@@ -66,7 +66,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test01HttpStatus200() {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("data", "<root/>");
 
@@ -79,7 +79,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test02HttpStatus400_missingField() {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
         // Notice: No "data" field added
 
@@ -93,7 +93,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     @Test
     public void test02HttpStatus400_invalidDocument() {
         final String invalidXMLDoc = "<noEndTagToThis>";
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerId", String.valueOf(getSignerIdDummy1()));
         fields.put("data", invalidXMLDoc);
 
@@ -107,7 +107,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     @Test
     public void test02HttpStatus400_unknownEncoding() {
         final String unknownEncoding = "_unknownEncoding123_";
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerId", String.valueOf(getSignerIdDummy1()));
         fields.put("data", "<root/>");
         fields.put("encoding", unknownEncoding);
@@ -123,7 +123,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     @Test
     public void test03HttpStatus404_nonExistingName() {
         final String nonExistingWorker = "_NotExistingWorker123_";
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerName", nonExistingWorker);
         fields.put("data", "<root/>");
 
@@ -136,7 +136,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
     @Test
     public void test03HttpStatus404_nonExistingId() {
         final int nonExistingId = 0;
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerId", String.valueOf(nonExistingId));
         fields.put("data", "<root/>");
 
@@ -148,7 +148,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test04HttpStatus503() {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("data", "<root/>");
 
@@ -156,9 +156,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
             // Deactivate crypto token
             try {
                 getWorkerSession().deactivateSigner(new WorkerIdentifier(getSignerIdDummy1()));
-            } catch (CryptoTokenOfflineException ex) {
-                fail(ex.getMessage());
-            } catch (InvalidWorkerIdException ex) {
+            } catch (CryptoTokenOfflineException | InvalidWorkerIdException ex) {
                 fail(ex.getMessage());
             }
 
@@ -167,11 +165,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
             // Activat crypto token
             try {
                 getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
-            } catch (CryptoTokenAuthenticationFailureException ex) {
-                fail(ex.getMessage());
-            } catch (CryptoTokenOfflineException ex) {
-                fail(ex.getMessage());
-            } catch (InvalidWorkerIdException ex) {
+            } catch (CryptoTokenAuthenticationFailureException | CryptoTokenOfflineException | InvalidWorkerIdException ex) {
                 fail(ex.getMessage());
             }
         }
@@ -182,7 +176,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test05HttpStatus500_exception() throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException, InvalidWorkerIdException {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("data", "<root/>");
 
@@ -213,7 +207,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
 
     @Test
     public void test06AttachmentFileName() throws Exception {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameCMSSigner1());
         fields.put("data", "Something to sign...");
         
@@ -237,7 +231,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test07ExplicitProcessTypeSignDocument() throws Exception {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("processType", "signDocument");
         fields.put("data", "<root/>");
@@ -252,7 +246,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test08WrongProcessType() throws Exception {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("processType", "validateDocument");
         fields.put("data", "<root/>");
@@ -267,7 +261,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test08WrongProcessTypeValidator() throws Exception {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getWorkerNameXmlValidator());
         fields.put("processType", "signDocument");
         fields.put("data", "<root/>");
@@ -282,7 +276,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test10InvalidProcessType() throws Exception {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("processType", "foobar");
         fields.put("data", "<root/>");
@@ -297,7 +291,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test11ValidateDocument() throws Exception {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerId", Integer.toString(getWorkerIdXmlValidator()));
         fields.put("processType", "validateDocument");
         fields.put("data", XMLValidatorTestData.TESTXML1);
@@ -313,7 +307,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test12ValidateDocumentInvalid() throws Exception {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerId", Integer.toString(getWorkerIdXmlValidator()));
         fields.put("processType", "validateDocument");
         fields.put("data", XMLValidatorTestData.TESTXML2);
@@ -329,7 +323,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test13ValidateCertificate() throws Exception {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerId", Integer.toString(getWorkerIdValidationService()));
         fields.put("processType", "validateCertificate");
         fields.put("data", XMLValidatorTestData.CERT_ISSUER);
@@ -350,7 +344,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test14ValidateCertificateOther() throws Exception {        
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerId", Integer.toString(getWorkerIdValidationService()));
         fields.put("processType", "validateCertificate");
         fields.put("data", XMLValidatorTestData.CERT_OTHER);
@@ -378,7 +372,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test15RequestMetadataSingleParam() throws Exception {
-        final Map<String, String> fields = new HashMap<String, String>();
+        final Map<String, String> fields = new HashMap<>();
         fields.put("workerId", "123");
         fields.put("data", "foo");
         fields.put("REQUEST_METADATA.FOO", "BAR");
@@ -398,7 +392,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test16RequestMetadataPropertiesFile() throws Exception {
-        final Map<String, String> fields = new HashMap<String, String>();
+        final Map<String, String> fields = new HashMap<>();
         fields.put("workerId", "123");
         fields.put("data", "foo");
         fields.put("REQUEST_METADATA", "FOO=BAR\nFOO2=BAR2");
@@ -420,7 +414,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test17RequestMetadataOverride() throws Exception {
-        final Map<String, String> fields = new HashMap<String, String>();
+        final Map<String, String> fields = new HashMap<>();
         fields.put("workerId", "123");
         fields.put("data", "foo");
         fields.put("REQUEST_METADATA", "FOO=BAR\nFOO2=BAR2");
@@ -441,7 +435,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test18RequestMetadataEscaped() throws Exception {
-        final Map<String, String> fields = new HashMap<String, String>();
+        final Map<String, String> fields = new HashMap<>();
         fields.put("workerId", "123");
         fields.put("data", "foo");
         fields.put("REQUEST_METADATA", "FOO=FOO\\=BAR\nFOO2=BAR2");
@@ -462,7 +456,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test19RequestMetadataLineEndingBackslash() throws Exception {
-        final Map<String, String> fields = new HashMap<String, String>();
+        final Map<String, String> fields = new HashMap<>();
         fields.put("workerId", "123");
         fields.put("data", "foo");
         fields.put("REQUEST_METADATA", "FOO=BAR\\\nNEXT_LINE\nFOO2=BAR2");
@@ -483,7 +477,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test20RequestMetadataWithCommentLine() throws Exception {
-        final Map<String, String> fields = new HashMap<String, String>();
+        final Map<String, String> fields = new HashMap<>();
         fields.put("workerId", "123");
         fields.put("data", "foo");
         fields.put("REQUEST_METADATA", "FOO=BAR\n# Comment = a comment\nFOO2=BAR2");
@@ -504,7 +498,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test21RequestMetadataExtraWhitespace() throws Exception {
-        final Map<String, String> fields = new HashMap<String, String>();
+        final Map<String, String> fields = new HashMap<>();
         fields.put("workerId", "123");
         fields.put("data", "foo");
         fields.put("REQUEST_METADATA", "FOO = BAR\nFOO2 = BAR2");
@@ -528,7 +522,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
             getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE", "700"); // 700 bytes max
             getGlobalSession().reload();
             
-            Map<String, String> fields = new HashMap<String, String>();
+            Map<String, String> fields = new HashMap<>();
             fields.put("workerName", getSignerNameCMSSigner1());
             
             // Test with a small number of bytes

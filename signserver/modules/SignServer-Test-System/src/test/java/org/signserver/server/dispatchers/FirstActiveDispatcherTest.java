@@ -74,6 +74,7 @@ public class FirstActiveDispatcherTest extends ModulesTestCase {
     private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }

@@ -87,6 +87,7 @@ public class CRLValidatorTest extends ModulesTestCase {
     private static X509CRL crlRootCA2;
 
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         sSSession = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
@@ -99,7 +100,7 @@ public class CRLValidatorTest extends ModulesTestCase {
         File cdpFile1 = new File(signServerHome, "tmp" + File.separator + "rootca1.crl");
         URL cdpUrl1 = cdpFile1.toURI().toURL();
         CRLDistPoint crlDistPointCA1WithUrl = ValidationTestUtils.generateDistPointWithUrl(cdpUrl1);
-        ArrayList<X509Certificate> chain1 = new ArrayList<X509Certificate>();
+        ArrayList<X509Certificate> chain1 = new ArrayList<>();
 
         KeyPair keysRootCA1 = KeyTools.genKeys("1024", "RSA");
         certRootCA1 = ValidationTestUtils.genCert("CN=RootCA1", "CN=RootCA1", keysRootCA1.getPrivate(), keysRootCA1.getPublic(),
@@ -130,7 +131,7 @@ public class CRLValidatorTest extends ModulesTestCase {
         certEndEntity8KeyUsageSig = ValidationTestUtils.genCert("CN=EndEntity8", "CN=RootCA1", keysRootCA1.getPrivate(), keysEndEntity8.getPublic(),
                 new Date(0), new Date(System.currentTimeMillis() + 1000000), false, X509KeyUsage.digitalSignature | X509KeyUsage.nonRepudiation, crlDistPointCA1WithUrl);
 
-        ArrayList<RevokedCertInfo> revoked = new ArrayList<RevokedCertInfo>();
+        ArrayList<RevokedCertInfo> revoked = new ArrayList<>();
         revoked.add(new RevokedCertInfo("fingerprint".getBytes(),
                 certEndEntity2.getSerialNumber().toByteArray(),
                 new Date().getTime(),
@@ -142,15 +143,9 @@ public class CRLValidatorTest extends ModulesTestCase {
                                            crlDistPointCA1WithUrl.getDistributionPoints()[0],
                                            revoked, 24, 1);
 
-        // Write CRL to file
-        OutputStream out = null;
-        try {
-            out = new FileOutputStream(cdpFile1);
+        try ( // Write CRL to file
+                OutputStream out = new FileOutputStream(cdpFile1)) {
             out.write(crlRootCA1.getEncoded());
-        } finally {
-            if (out != null) {
-                out.close();
-            }
         }
         assertTrue(cdpFile1.exists());
         assertTrue(cdpFile1.canRead());
@@ -160,7 +155,7 @@ public class CRLValidatorTest extends ModulesTestCase {
         File cdpFile2 = new File(signServerHome, "tmp" + File.separator + "rootca2.crl");
         URL cdpUrl2 = cdpFile2.toURI().toURL();
         CRLDistPoint crlDistPointCA2WithIssuer = ValidationTestUtils.generateDistPointWithIssuer("CN=RootCA2");
-        ArrayList<X509Certificate> chain2 = new ArrayList<X509Certificate>();
+        ArrayList<X509Certificate> chain2 = new ArrayList<>();
 
         KeyPair keysRootCA2 = KeyTools.genKeys("1024", "RSA");
         certRootCA2 = ValidationTestUtils.genCert("CN=RootCA2", "CN=RootCA2", keysRootCA2.getPrivate(), keysRootCA2.getPublic(),
@@ -174,7 +169,7 @@ public class CRLValidatorTest extends ModulesTestCase {
         certEndEntity4 = ValidationTestUtils.genCert("CN=EndEntity4", "CN=RootCA2", keysRootCA2.getPrivate(), keysEndEntity4.getPublic(),
                 new Date(0), new Date(System.currentTimeMillis() + 1000000), false, 0, crlDistPointCA2WithIssuer);
 
-        ArrayList<RevokedCertInfo> revoked2 = new ArrayList<RevokedCertInfo>();
+        ArrayList<RevokedCertInfo> revoked2 = new ArrayList<>();
         revoked2.add(new RevokedCertInfo("fingerprint2".getBytes(),
                 certEndEntity4.getSerialNumber().toByteArray(),
                 new Date().getTime(),

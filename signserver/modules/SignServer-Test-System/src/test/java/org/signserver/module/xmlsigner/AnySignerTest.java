@@ -57,12 +57,14 @@ public class AnySignerTest extends ModulesTestCase {
     private final WorkerSession workerSession = getWorkerSession();
     
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         signserverhome = PathUtil.getAppHome();
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }	

@@ -55,7 +55,7 @@ public class ValidationCacheTest {
      */
     @Test
     public void testValidationCache() throws InterruptedException {
-        ArrayList<String> cachedIssuerDNs = new ArrayList<String>();
+        ArrayList<String> cachedIssuerDNs = new ArrayList<>();
         cachedIssuerDNs.add(CertTools.getIssuerDN(cert1));
         cachedIssuerDNs.add(CertTools.getIssuerDN(cert2));
         ValidationCache cache = new ValidationCache(cachedIssuerDNs, 2000);

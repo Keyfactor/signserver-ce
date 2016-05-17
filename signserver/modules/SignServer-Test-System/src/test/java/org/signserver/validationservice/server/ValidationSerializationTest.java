@@ -60,7 +60,7 @@ public class ValidationSerializationTest {
         KeyPair validCert1Keys = KeyTools.genKeys("1024", "RSA");
         validCert1 = ValidationTestUtils.genCert("CN=ValidCert1", "CN=ValidSubCA1", subCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
 
-        ArrayList<Certificate> caChain = new ArrayList<Certificate>();
+        ArrayList<Certificate> caChain = new ArrayList<>();
         caChain.add(validSubCA1);
         caChain.add(validRootCA1);
         Validation val = new Validation(validCert1, caChain, Validation.Status.BADCERTPURPOSE, null);

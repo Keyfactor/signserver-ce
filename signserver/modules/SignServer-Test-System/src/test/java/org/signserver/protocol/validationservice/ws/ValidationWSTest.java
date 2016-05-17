@@ -74,7 +74,7 @@ public class ValidationWSTest extends ModulesTestCase {
         validCert1 = new String(Base64.encode(ValidationTestUtils.genCert("CN=ValidCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false).getEncoded()));
         revokedCert1 = new String(Base64.encode(ValidationTestUtils.genCert("CN=revokedCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false).getEncoded()));
         identificationCert1 = new String(Base64.encode(ValidationTestUtils.genCert("CN=identificationCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false, X509KeyUsage.digitalSignature + X509KeyUsage.keyEncipherment).getEncoded()));
-        ArrayList<X509Certificate> validChain1 = new ArrayList<X509Certificate>();
+        ArrayList<X509Certificate> validChain1 = new ArrayList<>();
         // Add in the wrong order
         validChain1.add(validRootCA1);
         validChain1.add(validSubCA1);

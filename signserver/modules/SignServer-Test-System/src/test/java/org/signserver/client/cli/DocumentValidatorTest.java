@@ -58,6 +58,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
     private final WorkerSession workerSession = getWorkerSession();
 
     @Before
+    @Override
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         TestingSecurityManager.install();
@@ -65,6 +66,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
     }
 
     @After
+    @Override
     protected void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }
@@ -146,18 +148,12 @@ public class DocumentValidatorTest extends ModulesTestCase {
     private void testValidateDocumentFromFile(final String protocol, final String[] metadatas) throws Exception {
         try {
             final File doc = File.createTempFile("test2.xml", null);
-            FileOutputStream out = null;
-            try {
-                out = new FileOutputStream(doc);
+            try (FileOutputStream out = new FileOutputStream(doc)) {
                 out.write(XMLValidatorTestData.TESTXML1.getBytes());
                 out.close();
-            } finally {
-                if (out != null) {
-                    out.close();
-                }
             }
            
-            final List<String> argList = new LinkedList<String>(Arrays.asList("validatedocument", "-workername",
+            final List<String> argList = new LinkedList<>(Arrays.asList("validatedocument", "-workername",
                                             "TestXMLValidator", "-infile", doc.getAbsolutePath(),
                                             "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()),
                                             "-truststore", new File(signserverhome, "p12/truststore.jks").getAbsolutePath(),

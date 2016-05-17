@@ -82,7 +82,7 @@ public abstract class KeystoreCryptoTokenTestBase extends ModulesTestCase {
     
     protected Set<String> getKeyAliases(final int workerId) throws Exception {
         Collection<KeyTestResult> testResults = workerSession.testKey(new WorkerIdentifier(workerId), "all", pin.toCharArray());
-        final HashSet<String> results = new HashSet<String>();
+        final HashSet<String> results = new HashSet<>();
         for (KeyTestResult testResult : testResults) {
             results.add(testResult.getAlias());
         }

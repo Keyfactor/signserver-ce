@@ -68,6 +68,7 @@ public class XMLSignerTest extends ModulesTestCase {
     private final GlobalConfigurationSession globalSession = getGlobalSession();
     
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
@@ -129,12 +130,12 @@ public class XMLSignerTest extends ModulesTestCase {
         // Answer to right question
         assertSame("Request ID", reqid, res.getRequestID());
 
-        // Output for manual inspection
-        final FileOutputStream fos = new FileOutputStream(new File(getSignServerHome()
-                + File.separator
-                + "tmp" + File.separator + "signedxml_" + workerId + "_" + sigAlg + ".xml"));
-        fos.write((byte[]) data);
-        fos.close();
+        try ( // Output for manual inspection
+                FileOutputStream fos = new FileOutputStream(new File(getSignServerHome()
+                        + File.separator
+                        + "tmp" + File.separator + "signedxml_" + workerId + "_" + sigAlg + ".xml"))) {
+            fos.write((byte[]) data);
+        }
 
         // Check certificate
         final Certificate signercert = res.getSignerCertificate();

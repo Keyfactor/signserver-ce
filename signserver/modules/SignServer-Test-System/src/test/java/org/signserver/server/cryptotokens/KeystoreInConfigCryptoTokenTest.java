@@ -138,7 +138,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
             workerSession.generateSignerKey(new WorkerIdentifier(workerId), "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
             
             // Now expect the new TEST_KEY_ALIAS
-            Set<String> expected = new HashSet<String>(aliases1);
+            Set<String> expected = new HashSet<>(aliases1);
             expected.add(TEST_KEY_ALIAS);
             Set<String> aliases2 = getKeyAliases(workerId);
             assertEquals("new key added", expected, aliases2);
@@ -189,7 +189,7 @@ public class KeystoreInConfigCryptoTokenTest extends KeystoreCryptoTokenTestBase
 
             // Now expect the TEST_KEY_ALIAS to have been removed
             Set<String> aliases2 = getKeyAliases(tokenId);
-            Set<String> expected = new HashSet<String>(aliases1);
+            Set<String> expected = new HashSet<>(aliases1);
             expected.remove(TEST_KEY_ALIAS);
             assertEquals("new key removed", expected, aliases2);
         } finally {

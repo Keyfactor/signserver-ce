@@ -209,10 +209,7 @@ public class ValidationWSServiceTest extends ModulesTestCase {
                     ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE,
                     response.getValidCertificatePurposes());
             assertNotNull("validationDate", response.getValidationDate());
-        } catch (IllegalRequestException_Exception ex) {
-            LOG.error(ex, ex);
-            fail(ex.getMessage());
-        } catch (SignServerException_Exception ex) {
+        } catch (IllegalRequestException_Exception | SignServerException_Exception ex) {
             LOG.error(ex, ex);
             fail(ex.getMessage());
         }

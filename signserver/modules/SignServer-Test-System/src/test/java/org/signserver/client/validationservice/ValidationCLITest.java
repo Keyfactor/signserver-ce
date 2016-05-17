@@ -62,6 +62,7 @@ public class ValidationCLITest extends ModulesTestCase {
     private CLITestHelper clientCLI = new CLITestHelper(ClientCLI.class);
     
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         gCSession = ServiceLocator.getInstance().lookupRemote(GlobalConfigurationSessionRemote.class);
@@ -81,7 +82,7 @@ public class ValidationCLITest extends ModulesTestCase {
         KeyPair validCert1Keys = KeyTools.genKeys("1024", "RSA");
         validCert1 = new String(Base64.encode(ValidationTestUtils.genCert("CN=ValidCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false, X509KeyUsage.digitalSignature + X509KeyUsage.keyEncipherment).getEncoded()));
         revokedCert1 = new String(Base64.encode(ValidationTestUtils.genCert("CN=revokedCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false).getEncoded()));
-        ArrayList<X509Certificate> validChain1 = new ArrayList<X509Certificate>();
+        ArrayList<X509Certificate> validChain1 = new ArrayList<>();
         // Add in the wrong order
         validChain1.add(validRootCA1);
         validChain1.add(validSubCA1);

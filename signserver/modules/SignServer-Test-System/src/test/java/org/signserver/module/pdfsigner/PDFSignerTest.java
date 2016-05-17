@@ -58,6 +58,7 @@ public class PDFSignerTest extends ModulesTestCase {
     private final ProcessSessionRemote processSession = getProcessSession();
 
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
@@ -66,6 +67,7 @@ public class PDFSignerTest extends ModulesTestCase {
      * @see junit.framework.TestCase#tearDown()
      */
     @After
+    @Override
     public void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }
@@ -168,10 +170,10 @@ public class PDFSignerTest extends ModulesTestCase {
         final PdfReader reader = new PdfReader(res.getProcessedData());
         assertFalse("isTampered", reader.isTampered());
 
-        // TODO: verify PDF file
-        FileOutputStream fos = new FileOutputStream(getSignServerHome() + "/tmp/signedpdf.pdf");
-        fos.write((byte[]) res.getProcessedData());
-        fos.close();
+        try ( // TODO: verify PDF file
+                FileOutputStream fos = new FileOutputStream(getSignServerHome() + "/tmp/signedpdf.pdf")) {
+            fos.write((byte[]) res.getProcessedData());
+        }
     }
 
     @Test
@@ -315,7 +317,7 @@ public class PDFSignerTest extends ModulesTestCase {
         cal.set(Calendar.MONTH, 3);
         cal.set(Calendar.DAY_OF_MONTH, 10);
         Date date = cal.getTime();
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("WORKERID", "4311");
 
         SimpleDateFormat sdf = new SimpleDateFormat("MMMMMMMMM");
@@ -530,15 +532,11 @@ public class PDFSignerTest extends ModulesTestCase {
 
         final File file = new File(getSignServerHome(),
                 "res" + File.separator + "test" + File.separator + name);
-        FileInputStream in = null;
-        try {
-            in = new FileInputStream(file);
+        try (FileInputStream in = new FileInputStream(file)) {
             int c;
             while ((c = in.read()) != -1) {
                 bout.write(c);
             }
-        } finally {
-            in.close();
         }
         return bout.toByteArray();
     }

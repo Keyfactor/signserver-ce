@@ -137,7 +137,7 @@ public class ArchiveTest extends ArchiveTestCase {
         // test querying archive
         final QueryCriteria qc = QueryCriteria.create();
         
-        qc.add(new Term(RelationalOperator.GE, ArchiveMetadata.TIME, Long.valueOf(timestamp)));
+        qc.add(new Term(RelationalOperator.GE, ArchiveMetadata.TIME, timestamp));
         
         Collection<ArchiveMetadata> metadatas =
                 getWorkerSession().searchArchive(0, 10, qc, false);

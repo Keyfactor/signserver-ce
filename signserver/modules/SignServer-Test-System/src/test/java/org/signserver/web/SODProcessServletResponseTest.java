@@ -63,7 +63,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test01HttpStatus200() {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("dataGroup1", "Yy==");
         fields.put("dataGroup2", "Yy==");
@@ -79,7 +79,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test02HttpStatus400_missingField() {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
         // Notice: No datagrou fields added
         fields.put("encoding", "base64");
@@ -94,7 +94,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
     @Test
     public void test02HttpStatus400_unknownLdsVersion() {
         final String unknownLdsVersion = "9999";
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerId", String.valueOf(getSignerIdDummy1()));
         fields.put("dataGroup1", "Yy==");
         fields.put("dataGroup2", "Yy==");
@@ -111,7 +111,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
     @Test
     public void test03HttpStatus404_nonExistingName() {
         final String nonExistingWorker = "_NotExistingWorker123_";
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerName", nonExistingWorker);
         fields.put("dataGroup1", "Yy==");
         fields.put("dataGroup2", "Yy==");
@@ -127,7 +127,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
     @Test
     public void test03HttpStatus404_nonExistingId() {
         final int nonExistingId = 0;
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerId", String.valueOf(nonExistingId));
         fields.put("dataGroup1", "Yy==");
         fields.put("dataGroup2", "Yy==");
@@ -142,7 +142,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test04HttpStatus503() {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("dataGroup1", "Yy==");
         fields.put("dataGroup2", "Yy==");
@@ -153,9 +153,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
             // Deactivate crypto token
             try {
                 getWorkerSession().deactivateSigner(new WorkerIdentifier(getSignerIdDummy1()));
-            } catch (CryptoTokenOfflineException ex) {
-                fail(ex.getMessage());
-            } catch (InvalidWorkerIdException ex) {
+            } catch (CryptoTokenOfflineException | InvalidWorkerIdException ex) {
                 fail(ex.getMessage());
             }
 
@@ -164,11 +162,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
             // Activat crypto token
             try {
                 getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), "foo123");
-            } catch (CryptoTokenAuthenticationFailureException ex) {
-                fail(ex.getMessage());
-            } catch (CryptoTokenOfflineException ex) {
-                fail(ex.getMessage());
-            } catch (InvalidWorkerIdException ex) {
+            } catch (CryptoTokenAuthenticationFailureException | CryptoTokenOfflineException | InvalidWorkerIdException ex) {
                 fail(ex.getMessage());
             }
         }
@@ -179,7 +173,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test05HttpStatus500_exception() throws Exception {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("dataGroup1", "Yy==");
         fields.put("dataGroup2", "Yy==");
@@ -227,7 +221,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test06RequestMetadataSingleParam() throws Exception {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerId", "123");
         fields.put("dataGroup1", "Yy==");
         fields.put("dataGroup2", "Yy==");
@@ -250,7 +244,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test07RequestMetadataPropertiesFile() throws Exception {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerId", "123");
         fields.put("dataGroup1", "Yy==");
         fields.put("dataGroup2", "Yy==");
@@ -275,7 +269,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
      */
     @Test
     public void test08RequestMetadataOverride() throws Exception {
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerId", "123");
         fields.put("dataGroup1", "Yy==");
         fields.put("dataGroup2", "Yy==");

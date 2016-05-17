@@ -78,6 +78,7 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
     private final WorkerSession workerSession = getWorkerSession();
 
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         

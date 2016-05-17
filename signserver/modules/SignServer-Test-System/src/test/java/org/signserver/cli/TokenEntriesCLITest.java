@@ -98,7 +98,7 @@ public class TokenEntriesCLITest extends ModulesTestCase {
     @Test
     public void testQueryMoreThan10Keys() throws Exception {
         final int tokenId = 40302;
-        final List<String> aliases = new ArrayList<String> ();
+        final List<String> aliases = new ArrayList<> ();
         for (int i = 0; i < 13; i++) {
             aliases.add("testKey-" + i);
         }

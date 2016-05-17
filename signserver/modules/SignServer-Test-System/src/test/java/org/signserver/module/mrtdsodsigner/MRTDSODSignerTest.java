@@ -80,6 +80,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before
+    @Override
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
@@ -88,6 +89,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
      * @see junit.framework.TestCase#tearDown()
      */
     @After
+    @Override
     protected void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }
@@ -170,13 +172,13 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     @Test
     public void test02SignData() throws Exception {
         // DG1, DG2 and default values
-        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<>();
         dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA256"));
         dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA256"));
         signHelper(WORKER1, 12, dataGroups1, false, "SHA256", "SHA256withRSA");
 
         // DG3, DG7, DG8, DG13 and default values
-        Map<Integer, byte[]> dataGroups2 = new LinkedHashMap<Integer, byte[]>();
+        Map<Integer, byte[]> dataGroups2 = new LinkedHashMap<>();
         dataGroups2.put(3, digestHelper("Dummy Value 3".getBytes(), "SHA256"));
         dataGroups2.put(7, digestHelper("Dummy Value 4".getBytes(), "SHA256"));
         dataGroups2.put(8, digestHelper("Dummy Value 5".getBytes(), "SHA256"));
@@ -184,7 +186,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         signHelper(WORKER1, 13, dataGroups2, false, "SHA256", "SHA256withRSA");
 
         // DG1, DG2 with the other worker which uses SHA512 and SHA512withRSA
-        Map<Integer, byte[]> dataGroups3 = new LinkedHashMap<Integer, byte[]>();
+        Map<Integer, byte[]> dataGroups3 = new LinkedHashMap<>();
         dataGroups3.put(1, digestHelper("Dummy Value 7".getBytes(), "SHA512"));
         dataGroups3.put(2, digestHelper("Dummy Value 8".getBytes(), "SHA512"));
         signHelper(WORKER2, 14, dataGroups3, false, "SHA512", "SHA512withRSA");
@@ -202,13 +204,13 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     @Test
     public void test03SignUnhashedData() throws Exception {
         // DG1, DG2 and default values
-        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<>();
         dataGroups1.put(1, "Dummy Value 1".getBytes());
         dataGroups1.put(2, "Dummy Value 2".getBytes());
         signHelper(WORKER3, 15, dataGroups1, true, "SHA256", "SHA256withRSA");
 
         // DG3, DG7, DG8, DG13 and default values
-        Map<Integer, byte[]> dataGroups2 = new LinkedHashMap<Integer, byte[]>();
+        Map<Integer, byte[]> dataGroups2 = new LinkedHashMap<>();
         dataGroups2.put(3, "Dummy Value 3".getBytes());
         dataGroups2.put(7, "Dummy Value 4".getBytes());
         dataGroups2.put(8, "Dummy Value 5".getBytes());
@@ -216,7 +218,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         signHelper(WORKER3, 16, dataGroups2, true, "SHA256", "SHA256withRSA");
 
         // DG1, DG2 with the other worker which uses SHA512 and SHA512withRSA
-        Map<Integer, byte[]> dataGroups3 = new LinkedHashMap<Integer, byte[]>();
+        Map<Integer, byte[]> dataGroups3 = new LinkedHashMap<>();
         dataGroups3.put(1, "Dummy Value 7".getBytes());
         dataGroups3.put(2, "Dummy Value 8".getBytes());
         signHelper(WORKER4, 17, dataGroups3, true, "SHA512", "SHA512withRSA");
@@ -225,7 +227,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     @Test
     public void test04MinRemainingCertVValidity() throws Exception {
         // A signing operation that will work
-        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<>();
         dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA256"));
         dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA256"));
         signHelper(WORKER1, 12, dataGroups1, false, "SHA256", "SHA256withRSA");
@@ -267,7 +269,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     public void test04bMinRemainingCertVValidityWithSoftKeystore()
             throws Exception {
         // A signing operation that will work
-        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<Integer, byte[]>();
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<>();
         dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA256"));
         dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA256"));
         signHelper(WORKER1B, 12, dataGroups1, false, "SHA256", "SHA256withRSA");
@@ -468,7 +470,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         Map<Integer, byte[]> expectedHashes;
         if (signerDoesHashing) {
             MessageDigest d = MessageDigest.getInstance(digestAlg, "BC");
-            expectedHashes = new HashMap<Integer, byte[]>();
+            expectedHashes = new HashMap<>();
             for (Map.Entry<Integer, byte[]> entry : dataGroups.entrySet()) {
                 expectedHashes.put(entry.getKey(), d.digest(entry.getValue()));
                 d.reset();

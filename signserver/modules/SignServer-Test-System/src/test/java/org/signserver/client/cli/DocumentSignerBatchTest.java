@@ -228,7 +228,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
                     + res, res.contains("<document1"));
             Set<String> expectedOutFiles = Collections.singleton("doc1.xml");
             
-            assertEquals("outfiles", expectedOutFiles, new HashSet<String>(Arrays.asList(outDir.getRoot().list())));
+            assertEquals("outfiles", expectedOutFiles, new HashSet<>(Arrays.asList(outDir.getRoot().list())));
             
             String file1Content = FileUtils.readFileToString(new File(outDir.getRoot(), file1.getName()));
             
@@ -267,9 +267,9 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
                             "-outdir", outDir.getRoot().getAbsolutePath()));
             assertFalse("should not contain the document: "
                     + res, res.contains("<document"));
-            Set<String> expectedOutFiles = new HashSet<String>(Arrays.asList("doc2.xml", "doc1.xml"));
+            Set<String> expectedOutFiles = new HashSet<>(Arrays.asList("doc2.xml", "doc1.xml"));
             
-            assertEquals("outfiles", expectedOutFiles, new HashSet<String>(Arrays.asList(outDir.getRoot().list())));
+            assertEquals("outfiles", expectedOutFiles, new HashSet<>(Arrays.asList(outDir.getRoot().list())));
             
             String file1Content = FileUtils.readFileToString(new File(outDir.getRoot(), file1.getName()));
             assertTrue("contains signature tag: "
@@ -286,7 +286,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
     }
     
     private ArrayList<File> createInputFiles(int count) throws IOException {
-        ArrayList<File> result = new ArrayList<File>();
+        ArrayList<File> result = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             File f = inDir.newFile("file" + i + ".xml");
             FileUtils.writeStringToFile(f, "<doc" + i + "/>");
@@ -296,7 +296,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
     }
     
     private Set<String> getExpectedNames(ArrayList<File> files) {
-        final HashSet<String> results = new HashSet<String>();
+        final HashSet<String> results = new HashSet<>();
         for (File file : files) {
             results.add(file.getName());
         }
@@ -304,7 +304,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
     }
     
     private void assertOutfilesSignatures(ArrayList<File> files) throws IOException {
-        assertEquals("outfiles", getExpectedNames(files), new HashSet<String>(Arrays.asList(outDir.getRoot().list())));
+        assertEquals("outfiles", getExpectedNames(files), new HashSet<>(Arrays.asList(outDir.getRoot().list())));
         
         for (int i = 0; i < files.size(); i++) {
             final File file = files.get(i);
@@ -360,7 +360,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         final ArrayList<File> files = createInputFiles(5);
         
         // Override the password reading
-        final ArrayList<Boolean> called = new ArrayList<Boolean>();
+        final ArrayList<Boolean> called = new ArrayList<>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
             public ConsolePasswordReader createConsolePasswordReader() {
@@ -404,7 +404,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         final ArrayList<File> files = createInputFiles(5);
         
         // Override the password reading
-        final ArrayList<Boolean> called = new ArrayList<Boolean>();
+        final ArrayList<Boolean> called = new ArrayList<>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
             public ConsolePasswordReader createConsolePasswordReader() {
@@ -450,7 +450,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         
         // Override the password reading
         final String[] passwords = new String[] { "incorrect1", "foo123" };
-        final ArrayList<Boolean> calls = new ArrayList<Boolean>();
+        final ArrayList<Boolean> calls = new ArrayList<>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
             public ConsolePasswordReader createConsolePasswordReader() {
@@ -497,7 +497,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         createInputFiles(5);
         
         // Override the password reading
-        final ArrayList<Boolean> calls = new ArrayList<Boolean>();
+        final ArrayList<Boolean> calls = new ArrayList<>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
             public ConsolePasswordReader createConsolePasswordReader() {
@@ -542,7 +542,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         
         // Override the password reading
         final String[] passwords = new String[] { "incorrect1", "foo123" };
-        final ArrayList<Boolean> calls = new ArrayList<Boolean>();
+        final ArrayList<Boolean> calls = new ArrayList<>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
             public ConsolePasswordReader createConsolePasswordReader() {
@@ -591,7 +591,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         
         // Override the password reading
         final String[] passwords = new String[] { "incorrect1", "incorrect2", "foo123" };
-        final ArrayList<Boolean> calls = new ArrayList<Boolean>();
+        final ArrayList<Boolean> calls = new ArrayList<>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
             public ConsolePasswordReader createConsolePasswordReader() {
@@ -640,7 +640,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         
         // Override the password reading
         final String[] passwords = new String[] { "incorrect1", "incorrect2", "incorrect3", "incorrect4", "incorrect5" };
-        final ArrayList<Boolean> calls = new ArrayList<Boolean>();
+        final ArrayList<Boolean> calls = new ArrayList<>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
             public ConsolePasswordReader createConsolePasswordReader() {

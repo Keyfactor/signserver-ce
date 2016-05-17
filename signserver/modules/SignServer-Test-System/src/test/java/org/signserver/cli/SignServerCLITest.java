@@ -638,11 +638,11 @@ public class SignServerCLITest extends ModulesTestCase {
                         "-truststore", getSignServerHome() + "/p12/truststore.jks", "-truststorepwd", "changeit",
                         "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()));
    	
-    	// check the log file to see that the FILENAME property was logged
-    	BufferedReader reader = new BufferedReader(new FileReader(logFile));
-    	final String line = reader.readLine();
-    	
-    	reader.close();
+    	final String line;
+        try ( // check the log file to see that the FILENAME property was logged
+                BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
+            line = reader.readLine();
+        }
     	
     	final String[] fields = line.split(";");
     	boolean found = false;

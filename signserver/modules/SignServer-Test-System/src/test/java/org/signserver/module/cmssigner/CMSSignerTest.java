@@ -65,11 +65,13 @@ public class CMSSignerTest extends ModulesTestCase {
     private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before
+    @Override
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
     @After
+    @Override
     protected void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }	
@@ -210,12 +212,12 @@ public class CMSSignerTest extends ModulesTestCase {
         // Answer to right question
         assertSame("Request ID", reqid, res.getRequestID());
 
-        // Output for manual inspection
-        final FileOutputStream fos = new FileOutputStream(
-                new File(getSignServerHome(),
-                "tmp" + File.separator + "signedcms_" + sigAlg + ".p7s"));
-        fos.write((byte[]) data);
-        fos.close();
+        try ( // Output for manual inspection
+                FileOutputStream fos = new FileOutputStream(
+                        new File(getSignServerHome(),
+                                "tmp" + File.separator + "signedcms_" + sigAlg + ".p7s"))) {
+            fos.write((byte[]) data);
+        }
 
         // Check certificate returned
         final Certificate signercert = res.getSignerCertificate();

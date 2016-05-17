@@ -66,6 +66,7 @@ public class OOXMLSignerTest extends ModulesTestCase {
     }
 
     @Before
+    @Override
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
@@ -89,9 +90,9 @@ public class OOXMLSignerTest extends ModulesTestCase {
 
         // Output for manual inspection
         File file = new File(getSignServerHome() + File.separator + "tmp" + File.separator + "signedTestDoc.docx");
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write((byte[]) data);
-        fos.close();
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write((byte[]) data);
+        }
 
 
         //TODO : validate signed document by calling ooxmlvalidator (first of course code one)

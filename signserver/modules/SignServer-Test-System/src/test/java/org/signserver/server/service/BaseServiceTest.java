@@ -48,6 +48,7 @@ public class BaseServiceTest extends ModulesTestCase {
     private static final int WORKER_ID = 17;
     
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         sSSession = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);

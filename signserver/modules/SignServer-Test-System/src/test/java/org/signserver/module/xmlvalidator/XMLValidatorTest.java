@@ -61,6 +61,7 @@ public class XMLValidatorTest extends ModulesTestCase {
     private final GlobalConfigurationSession globalSession = getGlobalSession();
     
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }

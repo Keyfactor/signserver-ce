@@ -86,6 +86,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
     private final GlobalConfigurationSession globalSession = getGlobalSession();
 
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
 
@@ -98,6 +99,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
      * @see junit.framework.TestCase#tearDown()
      */
     @After
+    @Override
     public void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }
@@ -128,7 +130,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         validCert1 = ValidationTestUtils.genCert("CN=ValidCert1", "CN=ValidSubCA1", validSubCA1Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
 
 
-        ArrayList<X509Certificate> validChain1 = new ArrayList<X509Certificate>();
+        ArrayList<X509Certificate> validChain1 = new ArrayList<>();
         // Add in the wrong order
         validChain1.add(validRootCA1);
         validChain1.add(validSubCA1);
@@ -199,7 +201,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         GenericSignRequest signRequest2 = new GenericSignRequest(13, requestBytes2);
         ProcessRequestWS req2 = new ProcessRequestWS(signRequest2);
 
-        ArrayList<ProcessRequestWS> reqs = new ArrayList<ProcessRequestWS>();
+        ArrayList<ProcessRequestWS> reqs = new ArrayList<>();
         reqs.add(req1);
         reqs.add(req2);
 
@@ -243,7 +245,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
 
         req1 = new ProcessRequestWS(req);
 
-        reqs = new ArrayList<ProcessRequestWS>();
+        reqs = new ArrayList<>();
         reqs.add(req1);
 
         resps = signServerWS.process("16", WSClientUtil.convertProcessRequestWS(reqs));
@@ -269,7 +271,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         byte[] requestBytes1 = timeStampRequest1.getEncoded();
         GenericSignRequest signRequest1 = new GenericSignRequest(12, requestBytes1);
         ProcessRequestWS req1 = new ProcessRequestWS(signRequest1);
-        ArrayList<ProcessRequestWS> reqs = new ArrayList<ProcessRequestWS>();
+        ArrayList<ProcessRequestWS> reqs = new ArrayList<>();
         reqs.add(req1);
 
         // Perform a basic test

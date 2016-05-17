@@ -49,6 +49,7 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
     private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         localIP = getClientIP();
@@ -161,9 +162,7 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
 
         try {
             processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, new RemoteRequestContext());
-        } catch (AuthorizationRequiredException ex) {
-            fail(ex.getMessage());
-        } catch (AccessDeniedException ex) {
+        } catch (AuthorizationRequiredException | AccessDeniedException ex) {
             fail(ex.getMessage());
         } catch (Exception ex) {
             LOG.error("Wrong type of exception", ex);

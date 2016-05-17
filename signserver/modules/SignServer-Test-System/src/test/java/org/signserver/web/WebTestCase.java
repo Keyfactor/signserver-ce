@@ -279,9 +279,9 @@ public abstract class WebTestCase extends ModulesTestCase {
         con.setAllowUserInteraction(false);
         con.setDoOutput(true);
         con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        PrintWriter out = new PrintWriter(con.getOutputStream());
-        out.print(body);
-        out.close();
+        try (PrintWriter out = new PrintWriter(con.getOutputStream())) {
+            out.print(body);
+        }
         return con;
     }
 
@@ -332,30 +332,29 @@ public abstract class WebTestCase extends ModulesTestCase {
         con.setRequestProperty("Content-Type",
                 "multipart/form-data; boundary=" + boundary);
 
-        PrintWriter out = new PrintWriter(con.getOutputStream());
-        for (Entry<String, String> field : fields.entrySet()) {
+        try (PrintWriter out = new PrintWriter(con.getOutputStream())) {
+            for (Entry<String, String> field : fields.entrySet()) {
+                out.print("--");
+                out.print(boundary);
+                out.print(CRLF);
+                out.print("Content-Disposition: form-data; name=\"");
+                out.print(field.getKey());
+                out.print("\"");
+                if (field.getKey().equals("data")) {
+                    out.print("; filename=\"" + fileName + "\"");
+                    out.print(CRLF);
+                    out.print("Content-Type: application/octet-stream");
+                }
+                out.print(CRLF);
+                out.print(CRLF);
+                out.print(field.getValue());
+                out.print(CRLF);
+            }
             out.print("--");
             out.print(boundary);
-            out.print(CRLF);
-            out.print("Content-Disposition: form-data; name=\"");
-            out.print(field.getKey());
-            out.print("\"");
-            if (field.getKey().equals("data")) {
-                out.print("; filename=\"" + fileName + "\"");
-                out.print(CRLF);
-                out.print("Content-Type: application/octet-stream");
-            }
-            out.print(CRLF);
-            out.print(CRLF);
-            out.print(field.getValue());
+            out.print("--");
             out.print(CRLF);
         }
-        out.print("--");
-        out.print(boundary);
-        out.print("--");
-        out.print(CRLF);
-
-        out.close();
         return con;
     }
 }

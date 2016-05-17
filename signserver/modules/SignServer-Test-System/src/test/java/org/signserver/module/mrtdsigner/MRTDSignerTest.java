@@ -48,6 +48,7 @@ public class MRTDSignerTest extends ModulesTestCase {
     private final ProcessSessionRemote processSession = getProcessSession();
     
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
@@ -69,7 +70,7 @@ public class MRTDSignerTest extends ModulesTestCase {
     @Test
     public void test01SignData() throws Exception {
         int reqid = 12;
-        ArrayList<byte[]> signrequests = new ArrayList<byte[]>();
+        ArrayList<byte[]> signrequests = new ArrayList<>();
 
         byte[] signreq1 = "Hello World".getBytes();
         byte[] signreq2 = "Hello World2".getBytes();

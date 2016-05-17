@@ -129,7 +129,7 @@ public class FileBasedDatabaseManager {
      * @return List of errors preventing the file based database from functioning
      */
     public List<String> getFatalErrors() {
-        final LinkedList<String> result = new LinkedList<String>();
+        final LinkedList<String> result = new LinkedList<>();
         if (!initialized) {
             result.add("File based database not initialized. See servlet log for error during startup.");
         }

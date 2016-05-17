@@ -92,7 +92,7 @@ public class FileBasedGlobalConfigurationDataService implements IGlobalConfigura
             synchronized (manager) {
                 dataStore = loadData();
             }
-            return new LinkedList<GlobalConfigurationDataBean>(dataStore.values());
+            return new LinkedList<>(dataStore.values());
         } catch (IOException ex) {
             LOG.error("Could not load data from file based database: " + ex.getMessage());
             return Collections.emptyList();
@@ -103,7 +103,7 @@ public class FileBasedGlobalConfigurationDataService implements IGlobalConfigura
         assert Thread.holdsLock(manager);
         checkSchemaVersion();
         
-        final HashMap<String, GlobalConfigurationDataBean> result = new HashMap<String, GlobalConfigurationDataBean>();
+        final HashMap<String, GlobalConfigurationDataBean> result = new HashMap<>();
         if (file.length() != 0) {
             final Properties properties = new Properties();
             FileInputStream in = null;

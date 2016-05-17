@@ -127,7 +127,7 @@ public class ArchiveDataService {
         try {
             return em.createNamedQuery("ArchiveDataBean.findByTime").setParameter(1, type).setParameter(2, signerid).setParameter(3, starttime).setParameter(4, endtime).getResultList();
         } catch (NoResultException ignored) {} // NOPMD
-        return new ArrayList<ArchiveDataBean>();
+        return new ArrayList<>();
     }
 
     @SuppressWarnings("unchecked")
@@ -135,7 +135,7 @@ public class ArchiveDataService {
         try {
             return em.createNamedQuery("ArchiveDataBean.findByRequestCertificate").setParameter(1, type).setParameter(2, signerid).setParameter(3, requestIssuerDN).setParameter(4, requestCertSerialnumber).getResultList();
         } catch (NoResultException ignored) {} // NOPMD
-        return new ArrayList<ArchiveDataBean>();
+        return new ArrayList<>();
     }
     
     @SuppressWarnings("unchecked")
@@ -151,7 +151,7 @@ public class ArchiveDataService {
         try {
             return em.createNamedQuery("ArchiveDataBean.findByRequestCertificateAndTime").setParameter(1, type).setParameter(2, signerid).setParameter(3, requestIssuerDN).setParameter(4, requestCertSerialnumber).setParameter(5, starttime).setParameter(6, endtime).getResultList();
         } catch (NoResultException ignored) {} // NOPMD
-        return new ArrayList<ArchiveDataBean>();
+        return new ArrayList<>();
     }
 
     @SuppressWarnings("unchecked")
@@ -159,7 +159,7 @@ public class ArchiveDataService {
         try {
             return em.createNamedQuery("ArchiveDataBean.findByRequestIP").setParameter(1, type).setParameter(2, signerid).setParameter(3, requestIP).getResultList();
         } catch (NoResultException ignored) {} // NOPMD
-        return new ArrayList<ArchiveDataBean>();
+        return new ArrayList<>();
     }
     
     @SuppressWarnings("unchecked")
@@ -175,7 +175,7 @@ public class ArchiveDataService {
         try {
             return em.createNamedQuery("ArchiveDataBean.findByRequestCertificateAndTime").setParameter(1, type).setParameter(2, signerid).setParameter(3, requestIP).setParameter(4, starttime).setParameter(5, endtime).getResultList();
         } catch (NoResultException ignored) {} // NOPMD
-        return new ArrayList<ArchiveDataBean>();
+        return new ArrayList<>();
     }
     
     /**
@@ -191,7 +191,7 @@ public class ArchiveDataService {
         
         if (!uniqueIds.isEmpty()) {
             try {
-                final List<ArchiveMetadata> result = new ArrayList<ArchiveMetadata>();
+                final List<ArchiveMetadata> result = new ArrayList<>();
                 final List<ArchiveDataBean> archiveDatas =
                         em.createNamedQuery("ArchiveDataBean.findAllWithUniqueIds").
                         setParameter("ids", uniqueIds).getResultList();
@@ -253,7 +253,7 @@ public class ArchiveDataService {
                 query.setMaxResults(max);
             }
             
-            final List<ArchiveMetadata> result = new LinkedList<ArchiveMetadata>();
+            final List<ArchiveMetadata> result = new LinkedList<>();
             
             if (includeData) {
                 final List<ArchiveDataBean> queryResults = query.getResultList();

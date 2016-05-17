@@ -198,9 +198,9 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
 
         java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
 
-        java.beans.XMLEncoder encoder = new java.beans.XMLEncoder(baos);
-        encoder.writeObject(a);
-        encoder.close();
+        try (java.beans.XMLEncoder encoder = new java.beans.XMLEncoder(baos)) {
+            encoder.writeObject(a);
+        }
 
         try {
             if (LOG.isDebugEnabled()) {

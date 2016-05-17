@@ -61,7 +61,7 @@ public class MRTDSigner extends BaseSigner {
             WorkerContext workerContext, EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
         
-        configErrors = new LinkedList<String>();
+        configErrors = new LinkedList<>();
         
         if (hasSetIncludeCertificateLevels) {
             configErrors.add(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported.");
@@ -77,6 +77,7 @@ public class MRTDSigner extends BaseSigner {
      * @return returns a MRTDSignResponse with the same number of signatures as requested.
      *
      */
+    @Override
     public ProcessResponse processData(ProcessRequest signRequest,
             RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 
@@ -98,7 +99,7 @@ public class MRTDSigner extends BaseSigner {
             if (signRequest instanceof MRTDSignRequest) {
                 MRTDSignRequest req = (MRTDSignRequest) signRequest;
 
-                ArrayList<byte[]> genSignatures = new ArrayList<byte[]>();
+                ArrayList<byte[]> genSignatures = new ArrayList<>();
 
                 Iterator<?> iterator = ((ArrayList<?>) req.getRequestData()).iterator();
                 while (iterator.hasNext()) {
@@ -160,9 +161,7 @@ public class MRTDSigner extends BaseSigner {
             // PKCS#1, not PSS. Sun's PKCS#11 provider does not supoprt PSS (OAEP) padding yet as of 2009-08-14.
             // The below (plain RSA) works for soft keystores and PrimeCardHSM
             c = Cipher.getInstance("RSA", crypto.getProvider());
-        } catch (NoSuchAlgorithmException e) {
-            throw new EJBException(e);
-        } catch (NoSuchPaddingException e) {
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new EJBException(e);
         }
 
@@ -175,9 +174,7 @@ public class MRTDSigner extends BaseSigner {
         byte[] result;
         try {
             result = c.doFinal(data);
-        } catch (IllegalBlockSizeException e) {
-            throw new EJBException(e);
-        } catch (BadPaddingException e) {
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
             throw new EJBException(e);
         }
         return result;

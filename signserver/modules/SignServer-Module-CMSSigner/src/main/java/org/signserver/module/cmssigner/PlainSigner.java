@@ -77,7 +77,7 @@ public class PlainSigner extends BaseSigner {
         super.init(workerId, config, workerContext, workerEM);
 
         // Configuration errors
-        configErrors = new LinkedList<String>();
+        configErrors = new LinkedList<>();
 
         // Get the signature algorithm
         signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM_PROPERTY);
@@ -193,13 +193,7 @@ public class PlainSigner extends BaseSigner {
             requestContext.setRequestFulfilledByWorker(true);
 
             return signResponse;
-        } catch (NoSuchAlgorithmException ex) {
-            LOG.error("Error initializing signer", ex);
-            throw new SignServerException("Error initializing signer", ex);
-        } catch (InvalidKeyException ex) {
-            LOG.error("Error initializing signer", ex);
-            throw new SignServerException("Error initializing signer", ex);
-        } catch (SignatureException ex) {
+        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException ex) {
             LOG.error("Error initializing signer", ex);
             throw new SignServerException("Error initializing signer", ex);
         } finally {
@@ -223,7 +217,7 @@ public class PlainSigner extends BaseSigner {
 
     @Override
     protected List<String> getFatalErrors(final IServices services) {
-        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors(services));
+        final LinkedList<String> errors = new LinkedList<>(super.getFatalErrors(services));
         errors.addAll(configErrors);
         return errors;
     }

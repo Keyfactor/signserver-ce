@@ -32,8 +32,8 @@ public class Permissions {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(Permissions.class);
     
-    private static final Map<String, Integer> permissionStringToInt = new HashMap<String, Integer>();
-    private static final Map<Integer, String> permissionIntToString = new HashMap<Integer, String>();
+    private static final Map<String, Integer> permissionStringToInt = new HashMap<>();
+    private static final Map<Integer, String> permissionIntToString = new HashMap<>();
     
     public static final String ALLOW_PRINTING = "ALLOW_PRINTING";
     public static final String ALLOW_MODIFY_CONTENTS = "ALLOW_MODIFY_CONTENTS";
@@ -136,7 +136,7 @@ public class Permissions {
     }
     
     private static Set<String> toPermissionsSet(int permissionBits) {
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
         for (Map.Entry<Integer, String> perm : permissionIntToString.entrySet()) {
             if ((permissionBits & perm.getKey()) == perm.getKey()) {
                 result.add(perm.getValue());

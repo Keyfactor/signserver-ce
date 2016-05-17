@@ -73,7 +73,7 @@ public class PDFSignerParameters {
     private boolean refuseDoubleIndirectObjects;
     
     /** Permissions to not allow in a document. */
-    private Set<String> rejectPermissions = new HashSet<String>();
+    private Set<String> rejectPermissions = new HashSet<>();
     /** Permissions to set. **/
     private Permissions setPermissions;
     /** Permissions to remove. **/
@@ -179,7 +179,7 @@ public class PDFSignerParameters {
         String removePermissionsValue = config.getProperties().getProperty(PDFSigner.REMOVE_PERMISSIONS);
         if (removePermissionsValue != null) {
             String[] array = removePermissionsValue.split(",");
-            removePermissions = new HashSet<String>();
+            removePermissions = new HashSet<>();
             removePermissions.addAll(Arrays.asList(array));
         }
         // Set ownerpassword

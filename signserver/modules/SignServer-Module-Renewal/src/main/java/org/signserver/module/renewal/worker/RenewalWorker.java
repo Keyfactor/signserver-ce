@@ -123,7 +123,7 @@ public class RenewalWorker extends BaseSigner {
             final WorkerContext workerContext, final EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
         
-        fatalErrors = new LinkedList<String>();
+        fatalErrors = new LinkedList<>();
         setupConfig();
     }
     
@@ -745,7 +745,7 @@ public class RenewalWorker extends BaseSigner {
     // TODO: We are not ordering this chain and assumes that is not important
     private static List<X509CertificateHolder> getCertificateChain(
             final Collection certs) {
-        final LinkedList<X509CertificateHolder> result = new LinkedList<X509CertificateHolder>();
+        final LinkedList<X509CertificateHolder> result = new LinkedList<>();
         for (Object cert : certs) {
             if (cert instanceof X509CertificateHolder) {
                 result.add((X509CertificateHolder) cert);
@@ -757,7 +757,7 @@ public class RenewalWorker extends BaseSigner {
     private static List<byte[]> getCertificateChainBytes(
             final Collection<? extends X509CertificateHolder> certs)
             throws CertificateEncodingException, IOException {
-        final LinkedList<byte[]> result = new LinkedList<byte[]>();
+        final LinkedList<byte[]> result = new LinkedList<>();
         for (X509CertificateHolder cert : certs) {
             result.add(cert.getEncoded());
         }

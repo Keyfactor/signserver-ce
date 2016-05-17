@@ -431,7 +431,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             // In the future the properties would just be default values used by
             // the interfaces when asking the user for the values and the actual
             // values to use could come as parameters to this method.
-            final HashMap<String, Object> params = new HashMap<String, Object>(3);
+            final HashMap<String, Object> params = new HashMap<>(3);
             final String dn = (String) config.getProperty(CryptoTokenHelper.PROPERTY_SELFSIGNED_DN);
             if (dn != null) {
                 params.put(CryptoTokenHelper.PROPERTY_SELFSIGNED_DN, dn);
@@ -455,7 +455,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             signer.generateKey(keyAlgorithm, keySpec, alias, authCode, params,
                     servicesImpl);
 
-            final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+            final HashMap<String, Object> auditMap = new HashMap<>();
             auditMap.put(AdditionalDetailsTypes.KEYALG.name(), keyAlgorithm);
             auditMap.put(AdditionalDetailsTypes.KEYSPEC.name(), keySpec);
             auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), alias);
@@ -565,7 +565,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             
             final Collection<KeyTestResult> result = signer.testKey(alias, authCode, servicesImpl);
             
-            final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+            final HashMap<String, Object> auditMap = new HashMap<>();
             auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), alias);
             auditMap.put(AdditionalDetailsTypes.CRYPTOTOKEN.name(), getCryptoToken(signerId, config));
             auditMap.put(AdditionalDetailsTypes.TESTRESULTS.name(), createResultsReport(result));
@@ -637,7 +637,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     }
     
     private void auditLogCertInstalled(final AdminInfo adminInfo, final WorkerIdentifier workerId, final String value, final String scope, final String node) {
-        final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+        final HashMap<String, Object> auditMap = new HashMap<>();
         auditMap.put(AdditionalDetailsTypes.CERTIFICATE.name(), value);
         auditMap.put(AdditionalDetailsTypes.SCOPE.name(), scope);
         if ("NODE".equalsIgnoreCase(scope)) {
@@ -647,7 +647,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     }
     
     private void auditLogCertChainInstalled(final AdminInfo adminInfo, final WorkerIdentifier workerId, final String value, final String scope, final String node) {
-        final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+        final HashMap<String, Object> auditMap = new HashMap<>();
         auditMap.put(AdditionalDetailsTypes.CERTIFICATECHAIN.name(), value);
         auditMap.put(AdditionalDetailsTypes.SCOPE.name(), scope);
         if ("NODE".equalsIgnoreCase(scope)) {
@@ -657,7 +657,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     }
     
     private void auditLogCertChainInstalledToToken(final AdminInfo adminInfo, EventStatus outcome, final WorkerIdentifier workerId, final WorkerConfig config, final String alias, final String value, final String error) {
-        final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+        final HashMap<String, Object> auditMap = new HashMap<>();
         auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), alias);
         auditMap.put(AdditionalDetailsTypes.CRYPTOTOKEN.name(), getCryptoToken(workerId, config));
         auditMap.put(AdditionalDetailsTypes.CERTIFICATECHAIN.name(), value);
@@ -694,13 +694,13 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     
     private void auditLogWorkerPropertyChange(final AdminInfo adminInfo, final WorkerIdentifier workerId, final WorkerConfig config, final String key, final String value) {
         if ("DEFAULTKEY".equalsIgnoreCase(key)) {
-            final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+            final HashMap<String, Object> auditMap = new HashMap<>();
             auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), value);
             auditMap.put(AdditionalDetailsTypes.CRYPTOTOKEN.name(), getCryptoToken(workerId, config));
             auditMap.put(AdditionalDetailsTypes.SCOPE.name(), "GLOBAL");
             auditLog(adminInfo, SignServerEventTypes.KEYSELECTED, EventStatus.SUCCESS, SignServerModuleTypes.WORKER_CONFIG, workerId, auditMap);
         } else if (key != null && key.lastIndexOf(".") != -1 && key.substring(key.lastIndexOf(".")).equalsIgnoreCase(".DEFAULTKEY")) {
-            final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+            final HashMap<String, Object> auditMap = new HashMap<>();
             auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), value);
             auditMap.put(AdditionalDetailsTypes.CRYPTOTOKEN.name(), getCryptoToken(workerId, config));
             auditMap.put(AdditionalDetailsTypes.SCOPE.name(), "NODE");
@@ -840,7 +840,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
                 throw new CryptoTokenOfflineException("No such alias: " + ex.getMessage(), ex);
             }
             
-            final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+            final HashMap<String, Object> auditMap = new HashMap<>();
             
             final String csr;
             if (ret instanceof Base64SignerCertReqData) {
@@ -938,7 +938,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     public List<byte[]> getSignerCertificateChainBytes(final WorkerIdentifier signerId)
             throws CryptoTokenOfflineException {
         final List<Certificate> certs = getSignerCertificateChain(signerId);
-        final List<byte[]> res = new LinkedList<byte[]>();
+        final List<byte[]> res = new LinkedList<>();
         
         if (certs == null) {
             return null;
@@ -995,7 +995,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             IProcessable signer = (IProcessable) worker;
             result = signer.removeKey(alias, servicesImpl);
         
-            final HashMap<String, Object> auditMap = new HashMap<String, Object>();
+            final HashMap<String, Object> auditMap = new HashMap<>();
             auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), alias);
             auditMap.put(AdditionalDetailsTypes.CRYPTOTOKEN.name(), getCryptoToken(signerId, worker.getConfig()));
             auditMap.put(AdditionalDetailsTypes.SUCCESS.name(), String.valueOf(result));
@@ -1047,7 +1047,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             throws CertificateException {
 
         WorkerConfig config = getWorkerConfig(signerId);
-    	ArrayList<Certificate> certs = new ArrayList<Certificate>();
+    	ArrayList<Certificate> certs = new ArrayList<>();
     	Iterator<byte[]> iter = signerCerts.iterator();
     	while(iter.hasNext()){
             X509Certificate cert;
@@ -1070,7 +1070,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             throws CryptoTokenOfflineException, CertificateException,
                    OperationUnsupportedException {
         try {
-            final List<Certificate> certs = new LinkedList<Certificate>();
+            final List<Certificate> certs = new LinkedList<>();
             
             for (final byte[] certBytes : signerCerts) {
                 final X509Certificate cert =
@@ -1087,10 +1087,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
                 } catch (NoSuchAliasException ex) {
                     auditLogCertChainInstalledToToken(adminInfo, EventStatus.FAILURE, signerId, worker.getConfig(), alias, new String(CertTools.getPEMFromCerts(certs)), ex.getMessage());
                     throw new CryptoTokenOfflineException("No such alias: " + ex.getLocalizedMessage());
-                } catch (InvalidAlgorithmParameterException ex) {
-                    auditLogCertChainInstalledToToken(adminInfo, EventStatus.FAILURE, signerId, worker.getConfig(), alias, new String(CertTools.getPEMFromCerts(certs)), ex.getMessage());
-                    throw new CryptoTokenOfflineException(ex);
-                } catch (UnsupportedCryptoTokenParameter ex) {
+                } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter ex) {
                     auditLogCertChainInstalledToToken(adminInfo, EventStatus.FAILURE, signerId, worker.getConfig(), alias, new String(CertTools.getPEMFromCerts(certs)), ex.getMessage());
                     throw new CryptoTokenOfflineException(ex);
                 } catch (CryptoTokenOfflineException ex) {
@@ -1141,7 +1138,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     @Override
     public List<ArchiveDataVO> findArchiveDataFromArchiveId(int signerId,
             String archiveId) {
-        final LinkedList<ArchiveDataVO> result = new LinkedList<ArchiveDataVO>();
+        final LinkedList<ArchiveDataVO> result = new LinkedList<>();
         if (archiveDataService == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Archiving to database is not supported when running without database");
@@ -1164,7 +1161,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     @Override
     public List<ArchiveDataVO> findArchiveDatasFromRequestIP(int signerId,
             String requestIP) {
-        List<ArchiveDataVO> retval = new LinkedList<ArchiveDataVO>();
+        List<ArchiveDataVO> retval = new LinkedList<>();
 
         if (archiveDataService == null) {
             if (LOG.isDebugEnabled()) {
@@ -1187,7 +1184,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     public List<ArchiveDataVO> findArchiveDatasFromRequestCertificate(
             int signerId, BigInteger requestCertSerialnumber,
             String requestCertIssuerDN) {
-        ArrayList<ArchiveDataVO> retval = new ArrayList<ArchiveDataVO>();
+        ArrayList<ArchiveDataVO> retval = new ArrayList<>();
 
         if (archiveDataService == null) {
             if (LOG.isDebugEnabled()) {

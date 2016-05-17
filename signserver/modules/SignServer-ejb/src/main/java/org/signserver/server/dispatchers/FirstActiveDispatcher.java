@@ -51,7 +51,7 @@ public class FirstActiveDispatcher extends BaseDispatcher {
     private static final String PROPERTY_WORKERS = "WORKERS";
 
     /** List of workers. */
-    private List<String> workers = new LinkedList<String>();
+    private List<String> workers = new LinkedList<>();
 
     private String name;
 
@@ -62,7 +62,7 @@ public class FirstActiveDispatcher extends BaseDispatcher {
 
         name = config.getProperty("NAME");
 
-        workers = new LinkedList<String>();
+        workers = new LinkedList<>();
         final String workersValue = config.getProperty(PROPERTY_WORKERS);
         if (workersValue == null) {
             LOG.error("Property WORKERS missing!");

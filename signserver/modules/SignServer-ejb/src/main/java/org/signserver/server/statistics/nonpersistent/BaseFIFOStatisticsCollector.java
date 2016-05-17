@@ -39,7 +39,7 @@ public abstract class BaseFIFOStatisticsCollector implements IStatisticsCollecto
     protected WorkerConfig config;
     protected EntityManager em;
     protected StatisticsEntry currentStatisticsEntry;
-    protected DelayQueue<StatisticsEntry> fIFOQueue = new DelayQueue<StatisticsEntry>();
+    protected DelayQueue<StatisticsEntry> fIFOQueue = new DelayQueue<>();
     
     private Long expireTime;
 
@@ -131,7 +131,7 @@ public abstract class BaseFIFOStatisticsCollector implements IStatisticsCollecto
      * Help method used to fetch matching statistics entries
      */
     protected List<StatisticsEntry> fetchStatistics(Date startTime, Date endTime) {
-        List<StatisticsEntry> retval = new ArrayList<StatisticsEntry>();
+        List<StatisticsEntry> retval = new ArrayList<>();
         
         // First pop old statistics entries
         while (fIFOQueue.poll() != null);

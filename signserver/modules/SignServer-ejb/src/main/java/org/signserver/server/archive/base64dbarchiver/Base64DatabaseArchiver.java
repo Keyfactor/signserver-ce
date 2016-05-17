@@ -123,7 +123,7 @@ public class Base64DatabaseArchiver extends BaseArchiver implements Archiver {
             final String uniqueId;
             
             if (useXForwardedFor) {
-                final List<String> ips = new LinkedList<String>();
+                final List<String> ips = new LinkedList<>();
                 final String[] forwardedIps =
                         XForwardedForUtils.getXForwardedForIPs(requestContext, maxForwardedAddresses);
                 

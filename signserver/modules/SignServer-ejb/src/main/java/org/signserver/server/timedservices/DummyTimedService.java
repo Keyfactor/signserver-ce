@@ -60,24 +60,20 @@ public class DummyTimedService extends BaseTimedService {
 
         int currentCount = 0;
 
-        try {
-            FileInputStream fis = new FileInputStream(outPath);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (FileInputStream fis = new FileInputStream(outPath)) {
+            baos = new ByteArrayOutputStream();
             int next;
             while ((next = fis.read()) != -1) {
                 baos.write(next);
             }
-            fis.close();
-            currentCount = Integer.parseInt(new String(baos.toByteArray()));
         } catch (FileNotFoundException e) {
         } catch (IOException e) {
             throw new ServiceExecutionFailedException(e.getClass().getName() + " : " + e.getMessage());
         }
+        currentCount = Integer.parseInt(new String(baos.toByteArray()));
         currentCount++;
-        try {
-            FileOutputStream fos = new FileOutputStream(outPath);
+        try (FileOutputStream fos = new FileOutputStream(outPath)) {
             fos.write(("" + currentCount).getBytes());
-            fos.close();
         } catch (IOException e) {
             throw new ServiceExecutionFailedException(e.getClass().getName() + " : " + e.getMessage());
         }

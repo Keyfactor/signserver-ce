@@ -60,7 +60,7 @@ public class CSVFileStatisticsCollector implements IStatisticsCollector {
     private ArrayList<String> columnHeaders;
     private ArrayList<String> customDataKeys;
     private File file;
-    private ArrayList<ArrayList<String>> writeCache = new ArrayList<ArrayList<String>>();
+    private ArrayList<ArrayList<String>> writeCache = new ArrayList<>();
     
     private Boolean locked = false;
 
@@ -86,7 +86,7 @@ public class CSVFileStatisticsCollector implements IStatisticsCollector {
             if (customDataKeys.isEmpty()) {
                 addRow();
             } else {
-                ArrayList<String> values = new ArrayList<String>();
+                ArrayList<String> values = new ArrayList<>();
                 for (String customKey : customDataKeys) {
                     Integer value = event.getCustomData().get(customKey);
                     if (value == null) {
@@ -104,7 +104,7 @@ public class CSVFileStatisticsCollector implements IStatisticsCollector {
      * Add a single timestamp.
      */
     private void addRow() {
-        ArrayList<String> strings = new ArrayList<String>();
+        ArrayList<String> strings = new ArrayList<>();
         addRow(strings, true);
     }
 
@@ -151,21 +151,21 @@ public class CSVFileStatisticsCollector implements IStatisticsCollector {
                     }
                     data += "\n";
                 }
-                FileOutputStream fos = new FileOutputStream(file, true);
-                for (ArrayList<String> currentRow : writeCache) {
-                    Iterator<String> i = currentRow.iterator();
-                    while (i.hasNext()) {
-                        if (data.equals("") || data.endsWith("\n")) {
-                            data += i.next();
-                        } else {
-                            data += ";" + i.next();
+                try (FileOutputStream fos = new FileOutputStream(file, true)) {
+                    for (ArrayList<String> currentRow : writeCache) {
+                        Iterator<String> i = currentRow.iterator();
+                        while (i.hasNext()) {
+                            if (data.equals("") || data.endsWith("\n")) {
+                                data += i.next();
+                            } else {
+                                data += ";" + i.next();
+                            }
                         }
+                        data += "\n";
                     }
-                    data += "\n";
+                    fos.write(data.getBytes());
                 }
-                fos.write(data.getBytes());
-                fos.close();
-                writeCache = new ArrayList<ArrayList<String>>();
+                writeCache = new ArrayList<>();
             } catch (IOException e) {
                 LOG.error("Could not write to output file \"" + file.getName() + "\". Disabling collection.", e);
                 missConfigured = true;
@@ -181,7 +181,7 @@ public class CSVFileStatisticsCollector implements IStatisticsCollector {
     @Override
     public List<StatisticsEntry> fetchStatistics(String type, Date startTime,
             Date endTime) {
-        return new ArrayList<StatisticsEntry>();
+        return new ArrayList<>();
     }
 
     @Override

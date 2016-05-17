@@ -125,7 +125,7 @@ public class OldDatabaseArchiver extends BaseArchiver implements Archiver {
             String remoteIp = (String) requestContext.get(RequestContext.REMOTE_IP);
             
             if (useXForwardedFor) {
-                final List<String> ips = new LinkedList<String>();
+                final List<String> ips = new LinkedList<>();
                 final String[] forwardedIps =
                         XForwardedForUtils.getXForwardedForIPs(requestContext, maxForwardedAddresses);
                 

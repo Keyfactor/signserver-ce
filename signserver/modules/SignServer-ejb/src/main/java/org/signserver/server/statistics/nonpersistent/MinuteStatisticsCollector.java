@@ -56,7 +56,7 @@ public class MinuteStatisticsCollector extends BaseFIFOStatisticsCollector {
         if (type.equals(StatisticsConstants.QUERYTYPE_ALL) || type.equals(NonPersistentStatisticsConstants.QUERYTYPE_MINUTE)) {
             retval = fetchStatistics(startTime, endTime);
         } else {
-            retval = new ArrayList<StatisticsEntry>();
+            retval = new ArrayList<>();
         }
         return retval;
     }

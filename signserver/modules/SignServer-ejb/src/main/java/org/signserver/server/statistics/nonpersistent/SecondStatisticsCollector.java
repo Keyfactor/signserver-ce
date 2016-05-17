@@ -54,7 +54,7 @@ public class SecondStatisticsCollector extends BaseFIFOStatisticsCollector {
         if (type.equals(StatisticsConstants.QUERYTYPE_ALL) || type.equals(NonPersistentStatisticsConstants.QUERYTYPE_SECOND)) {
             retval = fetchStatistics(startTime, endTime);
         } else {
-            retval = new ArrayList<StatisticsEntry>();
+            retval = new ArrayList<>();
         }
         return retval;
     }

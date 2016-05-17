@@ -60,7 +60,7 @@ public class DayStatisticsCollector extends BaseFIFOStatisticsCollector {
         if (type.equals(StatisticsConstants.QUERYTYPE_ALL) || type.equals(NonPersistentStatisticsConstants.QUERYTYPE_DAY)) {
             retval = fetchStatistics(startTime, endTime);
         } else {
-            retval = new ArrayList<StatisticsEntry>();
+            retval = new ArrayList<>();
         }
         return retval;
     }

@@ -85,7 +85,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
      * Used in a clustered environment to periodically load available
      * services
      */
-    private static final Integer SERVICELOADER_ID = new Integer(0);
+    private static final Integer SERVICELOADER_ID = 0;
     private static final long SERVICELOADER_PERIOD = 5 * 60 * 1000;
     
     // Don't persist the timer
@@ -173,36 +173,24 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                 } else {
                     GlobalConfiguration gc = globalConfigurationSession.getGlobalConfiguration();
                     Date nextRunDate = new Date(0);
-                    if (gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, "SERVICENEXTRUNDATE" + timerInfo.intValue()) != null) {
-                        nextRunDate = new Date(Long.parseLong(gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, "SERVICENEXTRUNDATE" + timerInfo.intValue())));
+                    if (gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, "SERVICENEXTRUNDATE" + timerInfo) != null) {
+                        nextRunDate = new Date(Long.parseLong(gc.getProperty(GlobalConfiguration.SCOPE_GLOBAL, "SERVICENEXTRUNDATE" + timerInfo)));
                     }
                     Date currentDate = new Date();
                     if (currentDate.after(nextRunDate)) {
                         nextRunDate = new Date(currentDate.getTime() + timedService.getNextInterval());
-                        globalConfigurationSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "SERVICENEXTRUNDATE" + timerInfo.intValue(), "" + nextRunDate.getTime());
+                        globalConfigurationSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "SERVICENEXTRUNDATE" + timerInfo, "" + nextRunDate.getTime());
                         run = true;
                     }
                 }
-            } catch (NotSupportedException e) {
-                LOG.error(e);
-            } catch (SystemException e) {
-                LOG.error(e);
-            } catch (SecurityException e) {
-                LOG.error(e);
-            } catch (IllegalStateException e) {
+            } catch (NotSupportedException | SystemException | SecurityException | IllegalStateException e) {
                 LOG.error(e);
             } catch (NoSuchWorkerException ex) {
                 LOG.error(ex.getMessage());
             } finally {
                 try {
                     ut.commit();
-                } catch (RollbackException e) {
-                    LOG.error(e);
-                } catch (HeuristicMixedException e) {
-                    LOG.error(e);
-                } catch (HeuristicRollbackException e) {
-                    LOG.error(e);
-                } catch (SystemException e) {
+                } catch (RollbackException | HeuristicMixedException | HeuristicRollbackException | SystemException e) {
                     LOG.error(e);
                 }
             }
@@ -218,7 +206,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                                 switch (logType) {
                                     case INFO_LOGGING:
                                         LOG.info("Service " +
-                                                timerInfo.intValue() +
+                                                timerInfo +
                                                 " executed successfully.");
                                         break;
                                     case SECURE_AUDITLOGGING:
@@ -240,7 +228,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                     } catch (ServiceExecutionFailedException e) {
                         // always log to error log, regardless of log types
                         // setup for service run logging
-                        LOG.error("Service" + timerInfo.intValue() + " execution failed. ", e);
+                        LOG.error("Service" + timerInfo + " execution failed. ", e);
                         
                         if (timedService.getLogTypes().contains(ITimedService.LogType.SECURE_AUDITLOGGING)) {
                             logSession.log(
@@ -265,11 +253,11 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                         LOG.error("Service worker execution failed.", e);
                     }
                 } else {
-                    LOG.error("Service with id " + timerInfo.intValue() + " not found.");
+                    LOG.error("Service with id " + timerInfo + " not found.");
                 }
             } else {
                 if (isSingleton) {
-                    LOG.info("Service " + timerInfo.intValue() + " have been executed on another node in the cluster, waiting.");
+                    LOG.info("Service " + timerInfo + " have been executed on another node in the cluster, waiting.");
                 }
             }
         }
@@ -286,7 +274,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
         TimerService timerService = sessionCtx.getTimerService();
         Collection<?> currentTimers = timerService.getTimers();
         Iterator<?> iter = currentTimers.iterator();
-        HashSet<Serializable> existingTimers = new HashSet<Serializable>();
+        HashSet<Serializable> existingTimers = new HashSet<>();
         while (iter.hasNext()) {
             Timer timer = (Timer) iter.next();
             existingTimers.add(timer.getInfo());
@@ -299,8 +287,8 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                 LOG.debug("Found " + serviceIds.size() + " timed services");
             }
         } else {
-            serviceIds = new ArrayList<Integer>();
-            serviceIds.add(new Integer(serviceId));
+            serviceIds = new ArrayList<>();
+            serviceIds.add(serviceId);
         }
         iter = serviceIds.iterator();
         while (iter.hasNext()) {
@@ -351,7 +339,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                         timer.cancel();
                     } else {
                         if (timer.getInfo() instanceof Integer) {
-                            if (((Integer) timer.getInfo()).intValue() == serviceId) {
+                            if (((Integer) timer.getInfo()) == serviceId) {
                                 timer.cancel();
                             }
                         }

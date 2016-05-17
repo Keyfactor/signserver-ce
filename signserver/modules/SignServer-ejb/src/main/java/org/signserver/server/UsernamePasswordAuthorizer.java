@@ -91,7 +91,7 @@ public class UsernamePasswordAuthorizer implements IAuthorizer {
 
     private void loadAccounts(final WorkerConfig config) {
 
-        userMap = new HashMap<String, Account>();
+        userMap = new HashMap<>();
 
         for(Object o : config.getProperties().keySet()) {
             if (o instanceof String) {

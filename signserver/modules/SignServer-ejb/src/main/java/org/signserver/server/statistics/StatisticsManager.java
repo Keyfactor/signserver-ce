@@ -38,7 +38,7 @@ public class StatisticsManager {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(StatisticsManager.class);
 
-    private static HashMap<Integer, IStatisticsCollector> instances = new HashMap<Integer, IStatisticsCollector>();
+    private static HashMap<Integer, IStatisticsCollector> instances = new HashMap<>();
 
     /**
      * Method used to signal to the StatisticsManager to create a statistics event using the

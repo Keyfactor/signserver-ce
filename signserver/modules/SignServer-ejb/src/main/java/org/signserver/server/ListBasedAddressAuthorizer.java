@@ -71,7 +71,7 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
             throws SignServerException {
         this.workerId = workerId;
         
-        fatalErrors = new LinkedList<String>();
+        fatalErrors = new LinkedList<>();
         
         whitelistedDirectAddresses = config.getProperty(PROPERTY_WHITELISTED_DIRECT_ADDRESSES);
         blacklistedDirectAddresses = config.getProperty(PROPERTY_BLACKLISTED_DIRECT_ADDRESSES);
@@ -115,7 +115,7 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
      * @return A set of InetAddress objects representing the list
      */
     private Set<InetAddress> splitAddresses(final String addresses, final String component) {
-        final Set<InetAddress> res = new HashSet<InetAddress>();
+        final Set<InetAddress> res = new HashSet<>();
         final String[] addressArr = addresses.split(",");
         
         for (String address : addressArr) {

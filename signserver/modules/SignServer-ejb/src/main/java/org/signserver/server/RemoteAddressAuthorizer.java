@@ -78,8 +78,8 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
 
     // allow the test (same package) to set the allow list manually
     void setAllowFromProperty(final String allowFromProperty) {
-        allowFromAddresses = new HashSet<InetAddress>();
-        fatalErrors = new LinkedList<String>();
+        allowFromAddresses = new HashSet<>();
+        fatalErrors = new LinkedList<>();
 
         if (allowFromProperty != null) {
             final String[] allowFromStrings = allowFromProperty.split(",");

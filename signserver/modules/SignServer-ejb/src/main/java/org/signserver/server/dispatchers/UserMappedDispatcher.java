@@ -67,11 +67,11 @@ public class UserMappedDispatcher extends BaseDispatcher {
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
-        configErrors = new LinkedList<String>();
+        configErrors = new LinkedList<>();
         
         name = config.getProperty("NAME");
 
-        mappings = new HashMap<String, String>();
+        mappings = new HashMap<>();
         final String workersValue = config.getProperty(PROPERTY_USERNAME_MAPPING);
         if (workersValue == null) {
             configErrors.add("Property " + PROPERTY_USERNAME_MAPPING + " missing!");
@@ -140,7 +140,7 @@ public class UserMappedDispatcher extends BaseDispatcher {
 
     @Override
     protected List<String> getFatalErrors(IServices services) {
-        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors(services));
+        final LinkedList<String> errors = new LinkedList<>(super.getFatalErrors(services));
         errors.addAll(configErrors);
         return errors;
     }

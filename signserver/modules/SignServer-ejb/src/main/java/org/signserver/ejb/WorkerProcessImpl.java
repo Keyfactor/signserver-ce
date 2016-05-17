@@ -176,7 +176,7 @@ class WorkerProcessImpl {
         try {
             worker = workerManagerSession.getWorkerWithComponents(wi);
         } catch (NoSuchWorkerException ex) {
-            Map<String, Object> details = new LinkedHashMap<String, Object>();
+            Map<String, Object> details = new LinkedHashMap<>();
             final String serNo = adminInfo.getCertSerialNumber() != null ? adminInfo.getCertSerialNumber().toString(16) : null;
 
             // produce backwards-compatible log entries here...
@@ -237,9 +237,7 @@ class WorkerProcessImpl {
                     logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
                             String.valueOf(true));
                 }
-            } catch (AuthorizationRequiredException ex) {
-                throw ex;
-            } catch (AccessDeniedException ex) {
+            } catch (AuthorizationRequiredException | AccessDeniedException ex) {
                 throw ex;
             } catch (IllegalRequestException ex) {
                 final IllegalRequestException exception =

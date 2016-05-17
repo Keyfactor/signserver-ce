@@ -126,7 +126,7 @@ public class StartupSingletonBean {
       
         // Make a log row that EJBCA is starting
         AuthenticationToken admin = new AlwaysAllowLocalAuthenticationToken(new UsernamePrincipal("StartServicesServlet.init"));
-        Map<String, Object> details = new LinkedHashMap<String, Object>();
+        Map<String, Object> details = new LinkedHashMap<>();
         details.put("msg", "start services startup msg");
         details.put(LOG_VERSION, version);
         try {

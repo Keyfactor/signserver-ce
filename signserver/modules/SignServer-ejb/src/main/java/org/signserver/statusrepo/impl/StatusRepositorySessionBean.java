@@ -190,7 +190,7 @@ public class StatusRepositorySessionBean implements
     
     private void auditLog(String property, String value, Long expiration) {
         try {
-            final Map<String, Object> details = new LinkedHashMap<String, Object>();
+            final Map<String, Object> details = new LinkedHashMap<>();
 
             details.put(StatusRepositorySession.LOG_PROPERTY, property);
 

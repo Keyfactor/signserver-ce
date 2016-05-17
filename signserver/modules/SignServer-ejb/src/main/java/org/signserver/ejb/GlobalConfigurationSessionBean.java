@@ -309,7 +309,7 @@ public class GlobalConfigurationSessionBean implements GlobalConfigurationSessio
     private void auditLog(final AdminInfo adminInfo, final SignServerEventTypes eventType, final String property,
             final String value) {
         try {
-            Map<String, Object> details = new LinkedHashMap<String, Object>();
+            Map<String, Object> details = new LinkedHashMap<>();
 
             if (property != null) {
                 details.put(GlobalConfigurationSession.LOG_PROPERTY, property);

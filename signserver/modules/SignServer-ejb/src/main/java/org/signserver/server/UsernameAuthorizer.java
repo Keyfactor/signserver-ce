@@ -121,7 +121,7 @@ public class UsernameAuthorizer implements IAuthorizer {
     private void loadAccounts(final String value) {
         LOG.trace(">loadAccounts");
 
-        acceptUsernames = new HashSet<String>();
+        acceptUsernames = new HashSet<>();
 
         if (value == null) {
             LOG.warn("No ACCEPT_USERNAMES specified");
@@ -155,7 +155,7 @@ public class UsernameAuthorizer implements IAuthorizer {
 
     @Override
     public List<String> getFatalErrors() {
-        final LinkedList<String> fatalErrors = new LinkedList<String>();
+        final LinkedList<String> fatalErrors = new LinkedList<>();
         if (configError != null) {
             fatalErrors.add(configError);
         }

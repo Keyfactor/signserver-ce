@@ -49,7 +49,7 @@ public class RoleAccessMockSessionBean implements RoleAccessSessionLocal, RoleAc
     
     public static final String SUPERADMIN_ROLE = "Super Administrator Role";
     
-    private ArrayList<RoleData> allRoles = new ArrayList<RoleData>();
+    private ArrayList<RoleData> allRoles = new ArrayList<>();
 
     public RoleAccessMockSessionBean() {
         RoleData role = new RoleData(1, SUPERADMIN_ROLE);
@@ -165,7 +165,7 @@ public class RoleAccessMockSessionBean implements RoleAccessSessionLocal, RoleAc
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<String> getRolesMatchingAuthenticationToken(final AuthenticationToken authenticationToken) throws AuthenticationFailedException {
         final List<RoleData> roleDatas = getAllRoles();
-        final List<String> roleNames = new ArrayList<String>();
+        final List<String> roleNames = new ArrayList<>();
         for (final RoleData roleData : roleDatas) {
             for (final AccessUserAspectData a : roleData.getAccessUsers().values()) {
                 if (authenticationToken.matches(a)) {

@@ -59,7 +59,7 @@ public class HourStatisticsCollector extends BaseFIFOStatisticsCollector {
         if (type.equals(StatisticsConstants.QUERYTYPE_ALL) || type.equals(NonPersistentStatisticsConstants.QUERYTYPE_HOUR)) {
             retval = fetchStatistics(startTime, endTime);
         } else {
-            retval = new ArrayList<StatisticsEntry>();
+            retval = new ArrayList<>();
         }
         return retval;
     }

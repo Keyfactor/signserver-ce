@@ -37,7 +37,7 @@ final class StatusRepository {
     private static final StatusRepository instance = new StatusRepository();
 
     /** Map of the data. */
-    private Map<StatusName, EntryHolder> datas = new EnumMap<StatusName, EntryHolder>(StatusName.class);
+    private Map<StatusName, EntryHolder> datas = new EnumMap<>(StatusName.class);
 
     /** Creates the instance of this class. */
     private StatusRepository() {
@@ -92,7 +92,7 @@ final class StatusRepository {
      * @return An read-only view of the underlying properties
      */
     public Map<String, StatusEntry> getEntries() {
-        Map<String, StatusEntry> result = new HashMap<String, StatusEntry>();
+        Map<String, StatusEntry> result = new HashMap<>();
         for (Map.Entry<StatusName, EntryHolder> entry : datas.entrySet()) {
             result.put(entry.getKey().name(), entry.getValue().getEntry());
         }

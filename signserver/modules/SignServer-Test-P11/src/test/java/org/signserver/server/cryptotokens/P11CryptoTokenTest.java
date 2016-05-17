@@ -158,7 +158,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     }
     
     private List<byte[]> getCertByteArrayList(final List<Certificate> chain) throws CertificateEncodingException {
-        final List<byte[]> result = new LinkedList<byte[]>();
+        final List<byte[]> result = new LinkedList<>();
         
         for (final Certificate cert : chain) {
             result.add(cert.getEncoded());

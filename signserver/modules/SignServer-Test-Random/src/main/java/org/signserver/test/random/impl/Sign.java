@@ -180,11 +180,7 @@ public class Sign implements Task {
             dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 
             doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes("UTF-8")));
-        } catch (ParserConfigurationException ex) {
-            throw new FailedException("Document parsing error", ex);
-        } catch (SAXException ex) {
-            throw new FailedException("Document parsing error", ex);
-        } catch (IOException ex) {
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
             throw new FailedException("Document parsing error", ex);
         }
         NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
@@ -196,11 +192,7 @@ public class Sign implements Task {
         XMLSignatureFactory fac;
         try {
             fac = XMLSignatureFactory.getInstance("DOM", (Provider) Class.forName(providerName).newInstance());
-        } catch (InstantiationException e) {
-            throw new SignServerException("Problem with JSR105 provider", e);
-        } catch (IllegalAccessException e) {
-            throw new SignServerException("Problem with JSR105 provider", e);
-        } catch (ClassNotFoundException e) {
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new SignServerException("Problem with JSR105 provider", e);
         }
 
@@ -214,9 +206,7 @@ public class Sign implements Task {
             if (!signature.validate(valContext)) {
                 throw new FailedException("Signature verification failed");
             }
-        } catch (MarshalException ex) {
-            throw new FailedException("XML signature validation error", ex);
-        } catch (XMLSignatureException ex) {
+        } catch (MarshalException | XMLSignatureException ex) {
             throw new FailedException("XML signature validation error", ex);
         }
     }
@@ -242,6 +232,7 @@ public class Sign implements Task {
                     final PublicKey key = ((X509Certificate) o).getPublicKey();
                     if (algEquals(method.getAlgorithm(), key.getAlgorithm())) {
                         return new KeySelectorResult() {
+                            @Override
                             public Key getKey() {
                                 return key;
                             }

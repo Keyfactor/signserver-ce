@@ -183,17 +183,17 @@ public class DocumentSigner implements Task {
         out.write(("\r\n--" + BOUNDARY + "--\r\n").getBytes());
         out.flush();
         
-        // Get the response
-        final InputStream in = urlConn.getInputStream();
-        final ByteArrayOutputStream os = new ByteArrayOutputStream();
-        int len;
-        final byte[] buf = new byte[1024];
-        while ((len = in.read(buf)) > 0) {
-            os.write(buf, 0, len);
+        try ( // Get the response
+                InputStream in = urlConn.getInputStream()) {
+            final ByteArrayOutputStream os = new ByteArrayOutputStream();
+            int len;
+            final byte[] buf = new byte[1024];
+            while ((len = in.read(buf)) > 0) {
+                os.write(buf, 0, len);
+            }
+            os.close();
+            out.close();
         }
-        os.close();
-        out.close();
-        in.close();
         
         // Take stop time
         final long estimatedTime = System.nanoTime() - startTime;

@@ -61,7 +61,7 @@ public class ODFSigner extends BaseSigner {
             WorkerContext workerContext, EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
         
-        configErrors = new LinkedList<String>();
+        configErrors = new LinkedList<>();
         
         if (hasSetIncludeCertificateLevels) {
             configErrors.add(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported.");

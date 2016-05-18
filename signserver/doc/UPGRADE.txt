@@ -33,7 +33,7 @@ From SignServer 3.7.x to SignServer 4.0.x
 a) Database schema changes:
 
 Two new columns in the signerconfigdata table was added. Hibernate will try to
- add those column during startup of the application server. However, if the 
+ add those columns during startup of the application server. However, if the 
 database user used by the data store does not have enough privileges (i.e. no 
 alter table rights) the table has to be altered manually:
 

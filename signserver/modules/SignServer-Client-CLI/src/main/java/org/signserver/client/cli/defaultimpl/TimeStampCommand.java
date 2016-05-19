@@ -947,7 +947,7 @@ public class TimeStampCommand extends AbstractCommand {
 
         while (bufRdr.ready()) {
             final byte[] certbuf;
-            try (ByteArrayOutputStream ostr = new ByteArrayOutputStream(),
+            try (ByteArrayOutputStream ostr = new ByteArrayOutputStream();
                  PrintStream opstr = new PrintStream(ostr)) {
                 String temp;
                 while ((temp = bufRdr.readLine()) != null

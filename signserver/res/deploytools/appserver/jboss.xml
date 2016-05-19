@@ -13,7 +13,7 @@
     -->
     <zipfileset id="appserver.extralibs" prefix="lib" dir="lib/ext/ext">
         <!-- Currently no extra jars are needed for JBoss. -->
-        <exclude name="*"/>
+        <exclude name="**/*"/>
     </zipfileset>
 
     <target name="j2ee:check">

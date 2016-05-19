@@ -906,38 +906,6 @@ public class TimeStampSigner extends BaseSigner {
        
         return serno;
     }
-    
-    private static class SHA1DigestCalculator implements DigestCalculator {
-    	private ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-    	private MessageDigest digest;
-
-    	public SHA1DigestCalculator() {
-    		try {
-    			this.digest = MessageDigest.getInstance("SHA1");
-    		} catch (NoSuchAlgorithmException e) {
-    			
-    		}
-    	}
-
-            @Override
-    	public AlgorithmIdentifier getAlgorithmIdentifier() {
-    		return new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1);
-    	}
-
-            @Override
-    	public OutputStream getOutputStream() {
-    		return bOut;
-    	}
-
-            @Override
-    	public byte[] getDigest() {
-    		byte[] bytes = digest.digest(bOut.toByteArray());
-
-    		bOut.reset();
-
-    		return bytes;
-    	}
-    }
 
     /**
      * @return True if each certificate in the certificate chain can be verified 

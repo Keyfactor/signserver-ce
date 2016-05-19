@@ -947,21 +947,25 @@ public class TimeStampCommand extends AbstractCommand {
 
         while (bufRdr.ready()) {
             final byte[] certbuf;
-            try (ByteArrayOutputStream ostr = new ByteArrayOutputStream()) {
-                final PrintStream opstr = new PrintStream(ostr);
+            try (ByteArrayOutputStream ostr = new ByteArrayOutputStream(),
+                 PrintStream opstr = new PrintStream(ostr)) {
                 String temp;
                 while ((temp = bufRdr.readLine()) != null
                         && !temp.equals(PEM_BEGIN)) {}
                 if (temp == null) {
                     throw new IOException("Error in " + certstream.toString()
                             + ", missing " + PEM_BEGIN + " boundary");
-                }   while ((temp = bufRdr.readLine()) != null
+                }
+                
+                while ((temp = bufRdr.readLine()) != null
                         && !temp.equals(PEM_END)) {
                     opstr.print(temp);
-                }   if (temp == null) {
+                }
+                
+                if (temp == null) {
                     throw new IOException("Error in " + certstream.toString()
                             + ", missing " + PEM_END + " boundary");
-                }   opstr.close();
+                }
                 certbuf = Base64.decode(ostr.toByteArray());
             }
             // Phweeew, were done, now decode the cert from file back to

@@ -188,11 +188,8 @@ public class KeyStoreOptions {
         if (truststoreFile != null) {
             try {
                 truststore = loadKeyStore(truststoreFile, truststorePassword);
-            } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException ex) {
-                throw new RuntimeException("Could not load truststore", ex);
-            } catch (FileNotFoundException ex) {
-                throw new RuntimeException("Could not load truststore", ex);
-            } catch (IOException ex) {
+            } catch (KeyStoreException | NoSuchAlgorithmException |
+                     CertificateException | IOException ex) {
                 throw new RuntimeException("Could not load truststore", ex);
             }
         }
@@ -201,11 +198,8 @@ public class KeyStoreOptions {
         if (keystoreFile != null) {
             try {
                 keystore = loadKeyStore(keystoreFile, keystorePassword);
-            } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException ex) {
-                throw new RuntimeException("Could not load keystore", ex);
-            } catch (FileNotFoundException ex) {
-                throw new RuntimeException("Could not load keystore", ex);
-            } catch (IOException ex) {
+            } catch (KeyStoreException | NoSuchAlgorithmException |
+                     CertificateException | IOException ex) {
                 throw new RuntimeException("Could not load keystore", ex);
             }
         }

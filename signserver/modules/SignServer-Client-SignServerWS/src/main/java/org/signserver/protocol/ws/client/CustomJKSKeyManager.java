@@ -44,11 +44,13 @@ class CustomJKSKeyManager implements X509KeyManager {
 
     }
 
+    @Override
     public String chooseClientAlias(String[] keyType, Principal[] issuers,
             Socket socket) {
         return chooseAlias(issuers);
     }
 
+    @Override
     public String chooseServerAlias(String keyType, Principal[] issuers,
             Socket socket) {
         return chooseAlias(issuers);
@@ -78,6 +80,7 @@ class CustomJKSKeyManager implements X509KeyManager {
         return retval;
     }
 
+    @Override
     public X509Certificate[] getCertificateChain(String alias) {
         try {
             return (X509Certificate[]) ks.getCertificateChain(alias);
@@ -87,6 +90,7 @@ class CustomJKSKeyManager implements X509KeyManager {
         }
     }
 
+    @Override
     public String[] getClientAliases(String keyType, Principal[] issuers) {
         return getAliases(issuers);
 
@@ -115,6 +119,7 @@ class CustomJKSKeyManager implements X509KeyManager {
         return retval.toArray(new String[retval.size()]);
     }
 
+    @Override
     public PrivateKey getPrivateKey(String alias) {
         try {
             return (PrivateKey) ks.getKey(alias, password);
@@ -124,6 +129,7 @@ class CustomJKSKeyManager implements X509KeyManager {
         }
     }
 
+    @Override
     public String[] getServerAliases(String keyType, Principal[] issuers) {
         return getAliases(issuers);
     }

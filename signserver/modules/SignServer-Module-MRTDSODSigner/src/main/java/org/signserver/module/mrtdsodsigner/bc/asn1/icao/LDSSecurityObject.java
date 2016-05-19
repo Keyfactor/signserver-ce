@@ -149,9 +149,8 @@ public class LDSSecurityObject
         seq.add(digestAlgorithmIdentifier);
 
         ASN1EncodableVector seqname = new ASN1EncodableVector();
-        for (int i = 0; i < datagroupHash.length; i++)
-        {
-            seqname.add(datagroupHash[i]);
+        for (DataGroupHash datagroupHash1 : datagroupHash) {
+            seqname.add(datagroupHash1);
         }
         seq.add(new DERSequence(seqname));
 

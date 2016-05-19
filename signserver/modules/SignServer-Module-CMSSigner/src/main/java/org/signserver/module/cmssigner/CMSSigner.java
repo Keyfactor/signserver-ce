@@ -73,7 +73,7 @@ public class CMSSigner extends BaseSigner {
         super.init(workerId, config, workerContext, workerEM);
 
         // Configuration errors
-        configErrors = new LinkedList<String>();
+        configErrors = new LinkedList<>();
 
         // Get the signature algorithm
         signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM_PROPERTY);
@@ -209,10 +209,7 @@ public class CMSSigner extends BaseSigner {
         } catch (CertificateEncodingException ex) {
             LOG.error("Error constructing cert store", ex);
             throw new SignServerException("Error constructing cert store", ex);
-        } catch (CMSException ex) {
-            LOG.error("Error constructing CMS", ex);
-            throw new SignServerException("Error constructing CMS", ex);
-        } catch (IOException ex) {
+        } catch (CMSException | IOException ex) {
             LOG.error("Error constructing CMS", ex);
             throw new SignServerException("Error constructing CMS", ex);
         } finally {
@@ -236,7 +233,7 @@ public class CMSSigner extends BaseSigner {
 
     @Override
     protected List<String> getFatalErrors(final IServices services) {
-        final LinkedList<String> errors = new LinkedList<String>(super.getFatalErrors(services));
+        final LinkedList<String> errors = new LinkedList<>(super.getFatalErrors(services));
         errors.addAll(configErrors);
         return errors;
     }

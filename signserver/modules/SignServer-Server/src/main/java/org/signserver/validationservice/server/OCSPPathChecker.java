@@ -161,9 +161,9 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
         con.setRequestProperty("Content-Type", "application/ocsp-request");
 
         con.connect();
-        OutputStream os = con.getOutputStream();
-        os.write(reqarray);
-        os.close();
+        try (OutputStream os = con.getOutputStream()) {
+            os.write(reqarray);
+        }
 
         //see if we received proper response
         if (con.getResponseCode() != HttpURLConnection.HTTP_OK) {
@@ -431,9 +431,7 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
             clonedOCSPPathChecker.cACert = clonedPrevCert;
             return clonedOCSPPathChecker;
 
-        } catch (CertificateException e) {
-            log.error("Exception occured on clone of OCSPPathChecker", e);
-        } catch (NoSuchProviderException e) {
+        } catch (CertificateException | NoSuchProviderException e) {
             log.error("Exception occured on clone of OCSPPathChecker", e);
         }
 

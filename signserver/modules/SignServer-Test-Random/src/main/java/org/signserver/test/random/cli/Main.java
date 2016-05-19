@@ -88,9 +88,9 @@ public class Main {
                 .append(" - Sends requests from usernames starting with the supplied 'userprefix' and ends with a random number between 'usersuffixmin' and 'usersuffixmax'").append(NL);
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
-        PrintWriter pw = new PrintWriter(bout);
-        formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, COMMAND + " <options>", "Random testing tool", OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
-        pw.close();
+        try (PrintWriter pw = new PrintWriter(bout)) {
+            formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, COMMAND + " <options>", "Random testing tool", OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
+        }
         LOG.info(bout.toString());
     }
     
@@ -155,7 +155,7 @@ public class Main {
             // Worker group 1
             final List<WorkerSpec> workerGroup1;
             if (commandLine.hasOption(WORKER_GROUP_1)) {
-                workerGroup1 = new LinkedList<WorkerSpec>();
+                workerGroup1 = new LinkedList<>();
                 final String list = commandLine.getOptionValue(WORKER_GROUP_1);
                 String[] ids = list.split(",");
                 for (String id : ids) {
@@ -168,7 +168,7 @@ public class Main {
             // Worker group 2
             final List<WorkerSpec> workerGroup2;
             if (commandLine.hasOption(WORKER_GROUP_2)) {
-                workerGroup2 = new LinkedList<WorkerSpec>();
+                workerGroup2 = new LinkedList<>();
                 final String list = commandLine.getOptionValue(WORKER_GROUP_2);
                 String[] ids = list.split(",");
                 for (String id : ids) {
@@ -181,7 +181,7 @@ public class Main {
             // Worker group 3
             final List<WorkerSpec> workerGroup3;
             if (commandLine.hasOption(WORKER_GROUP_3)) {
-                workerGroup3 = new LinkedList<WorkerSpec>();
+                workerGroup3 = new LinkedList<>();
                 final String list = commandLine.getOptionValue(WORKER_GROUP_3);
                 String[] ids = list.split(",");
                 for (String id : ids) {
@@ -210,7 +210,7 @@ public class Main {
             final AdminCommandHelper helper = new AdminCommandHelper();
             final WorkerSessionRemote workerSession = helper.getWorkerSession();
             final ProcessSessionRemote processSession = helper.getProcessSession();
-            final LinkedList<WorkerThread> threads = new LinkedList<WorkerThread>();
+            final LinkedList<WorkerThread> threads = new LinkedList<>();
             final FailureCallback callback = new FailureCallback() {
 
                 @Override
@@ -277,7 +277,7 @@ public class Main {
                         throw new ParseException("Missing -workergroup1");
                     }
                 }
-                Collection<WorkerSpec> allWorkers = new LinkedList<WorkerSpec>(context.getWorkerGroup1());
+                Collection<WorkerSpec> allWorkers = new LinkedList<>(context.getWorkerGroup1());
                 if (context.getWorkerGroup2() != null) {
                     allWorkers.addAll(context.getWorkerGroup2());
                 }
@@ -380,7 +380,7 @@ public class Main {
      * 
      */
     private static void signAndCountSignings(final List<WorkerThread> threads, final TestContext context) throws Exception {
-        final LinkedList<SigningThread> signingThreads = new LinkedList<SigningThread>();
+        final LinkedList<SigningThread> signingThreads = new LinkedList<>();
         
         if (context.getThreadsGroup1() == null) {
             throw new ParseException("Missing -threadgroup1");
@@ -528,7 +528,7 @@ public class Main {
         // Group 3: Threads updating the configuration of the workers in group 2
         final int workerId = context.getWorkerGroup3().get(0).getWorkerId();
         final List<WorkerSpec> renewees = context.getWorkerGroup2();
-        final List<RenewSigner> renewers = new LinkedList<RenewSigner>();
+        final List<RenewSigner> renewers = new LinkedList<>();
         for (WorkerSpec renewee : renewees) {
             renewers.add(new RenewSigner(workerId, renewee.getWorkerId(), context.getProcessSession()));
         }

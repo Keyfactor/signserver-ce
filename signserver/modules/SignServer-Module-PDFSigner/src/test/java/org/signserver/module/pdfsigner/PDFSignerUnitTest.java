@@ -305,7 +305,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         // The sampleOwner123 originally has: ALLOW_FILL_IN,ALLOW_MODIFY_ANNOTATIONS,ALLOW_MODIFY_CONTENTS
         workerSession.removeWorkerProperty(WORKER1, "SET_PERMISSIONS");
         workerSession.reloadConfiguration(WORKER1);
-        Set<String> expected = new HashSet<String>(Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"));
+        Set<String> expected = new HashSet<>(Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"));
         Permissions actual = getPermissions(signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD), 
                 SAMPLE_OWNER123_PASSWORD.getBytes("ISO-8859-1"));
         assertEquals(expected, actual.asSet());
@@ -324,7 +324,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     }
     
     private void doTestSetPermissions(int workerId, File pdf, String ownerPassword, String userPassword, Collection<String> permissions) throws Exception {
-        Set<String> expected = new HashSet<String>(permissions);
+        Set<String> expected = new HashSet<>(permissions);
         workerSession.setWorkerProperty(workerId, "SET_PERMISSIONS", toString(expected, ","));
         workerSession.reloadConfiguration(workerId);
         String password = ownerPassword == null ? userPassword : ownerPassword;
@@ -345,7 +345,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     }
     
     private byte[] doTestRemovePermissions(int workerId, File pdf, String ownerPassword, String userPassword, Collection<String> removePermissions, Collection<String> expected) throws Exception {
-        Set<String> expectedSet = new HashSet<String>(expected);
+        Set<String> expectedSet = new HashSet<>(expected);
         workerSession.setWorkerProperty(workerId, "REMOVE_PERMISSIONS", toString(removePermissions, ","));
         workerSession.reloadConfiguration(workerId);
         byte[] pdfbytes = signProtectedPDF(pdf, ownerPassword == null ? userPassword : ownerPassword);
@@ -1483,17 +1483,11 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
     private byte[] readFile(File file) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        BufferedInputStream in = null;
-        try {
-            in = new BufferedInputStream(new FileInputStream(
-                file));
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(
+                file))) {
             int b;
             while ((b = in.read()) != -1) {
                 bout.write(b);
-            }
-        } finally {
-            if (in != null) {
-                in.close();
             }
         }
         return bout.toByteArray();

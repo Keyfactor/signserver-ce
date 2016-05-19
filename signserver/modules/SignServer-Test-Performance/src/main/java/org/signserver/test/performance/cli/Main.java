@@ -119,9 +119,9 @@ public class Main {
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
-        PrintWriter pw = new PrintWriter(bout);
-        formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, COMMAND + " <options>", "Performance testing tool", OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
-        pw.close();
+        try (PrintWriter pw = new PrintWriter(bout)) {
+            formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, COMMAND + " <options>", "Performance testing tool", OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
+        }
         LOG.info(bout.toString());
     }
     
@@ -274,7 +274,7 @@ public class Main {
                 + "   Output statistics:       %s%n"
                 + "-------------------------------------------------------------------------------%n", new Date(), ts.name(), numThreads, warmupTime, maxWaitTime, limitedTime, url, userNameDescription, statFolder == null ? "no" : statFolder.getAbsolutePath()));
 
-            final LinkedList<WorkerThread> threads = new LinkedList<WorkerThread>();
+            final LinkedList<WorkerThread> threads = new LinkedList<>();
             final FailureCallback callback = new FailureCallback() {
 
                 @Override

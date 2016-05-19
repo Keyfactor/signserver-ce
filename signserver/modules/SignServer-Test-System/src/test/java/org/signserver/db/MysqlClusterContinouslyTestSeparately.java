@@ -100,9 +100,7 @@ public class MysqlClusterContinouslyTestSeparately extends TestCase {
     public void test03AddContinously() throws Exception {
 
 
-        PrintWriter fw = null;
-        try {
-            fw = new PrintWriter(new FileOutputStream(FILENAME_TEST_OUTPUT));
+        try (PrintWriter fw = new PrintWriter(new FileOutputStream(FILENAME_TEST_OUTPUT))) {
             // Parameters
             while (true) {
                 // Instance creation
@@ -121,10 +119,6 @@ public class MysqlClusterContinouslyTestSeparately extends TestCase {
             }
         } catch (Exception e) {
             fw.write(e.getMessage());
-        } finally {
-            if (fw != null) {
-                fw.close();
-            }
         }
     }
 

@@ -57,7 +57,7 @@ public abstract class AbstractTestCase extends TestCase {
     private static ProcessSessionRemote processSession;
     private static GlobalConfigurationSessionRemote globalSession;
 
-    private Collection<File> tempFiles = new LinkedList<File>();
+    private Collection<File> tempFiles = new LinkedList<>();
     private Random random = new Random();
 
     @Override
@@ -103,14 +103,8 @@ public abstract class AbstractTestCase extends TestCase {
             ks = KeyStore.getInstance(keystoreType, "BC");
         }
         ks.load(null, keystorePassword.toCharArray());
-        OutputStream out = null;
-        try {
-            out = new FileOutputStream(keystorePath);
+        try (OutputStream out = new FileOutputStream(keystorePath)) {
             ks.store(out, keystorePassword.toCharArray());
-        } finally {
-            if (out != null) {
-                out.close();
-            }
         }
         return ks;
     }

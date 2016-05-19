@@ -55,12 +55,12 @@ public class SignerStatusReportParser {
     public Map<String, Map<String, String>> parse(final InputStream in) throws FileNotFoundException, IOException {
 
         final Map<String, Map<String, String>> res
-                = new HashMap<String, Map<String, String>>();
+                = new HashMap<>();
 
         BufferedReader bin = new BufferedReader(new InputStreamReader(in));
         String line;
         while ((line = bin.readLine()) != null) {
-            Map<String, String> entry = new HashMap<String, String>();
+            Map<String, String> entry = new HashMap<>();
 
             String[] parts = line.split(", ");
             for (String part : parts) {

@@ -131,15 +131,9 @@ public class DocumentSignerTest extends ModulesTestCase {
         LOG.info("test02signDocumentFromFile");
         try {
             final File doc = File.createTempFile("test.xml", null);
-            FileOutputStream out = null;
-            try {
-                out = new FileOutputStream(doc);
+            try (FileOutputStream out = new FileOutputStream(doc)) {
                 out.write("<tag/>".getBytes());
                 out.close();
-            } finally {
-                if (out != null) {
-                    out.close();
-                }
             }
 
             String res =
@@ -490,7 +484,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     public void test13promptForTruststorePassword() throws Exception {
         LOG.info("test13promptForTruststorePassword");
         // Override the password reading
-        final ArrayList<Boolean> called = new ArrayList<Boolean>();
+        final ArrayList<Boolean> called = new ArrayList<>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
             public ConsolePasswordReader createConsolePasswordReader() {
@@ -527,7 +521,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     public void test13promptForUserPassword() throws Exception {
         LOG.info("test13promptForUserPassword");
         // Override the password reading
-        final ArrayList<Boolean> called = new ArrayList<Boolean>();
+        final ArrayList<Boolean> called = new ArrayList<>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
             public ConsolePasswordReader createConsolePasswordReader() {
@@ -564,7 +558,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     public void test13promptForKeystorePassword() throws Exception {
         LOG.info("test13promptForKeystorePassword");
         // Override the password reading
-        final ArrayList<Boolean> called = new ArrayList<Boolean>();
+        final ArrayList<Boolean> called = new ArrayList<>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
             public ConsolePasswordReader createConsolePasswordReader() {
@@ -597,7 +591,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     public void test13promptForKeystorePasswordAgain() throws Exception {
         LOG.info("test13promptForKeystorePasswordAgain");
         // Override the password reading
-        final ArrayList<Boolean> calls = new ArrayList<Boolean>();
+        final ArrayList<Boolean> calls = new ArrayList<>();
         final String[] passwords = new String[] { "incorrect1", "changeit" };
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
@@ -633,7 +627,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     public void test13promptForKeystorePassword3Times() throws Exception {
         LOG.info("test13promptForKeystorePasswordAgain");
         // Override the password reading
-        final ArrayList<Boolean> calls = new ArrayList<Boolean>();
+        final ArrayList<Boolean> calls = new ArrayList<>();
         final String[] passwords = new String[] { "incorrect1", "incorrect2", "incorrect3", "incorrect4", "incorrect5" };
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
@@ -671,7 +665,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     public void test13promptForUserAndTruststore() throws Exception {
         LOG.info("test13promptForUserAndTruststore");
         // Override the password reading
-        final ArrayList<Boolean> called = new ArrayList<Boolean>();
+        final ArrayList<Boolean> called = new ArrayList<>();
         SignDocumentCommand instance = new SignDocumentCommand() {
             @Override
             public ConsolePasswordReader createConsolePasswordReader() {

@@ -97,9 +97,9 @@ public class SetDBType {
         }
         tempZip.close();
 
-        FileOutputStream fos = new FileOutputStream(signserverearpath);
-        fos.write(baos.toByteArray());
-        fos.close();
+        try (FileOutputStream fos = new FileOutputStream(signserverearpath)) {
+            fos.write(baos.toByteArray());
+        }
     }
 
     private static ByteArrayOutputStream replaceEntityMappings(ByteArrayOutputStream content, File entityMappingXML) throws IOException {

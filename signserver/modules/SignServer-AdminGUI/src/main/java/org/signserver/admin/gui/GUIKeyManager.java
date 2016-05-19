@@ -49,8 +49,8 @@ public class GUIKeyManager implements X509KeyManager {
             // to find valid aliases. If our requested alias is found, select it
             // for return.
             String selectedAlias = null;
-            for (int i = 0; i < keyType.length; i++) {
-                String[] validAliases = base.getClientAliases(keyType[i], issuers);
+            for (String keyType1 : keyType) {
+                String[] validAliases = base.getClientAliases(keyType1, issuers);
                 if (validAliases != null) {
                     selectedAlias = (String) JOptionPane.showInputDialog(SignServerAdminGUIApplication.getApplication().getMainFrame(), "Choose identity:", "Login", JOptionPane.DEFAULT_OPTION, null, validAliases, validAliases[0]);
                     if (selectedAlias != null) {

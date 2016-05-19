@@ -52,10 +52,10 @@ public class CRLBuilder {
     private X500Name issuer;
     private String signatureAlgorithm;
     
-    private Set<CertExt> extensions = new HashSet<CertExt>();
+    private Set<CertExt> extensions = new HashSet<>();
 //    private boolean[] issuerUniqueId;
     
-    private LinkedList<CRLEntry> entries = new LinkedList<CRLEntry>();
+    private LinkedList<CRLEntry> entries = new LinkedList<>();
 
     public Date getNextUpdate() {
         if (nextUpdate == null) {
@@ -164,11 +164,7 @@ public class CRLBuilder {
             
             ContentSigner contentSigner = new JcaContentSignerBuilder(getSignatureAlgorithm()).setProvider("BC").build(getIssuerPrivateKey());
             return builder.build(contentSigner);
-        } catch (OperatorCreationException ex) {
-            throw new CertBuilderException(ex);
-        } catch (NoSuchAlgorithmException ex) {
-            throw new CertBuilderException(ex);
-        } catch (NoSuchProviderException ex) {
+        } catch (OperatorCreationException | NoSuchAlgorithmException | NoSuchProviderException ex) {
             throw new CertBuilderException(ex);
         } catch (CertIOException ex) {
             throw new CertBuilderException(ex);

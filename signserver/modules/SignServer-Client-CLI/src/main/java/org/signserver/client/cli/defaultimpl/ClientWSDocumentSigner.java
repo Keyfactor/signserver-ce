@@ -82,6 +82,7 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
         }
     }
 
+    @Override
     protected void doSign(final InputStream data, final long size, final String encoding,
             final OutputStream out, final Map<String, Object> requestContext)
             throws IllegalRequestException,
@@ -100,7 +101,7 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
             final long startTime = System.nanoTime();
 
             // Metadata        
-            final LinkedList<Metadata> requestMetadata = new LinkedList<Metadata>();
+            final LinkedList<Metadata> requestMetadata = new LinkedList<>();
             
             if (metadata != null) {
                 for (final String key : metadata.keySet()) {

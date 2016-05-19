@@ -113,7 +113,7 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
     @Test
     public void test01Report() throws Exception {
 
-        Map<String, String> fields = new HashMap<String, String>();
+        Map<String, String> fields = new HashMap<>();
         fields.put("workerId", String.valueOf(WORKERID_WORKER));
         fields.put("data", "");
         HttpURLConnection conn = sendGet(getServletURL(), fields);

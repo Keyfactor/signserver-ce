@@ -126,22 +126,22 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
 
         certSignedByLongChain = ValidationTestUtils.genCert("CN=certSignedByLongChain", "CN=ValidSubSubSubSubCA2", validSubSubSubSubCA2Keys.getPrivate(), validCert1Keys.getPublic(), new Date(0), new Date(System.currentTimeMillis() + 1000000), false);
 
-        ArrayList<X509Certificate> validChain1 = new ArrayList<X509Certificate>();
+        ArrayList<X509Certificate> validChain1 = new ArrayList<>();
         // Add in the wrong order
         validChain1.add(validRootCA1);
         validChain1.add(validSubCA1);
 
-        ArrayList<X509Certificate> expiredRootChain = new ArrayList<X509Certificate>();
+        ArrayList<X509Certificate> expiredRootChain = new ArrayList<>();
         expiredRootChain.add(expiredRootCA1);
 
-        ArrayList<X509Certificate> notYetValidSubChain = new ArrayList<X509Certificate>();
+        ArrayList<X509Certificate> notYetValidSubChain = new ArrayList<>();
         notYetValidSubChain.add(notYetValidCA);
         notYetValidSubChain.add(validRootCA1);
 
-        ArrayList<X509Certificate> revocedRootCA1Chain = new ArrayList<X509Certificate>();
+        ArrayList<X509Certificate> revocedRootCA1Chain = new ArrayList<>();
         revocedRootCA1Chain.add(revocedRootCA1);
 
-        ArrayList<X509Certificate> longChain = new ArrayList<X509Certificate>();
+        ArrayList<X509Certificate> longChain = new ArrayList<>();
         longChain.add(validSubCA2);
         longChain.add(validSubSubSubCA2);
         longChain.add(validRootCA1);

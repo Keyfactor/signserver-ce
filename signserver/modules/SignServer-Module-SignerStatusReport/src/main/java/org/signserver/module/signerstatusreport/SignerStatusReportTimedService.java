@@ -77,7 +77,7 @@ public class SignerStatusReportTimedService extends BaseTimedService {
             LOG.error("Property OUTPUTFILE missing!");
         }
 
-        workers = new LinkedList<String>();
+        workers = new LinkedList<>();
         final String workersValue = config.getProperty(PROPERTY_WORKERS);
         if (workersValue == null) {
             LOG.error("Property WORKERS missing!");

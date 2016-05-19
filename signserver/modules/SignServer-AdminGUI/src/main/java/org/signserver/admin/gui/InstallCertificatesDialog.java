@@ -568,21 +568,7 @@ public class InstallCertificatesDialog extends javax.swing.JDialog {
                             LOG.error(error, ex);
                             errors.append(error).append(":\n").append(ex.getMessage());
                             errors.append("\n");
-                        } catch (SOAPFaultException ex) {
-                            final String error =
-                                "Operation failed on server side for signer "
-                                + workerid;
-                            LOG.error(error, ex);
-                            errors.append(error).append(":\n").append(ex.getMessage());
-                            errors.append("\n");
-                        } catch (EJBException ex) {
-                            final String error =
-                                "Operation failed on server side for signer "
-                                + workerid;
-                            LOG.error(error, ex);
-                            errors.append(error).append(":\n").append(ex.getMessage());
-                            errors.append("\n");
-                        } catch (CryptoTokenOfflineException_Exception ex) {
+                        } catch (SOAPFaultException | EJBException | CryptoTokenOfflineException_Exception ex) {
                             final String error =
                                 "Operation failed on server side for signer "
                                 + workerid;

@@ -32,6 +32,7 @@ public class PDFPerformanceCommand extends AbstractCommand {
 	private long totalInvocations;
 	private String baseURLString = null;
 
+        @Override
     public String getDescription() {
         return "Run PDF performance testing";
     }
@@ -97,36 +98,39 @@ public class PDFPerformanceCommand extends AbstractCommand {
 			}
 			System.out.println("Processing " + file.getName() + "\n");
 			try {
-				BufferedReader br = new BufferedReader(new FileReader(file));
-				String str = br.readLine();
-				if (str == null) {
-					continue;
-				}
-				String[] columns = str.split(";");
-				ArrayList<ArrayList<Long>> roundedData = new ArrayList<ArrayList<Long>>();
-				ArrayList<Long> uniqueTimes = new ArrayList<Long>();
-				long startTime = 0;
-				while ((str = br.readLine()) != null) {
-					ArrayList<Long> row = new ArrayList<Long>();
-					String[] values = str.split(";");
-					if (startTime == 0) {
-						startTime = Long.parseLong(values[(values.length-1)]);
-					}
-					long currentTime = Long.parseLong(values[(values.length-1)]);
-					if (currentTime >= startTime + timeOffset) {
-						currentTime -= currentTime % timeInterval;	// Round down time to nearest value in interval
-						if (!uniqueTimes.contains(currentTime)) {
-							uniqueTimes.add(currentTime);
-						}
-						for (int i=0; i<values.length-1; i++) {
-							row.add(Long.parseLong(values[i]));
-						}
-						row.add(currentTime);
-						roundedData.add(row);
-					}
-				}
-				br.close();
-				ArrayList<String> explanationRow = new ArrayList<String>();
+                            String[] columns;
+                            ArrayList<ArrayList<Long>> roundedData;
+                            ArrayList<Long> uniqueTimes;
+                        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                            String str = br.readLine();
+                            if (str == null) {
+                                continue;
+                            }
+                            columns = str.split(";");
+                            roundedData = new ArrayList<>();
+                            uniqueTimes = new ArrayList<>();
+                            long startTime = 0;
+                            while ((str = br.readLine()) != null) {
+                                ArrayList<Long> row = new ArrayList<>();
+                                String[] values = str.split(";");
+                                if (startTime == 0) {
+                                    startTime = Long.parseLong(values[(values.length-1)]);
+                                }
+                                long currentTime = Long.parseLong(values[(values.length-1)]);
+                                if (currentTime >= startTime + timeOffset) {
+                                    currentTime -= currentTime % timeInterval;	// Round down time to nearest value in interval
+                                    if (!uniqueTimes.contains(currentTime)) {
+                                        uniqueTimes.add(currentTime);
+                                    }
+                                    for (int i=0; i<values.length-1; i++) {
+                                        row.add(Long.parseLong(values[i]));
+                                    }
+                                    row.add(currentTime);
+                                    roundedData.add(row);
+                                }
+                            }
+                        }
+				ArrayList<String> explanationRow = new ArrayList<>();
 				explanationRow.add(columns[columns.length-1]);	// Add time first
 				explanationRow.add("Invocations per "  + timeInterval/1000 + " seconds");	// and then the total in the time interval
 				explanationRow.add("Invocations per second");	// and then the total in the time interval
@@ -136,11 +140,11 @@ public class PDFPerformanceCommand extends AbstractCommand {
 					explanationRow.add(columns[i] + " per second");
 				}
 				// Loop trough unique times and sum the other column, calculate average and time-derivate
-				ArrayList<ArrayList<Double>> processedData = new ArrayList<ArrayList<Double>>();
+				ArrayList<ArrayList<Double>> processedData = new ArrayList<>();
 				List<Long> uniqueTimesSubset = uniqueTimes.subList(1, uniqueTimes.size() - 1);	// Ignore first and last interval
 				for (Long currentTime : uniqueTimesSubset) {
 					long currentFound = 0;
-					ArrayList<Double> sums = new ArrayList<Double>();
+					ArrayList<Double> sums = new ArrayList<>();
 					for (ArrayList<Long> point : roundedData) {
 						if (point.get(point.size()-1).longValue() == currentTime.longValue()) {
 							currentFound++;
@@ -154,7 +158,7 @@ public class PDFPerformanceCommand extends AbstractCommand {
 							}
 						}
 					}
-					ArrayList<Double> processedRow = new ArrayList<Double>();
+					ArrayList<Double> processedRow = new ArrayList<>();
 					processedRow.add(new Double(currentTime));	// The rounded time
 					processedRow.add(new Double(currentFound));	// The number of invocations at this rounded time
 					processedRow.add(new Double(currentFound) / new Double(timeInterval/1000));	// The number of invocations / second
@@ -183,15 +187,66 @@ public class PDFPerformanceCommand extends AbstractCommand {
 					PerformanceTestTask performanceTestTask = (PerformanceTestTask) Class.forName(moduleName).newInstance();
 					performanceTestTask.createDiagrams(file.getName(), statisticsDirectory, explanationRow, processedData);
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
+			} catch (IOException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
+                        ArrayList<String> explanationRow = new ArrayList<String>();
+                        explanationRow.add(columns[columns.length-1]);	// Add time first
+                        explanationRow.add("Invocations per "  + timeInterval/1000 + " seconds");	// and then the total in the time interval
+                        explanationRow.add("Invocations per second");	// and then the total in the time interval
+                        for (int i=0; i<columns.length-1; i++) {
+                            explanationRow.add("Total " + columns[i] + " in interval");
+                            explanationRow.add("Average " + columns[i]);
+                            explanationRow.add(columns[i] + " per second");
+                        }
+                        // Loop trough unique times and sum the other column, calculate average and time-derivate
+                        ArrayList<ArrayList<Double>> processedData = new ArrayList<ArrayList<Double>>();
+                        List<Long> uniqueTimesSubset = uniqueTimes.subList(1, uniqueTimes.size() - 1);	// Ignore first and last interval
+                        for (Long currentTime : uniqueTimesSubset) {
+                            long currentFound = 0;
+                            ArrayList<Double> sums = new ArrayList<Double>();
+                            for (ArrayList<Long> point : roundedData) {
+                                if (point.get(point.size()-1).longValue() == currentTime.longValue()) {
+                                    currentFound++;
+                                    // Sum all fields, but time
+                                    for (int i=0; i<point.size()-1; i++) {
+                                        if (sums.size() == i) {
+                                            sums.add(new Double(point.get(i)));
+                                        } else {
+                                            sums.set(i, new Double(point.get(i)) + sums.get(i));
+                                        }
+                                    }
+                                }
+                            }
+                            ArrayList<Double> processedRow = new ArrayList<Double>();
+                            processedRow.add(new Double(currentTime));	// The rounded time
+                            processedRow.add(new Double(currentFound));	// The number of invocations at this rounded time
+                            processedRow.add(new Double(currentFound) / new Double(timeInterval/1000));	// The number of invocations / second
+                            for (Double value : sums) {
+                                processedRow.add(value);    // Actual value
+                                processedRow.add(value / new Double(currentFound));    // Average
+                                processedRow.add(value / new Double(timeInterval/1000));    // Per second
+                            }
+                            processedData.add(processedRow);
+                        }
+                        File outFile = new File(file.getCanonicalPath().replace(".csv", "-processed.csv"));
+                        BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
+                        for (int i=0; i<explanationRow.size(); i++) {
+                            bw.write((i==0 ? "" : ";") + explanationRow.get(i));
+                        }
+                        bw.newLine();
+                        for (ArrayList<Double> currentRow : processedData) {
+                            for (int i=0; i<currentRow.size(); i++) {
+                                String value = "" + new Double(currentRow.get(i) + 0.5).longValue();
+                                bw.write((i==0 ? "" : ";") + value);
+                            }
+                            bw.newLine();
+                        }
+                        bw.close();
+                        for (String moduleName : testModules) {
+                            PerformanceTestTask performanceTestTask = (PerformanceTestTask) Class.forName(moduleName).newInstance();
+                            performanceTestTask.createDiagrams(file.getName(), statisticsDirectory, explanationRow, processedData);
+                        }
 		}
 	}
 
@@ -221,10 +276,10 @@ public class PDFPerformanceCommand extends AbstractCommand {
 			"Threads: " + threads + "\n" +
 			"Base URL: " + baseURLString + "\n\n";
 		System.out.println(info);
-		for (int i=0; i<testModules.length; i++) {
-			System.out.println("Starting test " + testModules[i]);
-			runTest(testModules[i], runTime, threads);
-		}
+            for (String testModule : testModules) {
+                System.out.println("Starting test " + testModule);
+                runTest(testModule, runTime, threads);
+            }
 	}
 
 	/**
@@ -232,7 +287,7 @@ public class PDFPerformanceCommand extends AbstractCommand {
 	 */
 	private long runTest(String className, long timeToRun, int numberOfThreads) {
 		totalInvocations = 0;
-		ArrayList<Thread> threads = new ArrayList<Thread>();
+		ArrayList<Thread> threads = new ArrayList<>();
 		Object setupData = null;
 		for (int i = 0; i<numberOfThreads; i++) {
 			PerformanceTestTask performanceTestTask = null;
@@ -281,6 +336,7 @@ public class PDFPerformanceCommand extends AbstractCommand {
 			this.startTime = System.currentTimeMillis();
 		}
 
+                @Override
 		public void run() {
 			try {
 				long i = 0;
@@ -300,6 +356,7 @@ public class PDFPerformanceCommand extends AbstractCommand {
 
 	/** Allow pattern "*.csv".  */
 	private class CSVFilter implements FilenameFilter {
+                @Override
 		public boolean accept(File dir, String name) {
 			return (name.toLowerCase().endsWith(".csv"));
 		}

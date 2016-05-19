@@ -118,7 +118,7 @@ public class SODFile extends PassportFile
 	private static final ASN1ObjectIdentifier IEEE_P1363_SHA1_OID = new ASN1ObjectIdentifier("1.3.14.3.2.26");
 
     private static final HashMap<String, ASN1Encodable> algorithmParameters =
-    		new HashMap<String, ASN1Encodable>();
+    		new HashMap<>();
 
 	private static final Provider PROVIDER = new org.bouncycastle.jce.provider.BouncyCastleProvider();
 
@@ -281,6 +281,7 @@ public class SODFile extends PassportFile
 		return EF_SOD_TAG;
 	}
 
+        @Override
 	public byte[] getEncoded() throws IOException {
 		if (isSourceConsistent) {
 			return sourceObject;
@@ -300,13 +301,12 @@ public class SODFile extends PassportFile
 	 */
 	public Map<Integer, byte[]> getDataGroupHashes() {
 		DataGroupHash[] hashObjects = getSecurityObject(signedData).getDatagroupHash();
-		Map<Integer, byte[]> hashMap = new HashMap<Integer, byte[]>(); /* HashMap... get it? :D */
-		for (int i = 0; i < hashObjects.length; i++) {
-			DataGroupHash hashObject = hashObjects[i];
-			int number = hashObject.getDataGroupNumber();
-			byte[] hashValue = hashObject.getDataGroupHashValue().getOctets();
-			hashMap.put(number, hashValue);
-		}
+		Map<Integer, byte[]> hashMap = new HashMap<>(); /* HashMap... get it? :D */
+            for (DataGroupHash hashObject : hashObjects) {
+                int number = hashObject.getDataGroupNumber();
+                byte[] hashValue = hashObject.getDataGroupHashValue().getOctets();
+                hashMap.put(number, hashValue);
+            }
 		return hashMap;
 	}
 
@@ -351,8 +351,7 @@ public class SODFile extends PassportFile
                                 final PSSParameterSpec spec = params.getParameterSpec(PSSParameterSpec.class);
                                 result = lookupMnemonicByOID(new ASN1ObjectIdentifier(spec.getDigestAlgorithm())) + "withRSAand" + lookupMnemonicByOID(new ASN1ObjectIdentifier(spec.getMGFAlgorithm()));
                             }
-                        } catch (InvalidParameterSpecException ignored) {}
-                        catch (IOException ignored) {}
+                        } catch (InvalidParameterSpecException | IOException ignored) {}
                     }
                     return result;
 		} catch (NoSuchAlgorithmException nsae) {
@@ -776,12 +775,9 @@ public class SODFile extends PassportFile
 	private static ASN1Sequence createCertificate(X509Certificate cert) throws CertificateException {
 		try {
 			byte[] certSpec = cert.getEncoded();
-			ASN1InputStream asn1In = new ASN1InputStream(certSpec);
-			try {
+			try (ASN1InputStream asn1In = new ASN1InputStream(certSpec)) {
 				ASN1Sequence certSeq = (ASN1Sequence)(asn1In).readObject();
 				return certSeq;
-			} finally {
-				asn1In.close();
 			}
 		} catch (IOException ioe) {
 			throw new CertificateException("Could not construct certificate byte stream");

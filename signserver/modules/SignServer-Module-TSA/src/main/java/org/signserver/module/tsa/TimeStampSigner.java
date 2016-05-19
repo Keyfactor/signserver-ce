@@ -251,7 +251,7 @@ public class TimeStampSigner extends BaseSigner {
     };
 
     private static final HashMap<String, ASN1ObjectIdentifier> ACCEPTEDALGORITHMSMAP =
-            new HashMap<String, ASN1ObjectIdentifier>();
+            new HashMap<>();
     private static final HashMap<ASN1ObjectIdentifier, String> ACCEPTEDALGORITHMSREVERSEMAP =
     		new HashMap<>();
 

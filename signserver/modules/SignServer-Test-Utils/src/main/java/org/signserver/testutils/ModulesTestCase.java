@@ -363,16 +363,10 @@ public class ModulesTestCase extends TestCase {
      * @throws CertificateException in case a certificate could not be decoded 
      */
     public void setProperties(final File file) throws IOException, CertificateException {
-        InputStream in = null;
-        try {
-            in = new FileInputStream(file);
+        try (InputStream in = new FileInputStream(file)) {
             Properties properties = new Properties();
             properties.load(in);
             setProperties(properties);
-        } finally {
-            if (in != null) {
-                in.close();
-            }
         }
     }
     
@@ -419,7 +413,7 @@ public class ModulesTestCase extends TestCase {
 
                     if (key.startsWith("SIGNERCERTCHAIN")) {
                         String certs[] = value.split(";");
-                        ArrayList<byte[]> chain = new ArrayList<byte[]>();
+                        ArrayList<byte[]> chain = new ArrayList<>();
                         for (String base64cert : certs) {
                             byte[] cert = Base64.decode(base64cert.getBytes());
                             chain.add(cert);

@@ -62,11 +62,12 @@ public class PerformanceTestPDFServlet implements PerformanceTestTask {
 	private static final String PDF_CONTENT = "This is a test document for the PDF signer.";
 
 	private String baseURLString = null;
-	private ArrayList<byte[]> pdfs = new ArrayList<byte[]>();
+	private ArrayList<byte[]> pdfs = new ArrayList<>();
 	private long startTime = 0;
 	private long runTime = 0;
 
 	/** @see org.signserver.client.PerformanceTestTask */
+        @Override
 	public boolean invoke(int threadId) {
 		if (startTime == 0) {
 			startTime = System.currentTimeMillis();
@@ -76,44 +77,44 @@ public class PerformanceTestPDFServlet implements PerformanceTestTask {
 		try {
 			target = new URL(baseURLString);
 			InetAddress addr = InetAddress.getByName(target.getHost());
-			Socket socket = new Socket(addr, target.getPort());
-			OutputStream raw = socket.getOutputStream();
-			final int contentLength =
-                                REQUEST_CONTENT_WORKERNAME.length()
-                                + REQUEST_CONTENT_FILE.length()
-                                + testPDF.length
-                                + REQUEST_CONTENT_END.length();
-			final String command =
-				"POST "+target.getPath() + "pdf HTTP/1.0\r\n"
-				+ "Content-Type: multipart/form-data; boundary=signserver\r\n"
-				+ "Content-Length: " + contentLength + "\r\n"
-				+ "\r\n";
-			raw.write(command.getBytes());
-                        raw.write(REQUEST_CONTENT_WORKERNAME.getBytes());
-			raw.write(REQUEST_CONTENT_FILE.getBytes());
-			raw.write(testPDF);
-			raw.write(REQUEST_CONTENT_END.getBytes());
-			raw.flush( );
-
-			InputStream in = socket.getInputStream();
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			int len = 0;
-			byte[] buf = new byte[1024];
-			while ((len = in.read(buf)) > 0) {
-				os.write(buf, 0, len);
-			}
-			in.close();
-			os.close();
-			byte[] inbytes = os.toByteArray();
-
-			PdfReader pdfReader = new PdfReader(inbytes);
-			if (!new String(pdfReader.getPageContent(1)).contains(PDF_CONTENT)) {
-				System.err.println("Did not get the same document back..");
-				return false;
-			}
-			pdfReader.close();
-			raw.close();
-			socket.close();
+                try (Socket socket = new Socket(addr, target.getPort())) {
+                    OutputStream raw = socket.getOutputStream();
+                    final int contentLength =
+                            REQUEST_CONTENT_WORKERNAME.length()
+                            + REQUEST_CONTENT_FILE.length()
+                            + testPDF.length
+                            + REQUEST_CONTENT_END.length();
+                    final String command =
+                            "POST "+target.getPath() + "pdf HTTP/1.0\r\n"
+                            + "Content-Type: multipart/form-data; boundary=signserver\r\n"
+                            + "Content-Length: " + contentLength + "\r\n"
+                            + "\r\n";
+                    raw.write(command.getBytes());
+                    raw.write(REQUEST_CONTENT_WORKERNAME.getBytes());
+                    raw.write(REQUEST_CONTENT_FILE.getBytes());
+                    raw.write(testPDF);
+                    raw.write(REQUEST_CONTENT_END.getBytes());
+                    raw.flush( );
+                    
+                    InputStream in = socket.getInputStream();
+                    ByteArrayOutputStream os = new ByteArrayOutputStream();
+                    int len = 0;
+                    byte[] buf = new byte[1024];
+                    while ((len = in.read(buf)) > 0) {
+                        os.write(buf, 0, len);
+                    }
+                    in.close();
+                    os.close();
+                    byte[] inbytes = os.toByteArray();
+                    
+                    PdfReader pdfReader = new PdfReader(inbytes);
+                    if (!new String(pdfReader.getPageContent(1)).contains(PDF_CONTENT)) {
+                        System.err.println("Did not get the same document back..");
+                        return false;
+                    }
+                    pdfReader.close();
+                    raw.close();
+                }
 		} catch (IOException e) {
 			System.err.println("testPDF.length=" + testPDF.length + "," + e.getMessage());
 			//e.printStackTrace();
@@ -124,6 +125,7 @@ public class PerformanceTestPDFServlet implements PerformanceTestTask {
 
 	/** @see org.signserver.client.PerformanceTestTask */
 	@SuppressWarnings("unchecked")
+        @Override
 	public Object setup(Object setupData, long timeToRun, String baseURLString) {
 		this.runTime = timeToRun;
 		if (!baseURLString.endsWith("/")) {
@@ -178,6 +180,7 @@ public class PerformanceTestPDFServlet implements PerformanceTestTask {
 	
 
 	/** @see org.signserver.client.PerformanceTestTask */
+        @Override
 	public void createDiagrams(String currentFileName, String statisticsDirectory, ArrayList<String> explanationRow, ArrayList<ArrayList<Double>> processedData) {
 		explanationRow.set(COLUMN_DATAFLOW, "Data throughput (bytes/second)");	// Set nicer explanation
 

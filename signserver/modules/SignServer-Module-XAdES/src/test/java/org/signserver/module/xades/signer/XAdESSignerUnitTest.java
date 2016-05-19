@@ -408,7 +408,7 @@ public class XAdESSignerUnitTest {
 
         final QualifyingProperties qp = r.getQualifyingProperties();
         
-        final Set<String> foundUris = new HashSet<String>();
+        final Set<String> foundUris = new HashSet<>();
         
         final SignedProperties sp = qp.getSignedProperties();
        
@@ -817,7 +817,7 @@ public class XAdESSignerUnitTest {
         KeyInfo keyInfo = r.getXmlSignature().getKeyInfo();
         
         // Gather all certificates
-        List<X509Certificate> certs = new LinkedList<X509Certificate>();
+        List<X509Certificate> certs = new LinkedList<>();
         for (int i = 0; i < keyInfo.lengthX509Data(); i++) {
             X509Data x509Data = keyInfo.itemX509Data(i);
             if (x509Data.containsCertificate()) {
@@ -844,7 +844,7 @@ public class XAdESSignerUnitTest {
         KeyInfo keyInfo = r.getXmlSignature().getKeyInfo();
         
         // Gather all certificates
-        List<X509Certificate> certs = new LinkedList<X509Certificate>();
+        List<X509Certificate> certs = new LinkedList<>();
         for (int i = 0; i < keyInfo.lengthX509Data(); i++) {
             X509Data x509Data = keyInfo.itemX509Data(i);
             if (x509Data.containsCertificate()) {
@@ -870,7 +870,7 @@ public class XAdESSignerUnitTest {
         KeyInfo keyInfo = r.getXmlSignature().getKeyInfo();
         
         // Gather all certificates
-        List<X509Certificate> certs = new LinkedList<X509Certificate>();
+        List<X509Certificate> certs = new LinkedList<>();
         for (int i = 0; i < keyInfo.lengthX509Data(); i++) {
             X509Data x509Data = keyInfo.itemX509Data(i);
             if (x509Data.containsCertificate()) {
@@ -896,7 +896,7 @@ public class XAdESSignerUnitTest {
         KeyInfo keyInfo = r.getXmlSignature().getKeyInfo();
         
         // Gather all certificates
-        List<X509Certificate> certs = new LinkedList<X509Certificate>();
+        List<X509Certificate> certs = new LinkedList<>();
         for (int i = 0; i < keyInfo.lengthX509Data(); i++) {
             X509Data x509Data = keyInfo.itemX509Data(i);
             if (x509Data.containsCertificate()) {
@@ -922,7 +922,7 @@ public class XAdESSignerUnitTest {
         KeyInfo keyInfo = r.getXmlSignature().getKeyInfo();
         
         // Gather all certificates
-        List<X509Certificate> actual = new LinkedList<X509Certificate>();
+        List<X509Certificate> actual = new LinkedList<>();
         for (int i = 0; i < keyInfo.lengthX509Data(); i++) {
             X509Data x509Data = keyInfo.itemX509Data(i);
             if (x509Data.containsCertificate()) {

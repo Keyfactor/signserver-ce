@@ -67,7 +67,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     private List<String> fatalErrors;
 
     private boolean cachePrivateKey;
-    private final Map<String, Object> workerCache = new HashMap<String, Object>(5);
+    private final Map<String, Object> workerCache = new HashMap<>(5);
 
     /**
      * Holds fatal errors gathered when initing the crypto token.
@@ -82,8 +82,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             WorkerContext workerContext, EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
 
-        cryptoTokenFatalErrors = new LinkedList<String>();
-        fatalErrors = new LinkedList<String>();
+        cryptoTokenFatalErrors = new LinkedList<>();
+        fatalErrors = new LinkedList<>();
 
         // initialize key alias selector
         final String aliasSelectorClass =
@@ -775,9 +775,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             final MessageDigest md = MessageDigest.getInstance("SHA1");
             md.update(data);
             return new String(Hex.encode(md.digest(transactionId.getBytes("UTF-8"))), "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            throw new SignServerException("Unable to compute archive id", ex);
-        } catch (NoSuchAlgorithmException ex) {
+        } catch (UnsupportedEncodingException | NoSuchAlgorithmException ex) {
             throw new SignServerException("Unable to compute archive id", ex);
         }
     }

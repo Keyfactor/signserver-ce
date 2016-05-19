@@ -308,8 +308,8 @@ public class CertTools {
             return null;
         }
 
-        final Vector<ASN1ObjectIdentifier> defaultOrdering = new Vector<ASN1ObjectIdentifier>();
-        final Vector<String> values = new Vector<String>();
+        final Vector<ASN1ObjectIdentifier> defaultOrdering = new Vector<>();
+        final Vector<String> values = new Vector<>();
         final X509NameTokenizer x509NameTokenizer = new X509NameTokenizer(dn);
 
         while (x509NameTokenizer.hasMoreTokens()) {
@@ -386,15 +386,15 @@ public class CertTools {
         // Guess order of the input name
         final boolean isLdapOrder = !isDNReversed(x509Name.toString());
         // -- New order for the X509 Fields
-        final List<ASN1ObjectIdentifier> newOrdering = new ArrayList<ASN1ObjectIdentifier>();
-        final List<Object> newValues = new ArrayList<Object>();
+        final List<ASN1ObjectIdentifier> newOrdering = new ArrayList<>();
+        final List<Object> newValues = new ArrayList<>();
         // -- Add ordered fields
         @SuppressWarnings("unchecked")
         final Vector<ASN1ObjectIdentifier> allOids = x509Name.getOIDs();
         // If we think the DN is in LDAP order, first order it as a LDAP DN, if we don't think it's LDAP order
         // order it as a X.500 DN
         final List<ASN1ObjectIdentifier> ordering = getX509FieldOrder(isLdapOrder);
-        final HashSet<ASN1ObjectIdentifier> hs = new HashSet<ASN1ObjectIdentifier>(allOids.size() + ordering.size());
+        final HashSet<ASN1ObjectIdentifier> hs = new HashSet<>(allOids.size() + ordering.size());
         for (final ASN1ObjectIdentifier oid : ordering) {
             if (!hs.contains(oid)) {
                 hs.add(oid);
@@ -433,7 +433,7 @@ public class CertTools {
             Collections.reverse(newValues);
         }
         // -- Return X509Name with the ordered fields
-        return new X509Name(new Vector<ASN1ObjectIdentifier>(newOrdering), new Vector<Object>(newValues), converter);
+        return new X509Name(new Vector<>(newOrdering), new Vector<>(newValues), converter);
     } //
 
     
@@ -502,9 +502,9 @@ public class CertTools {
     public static Vector getX509FieldOrder(boolean ldaporder){
       Vector fieldOrder = new Vector();
       String[] dNObjects = DnComponents.getDnObjects(ldaporder);
-      for (int i = 0; i < dNObjects.length; i++) {
-          fieldOrder.add(DnComponents.getOid(dNObjects[i]));
-      }
+        for (String dNObject : dNObjects) {
+            fieldOrder.add(DnComponents.getOid(dNObject));
+        }
       return fieldOrder;
     }
     
@@ -540,13 +540,7 @@ public class CertTools {
             try {
             	CVCertificate parsedObject = CertificateParser.parseCertificate(cert);
             	ret = new CardVerifiableCertificate(parsedObject);
-			} catch (ParseException e) {
-	        	log.info("Certificate exception trying to read CVCCertificate: ", e);
-	        	throw new CertificateException("Certificate exception trying to read CVCCertificate", e);
-			} catch (ConstructionException e) {
-	        	log.info("Certificate exception trying to read CVCCertificate: ", e);
-	        	throw new CertificateException("Certificate exception trying to read CVCCertificate", e);
-			} catch (IllegalArgumentException e) {
+			} catch (ParseException | ConstructionException | IllegalArgumentException e) {
 	        	log.info("Certificate exception trying to read CVCCertificate: ", e);
 	        	throw new CertificateException("Certificate exception trying to read CVCCertificate", e);
 			}

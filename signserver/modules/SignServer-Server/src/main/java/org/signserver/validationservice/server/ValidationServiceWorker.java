@@ -52,7 +52,7 @@ public class ValidationServiceWorker extends BaseProcessable {
     @Override
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEntityManager) {
         super.init(workerId, config, workerContext, workerEntityManager);
-        fatalErrors = new LinkedList<String>();
+        fatalErrors = new LinkedList<>();
         
         try {
             validationService = createValidationService(config);
@@ -80,13 +80,7 @@ public class ValidationServiceWorker extends BaseProcessable {
 
                 retval.init(workerId, config, em);
             }
-        } catch (ClassNotFoundException e) {
-            error = "Error instatiating Validation Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.";
-            LOG.error(error, e);
-        } catch (IllegalAccessException e) {
-            error = "Error instatiating Validation Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.";
-            LOG.error(error, e);
-        } catch (InstantiationException e) {
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             error = "Error instatiating Validation Service, check that the TYPE setting of workerid : " + workerId + " have the correct class path.";
             LOG.error(error, e);
         }
@@ -126,7 +120,7 @@ public class ValidationServiceWorker extends BaseProcessable {
 
     @Override
     protected List<String> getFatalErrors(IServices services) {
-        final List<String> errors = new LinkedList<String>();
+        final List<String> errors = new LinkedList<>();
         
         errors.addAll(super.getFatalErrors(services));
         errors.addAll(fatalErrors);

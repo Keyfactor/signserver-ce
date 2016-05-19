@@ -265,9 +265,9 @@ public class ArchiveDataBean implements Serializable {
         
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        XMLEncoder encoder = new XMLEncoder(baos);
-        encoder.writeObject(a);
-        encoder.close();
+        try (XMLEncoder encoder = new XMLEncoder(baos)) {
+            encoder.writeObject(a);
+        }
 
         try {
             setArchiveData(baos.toString("UTF8"));

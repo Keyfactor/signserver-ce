@@ -179,9 +179,9 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
 
         // Output for manual inspection
         File file = new File(getSignServerHome() + File.separator + "tmp" + File.separator + "signed_endentity8.xml");
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write((byte[]) data);
-        fos.close();
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write((byte[]) data);
+        }
 
         // Check certificate
         Certificate signercert = result.getSignerCertificate();

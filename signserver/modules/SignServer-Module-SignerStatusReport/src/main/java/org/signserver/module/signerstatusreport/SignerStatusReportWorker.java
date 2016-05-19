@@ -69,7 +69,7 @@ public class SignerStatusReportWorker extends BaseSigner {
     @Override
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
-        workers = new LinkedList<String>();
+        workers = new LinkedList<>();
         final String workersValue = config.getProperty(PROPERTY_WORKERS);
         if (workersValue == null) {
             LOG.error("Property WORKERS missing!");

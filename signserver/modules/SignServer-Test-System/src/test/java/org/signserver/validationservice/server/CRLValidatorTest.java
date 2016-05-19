@@ -178,15 +178,9 @@ public class CRLValidatorTest extends ModulesTestCase {
 
         crlRootCA2 = ValidationTestUtils.genCRL(certRootCA2, keysRootCA2.getPrivate(), crlDistPointCA2WithIssuer.getDistributionPoints()[0], revoked2, 24, 1);
 
-        // Write CRL to file
-        OutputStream out2 = null;
-        try {
-            out2 = new FileOutputStream(cdpFile2);
+        try ( // Write CRL to file
+                OutputStream out2 = new FileOutputStream(cdpFile2)) {
             out2.write(crlRootCA2.getEncoded());
-        } finally {
-            if (out2 != null) {
-                out2.close();
-            }
         }
         assertTrue(cdpFile2.exists());
         assertTrue(cdpFile2.canRead());

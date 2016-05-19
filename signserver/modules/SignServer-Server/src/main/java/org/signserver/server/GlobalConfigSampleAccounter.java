@@ -169,7 +169,7 @@ public class GlobalConfigSampleAccounter implements IAccounter {
             return Collections.emptyMap();
         }
         final String[] entries = mapping.split(";");
-        final Map<String, String> result = new HashMap<String, String>();
+        final Map<String, String> result = new HashMap<>();
         for (String entry : entries) {
             final String[] keyvalue = entry.trim().split(":");
             if (keyvalue.length == 2) {
@@ -200,7 +200,7 @@ public class GlobalConfigSampleAccounter implements IAccounter {
             return Collections.emptyMap();
         }
         final String[] entries = mapping.split(";");
-        final Map<String, Integer> result = new HashMap<String, Integer>();
+        final Map<String, Integer> result = new HashMap<>();
         for (String entry : entries) {
             final String[] keyvalue = entry.trim().split(":");
             if (keyvalue.length == 2) {

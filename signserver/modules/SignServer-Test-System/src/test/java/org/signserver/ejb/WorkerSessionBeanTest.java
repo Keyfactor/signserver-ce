@@ -76,7 +76,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     public void test01SignData() throws Exception {
 
         int reqid = 11;
-        ArrayList<byte[]> signrequests = new ArrayList<byte[]>();
+        ArrayList<byte[]> signrequests = new ArrayList<>();
 
         byte[] signreq1 = "Hello World".getBytes();
         byte[] signreq2 = "Hello World2".getBytes();

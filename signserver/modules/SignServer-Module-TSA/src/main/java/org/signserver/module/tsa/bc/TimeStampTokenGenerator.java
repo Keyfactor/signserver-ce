@@ -173,6 +173,7 @@ public class TimeStampTokenGenerator
             
             this.signerInfoGen = new SignerInfoGenerator(signerInfoGen, new CMSAttributeTableGenerator()
             {
+                @Override
                 public AttributeTable getAttributes(Map parameters)
                         throws CMSAttributeTableGenerationException
                 {
@@ -196,6 +197,7 @@ public class TimeStampTokenGenerator
             
             this.signerInfoGen = new SignerInfoGenerator(signerInfoGen, new CMSAttributeTableGenerator()
             {
+                @Override
                 public AttributeTable getAttributes(Map parameters)
                         throws CMSAttributeTableGenerationException
                 {

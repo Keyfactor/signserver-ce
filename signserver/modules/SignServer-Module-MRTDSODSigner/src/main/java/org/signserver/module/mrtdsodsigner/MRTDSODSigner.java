@@ -103,7 +103,7 @@ public class MRTDSODSigner extends BaseSigner {
             WorkerContext workerContext, EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
         
-        configErrors = new LinkedList<String>();
+        configErrors = new LinkedList<>();
         
         if (hasSetIncludeCertificateLevels) {
             configErrors.add(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported.");
@@ -192,7 +192,7 @@ public class MRTDSODSigner extends BaseSigner {
                 }
                 // If true here the "data group hashes" are not really hashes but values that we must hash.
                 // The input is already decoded (if needed) and nice, so we just need to hash it
-                dghashes = new HashMap<Integer, byte[]>(16);
+                dghashes = new HashMap<>(16);
                 for (Map.Entry<Integer, byte[]> dgId : dgvalues.entrySet()) {
                     final byte[] value = dgId.getValue();
                     if (log.isDebugEnabled()) {
@@ -252,9 +252,7 @@ public class MRTDSODSigner extends BaseSigner {
             // Reconstruct the sod
             sod = new SODFile(new ByteArrayInputStream(constructedSod.getEncoded()));
 
-        } catch (NoSuchAlgorithmException ex) {
-            throw new SignServerException("Problem constructing SOD", ex);
-        } catch (CertificateException ex) {
+        } catch (NoSuchAlgorithmException | CertificateException ex) {
             throw new SignServerException("Problem constructing SOD", ex);
         } catch (IOException ex) {
             throw new SignServerException("Problem reconstructing SOD", ex);

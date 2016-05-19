@@ -124,6 +124,7 @@ public class MockedCryptoToken implements ICryptoTokenV4 {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public KeyStore getKeyStore() throws UnsupportedOperationException, CryptoTokenOfflineException, KeyStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }

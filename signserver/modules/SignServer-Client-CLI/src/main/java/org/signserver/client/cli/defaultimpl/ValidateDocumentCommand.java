@@ -179,10 +179,10 @@ public class ValidateDocumentCommand extends AbstractCommand {
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
-        PrintWriter pw = new PrintWriter(bout);
-        formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, "validatedocument <-workername WORKERNAME | -workerid WORKERID> [options]",
-                "Request a document to be validated by SignServer", OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
-        pw.close();
+        try (PrintWriter pw = new PrintWriter(bout)) {
+            formatter.printHelp(pw, HelpFormatter.DEFAULT_WIDTH, "validatedocument <-workername WORKERNAME | -workerid WORKERID> [options]",
+                    "Request a document to be validated by SignServer", OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, footer.toString());
+        }
         return bout.toString();
     }
 
@@ -249,11 +249,7 @@ public class ValidateDocumentCommand extends AbstractCommand {
             }
         } catch (IOException ex) {
             throw new IllegalCommandArgumentsException("Failed to read password: " + ex.getLocalizedMessage());
-        } catch (NoSuchAlgorithmException ex) {
-            throw new IllegalCommandArgumentsException("Failure setting up keystores: " + ex.getMessage());
-        } catch (CertificateException ex) {
-            throw new IllegalCommandArgumentsException("Failure setting up keystores: " + ex.getMessage());
-        } catch (KeyStoreException ex) {
+        } catch (NoSuchAlgorithmException | CertificateException | KeyStoreException ex) {
             throw new IllegalCommandArgumentsException("Failure setting up keystores: " + ex.getMessage());
         }
     }
@@ -341,7 +337,7 @@ public class ValidateDocumentCommand extends AbstractCommand {
         FileInputStream fin = null;
         try {
             final byte[] bytes;
-            final Map<String, Object> requestContext = new HashMap<String, Object>();
+            final Map<String, Object> requestContext = new HashMap<>();
             
             if (inFile == null) {
                 bytes = data.getBytes();
@@ -356,11 +352,7 @@ public class ValidateDocumentCommand extends AbstractCommand {
         } catch (FileNotFoundException ex) {
             LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),
                     ex.getLocalizedMessage()));
-        } catch (IllegalRequestException ex) {
-            LOG.error(ex);
-        } catch (CryptoTokenOfflineException ex) {
-            LOG.error(ex);
-        } catch (SignServerException ex) {
+        } catch (IllegalRequestException | CryptoTokenOfflineException | SignServerException | IOException ex) {
             LOG.error(ex);
         } catch (SOAPFaultException ex) {
             if (ex.getCause() instanceof AuthorizationRequiredException) {
@@ -372,8 +364,6 @@ public class ValidateDocumentCommand extends AbstractCommand {
         } catch (HTTPException ex) {
             LOG.error("Failure: HTTP error: " + ex.getResponseCode() + ": " +
                       ex.getResponseMessage());
-        } catch (IOException ex) {
-            LOG.error(ex);
         } finally {
             if (fin != null) {
                 try {

@@ -98,9 +98,10 @@ public class MysqlClusterContinouslyTestSeparately extends TestCase {
      * Test adding a row once a second
      */
     public void test03AddContinously() throws Exception {
+        final FileOutputStream fis = new FileOutputStream(FILENAME_TEST_OUTPUT);
+        PrintWriter fw = new PrintWriter(fis);
 
-
-        try (PrintWriter fw = new PrintWriter(new FileOutputStream(FILENAME_TEST_OUTPUT))) {
+        try {
             // Parameters
             while (true) {
                 // Instance creation
@@ -119,6 +120,8 @@ public class MysqlClusterContinouslyTestSeparately extends TestCase {
             }
         } catch (Exception e) {
             fw.write(e.getMessage());
+        } finally {
+            fis.close();
         }
     }
 

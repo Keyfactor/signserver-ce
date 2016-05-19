@@ -93,7 +93,6 @@ CREATE SEQUENCE hibernate_sequence
 ALTER TABLE ONLY archivedata
     ADD CONSTRAINT archivedata_pkey PRIMARY KEY (uniqueid);
 
-
 --
 -- Name: auditrecorddata_pkey; Type: CONSTRAINT; Schema: public; Owner: signserver; Tablespace: 
 --
@@ -101,30 +100,12 @@ ALTER TABLE ONLY archivedata
 ALTER TABLE ONLY auditrecorddata
     ADD CONSTRAINT auditrecorddata_pkey PRIMARY KEY (pk);
 
-
---
--- Name: enckeydata_pkey; Type: CONSTRAINT; Schema: public; Owner: signserver; Tablespace: 
---
-
-ALTER TABLE ONLY enckeydata
-    ADD CONSTRAINT enckeydata_pkey PRIMARY KEY (id);
-
-
 --
 -- Name: globalconfigdata_pkey; Type: CONSTRAINT; Schema: public; Owner: signserver; Tablespace: 
 --
 
 ALTER TABLE ONLY globalconfigdata
     ADD CONSTRAINT globalconfigdata_pkey PRIMARY KEY (propertykey);
-
-
---
--- Name: groupkeydata_pkey; Type: CONSTRAINT; Schema: public; Owner: signserver; Tablespace: 
---
-
-ALTER TABLE ONLY groupkeydata
-    ADD CONSTRAINT groupkeydata_pkey PRIMARY KEY (id);
-
 
 --
 -- Name: keyusagecounter_pkey; Type: CONSTRAINT; Schema: public; Owner: signserver; Tablespace: 

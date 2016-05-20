@@ -440,12 +440,6 @@ This is not needed in JBoss EAP 6.1/JBoss 7.2/WildFly and later, because the two
 One package is however needed still. Since JBoss EAP 6.1 the file is located in <i>modules/system/layers/base/sun/jdk/main/module.xml</i>.
                         </p>
                         <source>&lt;path name="sun/security/pkcs11/wrapper"/&gt;</source>
-                        
-                    <h4>Change CLI port to access WildFly</h4>
-                        <p>
-In order to be able to access SignServer in WildFly using the SignServer command line interface (remote EJB) edit SIGNSERVER_HOME/conf/jboss7/jboss-ejb-client.properties and change to port 8080:
-                        </p>
-                        <source>remote.connection.default.port = 8080</source>
 
                 </subsection>
 

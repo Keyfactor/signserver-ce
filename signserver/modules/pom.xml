@@ -174,9 +174,30 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Test Code Coverage -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.6.201602180812</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-    
+
     <!--
         PrimeKey Internal/Customer Repository Mirror.
         Edit ~/.m2/settings.xml to enable by setting the primekey.customer

@@ -573,14 +573,12 @@ public class TimeStampCommand extends AbstractCommand {
             for (Object oid : request.getExtensionOIDs()) {
                 final ASN1ObjectIdentifier asn1Oid =
                         (ASN1ObjectIdentifier) oid;
+                final Extension ext = request.getExtension(asn1Oid);
                 out.print("    " + oid + ": ");
-                out.println(new String(Hex.encode(request.getExtension(asn1Oid).getEncoded())));
-                
-                final ASN1ObjectIdentifier oid2 = new ASN1ObjectIdentifier((String) oid);
+                out.println(new String(Hex.encode(ext.getEncoded())));
 
-                if (oid2.equals(Extension.qCStatements)) {
-                    final Extension extension = request.getExtension(oid2);
-                    printQualifiedStatement(extension);
+                if (asn1Oid.equals(Extension.qCStatements)) {
+                    printQualifiedStatement(ext);
                 }
             }
         }

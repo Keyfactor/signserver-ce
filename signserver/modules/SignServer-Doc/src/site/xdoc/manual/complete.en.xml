@@ -675,6 +675,18 @@ Configure interfaces using the approproate bind address (i.e. 0.0.0.0 or 127.0.0
 /interface=httpspub:add(inet-address="0.0.0.0")
 /interface=httpspriv:add(inet-address="0.0.0.0")
                         </source>
+
+                        <p>
+Secure the CLI by removing the http-remoting-connector from using the http port and instead use a separate port 4447.
+                        </p>
+                        <source>
+/subsystem=remoting/http-connector=http-remoting-connector:remove
+/subsystem=remoting/http-connector=http-remoting-connector:add(connector-ref="remoting",security-realm="ApplicationRealm")
+/socket-binding-group=standard-sockets/socket-binding=remoting:add(port="4447")
+/subsystem=undertow/server=default-server/http-listener=remoting:add(socket-binding=remoting)
+:reload
+                        </source>
+
                         <p>
 Set-up the private port which requires client certificate. 
 Use appropriate values for key-alias (hostname), password (keystore password), ca-certificate-password (truststore password),

@@ -1778,6 +1778,10 @@ from timing-out.
                 </subsection>
                 
                 <subsection name="RenewalTimedService">
+                    <div class="frame note">
+                        <div class="label">Note</div>
+                        <div class="content">The RenewalTimedService is an Enterprise Edition feature.</div>
+                    </div>
                     <p>
 Fully qualified class name: org.signserver.module.renewal.service.RenewalTimedService
                     </p>

@@ -34,6 +34,7 @@ public class PDFPerformanceCommand extends AbstractCommand {
     private long totalInvocations;
     private String baseURLString = null;
 
+    @Override
     public String getDescription() {
         return "Run PDF performance testing";
     }
@@ -155,7 +156,7 @@ public class PDFPerformanceCommand extends AbstractCommand {
                             }
                         }
                     }
-                    ArrayList<Double> processedRow = new ArrayList<Double>();
+                    ArrayList<Double> processedRow = new ArrayList<>();
                     processedRow.add(new Double(currentTime));	// The rounded time
                     processedRow.add(new Double(currentFound));	// The number of invocations at this rounded time
                     processedRow.add(new Double(currentFound) / new Double(timeInterval / 1000));	// The number of invocations / second
@@ -167,19 +168,19 @@ public class PDFPerformanceCommand extends AbstractCommand {
                     processedData.add(processedRow);
                 }
                 File outFile = new File(file.getCanonicalPath().replace(".csv", "-processed.csv"));
-                BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
-                for (int i = 0; i < explanationRow.size(); i++) {
-                    bw.write((i == 0 ? "" : ";") + explanationRow.get(i));
-                }
-                bw.newLine();
-                for (ArrayList<Double> currentRow : processedData) {
-                    for (int i = 0; i < currentRow.size(); i++) {
-                        String value = "" + new Double(currentRow.get(i) + 0.5).longValue();
-                        bw.write((i == 0 ? "" : ";") + value);
+                try (BufferedWriter bw = new BufferedWriter(new FileWriter(outFile))) {
+                    for (int i = 0; i < explanationRow.size(); i++) {
+                        bw.write((i == 0 ? "" : ";") + explanationRow.get(i));
                     }
                     bw.newLine();
+                    for (ArrayList<Double> currentRow : processedData) {
+                        for (int i = 0; i < currentRow.size(); i++) {
+                            String value = "" + new Double(currentRow.get(i) + 0.5).longValue();
+                            bw.write((i == 0 ? "" : ";") + value);
+                        }
+                        bw.newLine();
+                    }
                 }
-                bw.close();
                 for (String moduleName : testModules) {
                     PerformanceTestTask performanceTestTask = (PerformanceTestTask) Class.forName(moduleName).newInstance();
                     performanceTestTask.createDiagrams(file.getName(), statisticsDirectory, explanationRow, processedData);
@@ -280,6 +281,7 @@ public class PDFPerformanceCommand extends AbstractCommand {
             this.startTime = System.currentTimeMillis();
         }
 
+        @Override
         public void run() {
             try {
                 long i = 0;

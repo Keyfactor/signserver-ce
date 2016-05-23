@@ -44,6 +44,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
      * Set up the test case
      */
     @Before
+    @Override
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }

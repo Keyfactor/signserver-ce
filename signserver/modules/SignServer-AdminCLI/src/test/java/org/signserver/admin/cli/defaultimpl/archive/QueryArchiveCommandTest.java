@@ -85,7 +85,7 @@ public class QueryArchiveCommandTest extends TestCase {
         
         assertEquals("Operation", RelationalOperator.GT, term.getOperator());
         assertEquals("Name", ArchiveMetadata.SIGNER_ID, term.getName());
-        assertEquals("Value", Integer.valueOf(1), term.getValue());
+        assertEquals("Value", 1, term.getValue());
     }
     
     /**
@@ -170,7 +170,7 @@ public class QueryArchiveCommandTest extends TestCase {
         
         assertEquals("Operation", RelationalOperator.EQ, term.getOperator());
         assertEquals("Name", ArchiveMetadata.TIME, term.getName());
-        assertEquals("Value", Long.valueOf(1360587600000L), term.getValue()); 
+        assertEquals("Value", 1360587600000L, term.getValue()); 
     }
     
     public void test11DateInvalid() throws Exception {

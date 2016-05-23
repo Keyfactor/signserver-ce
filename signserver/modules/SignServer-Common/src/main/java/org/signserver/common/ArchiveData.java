@@ -60,10 +60,12 @@ public class ArchiveData extends UpgradeableDataHashMap {
         return result;
     }
 
+    @Override
     public float getLatestVersion() {
         return LATEST_VERSION;
     }
 
+    @Override
     public void upgrade() {
     }
 }

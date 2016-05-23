@@ -179,39 +179,38 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
         // Read der encoded ocsp response
         byte[] responsearr;
 
-        InputStream reader = con.getInputStream();
-        int responselen = con.getContentLength();
-
-        if (responselen != -1) {
-
-            //header indicating content-length is present, so go ahead and use it
-            responsearr = new byte[responselen];
-
-            int offset = 0;
-            int bread;
-            while ((responselen > 0) && (bread = reader.read(responsearr, offset, responselen)) != -1) {
-                offset += bread;
-                responselen -= bread;
+        try (InputStream reader = con.getInputStream()) {
+            int responselen = con.getContentLength();
+            
+            if (responselen != -1) {
+                
+                //header indicating content-length is present, so go ahead and use it
+                responsearr = new byte[responselen];
+                
+                int offset = 0;
+                int bread;
+                while ((responselen > 0) && (bread = reader.read(responsearr, offset, responselen)) != -1) {
+                    offset += bread;
+                    responselen -= bread;
+                }
+                
+                //read.read returned -1 but we expect inputstream to contain more data
+                //is it a dreadful unexpected EOF we were afraid of ??
+                if (responselen > 0) {
+                    throw new SignServerException("Unexpected EOF encountered while reading ocsp response from : " + oCSPURLString);
+                }
+            } else {
+                //getContentLength() returns -1. no panic , perfect normal value if header indicating length is missing (javadoc)
+                //try to read response manually byte by byte (small response expected , no need to buffer)
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                int b;
+                while ((b = reader.read()) != -1) {
+                    baos.write(b);
+                }
+                
+                responsearr = baos.toByteArray();
             }
-
-            //read.read returned -1 but we expect inputstream to contain more data
-            //is it a dreadful unexpected EOF we were afraid of ??
-            if (responselen > 0) {
-                throw new SignServerException("Unexpected EOF encountered while reading ocsp response from : " + oCSPURLString);
-            }
-        } else {
-            //getContentLength() returns -1. no panic , perfect normal value if header indicating length is missing (javadoc)
-            //try to read response manually byte by byte (small response expected , no need to buffer)
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            int b;
-            while ((b = reader.read()) != -1) {
-                baos.write(b);
-            }
-
-            responsearr = baos.toByteArray();
         }
-
-        reader.close();
         con.disconnect();
 
 

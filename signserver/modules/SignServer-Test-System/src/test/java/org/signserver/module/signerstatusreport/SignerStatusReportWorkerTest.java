@@ -81,6 +81,7 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
     }
     
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }

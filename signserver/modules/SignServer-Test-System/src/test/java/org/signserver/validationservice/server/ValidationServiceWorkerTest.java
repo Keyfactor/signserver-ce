@@ -76,6 +76,7 @@ public class ValidationServiceWorkerTest extends ModulesTestCase {
     private static X509Certificate badKeyUsageCert1;
 
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         sSSession = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);

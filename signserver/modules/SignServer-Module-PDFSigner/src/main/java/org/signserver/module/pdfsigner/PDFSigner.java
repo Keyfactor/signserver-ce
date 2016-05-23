@@ -338,18 +338,16 @@ public class PDFSigner extends BaseSigner {
             
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
-        } catch (DocumentException e) {
+        } catch (DocumentException | IOException e) {
             throw new IllegalRequestException("Could not sign document: "
                     + e.getMessage(), e);
         } catch (BadPasswordException ex) {
             throw new IllegalRequestException("A valid password is required to sign the document: " + ex.getMessage(), ex);
-        } catch (UnsupportedEncodingException ex) {
+        }catch (UnsupportedEncodingException ex) {
             throw new IllegalRequestException("The supplied password could not be read: " + ex.getMessage(), ex);
-        } catch (IOException e) {
-            // fallback for IOException
-            throw new IllegalRequestException("Could not sign document: "
-                    + e.getMessage(), e);
-        } finally {
+        }
+        // fallback for IOException
+         finally {
             releaseCryptoInstance(crypto, requestContext);
         }
 

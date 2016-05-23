@@ -136,11 +136,7 @@ public class AdminWebServiceTest extends ModulesTestCase {
         try {
             adminWS.activateSigner(ANY_WORKERID, AUTH_CODE);
             fail("Access should have been denied!");
-        } catch (CryptoTokenAuthenticationFailureException_Exception ex) {
-            fail("Wrong exception: " + ex.getMessage());
-        } catch (CryptoTokenOfflineException_Exception ex) {
-            fail("Wrong exception: " + ex.getMessage());
-        } catch (InvalidWorkerIdException_Exception ex) {
+        } catch (CryptoTokenAuthenticationFailureException_Exception | CryptoTokenOfflineException_Exception | InvalidWorkerIdException_Exception ex) {
             fail("Wrong exception: " + ex.getMessage());
         } catch (AdminNotAuthorizedException_Exception ignored) {
             // OK

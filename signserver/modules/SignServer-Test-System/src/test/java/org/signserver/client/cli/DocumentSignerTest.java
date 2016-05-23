@@ -64,6 +64,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     private final WorkerSession workerSession = getWorkerSession();
     
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         TestingSecurityManager.install();
@@ -72,6 +73,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }	

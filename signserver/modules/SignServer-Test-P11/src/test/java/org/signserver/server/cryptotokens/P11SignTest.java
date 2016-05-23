@@ -507,7 +507,7 @@ public class P11SignTest extends ModulesTestCase {
         assertEquals("errors: " + errors, 0, errors.size());
 
         // Test signing
-        HashMap<Integer, byte[]> dgs = new HashMap<Integer, byte[]>();
+        HashMap<Integer, byte[]> dgs = new HashMap<>();
         dgs.put(1, "Yy==".getBytes());
         dgs.put(2, "Yy==".getBytes());
         dgs.put(3, "Yy==".getBytes());
@@ -932,7 +932,7 @@ public class P11SignTest extends ModulesTestCase {
     
     private Set<String> getKeyAliases(final int workerId) throws Exception {
         Collection<KeyTestResult> testResults = workerSession.testKey(new WorkerIdentifier(workerId), "all", pin.toCharArray());
-        final HashSet<String> results = new HashSet<String>();
+        final HashSet<String> results = new HashSet<>();
         for (KeyTestResult testResult : testResults) {
             results.add(testResult.getAlias());
         }
@@ -967,7 +967,7 @@ public class P11SignTest extends ModulesTestCase {
             workerSession.generateSignerKey(new WorkerIdentifier(workerId), "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
             
             // Now expect the new TEST_KEY_ALIAS
-            Set<String> expected = new HashSet<String>(aliases1);
+            Set<String> expected = new HashSet<>(aliases1);
             expected.add(TEST_KEY_ALIAS);
             Set<String> aliases2 = getKeyAliases(workerId);
             assertEquals("new key added", expected, aliases2);
@@ -1187,7 +1187,7 @@ public class P11SignTest extends ModulesTestCase {
             workerSession.generateSignerKey(new WorkerIdentifier(tokenId), "RSA", "1024", TEST_KEY_ALIAS, pin.toCharArray());
 
             // Now expect the new TEST_KEY_ALIAS
-            Set<String> expected = new HashSet<String>(aliases1);
+            Set<String> expected = new HashSet<>(aliases1);
             expected.add(TEST_KEY_ALIAS);
             Set<String> aliases2 = getKeyAliases(tokenId);
             assertEquals("new key added", expected, aliases2);
@@ -1229,7 +1229,7 @@ public class P11SignTest extends ModulesTestCase {
             
             // Now expect the TEST_KEY_ALIAS to have been removed
             Set<String> aliases2 = getKeyAliases(workerId);
-            Set<String> expected = new HashSet<String>(aliases1);
+            Set<String> expected = new HashSet<>(aliases1);
             expected.remove(TEST_KEY_ALIAS);
             assertEquals("new key removed", expected, aliases2);
         } finally {
@@ -1266,7 +1266,7 @@ public class P11SignTest extends ModulesTestCase {
 
             // Now expect the TEST_KEY_ALIAS to have been removed
             Set<String> aliases2 = getKeyAliases(tokenId);
-            Set<String> expected = new HashSet<String>(aliases1);
+            Set<String> expected = new HashSet<>(aliases1);
             expected.remove(TEST_KEY_ALIAS);
             assertEquals("new key removed", expected, aliases2);
         } finally {

@@ -172,7 +172,7 @@ public class QueryAuditLogCommandTest extends TestCase {
         
         assertEquals("Operation", RelationalOperator.EQ, term.getOperator());
         assertEquals("Name", AuditRecordData.FIELD_TIMESTAMP, term.getName());
-        assertEquals("Value", Long.valueOf(1360587600000L), term.getValue()); 
+        assertEquals("Value", 1360587600000L, term.getValue()); 
     }
     
     public void test11DateInvalid() throws Exception {

@@ -164,17 +164,19 @@ public class WorkerConfig extends UpgradeableDataHashMap {
         return data;
     }
 
+    @Override
     public float getLatestVersion() {
         return LATEST_VERSION;
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public void upgrade() {
         if (data.get(WorkerConfig.CLASS) == null) {
             data.put(WorkerConfig.CLASS, this.getClass().getName());
         }
 
-        data.put(WorkerConfig.VERSION, new Float(LATEST_VERSION));
+        data.put(WorkerConfig.VERSION, LATEST_VERSION);
     }
     
     public String getImplementationClass() {

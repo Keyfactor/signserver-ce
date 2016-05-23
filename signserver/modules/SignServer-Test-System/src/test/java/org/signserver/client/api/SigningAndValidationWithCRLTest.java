@@ -72,6 +72,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     }
 
     @Before
+    @Override
     protected void setUp() throws Exception {
 
         keystoreFileEndentity8 = new File(getSignServerHome() + File.separator + "res/test/org/signserver/client/api/endentity8.p12");

@@ -77,8 +77,7 @@ public class PerformanceTestPDFServlet implements PerformanceTestTask {
 		try {
 			target = new URL(baseURLString);
 			InetAddress addr = InetAddress.getByName(target.getHost());
-                try (Socket socket = new Socket(addr, target.getPort())) {
-                    OutputStream raw = socket.getOutputStream();
+                try (Socket socket = new Socket(addr, target.getPort()); OutputStream raw = socket.getOutputStream()) {
                     final int contentLength =
                             REQUEST_CONTENT_WORKERNAME.length()
                             + REQUEST_CONTENT_FILE.length()
@@ -113,7 +112,6 @@ public class PerformanceTestPDFServlet implements PerformanceTestTask {
                         return false;
                     }
                     pdfReader.close();
-                    raw.close();
                 }
 		} catch (IOException e) {
 			System.err.println("testPDF.length=" + testPDF.length + "," + e.getMessage());

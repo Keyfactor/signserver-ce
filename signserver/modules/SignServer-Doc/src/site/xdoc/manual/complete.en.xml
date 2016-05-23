@@ -5681,6 +5681,9 @@ from timing-out.
                     </subsection>
                     
                     <subsection name="RenewalTimedService">
+                    <note>
+The RenewalTimedService is an Enterprise Edition feature.
+                    </note>
                     <p>
 Fully qualified class name: org.signserver.module.renewal.service.RenewalTimedService
                     </p>

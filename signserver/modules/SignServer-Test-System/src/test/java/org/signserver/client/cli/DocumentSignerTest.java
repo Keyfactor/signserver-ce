@@ -135,7 +135,6 @@ public class DocumentSignerTest extends ModulesTestCase {
             final File doc = File.createTempFile("test.xml", null);
             try (FileOutputStream out = new FileOutputStream(doc)) {
                 out.write("<tag/>".getBytes());
-                out.close();
             }
 
             String res =

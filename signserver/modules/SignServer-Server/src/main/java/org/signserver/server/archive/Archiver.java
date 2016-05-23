@@ -69,7 +69,7 @@ public interface Archiver {
     boolean archive(Archivable archivable, RequestContext requestContext) throws ArchiveException;
     
     /**
-     * Get a list of fatal errors for the archiver implementation
+     * Get a list of fatal errors for the archiver implementation.
      *
      * @return A list of fatal errors for the archiver implementation
      */

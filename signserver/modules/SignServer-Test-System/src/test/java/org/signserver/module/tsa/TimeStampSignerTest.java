@@ -141,6 +141,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     private final ProcessSessionRemote processSession = getProcessSession();
 
     @Before
+    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
 
@@ -151,6 +152,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      * @see junit.framework.TestCase#tearDown()
      */
     @After
+    @Override
     public void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }
@@ -416,9 +418,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
                         
         		TestUtils.checkSigningCertificateAttribute(Attribute.getInstance(scAttrs.get(0)), cert);
         	}
-        } catch (TSPException e) {
-        	fail("Failed to verify response");
-        } catch (IOException e) {
+        } catch (TSPException | IOException e) {
         	fail("Failed to verify response");
         }
         
@@ -761,7 +761,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
             // An not strictly valid chain as it contains an additional certificate at the end
             // (In same use cases this might be okey but now we are testing the 
             //  strict checking with the REQUIREVALIDCHAIN property set)
-            List<Certificate> ourChain = new LinkedList<Certificate>();
+            List<Certificate> ourChain = new LinkedList<>();
             ourChain.addAll(chain);
             ourChain.add(other);
             workerSession.uploadSignerCertificate(WORKER1.getId(), subject.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);

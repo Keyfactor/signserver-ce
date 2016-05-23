@@ -352,7 +352,7 @@ public class ValidateDocumentCommand extends AbstractCommand {
         } catch (FileNotFoundException ex) {
             LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),
                     ex.getLocalizedMessage()));
-        } catch (IllegalRequestException | CryptoTokenOfflineException | SignServerException | IOException ex) {
+        } catch (IllegalRequestException | CryptoTokenOfflineException | SignServerException ex) {
             LOG.error(ex);
         } catch (SOAPFaultException ex) {
             if (ex.getCause() instanceof AuthorizationRequiredException) {
@@ -361,12 +361,13 @@ public class ValidateDocumentCommand extends AbstractCommand {
                 LOG.error("Authorization required: " + authEx.getMessage());
             }
             LOG.error(ex);
-        }catch (HTTPException ex) {
+        } catch (HTTPException ex) {
             LOG.error("Failure: HTTP error: " + ex.getResponseCode() + ": " +
                       ex.getResponseMessage());
-        }
-        // fallback to IOException...
-         finally {
+        } catch (IOException ex) {
+            // fallback to IOException...
+            LOG.error(ex);
+        } finally {
             if (fin != null) {
                 try {
                     fin.close();

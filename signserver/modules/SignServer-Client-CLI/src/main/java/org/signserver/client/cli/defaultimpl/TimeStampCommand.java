@@ -515,32 +515,38 @@ public class TimeStampCommand extends AbstractCommand {
     private void printQualifiedStatement(final Extension extension)
         throws IOException {
         out.println("          Qualified statement");
-        final ASN1Sequence seq =
-                ASN1Sequence.getInstance(extension.getExtnValue().getOctets());
+        
+        try {
+            final ASN1Sequence seq =
+                    ASN1Sequence.getInstance(extension.getExtnValue().getOctets());
 
-        if (seq != null) {
-            final QCStatement statement =
-                    QCStatement.getInstance(seq.getObjectAt(0));
+            if (seq != null) {
+                final QCStatement statement =
+                        QCStatement.getInstance(seq.getObjectAt(0));
 
-            if (statement != null) {
-                final ASN1Encodable statementInfo =
-                        statement.getStatementInfo();
-                final ASN1ObjectIdentifier oid =
-                        statement.getStatementId();
-                
-                out.print("          Statement ID: " + oid.getId());
-                
-                if (ID_ETSI_TSTS.equals(oid)) {
-                    out.println(" (ETSI EN 319 422 compliant)");
-                }
-                
-                out.println();
+                if (statement != null) {
+                    final ASN1Encodable statementInfo =
+                            statement.getStatementInfo();
+                    final ASN1ObjectIdentifier oid =
+                            statement.getStatementId();
 
-                if (statementInfo != null) {
-                    out.println("          Statment info: " +
-                                Hex.encode(statementInfo.toASN1Primitive().getEncoded()));
+                    out.print("          Statement ID: " + oid.getId());
+
+                    if (ID_ETSI_TSTS.equals(oid)) {
+                        out.println(" (ETSI EN 319 422 compliant)");
+                    }
+
+                    out.println();
+
+                    if (statementInfo != null) {
+                        out.println("          Statment info: " +
+                                    Hex.encode(statementInfo.toASN1Primitive().getEncoded()));
+                    }
                 }
             }
+        } catch (IllegalArgumentException ex) {
+            out.println("          Failed to parse extension value: " +
+                        ex.getMessage());
         }
     }
     

@@ -26,7 +26,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -719,107 +718,6 @@ public class RenewalWorkerTest extends AbstractTestCase {
         doRenewalFirstTime();
     }
 
-    public void test30renewalServiceRun() throws Exception {
-        try {
-            addRenewalWorker(WORKERID, WORKERNAME);
-            addCryptoWorker(CRYPTOWORKER_6200_ID, CRYPTOWORKER_6200, false);
-            
-            addSignerReferencingToken(SIGNERID_6102, SIGNER_6102, SIGNER_6102_ENDENTITY, CRYPTOWORKER_6200);
-            getWorkerSession().setWorkerProperty(SIGNERID_6102, "RENEWWORKER", WORKERNAME);
-            getWorkerSession().reloadConfiguration(RENEWALSERVICE_ID);
-
-            addRenewalWorker(WORKERID, WORKERNAME);
-            
-            mockSetupEjbcaSearchResult();
-
-            doRenewalFirstTime();
-            
-            final X509Certificate oldCert = (X509Certificate) getWorkerSession().getSignerCertificate(new WorkerIdentifier(SIGNERID_6102));
-            final Date oldNotBefore = oldCert.getNotBefore();
-
-            setupRenewalService(RENEWALSERVICE_ID, RENEWALSERVICE_NAME, SIGNER_6102);
-            getWorkerSession().reloadConfiguration(RENEWALSERVICE_ID);
-
-            // Wait for the service to have run
-            Thread.sleep(30000);
-           
-            final X509Certificate newCert = (X509Certificate) getWorkerSession().getSignerCertificate(new WorkerIdentifier(SIGNERID_6102));
-            final Date newNotBefore = newCert.getNotBefore();
-
-            assertNotNull("new certificate", newCert);
-            assertTrue("New notBefore: " + newNotBefore + ", Old: " + oldNotBefore, newNotBefore.after(oldNotBefore));
-            assertFalse("New key", oldCert.getPublicKey().equals(newCert.getPublicKey()));
-        } finally {
-            // Disable the service so it won't run again while we try to remove it
-            getWorkerSession().setWorkerProperty(RENEWALSERVICE_ID, "ACTIVE", "FALSE");
-            getWorkerSession().reloadConfiguration(RENEWALSERVICE_ID);
-            
-            // Wait in case it is about to run
-            try {
-                Thread.sleep(30000);
-            } catch (InterruptedException ex) {
-                LOG.error("Interrupted", ex);
-            }
-            
-            // Now remove the service when we are kind of sure it won't run while we are doing it
-            removeWorker(RENEWALSERVICE_ID);
-            
-            removeWorker(CRYPTOWORKER_6200_ID);
-        }    
-    }
-    
-    public void test30renewalServiceRun_forDefaultKey() throws Exception {
-        try {
-            addRenewalWorker(WORKERID, WORKERNAME);
-            addCryptoWorker(CRYPTOWORKER_6200_ID, CRYPTOWORKER_6200, false);
-            
-            addSignerReferencingToken(SIGNERID_6102, SIGNER_6102, SIGNER_6102_ENDENTITY, CRYPTOWORKER_6200);
-            getWorkerSession().setWorkerProperty(SIGNERID_6102, "RENEWWORKER", WORKERNAME);
-            getWorkerSession().setWorkerProperty(SIGNERID_6102, "RENEW_FORDEFAULTKEY", "true");
-            getWorkerSession().reloadConfiguration(RENEWALSERVICE_ID);
-
-            addRenewalWorker(WORKERID, WORKERNAME);
-            
-            mockSetupEjbcaSearchResult();
-
-            doRenewalFirstTime();
-            
-            final X509Certificate oldCert = (X509Certificate) getWorkerSession().getSignerCertificate(new WorkerIdentifier(SIGNERID_6102));
-            final Date oldNotBefore = oldCert.getNotBefore();
-
-            setupRenewalService(RENEWALSERVICE_ID, RENEWALSERVICE_NAME, SIGNER_6102);
-            getWorkerSession().reloadConfiguration(RENEWALSERVICE_ID);
-
-            // Wait for the service to have run
-            Thread.sleep(20000);
-
-            final X509Certificate newCert = (X509Certificate) getWorkerSession().getSignerCertificate(new WorkerIdentifier(SIGNERID_6102));
-            final Date newNotBefore = newCert.getNotBefore();
-
-            assertNotNull("new certificate", newCert);
-            assertTrue("New notBefore: " + newNotBefore + ", Old: " + oldNotBefore, newNotBefore.after(oldNotBefore));
-            assertEquals("Same key", oldCert.getPublicKey(), newCert.getPublicKey());
-            
-            
-        } finally {
-            // Disable the service so it won't run again while we try to remove it
-            getWorkerSession().setWorkerProperty(RENEWALSERVICE_ID, "ACTIVE", "FALSE");
-            getWorkerSession().reloadConfiguration(RENEWALSERVICE_ID);
-            
-            // Wait in case it is about to run
-            try {
-                Thread.sleep(30000);
-            } catch (InterruptedException ex) {
-                LOG.error("Interrupted", ex);
-            }
-            
-            // Now remove the service when we are kind of sure it won't run while we are doing it
-            removeWorker(RENEWALSERVICE_ID);
-            
-            removeWorker(CRYPTOWORKER_6200_ID);
-        }    
-    }
-
     private void doRenewalFirstTimeUsingCLI() throws Exception {
         LOG.info(">doRenewalFirstTimeUsingCLI");
         
@@ -895,17 +793,6 @@ public class RenewalWorkerTest extends AbstractTestCase {
         getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPATH", keystorePath);
         getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPASSWORD", keystorePassword);
         getWorkerSession().setWorkerProperty(signerId, "DEFAULTKEY", "defaultKey");
-    }
-    
-    private void setupRenewalService(final int signerId, final String signerName, final String workers) throws Exception {
-        getWorkerSession().setWorkerProperty(signerId, WorkerConfig.TYPE, WorkerType.TIMED_SERVICE.name());
-    	getWorkerSession().setWorkerProperty(signerId, WorkerConfig.IMPLEMENTATION_CLASS,
-                "org.signserver.module.renewal.service.RenewalTimedService");
-        getWorkerSession().setWorkerProperty(signerId, "NAME", signerName);
-        getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
-        getWorkerSession().setWorkerProperty(signerId, "WORKERS", workers);
-        getWorkerSession().setWorkerProperty(signerId, "INTERVAL", "10");
-        getWorkerSession().setWorkerProperty(signerId, "ACTIVE", "true");
     }
 
     protected void addRenewalWorker(final int signerId, final String signerName, 

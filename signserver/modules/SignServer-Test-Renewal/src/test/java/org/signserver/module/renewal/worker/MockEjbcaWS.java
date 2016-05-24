@@ -82,6 +82,9 @@ public class MockEjbcaWS {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(MockEjbcaWS.class);
 
+    public static final int MATCH_WITH_USERNAME = 0;
+    public static final int MATCH_TYPE_EQUALS = 0;
+
     private boolean findUserCalled;
     private boolean editUserCalled;
     private boolean pkcs10RequestCalled;
@@ -320,8 +323,8 @@ public class MockEjbcaWS {
             EjbcaException_Exception {
         try {
             final UserMatchEq match1 = new UserMatchEq();
-            match1.setMatchwith(RenewalWorkerTest.MATCH_WITH_USERNAME);
-            match1.setMatchtype(RenewalWorkerTest.MATCH_TYPE_EQUALS);
+            match1.setMatchwith(MATCH_WITH_USERNAME);
+            match1.setMatchtype(MATCH_TYPE_EQUALS);
             match1.setMatchvalue(username);
             List<UserDataVOWS> users = findUser(match1);
             if (users.size() < 1) {

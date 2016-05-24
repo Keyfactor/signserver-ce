@@ -96,9 +96,6 @@ public class RenewalWorkerTest extends AbstractTestCase {
     public static final String DEFAULT_KEYALG = "RSA";
     public static final String DEFAULT_KEYSPEC = "2048";
 
-    static final int MATCH_WITH_USERNAME = 0;
-    static final int MATCH_TYPE_EQUALS = 0;
-
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(RenewalWorkerTest.class);
 
@@ -1082,8 +1079,8 @@ public class RenewalWorkerTest extends AbstractTestCase {
         user1.setCertificateProfileName("ENDENTITY");
         user1.setCaName("SomeCA");
         final UserMatchEq match1 = new UserMatchEq();
-        match1.setMatchwith(MATCH_WITH_USERNAME);
-        match1.setMatchtype(MATCH_TYPE_EQUALS);
+        match1.setMatchwith(MockEjbcaWS.MATCH_WITH_USERNAME);
+        match1.setMatchtype(MockEjbcaWS.MATCH_TYPE_EQUALS);
         match1.setMatchvalue(SIGNER_6102_ENDENTITY);
         final Map<UserMatchEq, List<UserDataVOWS>> findResult
                 = new HashMap<>();

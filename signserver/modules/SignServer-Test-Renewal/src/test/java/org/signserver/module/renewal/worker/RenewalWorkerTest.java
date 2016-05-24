@@ -15,6 +15,7 @@ package org.signserver.module.renewal.worker;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.security.KeyStore;
@@ -715,8 +716,25 @@ public class RenewalWorkerTest extends AbstractTestCase {
 
         doRenewalFirstTime();
     }
-
+    
     public void test30renewalServiceRun() throws Exception {
+        // Only run this test in EE
+        FileInputStream fin = null;
+        try {
+            fin = new FileInputStream(new File(PathUtil.getAppHome(), "res/edition.properties"));
+            Properties app = new Properties();
+            app.load(fin);
+            // Not working: Assume.assumeThat(app.getProperty("app.edition"), is("EE"));
+            if (!"EE".equals(app.getProperty("app.edition"))) {
+                LOG.error("Skipping EE test");
+                return;
+            }
+        } finally {
+            if (fin != null) {
+                fin.close();
+            }
+        }
+
         try {
             addRenewalWorker(WORKERID, WORKERNAME);
             addCryptoWorker(CRYPTOWORKER_6200_ID, CRYPTOWORKER_6200, false);
@@ -764,8 +782,25 @@ public class RenewalWorkerTest extends AbstractTestCase {
             removeWorker(CRYPTOWORKER_6200_ID);
         }    
     }
-    
+
     public void test30renewalServiceRun_forDefaultKey() throws Exception {
+        // Only run this test in EE
+        FileInputStream fin = null;
+        try {
+            fin = new FileInputStream(new File(PathUtil.getAppHome(), "res/edition.properties"));
+            Properties app = new Properties();
+            app.load(fin);
+            // Not working: Assume.assumeThat(app.getProperty("app.edition"), is("EE"));
+            if (!"EE".equals(app.getProperty("app.edition"))) {
+                LOG.error("Skipping EE test");
+                return;
+            }
+        } finally {
+            if (fin != null) {
+                fin.close();
+            }
+        }
+
         try {
             addRenewalWorker(WORKERID, WORKERNAME);
             addCryptoWorker(CRYPTOWORKER_6200_ID, CRYPTOWORKER_6200, false);

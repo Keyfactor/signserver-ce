@@ -76,6 +76,8 @@ public class BaseWorkerLoggerUnitTest extends TestCase {
                      1, workerLogger.getFatalErrors().size());
         assertTrue("Should contain the error",
                    workerLogger.getFatalErrors().contains("An error"));
+        assertTrue("Should detect errors being registered",
+                   workerLogger.hasErrors());
     }
     
     /**
@@ -142,5 +144,34 @@ public class BaseWorkerLoggerUnitTest extends TestCase {
                    workerLogger.getFatalErrors().contains("Base error"));
         assertTrue("Should contain the overridden error",
                    workerLogger.getFatalErrors().contains("Overridden error"));
+    }
+    
+    /**
+     * Test that an implementation can use hasErrors() to detect if errors have
+     * been registered at the base level.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testHasErrors() throws Exception {
+        final BaseWorkerLogger workerLogger = new BaseWorkerLogger() {
+            @Override
+            public void init(int workerId, WorkerConfig config, SignServerContext context) {
+                addFatalError("An error");
+            }
+
+            @Override
+            public void log(AdminInfo adminInfo, Map<String, String> fields, RequestContext requestContext) throws WorkerLoggerException {
+            }            
+        };
+        
+        workerLogger.init(0, null, null);
+        
+        assertEquals("Should contain one error",
+                     1, workerLogger.getFatalErrors().size());
+        assertTrue("Should contain the error",
+                   workerLogger.getFatalErrors().contains("An error"));
+        assertTrue("Should show errors being registered",
+                   workerLogger.hasErrors());
     }
 }

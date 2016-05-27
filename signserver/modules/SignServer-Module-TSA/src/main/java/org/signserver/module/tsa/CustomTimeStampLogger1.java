@@ -18,6 +18,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.log.AdminInfo;
+import org.signserver.server.log.BaseWorkerLogger;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.WorkerLoggerException;
 
@@ -27,7 +28,7 @@ import org.signserver.server.log.WorkerLoggerException;
  * @author Markus Kilås
  * @version $Id$
  */
-public class CustomTimeStampLogger1 implements ITimeStampLogger {
+public class CustomTimeStampLogger1 extends BaseWorkerLogger implements ITimeStampLogger {
 
     private static final Logger ACCOUNTLOG =
             Logger.getLogger(IWorkerLogger.class);

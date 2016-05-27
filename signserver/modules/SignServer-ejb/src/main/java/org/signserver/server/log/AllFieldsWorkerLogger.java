@@ -26,7 +26,7 @@ import org.signserver.server.SignServerContext;
  * @author Markus Kilås
  * @version $Id$
  */
-public class AllFieldsWorkerLogger implements IWorkerLogger {
+public class AllFieldsWorkerLogger extends BaseWorkerLogger implements IWorkerLogger {
 
     /** Logger for this class. */
     private static final Logger ACCOUNTLOG =

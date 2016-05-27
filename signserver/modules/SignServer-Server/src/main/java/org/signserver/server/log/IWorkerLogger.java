@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server.log;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.signserver.common.RequestContext;
@@ -90,4 +91,10 @@ public interface IWorkerLogger {
      */
     void log(final AdminInfo adminInfo, Map<String,String> fields, RequestContext requestContext) throws WorkerLoggerException;
 
+    /**
+     * Return a list of fatal errors for the logger implementation.
+     * 
+     * @return A list of errors, or empty if there's no fatal errors
+     */
+    List<String> getFatalErrors();
 }

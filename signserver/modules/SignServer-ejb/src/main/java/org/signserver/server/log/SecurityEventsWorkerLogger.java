@@ -30,7 +30,7 @@ import org.signserver.server.SignServerContext;
  * @author Marcus Lundblad
  * @version $Id$
  */
-public class SecurityEventsWorkerLogger implements IWorkerLogger {
+public class SecurityEventsWorkerLogger extends BaseWorkerLogger implements IWorkerLogger {
     /** Logger for this class. */
     private final Logger LOG = Logger.getLogger(SecurityEventsWorkerLogger.class);
 
@@ -41,16 +41,13 @@ public class SecurityEventsWorkerLogger implements IWorkerLogger {
     private Set<String> includedFields;
     private Set<String> excludedFields;
 
-    private boolean configError;
-
     @Override
     public void init(final int workerId, final WorkerConfig config, final SignServerContext context) {
         final String include = config.getProperty(INCLUDE_FIELDS);
         final String exclude = config.getProperty(EXCLUDE_FIELDS);
 
         if (include != null && exclude != null) {
-            LOG.error("Can only set one of " + INCLUDE_FIELDS + " and " + EXCLUDE_FIELDS);
-            configError = true;
+            addFatalError("Can only set one of " + INCLUDE_FIELDS + " and " + EXCLUDE_FIELDS);
         }
 
         if (include != null) {
@@ -76,7 +73,7 @@ public class SecurityEventsWorkerLogger implements IWorkerLogger {
     public void log(final AdminInfo adminInfo, final Map<String, String> fields, final RequestContext context) throws WorkerLoggerException {
         final Map<String, Object> details = new LinkedHashMap<>();
 
-        if (configError) {
+        if (hasErrors()) {
             throw new WorkerLoggerException("Can only set one of " + INCLUDE_FIELDS + " and " + EXCLUDE_FIELDS);
         }
         final SecurityEventsLoggerSessionLocal logger = context.getServices().get(SecurityEventsLoggerSessionLocal.class);

@@ -13,22 +13,39 @@
 package org.signserver.server.log;
 
 import java.util.Map;
+import junit.framework.TestCase;
+import org.junit.Test;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.SignServerContext;
 
 /**
- * WorkerLogger not logging anything at all.
- *
- * @author Markus Kilås
- * @version $Id$
+ * Unit tests for the base worker logger implementation.
+ * Tests the fatal errors mechanism.
+ * 
+ * @author Marcus Lundblad
+ * @version $Id
  */
-public class NullWorkerLogger extends BaseWorkerLogger implements IWorkerLogger {
+public class BaseWorkerLoggerUnitTest extends TestCase {
+    
+    /**
+     * Test that no fatal error is included by default.
+     * 
+     */
+    @Test
+    public void testNoErrors() {
+        final BaseWorkerLogger workerLogger = new BaseWorkerLogger() {
+            @Override
+            public void init(int workerId, WorkerConfig config, SignServerContext context) {
+            }
 
-    @Override
-    public void init(final int workerId, final WorkerConfig config, final SignServerContext context) {}
-
-    @Override
-    public void log(final AdminInfo adminInfo, final Map<String, String> fields, final RequestContext context) throws WorkerLoggerException {}
-
+            @Override
+            public void log(AdminInfo adminInfo, Map<String, String> fields, RequestContext requestContext) throws WorkerLoggerException {
+            }            
+        };
+        
+        assertEquals("Should contain no errors",
+                     0, workerLogger.getFatalErrors().size());
+        assertFalse("Should not report errors", workerLogger.hasErrors());
+    }
 }

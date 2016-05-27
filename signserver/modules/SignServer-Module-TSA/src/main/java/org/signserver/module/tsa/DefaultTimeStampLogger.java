@@ -20,6 +20,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.log.AdminInfo;
+import org.signserver.server.log.BaseWorkerLogger;
 import org.signserver.server.log.EjbcaPatternLogger;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.WorkerLoggerException;
@@ -29,7 +30,7 @@ import org.signserver.server.log.WorkerLoggerException;
  *
  * @version $Id$
  */
-public class DefaultTimeStampLogger implements IWorkerLogger {
+public class DefaultTimeStampLogger extends BaseWorkerLogger implements IWorkerLogger {
 
     private Pattern pattern;
     private String orderString;

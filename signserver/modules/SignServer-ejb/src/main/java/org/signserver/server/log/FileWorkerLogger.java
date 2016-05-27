@@ -27,7 +27,7 @@ import org.signserver.server.SignServerContext;
  * @author Marcus Lundblad
  * @version $Id$
  */
-public class FileWorkerLogger implements IWorkerLogger {
+public class FileWorkerLogger extends BaseWorkerLogger implements IWorkerLogger {
 
     private static final String FILE_PATH_PROPERTY_NAME = "LOG_FILE_PATH";
     
@@ -42,7 +42,7 @@ public class FileWorkerLogger implements IWorkerLogger {
         logFilePath = config.getProperty(FILE_PATH_PROPERTY_NAME);
 
         if (logFilePath == null) {
-            LOG.error("Log file path not specified");
+            addFatalError("Log file path not specified");
         }
     }
 

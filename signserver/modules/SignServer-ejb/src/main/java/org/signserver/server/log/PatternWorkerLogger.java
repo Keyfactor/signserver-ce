@@ -25,7 +25,7 @@ import org.signserver.server.SignServerContext;
  *
  * @version $Id$
  */
-public class PatternWorkerLogger implements IWorkerLogger {
+public class PatternWorkerLogger extends BaseWorkerLogger implements IWorkerLogger {
 
     private Pattern pattern;
     private String orderString;

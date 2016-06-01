@@ -109,8 +109,10 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 (byte[]) res.getProcessedData());
         timeStampResponse.validate(timeStampRequest);
 
-        LogMap logMap = LogMap.getInstance(processSession.getLastRequestContext());
-        assertEquals("timesource", LocalComputerTimeSource.class.getSimpleName(), logMap.get("TSA_TIMESOURCE"));
+        final LogMap logMap = LogMap.getInstance(processSession.getLastRequestContext());
+        final Loggable loggable = logMap.get("TSA_TIMESOURCE");
+        assertEquals("timesource", LocalComputerTimeSource.class.getSimpleName(),
+                     loggable.logValue());
     }
     
     /**

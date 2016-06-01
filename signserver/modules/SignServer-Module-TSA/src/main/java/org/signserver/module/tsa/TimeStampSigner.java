@@ -74,6 +74,7 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.server.log.ExceptionLoggable;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
@@ -702,12 +703,7 @@ public class TimeStampSigner extends BaseSigner {
                     "InvalidAlgorithmParameterException: " + e.getMessage(), e);
             LOG.error("InvalidAlgorithmParameterException: ", e);
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                       new Loggable() {
-                           @Override
-                           public String logValue() {
-                               return exception.getMessage();
-                           }
-                       });
+                       new ExceptionLoggable(exception));
             throw exception;
         } catch (NoSuchAlgorithmException e) {
             final IllegalRequestException exception =
@@ -715,12 +711,7 @@ public class TimeStampSigner extends BaseSigner {
                         "NoSuchAlgorithmException: " + e.getMessage(), e);
             LOG.error("NoSuchAlgorithmException: ", e);
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                       new Loggable() {
-                           @Override
-                           public String logValue() {
-                               return exception.getMessage();
-                           }
-                       });
+                       new ExceptionLoggable(exception));
             throw exception;
         } catch (NoSuchProviderException e) {
             final IllegalRequestException exception =
@@ -728,12 +719,7 @@ public class TimeStampSigner extends BaseSigner {
                     "NoSuchProviderException: " + e.getMessage(), e);
             LOG.error("NoSuchProviderException: ", e);
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                       new Loggable() {
-                           @Override
-                           public String logValue() {
-                               return exception.getMessage();
-                           }
-                       });
+                       new ExceptionLoggable(exception));
             throw exception;
         } catch (CertStoreException e) {
             final IllegalRequestException exception =
@@ -741,12 +727,7 @@ public class TimeStampSigner extends BaseSigner {
                     + e.getMessage(), e);
             LOG.error("CertStoreException: ", e);
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                       new Loggable() {
-                           @Override
-                           public String logValue() {
-                               return exception.getMessage();
-                           }
-                       });
+                       new ExceptionLoggable(exception));
             throw exception;
         } catch (IOException e) {
             final IllegalRequestException exception =
@@ -754,36 +735,21 @@ public class TimeStampSigner extends BaseSigner {
                     "IOException: " + e.getMessage(), e);
             LOG.error("IOException: ", e);
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                       new Loggable() {
-                           @Override
-                           public String logValue() {
-                               return exception.getMessage();
-                           }
-                       });
+                       new ExceptionLoggable(exception));
             throw exception;
         } catch (TSPException e) {
             final IllegalRequestException exception =
                     new IllegalRequestException(e.getMessage(), e);
             LOG.error("TSPException: ", e);
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                       new Loggable() {
-                           @Override
-                           public String logValue() {
-                               return exception.getMessage();
-                           }
-                       });
+                       new ExceptionLoggable(exception));
             throw exception;
         } catch (OperatorCreationException e) {
         	final SignServerException exception =
         			new SignServerException(e.getMessage(), e);
         	LOG.error("OperatorCreationException: ", e);
         	logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                           new Loggable() {
-                               @Override
-                               public String logValue() {
-                                   return exception.getMessage();
-                               }
-                           });
+                           new ExceptionLoggable(exception));
         	throw exception;
         } finally {
             releaseCryptoInstance(crypto, requestContext);

@@ -32,6 +32,7 @@ import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.dispatchers.BaseDispatcher;
 import org.signserver.server.log.AdminInfo;
+import org.signserver.server.log.ExceptionLoggable;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
@@ -188,13 +189,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
                 result = (GenericSignResponse) getProcessSession(context.getServices()).process(new AdminInfo("Client user", null, null), toWorker, newRequest, nextContext);
             }
         } catch (final IOException e) {
-            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                       new Loggable() {
-                           @Override
-                           public String logValue() {
-                               return e.getMessage();
-                           }
-                       });
+            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION, new ExceptionLoggable(e));
             throw new SignServerException("Response message could not be constructed", e);
         } catch (TSPException e) {
             throw new SignServerException("Response message could not be constructed", e);

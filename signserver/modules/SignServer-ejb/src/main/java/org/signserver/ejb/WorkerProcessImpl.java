@@ -591,12 +591,7 @@ class WorkerProcessImpl {
         if (workerLogger == null) {
             throw new WorkerLoggerException("Worker logger misconfigured", ex);
         }
-    	logMap.put(IWorkerLogger.LOG_EXCEPTION, new Loggable() {
-            @Override
-            public String logValue() {
-                return ex.getMessage();
-            }
-        });
+    	logMap.put(IWorkerLogger.LOG_EXCEPTION, new ExceptionLoggable(ex));
     	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, new Loggable() {
             @Override
             public String logValue() {

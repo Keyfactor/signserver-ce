@@ -68,6 +68,7 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.server.log.ExceptionLoggable;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
 import org.signserver.server.signers.BaseSigner;
@@ -440,48 +441,28 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                     "IOException: " + e.getMessage(), e);
             LOG.error("IOException: ", e);
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                       new Loggable() {
-                           @Override
-                           public String logValue() {
-                               return exception.getMessage();
-                           }
-                       });
+                       new ExceptionLoggable(exception));
             throw exception;
         } catch (CMSException e) {
         	final SignServerException exception =
         			new SignServerException(e.getMessage(), e);
         	LOG.error("CMSException: ", e);
         	logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                           new Loggable() {
-                               @Override
-                               public String logValue() {
-                                   return exception.getMessage();
-                               }
-                           });
+                           new ExceptionLoggable(exception));
         	throw exception;
         } catch (OperatorCreationException e) {
             final SignServerException exception =
                 new SignServerException(e.getMessage(), e);
             LOG.error("OperatorCreationException: ", e);
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                       new Loggable() {
-                           @Override
-                           public String logValue() {
-                                   return exception.getMessage();
-                           }
-                       });
+                       new ExceptionLoggable(exception));
             throw exception;
         } catch (CertificateEncodingException e) {
             final SignServerException exception =
                 new SignServerException(e.getMessage(), e);
             LOG.error("CertificateEncodingException: ", e);
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                       new Loggable() {
-                           @Override
-                           public String logValue() {
-                                   return exception.getMessage();
-                           }
-                       });
+                       new ExceptionLoggable(exception));
             throw exception;
         } catch (ArrayIndexOutOfBoundsException e) {
             // the BC base64 decoder doesn't check the the base64 input length...
@@ -490,12 +471,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                     "ArrayIndexOutOfBoundsException: " + e.getMessage(), e);
             LOG.error("ArrayIndexOutOfBoundsException: ", e);
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                       new Loggable() {
-                           @Override
-                           public String logValue() {
-                                   return exception.getMessage();
-                           }
-                       });
+                       new ExceptionLoggable(exception));
             throw exception;
         }
     }

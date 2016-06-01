@@ -29,6 +29,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.log.LogMap;
+import org.signserver.server.log.Loggable;
 
 /**
  * Authorizer requiring a username password pair.
@@ -164,7 +165,13 @@ public class UsernamePasswordAuthorizer implements IAuthorizer {
 
     private static void logUsername(final String username,
             final RequestContext requestContext) {
-        LogMap.getInstance(requestContext).put(IAuthorizer.LOG_USERNAME, username);
+        LogMap.getInstance(requestContext).put(IAuthorizer.LOG_USERNAME,
+                    new Loggable() {
+                        @Override
+                        public String logValue() {
+                            return username;
+                        }
+                    });
     }
 
     private static class Account {

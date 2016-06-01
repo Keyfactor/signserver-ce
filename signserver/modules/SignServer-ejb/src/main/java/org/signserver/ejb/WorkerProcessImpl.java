@@ -69,6 +69,7 @@ import org.signserver.server.statistics.StatisticsManager;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.IServices;
+import org.signserver.server.log.ExceptionLoggable;
 import org.signserver.server.log.Loggable;
 
 /**

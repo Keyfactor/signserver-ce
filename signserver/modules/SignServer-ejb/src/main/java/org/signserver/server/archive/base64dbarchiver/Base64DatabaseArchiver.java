@@ -153,13 +153,15 @@ public class Base64DatabaseArchiver extends BaseArchiver implements Archiver {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Archived with uniqueId: " + uniqueId);
             }
+
             final LogMap logMap = LogMap.getInstance(requestContext);
-            
+            final Loggable loggable = logMap.get(IWorkerLogger.LOG_ARCHIVE_IDS);
+
             logMap.put(IWorkerLogger.LOG_ARCHIVE_IDS, new Loggable() {
                 @Override
                 public String logValue() {
                     final String ids;
-                    final Loggable loggable = logMap.get(IWorkerLogger.LOG_ARCHIVE_IDS);
+                    
                     if (loggable == null) {
                         ids = uniqueId;
                     } else {

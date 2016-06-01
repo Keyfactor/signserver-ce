@@ -47,6 +47,7 @@ import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
+import org.signserver.server.log.Loggable;
 
 public abstract class BaseProcessable extends BaseWorker implements IProcessable {
 
@@ -152,8 +153,21 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         final String alias = aliasSelector.getAlias(purpose, this, request, context);
 
         if (context != null) {
-            LogMap.getInstance(context).put(IWorkerLogger.LOG_KEYALIAS, alias);
-            LogMap.getInstance(context).put(IWorkerLogger.LOG_CRYPTOTOKEN, getCryptoToken(workerId, config));
+            LogMap.getInstance(context).put(IWorkerLogger.LOG_KEYALIAS,
+                                            new Loggable() {
+                                                @Override
+                                                public String logValue() {
+                                                    return alias;
+                                                }
+                                            });
+            LogMap.getInstance(context).put(IWorkerLogger.LOG_CRYPTOTOKEN,
+                                            new Loggable() {
+                                                @Override
+                                                public String logValue() {
+                                                    return getCryptoToken(workerId,
+                                                                          config);
+                                                }
+                                            });
         }
 
         return alias;

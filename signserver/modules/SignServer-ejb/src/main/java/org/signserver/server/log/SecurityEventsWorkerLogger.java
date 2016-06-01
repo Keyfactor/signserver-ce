@@ -70,7 +70,7 @@ public class SecurityEventsWorkerLogger extends BaseWorkerLogger implements IWor
     }
 
     @Override
-    public void log(final AdminInfo adminInfo, final Map<String, String> fields, final RequestContext context) throws WorkerLoggerException {
+    public void log(final AdminInfo adminInfo, final Map<String, Loggable> fields, final RequestContext context) throws WorkerLoggerException {
         final Map<String, Object> details = new LinkedHashMap<>();
 
         if (hasErrors()) {
@@ -86,15 +86,15 @@ public class SecurityEventsWorkerLogger extends BaseWorkerLogger implements IWor
             if (!IWorkerLogger.LOG_WORKER_ID.equals(key) &&
                 (includedFields == null || includedFields.contains(key)) &&
                 (excludedFields == null || !excludedFields.contains(key))) {
-                details.put(key, fields.get(key));
+                details.put(key, fields.get(key).logValue());
             }
         }
         final String serNo = adminInfo.getCertSerialNumber() != null ? adminInfo.getCertSerialNumber().toString(16) : null;
-        final String sucess = fields.get(IWorkerLogger.LOG_PROCESS_SUCCESS);
+        final String sucess = fields.get(IWorkerLogger.LOG_PROCESS_SUCCESS).logValue();
         logger.log(SignServerEventTypes.PROCESS,
                 Boolean.toString(true).equals(sucess) ? EventStatus.SUCCESS : EventStatus.FAILURE,
                 SignServerModuleTypes.WORKER, SignServerServiceTypes.SIGNSERVER, adminInfo.getSubjectDN(),
-                adminInfo.getIssuerDN(), serNo, fields.get(IWorkerLogger.LOG_WORKER_ID), details);
+                adminInfo.getIssuerDN(), serNo, fields.get(IWorkerLogger.LOG_WORKER_ID).logValue(), details);
     }
 
 }

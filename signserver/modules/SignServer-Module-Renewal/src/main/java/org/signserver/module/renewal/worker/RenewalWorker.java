@@ -50,6 +50,7 @@ import org.signserver.server.log.LogMap;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.IServices;
+import org.signserver.server.log.Loggable;
 
 /**
  * Worker renewing certificate (and optionally keys) for a signer by sending
@@ -197,11 +198,22 @@ public class RenewalWorker extends BaseSigner {
 
         // Log result
         logMap.put(RenewalWorkerProperties.LOG_RESPONSE_RESULT,
-                responseData.getProperty(RenewalWorkerProperties
-                    .RESPONSE_RESULT));
+                   new Loggable() {
+                        @Override
+                        public String logValue() {
+                            return responseData.getProperty(RenewalWorkerProperties
+                                                            .RESPONSE_RESULT);
+                        }
+                    }); 
+
         logMap.put(RenewalWorkerProperties.LOG_RESPONSE_MESSAGE,
-                responseData.getProperty(RenewalWorkerProperties
-                    .RESPONSE_MESSAGE));
+                   new Loggable() {
+                       @Override
+                       public String logValue() {
+                           return responseData.getProperty(RenewalWorkerProperties
+                                                            .RESPONSE_MESSAGE);
+                       }
+                   });
 
         if (request instanceof GenericSignRequest) {
             final GenericSignRequest signRequest =
@@ -254,7 +266,13 @@ public class RenewalWorker extends BaseSigner {
         responseData = new Properties();
 
         // Log renewee
-        logMap.put(RenewalWorkerProperties.LOG_RENEWEE, workerName);
+        logMap.put(RenewalWorkerProperties.LOG_RENEWEE,
+                   new Loggable() {
+                       @Override
+                       public String logValue() {
+                           return workerName;
+                       }
+                   });
 
         final WorkerSessionLocal workerSession = getWorkerSession(requestContext.getServices());
         
@@ -408,7 +426,13 @@ public class RenewalWorker extends BaseSigner {
                 keyAlg, keySpec, null, authcode);
 
         // Log
-        logMap.put(RenewalWorkerProperties.LOG_GENERATEDKEYALIAS, newAlias);
+        logMap.put(RenewalWorkerProperties.LOG_GENERATEDKEYALIAS,
+                   new Loggable() {
+                       @Override
+                       public String logValue() {
+                           return newAlias;
+                       }
+                   });
         if (LOG.isDebugEnabled()) {
             LOG.debug("Generated new key: " + newAlias);
         }
@@ -427,7 +451,12 @@ public class RenewalWorker extends BaseSigner {
         if (result.isSuccess()) {
             // Log
             logMap.put(RenewalWorkerProperties.LOG_GENERATEDKEYHASH, 
-                    result.getPublicKeyHash());
+                       new Loggable() {
+                           @Override
+                           public String logValue() {
+                               return result.getPublicKeyHash();
+                           }
+                       });
 
             workerSession.setWorkerProperty(workerId, NEXTCERTSIGNKEY,
                     newAlias);
@@ -537,11 +566,26 @@ public class RenewalWorker extends BaseSigner {
 
                 // Log
                 logMap.put(RenewalWorkerProperties.LOG_NEWCERTISSUERDN,
-                        signerCert.getIssuer().toString());
+                           new Loggable() {
+                               @Override
+                               public String logValue() {
+                                   return signerCert.getIssuer().toString();
+                               }
+                           });
                 logMap.put(RenewalWorkerProperties.LOG_NEWCERTSERIALNO,
-                        signerCert.getSerialNumber().toString(16));
+                           new Loggable() {
+                               @Override
+                               public String logValue() {
+                                   return signerCert.getSerialNumber().toString(16);
+                               }
+                           });
                 logMap.put(RenewalWorkerProperties.LOG_NEWCERTSUBJECTDN,
-                        signerCert.getSubject().toString());
+                           new Loggable() {
+                               @Override
+                               public String logValue() {
+                                   return signerCert.getSubject().toString();
+                               }
+                           });
 
                 // TODO: Check the certificate
                     // Public key should match

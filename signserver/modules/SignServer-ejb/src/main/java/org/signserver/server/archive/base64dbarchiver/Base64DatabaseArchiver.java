@@ -35,6 +35,7 @@ import org.signserver.server.archive.olddbarchiver.ArchiveOfTypes;
 import org.signserver.server.archive.olddbarchiver.entities.ArchiveDataService;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
+import org.signserver.server.log.Loggable;
 
 /**
  * Archiver archiving to the database table ArchiveData with the archived bytes
@@ -152,15 +153,22 @@ public class Base64DatabaseArchiver extends BaseArchiver implements Archiver {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Archived with uniqueId: " + uniqueId);
             }
-            LogMap logMap = LogMap.getInstance(requestContext);
-            String ids = logMap.get(IWorkerLogger.LOG_ARCHIVE_IDS);
-            if (ids == null) {
-                ids = uniqueId;
-            } else {
-                ids = ids + ", " + uniqueId;
-            }
-            logMap.put(IWorkerLogger.LOG_ARCHIVE_IDS, ids);
+            final LogMap logMap = LogMap.getInstance(requestContext);
             
+            logMap.put(IWorkerLogger.LOG_ARCHIVE_IDS, new Loggable() {
+                @Override
+                public String logValue() {
+                    final String ids;
+                    final Loggable loggable = logMap.get(IWorkerLogger.LOG_ARCHIVE_IDS);
+                    if (loggable == null) {
+                        ids = uniqueId;
+                    } else {
+                        ids = loggable.logValue() + ", " + uniqueId;
+                    }
+                    return ids;
+                }
+            });
+
             archived = true;
         } else {
             archived = false;

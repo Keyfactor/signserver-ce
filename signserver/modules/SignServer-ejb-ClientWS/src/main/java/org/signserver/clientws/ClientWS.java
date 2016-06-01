@@ -31,6 +31,7 @@ import org.signserver.server.CredentialUtils;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
+import org.signserver.server.log.Loggable;
 
 /**
  * Client web services implementation containing operations for requesting 
@@ -256,14 +257,28 @@ public class ClientWS {
         final String xForwardedFor = servletRequest.getHeader(RequestContext.X_FORWARDED_FOR);
 
         // Add HTTP specific log entries
-        logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, 
-                servletRequest.getRequestURL().append("?")
-                .append(servletRequest.getQueryString()).toString());
-        logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH, 
-                servletRequest.getHeader("Content-Length"));
-        logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR,
-                servletRequest.getHeader("X-Forwarded-For"));
-        
+        logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, new Loggable() {
+            @Override
+            public String logValue() {
+                return servletRequest.getRequestURL().append("?")
+                        .append(servletRequest.getQueryString()).toString();
+            }
+        });
+                
+        logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH, new Loggable() {
+            @Override
+            public String logValue() {
+                return servletRequest.getHeader("Content-Length");
+            }
+        });
+
+        logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR, new Loggable() {
+            @Override
+            public String logValue() {
+                return servletRequest.getHeader("X-Forwarded-For");
+            }
+        });
+
         if (xForwardedFor != null) {
             requestContext.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
         }
@@ -277,10 +292,15 @@ public class ClientWS {
             }
             
             // Special handling of FILENAME
-            String fileName = metadata.get(RequestContext.FILENAME);
+            final String fileName = metadata.get(RequestContext.FILENAME);
             if (fileName != null) {
                 requestContext.put(RequestContext.FILENAME, fileName);
-                logMap.put(IWorkerLogger.LOG_FILENAME, fileName);
+                logMap.put(IWorkerLogger.LOG_FILENAME, new Loggable() {
+                    @Override
+                    public String logValue() {
+                        return fileName;
+                    }
+                });
             }
         }
         

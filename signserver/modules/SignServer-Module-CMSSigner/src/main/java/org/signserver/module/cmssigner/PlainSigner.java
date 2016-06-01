@@ -40,6 +40,7 @@ import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
+import org.signserver.server.log.Loggable;
 import org.signserver.server.signers.BaseSigner;
 
 /**
@@ -130,12 +131,22 @@ public class PlainSigner extends BaseSigner {
         }
         
         final byte[] data = (byte[]) sReq.getRequestData();
-        byte[] digest;
-        logMap.put(IWorkerLogger.LOG_REQUEST_DIGEST_ALGORITHM, logRequestDigestAlgorithm);
+        final byte[] digest;
+        logMap.put(IWorkerLogger.LOG_REQUEST_DIGEST_ALGORITHM, new Loggable() {
+            @Override
+            public String logValue() {
+                return logRequestDigestAlgorithm;
+            }
+        });
         try {
             final MessageDigest md = MessageDigest.getInstance(logRequestDigestAlgorithm);
             digest = md.digest(data);
-            logMap.put(IWorkerLogger.LOG_REQUEST_DIGEST, Hex.toHexString(digest));
+            logMap.put(IWorkerLogger.LOG_REQUEST_DIGEST, new Loggable() {
+                @Override
+                public String logValue() {
+                    return Hex.toHexString(digest);
+                }
+            });
         } catch (NoSuchAlgorithmException ex) {
             LOG.error("Digest algorithm not supported", ex);
             throw new SignServerException("Digest algorithm not supported", ex);
@@ -167,7 +178,12 @@ public class PlainSigner extends BaseSigner {
 
             final byte[] signedbytes = signature.sign();
             
-            logMap.put(IWorkerLogger.LOG_RESPONSE_ENCODED, Base64.toBase64String(signedbytes));
+            logMap.put(IWorkerLogger.LOG_RESPONSE_ENCODED, new Loggable() {
+                @Override
+                public String logValue() {
+                    return Base64.toBase64String(signedbytes);
+                }
+            });
             
             final Collection<? extends Archivable> archivables = Arrays.asList(
                     new DefaultArchivable(Archivable.TYPE_REQUEST, CONTENT_TYPE, data, archiveId), 

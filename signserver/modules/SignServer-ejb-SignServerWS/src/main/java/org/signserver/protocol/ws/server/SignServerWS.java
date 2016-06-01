@@ -35,6 +35,7 @@ import org.signserver.server.CredentialUtils;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
+import org.signserver.server.log.Loggable;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 
 /**
@@ -166,13 +167,27 @@ public class SignServerWS implements ISignServerWS {
         final String xForwardedFor = servletRequest.getHeader(RequestContext.X_FORWARDED_FOR);
         
         // Add HTTP specific log entries
-        logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, 
-                servletRequest.getRequestURL().append("?")
-                .append(servletRequest.getQueryString()).toString());
-        logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH, 
-                servletRequest.getHeader("Content-Length"));
-        logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR, xForwardedFor);
-
+        logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, new Loggable() {
+            @Override
+            public String logValue() {
+                return servletRequest.getRequestURL().append("?")
+                        .append(servletRequest.getQueryString()).toString();
+            }
+        });
+                
+        logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH, new Loggable() {
+            @Override
+            public String logValue() {
+                return servletRequest.getHeader("Content-Length");
+            }
+        });
+                
+        logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR, new Loggable() {
+            @Override
+            public String logValue() {
+                return xForwardedFor;
+            }
+        });
         
         if (xForwardedFor != null) {
             requestContext.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
@@ -198,18 +213,33 @@ public class SignServerWS implements ISignServerWS {
                 requestContext.put(RequestContext.REQUEST_METADATA, metadata);
             }
             
-            String fileName = metadata.get(RequestContext.FILENAME);
+            final String fileName = metadata.get(RequestContext.FILENAME);
 
             if (fileName != null) {
                 requestContext.put(RequestContext.FILENAME, fileName);
-                logMap.put(IWorkerLogger.LOG_FILENAME, fileName);
+                logMap.put(IWorkerLogger.LOG_FILENAME, new Loggable() {
+                    @Override
+                    public String logValue() {
+                        return fileName;
+                    }
+                });
             }
             
             if (wi.hasName()) {
-                logMap.put(IWorkerLogger.LOG_WORKER_NAME, wi.getName());
+                logMap.put(IWorkerLogger.LOG_WORKER_NAME, new Loggable() {
+                    @Override
+                    public String logValue() {
+                        return wi.getName();
+                    }
+                });
             }
             if (wi.hasId()) {
-                logMap.put(IWorkerLogger.LOG_WORKER_ID, String.valueOf(wi.getId()));
+                logMap.put(IWorkerLogger.LOG_WORKER_ID, new Loggable() {
+                    @Override
+                    public String logValue() {
+                        return String.valueOf(wi.getId());
+                    }
+                });
             }
 
             ProcessResponse resp = getProcessSession().process(new AdminInfo("Client user", null, null),

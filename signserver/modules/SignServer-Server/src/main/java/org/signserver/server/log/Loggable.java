@@ -12,23 +12,20 @@
  *************************************************************************/
 package org.signserver.server.log;
 
-import java.util.Map;
-import org.signserver.common.RequestContext;
-import org.signserver.common.WorkerConfig;
-import org.signserver.server.SignServerContext;
-
 /**
- * WorkerLogger not logging anything at all.
- *
- * @author Markus Kilås
+ * Interface for logging a single value.
+ * Workers will implement this interace for log values when setting
+ * the log map to enable logger implementations to do lazy evaluation
+ * of log strings.
+ * 
+ * @author Marcus Lundblad
  * @version $Id$
  */
-public class NullWorkerLogger extends BaseWorkerLogger implements IWorkerLogger {
-
-    @Override
-    public void init(final int workerId, final WorkerConfig config, final SignServerContext context) {}
-
-    @Override
-    public void log(final AdminInfo adminInfo, final Map<String, Loggable> fields, final RequestContext context) throws WorkerLoggerException {}
-
+public interface Loggable {
+    /**
+     * Gets a log string for this instance of Loggable.
+     * 
+     * @return The log string value
+     */
+    String logValue();
 }

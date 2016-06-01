@@ -47,6 +47,7 @@ import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.log.AdminInfo;
+import org.signserver.server.log.Loggable;
 import org.signserver.test.utils.mock.MockedRequestContext;
 import org.signserver.test.utils.mock.MockedServicesImpl;
 
@@ -136,14 +137,18 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         timeStampResponse.validate(timeStampRequest);
 
         LogMap logMap = LogMap.getInstance(processSession.getLastRequestContext());
-        assertNotNull("response",
-                logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED));
+        final Loggable responseLoggable =
+                logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED);
+        assertNotNull("response", responseLoggable);
+        
         assertEquals("log line doesn't contain newlines", -1,
-                logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED).lastIndexOf('\n'));
-        assertNotNull("request",
-                logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_ENCODED));
+                responseLoggable.logValue().lastIndexOf('\n'));
+        
+        final Loggable requestLoggable =
+                logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_ENCODED);
+        assertNotNull("request", requestLoggable);
         assertEquals("log line doesn't contain newlines", -1,
-                logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_ENCODED).lastIndexOf('\n'));
+                requestLoggable.logValue().lastIndexOf('\n'));
     }
 
     private void setupWorkers() throws Exception {

@@ -24,7 +24,7 @@ import org.signserver.common.RequestContext;
  * @author Markus Kilås
  * @version $Id$
  */
-public class LogMap extends HashMap<String, String> {
+public class LogMap extends HashMap<String, Loggable> {
   
     /**
      * Get the LogMap from the RequestContext or create and put a new one
@@ -49,7 +49,7 @@ public class LogMap extends HashMap<String, String> {
         final LogMap newLogMap = new LogMap();
         
         for (final String key : this.keySet()) {
-            final String value = (String) get(key);
+            final Loggable value = (Loggable) get(key);
             newLogMap.put(key, value);
         }
         

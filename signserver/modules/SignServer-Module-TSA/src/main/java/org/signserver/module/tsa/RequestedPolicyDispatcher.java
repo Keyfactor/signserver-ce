@@ -34,6 +34,7 @@ import org.signserver.server.dispatchers.BaseDispatcher;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
+import org.signserver.server.log.Loggable;
 
 /**
  * Dispatching requests to a Time Stamp Unit based on the requested profile.
@@ -158,8 +159,20 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
                 final TimeStampResponse resp = gen.generateFailResponse(PKIStatus.REJECTION, PKIFailureInfo.unacceptedPolicy, statusString);
 
                 // Auditlog
-                logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, "false");
-                logMap.put(IWorkerLogger.LOG_EXCEPTION, "requested policy not supported");
+                logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
+                           new Loggable() {
+                               @Override
+                               public String logValue() {
+                                   return "false";
+                               }
+                           });
+                logMap.put(IWorkerLogger.LOG_EXCEPTION,
+                           new Loggable() {
+                               @Override
+                               public String logValue() {
+                                   return "requested policy not supported";
+                               }
+                           });
 
                 result = new GenericServletResponse(sReq.getRequestID(), resp.getEncoded(), null, null, null, RESPONSE_CONTENT_TYPE);
             } else {
@@ -174,8 +187,14 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
                 
                 result = (GenericSignResponse) getProcessSession(context.getServices()).process(new AdminInfo("Client user", null, null), toWorker, newRequest, nextContext);
             }
-        } catch (IOException e) {
-            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION, e.getMessage());
+        } catch (final IOException e) {
+            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
+                       new Loggable() {
+                           @Override
+                           public String logValue() {
+                               return e.getMessage();
+                           }
+                       });
             throw new SignServerException("Response message could not be constructed", e);
         } catch (TSPException e) {
             throw new SignServerException("Response message could not be constructed", e);

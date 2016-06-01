@@ -47,7 +47,7 @@ public class FileWorkerLogger extends BaseWorkerLogger implements IWorkerLogger 
     }
 
     @Override
-    public void log(final AdminInfo adminInfo, final Map<String, String> fields, final RequestContext context) throws WorkerLoggerException {
+    public void log(final AdminInfo adminInfo, final Map<String, Loggable> fields, final RequestContext context) throws WorkerLoggerException {
         FileOutputStream fos = null;
 
         try {
@@ -58,10 +58,10 @@ public class FileWorkerLogger extends BaseWorkerLogger implements IWorkerLogger 
 
         final StringBuilder str = new StringBuilder();
 
-        for (Map.Entry<String, String> entry : fields.entrySet()) {
+        for (Map.Entry<String, Loggable> entry : fields.entrySet()) {
             str.append(entry.getKey());
             str.append(": ");
-            str.append(entry.getValue());
+            str.append(entry.getValue().logValue());
             str.append("; ");
         }
 

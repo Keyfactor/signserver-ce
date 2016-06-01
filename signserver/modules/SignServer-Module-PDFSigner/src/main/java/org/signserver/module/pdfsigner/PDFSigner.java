@@ -43,6 +43,7 @@ import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
+import org.signserver.server.log.Loggable;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.server.statistics.Event;
 import org.signserver.validationservice.server.ValidationUtils;
@@ -305,12 +306,24 @@ public class PDFSigner extends BaseSigner {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Password was null or empty");
                 }
-                logMap.put(IWorkerLogger.LOG_PDF_PASSWORD_SUPPLIED, Boolean.FALSE.toString());
+                logMap.put(IWorkerLogger.LOG_PDF_PASSWORD_SUPPLIED,
+                           new Loggable() {
+                               @Override
+                               public String logValue() {
+                                   return Boolean.FALSE.toString();
+                               }
+                           });
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Password length was " + password.length + " bytes");
                 }
-                logMap.put(IWorkerLogger.LOG_PDF_PASSWORD_SUPPLIED, Boolean.TRUE.toString());
+                logMap.put(IWorkerLogger.LOG_PDF_PASSWORD_SUPPLIED,
+                           new Loggable() {
+                               @Override
+                               public String logValue() {
+                                   return Boolean.TRUE.toString();
+                               }
+                           });
             }
             
             byte[] signedbytes =

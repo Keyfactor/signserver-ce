@@ -23,6 +23,7 @@ import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.BaseWorkerLogger;
 import org.signserver.server.log.EjbcaPatternLogger;
 import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.log.Loggable;
 import org.signserver.server.log.WorkerLoggerException;
 
 /**
@@ -88,14 +89,14 @@ public class DefaultTimeStampLogger extends BaseWorkerLogger implements IWorkerL
     }
 
     @Override
-    public void log(final AdminInfo adminInfo, final Map<String, String> fields, final RequestContext context) throws WorkerLoggerException {
+    public void log(final AdminInfo adminInfo, final Map<String, Loggable> fields, final RequestContext context) throws WorkerLoggerException {
         final EjbcaPatternLogger pl = new EjbcaPatternLogger(this.pattern.matcher(
                 this.orderString), this.orderString, ACCOUNTLOG,
                 this.logDateFormat, this.timeZone, this.logLevel);
 
         // TODO: Do a new version of pattern logger instead of this copying
-        for (Map.Entry<String, String> entry : fields.entrySet()) {
-            pl.paramPut(entry.getKey(), entry.getValue());
+        for (Map.Entry<String, Loggable> entry : fields.entrySet()) {
+            pl.paramPut(entry.getKey(), entry.getValue().logValue());
         }
         pl.writeln();
         pl.flush();

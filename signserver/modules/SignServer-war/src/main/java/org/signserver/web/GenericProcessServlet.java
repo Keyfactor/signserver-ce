@@ -41,6 +41,7 @@ import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.server.log.Loggable;
 
 /**
  * GenericProcessServlet is a general Servlet passing on it's request info to the worker configured by either
@@ -378,7 +379,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
     } // doGet
 
     private void processRequest(final HttpServletRequest req, final HttpServletResponse res, final WorkerIdentifier wi, final byte[] data,
-            String fileName, final String pdfPassword, final ProcessType processType,
+            final String fileName, final String pdfPassword, final ProcessType processType,
             final MetaDataHolder metadataHolder) throws java.io.IOException, ServletException {
         final String remoteAddr = req.getRemoteAddr();
         if (LOG.isDebugEnabled()) {
@@ -406,22 +407,42 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         final String xForwardedFor = req.getHeader(RequestContext.X_FORWARDED_FOR);
         
         // Add HTTP specific log entries
-        logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, req.getRequestURL().append("?").append(req.getQueryString()).toString());
-        logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH,
-                String.valueOf(data.length));
-        logMap.put(IWorkerLogger.LOG_FILENAME, fileName);
-        logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR, xForwardedFor);
+        logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, new Loggable() {
+            @Override
+            public String logValue() {
+                return req.getRequestURL().append("?").append(req.getQueryString()).toString();
+            }
+        });
+        logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH, new Loggable() {
+            @Override
+            public String logValue() {
+                return String.valueOf(data.length);
+            }
+        });     
+        logMap.put(IWorkerLogger.LOG_FILENAME, new Loggable() {
+            @Override
+            public String logValue() {
+                return fileName;
+            }
+        });
+        logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR, new Loggable() {
+            @Override
+            public String logValue() {
+                return xForwardedFor;
+            }
+        });
 
         if (xForwardedFor != null) {
             context.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
         }
         
         // Store filename for use by archiver etc
+        String strippedFileName = fileName;
         if (fileName != null) {
-            fileName = stripPath(fileName);
+            strippedFileName = stripPath(fileName);
         }
-        context.put(RequestContext.FILENAME, fileName);
-        context.put(RequestContext.RESPONSE_FILENAME, fileName);
+        context.put(RequestContext.FILENAME, strippedFileName);
+        context.put(RequestContext.RESPONSE_FILENAME, strippedFileName);
 
         // PDF Password
         if (pdfPassword != null) {

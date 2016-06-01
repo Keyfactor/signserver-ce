@@ -60,6 +60,7 @@ import org.signserver.server.ZeroTimeSource;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.LogMap;
+import org.signserver.server.log.Loggable;
 import org.signserver.test.utils.CertTools;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertExt;
@@ -322,8 +323,10 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         
         assertNotNull("response",
                 logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED));
+        final Loggable loggable =
+                logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED);
         assertEquals("log line doesn't contain newlines", -1,
-                logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED).lastIndexOf('\n'));
+                loggable.logValue().lastIndexOf('\n'));
     }
     
     /**

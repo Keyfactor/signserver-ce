@@ -20,6 +20,7 @@ import org.signserver.server.SignServerContext;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.BaseWorkerLogger;
 import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.log.Loggable;
 import org.signserver.server.log.WorkerLoggerException;
 
 /**
@@ -39,7 +40,7 @@ public class CustomTimeStampLogger1 extends BaseWorkerLogger implements ITimeSta
     }
 
     @Override
-    public void log(final AdminInfo adminInfo, final Map<String, String> fields, final RequestContext context)
+    public void log(final AdminInfo adminInfo, final Map<String, Loggable> fields, final RequestContext context)
             throws WorkerLoggerException {
         final StringBuilder str = new StringBuilder();
 
@@ -47,22 +48,22 @@ public class CustomTimeStampLogger1 extends BaseWorkerLogger implements ITimeSta
 
         str.append("LOG_ID");
         str.append(": ");
-        str.append(fields.get(IWorkerLogger.LOG_ID));
+        str.append(fields.get(IWorkerLogger.LOG_ID).logValue());
         str.append("; ");
 
         str.append("CLIENT_IP");
         str.append(": ");
-        str.append(fields.get(IWorkerLogger.LOG_CLIENT_IP));
+        str.append(fields.get(IWorkerLogger.LOG_CLIENT_IP).logValue());
         str.append("; ");
 
         str.append("REQUEST_FULLURL");
         str.append(": ");
-        str.append(fields.get(IWorkerLogger.LOG_REQUEST_FULLURL));
+        str.append(fields.get(IWorkerLogger.LOG_REQUEST_FULLURL).logValue());
         str.append("; ");
 
         str.append("RequestTime");
         str.append(": ");
-        str.append(fields.get(IWorkerLogger.LOG_TIME));
+        str.append(fields.get(IWorkerLogger.LOG_TIME).logValue());
         str.append("; ");
 
         str.append("ResponseTime");
@@ -72,54 +73,54 @@ public class CustomTimeStampLogger1 extends BaseWorkerLogger implements ITimeSta
 
         str.append("TimeStamp");
         str.append(": ");
-        str.append(fields.get(ITimeStampLogger.LOG_TSA_TIME));
+        str.append(fields.get(ITimeStampLogger.LOG_TSA_TIME).logValue());
         str.append("; ");
 
         str.append("PKIStatus");
         str.append(": ");
-        str.append(fields.get(ITimeStampLogger.LOG_TSA_PKISTATUS));
+        str.append(fields.get(ITimeStampLogger.LOG_TSA_PKISTATUS).logValue());
         str.append("; ");
 
         str.append("PKIFailureInfo");
         str.append(": ");
-        str.append(fields.get(ITimeStampLogger.LOG_TSA_PKIFAILUREINFO));
+        str.append(fields.get(ITimeStampLogger.LOG_TSA_PKIFAILUREINFO).logValue());
         str.append("; ");
 
         str.append("TSA_POLICYID");
         str.append(": ");
-        str.append(fields.get(ITimeStampLogger.LOG_TSA_POLICYID));
+        str.append(fields.get(ITimeStampLogger.LOG_TSA_POLICYID).logValue());
         str.append("; ");
 
         str.append("SIGNER_CERT_SERIALNUMBER");
         str.append(": ");
-        str.append(fields.get(ITimeStampLogger.LOG_SIGNER_CERT_SERIALNUMBER));
+        str.append(fields.get(ITimeStampLogger.LOG_SIGNER_CERT_SERIALNUMBER).logValue());
         str.append("; ");
 
         str.append("SIGNER_CERT_ISSUERDN");
         str.append(": ");
-        str.append(fields.get(ITimeStampLogger.LOG_SIGNER_CERT_ISSUERDN));
+        str.append(fields.get(ITimeStampLogger.LOG_SIGNER_CERT_ISSUERDN).logValue());
         str.append("; ");
 
         str.append("TSA_TIMESTAMPREQUEST_ENCODED");
         str.append(": ");
         str.append(fields.get(
-                ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_ENCODED));
+                ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_ENCODED).logValue());
         str.append("; ");
 
         str.append("TSA_TIMESTAMPRESPONSE_ENCODED");
         str.append(": ");
         str.append(fields.get(
-                ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED));
+                ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED).logValue());
         str.append("; ");
 
         str.append("TSA_EXCEPTION");
         str.append(": ");
-        str.append(fields.get(ITimeStampLogger.LOG_TSA_EXCEPTION));
+        str.append(fields.get(ITimeStampLogger.LOG_TSA_EXCEPTION).logValue());
         str.append("; ");
 
         str.append("EXCEPTION");
         str.append(": ");
-        str.append(fields.get(IWorkerLogger.LOG_EXCEPTION));
+        str.append(fields.get(IWorkerLogger.LOG_EXCEPTION).logValue());
         str.append("; ");
 
         ACCOUNTLOG.info(str.toString());

@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server.log;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.log4j.Level;
@@ -69,11 +70,15 @@ public class PatternWorkerLogger extends BaseWorkerLogger implements IWorkerLogg
     }
 
     @Override
-    public void log(final AdminInfo adminInfo, final Map<String, String> fields, final RequestContext context) throws WorkerLoggerException {
+    public void log(final AdminInfo adminInfo, final Map<String, Loggable> fields, final RequestContext context) throws WorkerLoggerException {
         final EjbcaPatternLogger pl = new EjbcaPatternLogger(this.pattern.matcher(
                 this.orderString), this.orderString, ACCOUNTLOG,
                 this.logDateFormat, this.timeZone, this.logLevel);
-        pl.putAll(fields);
+        final Map<String, String> map = new HashMap<String, String>();
+        for (final Map.Entry<String, Loggable> entrySet : fields.entrySet()) {
+            map.put(entrySet.getKey(), entrySet.getValue().logValue());
+        }
+        pl.putAll(map);
         pl.writeln();
         pl.flush();
     }

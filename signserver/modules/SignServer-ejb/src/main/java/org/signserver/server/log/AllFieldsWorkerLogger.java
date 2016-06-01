@@ -51,14 +51,14 @@ public class AllFieldsWorkerLogger extends BaseWorkerLogger implements IWorkerLo
      * @throws WorkerLoggerException
      */
     @Override
-    public void log(final AdminInfo adminInfo, final Map<String, String> fields, final RequestContext context)
+    public void log(final AdminInfo adminInfo, final Map<String, Loggable> fields, final RequestContext context)
             throws WorkerLoggerException {
         final StringBuilder str = new StringBuilder();
         str.append("AllVariablesLogger; ");
-        for (Map.Entry<String, String> entry : fields.entrySet()) {
+        for (Map.Entry<String, Loggable> entry : fields.entrySet()) {
             str.append(entry.getKey());
             str.append(": ");
-            str.append(entry.getValue());
+            str.append(entry.getValue().logValue());
             str.append("; ");
         }
         

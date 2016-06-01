@@ -318,8 +318,10 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         assertTrue("Verification using signer certificate", signer.verify(verifier));
 
         // Check that the time source is being logged
-        LogMap logMap = LogMap.getInstance(workerMock.getLastRequestContext());
-        assertEquals("timesource", ZeroTimeSource.class.getSimpleName(), logMap.get("TSA_TIMESOURCE"));
+        final LogMap logMap = LogMap.getInstance(workerMock.getLastRequestContext());
+        final Loggable timeSourceLoggable = logMap.get("TSA_TIMESOURCE");
+        assertEquals("timesource", ZeroTimeSource.class.getSimpleName(),
+                     timeSourceLoggable.logValue());
         
         assertNotNull("response",
                 logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED));

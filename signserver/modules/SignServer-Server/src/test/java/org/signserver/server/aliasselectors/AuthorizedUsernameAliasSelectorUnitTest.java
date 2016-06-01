@@ -19,6 +19,7 @@ import org.signserver.server.IAuthorizer;
 import org.signserver.server.cryptotokens.CryptoTokenHelper;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.log.LogMap;
+import org.signserver.server.log.Loggable;
 
 /**
  * Unit tests for the username alias selector.
@@ -40,7 +41,12 @@ public class AuthorizedUsernameAliasSelectorUnitTest extends TestCase {
        
        final LogMap logMap= LogMap.getInstance(context);
        
-       logMap.put(IAuthorizer.LOG_USERNAME, "user4711");
+       logMap.put(IAuthorizer.LOG_USERNAME, new Loggable() {
+            @Override
+            public String logValue() {
+                return "user4711";
+            }
+       });
        selector.init(4711, new WorkerConfig(), null, null);
        
        assertEquals("Alias", "user4711",
@@ -62,7 +68,12 @@ public class AuthorizedUsernameAliasSelectorUnitTest extends TestCase {
        
        final LogMap logMap= LogMap.getInstance(context);
        
-       logMap.put(IAuthorizer.LOG_USERNAME, "user4711");
+       logMap.put(IAuthorizer.LOG_USERNAME, new Loggable() {
+           @Override
+           public String logValue() {
+               return "user4711";
+           }
+       });
        selector.init(4711, config, null, null);
        
        assertEquals("Alias", "key_user4711",
@@ -96,7 +107,12 @@ public class AuthorizedUsernameAliasSelectorUnitTest extends TestCase {
         final RequestContext context = new RequestContext();
         final LogMap logMap = LogMap.getInstance(context);
        
-        logMap.put(IAuthorizer.LOG_USERNAME, "user4711");
+        logMap.put(IAuthorizer.LOG_USERNAME, new Loggable() {
+            @Override
+            public String logValue() {
+                return "user4711";
+            }
+        });
         selector.init(4711, config, null, null);
        
         assertEquals("Alias", "user4711",

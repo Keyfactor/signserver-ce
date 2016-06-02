@@ -20,13 +20,22 @@ package org.signserver.server.log;
  * @version $Id$
  */
 public class ExceptionLoggable implements Loggable {
-
     final private Throwable ex;
     
+    /**
+     * Create an instance given the supplied Throwable.
+     * 
+     * @param ex 
+     */
     public ExceptionLoggable(final Throwable ex) {
         this.ex = ex;
     }
     
+    /**
+     * Log the message of the stored Throwable instance.
+     * 
+     * @return The log message
+     */
     @Override
     public String logValue() {
         return ex.getMessage();

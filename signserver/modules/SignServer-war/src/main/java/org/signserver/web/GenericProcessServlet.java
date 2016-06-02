@@ -42,6 +42,7 @@ import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.server.log.Loggable;
+import org.signserver.server.log.StringValueLoggable;
 
 /**
  * GenericProcessServlet is a general Servlet passing on it's request info to the worker configured by either
@@ -413,12 +414,8 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                 return req.getRequestURL().append("?").append(req.getQueryString()).toString();
             }
         });
-        logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH, new Loggable() {
-            @Override
-            public String logValue() {
-                return String.valueOf(data.length);
-            }
-        });     
+        logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH,
+                   new StringValueLoggable(data.length));     
         logMap.put(IWorkerLogger.LOG_FILENAME, new Loggable() {
             @Override
             public String logValue() {

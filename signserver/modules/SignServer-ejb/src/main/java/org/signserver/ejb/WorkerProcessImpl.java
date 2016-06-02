@@ -71,6 +71,7 @@ import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.log.ExceptionLoggable;
 import org.signserver.server.log.Loggable;
+import org.signserver.server.log.StringValueLoggable;
 
 /**
  * Implements the business logic for the process method.
@@ -168,18 +169,10 @@ class WorkerProcessImpl {
         // Store values for request context and logging
         requestContext.put(RequestContext.TRANSACTION_ID, transactionID);
         requestContext.put(RequestContext.EM, em);
-        logMap.put(IWorkerLogger.LOG_TIME, new Loggable() {
-            @Override
-            public String logValue() {
-                return String.valueOf(startTime);
-            }
-        });
-        logMap.put(IWorkerLogger.LOG_ID, new Loggable() {
-            @Override
-            public String logValue() {
-                return transactionID;
-            }
-        });
+        logMap.put(IWorkerLogger.LOG_TIME,
+                   new StringValueLoggable(startTime));
+        logMap.put(IWorkerLogger.LOG_ID,
+                   new StringValueLoggable(transactionID));
         logMap.put(IWorkerLogger.LOG_CLIENT_IP, new Loggable() {
             @Override
             public String logValue() {
@@ -210,12 +203,8 @@ class WorkerProcessImpl {
         // Store ID now that we are sure we have it
         final int workerId = worker.getId();
         requestContext.put(RequestContext.WORKER_ID, workerId);
-        logMap.put(IWorkerLogger.LOG_WORKER_ID, new Loggable() {
-            @Override
-            public String logValue() {
-                return String.valueOf(workerId);
-            }
-        });
+        logMap.put(IWorkerLogger.LOG_WORKER_ID,
+                   new StringValueLoggable(workerId));
 
         final WorkerConfig awc = worker.getWorker().getConfig();
 
@@ -259,22 +248,14 @@ class WorkerProcessImpl {
                 if (authorizer == null) {
                     final SignServerException exception =
                         new SignServerException("Authorization misconfigured");
-                    logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, new Loggable() {
-                        @Override
-                        public String logValue() {
-                            return String.valueOf(false);
-                        }
-                    });
+                    logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, 
+                               new StringValueLoggable(false));
                     logException(adminInfo, exception, logMap, workerLogger, requestContext);
                     throw exception;
                 } else {
                     authorizer.isAuthorized(request, requestContext);
-                    logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, new Loggable() {
-                        @Override
-                        public String logValue() {
-                            return String.valueOf(true);
-                        }
-                    });     
+                    logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
+                               new StringValueLoggable(true));     
                 }
             } catch (AuthorizationRequiredException | AccessDeniedException ex) {
                 throw ex;
@@ -282,24 +263,16 @@ class WorkerProcessImpl {
                 final IllegalRequestException exception =
                         new IllegalRequestException("Authorization failed: "
                         + ex.getMessage(), ex);
-                logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, new Loggable() {
-                    @Override
-                    public String logValue() {
-                        return String.valueOf(false);
-                    }
-                });
+                logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
+                           new StringValueLoggable(false));
                 logException(adminInfo, ex, logMap, workerLogger, requestContext);
                 throw exception;
             } catch (SignServerException ex) {
                 final SignServerException exception =
                         new SignServerException("Authorization failed: "
                         + ex.getMessage(), ex);
-                logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, new Loggable() {
-                    @Override
-                    public String logValue() {
-                        return String.valueOf(false);
-                    }
-                });
+                logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
+                           new StringValueLoggable(false));
                 logException(adminInfo, ex, logMap, workerLogger, requestContext);
                 throw exception;
             }
@@ -437,19 +410,11 @@ class WorkerProcessImpl {
 
                     purchased = worker.getAccounter().purchase(credential, request, res, requestContext);
 
-                    logMap.put(IWorkerLogger.LOG_PURCHASED, new Loggable() {
-                        @Override
-                        public String logValue() {
-                            return String.valueOf(purchased);
-                        }
-                    });
+                    logMap.put(IWorkerLogger.LOG_PURCHASED,
+                               new StringValueLoggable(purchased));
                 } catch (AccounterException ex) {
-                    logMap.put(IWorkerLogger.LOG_PURCHASED, new Loggable() {
-                        @Override
-                        public String logValue() {
-                            return String.valueOf(false);
-                        }
-                    });
+                    logMap.put(IWorkerLogger.LOG_PURCHASED,
+                               new StringValueLoggable(false));
                     final SignServerException exception =
                             new SignServerException("Accounter failed: "
                             + ex.getMessage(), ex);
@@ -464,23 +429,15 @@ class WorkerProcessImpl {
                             return error;
                         }
                     });
-                    logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, new Loggable() {
-                        @Override
-                        public String logValue() {
-                            return String.valueOf(false);
-                        }
-                    });
+                    logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS,
+                               new StringValueLoggable(false));
 
                     workerLogger.log(adminInfo, logMap, requestContext);
                     throw new NotGrantedException(error);
                 }
             } else {
-                logMap.put(IWorkerLogger.LOG_PURCHASED, new Loggable() {
-                    @Override
-                    public String logValue() {
-                        return String.valueOf(false);
-                    }
-                });
+                logMap.put(IWorkerLogger.LOG_PURCHASED,
+                           new StringValueLoggable(false));
             }
 
             // Archiving
@@ -541,24 +498,16 @@ class WorkerProcessImpl {
             // Old log entries (SignServer 3.1) added for backward compatibility
             // Log: REQUESTID
             if (res instanceof ISignResponse) {
-                logMap.put("REQUESTID", new Loggable() {
-                    @Override
-                    public String logValue() {
-                        return String.valueOf(((ISignResponse) res).getRequestID());
-                    }
-                });
+                logMap.put("REQUESTID",
+                           new StringValueLoggable(((ISignResponse) res).getRequestID()));
             }
 
             // Log
             final Loggable loggable = logMap.get(IWorkerLogger.LOG_PROCESS_SUCCESS);
             // log process status true if not already set by the worker...
             if (loggable == null) {
-            	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, new Loggable() {
-                    @Override
-                    public String logValue() {
-                        return String.valueOf(true);
-                    }
-                });
+            	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS,
+                           new StringValueLoggable(true));
             }
             workerLogger.log(adminInfo, logMap, requestContext);
 
@@ -593,12 +542,8 @@ class WorkerProcessImpl {
             throw new WorkerLoggerException("Worker logger misconfigured", ex);
         }
     	logMap.put(IWorkerLogger.LOG_EXCEPTION, new ExceptionLoggable(ex));
-    	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, new Loggable() {
-            @Override
-            public String logValue() {
-                return String.valueOf(false);
-            }
-        });
+    	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS,
+                   new StringValueLoggable(false));
     	workerLogger.log(adminInfo, logMap, requestContext);
     }
 

@@ -415,7 +415,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             }
         });
         logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH,
-                   new StringValueLoggable(data.length));     
+                   new StringValueLoggable(data.length));
         logMap.put(IWorkerLogger.LOG_FILENAME, new Loggable() {
             @Override
             public String logValue() {

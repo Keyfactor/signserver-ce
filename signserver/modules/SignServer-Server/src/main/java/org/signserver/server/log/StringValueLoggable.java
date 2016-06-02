@@ -23,10 +23,21 @@ package org.signserver.server.log;
 public class StringValueLoggable<T> implements Loggable {
     final T value;
     
+    /**
+     * Construct a loggable instance using the passed in object for the log
+     * value.
+     * 
+     * @param value Object to get the log message from
+     */
     public StringValueLoggable(T value) {
         this.value = value;
     }
     
+    /**
+     * Log message using String.valueOf() using the stored instance.
+     * 
+     * @return The log message
+     */
     @Override
     public String logValue() {
         return String.valueOf((Object) value);

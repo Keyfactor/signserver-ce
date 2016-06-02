@@ -78,6 +78,7 @@ import org.signserver.server.log.ExceptionLoggable;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
+import org.signserver.server.log.StringValueLoggable;
 import org.signserver.server.signers.BaseSigner;
 
 /**
@@ -689,12 +690,7 @@ public class TimeStampSigner extends BaseSigner {
                 requestContext.setRequestFulfilledByWorker(true);
             } else {
             	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS,
-                           new Loggable() {
-                               @Override
-                               public String logValue() {
-                                   return String.valueOf(false);
-                               }
-                           });
+                           new StringValueLoggable(false));
             }
 
         } catch (InvalidAlgorithmParameterException e) {

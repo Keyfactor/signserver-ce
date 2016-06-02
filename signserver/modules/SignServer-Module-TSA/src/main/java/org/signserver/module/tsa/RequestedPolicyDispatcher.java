@@ -32,10 +32,12 @@ import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.dispatchers.BaseDispatcher;
 import org.signserver.server.log.AdminInfo;
+import org.signserver.server.log.ConstantStringLoggable;
 import org.signserver.server.log.ExceptionLoggable;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
+import org.signserver.server.log.StringValueLoggable;
 
 /**
  * Dispatching requests to a Time Stamp Unit based on the requested profile.
@@ -161,19 +163,9 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
 
                 // Auditlog
                 logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
-                           new Loggable() {
-                               @Override
-                               public String logValue() {
-                                   return "false";
-                               }
-                           });
+                           new StringValueLoggable(false));
                 logMap.put(IWorkerLogger.LOG_EXCEPTION,
-                           new Loggable() {
-                               @Override
-                               public String logValue() {
-                                   return "requested policy not supported";
-                               }
-                           });
+                           new ConstantStringLoggable("requested policy not supported"));
 
                 result = new GenericServletResponse(sReq.getRequestID(), resp.getEncoded(), null, null, null, RESPONSE_CONTENT_TYPE);
             } else {

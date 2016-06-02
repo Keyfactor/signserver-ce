@@ -74,6 +74,7 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.server.log.ConstantStringLoggable;
 import org.signserver.server.log.ExceptionLoggable;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
@@ -675,12 +676,7 @@ public class TimeStampSigner extends BaseSigner {
             // Put in log values
             if (date == null) {
                 logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                           new Loggable() {
-                               @Override
-                               public String logValue() {
-                                   return "timeSourceNotAvailable";
-                               }
-                           });
+                           new ConstantStringLoggable("timeSourceNotAvailable"));
             }
 
             // We were able to fulfill the request so the worker session bean

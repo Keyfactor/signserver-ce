@@ -44,6 +44,7 @@ import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
@@ -253,7 +254,8 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         if (!includeSigningCertAttr) {
             assertNull("No signing cert attribute", signingCertAttr);
         } else {
-            TestUtils.checkSigningCertificateAttribute(signingCertAttr, cert);
+            TestUtils.checkSigningCertificateAttribute(signingCertAttr, cert,
+                                                       "SHA1", false);
         }
         
         final Attribute contentTypeAttr =

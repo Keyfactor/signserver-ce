@@ -363,7 +363,18 @@ public class TimeStampSignerTest extends ModulesTestCase {
     	}
     }
     
-    private int testWithHash(final ASN1ObjectIdentifier hashAlgo) throws Exception {
+    /**
+     * Helper method testing with given request hash algorithm and (optionally
+     * a given certificate digest algorithm.
+     * 
+     * @param hashAlgo
+     * @return
+     * @throws Exception 
+     */
+    private int testWithHash(final ASN1ObjectIdentifier hashAlgo,
+                             final String certDigestAlgo,
+                             final ASN1ObjectIdentifier expectedCertDigestAlgo,
+                             final boolean expectESSCertIDv2) throws Exception {
     	int reqid = random.nextInt();
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
@@ -375,66 +386,106 @@ public class TimeStampSignerTest extends ModulesTestCase {
         GenericSignRequest signRequest =
                 new GenericSignRequest(reqid, requestBytes);
 
-
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(
-                WORKER1, signRequest, new RemoteRequestContext());
-
-        final CertificateFactory factory = CertificateFactory.getInstance("X.509");
-        final X509Certificate cert =
-                (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(Base64.decode(CERTSTRING.getBytes())));
-        
-        TimeStampResponse timeStampResponse = null;
         try {
-        	// check response
-        	timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
-        	timeStampResponse.validate(timeStampRequest);
-      	
-        	if (timeStampResponse.getStatus() != PKIStatus.GRANTED) {
-        		// return early and don't attempt to get a token
-        		return timeStampResponse.getStatus();
-        	}
-        	
-        	// check the hash value from the response
-        	TimeStampToken token = timeStampResponse.getTimeStampToken();
-        	AlgorithmIdentifier algo = token.getTimeStampInfo().getHashAlgorithm();
-        	assertEquals("Timestamp response is using incorrect hash algorithm", hashAlgo, algo.getAlgorithm()); 	
-        	
-        	Collection signerInfos = token.toCMSSignedData().getSignerInfos().getSigners();
-        	
-        	// there should be one SignerInfo
-        	assertEquals("There should only be one signer in the timestamp response", 1, signerInfos.size());
-        	
-        	for (Object o : signerInfos) {
-        		SignerInformation si = (SignerInformation) o;
-        		
-        		// test the response signature algorithm
-        		assertEquals("Timestamp used unexpected signature algorithm", TSPAlgorithms.SHA1.toString(), si.getDigestAlgOID());
-        		assertEquals("Timestamp is signed with unexpected signature encryption algorithm", "1.2.840.113549.1.1.1", si.getEncryptionAlgOID());
-       		
-        		final AttributeTable attrs = si.getSignedAttributes();
-        		final ASN1EncodableVector scAttrs = attrs.getAll(PKCSObjectIdentifiers.id_aa_signingCertificate);
+            if (certDigestAlgo != null) {
+                workerSession.setWorkerProperty(WORKER1.getId(),
+                                                "CERTIFICATE_DIGEST_ALGORITHM",
+                                                certDigestAlgo);
+                workerSession.reloadConfiguration(WORKER1.getId());
+            }
+            
+            final GenericSignResponse res = (GenericSignResponse) processSession.process(
+                    WORKER1, signRequest, new RemoteRequestContext());
 
-        		assertEquals("Should contain a signingCertificate signed attribute", 1, scAttrs.size());
-                        
-        		TestUtils.checkSigningCertificateAttribute(Attribute.getInstance(scAttrs.get(0)), cert);
-        	}
-        } catch (TSPException | IOException e) {
-        	fail("Failed to verify response");
+            final CertificateFactory factory = CertificateFactory.getInstance("X.509");
+            final X509Certificate cert =
+                    (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(Base64.decode(CERTSTRING.getBytes())));
+
+            TimeStampResponse timeStampResponse = null;
+            try {
+                    // check response
+                    timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
+                    timeStampResponse.validate(timeStampRequest);
+
+                    if (timeStampResponse.getStatus() != PKIStatus.GRANTED) {
+                            // return early and don't attempt to get a token
+                            return timeStampResponse.getStatus();
+                    }
+
+                    // check the hash value from the response
+                    TimeStampToken token = timeStampResponse.getTimeStampToken();
+                    AlgorithmIdentifier algo = token.getTimeStampInfo().getHashAlgorithm();
+                    assertEquals("Timestamp response is using incorrect hash algorithm", hashAlgo, algo.getAlgorithm()); 	
+
+                    Collection signerInfos = token.toCMSSignedData().getSignerInfos().getSigners();
+
+                    // there should be one SignerInfo
+                    assertEquals("There should only be one signer in the timestamp response", 1, signerInfos.size());
+
+                    for (Object o : signerInfos) {
+                            SignerInformation si = (SignerInformation) o;
+
+                            // test the response signature algorithm
+                            assertEquals("Timestamp used unexpected signature algorithm", TSPAlgorithms.SHA1.toString(), si.getDigestAlgOID());
+                            assertEquals("Timestamp is signed with unexpected signature encryption algorithm", "1.2.840.113549.1.1.1", si.getEncryptionAlgOID());
+
+                            final AttributeTable attrs = si.getSignedAttributes();
+                            final ASN1EncodableVector scAttrs =
+                                    attrs.getAll(expectESSCertIDv2 ?
+                                                 PKCSObjectIdentifiers.id_aa_signingCertificateV2 : 
+                                                 PKCSObjectIdentifiers.id_aa_signingCertificate);
+
+                            assertEquals("Should contain a signingCertificate signed attribute", 1, scAttrs.size());
+
+                            final String digestAlg = getBCDigestAlg(certDigestAlgo);
+                            TestUtils.checkSigningCertificateAttribute(
+                                    Attribute.getInstance(scAttrs.get(0)), cert,
+                                    digestAlg, expectESSCertIDv2);
+                    }
+            } catch (TSPException | IOException e) {
+                    fail("Failed to verify response");
+            }
+
+
+            final TimeStampToken token = timeStampResponse.getTimeStampToken();
+
+            try {
+                    final SignerInformationVerifier infoVerifier =
+                            new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build((X509Certificate) cert);
+
+                    token.validate(infoVerifier);
+            } catch (TSPException e) {
+                    fail("Failed to validate response token");
+            }
+            
+            return timeStampResponse.getStatus();
+        } finally {
+            workerSession.removeWorkerProperty(WORKER1.getId(),
+                                               "CERTIFICATE_DIGEST_ALGORITHM");
+            workerSession.reloadConfiguration(WORKER1.getId());
+        }
+            
+    }
+    
+    private String getBCDigestAlg(final String alg) {
+        if (alg == null) {
+            return "SHA-256";
         }
         
-        
-        final TimeStampToken token = timeStampResponse.getTimeStampToken();
-        
-        try {
-                final SignerInformationVerifier infoVerifier =
-                        new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build((X509Certificate) cert);
-
-                token.validate(infoVerifier);
-        } catch (TSPException e) {
-        	fail("Failed to validate response token");
+        switch (alg) {
+            case "SHA1":
+                return "SHA-1";
+            case "SHA224":
+                return "SHA-224";
+            case "SHA256":
+                return "SHA-256";
+            case "SHA384":
+                return "SHA-384";
+            case "SHA512":
+                return "SHA-512";
+            default:
+                return null;
         }
-       
-        return timeStampResponse.getStatus();
     }
     
     /**
@@ -445,7 +496,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      */
     @Test
     public void test06HashSHA256() throws Exception {
-    	testWithHash(TSPAlgorithms.SHA256);
+    	testWithHash(TSPAlgorithms.SHA256, null, TSPAlgorithms.SHA256, true);
     }
     
     /**
@@ -456,7 +507,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      */
     @Test
     public void test07HashSHA512() throws Exception {
-    	testWithHash(TSPAlgorithms.SHA512);
+    	testWithHash(TSPAlgorithms.SHA512, null, TSPAlgorithms.SHA256, true);
     }
     
     /**
@@ -467,7 +518,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      */
     @Test
     public void test08HashRIPE160() throws Exception {
-    	testWithHash(TSPAlgorithms.RIPEMD160);
+    	testWithHash(TSPAlgorithms.RIPEMD160, null, TSPAlgorithms.SHA256, true);
     }
     
     
@@ -484,7 +535,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     	workerSession.setWorkerProperty(WORKER1.getId(), TimeStampSigner.ACCEPTEDALGORITHMS, "SHA1");
     	workerSession.reloadConfiguration(WORKER1.getId());
     	
-    	int status = testWithHash(TSPAlgorithms.SHA256);
+    	int status = testWithHash(TSPAlgorithms.SHA256, null, TSPAlgorithms.SHA256, true);
     	assertEquals("Should return status REJECTION", PKIStatus.REJECTION, status);
     }    
     
@@ -501,7 +552,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     	workerSession.reloadConfiguration(WORKER1.getId());
     	
     	ASN1ObjectIdentifier oid = new ASN1ObjectIdentifier(DUMMY_OID);
-    	int status = testWithHash(oid);
+    	int status = testWithHash(oid, null, TSPAlgorithms.SHA256, true);
 
     	assertEquals("Should not accept an invalid hash algorithm", PKIStatus.REJECTION, status);
     }
@@ -518,7 +569,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
     	workerSession.setWorkerProperty(WORKER1.getId(), TimeStampSigner.ACCEPTEDALGORITHMS, "SHA1");
     	workerSession.reloadConfiguration(WORKER1.getId());
     	
-    	int status = testWithHash(TSPAlgorithms.SHA1);
+    	int status = testWithHash(TSPAlgorithms.SHA1, null, TSPAlgorithms.SHA256, true);
     	assertEquals("Should return status GRANTED", PKIStatus.GRANTED, status);
     }    
     

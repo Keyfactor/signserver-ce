@@ -38,7 +38,9 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.ess.ESSCertID;
+import org.bouncycastle.asn1.ess.ESSCertIDv2;
 import org.bouncycastle.asn1.ess.SigningCertificate;
+import org.bouncycastle.asn1.ess.SigningCertificateV2;
 import org.bouncycastle.asn1.x509.IssuerSerial;
 import org.signserver.client.cli.defaultimpl.AliasKeyManager;
 import static org.junit.Assert.*;
@@ -149,20 +151,37 @@ public class TestUtils {
         return getBuildConfig().getProperty("java.trustpassword", "changeit");
     }
     
-    public static void checkSigningCertificateAttribute(final Attribute attr, final X509Certificate cert) throws Exception {    
+    public static void checkSigningCertificateAttribute(final Attribute attr,
+                                                        final X509Certificate cert,
+                                                        final String digestAlg,
+                                                        final boolean useESSCertIDv2)
+            throws Exception {    
         assertEquals("Invalid OID for content", SIGNING_CERT_OID, attr.getAttrType().getId());
         
         // calculate expected hash
-        final byte[] digest = MessageDigest.getInstance("SHA-1").digest(cert.getEncoded());
+        final byte[] digest = MessageDigest.getInstance(digestAlg).digest(cert.getEncoded());
         
         final ASN1Set vals = attr.getAttrValues();
-        final SigningCertificate sc = SigningCertificate.getInstance(vals.getObjectAt(0));
-        final ESSCertID certId = sc.getCerts()[0];
         
-        final IssuerSerial is = certId.getIssuerSerial();
+        if (useESSCertIDv2) {
+            final SigningCertificateV2 sc =
+                    SigningCertificateV2.getInstance(vals.getObjectAt(0));
+            final ESSCertIDv2 certId = sc.getCerts()[0];
+            
+            final IssuerSerial is = certId.getIssuerSerial();
         
-        assertTrue("Hash doesn't match", Arrays.equals(digest, certId.getCertHash()));
-        assertEquals("Serial number doesn't match", cert.getSerialNumber(),
-                     is.getSerial().getValue());
+            assertTrue("Hash doesn't match", Arrays.equals(digest, certId.getCertHash()));
+            assertEquals("Serial number doesn't match", cert.getSerialNumber(),
+                         is.getSerial().getValue());
+        } else {
+            final SigningCertificate sc = SigningCertificate.getInstance(vals.getObjectAt(0));
+            final ESSCertID certId = sc.getCerts()[0];
+            
+            final IssuerSerial is = certId.getIssuerSerial();
+        
+            assertTrue("Hash doesn't match", Arrays.equals(digest, certId.getCertHash()));
+            assertEquals("Serial number doesn't match", cert.getSerialNumber(),
+                         is.getSerial().getValue());
+        }
     }
 }

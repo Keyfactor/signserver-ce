@@ -61,6 +61,7 @@ public class TestUtils {
     
     /** Expected values in the signingCertificate CMS attribute */
     private static final String SIGNING_CERT_OID = "1.2.840.113549.1.9.16.2.12";
+    private static final String SIGNING_CERT_V2_OID = "1.2.840.113549.1.9.16.2.47";
     private static final String CN_OID = "2.5.4.3";
     private static final String OU_OID = "2.5.4.11";
     private static final String O_OID = "2.5.4.10";
@@ -156,8 +157,10 @@ public class TestUtils {
                                                         final String digestAlg,
                                                         final boolean useESSCertIDv2)
             throws Exception {    
-        assertEquals("Invalid OID for content", SIGNING_CERT_OID, attr.getAttrType().getId());
-        
+        assertEquals("Invalid OID for content",
+                useESSCertIDv2 ? SIGNING_CERT_V2_OID : SIGNING_CERT_OID,
+                attr.getAttrType().getId());
+
         // calculate expected hash
         final byte[] digest = MessageDigest.getInstance(digestAlg).digest(cert.getEncoded());
         

@@ -220,6 +220,7 @@ public class TimeStampSigner extends BaseSigner {
     public static final String MAXSERIALNUMBERLENGTH = "MAXSERIALNUMBERLENGTH";
     public static final String INCLUDESTATUSSTRING = "INCLUDESTATUSSTRING";
     public static final String INCLUDESIGNINGTIMEATTRIBUTE = "INCLUDESIGNINGTIMEATTRIBUTE";
+    public static final String CERTIFICATE_DIGEST_ALGORITHM = "CERTIFICATE_DIGEST_ALGORITHM";
     
     private static final String DEFAULT_WORKERLOGGER =
             DefaultTimeStampLogger.class.getName();
@@ -270,7 +271,7 @@ public class TimeStampSigner extends BaseSigner {
 
     private static final String DEFAULT_SIGNATUREALGORITHM = "SHA1withRSA";
     private static final String DEFAULT_ORDERING = "FALSE";
-    //private static final String DEFAULT_DIGESTOID   = TSPAlgorithms.SHA1;
+    private static final String DEFAULT_CERTIFICATE_DIGEST_ALGORITHM = "SHA256";
     
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 
@@ -300,6 +301,8 @@ public class TimeStampSigner extends BaseSigner {
     
     private boolean ordering;
    
+    private ASN1ObjectIdentifier certificateDigestAlgorithm;
+    
     List<String> configErrors;
     
     @Override
@@ -403,11 +406,33 @@ public class TimeStampSigner extends BaseSigner {
         if (hasSetIncludeCertificateLevels && includeCertificateLevels == 0) {
             configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 supported.");
         }
+        
+        final String certificateDigestAlgorithmString =
+                config.getProperty(CERTIFICATE_DIGEST_ALGORITHM,
+                                   DEFAULT_CERTIFICATE_DIGEST_ALGORITHM);
+        certificateDigestAlgorithm =
+                getCertificateDigestAlgorithmFromString(certificateDigestAlgorithmString);
 
         // Print the errors for troubleshooting
         if (!configErrors.isEmpty()) {
             LOG.info("Configuration errors for worker " + workerId + ": \n"
                     + configErrors.toString());
+        }
+    }
+    
+    private ASN1ObjectIdentifier getCertificateDigestAlgorithmFromString(final String digestAlg) {
+        switch (digestAlg) {
+            case "SHA1":
+                return TSPAlgorithms.SHA1;
+            case "SHA256":
+                return TSPAlgorithms.SHA256;
+            case "SHA384":
+                return TSPAlgorithms.SHA384;
+            case "SHA512":
+                return TSPAlgorithms.SHA512;
+            default:
+                configErrors.add("Unsupported certificate digest algorithm: " + digestAlg);
+                return null;
         }
     }
 
@@ -888,7 +913,7 @@ public class TimeStampSigner extends BaseSigner {
             }
             
             DigestCalculatorProvider calcProv = new BcDigestCalculatorProvider();    
-            DigestCalculator calc = calcProv.get(new AlgorithmIdentifier(TSPAlgorithms.SHA1));
+            DigestCalculator calc = calcProv.get(new AlgorithmIdentifier(certificateDigestAlgorithm));
 
             ContentSigner cs =
             		new JcaContentSignerBuilder(signatureAlgorithm).setProvider(crypto.getProvider()).build(crypto.getPrivateKey());

@@ -1517,6 +1517,17 @@ public class TimeStampSignerTest extends ModulesTestCase {
     public void test49CertificateDigestMethodSHA512() throws Exception {
         testWithHash(TSPAlgorithms.SHA256, "SHA512", TSPAlgorithms.SHA512, true);
     }
+    
+    /**
+     * Test with certificate digest method SHA224.
+     * Also checks that the v2 signing cert attribute is used.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test50CertificateDigestMethodSHA224() throws Exception {
+        testWithHash(TSPAlgorithms.SHA256, "SHA224", TSPAlgorithms.SHA224, true);
+    }
 
     private void assertTokenGranted(WorkerIdentifier wi) throws Exception {
         TimeStampRequestGenerator timeStampRequestGenerator =

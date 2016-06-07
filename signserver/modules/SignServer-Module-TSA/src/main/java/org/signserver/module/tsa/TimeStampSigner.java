@@ -424,6 +424,8 @@ public class TimeStampSigner extends BaseSigner {
         switch (digestAlg) {
             case "SHA1":
                 return TSPAlgorithms.SHA1;
+            case "SHA224":
+                return TSPAlgorithms.SHA224;
             case "SHA256":
                 return TSPAlgorithms.SHA256;
             case "SHA384":

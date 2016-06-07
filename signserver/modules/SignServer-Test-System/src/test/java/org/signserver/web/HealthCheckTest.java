@@ -15,6 +15,7 @@ package org.signserver.web;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Properties;
+import org.apache.log4j.Logger;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
@@ -35,6 +36,9 @@ import org.signserver.statusrepo.StatusRepositorySessionRemote;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class HealthCheckTest extends WebTestCase {
     
+    /** Logger for this class. */
+    private final static Logger LOG = Logger.getLogger(HealthCheckTest.class);
+    
     /** Worker ID for test TSA worker. */
     private static final int TSA_WORKER = 8904;
     
@@ -47,14 +51,12 @@ public class HealthCheckTest extends WebTestCase {
     protected String getServletURL() {
         return getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/healthcheck/signserverhealth";
     }
-    
-    
 
     @Before
     @Override
     public void setUp() throws Exception {
         repository = ServiceLocator.getInstance().lookupRemote(StatusRepositorySessionRemote.class);
-	}
+    }
 
 
 
@@ -64,6 +66,7 @@ public class HealthCheckTest extends WebTestCase {
      */
     @Test
     public void test00SetupDatabase() throws Exception {
+        LOG.info("test00SetupDatabase");
         addDummySigner1(true);
     }
 
@@ -73,6 +76,7 @@ public class HealthCheckTest extends WebTestCase {
      */
     @Test
     public void test01AllOk() throws Exception {
+        LOG.info("test01AllOk");
         assertStatusReturned(NO_FIELDS, 200);
         String body = new String(sendAndReadyBody(NO_FIELDS));
         assertTrue("Contains ALLOK: " + body, body.contains("ALLOK"));
@@ -84,6 +88,7 @@ public class HealthCheckTest extends WebTestCase {
      */
     @Test
     public void test02CryptoTokenOffline() throws Exception {
+        LOG.info("test02CryptoTokenOffline");
         try {
             // Make sure one worker is offline
             getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "KEYSTOREPATH", "_non-existing-path_");
@@ -107,6 +112,7 @@ public class HealthCheckTest extends WebTestCase {
      */
     @Test
     public void test03TimeSourceNotInsync() throws Exception {
+        LOG.info("test03TimeSourceNotInsync");
         try {
             addTimeStampSigner(TSA_WORKER, "TestTSA4", true);
             workerSession.setWorkerProperty(TSA_WORKER, "DEFAULTTSAPOLICYOID", "1.2.3");
@@ -137,6 +143,7 @@ public class HealthCheckTest extends WebTestCase {
      */
     @Test
     public void test04DownForMaintenance() throws Exception {
+        LOG.info("test04DownForMaintenance");
     	FileOutputStream fos = openMaintenanceProperties();
     	Properties properties = new Properties();
 
@@ -173,7 +180,7 @@ public class HealthCheckTest extends WebTestCase {
      */
     @Test
     public void test99TearDownDatabase() throws Exception {
-        
-//        removeWorker(getSignerIdCMSSigner1());
+        LOG.info("test99TearDownDatabase");
+        removeWorker(getSignerIdDummy1());
     }
 }

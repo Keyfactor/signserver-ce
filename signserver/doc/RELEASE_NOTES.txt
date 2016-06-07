@@ -23,6 +23,9 @@ Notice:
    use KeystoreCryptoToken with the supplied sample configuration.
    For OldPKCS11CryptoToken, configurations should be upgraded to use
    PKCS11CryptoToken.
+ - The TimeStampSigner now generates RFC 5816-compliant time stamps with the
+   ESSCertIDv2 attribute. To get the old behaviour, specify SHA1 as the certificate
+   digest algorithm, using the new CERTIFICATE_DIGEST_ALGORITHM worker property.
 
 See ChangeLog.txt for the full list of changes.
 

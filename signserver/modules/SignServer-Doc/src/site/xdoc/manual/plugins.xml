@@ -209,6 +209,41 @@ versions of OpenJDK's jarsigner utility. (OPTIONAL), default true.
                         <p>
 <b>INCLUDESIGNINGTIMEATTRIBUTE</b> = Specifies if the signingTime signed CMS attribute should be included in the response. (OPTIONAL), default true.
                         </p>
+                        <p>
+<b>CERTIFICATE_DIGEST_ALGORITHM</b> = Specifies the digest algorithm used for calculating the digest of the signing certificate.<br/>
+Supported values:<br/>
+<ul>
+    <li>
+        <p>
+<b>SHA1</b>
+        </p>
+    </li>
+        <li>
+        <p>
+<b>SHA224</b>
+        </p>
+    </li>
+    <li>
+        <p>
+<b>SHA256</b>
+        </p>
+    </li>
+    <li>
+        <p>
+<b>SHA384</b>
+        </p>
+    </li>
+    <li>
+        <p>
+<b>SHA512</b>
+        </p>
+    </li>
+</ul>
+<br/>
+When using an algorithm other than SHA1, RFC 5816-compliant time stamps will be issued.<br/>
+To get the old behaviour (with the ESSCertID attribute instead of ESSCertIDv2), SHA1 must be set explicitly.<br/>
+Default: SHA256.
+                        </p>
 
                     
                     <h4>TimeStampSigner Certificates</h4>

@@ -18,7 +18,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.internal.UpgradeableDataHashMap;
+import static org.signserver.common.util.PropertiesConstants.KEYSTORE_DATA;
 
 /**
  * Class representing a signer config. contains to types of data, 
@@ -279,5 +281,30 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     public int getVirtualPropertiesNumber() {
         // NAME and TYPE:
         return 2;
+    }
+    
+    /**
+     * Get the keystore data used by the KeystoreInConfigCryptoToken.
+     * 
+     * @return Keystore data in PKCS#12 format
+     */
+    public byte[] getKeystoreData() {
+        final String keystoreDataString =
+                (String) getData().get(KEYSTORE_DATA);
+        
+        if (keystoreDataString != null) {
+            return Base64.decode(keystoreDataString);
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Set the keystore data used by the KeystoreInConfigCryptoToken.
+     * 
+     * @param keystoreData 
+     */
+    public void setKeystoreData(final byte[] keystoreData) {
+        getData().put(KEYSTORE_DATA, new String(Base64.encode(keystoreData)));
     }
 }

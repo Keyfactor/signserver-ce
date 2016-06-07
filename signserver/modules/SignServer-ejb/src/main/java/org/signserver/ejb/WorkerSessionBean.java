@@ -600,13 +600,13 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     public byte[] getKeystoreData(AdminInfo adminInfo, int signerId) {
         WorkerConfig config = getWorkerConfig(signerId);
         
-        return (new ProcessableConfig(config)).getKeystoreData();
+        return config.getKeystoreData();
     }
 
     @Override
     public void setKeystoreData(AdminInfo adminInfo, int signerId, byte[] keystoreData) {
         WorkerConfig config = getWorkerConfig(signerId);
-        (new ProcessableConfig(config)).setKeystoreData(keystoreData);
+        config.setKeystoreData(keystoreData);
         setWorkerConfig(adminInfo, signerId, config, "set:keystore_data", null);
     }
     

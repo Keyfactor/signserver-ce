@@ -260,29 +260,4 @@ public class ProcessableConfig {
     public WorkerConfig getWorkerConfig() {
         return workerConfig;
     }
-    
-    /**
-     * Get the keystore data used by the KeystoreInConfigCryptoToken.
-     * 
-     * @return Keystore data in PKCS#12 format
-     */
-    public byte[] getKeystoreData() {
-        final String keystoreDataString =
-                (String) workerConfig.getData().get(KEYSTORE_DATA);
-        
-        if (keystoreDataString != null) {
-            return Base64.decode(keystoreDataString);
-        }
-        
-        return null;
-    }
-    
-    /**
-     * Set the keystore data used by the KeystoreInConfigCryptoToken.
-     * 
-     * @param keystoreData 
-     */
-    public void setKeystoreData(final byte[] keystoreData) {
-        workerConfig.getData().put(KEYSTORE_DATA, new String(Base64.encode(keystoreData)));
-    }
 }

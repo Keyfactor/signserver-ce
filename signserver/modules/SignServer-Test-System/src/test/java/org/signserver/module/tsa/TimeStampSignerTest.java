@@ -1472,6 +1472,17 @@ public class TimeStampSignerTest extends ModulesTestCase {
            workerSession.reloadConfiguration(WORKER1.getId());
        }
     }
+    
+    /**
+     * Test timestamping with certificate digest method SHA1.
+     * Checks that the ESSCertID attribute (not v2) is used in the response.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test46CertificateDigestMethodSHA1() throws Exception {
+    	testWithHash(TSPAlgorithms.SHA256, "SHA1", TSPAlgorithms.SHA1, false);
+    }
 
     private void assertTokenGranted(WorkerIdentifier wi) throws Exception {
         TimeStampRequestGenerator timeStampRequestGenerator =

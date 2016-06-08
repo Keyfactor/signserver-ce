@@ -320,6 +320,16 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     }
     
     /**
+     * Adds a Certificate SN to the collection of authorized clients	  
+     * 
+     * @param client the AuthorizedClient to add
+     */
+    @SuppressWarnings("unchecked")
+    public void addAuthorizedClient(AuthorizedClient client) {
+        ((HashSet<AuthorizedClient>) get(AUTHORIZED_CLIENTS)).add(client);
+    }
+    
+    /**
      * Removes a Certificate SN from the collection of authorized clients	  
      * 
      * @param client the AuthorizedClient to remove

@@ -741,7 +741,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     @Override
     public void addAuthorizedClient(final AdminInfo adminInfo, int signerId, AuthorizedClient authClient) {
         WorkerConfig config = getWorkerConfig(signerId);
-        (new ProcessableConfig(config)).addAuthorizedClient(authClient);
+        config.addAuthorizedClient(authClient);
         setWorkerConfig(adminInfo, signerId, config, "added:authorized_client",
         		"SN: " + authClient.getCertSN() + ", issuer DN: " + authClient.getIssuerDN());
     }

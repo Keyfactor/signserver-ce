@@ -83,16 +83,6 @@ public class ProcessableConfig {
         return value;
     }
 
-    /**
-     * Adds a Certificate SN to the collection of authorized clients	  
-     * 
-     * @param client the AuthorizedClient to add
-     */
-    @SuppressWarnings("unchecked")
-    public void addAuthorizedClient(AuthorizedClient client) {
-        ((HashSet<AuthorizedClient>) get(AUTHORIZED_CLIENTS)).add(client);
-    }
-
     public WorkerConfig getWorkerConfig() {
         return workerConfig;
     }

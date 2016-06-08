@@ -117,6 +117,10 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     @SuppressWarnings("unchecked")
     public WorkerConfig() {
         data.put(PROPERTIES, new Properties());
+        
+        if (get(AUTHORIZED_CLIENTS) == null) {
+            put(AUTHORIZED_CLIENTS, new HashSet<AuthorizedClient>());
+        }
     }
 
     /**

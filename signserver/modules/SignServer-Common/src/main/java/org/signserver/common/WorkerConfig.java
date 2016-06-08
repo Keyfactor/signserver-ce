@@ -319,6 +319,20 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     }
     
     /**
+     * Checks if a certificate is in the list of authorized clients
+     * @param clientCertificate
+     * @return true if client is authorized.
+     */
+    @SuppressWarnings("unchecked")
+    public boolean isClientAuthorized(X509Certificate clientCertificate) {
+        final AuthorizedClient client = new AuthorizedClient(clientCertificate.getSerialNumber().toString(16), clientCertificate.getIssuerDN().toString());
+        final HashSet<AuthorizedClient> authClients =
+                (HashSet<AuthorizedClient>) get(AUTHORIZED_CLIENTS);
+
+        return authClients != null && authClients.contains(client);
+    }
+    
+    /**
      * Method used to fetch a signers certificate from the config
      * @return the signer certificate stored or null if no certificate have been uploaded.
      * 

@@ -129,18 +129,6 @@ public class ProcessableConfig {
         return result;
     }
 
-    /**
-     * Checks if a certificate is in the list of authorized clients
-     * @param clientCertificate
-     * @return true if client is authorized.
-     */
-    @SuppressWarnings("unchecked")
-    public boolean isClientAuthorized(X509Certificate clientCertificate) {
-        AuthorizedClient client = new AuthorizedClient(clientCertificate.getSerialNumber().toString(16), clientCertificate.getIssuerDN().toString());
-
-        return ((HashSet<AuthorizedClient>) get(AUTHORIZED_CLIENTS)).contains(client);
-    }
-
     public WorkerConfig getWorkerConfig() {
         return workerConfig;
     }

@@ -19,7 +19,6 @@ import java.util.Properties;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.AuthorizedClient;
-import org.signserver.common.ProcessableConfig;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
@@ -156,7 +155,7 @@ public abstract class BaseWorker implements IWorker {
 
         // Authorized Clients
         final StringBuilder clientsValue = new StringBuilder();
-        for (AuthorizedClient client : new ProcessableConfig(config).getAuthorizedClients()) {
+        for (AuthorizedClient client : config.getAuthorizedClients()) {
             clientsValue.append(client.getCertSN()).append(", ").append(properties.getProperty(client.getIssuerDN())).append("\n");
         }
         completeEntries.add(new WorkerStatusInfo.Entry("Authorized clients (serial number, issuer DN)", clientsValue.toString()));

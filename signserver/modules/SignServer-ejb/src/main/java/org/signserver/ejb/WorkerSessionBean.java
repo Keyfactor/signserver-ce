@@ -727,8 +727,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
      */
     @Override
     public Collection<AuthorizedClient> getAuthorizedClients(int signerId) {
-        return new ProcessableConfig(getWorkerConfig(signerId)).
-                getAuthorizedClients();
+        return getWorkerConfig(signerId).getAuthorizedClients();
     }
 
     @Override

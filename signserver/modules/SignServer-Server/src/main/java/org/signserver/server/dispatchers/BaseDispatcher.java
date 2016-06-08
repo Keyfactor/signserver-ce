@@ -12,13 +12,11 @@
  *************************************************************************/
 package org.signserver.server.dispatchers;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.signserver.common.AuthorizedClient;
-import org.signserver.common.ProcessableConfig;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerStatus;
@@ -68,7 +66,7 @@ public abstract class BaseDispatcher extends BaseProcessable {
 
         // Clients
         final StringBuilder clientsValue = new StringBuilder();
-        for (AuthorizedClient client : new ProcessableConfig(config).getAuthorizedClients()) {
+        for (AuthorizedClient client : config.getAuthorizedClients()) {
             clientsValue.append("  ").append(client.getCertSN()).append(", ").append(properties.getProperty(client.getIssuerDN())).append("\n");
         }
         completeEntries.add(new WorkerStatusInfo.Entry("Authorized clients (serial number, issuer DN)", clientsValue.toString()));

@@ -21,6 +21,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -316,6 +317,28 @@ public class WorkerConfig extends UpgradeableDataHashMap {
             }
         }
         return value;
+    }
+    
+    /**
+     * 	  
+     * Gets a collection of authorized client certificates
+     * 
+     * @return a Collection of String containing the certificate serial number.
+     */
+    @SuppressWarnings("unchecked")
+    public Collection<AuthorizedClient> getAuthorizedClients() {
+        final ArrayList<AuthorizedClient> result = new ArrayList<>();
+        final HashSet<AuthorizedClient> authClients =
+                (HashSet<AuthorizedClient>) get(AUTHORIZED_CLIENTS);
+        
+        if (authClients != null) {
+            for (final AuthorizedClient client : authClients) {
+                result.add(client);
+            }
+        }
+
+        Collections.sort(result);
+        return result;
     }
     
     /**

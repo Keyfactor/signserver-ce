@@ -289,10 +289,9 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
             
             final WorkerConfig config =
                     workerSession.getCurrentWorkerConfig(getSignerIdDummy1());
-            final ProcessableConfig pc = new ProcessableConfig(config);
             
             assertTrue("Should not contain authclients",
-                    pc.getAuthorizedClients().isEmpty());
+                    config.getAuthorizedClients().isEmpty());
         } finally {
             workerSession.removeAuthorizedClient(getSignerIdDummy1(),
                new AuthorizedClient("123456789", "CN=SomeUser"));

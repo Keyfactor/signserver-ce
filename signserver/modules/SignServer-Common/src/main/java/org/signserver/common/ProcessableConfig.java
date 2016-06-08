@@ -111,24 +111,6 @@ public class ProcessableConfig {
         return false;
     }
 
-    /**
-     * 	  
-     * Gets a collection of authorized client certificates
-     * 
-     * @return a Collection of String containing the certificate serial number.
-     */
-    @SuppressWarnings("unchecked")
-    public Collection<AuthorizedClient> getAuthorizedClients() {
-        ArrayList<AuthorizedClient> result = new ArrayList<>();
-        Iterator<AuthorizedClient> iter = ((HashSet<AuthorizedClient>) get(AUTHORIZED_CLIENTS)).iterator();
-        while (iter.hasNext()) {
-            result.add(iter.next());
-        }
-
-        Collections.sort(result);
-        return result;
-    }
-
     public WorkerConfig getWorkerConfig() {
         return workerConfig;
     }

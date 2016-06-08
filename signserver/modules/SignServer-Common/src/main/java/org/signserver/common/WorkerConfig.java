@@ -320,6 +320,29 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     }
     
     /**
+     * Removes a Certificate SN from the collection of authorized clients	  
+     * 
+     * @param client the AuthorizedClient to remove
+     * @return true if the client was found and removed
+     */
+    @SuppressWarnings("unchecked")
+    public boolean removeAuthorizedClient(AuthorizedClient client) {
+        final HashSet<AuthorizedClient> authClients =
+                (HashSet<AuthorizedClient>) get(AUTHORIZED_CLIENTS);
+        
+        if (authClients != null) {
+            for (final AuthorizedClient authClient : authClients) {
+                if (authClient.getCertSN().equals(client.getCertSN()) &&
+                    authClient.getIssuerDN().equals(client.getIssuerDN())) {
+                    return authClients.remove(authClient);
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
      * 	  
      * Gets a collection of authorized client certificates
      * 

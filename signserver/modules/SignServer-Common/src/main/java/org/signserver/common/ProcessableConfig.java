@@ -93,24 +93,6 @@ public class ProcessableConfig {
         ((HashSet<AuthorizedClient>) get(AUTHORIZED_CLIENTS)).add(client);
     }
 
-    /**
-     * Removes a Certificate SN from the collection of authorized clients	  
-     * 
-     * @param client the AuthorizedClient to remove
-     * @return true if the client was found and removed
-     */
-    @SuppressWarnings("unchecked")
-    public boolean removeAuthorizedClient(AuthorizedClient client) {
-        Iterator<AuthorizedClient> iter = ((HashSet<AuthorizedClient>) get(AUTHORIZED_CLIENTS)).iterator();
-        while (iter.hasNext()) {
-            AuthorizedClient next = iter.next();
-            if (next.getCertSN().equals(client.getCertSN()) && next.getIssuerDN().equals(client.getIssuerDN())) {
-                return ((HashSet<AuthorizedClient>) get(AUTHORIZED_CLIENTS)).remove(next);
-            }
-        }
-        return false;
-    }
-
     public WorkerConfig getWorkerConfig() {
         return workerConfig;
     }

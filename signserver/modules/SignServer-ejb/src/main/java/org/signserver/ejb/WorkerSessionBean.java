@@ -758,8 +758,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         WorkerConfig config = getWorkerConfig(signerId);
 
 
-        result = (new ProcessableConfig(config)).removeAuthorizedClient(
-                authClient);
+        result = config.removeAuthorizedClient(authClient);
         setWorkerConfig(adminInfo, signerId, config, "removed:authorized_client",
         		"SN: " + authClient.getCertSN() + ", issuer DN: " + authClient.getIssuerDN());
         return result;

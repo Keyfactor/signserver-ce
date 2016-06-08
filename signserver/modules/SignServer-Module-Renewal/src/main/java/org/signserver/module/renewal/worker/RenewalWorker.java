@@ -73,8 +73,8 @@ public class RenewalWorker extends BaseSigner {
 
     private static final String NEXTCERTSIGNKEY = "NEXTCERTSIGNKEY";
 
-    private static final String TRUSTSTORE_TYPE_PEM = "PEM";
-    private static final String TRUSTSTORE_TYPE_JKS = "JKS";
+    public static final String TRUSTSTORE_TYPE_PEM = "PEM";
+    public static final String TRUSTSTORE_TYPE_JKS = "JKS";
 
     private static final String WS_PATH = "/ejbcaws/ejbcaws?wsdl";
 
@@ -844,7 +844,7 @@ public class RenewalWorker extends BaseSigner {
         return result;
     }
   
-    class AliasKeyManager implements X509KeyManager {
+    public static class AliasKeyManager implements X509KeyManager {
 
         private final X509KeyManager base;
         private final String alias;
@@ -893,7 +893,7 @@ public class RenewalWorker extends BaseSigner {
     /**
      * Simply matches true on all objects found.
      */
-    private static class AllSelector implements Selector {
+    public static class AllSelector implements Selector {
         @Override
         public boolean match(Object obj) {
             return true;

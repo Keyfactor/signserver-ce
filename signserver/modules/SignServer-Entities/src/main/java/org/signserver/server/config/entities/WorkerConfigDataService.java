@@ -24,7 +24,6 @@ import org.apache.log4j.Logger;
 import org.cesecore.util.Base64GetHashMap;
 import org.cesecore.util.Base64PutHashMap;
 import org.signserver.common.NoSuchWorkerException;
-import org.signserver.common.ProcessableConfig;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerType;
 
@@ -92,7 +91,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
     }
     
     private WorkerConfig parseWorkerConfig(WorkerConfigDataBean wcdb) {
-        final WorkerConfig workerConf;
+        final WorkerConfig workerConf = new WorkerConfig();
         java.beans.XMLDecoder decoder;
         try {
             decoder =
@@ -107,20 +106,13 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
         // Handle Base64 encoded string values
         HashMap data = new Base64GetHashMap(h);
 
-        if (data.get(WorkerConfig.CLASS) == null) {
-            // Special case, need to upgrade from signserver 1.0
-            workerConf = new ProcessableConfig(new WorkerConfig()).getWorkerConfig();
+        try {
             workerConf.loadData(data);
             workerConf.upgrade();
-        } else {
-            workerConf = new WorkerConfig();
-            try {
-                workerConf.loadData(data);
-                workerConf.upgrade();
-            } catch (Exception e) {
-                LOG.error(e);
-            }
+        } catch (Exception e) {
+            LOG.error(e);
         }
+
         if (wcdb.getSignerName() != null) {
             workerConf.setProperty("NAME", wcdb.getSignerName());
         }

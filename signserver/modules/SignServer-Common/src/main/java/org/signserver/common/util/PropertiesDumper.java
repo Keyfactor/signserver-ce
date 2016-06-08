@@ -27,9 +27,6 @@ import java.util.List;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.signserver.common.AuthorizedClient;
-import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.ProcessableConfig;
-import org.signserver.common.WorkerConfig;
 import static org.signserver.common.util.PropertiesConstants.*;
 
 /**

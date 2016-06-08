@@ -12,14 +12,19 @@
  *************************************************************************/
 package org.signserver.common;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
@@ -311,6 +316,99 @@ public class WorkerConfig extends UpgradeableDataHashMap {
             }
         }
         return value;
+    }
+    
+    /**
+     * Method used to fetch a signers certificate from the config
+     * @return the signer certificate stored or null if no certificate have been uploaded.
+     * 
+     */
+    public X509Certificate getSignerCertificate() {
+        X509Certificate result = null;
+        String stringcert = (String) get(SIGNERCERT);
+        if (stringcert == null || stringcert.equals("")) {
+            stringcert = (String) get(WorkerConfig.getNodeId() + "." + SIGNERCERT);
+        }
+
+        if (stringcert != null && !stringcert.equals("")) {
+            Collection<?> certs;
+            try {
+                certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));
+                if (certs.size() > 0) {
+                    result = (X509Certificate) certs.iterator().next();
+                }
+            } catch (CertificateException | IllegalStateException e) {
+                LOG.error(e);
+            }
+
+        }
+
+        if (result == null) {
+            // try fetch certificate from certificate chain
+            Collection<?> chain = getSignerCertificateChain();
+            if (chain != null) {
+                Iterator<?> iter = chain.iterator();
+                while (iter.hasNext()) {
+                    X509Certificate next = (X509Certificate) iter.next();
+                    if (next.getBasicConstraints() == -1) {
+                        result = next;
+                    }
+                }
+            }
+        }
+        return result;
+
+    }
+
+    /**
+     * Method used to store a signers certificate in the config
+     * @param signerCert
+     * 
+     */
+    public void setSignerCertificate(X509Certificate signerCert, String scope) {
+        ArrayList<Certificate> list = new ArrayList<>();
+        list.add(signerCert);
+        if (scope.equals(GlobalConfiguration.SCOPE_GLOBAL)) {
+            try {
+                String stringcert =
+                        new String(CertTools.getPemFromCertificateChain(list));
+                put(SIGNERCERT, stringcert);
+            } catch (CertificateException e) {
+                LOG.error(e);
+            }
+        } else {
+            try {
+                String stringcert =
+                        new String(CertTools.getPemFromCertificateChain(list));
+                put(WorkerConfig.getNodeId() + "." + SIGNERCERT, stringcert);
+            } catch (CertificateException e) {
+                LOG.error(e);
+            }
+        }
+
+    }
+    
+    /**
+     * Method used to fetch a signers certificate chain from the config
+     * @return the signer certificate stored or null if no certificates have been uploaded.
+     * 
+     */
+    @SuppressWarnings("unchecked")
+    public List<Certificate> getSignerCertificateChain() {
+        List<Certificate> result = null;
+        String stringcert = (String) get(SIGNERCERTCHAIN);
+        if (stringcert == null || stringcert.equals("")) {
+            stringcert = (String) get(WorkerConfig.getNodeId() + "." + SIGNERCERTCHAIN);
+        }
+
+        if (stringcert != null && !stringcert.equals("")) {
+            try {
+                result = CertTools.getCertsFromPEM(new ByteArrayInputStream(stringcert.getBytes()));
+            } catch (CertificateException | IllegalStateException e) {
+                LOG.error(e);
+            }
+        }
+        return result;
     }
     
     /**

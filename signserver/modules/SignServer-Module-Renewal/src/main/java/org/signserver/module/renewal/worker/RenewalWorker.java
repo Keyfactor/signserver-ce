@@ -825,8 +825,7 @@ public class RenewalWorker extends BaseSigner {
     private X509Certificate[] getCertificateChain(final String alias, final KeyStore keystore) throws KeyStoreException {
         X509Certificate[] result;
         
-        List<Certificate> chain =
-                (new ProcessableConfig(config)).getSignerCertificateChain();
+        List<Certificate> chain = config.getSignerCertificateChain();
         
         if (chain == null) {
             Certificate[] ch = keystore.getCertificateChain(alias);

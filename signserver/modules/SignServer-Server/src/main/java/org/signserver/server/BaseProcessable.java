@@ -211,7 +211,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             token.activate(authenticationCode, services);
 
             // Check if certificate matches key
-            final Certificate certFromConfig = (new ProcessableConfig(config)).getSignerCertificate();
+            final Certificate certFromConfig = config.getSignerCertificate();
             if (certFromConfig == null) {
                 log.info("Activate: Signer " + workerId + ": No certificate in config");
             } else {
@@ -530,7 +530,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      */
     public Certificate getSigningCertificate(ICryptoInstance crypto) throws CryptoTokenOfflineException {
         final Certificate result;
-        final Certificate certFromConfig = (new ProcessableConfig(config)).getSignerCertificate();
+        final Certificate certFromConfig = config.getSignerCertificate();
         if (certFromConfig == null && crypto != null) {
             result = crypto.getCertificate();
         } else {
@@ -549,7 +549,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         if (alias != null && !alias.equals(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY))) {
             certFromConfig = null;
         } else {
-            certFromConfig = (new ProcessableConfig(config)).getSignerCertificate();
+            certFromConfig = config.getSignerCertificate();
         }
         if (certFromConfig == null) {
             RequestContext context = new RequestContext(true);
@@ -586,7 +586,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      */
     public List<Certificate> getSigningCertificateChain(final ICryptoInstance crypto) {
         final List<Certificate> result;
-        final List<Certificate> certChainFromConfig = config == null ? null : (new ProcessableConfig(config)).getSignerCertificateChain();
+        final List<Certificate> certChainFromConfig =
+                config == null ? null : config.getSignerCertificateChain();
         if (certChainFromConfig == null && crypto != null) {
             result = crypto.getCertificateChain();
         } else {
@@ -605,7 +606,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         if (alias != null && !alias.equals(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY))) {
             certChainFromConfig = null;
         } else {
-            certChainFromConfig = config == null ? null : (new ProcessableConfig(config)).getSignerCertificateChain();
+            certChainFromConfig =
+                    config == null ? null : config.getSignerCertificateChain();
         }
         if (certChainFromConfig == null) {
             RequestContext context = new RequestContext(true);

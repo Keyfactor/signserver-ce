@@ -1032,7 +1032,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         WorkerConfig config = getWorkerConfig(signerId);
 
         final Certificate cert  = CertTools.getCertfromByteArray(signerCert);
-        ( new ProcessableConfig(config)).setSignerCertificate((X509Certificate)cert,scope);
+        config.setSignerCertificate((X509Certificate)cert,scope);
         setWorkerConfig(adminInfo, signerId, config, null, null);
         final boolean scopeGlobal = GlobalConfiguration.SCOPE_GLOBAL.equalsIgnoreCase(scope);
         auditLogCertInstalled(adminInfo, new WorkerIdentifier(signerId), new String (CertTools.getPEMFromCerts(Arrays.asList(cert))), scopeGlobal ? "GLOBAL" : "NODE", scopeGlobal ? null : WorkerConfig.getNodeId());

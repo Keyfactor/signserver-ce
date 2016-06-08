@@ -270,8 +270,8 @@ public class SignServerWS implements ISignServerWS {
         ArrayList<Certificate> retval = null;
         try {
             WorkerStatus ws = getWorkerSession().getStatus(wi);
-            ProcessableConfig sc = new ProcessableConfig(ws.getActiveSignerConfig());
-            Collection<java.security.cert.Certificate> signerCertificateChain = sc.getSignerCertificateChain();
+            Collection<java.security.cert.Certificate> signerCertificateChain =
+                    ws.getActiveSignerConfig().getSignerCertificateChain();
 
             if (signerCertificateChain != null) {
                 retval = new ArrayList<>();

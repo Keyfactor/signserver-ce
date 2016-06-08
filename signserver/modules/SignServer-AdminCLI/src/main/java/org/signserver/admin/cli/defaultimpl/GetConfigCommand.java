@@ -109,10 +109,9 @@ public class GetConfigCommand extends AbstractAdminCommand {
             out.println("  " + key + "=" + config.getProperties().getProperty(key) + "\n");
         }
 
-        ProcessableConfig pConfig = new ProcessableConfig(config);
-        if (pConfig.getSignerCertificate() != null) {
+        if (config.getSignerCertificate() != null) {
             out.println(" The current configuration use the following signer certificate : \n");
-            WorkerStatus.printCert(pConfig.getSignerCertificate(), out);
+            WorkerStatus.printCert(config.getSignerCertificate(), out);
         } else {
             out.println(" Either this isn't a Signer or no Signer Certificate have been uploaded to it.\n");
         }

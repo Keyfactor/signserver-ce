@@ -14,13 +14,22 @@ package org.signserver.common;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.internal.UpgradeableDataHashMap;
+import org.cesecore.util.CertTools;
+import static org.signserver.common.util.PropertiesConstants.AUTHORIZED_CLIENTS;
 import static org.signserver.common.util.PropertiesConstants.KEYSTORE_DATA;
+import static org.signserver.common.util.PropertiesConstants.SIGNERCERT;
+import static org.signserver.common.util.PropertiesConstants.SIGNERCERTCHAIN;
 
 /**
  * Class representing a signer config. contains to types of data, 
@@ -102,6 +111,18 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     @SuppressWarnings("unchecked")
     public WorkerConfig() {
         data.put(PROPERTIES, new Properties());
+        
+        if (get(AUTHORIZED_CLIENTS) == null) {
+            put(AUTHORIZED_CLIENTS, new HashSet<AuthorizedClient>());
+        }
+        if (get(SIGNERCERT) == null) {
+            put(SIGNERCERT, "");
+        }
+        if (get(SIGNERCERTCHAIN) == null) {
+            put(SIGNERCERTCHAIN, "");
+        }
+
+        put(WorkerConfig.CLASS, this.getClass().getName());
     }
 
     /**
@@ -281,6 +302,50 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     public int getVirtualPropertiesNumber() {
         // NAME and TYPE:
         return 2;
+    }
+    
+    private void put(String key, Serializable value) {
+        if (value instanceof String) {
+            setProperty(key, (String) value);
+        } else {
+            getData().put(key, value);
+        }
+    }
+
+    private Serializable get(String key) {
+        final String value = getProperty(key);
+        if (value == null) {
+            final Object o = getData().get(key);
+            if (o instanceof Serializable) {
+                return (Serializable) o;
+            } else {
+                return null;
+            }
+        }
+        return value;
+    }
+    
+    /**
+     * Method used to store a signers certificate in the config
+     * @param signerCert
+     * 
+     */
+    public void setSignerCertificateChain(Collection<Certificate> signerCertificateChain, String scope) {
+        if (scope.equals(GlobalConfiguration.SCOPE_GLOBAL)) {
+            try {
+                String stringcert = new String(CertTools.getPEMFromCerts(signerCertificateChain));
+                put(SIGNERCERTCHAIN, stringcert);
+            } catch (CertificateException e) {
+                LOG.error(e);
+            }
+        } else {
+            try {
+                String stringcert = new String(CertTools.getPEMFromCerts(signerCertificateChain));
+                put(WorkerConfig.getNodeId() + "." + SIGNERCERTCHAIN, stringcert);
+            } catch (CertificateException e) {
+                LOG.error(e);
+            }
+        }
     }
     
     /**

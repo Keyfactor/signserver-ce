@@ -234,29 +234,6 @@ public class ProcessableConfig {
         return result;
     }
 
-    /**
-     * Method used to store a signers certificate in the config
-     * @param signerCert
-     * 
-     */
-    public void setSignerCertificateChain(Collection<Certificate> signerCertificateChain, String scope) {
-        if (scope.equals(GlobalConfiguration.SCOPE_GLOBAL)) {
-            try {
-                String stringcert = new String(CertTools.getPEMFromCerts(signerCertificateChain));
-                put(SIGNERCERTCHAIN, stringcert);
-            } catch (CertificateException e) {
-                LOG.error(e);
-            }
-        } else {
-            try {
-                String stringcert = new String(CertTools.getPEMFromCerts(signerCertificateChain));
-                put(WorkerConfig.getNodeId() + "." + SIGNERCERTCHAIN, stringcert);
-            } catch (CertificateException e) {
-                LOG.error(e);
-            }
-        }
-    }
-
     public WorkerConfig getWorkerConfig() {
         return workerConfig;
     }

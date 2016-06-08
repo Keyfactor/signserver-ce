@@ -1061,7 +1061,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     	}
     	// Collections.reverse(certs); // TODO: Why?
 
-        (new ProcessableConfig( config)).setSignerCertificateChain(certs, scope);
+        config.setSignerCertificateChain(certs, scope);
         setWorkerConfig(adminInfo, signerId, config, null, null);
         final boolean scopeGlobal = GlobalConfiguration.SCOPE_GLOBAL.equalsIgnoreCase(scope);
         auditLogCertChainInstalled(adminInfo, new WorkerIdentifier(signerId), new String (CertTools.getPEMFromCerts(certs)), scopeGlobal ? "GLOBAL" : "NODE", scopeGlobal ? null : WorkerConfig.getNodeId());

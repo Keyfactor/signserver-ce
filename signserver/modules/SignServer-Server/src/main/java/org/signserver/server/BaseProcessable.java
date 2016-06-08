@@ -14,7 +14,6 @@ package org.signserver.server;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -301,7 +300,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             final ICryptoTokenV4 tokenFromOtherWorker1 = getSignServerContext().getCryptoToken(services);
 
             if (tokenFromOtherWorker1 != null) {
-                cryptoToken = new WrappedCryptoToken(tokenFromOtherWorker1, config);
+                cryptoToken = tokenFromOtherWorker1;
             } else {
                 final GlobalConfiguration gc = services.get(GlobalConfigurationSessionLocal.class).getGlobalConfiguration();
                 final Properties defaultProperties = new Properties();
@@ -411,97 +410,6 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
         return cryptoToken;
     }
-
-    /**
-     * Wrapper for crypto tokens so that workers can still use the old crypto
-     * token V1 API. The wrapper delegates the operations on keys to the V2
-     * API and using the keys defined in _this_ worker.
-     * TODO: This is not needed anymore?
-     */
-    private static class WrappedCryptoToken implements ICryptoTokenV4 {
-
-        /** Logger for this class. */
-        private static final Logger LOG = Logger.getLogger(WrappedCryptoToken.class);
-
-        private final ICryptoTokenV4 delegate;
-        private final WorkerConfig config;
-
-        /**
-         * Constructs a new instance of the wrapped crypto token.
-         * @param delegate The V2 implementation.
-         * @param config This worker's configuration
-         */
-        public WrappedCryptoToken(ICryptoTokenV4 delegate, WorkerConfig config) {
-            this.delegate = delegate;
-            this.config = config;
-        }
-
-        @Override
-        public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
-            delegate.init(workerId, props);
-        }
-
-        @Override
-        public void activate(String authenticationcode, IServices services) throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException {
-            delegate.activate(authenticationcode, services);
-        }
-
-        @Override
-        public boolean deactivate(IServices services) throws CryptoTokenOfflineException {
-            return delegate.deactivate(services);
-        }
-
-        @Override
-        public KeyStore getKeyStore() throws UnsupportedOperationException, CryptoTokenOfflineException, KeyStoreException {
-            return delegate.getKeyStore();
-        }
-
-        @Override
-        public int getCryptoTokenStatus(IServices services) {
-            return delegate.getCryptoTokenStatus(services);
-        }
-
-        @Override
-        public void importCertificateChain(List<Certificate> certChain, String alias, char[] athenticationCode, Map<String, Object> params, IServices services) throws TokenOutOfSpaceException, CryptoTokenOfflineException, NoSuchAliasException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
-            delegate.importCertificateChain(certChain, alias, athenticationCode, params, services);
-        }
-
-        @Override
-        public TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, QueryException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
-            return delegate.searchTokenEntries(startIndex, max, qc, includeData, params, services);
-        }
-
-        @Override
-        public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, NoSuchAliasException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException {
-            return delegate.acquireCryptoInstance(alias, params, context);
-        }
-
-        @Override
-        public void releaseCryptoInstance(ICryptoInstance instance, RequestContext context) {
-            delegate.releaseCryptoInstance(instance, context);
-        }
-
-        @Override
-        public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws TokenOutOfSpaceException, CryptoTokenOfflineException, DuplicateAliasException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
-            delegate.generateKey(keyAlgorithm, keySpec, alias, authCode, params, services);
-        }
-
-        @Override
-        public ICertReqData genCertificateRequest(ISignerCertReqInfo info, boolean explicitEccParameters, String keyAlias, IServices services) throws CryptoTokenOfflineException, NoSuchAliasException {
-            return delegate.genCertificateRequest(info, explicitEccParameters, keyAlias, services);
-        }
-
-        @Override
-        public Collection<org.signserver.common.KeyTestResult> testKey(String alias, char[] authCode, IServices Services) throws CryptoTokenOfflineException, KeyStoreException {
-            return delegate.testKey(alias, authCode, Services);
-        }
-
-        @Override
-        public boolean removeKey(String alias, IServices services) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
-            return delegate.removeKey(alias, services);
-        }
-
-    };
 
     @Override
     public int getCryptoTokenStatus(IServices services) {
@@ -879,23 +787,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
 
     protected ICryptoInstance acquireDefaultCryptoInstance(RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {
-        final ICryptoInstance result;
-        String alias = config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY);
-
-        ICryptoTokenV4 token = getCryptoToken(context.getServices());
-        if (token == null) {
-            throw new CryptoTokenOfflineException("Crypto token not available");
-        }
-        try {
-            result = token.acquireCryptoInstance(alias, Collections.<String, Object>emptyMap(), context);
-        } catch (NoSuchAliasException ex) {
-            throw new CryptoTokenOfflineException("Key not available: " + ex.getMessage());
-        }
-
-        // Register the new instance
-        CryptoInstances.getInstance(context).add(result);
-
-        return result;
+        return acquireDefaultCryptoInstance(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY), context);
     }
 
     // XXX: Should not be needed, XXX: Mostly duplicated

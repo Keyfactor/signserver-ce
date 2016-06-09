@@ -50,7 +50,7 @@ public class WorkerConfigDataBean implements Serializable {
     private String signerName;
     
     @Column
-    private int signerType;
+    private Integer signerType;
     
     @Lob
     @Column(length = 1048576)
@@ -82,11 +82,11 @@ public class WorkerConfigDataBean implements Serializable {
     }
 
     public WorkerType getSignerType() {
-        return WorkerType.fromType(signerType);
+        return signerType == null ? WorkerType.UNKNOWN : WorkerType.fromType(signerType);
     }
 
     public void setSignerType(WorkerType signerType) {
-        this.signerType = signerType.getType();
+        this.signerType = signerType == null ? null : signerType.getType();
     }
 
     /**

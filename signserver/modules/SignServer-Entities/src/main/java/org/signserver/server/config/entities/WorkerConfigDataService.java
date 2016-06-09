@@ -141,9 +141,9 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
         final LinkedList<Integer> result = new LinkedList<>();
         Query query;
         if (workerType == null) {
-            query = em.createQuery("SELECT w from WorkerConfigDataBean w WHERE w.signerType IS NULL OR w.signerType = :workerType").setParameter("workerType", WorkerType.UNKNOWN);
+            query = em.createQuery("SELECT w from WorkerConfigDataBean w WHERE w.signerType IS NULL OR w.signerType = :workerType").setParameter("workerType", WorkerType.UNKNOWN.getType());
         } else {
-            query = em.createQuery("SELECT w from WorkerConfigDataBean w WHERE w.signerType = :workerType").setParameter("workerType", workerType);
+            query = em.createQuery("SELECT w from WorkerConfigDataBean w WHERE w.signerType = :workerType").setParameter("workerType", workerType.getType());
         }
         List<WorkerConfigDataBean> list = (List<WorkerConfigDataBean>) query.getResultList();
         for (WorkerConfigDataBean wcdb : list) {

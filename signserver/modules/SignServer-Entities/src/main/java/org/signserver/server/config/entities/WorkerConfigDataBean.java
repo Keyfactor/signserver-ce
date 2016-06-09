@@ -49,9 +49,8 @@ public class WorkerConfigDataBean implements Serializable {
     @Column(length = 255)
     private String signerName;
     
-    @Column(length = 255)
-    @Enumerated(EnumType.STRING)
-    private WorkerType signerType;
+    @Column
+    private int signerType;
     
     @Lob
     @Column(length = 1048576)
@@ -83,11 +82,11 @@ public class WorkerConfigDataBean implements Serializable {
     }
 
     public WorkerType getSignerType() {
-        return signerType;
+        return WorkerType.fromType(signerType);
     }
 
     public void setSignerType(WorkerType signerType) {
-        this.signerType = signerType;
+        this.signerType = signerType.getType();
     }
 
     /**

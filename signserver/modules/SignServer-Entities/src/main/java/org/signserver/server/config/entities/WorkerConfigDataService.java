@@ -61,7 +61,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
         wcdb.setSignerId(workerId);
         final String name = "UnamedWorker" + workerId;
         wcdb.setSignerName(name);
-        wcdb.setSignerType(WorkerType.UNKNOWN);
+        wcdb.setSignerType(WorkerType.UNKNOWN.getType());
 
         try {
             final WorkerConfig config = (WorkerConfig) this.getClass().getClassLoader().loadClass(configClassPath).newInstance();
@@ -116,10 +116,15 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
         if (wcdb.getSignerName() != null) {
             workerConf.setProperty("NAME", wcdb.getSignerName());
         }
-        if (wcdb.getSignerType() != null) {
-            workerConf.setProperty("TYPE", wcdb.getSignerType().name());
+        final Integer signerType = wcdb.getSignerType();
+        if (signerType != null) {
+            try {
+                workerConf.setProperty("TYPE", WorkerType.fromType(signerType).name());
+            } catch (IllegalArgumentException ex) {
+                LOG.error("Unsupported worker type: " + signerType + ": " + ex.getLocalizedMessage());
+            }
         }
-        
+
         return workerConf;
     }
 
@@ -215,10 +220,10 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
             final String type = signconf.getProperty("TYPE");
             if (signconf.getProperty("TYPE") != null) {
                 try {
-                    wcdb.setSignerType(WorkerType.valueOf(type));
+                    wcdb.setSignerType(WorkerType.valueOf(type).getType());
                 } catch (IllegalArgumentException ex) {
                     LOG.error("Unable to set worker type: " + ex.getLocalizedMessage());
-                    wcdb.setSignerType(WorkerType.UNKNOWN);
+                    wcdb.setSignerType(WorkerType.UNKNOWN.getType());
                 }
             }
 

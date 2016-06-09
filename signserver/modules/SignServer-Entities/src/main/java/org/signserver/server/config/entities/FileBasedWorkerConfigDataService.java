@@ -112,19 +112,20 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                     
                     final File typeFile = getTypeFile(workerId);
                     if (typeFile.exists()) {
-                        final String type = FileUtils.readFileToString(typeFile);
+                        final String typeValue = FileUtils.readFileToString(typeFile);
                         try {
-                            wcdb.setSignerType(WorkerType.valueOf(type));
+                            final int type = Integer.parseInt(typeValue);
+                            wcdb.setSignerType(type);
                         } catch (IllegalArgumentException ex) {
-                            LOG.error("Unsupported worker type: " + type + ": " + ex.getLocalizedMessage());
-                            wcdb.setSignerType(WorkerType.UNKNOWN);
+                            LOG.error("Unsupported worker type: " + typeValue + ": " + ex.getLocalizedMessage());
+                            wcdb.setSignerType(WorkerType.UNKNOWN.getType());
                         }
                     } else {
                         LOG.warn("No type file for worker " + workerId);
                     }
                 }
             }
-
+            
             if (wcdb != null) {
                 XMLDecoder decoder;
                 try {
@@ -149,7 +150,13 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                 }
                 
                 if (wcdb.getSignerType() != null) {
-                   result.setProperty("TYPE", wcdb.getSignerType().name());
+                    Integer signerType = wcdb.getSignerType();
+                    try {
+                        result.setProperty("TYPE", WorkerType.fromType(signerType).name());
+                    } catch (IllegalArgumentException ex) {
+                        LOG.error("Unsupported worker type: " + signerType + ": " + ex.getLocalizedMessage());
+                        result.setProperty("TYPE", WorkerType.UNKNOWN.name());
+                    }
                 }
             }
         } catch (IOException ex) {
@@ -237,23 +244,32 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                 }
                 
                 // Update type if needed
-                String newType = signconf.getProperty("TYPE");
-                if (newType == null) {
-                    newType = WorkerType.UNKNOWN.name();
+                final String newTypeValue = signconf.getProperty("TYPE");
+                WorkerType wt;
+                if (newTypeValue == null) {
+                    wt = WorkerType.UNKNOWN;
+                } else {
+                    try {
+                        wt = WorkerType.valueOf(newTypeValue);
+                    } catch (IllegalArgumentException ex) {
+                        LOG.error("Unable to set worker type: " + ex.getLocalizedMessage());
+                        wt = WorkerType.UNKNOWN;
+                    }
                 }
-                try {
-                    WorkerType.valueOf(newType);
-                } catch (IllegalArgumentException ex) {
-                    LOG.error("Unable to set worker type: " + ex.getLocalizedMessage());
-                    newType = WorkerType.UNKNOWN.name();
-                }
-                WorkerType wt = WorkerType.valueOf(newType);
-                    
+                final int newType = wt.getType();
+
                 final File oldTypeFile = getTypeFile(workerId);
                 if (oldTypeFile.exists()) {
-                    String oldType = FileUtils.readFileToString(oldTypeFile);
+                    final String oldTypeValue = FileUtils.readFileToString(oldTypeFile);
+                    int oldType;
+                    try {
+                        oldType = Integer.parseInt(oldTypeValue);
+                    } catch (IllegalArgumentException ex) {
+                        LOG.error("Unable to load old worker type: " + ex.getLocalizedMessage());
+                        oldType = -1;
+                    }
 
-                    if (!newType.equals(oldType)) {
+                    if (newType != oldType) {
                         final File typeFolder = getTypeFolder(wt);
                         createFolder(typeFolder);
                         
@@ -269,15 +285,19 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                             LOG.debug("New type: " + newType + ", oldType: " + oldType);
                         }
 
-                        wcdb.setSignerType(wt);
+                        wcdb.setSignerType(wt.getType());
 
-                        final File oldTypeFolder = getTypeFolder(WorkerType.valueOf(oldType));
-                        final File oldTypeTypeFile = new File(oldTypeFolder, TYPE_PREFIX + workerId + SUFFIX);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Removing old type type file " + oldTypeTypeFile.getName());
-                        }
-                        if (!oldTypeTypeFile.delete()) {
-                            throw new FileBasedDatabaseException("Could not delete old type type file: " + oldTypeTypeFile.getAbsolutePath());
+                        try {
+                            final File oldTypeFolder = getTypeFolder(WorkerType.fromType(oldType));
+                            final File oldTypeTypeFile = new File(oldTypeFolder, TYPE_PREFIX + workerId + SUFFIX);
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Removing old type type file " + oldTypeTypeFile.getName());
+                            }
+                            if (!oldTypeTypeFile.delete()) {
+                                throw new FileBasedDatabaseException("Could not delete old type type file: " + oldTypeTypeFile.getAbsolutePath());
+                            }
+                        } catch (IllegalArgumentException ex) {
+                            LOG.warn("Unable to remove old type: " + ex.getLocalizedMessage());
                         }
                         writeType(workerId, newType);
                     }
@@ -285,7 +305,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("New type: " + newType);
                     }
-                    wcdb.setSignerType(wt);
+                    wcdb.setSignerType(wt.getType());
                     writeType(workerId, newType);
                     
                     final File typeFolder = getTypeFolder(wt);
@@ -539,12 +559,12 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         FileUtils.writeStringToFile(file, String.valueOf(id), "UTF-8");  // TODO: Replace with one that fd.sync()
     }
     
-    private void writeType(int id, String type) throws IOException {
+    private void writeType(int id, int type) throws IOException {
         final File file = getTypeFile(id);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Write type \"" + type + "\" for ID " + id + " to " + file.getName());
         }
-        FileUtils.writeStringToFile(file, type, "UTF-8"); // TODO: Replace with one that fd.sync()
+        FileUtils.writeStringToFile(file, String.valueOf(type), "UTF-8"); // TODO: Replace with one that fd.sync()
     }
 
     private List<Integer> findAllWithoutName() {
@@ -654,7 +674,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                             LOG.error("Unable to create file " + file + ". This worker will not be upgraded.");
                         }
                         try {
-                            writeType(id, WorkerType.UNKNOWN.name());
+                            writeType(id, WorkerType.UNKNOWN.getType());
                         } catch (IOException ex) {
                             LOG.error("Adding type file failed for worker configuration " + id, ex);
                         }

@@ -81,12 +81,12 @@ public class WorkerConfigDataBean implements Serializable {
         this.signerName = signerName;
     }
 
-    public WorkerType getSignerType() {
-        return signerType == null ? WorkerType.UNKNOWN : WorkerType.fromType(signerType);
+    public Integer getSignerType() {
+        return signerType;
     }
 
-    public void setSignerType(WorkerType signerType) {
-        this.signerType = signerType == null ? null : signerType.getType();
+    public void setSignerType(Integer signerType) {
+        this.signerType = signerType;
     }
 
     /**

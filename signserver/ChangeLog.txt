@@ -1,3 +1,22 @@
+SignServer 3.7.4, 2016-06-24
+----------------------------
+
+** Bug
+    * [DSS-1167] - Querying archive data by Signer ID not working locally (EJB interface)
+    * [DSS-1171] - Quick start documentation still refers to old soft crypto token
+    * [DSS-1172] - Admin GUI copyright year is outdated
+    * [DSS-1189] - PostgreSQL not working with 3.7.x and JBoss AS 7 / EAP 6
+    * [DSS-1203] - WildFly 9 configuration should use separate port for remoting
+    * [DSS-1208] - Missing sample enable value for TimeMonitorManager in deploy properties
+
+** Improvement
+    * [DSS-436] - Split xdocs in two separate sites, signserver.org and documentation site
+    * [DSS-918] - Improve HealthCheck free memory control (copy of ECA-4039)
+
+** New Feature
+    * [DSS-1165] - Support for qcStatements extension for qualified electronic time-stamps
+
+
 SignServer 3.7.3, 2016-03-24
 ----------------------------
 
@@ -19,6 +38,7 @@ SignServer 3.7.3, 2016-03-24
 ** New Feature
     * [DSS-331] - Auto-renewal timed service
     * [DSS-1144] - Option to specify options for the generated self-signed certificate
+
 
 SignServer 3.7.2, 2016-02-08
 ----------------------------

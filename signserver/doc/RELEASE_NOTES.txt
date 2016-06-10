@@ -1,3 +1,18 @@
+SignServer 3.7.4
+----------------
+
+New feature:
+ - Support for qcStatements extension for Qualified Electronic Time-stamps
+
+Improvement:
+ - More reliable calculation of free memory in Health Check
+
+Bug fixes:
+ - Fixed issue with PostgreSQL
+ - Fixed archive querying when running the GUI locally
+ - A few documentation and sample configuration fixes
+
+
 SignServer 3.7.3
 ----------------
 

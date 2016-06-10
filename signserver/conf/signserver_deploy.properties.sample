@@ -274,6 +274,11 @@ j2ee.web-nohttps=true
 # Default: false
 #timemonitor.enabled=false
 
+# Set to enable build of the TimeMonitorManager (Enterprise Edition only)
+# Default: false
+#module.timemonitormanager.enabled=false
+
+
 # -------------- Additional Web Deployments -----------------------------------
 
 # Deploy the documentation.

@@ -65,7 +65,7 @@ public class SigningAndValidationTestData {
                     01:26:c6:9c:6b:90:6e:b8:61:e5:4f:93:e2:af:d0:67:e1:39:
                     7a:6a
      */
-    public static final String CERT_EIGHTCA = 
+    private static final String CERT_EIGHTCA = 
             "MIICTjCCAbegAwIBAgIIS/QMzIzwNtcwDQYJKoZIhvcNAQEFBQAwNzEQMA4GA1UE"
             + "AwwHRWlnaHRDQTEWMBQGA1UECgwNRUpCQ0EgVGVzdGluZzELMAkGA1UEBhMCU0Uw"
             + "HhcNMDkwNjEwMTU0NDUxWhcNMTkwNjA4MTU0NDUxWjA3MRAwDgYDVQQDDAdFaWdo"
@@ -81,78 +81,73 @@ public class SigningAndValidationTestData {
             + "xpxrkG64YeVPk+Kv0GfhOXpq";
 
     /**
-    Certificate:
-    Data:
-        Version: 3 (0x2)
-        Serial Number:
-            0a:26:14:c8:76:38:e3:65
-        Signature Algorithm: sha1WithRSAEncryption
-        Issuer: CN=EightCA, O=EJBCA Testing, C=SE
-        Validity
-            Not Before: Jun 10 15:40:23 2009 GMT
-            Not After : Jun  8 15:40:23 2016 GMT
-        Subject: CN=endentity8
-        Subject Public Key Info:
-            Public Key Algorithm: rsaEncryption
-            RSA Public Key: (1024 bit)
-                Modulus (1024 bit):
-                    00:b2:72:30:72:d3:cf:f3:a5:16:6e:18:64:ae:ba:
-                    50:6f:fc:6d:ff:ba:b5:79:55:2c:80:88:54:2f:2e:
-                    0c:f4:30:6b:26:a1:d1:ef:66:73:70:e4:e3:df:2f:
-                    5e:19:8c:ff:fc:4e:a3:71:dc:f6:bf:e6:49:b4:67:
-                    c6:46:e5:c4:d5:03:f9:99:48:bb:e5:50:f7:53:2e:
-                    85:2d:03:11:de:0f:e0:2b:66:1e:66:07:24:4a:51:
-                    5b:2d:6d:e8:e1:65:a3:d8:b3:4e:dd:9b:d4:10:23:
-                    9a:64:85:c6:ec:40:2f:1d:78:b1:31:d4:f5:a6:b6:
-                    c3:ca:80:70:42:e8:a8:51:c7
-                Exponent: 65537 (0x10001)
-        X509v3 extensions:
-            X509v3 Subject Key Identifier: 
-                B0:2C:D2:F8:CF:CD:68:A9:D6:D8:62:21:49:0F:F9:3E:3B:14:5C:E7
-            X509v3 Basic Constraints: critical
-                CA:FALSE
-            X509v3 Authority Key Identifier: 
-                keyid:DE:7D:65:1E:67:74:37:83:B0:F8:EC:61:E4:7C:BC:F5:5C:67:DB:D3
+     * signer00001 from dss10_keystore.p12.
+     */
+    private static final String CERT_SIGNER00001 =
+            "MIIEmDCCAoCgAwIBAgIIa4ipW9G59Z0wDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UE\n" +
+            "AwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNp\n" +
+            "Z25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTE2MDMwMzA4MjQwOVoXDTM2MDIyNzA4\n" +
+            "MjQwOVowSjEUMBIGA1UEAwwLc2lnbmVyMDAwMDExEDAOBgNVBAsMB1Rlc3Rpbmcx\n" +
+            "EzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0B\n" +
+            "AQEFAAOCAQ8AMIIBCgKCAQEApzvRZ6gX/u2T1AqL7EVrpKHEFDtKlBehjqJ05/kI\n" +
+            "zFNbGNkmTLQkbCRRirfHcd6jhY9wmFnYFTTHBS9JFWI7Q6Q/nehHApSaoh+eb5Qr\n" +
+            "ZYW2Cq5wLrQg18ckpecarXratsPQEKvTGWBCnJ1bhHmMeWHj56LYIB2EqES09gmK\n" +
+            "IVbNoAX/XymZ3lDgtfGXUc5SndTh1iIPFVMUzRbXoSvZGIfvQ6rRJDVS3/epBRfW\n" +
+            "tGzLaDK+dXMHisLsOahQARp5XU8DXd5+CwZC1dA+zQNixYEhStHXVuKfv4a89ONS\n" +
+            "pEdv2KHgOLiQP2N+hjszzSasRbhwLSENMEbeL5GbMIJTRQIDAQABo38wfTAdBgNV\n" +
+            "HQ4EFgQUlkvLMTR+fW1eSjV4irWUdoJifMwwDAYDVR0TAQH/BAIwADAfBgNVHSME\n" +
+            "GDAWgBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0l\n" +
+            "BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQANg0pI\n" +
+            "IifUnDHjffnpiep7eITU6V6odovsj3+1tYIaAahW+HtI5T2ishEt++huFiUFIdwb\n" +
+            "FyF4Ep5cQe9cMfQghUJ//YqC1WHnxVQH234ELdO1FzaC1YcHis2zeW7HFpugd9Wr\n" +
+            "Lgms/p2gXTLkLEfbUVE5ujUjelBUKyIA3ADDnWRxaz2vlOvRV+8ZgrvxSN+jYkrA\n" +
+            "SeoDHeBh9qGknu1AmgaIUuQV6j/SSuf9+em3E7RSpFzOFwQTKq1MlKcxb3EC32O/\n" +
+            "JHu8T8jHWHZDmq2IkmwyGm3vTJH9bLNKvgM+wLWBJpbU5Ku/ijRNvOCAVrt90QKl\n" +
+            "MtA2/JZfLqZFiBNdB43VrM6cxWMdCL7gRIb50rR/CNAgblHq0DvpnXwS16SdaEib\n" +
+            "H6LjzTIJjoLwVbW+23j5w5r+XgxeNpoGxD5WY+Kq/h7D4eoL3e+oXHEfNwvXEuuR\n" +
+            "FpFXv4+4kOibRklG79VHSXEWclMvMlplIqHjHYh4gGSyvktCkV7YmqWteK9NEKeL\n" +
+            "OFoJ5Y5S4S9a+aCFkaHoUrW/PwR8Qp/0vOCK8+UduaDVbEQaM8Z2KeZwWafVdFxg\n" +
+            "b41nu6vcDVL/OQU0JyvdmNYmVoujboC3kNVfYJRgWeGceW2yo5anh5EuVwpMDncN\n" +
+            "HRF8V0TNwfORKDMmKoX5rcdgjmrR7Ebh29qalg==";
 
-            X509v3 CRL Distribution Points: critical
-                CRLissuer:<UNSUPPORTED>
-
-            X509v3 Key Usage: critical
-                Digital Signature, Non Repudiation, Key Encipherment
-            X509v3 Extended Key Usage: 
-                TLS Web Client Authentication, E-mail Protection
-    Signature Algorithm: sha1WithRSAEncryption
-        5d:22:4b:a1:22:71:06:2e:55:ab:89:d4:ee:58:84:86:6f:09:
-        c5:86:31:a9:07:95:a3:0a:c6:cd:46:bc:53:85:09:3a:94:d0:
-        e4:41:51:be:68:35:b3:96:74:4b:ad:d3:67:92:f0:6a:28:c2:
-        b8:b5:20:fb:0c:ad:f7:64:f9:23:2d:09:2e:5e:9e:87:3d:10:
-        6e:45:bd:ba:f1:73:af:7d:4d:96:07:88:f2:7f:44:68:94:2b:
-        c0:68:4b:79:8f:2c:89:7f:d7:5e:87:46:c1:c8:66:a8:dc:89:
-        db:e1:ee:63:8f:13:88:e7:d9:2a:a1:8a:bc:37:d0:cc:d7:8e:
-        67:37
-    */
-    public static final String CERT_ENDENTITY8 =
-            "MIIClzCCAgCgAwIBAgIICiYUyHY442UwDQYJKoZIhvcNAQEFBQAwNzEQMA4GA1UE"
-            + "AwwHRWlnaHRDQTEWMBQGA1UECgwNRUpCQ0EgVGVzdGluZzELMAkGA1UEBhMCU0Uw"
-            + "HhcNMDkwNjEwMTU0MDIzWhcNMTYwNjA4MTU0MDIzWjAVMRMwEQYDVQQDDAplbmRl"
-            + "bnRpdHk4MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCycjBy08/zpRZuGGSu"
-            + "ulBv/G3/urV5VSyAiFQvLgz0MGsmodHvZnNw5OPfL14ZjP/8TqNx3Pa/5km0Z8ZG"
-            + "5cTVA/mZSLvlUPdTLoUtAxHeD+ArZh5mByRKUVstbejhZaPYs07dm9QQI5pkhcbs"
-            + "QC8deLEx1PWmtsPKgHBC6KhRxwIDAQABo4HNMIHKMB0GA1UdDgQWBBSwLNL4z81o"
-            + "qdbYYiFJD/k+OxRc5zAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFN59ZR5ndDeD"
-            + "sPjsYeR8vPVcZ9vTMEsGA1UdHwEB/wRBMD8wPaI7pDkwNzEQMA4GA1UEAwwHRWln"
-            + "aHRDQTEWMBQGA1UECgwNRUpCQ0EgVGVzdGluZzELMAkGA1UEBhMCU0UwDgYDVR0P"
-            + "AQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDANBgkqhkiG"
-            + "9w0BAQUFAAOBgQBdIkuhInEGLlWridTuWISGbwnFhjGpB5WjCsbNRrxThQk6lNDk"
-            + "QVG+aDWzlnRLrdNnkvBqKMK4tSD7DK33ZPkjLQkuXp6HPRBuRb268XOvfU2WB4jy"
-            + "f0RolCvAaEt5jyyJf9deh0bByGao3Inb4e5jjxOI59kqoYq8N9DM145nNw==";
-
+    private static final String CERT_DSSROOTCA10 =
+            "MIIFfzCCA2egAwIBAgIIMk1BOK8CwTwwDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UE\n" +
+            "AwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNp\n" +
+            "Z25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMDUyNzA4MTQyN1oXDTM2MDUyNzA4\n" +
+            "MTQyN1owTTEXMBUGA1UEAwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3Rp\n" +
+            "bmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIICIjANBgkqhkiG\n" +
+            "9w0BAQEFAAOCAg8AMIICCgKCAgEAgblgjTTkMp1QAhgWDprhvqE9zX1Ux/A/RTOu\n" +
+            "4G4f6CTkd6JEEkbdKZv+CKv4cRoVCtfO3wnOokFRw/1JMmHHiQ1Z//uDoDjo8jk8\n" +
+            "nek0ArFE9R5NT02wMJCQa/mP1wU9ZSl1tx3jQRUFB+rTNeCcPTft+1FL7UjYMdkR\n" +
+            "zl261IOlmXzDMA+EYIGJ2c2wYhOv2DqfQygNz5GOf0EFqlQZIt/pzopSS+0K8mNb\n" +
+            "53ROhg9GJujwzugSH5Z+r0fsVHbCV0QUkZBfkRo9KMcdaDEPa8xpYTjsFPqU6Rcn\n" +
+            "GkVABhn8OS8SIWw2re1f+htj6p9EGbk1m0I9pWGBA9ktWnrqlqDXV+tEhhh1O4f+\n" +
+            "LHieoxiscrF7RXxlYqyam6oabfXsX3VAC0M1UkwIciE8wA1Sj/+dgoSMqvEDNDfw\n" +
+            "pEYt6l8Z8czDTWDi7MM2u5VY0nP3+A+PepKrOtrdaGSP396f4a7A3un1o6nQWHsy\n" +
+            "WQ7kc8GIn8zN5nykQaghGyYlHHYe1XUSPtHmxjbdsyztrkIis3cfjFne0XgPAiQu\n" +
+            "Yx3T/B+po9BhGIUwCV0Qi/gWVN6NkydsbzMeRXELQYyK+lHgIGiEaBzQRRtXbnB+\n" +
+            "wQXi2IacJNdKqICwDsl/PvvcZI9ZV6pB/KIzB+8IJm0CLY24K0OXJs3Bqij8gmpv\n" +
+            "bI+o0wUCAwEAAaNjMGEwHQYDVR0OBBYEFCB6Id7orbsCqPtxWKQJYrnYWAWiMA8G\n" +
+            "A1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAUIHoh3uituwKo+3FYpAliudhYBaIw\n" +
+            "DgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBCwUAA4ICAQAxFvpOZF6Kol48cQeK\n" +
+            "WQ48VAe+h5dmyKMfDLDZX51IRzfKKsHLpFPxzGNw4t9Uv4YOR0CD9z81dR+c93t1\n" +
+            "lwwIpKbx9Qmq8jViHEHKYD9FXThM+cVpsT25pg35m3ONeUX/b++l2d+2QNNTWMvd\n" +
+            "sCtaQdybZqbYFIk0IjPwLLqdsA8Io60kuES4JnQahPdLkfm70rgAdmRDozOfSDaa\n" +
+            "WHY20DovkfvKUYjPR6MGAPD5w9dEb4wp/ZjATblyZnH+LTflwfftUAonmAw46E0Z\n" +
+            "gg143sO6RfOOnbwjXEc+KXd/KQ6kTQ560mlyRd6q7EIDYRfD4n4agKV2R5gvVPhM\n" +
+            "D0+IK7kagqKNfWa9z8Ue2N3MedyWnb9wv4wC69qFndGaIfYADkUykoOyLsVVteJ7\n" +
+            "0PVJPXO7s66LucfD2R0wo2MpuOYCsTOm7HHS+uZ9VjHl2qQ0ZQG89Xn+AXnzPbk1\n" +
+            "INe2z0lq3hzCW5DTYBKsJEexErzMpLwiEqUYJUfR9EeCM8UPMtLSqz1utdPoIYhU\n" +
+            "LGzt5lSJEpMHMbquYfWJxQiKCbvfxQsP5dLUMEIqTgjNdo98OlM7Z7zjYH9Kimz3\n" +
+            "wgAKSAIoQZr7Oy1dMHO5GK4jBtZ8wgsyyQ6DzQQ7R68XFVKarIW8SATeyubAP+Wj\n" +
+            "dMwk/ZXzsDjMZEtENaBXzAefYA==";
+    
 	
     /**
      * Subject: CN=FirstCA,O=EJBCA Testing,C=SE
      * Issuer:  CN=FirstCA,O=EJBCA Testing,C=SE
      */
-    public static final String CERT_FIRSTCA =
+    private static final String CERT_FIRSTCA =
             "MIICTjCCAbegAwIBAgIIFJUfMRSPUTswDQYJKoZIhvcNAQEFBQAwNzEQMA4GA1UE"
             + "AwwHRmlyc3RDQTEWMBQGA1UECgwNRUpCQ0EgVGVzdGluZzELMAkGA1UEBhMCU0Uw"
             + "HhcNMDkwNjA0MTYzOTQ0WhcNMTkwNjAyMTYzOTQ0WjA3MRAwDgYDVQQDDAdGaXJz"
@@ -171,7 +166,7 @@ public class SigningAndValidationTestData {
      * Subject    : C=SE, O=EJBCA Testing, CN=endentity1
      * Issuer     : C=SE, O=EJBCA Testing, CN=FirstCA
      */
-    public static final String CERT_ENDENTITY1 = 
+    private static final String CERT_ENDENTITY1 = 
             "MIICbTCCAdagAwIBAgIIdpfNAUY23BQwDQYJKoZIhvcNAQEFBQAwNzEQMA4GA1UE"
             + "AwwHRmlyc3RDQTEWMBQGA1UECgwNRUpCQ0EgVGVzdGluZzELMAkGA1UEBhMCU0Uw"
             + "HhcNMDkwNjA4MDgyMzQzWhcNMTEwNjA4MDgyMzQzWjA6MRMwEQYDVQQDDAplbmRl"
@@ -190,7 +185,7 @@ public class SigningAndValidationTestData {
     /**
      * 
      */
-    public static final String CERT_ENDENTITY2 =
+    private static final String CERT_ENDENTITY2 =
             "MIICSDCCAbGgAwIBAgIIJMFclCdO0dowDQYJKoZIhvcNAQEFBQAwNzEQMA4GA1UE"
             + "AwwHRmlyc3RDQTEWMBQGA1UECgwNRUpCQ0EgVGVzdGluZzELMAkGA1UEBhMCU0Uw"
             + "HhcNMDkwNjA4MDkzNTM1WhcNMTEwNjA4MDkzNTM1WjAVMRMwEQYDVQQDDAplbmRl"
@@ -206,15 +201,13 @@ public class SigningAndValidationTestData {
             + "GUfKfM8Tu+OKjA0+";
 		
 	
-    public static final String SIGNATURE_BY_ENDENTITY1 =
+    private static final String SIGNATURE_BY_ENDENTITY1 =
             "eBS5DYS3QWmpAIRoHgMuR1a72OPXC5cYg1M3KXzlRW471vOQq0zx7LI3NnNSyfhjWuQf0zQTyGv9"
             + "oKhCnGSFqTO+uwSfsajGL4HsWWm8ot+HkzgL0fcWl5EATntqGmaS2nKPR/cVl+P4BehjFcD3BZ70"
             + "gD+07DZjFd/tmjioH/w=";
 	
-    public static final String SIGNATURE_BY_ENDENTITY8 =
-            "AahdAhSFwJ/f8mBZzY/B9iMTnyg7yKSKnzne6imP7/TRe17it/EHiVCO1F4oCpOtW2rURQyicMY3\n"
-            + "dXmDXyEflf/mEd2Y55ZWDGNwKa1MWzl+qjBZvQyQabl4zd6F8la12VCKJ/UCJMkZHeDGLGWD7Tcf\n"
-            + "rjN+LjgoIoZTAe0jrb0=";
+    private static final String SIGNATURE_BY_SIGNER00001 =
+            "TVHbxQyoBoLXqDICQ1gGHxfkVn3HUZ6KW66bNRWmwjzXvyjEkqcRYHohj9Z8hbnRxBObw3feZRkHz8UFaELXH1QcEiklGDTIMQoqiaWUQ9rwa8gnaN9hjHx2R82vwztNu0DhG51ovzUj29XXBth3+Lo84WtbbfZo1vXOApKd25R574Ethelxss0zRjfCTiCMyg4GCt3fF0u3JElydg6EfpOtA8wSEolQ6S/KS/FEkjCBCy/0EwkimTZuBoR7CFlMlox2pUV9hAfS5VavzdYCVB1kRCTAVs+Pjc+hSOUUH+cNpwHmacKoy0eQTgM5L8/l3Ep/p443dEmbTmx2doDIew==";
 	
     
     private static final String CERT_OTHER =
@@ -235,12 +228,9 @@ public class SigningAndValidationTestData {
         +"pN5nwZxfMj6Zz+9Y9fAZdWzjUa4rBwbNzZlvZ/uXQaIb4U0DPmSJZC0YwXmUqU5u7W7Zow==";
 	 
 	 
+    /** Signature by signer00002. */
     private static final String SIGNATURE_BY_OTHER =
-         "vNPmEQ9ckorNrQ793HZsVP8/NB07S2pNZkJ7JvfALNBkyDCntC+7UsiXWPRM1YMz3dnDF9WkjWHF"
-                +"549XnjiwT7k0cBnKH0563rB0KWSjgAN7dT27g/+dKbvz7B6Q+v1uQDodahBW8Cpm6JuLwO0hZpHF"
-                +"subk1bfz/iCUsJEuzGq++OyTGQJiVyJ7D/+fxRefVdORAcGRXBmvRUh3/pKGnv36BzYOR3z4lDLE"
-                +"obSmC8X62cTYA+uCW3UJAhuxGEmXdYzrNTA0RH5ybC8kSkPmMvbxeA45hiyT6k8BiEhVAumncRkd"
-                +"lWowqRrdOL0XaGczUUsp+BN6xsIqzfk3RCVtSQ==";
+         "a7q9iXVRt1dOLZR101L7GNgXyOAb1nVJ+/acR+8NM+Qof3URaSnuqmNCUoRQRBP2JIv9b/itfoZpf0/m2Sbpuw==";
 	 
     /**
      * Ok sig, ok cert.
@@ -249,10 +239,10 @@ public class SigningAndValidationTestData {
                             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                             +"<root><my-tag>My Data</my-tag><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
                             +"    <SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\"/><SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#rsa-sha1\"/><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><DigestValue>uCUwcTJFETdIT9uYQPkG9GaXg+Y=</DigestValue></Reference></SignedInfo>"
-                            +"    <SignatureValue>"+SIGNATURE_BY_ENDENTITY8+"</SignatureValue>"
+                            +"    <SignatureValue>"+SIGNATURE_BY_SIGNER00001+"</SignatureValue>"
                             +"    <KeyInfo>"
                             +"        <X509Data>"
-                            +"            <X509Certificate>"+CERT_ENDENTITY8+"</X509Certificate>"
+                            +"            <X509Certificate>"+CERT_SIGNER00001+"</X509Certificate>"
                             +"        </X509Data>"
                             +"    </KeyInfo>"
                             +"</Signature ></root>";
@@ -275,7 +265,7 @@ public class SigningAndValidationTestData {
                             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                             +"<root><my-tag>My Data</my-tag><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
                             +"    <SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\"/><SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#rsa-sha1\"/><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><DigestValue>uCUwcTJFETdIT9uYQPkG9GaXg+Y=</DigestValue></Reference></SignedInfo>"
-                            +"    <SignatureValue>"+SIGNATURE_BY_ENDENTITY8+"</SignatureValue>"
+                            +"    <SignatureValue>"+SIGNATURE_BY_SIGNER00001+"</SignatureValue>"
                             +"    <KeyInfo>"
                             +"        <X509Data>"
                             +"        <X509Certificate>"+CERT_EIGHTCA+"</X509Certificate>"
@@ -290,7 +280,7 @@ public class SigningAndValidationTestData {
                             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                             +"<root><my-tag>My Data</my-tag><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
                             +"    <SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\"/><SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#rsa-sha1\"/><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><DigestValue>uCUwcTJFETdIT9uYQPkG9GaXg+Y=</DigestValue></Reference></SignedInfo>"
-                            +"    <SignatureValue>"+SIGNATURE_BY_ENDENTITY8+"</SignatureValue>"
+                            +"    <SignatureValue>"+SIGNATURE_BY_SIGNER00001+"</SignatureValue>"
                             +"    <KeyInfo>"
                             +"        <X509Data>"
                             +"        </X509Data>"
@@ -304,11 +294,11 @@ public class SigningAndValidationTestData {
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
             +"<root><my-tag>My Data</my-tag><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"
             +"    <SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments\"/><SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#rsa-sha1\"/><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><DigestValue>uCUwcTJFETdIT9uYQPkG9GaXg+Y=</DigestValue></Reference></SignedInfo>"
-            +"    <SignatureValue>"+SIGNATURE_BY_ENDENTITY8+"</SignatureValue>"
+            +"    <SignatureValue>"+SIGNATURE_BY_SIGNER00001+"</SignatureValue>"
             +"    <KeyInfo>"
             +"        <X509Data>"
-            +"        <X509Certificate>"+CERT_EIGHTCA+"</X509Certificate>"
-            +"            <X509Certificate>"+CERT_ENDENTITY8+"</X509Certificate>"
+            +"        <X509Certificate>"+CERT_DSSROOTCA10+"</X509Certificate>"
+            +"            <X509Certificate>"+CERT_SIGNER00001+"</X509Certificate>"
             +"        </X509Data>"
             +"    </KeyInfo>"
             +"</Signature ></root>";

@@ -18,6 +18,7 @@ import java.util.List;
 import javax.naming.NamingException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.junit.Before;
@@ -30,6 +31,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.Validation;
 import org.w3c.dom.Document;
 import org.junit.Test;
+import org.signserver.common.util.PathUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
@@ -57,7 +59,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     private static final String CERTVALIDATION_WORKER = "CRLValidationWorker2";
     private static final String XMLVALIDATOR_WORKER = "XMLValidatorWorker2";
     private static final String KEYSTORE8_PASSWORD = "foo123";
-    private static final String KEYSTORE8_ALIAS = "endentity8";
+    private static final String KEYSTORE8_ALIAS = "signer00001";
     
     private static File keystoreFileEndentity8;
     private static File crlWithCertOk;
@@ -75,17 +77,14 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     @Override
     protected void setUp() throws Exception {
 
-        keystoreFileEndentity8 = new File(getSignServerHome() + File.separator + "res/test/org/signserver/client/api/endentity8.p12");
+        keystoreFileEndentity8 = new File(PathUtil.getAppHome(), "res/test/dss10/dss10_keystore.p12");
         if (!keystoreFileEndentity8.exists()) {
             throw new FileNotFoundException("Keystore file: " + keystoreFileEndentity8.getAbsolutePath());
         }
 
-        crlWithCertOk = new File(getSignServerHome() + File.separator
-                + "res/test/org/signserver/client/api/EightCA-ok.crl");
-        crlWithCertRevoked = new File(getSignServerHome() + File.separator
-                + "res/test/org/signserver/client/api/EightCA-revoked.crl");
-        crlToUse = new File(getSignServerHome() + File.separator
-                + "res/test/org/signserver/client/api/EightCA-use.crl");
+        crlWithCertOk = new File(PathUtil.getAppHome(), "res/test/dss10/DSSRootCA10-4.crl");
+        crlWithCertRevoked = new File(PathUtil.getAppHome(), "res/test/dss10/DSSRootCA10-5-6b88a95bd1b9f59d-revoked.crl");
+        crlToUse = new File(PathUtil.getAppHome(), "tmp/DSSRootCA10-use.crl");
 
         if (!crlWithCertOk.exists()) {
             throw new FileNotFoundException("Missing CRL: "
@@ -159,13 +158,14 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         workerSession.activateSigner(new WorkerIdentifier(SIGNER1_WORKERID), KEYSTORE8_PASSWORD);
     }
 
-    private void setupValidation() {
+    private void setupValidation() throws IOException {
+        final String caPEM = FileUtils.readFileToString(new File(PathUtil.getAppHome(), "res/test/dss10/DSSRootCA10.cacert.pem"));
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "NAME", CERTVALIDATION_WORKER);
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.CLASSPATH", "org.signserver.validationservice.server.CRLValidator");
-        workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CERTCHAIN", "-----BEGIN CERTIFICATE-----\n" + SigningAndValidationTestData.CERT_EIGHTCA + "\n-----END CERTIFICATE-----\n");
+        workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.ISSUER1.CERTCHAIN", caPEM);
         workerSession.setWorkerProperty(CERTVALIDATION_WORKERID, "VAL1.TESTPROP", "TEST");
         workerSession.reloadConfiguration(CERTVALIDATION_WORKERID);
     }
@@ -322,9 +322,9 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
 
         // Check certificate and path
         Certificate signercert = res.getCertificateValidation().getCertificate();
-        assertEquals("Signer certificate", "CN=endentity8", CertTools.getSubjectDN(signercert));
+        assertEquals("Signer certificate", "CN=signer00001,OU=Testing,O=SignServer,C=SE", CertTools.getSubjectDN(signercert));
         List<Certificate> caChain = res.getCertificateValidation().getCAChain();
-        assertEquals("ca certificate 0", "CN=EightCA,O=EJBCA Testing,C=SE", CertTools.getSubjectDN(caChain.get(0)));
+        assertEquals("ca certificate 0", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", CertTools.getSubjectDN(caChain.get(0)));
         assertEquals("caChain length", 1, caChain.size());
         LOG.info("Status message: " + res.getCertificateValidation().getStatusMessage());
         assertEquals(Validation.Status.VALID, res.getCertificateValidation().getStatus());

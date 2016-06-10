@@ -18,7 +18,7 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 
 /**
- * Utility methods related to the Healt check functionality.
+ * Utility methods related to the Health check functionality.
  * 
  * @version $Id$
  */
@@ -29,8 +29,26 @@ public class HealthCheckUtils {
 
     public static List<String> checkMemory(int minfreememory) {
         final LinkedList<String> result = new LinkedList<String>();
-        if (minfreememory >= Runtime.getRuntime().freeMemory()) {
-            result.add("Error Virtual Memory is about to run out, currently free memory :" + Runtime.getRuntime().freeMemory());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Checking JVM heap memory.");
+        }
+        // Memory still not allocated by the JVM + available memory of what is allocated by the JVM
+        final long maxAllocation = Runtime.getRuntime().maxMemory();
+
+        // The total amount of memory allocated to the JVM
+        final long currentlyAllocation = Runtime.getRuntime().totalMemory();
+
+        // Available memory of what is allocated by the JVM
+        final long freeAllocated = Runtime.getRuntime().freeMemory();
+
+        // Memory still not allocated by the JVM + available memory of what is allocated by the JVM
+        final long currentFreeMemory = maxAllocation - currentlyAllocation + freeAllocated;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug((100L * (maxAllocation - currentFreeMemory) / maxAllocation) + "% of the " + (maxAllocation / 1048576L) + " MiB heap is currently used.");
+        }
+
+        if (minfreememory >= currentFreeMemory) {
+            result.add("Error Virtual Memory is about to run out, currently free memory :" + currentFreeMemory);
         }
         return result;
     }

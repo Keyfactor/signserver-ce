@@ -10,17 +10,32 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.archive;
+package org.signserver.server;
 
-
-import org.signserver.server.BaseComponent;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
- * Abstract base implementation of an archiver.
- * Currently implements a base version of error reporting.
+ * Base implementation of the component interface.
  * 
  * @author Marcus Lundblad
  * @version $Id$
  */
-public abstract class BaseArchiver extends BaseComponent implements Archiver {
+public abstract class BaseComponent implements IComponent {
+
+    private final List<String> fatalErrors = new LinkedList<>();
+
+    /**
+     * Register a fatal error for the archiver instance.
+     * 
+     * @param error 
+     */
+    protected void addFatalError(final String error) {
+        fatalErrors.add(error);
+    }
+    
+    @Override
+    public List<String> getFatalErrors(IServices services) {
+        return fatalErrors;
+    }
 }

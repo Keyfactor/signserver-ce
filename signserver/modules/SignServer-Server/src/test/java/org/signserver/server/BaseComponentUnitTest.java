@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.archive;
+package org.signserver.server;
 
 import java.util.List;
 import junit.framework.TestCase;
@@ -18,6 +18,11 @@ import org.junit.Test;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.SignServerContext;
+import org.signserver.server.archive.Archivable;
+import org.signserver.server.archive.ArchiveException;
+import org.signserver.server.archive.Archiver;
+import org.signserver.server.archive.ArchiverInitException;
+import org.signserver.server.archive.BaseArchiver;
 
 /**
  * Unit tests for the base archiver class.
@@ -26,7 +31,7 @@ import org.signserver.server.SignServerContext;
  * @author Marcus Lundblad
  * @version $Id$
  */
-public class BaseArchiverUnitTest extends TestCase {
+public class BaseComponentUnitTest extends TestCase {
     
     /**
      * Test that no fatal errors are included by default in a BaseArchiver
@@ -36,19 +41,10 @@ public class BaseArchiverUnitTest extends TestCase {
      */
     @Test
     public void testNoErrors() throws Exception {
-       final Archiver archiver = new BaseArchiver() {
-           @Override
-           public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
-               throw new UnsupportedOperationException("Not supported yet.");
-           }
-
-           @Override
-           public boolean archive(Archivable archivable, RequestContext requestContext) throws ArchiveException {
-               throw new UnsupportedOperationException("Not supported yet.");
-           }
+       final IComponent component = new BaseComponent() {
        };
        
-       final List<String> errors = archiver.getFatalErrors();
+       final List<String> errors = component.getFatalErrors(null);
        assertTrue("Should not contain fatal errors", errors.isEmpty());
     }
     
@@ -59,23 +55,13 @@ public class BaseArchiverUnitTest extends TestCase {
      */
     @Test
     public void testOneError() throws Exception {
-        final Archiver archiver = new BaseArchiver() {
+        final IComponent component = new BaseComponent() {
             {
                 addFatalError("One error");
             }
-
-            @Override
-            public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            @Override
-            public boolean archive(Archivable archivable, RequestContext requestContext) throws ArchiveException {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
         };
         
-        final List<String> errors = archiver.getFatalErrors();
+        final List<String> errors = component.getFatalErrors(null);
         assertEquals("Should contain one error", 1, errors.size());
         assertTrue("Should contain specific error", errors.contains("One error"));
     }
@@ -87,24 +73,14 @@ public class BaseArchiverUnitTest extends TestCase {
      */
     @Test
     public void testTwoErrors() throws Exception {
-        final Archiver archiver = new BaseArchiver() {
+        final IComponent component = new BaseComponent() {
             {
                 addFatalError("One error");
                 addFatalError("Second error");
             }
-
-            @Override
-            public void init(int listIndex, WorkerConfig config, SignServerContext context) throws ArchiverInitException {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            @Override
-            public boolean archive(Archivable archivable, RequestContext requestContext) throws ArchiveException {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
         };
         
-        final List<String> errors = archiver.getFatalErrors();
+        final List<String> errors = component.getFatalErrors(null);
         assertEquals("Should contain two errors", 2, errors.size());
         assertTrue("Should contain specific error", errors.contains("One error"));
         assertTrue("Should contain the second error", errors.contains("Second error"));

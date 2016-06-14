@@ -10,17 +10,16 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.archive;
+package org.signserver.server;
 
-
-import org.signserver.server.BaseComponent;
+import java.util.List;
 
 /**
- * Abstract base implementation of an archiver.
- * Currently implements a base version of error reporting.
+ * Common interface for components.
  * 
  * @author Marcus Lundblad
  * @version $Id$
  */
-public abstract class BaseArchiver extends BaseComponent implements Archiver {
+public interface IComponent {
+    List<String> getFatalErrors(IServices services);
 }

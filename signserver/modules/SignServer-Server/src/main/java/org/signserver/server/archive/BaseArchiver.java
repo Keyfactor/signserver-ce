@@ -13,6 +13,7 @@
 package org.signserver.server.archive;
 
 
+import java.util.List;
 import org.signserver.server.BaseComponent;
 
 /**
@@ -23,4 +24,9 @@ import org.signserver.server.BaseComponent;
  * @version $Id$
  */
 public abstract class BaseArchiver extends BaseComponent implements Archiver {
+    
+    @Override
+    public List<String> getFatalErrors() {
+        return getFatalErrors(null);
+    }
 }

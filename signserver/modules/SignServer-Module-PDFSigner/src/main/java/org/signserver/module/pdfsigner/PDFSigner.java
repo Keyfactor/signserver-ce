@@ -267,14 +267,14 @@ public class PDFSigner extends BaseSigner {
         // with a byte[].
         if (!(signRequest instanceof GenericSignRequest)) {
             throw new IllegalRequestException(
-                    "Received request wasn't a expected GenericSignRequest.");
+                    "Received request wasn't an expected GenericSignRequest.");
         }
         
         final ISignRequest sReq = (ISignRequest) signRequest;
         
         if (!(sReq.getRequestData() instanceof byte[])) {
             throw new IllegalRequestException(
-                    "Received request data wasn't a expected byte[].");
+                    "Received request data wasn't an expected byte[].");
         }
 
         // Log values

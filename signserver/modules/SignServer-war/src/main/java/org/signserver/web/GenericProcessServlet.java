@@ -384,7 +384,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             final MetaDataHolder metadataHolder) throws java.io.IOException, ServletException {
         final String remoteAddr = req.getRemoteAddr();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Received HTTP process request for worker " + wi + ", from ip " + remoteAddr);
+            LOG.debug("Received HTTP process request for worker " + wi + ", from IP " + remoteAddr);
         }
 
         // Client certificate

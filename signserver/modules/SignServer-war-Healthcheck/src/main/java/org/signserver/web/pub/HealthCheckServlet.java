@@ -172,7 +172,7 @@ public class HealthCheckServlet extends HttpServlet {
     	    } catch (IOException e) {
     	        log.error("ERROR : Problems generating unauthorized http response.");
     	    }
-    	    log.error("Healthcheck request received from an non authorized IP: " + remoteIP);
+    	    log.error("Healthcheck request received from a non authorized IP: " + remoteIP);
     	}
     }
 

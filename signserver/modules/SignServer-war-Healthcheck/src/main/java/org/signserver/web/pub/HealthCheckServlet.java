@@ -168,7 +168,7 @@ public class HealthCheckServlet extends HttpServlet {
 		remoteIP = "unknown";    			  
     	    }
     	    try {
-    		response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"ERROR : Healthcheck request received from an non authorized IP: "+remoteIP);
+    		response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"ERROR : Healthcheck request received from a non authorized IP: "+remoteIP);
     	    } catch (IOException e) {
     	        log.error("ERROR : Problems generating unauthorized http response.");
     	    }

@@ -580,7 +580,7 @@ $ bin/signserver reload 1</source>
                         <li>
 Load the Timestamp demo configuration and notice the generated worker ID (in this
 example 2):<br/>
-<source>$ bin/signserver setproperties doc/sample-configs/qs_timestamp_configuration.properties</source>
+<source>$ bin/signserver setproperties doc/sample-configs/timestamp_configuration.properties</source>
                         </li>
                         <li>
 Activate the configuration with:<br/>
@@ -625,7 +625,7 @@ $ bin/signserver reload 1</source>
                         <li>
 Load the PDF signer demo configuration and notice the generated worker ID (in this
 example 3):<br/>
-<source>$ bin/signserver setproperties doc/sample-configs/qs_pdfsigner_configuration.properties</source>
+<source>$ bin/signserver setproperties doc/sample-configs/pdfsigner_configuration.properties</source>
                         </li>
                         <li>
 Activate the configuration with:<br/>
@@ -653,7 +653,7 @@ To install a certificate validation service worker issue the following commands:
                     <ol>
                         <li>
 Load the configuration and notice the worker ID (in this example: 6):<br/>
-<source>$ bin/signserver setproperties doc/sample-configs/qs_validator_dummy_configuration.properties</source>
+<source>$ bin/signserver setproperties doc/sample-configs/validator_dummy_configuration.properties</source>
                         </li>
                         <li>
 Activate the configuration with:<br/>
@@ -677,7 +677,7 @@ modules built in.
                         <li>
 Load the XML validator demo configuration and notice the generated worker ID (in this
 example 7):
-$ bin/signserver setproperties doc/sample-configs/qs_xmlvalidator_configuration.properties
+$ bin/signserver setproperties doc/sample-configs/xmlvalidator_configuration.properties
                         </li>
                     <li>
 Verify the configuration with (notice that VALIDATIONSERVICEWORKER is set to "CertValidationWorker"):<br/>
@@ -719,7 +719,7 @@ $ bin/signserver reload 1</source>
                         <li>
 Load the MRTD SOD signer demo configuration and notice the generated worker ID (in this
 example 8):<br/>
-<source>$ bin/signserver setproperties doc/sample-configs/qs_mrtdsodsigner_configuration.properties</source>
+<source>$ bin/signserver setproperties doc/sample-configs/mrtdsodsigner_configuration.properties</source>
                         </li>
                         <li>
 Activate the configuration with:<br/>
@@ -756,7 +756,7 @@ section of the manual.
 <source>
 bin/signserver setproperties doc/sample-configs/pkcs11-crypto-configuration.properties
 bin/signserver reload 9
-bin/signserver setproperties doc/sample-configs/qs_mrtdsodsigner_configuration.properties
+bin/signserver setproperties doc/sample-configs/mrtdsodsigner_configuration.properties
 bin/signserver setproperty 10 CRYPTOTOKEN CryptoTokenP11
 bin/signserver reload 10
 bin/signserver activatecryptotoken 9 tokenpin

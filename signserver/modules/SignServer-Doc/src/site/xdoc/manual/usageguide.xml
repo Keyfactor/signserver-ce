@@ -1042,7 +1042,7 @@ Sample configuration files are available in SIGNSERVER_HOME/sample-configs.
 To setup a PDFSigner using the quick start configuration file issue the
 following command:
                         </p>
-                        <source>bin/signserver setproperties sample-configs/qs_pdfsigner_configuration.properties</source>
+                        <source>bin/signserver setproperties sample-configs/pdfsigner_configuration.properties</source>
                         <p>
 Notice the created workerId and use it when applying the configuration using the
 reload command:

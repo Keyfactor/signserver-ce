@@ -105,7 +105,7 @@ public class SignServerLog4jDevice implements AuditLogDevice {
 			throws AuditRecordStorageException {
 		final StringBuilder str = new StringBuilder();	
 		str.append("EVENT: ").append(eventType.toString()).append("; ")
-                .append("OUTCOME").append(eventStatus.toString()).append("; ")
+                .append("OUTCOME: ").append(eventStatus.toString()).append("; ")
 		.append("MODULE: ").append(moduleType.toString()).append("; ")
 		.append("ADMINISTRATOR: ").append(authToken).append("; ")
 		.append("ISSUER: ").append(customId).append("; ")

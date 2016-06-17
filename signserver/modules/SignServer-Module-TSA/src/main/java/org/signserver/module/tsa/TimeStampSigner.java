@@ -207,6 +207,7 @@ public class TimeStampSigner extends BaseSigner {
     public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
     public static final String ACCEPTEDALGORITHMS = "ACCEPTEDALGORITHMS";
     public static final String ACCEPTEDPOLICIES = "ACCEPTEDPOLICIES";
+    public static final String ACCEPTANYPOLICY = "ACCEPTANYPOLICY";
     public static final String ACCEPTEDEXTENSIONS = "ACCEPTEDEXTENSIONS";
     //public static final String DEFAULTDIGESTOID    = "DEFAULTDIGESTOID";
     public static final String DEFAULTTSAPOLICYOID = "DEFAULTTSAPOLICYOID";
@@ -279,6 +280,7 @@ public class TimeStampSigner extends BaseSigner {
     private String signatureAlgorithm;
     private Set<ASN1ObjectIdentifier> acceptedAlgorithms = null;
     private Set<String> acceptedPolicies = null;
+    private boolean acceptAnyPolicy = false;
     private Set<String> acceptedExtensions = null;
 
     //private String defaultDigestOID = null;
@@ -413,6 +415,19 @@ public class TimeStampSigner extends BaseSigner {
         certificateDigestAlgorithm =
                 getCertificateDigestAlgorithmFromString(certificateDigestAlgorithmString);
 
+        final String acceptAnyPolicyValue = config.getProperty(ACCEPTANYPOLICY);
+        final String acceptedPoliciesValue = config.getProperty(ACCEPTEDPOLICIES);
+                
+        if (acceptAnyPolicyValue != null && acceptedPoliciesValue != null) {
+            configErrors.add("Can not specifiy both ACCEPTANYPOLICY and ACCEPTEDPOLICIES at the same time");
+        } else if ((acceptAnyPolicyValue == null || acceptAnyPolicyValue.isEmpty()) &&
+                    (acceptedPoliciesValue == null || acceptedPoliciesValue.isEmpty())) {
+            configErrors.add("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY");
+        } else if (acceptAnyPolicyValue != null &&
+                   !Boolean.TRUE.toString().equals(acceptAnyPolicyValue)) {
+            configErrors.add("When set, ACCEPTANYPOLICY must have the value true");
+        }
+        
         // Print the errors for troubleshooting
         if (!configErrors.isEmpty()) {
             LOG.info("Configuration errors for worker " + workerId + ": \n"

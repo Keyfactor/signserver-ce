@@ -16,6 +16,9 @@ import java.io.File;
 import java.math.BigInteger;
 import java.security.Security;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
@@ -36,8 +39,10 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerStatus;
 import org.signserver.server.LocalComputerTimeSource;
 import org.signserver.server.log.LogMap;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
@@ -46,6 +51,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.IServices;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.Loggable;
 import org.signserver.test.utils.mock.MockedRequestContext;
@@ -72,6 +78,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     private static final int WORKER6 = 8895;
     private static final int WORKER7 = 8896;
     private static final int WORKER8 = 8897;
+    private static final int WORKER9 = 8898;
     private static final String NAME = "NAME";
     private static final String AUTHTYPE = "AUTHTYPE";
     private static final String CRYPTOTOKEN_CLASSNAME =
@@ -637,6 +644,92 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 (byte[]) res.getProcessedData());
         timeStampResponse.validate(timeStampRequest);
         assertEquals("acceptance", PKIStatus.REJECTION, timeStampResponse.getStatus());
+    }
+    
+    /**
+     * Test that setting both ACCEPTANYPOLICY and ACCEPTEDPOLICIES results in
+     * a configuration error.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testBothAnyAcceptedAndAcceptedPoliciesError() throws Exception {
+        LOG.info("testBothAnyAcceptedAndAcceptedPoliciesError"); 
+        
+        final WorkerConfig config = new WorkerConfig();
+        
+        config.setProperty("ACCEPTANYPOLICY", "true");
+        config.setProperty("ACCEPTEDPOLICIES", "1.2.3.4");
+        
+        final TimeStampSigner signer = new TimeStampSigner() {
+            @Override
+            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+                return null;
+            }
+        };
+        
+        signer.init(WORKER1, config, null, null);
+        
+        final List<String> fatalErrors = signer.getFatalErrors(null);
+        
+        assertTrue("should contain configuration error",
+                   fatalErrors.contains("Can not specifiy both ACCEPTANYPOLICY and ACCEPTEDPOLICIES at the same time"));
+    }
+    
+    /**
+     * Test that not setting any of ACCEPTANYPOLICY or ACCEPTEDPOLICIES results in
+     * a configuration error.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testNoneOfAnyAcceptedOrAcceptedPoliciesError() throws Exception {
+        LOG.info("testBothAnyAcceptedAndAcceptedPoliciesError"); 
+        
+        final WorkerConfig config = new WorkerConfig();
+      
+        final TimeStampSigner signer = new TimeStampSigner() {
+            @Override
+            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+                return null;
+            }
+        };
+        
+        signer.init(WORKER1, config, null, null);
+        
+        final List<String> fatalErrors = signer.getFatalErrors(null);
+        
+        assertTrue("should contain configuration error",
+                   fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY"));
+    }
+    
+    /**
+     * Test that not setting an invalid value for ACCEPTANYPOLICY results in
+     * an error.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testAcceptAnyPolicyInvalid() throws Exception {
+        LOG.info("testBothAnyAcceptedAndAcceptedPoliciesError"); 
+        
+        final WorkerConfig config = new WorkerConfig();
+        
+        config.setProperty("ACCEPTANYPOLICY", "false");
+      
+        final TimeStampSigner signer = new TimeStampSigner() {
+            @Override
+            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+                return null;
+            }
+        };
+        
+        signer.init(WORKER1, config, null, null);
+        
+        final List<String> fatalErrors = signer.getFatalErrors(null);
+        
+        assertTrue("should contain configuration error",
+                   fatalErrors.contains("When set, ACCEPTANYPOLICY must have the value true"));
     }
 }
 

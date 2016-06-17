@@ -70,6 +70,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     private static final int WORKER4 = 8893;
     private static final int WORKER5 = 8894;
     private static final int WORKER6 = 8895;
+    private static final int WORKER7 = 8896;
     private static final String NAME = "NAME";
     private static final String AUTHTYPE = "AUTHTYPE";
     private static final String CRYPTOTOKEN_CLASSNAME =
@@ -177,7 +178,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                         File.separator + "dss10_tssigner1.p12");
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
-
+            config.setProperty("ACCEPTANYPOLICY", "true");
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner());
             workerSession.reloadConfiguration(workerId);
@@ -198,7 +199,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                         File.separator + "dss10_tssigner1.p12");
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
-            
+            config.setProperty("ACCEPTANYPOLICY", "true");
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner());
             workerSession.reloadConfiguration(workerId);
@@ -219,7 +220,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                         File.separator + "dss10_tssigner1.p12");
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
-            
+            config.setProperty("ACCEPTANYPOLICY", "true");
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner());
             workerSession.reloadConfiguration(workerId);
@@ -240,6 +241,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                         File.separator + "dss10_tssigner1.p12");
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
+            config.setProperty("ACCEPTANYPOLICY", "true");
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner());
             workerSession.reloadConfiguration(workerId);
@@ -259,6 +261,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                         File.separator + "dss10_tssigner1.p12");
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
+            config.setProperty("ACCEPTANYPOLICY", "true");
             
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner() {
@@ -288,6 +291,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                         File.separator + "dss10_tssigner1.p12");
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
+            config.setProperty("ACCEPTANYPOLICY", "true");
             
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner() {
@@ -306,6 +310,27 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                      return new Extensions(exts);
                 }
             });
+            workerSession.reloadConfiguration(workerId);
+        }
+        
+        // WORKER7: accepting only a specific request policy
+        {
+            final int workerId = WORKER7;
+            final WorkerConfig config = new WorkerConfig();
+            config.setProperty(NAME, "TestTimeStampSigner7");
+            config.setProperty(AUTHTYPE, "NOAUTH");
+            config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID, "1.2.3.4");
+            config.setProperty("DEFAULTKEY", KEY_ALIAS);
+            config.setProperty("KEYSTOREPATH",
+                getSignServerHome() + File.separator + "res" +
+                        File.separator + "test" + File.separator + "dss10" +
+                        File.separator + "dss10_tssigner1.p12");
+            config.setProperty("KEYSTORETYPE", "PKCS12");
+            config.setProperty("KEYSTOREPASSWORD", "foo123");
+            config.setProperty("ACCEPTEDPOLICIES", "1.2.3.4");
+            
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
+                    new TimeStampSigner());
             workerSession.reloadConfiguration(workerId);
         }
     }
@@ -515,6 +540,31 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 extension1.getExtnValue());
         assertEquals("Should contain extension value", new DEROctetString("Critical".getBytes()),
                 extension2.getExtnValue());
+    }
+    
+    /**
+     * Test that setting an accepted policy works with that policy in the
+     * request.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testOnlyAcceptedPolicy() throws Exception {
+        LOG.info("testAnyAcceptedPolicy");
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.2.3.4"));
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        byte[] requestBytes = timeStampRequest.getEncoded();
+        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
+        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
+                new WorkerIdentifier(WORKER7), signRequest, new MockedRequestContext(services));
+
+        final TimeStampResponse timeStampResponse = new TimeStampResponse(
+                (byte[]) res.getProcessedData());
+        timeStampResponse.validate(timeStampRequest);
+        assertEquals("acceptance", PKIStatus.GRANTED, timeStampResponse.getStatus());
     }
 }
 

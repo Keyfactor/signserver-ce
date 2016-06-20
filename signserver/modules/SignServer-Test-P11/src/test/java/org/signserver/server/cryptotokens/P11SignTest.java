@@ -364,6 +364,7 @@ public class P11SignTest extends ModulesTestCase {
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
         workerSession.setWorkerProperty(workerId, "DEFAULTTSAPOLICYOID", "1.2.3");
         workerSession.setWorkerProperty(workerId, "CACHE_PRIVATEKEY", String.valueOf(cache));
+        workerSession.setWorkerProperty(workerId, "ACCEPTANYPOLICY", "true");
         
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);

@@ -433,8 +433,7 @@ public class TimeStampSigner extends BaseSigner {
         
         if (acceptAnyPolicy && acceptedPoliciesValue != null) {
             configErrors.add("Can not set ACCEPTANYPOLICY to true and ACCEPTEDPOLICIES at the same time");
-        } else if (!acceptAnyPolicy &&
-                   (acceptedPoliciesValue == null || acceptedPoliciesValue.isEmpty())) {
+        } else if (!acceptAnyPolicy && acceptedPoliciesValue == null) {
             configErrors.add("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true");
         }
 

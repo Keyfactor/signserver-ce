@@ -852,5 +852,34 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         assertTrue("should contain configuration error",
                    fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true"));
     }
+    
+    /**
+     * Test that setting ACCEPTEDPOLICIES to an empty list is accepted without
+     * setting ACCEPTANYPOLICY.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testAcceptedPoliciesEmpty() throws Exception {
+        LOG.info("testAcceptedPoliciesEmpty"); 
+        
+        final WorkerConfig config = new WorkerConfig();
+        
+        config.setProperty("ACCEPTEDPOLICIES", "");
+      
+        final TimeStampSigner signer = new TimeStampSigner() {
+            @Override
+            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+                return null;
+            }
+        };
+        
+        signer.init(WORKER1, config, null, null);
+        
+        final List<String> fatalErrors = signer.getFatalErrors(null);
+        
+        assertFalse("should not contain error",
+                fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true"));
+    }
 }
 

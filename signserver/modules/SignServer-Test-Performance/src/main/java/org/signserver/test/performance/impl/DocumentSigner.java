@@ -44,6 +44,7 @@ public class DocumentSigner implements Task {
     private boolean useWorkerServlet;
     
     private String workerNameOrId;
+    private final String processType;
     private final Random random;
     private byte[] data;
 
@@ -52,12 +53,13 @@ public class DocumentSigner implements Task {
     private final Integer userSuffixMax;
 
     public DocumentSigner(final String url, final boolean useWorkerServlet, 
-            final byte[] data, final String workerNameOrId, final Random random,
+            final byte[] data, final String workerNameOrId, final String processType, final Random random,
             final String userPrefix, final Integer userSuffixMin, final Integer userSuffixMax) {
         this.url = url;
         this.useWorkerServlet = useWorkerServlet;
         this.data = data;
         this.workerNameOrId = workerNameOrId;
+        this.processType = processType;
         this.random = random;
         this.userPrefix = userPrefix;
         this.userSuffixMin = userSuffixMin;
@@ -156,6 +158,16 @@ public class DocumentSigner implements Task {
             sb.append("--" + BOUNDARY);
             sb.append(CRLF);
         }
+        
+        // processType
+        sb.append("Content-Disposition: form-data; name=\"processType\"");
+        sb.append(CRLF);
+        sb.append(CRLF);
+        sb.append(processType);
+        sb.append(CRLF);
+            
+        sb.append("--" + BOUNDARY);
+        sb.append(CRLF);
 
         sb.append("Content-Disposition: form-data; name=\"datafile\"");
         sb.append("; filename=\"");
@@ -179,7 +191,7 @@ public class DocumentSigner implements Task {
                 
         out.write(sb.toString().getBytes());
         out.write(data);
-        
+
         out.write(("\r\n--" + BOUNDARY + "--\r\n").getBytes());
         out.flush();
         

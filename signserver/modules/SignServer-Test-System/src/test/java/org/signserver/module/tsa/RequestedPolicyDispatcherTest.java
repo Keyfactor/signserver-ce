@@ -126,16 +126,19 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         
         addTimeStampSigner(WORKER1, "TestTSUnit1", true);
         workerSession.setWorkerProperty(WORKER1, "DEFAULTTSAPOLICYOID", "1.2.13.1");
+        workerSession.removeWorkerProperty(WORKER1, "ACCEPTANYPOLICY");
         workerSession.setWorkerProperty(WORKER1, "ACCEPTEDPOLICIES", "1.2.13.1;1.2.13.9");
         workerSession.reloadConfiguration(WORKER1);
 
         addTimeStampSigner(WORKER2, "TestTSUnit2", true);
         workerSession.setWorkerProperty(WORKER2, "DEFAULTTSAPOLICYOID", "1.2.13.2");
+        workerSession.removeWorkerProperty(WORKER2, "ACCEPTANYPOLICY");
         workerSession.setWorkerProperty(WORKER2, "ACCEPTEDPOLICIES", "1.2.13.2");
         workerSession.reloadConfiguration(WORKER2);
         
         addTimeStampSigner(WORKER3, "TestTSUnit3", true);
         workerSession.setWorkerProperty(WORKER3, "DEFAULTTSAPOLICYOID", "1.2.13.3");
+        workerSession.removeWorkerProperty(WORKER3, "ACCEPTANYPOLICY");
         workerSession.setWorkerProperty(WORKER3, "ACCEPTEDPOLICIES", "1.2.13.3");
         workerSession.reloadConfiguration(WORKER3);
     }

@@ -12,13 +12,10 @@
  *************************************************************************/
 package org.signserver.module.tsa;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
@@ -42,7 +39,6 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIStatus;
-import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.Extensions;
@@ -418,16 +414,28 @@ public class TimeStampSigner extends BaseSigner {
         final String acceptAnyPolicyValue = config.getProperty(ACCEPTANYPOLICY);
         final String acceptedPoliciesValue = config.getProperty(ACCEPTEDPOLICIES);
                 
-        if (acceptAnyPolicyValue != null && acceptedPoliciesValue != null) {
-            configErrors.add("Can not specifiy both ACCEPTANYPOLICY and ACCEPTEDPOLICIES at the same time");
-        } else if ((acceptAnyPolicyValue == null || acceptAnyPolicyValue.isEmpty()) &&
-                    (acceptedPoliciesValue == null || acceptedPoliciesValue.isEmpty())) {
-            configErrors.add("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY");
-        } else if (acceptAnyPolicyValue != null &&
-                   !Boolean.TRUE.toString().equals(acceptAnyPolicyValue)) {
-            configErrors.add("When set, ACCEPTANYPOLICY must have the value true");
+        if (acceptAnyPolicyValue != null) {
+            switch (acceptAnyPolicyValue) {
+                case "true":
+                    acceptAnyPolicy = true;
+                    break;
+                case "false":
+                    acceptAnyPolicy = false;
+                case "":
+                    acceptAnyPolicy = false;
+                default:
+                    configErrors.add("Illegal value for ACCEPTANYPOLICY: " +
+                                     acceptAnyPolicyValue);
+            }
         }
         
+        if (acceptAnyPolicy && acceptedPoliciesValue != null) {
+            configErrors.add("Can not set ACCEPTANYPOLICY to true and ACCEPTEDPOLICIES at the same time");
+        } else if (!acceptAnyPolicy &&
+                   (acceptedPoliciesValue == null || acceptedPoliciesValue.isEmpty())) {
+            configErrors.add("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true");
+        }
+
         // Print the errors for troubleshooting
         if (!configErrors.isEmpty()) {
             LOG.info("Configuration errors for worker " + workerId + ": \n"

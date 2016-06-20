@@ -12,7 +12,8 @@
  *************************************************************************/
 package org.signserver.module.xmlvalidator;
 
-import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.common.RequestContext;
+import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 
 /**
  * Mocked version of the XMLValidator.
@@ -21,14 +22,14 @@ import org.signserver.ejb.interfaces.WorkerSession;
  * @version $Id: MockedXAdESSigner.java 4704 2014-05-16 12:38:10Z netmackan $
  */
 public class MockedXMLValidator extends XMLValidator {
-    private final WorkerSession mockedWorkerSession;
+    private final InternalProcessSessionLocal mockedWorkerSession;
 
-    public MockedXMLValidator(final WorkerSession mockedWorkerSession) {
+    public MockedXMLValidator(final InternalProcessSessionLocal mockedWorkerSession) {
         this.mockedWorkerSession = mockedWorkerSession;
     }
 
     @Override
-    protected WorkerSession getWorkerSession() {
+    protected InternalProcessSessionLocal getProcessSession(RequestContext requestContext) {
         return mockedWorkerSession;
     }
 

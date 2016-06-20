@@ -31,6 +31,7 @@ import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerType;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.test.utils.mock.MockedCryptoToken;
@@ -84,12 +85,16 @@ public class XMLValidatorUnitTest {
             final String expectedSubjectDN, final String expectedIssuerDN) throws Exception {
 
         WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.CRYPTO_WORKER.name());
+        config.setProperty("VALIDATIONSERVICEWORKER", "AnyValueAsWeMockedThis");
 
         XMLValidator instance = new MockedXMLValidator(new MockedWorkerSession());
         instance.init(4711, config, null, null);
         final RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
 
+        System.err.println(instance.getFatalErrors(null));
+        
         GenericValidationRequest request = new GenericValidationRequest(100, xml.getBytes("UTF-8"));
         GenericValidationResponse res = (GenericValidationResponse) instance.processData(request, requestContext);
 

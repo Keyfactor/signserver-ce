@@ -1,4 +1,4 @@
-SignServer 3.7.4, 2016-06-24
+SignServer 3.7.4, 2016-06-23
 ----------------------------
 
 ** Bug
@@ -8,6 +8,7 @@ SignServer 3.7.4, 2016-06-24
     * [DSS-1189] - PostgreSQL not working with 3.7.x and JBoss AS 7 / EAP 6
     * [DSS-1203] - WildFly 9 configuration should use separate port for remoting
     * [DSS-1208] - Missing sample enable value for TimeMonitorManager in deploy properties
+    * [DSS-1212] - XML Validator causes deadlocks under high load
 
 ** Improvement
     * [DSS-436] - Split xdocs in two separate sites, signserver.org and documentation site

@@ -37,7 +37,7 @@ import org.signserver.test.performance.impl.TimeStampThread;
  */
 public class Main {
     /** Logger for this class */
-    private static Logger LOG = Logger.getLogger(Main.class);
+    private static final Logger LOG = Logger.getLogger(Main.class);
 
     private static final String TEST_SUITE = "testsuite";
     private static final String TIME_LIMIT = "timelimit";
@@ -55,12 +55,12 @@ public class Main {
     private static final String USERPREFIX = "userprefix";
     private static final String USERSUFFIXMIN = "usersuffixmin";
     private static final String USERSUFFIXMAX = "usersuffixmax";
-    
+
     private static final String NL = System.getProperty("line.separator");
     private static final String COMMAND = "stresstest";
-    
+
     private static final int DEFUALT_MAX_WAIT_TIME = 100;
-    
+
     private static int exitCode;
     private static long startTime;
     private static long warmupTime;
@@ -76,6 +76,7 @@ public class Main {
     private enum TestSuites {
         TimeStamp1,
         DocumentSigner1,
+        DocumentValidator1,
     }
 
     static {
@@ -84,16 +85,16 @@ public class Main {
         OPTIONS.addOption(TIME_LIMIT, true, "Optional. Only run for the specified time (in milliseconds).");
         OPTIONS.addOption(THREADS, true, "Number of threads requesting time stamps.");
         OPTIONS.addOption(TSA_URL, true, "URL to timestamp worker to use.");
-        OPTIONS.addOption(PROCESS_URL, true, "URL to process servlet (for the DocumentSigner1 test suite).");
-        OPTIONS.addOption(WORKER_URL, true, "URL to worker servlet (for the DocumentSigner1 test suite).");
-        OPTIONS.addOption(WORKER_NAME_OR_ID, true, "Worker name or ID to use (with the DocumentSigner1 test suite).");
+        OPTIONS.addOption(PROCESS_URL, true, "URL to process servlet (for the DocumentSigner/Validator1 test suites).");
+        OPTIONS.addOption(WORKER_URL, true, "URL to worker servlet (for the DocumentSigner/Validator1 test suites).");
+        OPTIONS.addOption(WORKER_NAME_OR_ID, true, "Worker name or ID to use (with the DocumentSigner/Validator1 test suites).");
         OPTIONS.addOption(MAX_WAIT_TIME, true, "Maximum number of milliseconds for a thread to wait until issuing the next time stamp. Default=100");
         OPTIONS.addOption(WARMUP_TIME, true,
                 "Don't count number of signings and response times until after this time (in milliseconds). Default=0 (no warmup time).");
         OPTIONS.addOption(STAT_OUTPUT_DIR, true,
                 "Optional. Directory to output statistics to. If set, each threads creates a file in this directory to output its response times to. The directory must exist.");
-        OPTIONS.addOption(INFILE, true, "Input file used for DocumentSigner1 testsuite.");
-        OPTIONS.addOption(DATA, true, "Input data to be used with the DocumentSigner1 testsuite using an XMLSigner.");
+        OPTIONS.addOption(INFILE, true, "Input file used for DocumentSigner/Validator1 testsuites.");
+        OPTIONS.addOption(DATA, true, "Input data to be used with the DocumentSigner/Validator1 testsuites using an XMLSigner.");
         OPTIONS.addOption(USERPREFIX, true, "Prefix for usernames.");
         OPTIONS.addOption(USERSUFFIXMIN, true, "Lowest suffix for usernames in form of an integer value (inclusive).");
         OPTIONS.addOption(USERSUFFIXMAX, true, "Highest suffix for usernames in form of an integer value (inclusive).");
@@ -115,7 +116,9 @@ public class Main {
                 .append("d) ").append(COMMAND)
                 .append(" -testsuite DocumentSigner1 -threads 4 -processurl http://localhost:8080/signserver/process -worker XMLSigner -data \"<root/>\"").append(NL)
                 .append("e) ").append(COMMAND)
-                .append(" -testsuite DocumentSigner1 -threads 4 -processurl http://localhost:8080/signserver/process -worker XMLSigner -data \"<root/>\" -userprefix user -usersuffixmin 1 -usersuffixmax 50").append(NL);
+                .append(" -testsuite DocumentSigner1 -threads 4 -processurl http://localhost:8080/signserver/process -worker XMLSigner -data \"<root/>\" -userprefix user -usersuffixmin 1 -usersuffixmax 50").append(NL)
+                .append("f) ").append(COMMAND)
+                .append(" -testsuite DocumentValidator1 -threads 4 -processurl http://localhost:8080/signserver/process -worker DemoXMLValidator -infile signed.xml").append(NL);
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
@@ -124,7 +127,7 @@ public class Main {
         }
         LOG.info(bout.toString());
     }
-    
+
     /**
      * @param args the command line arguments
      */
@@ -133,7 +136,7 @@ public class Main {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("(Debug logging is enabled)");
             }
-            
+
             final CommandLine commandLine = new GnuParser().parse(OPTIONS, args);
 
             // Test suite
@@ -143,7 +146,7 @@ public class Main {
             } else {
                 throw new ParseException("Missing option: -" + TEST_SUITE);
             }
-            
+
             // Time limit
             final long limitedTime;
             if (commandLine.hasOption(TIME_LIMIT)) {
@@ -151,21 +154,21 @@ public class Main {
             } else {
                 limitedTime = -1;
             }
-            
+
             final int numThreads;
             if (commandLine.hasOption(THREADS)) {
                 numThreads = Integer.parseInt(commandLine.getOptionValue(THREADS));
             } else {
                 throw new ParseException("Missing option: -" + THREADS);
             }
-  
+
             final int maxWaitTime;
             if (commandLine.hasOption(MAX_WAIT_TIME)) {
                 maxWaitTime = Integer.parseInt(commandLine.getOptionValue(MAX_WAIT_TIME));
             } else {
                 maxWaitTime = DEFUALT_MAX_WAIT_TIME;
             }
-            
+
             final String url;
             boolean useWorkerServlet = false;
             if (commandLine.hasOption(TSA_URL)) {
@@ -175,16 +178,16 @@ public class Main {
                 }
                 url = commandLine.getOptionValue(TSA_URL);
             } else if (commandLine.hasOption(PROCESS_URL)) {
-                if (!ts.equals(TestSuites.DocumentSigner1)) {
-                    throw new ParseException("Option " + TSA_URL + " can only be used with the " +
-                            TestSuites.TimeStamp1.toString() + " test suite.");
+                if (!ts.equals(TestSuites.DocumentSigner1) && !ts.equals(TestSuites.DocumentValidator1)) {
+                    throw new ParseException("Option " + PROCESS_URL + " can only be used with the " +
+                            TestSuites.DocumentSigner1.toString() + " or " + TestSuites.DocumentValidator1.toString() + " test suites.");
                 }
                 url = commandLine.getOptionValue(PROCESS_URL);
                 useWorkerServlet = false;
             } else if (commandLine.hasOption(WORKER_URL)) {
                 if (!ts.equals(TestSuites.DocumentSigner1)) {
-                    throw new ParseException("Option " + TSA_URL + " can only be used with the " +
-                            TestSuites.TimeStamp1.toString() + " test suite.");
+                    throw new ParseException("Option " + WORKER_URL + " can only be used with the " +
+                            TestSuites.DocumentSigner1.toString() + " or " + TestSuites.DocumentValidator1.toString() + " test suites.");
                 }
                 url = commandLine.getOptionValue(WORKER_URL);
                 useWorkerServlet = true;
@@ -195,18 +198,18 @@ public class Main {
                     throw new ParseException("Missing option: -" + PROCESS_URL);
                 }
             }
-            
+
             String workerNameOrId = null;
             if (commandLine.hasOption(WORKER_NAME_OR_ID)) {
                 workerNameOrId = commandLine.getOptionValue(WORKER_NAME_OR_ID);
             } else if (ts.equals(TestSuites.DocumentSigner1)) {
                 throw new ParseException("Must specify worker name or ID.");
             }
-            
+
             if (commandLine.hasOption(INFILE)) {
                 final String file = commandLine.getOptionValue(INFILE);
                 final File infile = new File(file);
-                
+
                 try {
                     data = FileUtils.readFileToByteArray(infile);
                 } catch (IOException e) {
@@ -217,13 +220,13 @@ public class Main {
             } else if (ts.equals(TestSuites.DocumentSigner1)) {
                 throw new ParseException("Must specify an input file.");
             }
-            
+
             if (commandLine.hasOption(WARMUP_TIME)) {
                 warmupTime = Long.parseLong(commandLine.getOptionValue(WARMUP_TIME));
             } else {
                 warmupTime = 0;
             }
-            
+
             // Time limit
             final File statFolder;
             if (commandLine.hasOption(STAT_OUTPUT_DIR)) {
@@ -282,7 +285,7 @@ public class Main {
                     for (WorkerThread w : threads) {
                         w.stopIt();
                     }
-                    
+
                     // Print message
                     LOG.error("   " + message);
                     exitCode = -1;
@@ -296,7 +299,7 @@ public class Main {
                     callback.failed((WorkerThread) t, "Uncaught exception: " + e.getMessage());
                 }
             };
-            
+
             Thread shutdownHook = new Thread() {
                 @Override
                 public void run() {
@@ -306,7 +309,7 @@ public class Main {
                     shutdown(threads);
                 }
             };
-            
+
             Runtime.getRuntime().addShutdownHook(shutdownHook);
 
             try {
@@ -317,13 +320,16 @@ public class Main {
                 case DocumentSigner1:
                     documentSigner1(threads, numThreads, callback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder, userPrefix, usersuffixMin, usersuffixMax);
                     break;
+                case DocumentValidator1:
+                    documentValidator1(threads, numThreads, callback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder, userPrefix, usersuffixMin, usersuffixMax);
+                    break;
                 default:
                     throw new Exception("Unsupported test suite");
                 }
-                
+
                 // Wait 1 second to start
                 Thread.sleep(1000);
-            
+
                 // Start all threads
                 startTime = System.currentTimeMillis();
                 for (WorkerThread w : threads) {
@@ -346,12 +352,12 @@ public class Main {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Interupted when waiting for thread: " + ex.getMessage());
                     }
-                }                
+                }
             } catch (Exception ex) {
                 LOG.error("Failed: " + ex.getMessage(), ex);
                 exitCode = -1;
             }
-                
+
             System.exit(exitCode);
         } catch (ParseException ex) {
             LOG.error("Parse error: " + ex.getMessage());
@@ -359,17 +365,17 @@ public class Main {
             System.exit(-2);
         }
     }
-    
+
     /**
      * Shutdown worker threads.
-     * 
+     *
      * @param threads
      */
     private static void shutdown(final List<WorkerThread> threads) {
         for (WorkerThread w : threads) {
             w.stopIt();
         }
-        
+
         // Total statistics
         long totalRunTime = System.currentTimeMillis() - startTime - warmupTime;
         long totalOperationsPerformed = 0;
@@ -377,7 +383,7 @@ public class Main {
         double totalAverageResponseTime;
         long totalMaxResponseTime = 0;
         long totalMinResponseTime = Long.MAX_VALUE;
-        
+
         // Wait until all stopped
         try {
             for (WorkerThread w : threads) {
@@ -385,20 +391,20 @@ public class Main {
                     LOG.debug("Waiting for thread " + w.getName() + " to finish.");
                 }
                 w.join();
-                
+
                 final long operationsPerformed = w.getOperationsPerformed();
                 final long maxResponseTime = w.getMaxResponseTime();
                 final long minResponseTime = w.getMinResponseTime();
                 totalOperationsPerformed += operationsPerformed;
                 totalResponseTime += w.getResponseTimeSum();
-                        
+
                 totalMaxResponseTime = Math.max(totalMaxResponseTime, maxResponseTime);
                 totalMinResponseTime = Math.min(totalMinResponseTime, minResponseTime);
             }
         } catch (InterruptedException ex) {
             LOG.error("Interrupted: " + ex.getMessage());
         }
-        
+
         if (totalOperationsPerformed > 0) {
             totalAverageResponseTime = totalResponseTime / (double) totalOperationsPerformed;
         } else {
@@ -416,7 +422,7 @@ public class Main {
         if (totalRunTime < 0) {
             totalRunTime = 0;
         }
-        
+
         LOG.info(String.format(
                   "%n-- Summary -------------------------------------------------------------------%n"
                 + "   End time:                %s%n"
@@ -428,11 +434,11 @@ public class Main {
                 + "   Transactions per second: %12.1f tps%n"
                 + "------------------------------------------------------------------------------%n", new Date(), totalOperationsPerformed, totalMinResponseTime, totalAverageResponseTime, totalMaxResponseTime, totalRunTime, tps));
     }
-    
-    
+
+
     /**
      * Initialize the worker thread list for the time stamp test suite.
-     * 
+     *
      * @param threads A list to hold the worker threads. This list is filled by the method.
      * @param numThreads Number of threads to create.
      * @param failureCallback Callback to handle failures.
@@ -458,10 +464,10 @@ public class Main {
                     warmupTime, limitedTime, statFile));
         }
     }
-    
+
     /**
      * Initialize the worker thread list for the document signer test suite.
-     * 
+     *
      * @param threads A list to hold the worker threads. This list is filled by the method.
      * @param numThreads Number of threads to create.
      * @param failureCallback Callback to handle failures.
@@ -474,20 +480,51 @@ public class Main {
      * @throws Exception
      */
     private static void documentSigner1(final List<WorkerThread> threads, final int numThreads,
-            final FailureCallback failureCallback, final String url, final boolean useWorkerServlet, 
+            final FailureCallback failureCallback, final String url, final boolean useWorkerServlet,
             final String workerNameOrId, int maxWaitTime, long warmupTime,
             final long limitedTime, final File statFolder,
             final String userPrefix, final Integer userSuffixMin, final Integer userSuffixMax) throws Exception {
+        documentSignerOrValidator1(threads, numThreads, failureCallback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder, userPrefix, userSuffixMin, userSuffixMax, "DocumentSigner1-", "signDocument");
+    }
+
+    /**
+     * Initialize the worker thread list for the document validator test suite.
+     *
+     * @param threads A list to hold the worker threads. This list is filled by the method.
+     * @param numThreads Number of threads to create.
+     * @param failureCallback Callback to handle failures.
+     * @param url Base process URL.
+     * @param workerNameOrId Worker name of worker ID.
+     * @param maxWaitTime Maximum waiting time between generated requests.
+     * @param warmupTime Warmup time, if set to > 0, will add a warmup period where no stats are collected.
+     * @param limitedTime Maximum run time, if set to -1, threads will run until interrupted.
+     * @param statFolder Output folder for statistics.
+     * @throws Exception
+     */
+    private static void documentValidator1(final List<WorkerThread> threads, final int numThreads,
+            final FailureCallback failureCallback, final String url, final boolean useWorkerServlet,
+            final String workerNameOrId, int maxWaitTime, long warmupTime,
+            final long limitedTime, final File statFolder,
+            final String userPrefix, final Integer userSuffixMin, final Integer userSuffixMax) throws Exception {
+        documentSignerOrValidator1(threads, numThreads, failureCallback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder, userPrefix, userSuffixMin, userSuffixMax, "DocumentValidator1-", "validateDocument");
+    }
+
+    private static void documentSignerOrValidator1(final List<WorkerThread> threads, final int numThreads,
+            final FailureCallback failureCallback, final String url, final boolean useWorkerServlet,
+            final String workerNameOrId, int maxWaitTime, long warmupTime,
+            final long limitedTime, final File statFolder,
+            final String userPrefix, final Integer userSuffixMin, final Integer userSuffixMax,
+            final String workerNamePrefix, final String processType) throws Exception {
         final Random random = new Random();
         for (int i = 0; i < numThreads; i++) {
-            final String name = "DocumentSigner1-" + i;
+            final String name = workerNamePrefix + i;
             final File statFile;
             if (statFolder == null) {
                 statFile = null;
             } else {
                 statFile = new File(statFolder, name + ".csv");
             }
-            threads.add(new DocumentSignerThread(name, failureCallback, url, useWorkerServlet, data, workerNameOrId, maxWaitTime,
+            threads.add(new DocumentSignerThread(name, failureCallback, url, useWorkerServlet, data, workerNameOrId, processType, maxWaitTime,
                     random.nextInt(), warmupTime, limitedTime, statFile,
                     userPrefix, userSuffixMin, userSuffixMax));
         }

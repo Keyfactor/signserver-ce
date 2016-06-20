@@ -163,6 +163,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKER1.getId(), "ACCEPTANYPOLICY", "true");
         
         addTimeStampSigner(WORKER2.getId(), "TestTSA2", true);
+        workerSession.setWorkerProperty(WORKER2.getId(), "ACCEPTANYPOLICY", "false");
         workerSession.setWorkerProperty(WORKER2.getId(), "ACCEPTEDPOLICIES", "1.2.3");
         workerSession.reloadConfiguration(WORKER2.getId());
         

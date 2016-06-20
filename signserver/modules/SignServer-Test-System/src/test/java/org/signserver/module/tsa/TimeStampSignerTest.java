@@ -160,16 +160,19 @@ public class TimeStampSignerTest extends ModulesTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {        
         addTimeStampSigner(WORKER1.getId(), "TestTSA1", true);
+        workerSession.setWorkerProperty(WORKER1.getId(), "ACCEPTANYPOLICY", "true");
         
         addTimeStampSigner(WORKER2.getId(), "TestTSA2", true);
         workerSession.setWorkerProperty(WORKER2.getId(), "ACCEPTEDPOLICIES", "1.2.3");
         workerSession.reloadConfiguration(WORKER2.getId());
         
         addTimeStampSigner(WORKER3.getId(), "TestTSA3", true);
+        workerSession.setWorkerProperty(WORKER3.getId(), "ACCEPTANYPOLICY", "true");
         workerSession.setWorkerProperty(WORKER3.getId(), "TIMESOURCE", "org.signserver.server.NullTimeSource");
         workerSession.reloadConfiguration(WORKER3.getId());
         
         addTimeStampSigner(WORKER4.getId(), "TestTSA4", true);
+        workerSession.setWorkerProperty(WORKER4.getId(), "ACCEPTANYPOLICY", "true");
         workerSession.setWorkerProperty(WORKER4.getId(), "TIMESOURCE", "org.signserver.server.StatusReadingLocalComputerTimeSource");
         workerSession.reloadConfiguration(WORKER4.getId());
     }

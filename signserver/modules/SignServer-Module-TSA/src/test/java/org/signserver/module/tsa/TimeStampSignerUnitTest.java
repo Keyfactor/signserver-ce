@@ -576,7 +576,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
      */
     @Test
     public void testOnlyAcceptedPolicy() throws Exception {
-        LOG.info("testAnyAcceptedPolicy");
+        LOG.info("testOnlyAcceptedPolicy");
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
         timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.2.3.4"));
@@ -641,6 +641,30 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 (byte[]) res.getProcessedData());
         timeStampResponse.validate(timeStampRequest);
         assertEquals("acceptance", PKIStatus.REJECTION, timeStampResponse.getStatus());
+    }
+    
+    /**
+     * Test that requesting a policy works with ACCEPTANYPOLICY set to true.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testAnyAcceptedPolicy() throws Exception {
+        LOG.info("testAnyAcceptedPolicy");
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.2.3.5"));
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        byte[] requestBytes = timeStampRequest.getEncoded();
+        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
+        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
+                new WorkerIdentifier(WORKER1), signRequest, new MockedRequestContext(services));
+
+        final TimeStampResponse timeStampResponse = new TimeStampResponse(
+                (byte[]) res.getProcessedData());
+        timeStampResponse.validate(timeStampRequest);
+        assertEquals("acceptance", PKIStatus.GRANTED, timeStampResponse.getStatus());
     }
     
     /**

@@ -1003,7 +1003,7 @@ public class TimeStampSigner extends BaseSigner {
         
         return new TimeStampResponseGenerator(timeStampTokenGen,
                 this.getAcceptedAlgorithms(),
-                this.getAcceptedPolicies(),
+                acceptAnyPolicy ? null : this.getAcceptedPolicies(),
                 this.getAcceptedExtensions());
     }
 

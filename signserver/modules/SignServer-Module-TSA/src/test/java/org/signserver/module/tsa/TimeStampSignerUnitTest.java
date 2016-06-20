@@ -792,5 +792,34 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         assertTrue("should contain configuration error",
                    fatalErrors.contains("Illegal value for ACCEPTANYPOLICY: foo"));
     }
+    
+    /**
+     * Test that setting ACCEPTANYPOLICY to false without setting ACCEPTEDPOLICIES
+     * is not allowed.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testAcceptAnyPolicyFalseAndNoAcceptedPolicies() throws Exception {
+        LOG.info("testAcceptAnyPolicyFalseAndNoAcceptedPolicies"); 
+        
+        final WorkerConfig config = new WorkerConfig();
+        
+        config.setProperty("ACCEPTANYPOLICY", "false");
+      
+        final TimeStampSigner signer = new TimeStampSigner() {
+            @Override
+            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+                return null;
+            }
+        };
+        
+        signer.init(WORKER1, config, null, null);
+        
+        final List<String> fatalErrors = signer.getFatalErrors(null);
+        
+        assertTrue("should contain configuration error",
+                   fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true"));
+    }
 }
 

@@ -35,7 +35,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.validators.BaseValidator;
 import org.signserver.validationservice.common.ValidateRequest;
@@ -76,7 +76,7 @@ public class XMLValidator extends BaseValidator {
     static final String PROP_STRIPSIGNATURE = "STRIPSIGNATURE";
     
     /** Worker session. */
-    private IWorkerSession workersession;
+    private IInternalWorkerSession workersession;
     
     /** ID of validation service worker used for validating certificates. */
     private transient int validationServiceWorkerId;
@@ -297,11 +297,11 @@ public class XMLValidator extends BaseValidator {
     /**
      * @return The worker session. Can be overridden for instance by unit tests.
      */
-    protected IWorkerSession getWorkerSession() {
+    protected IInternalWorkerSession getWorkerSession() {
         if (workersession == null) {
             try {
                 workersession = ServiceLocator.getInstance().lookupLocal(
-                        IWorkerSession.class);
+                        IInternalWorkerSession.class);
             } catch (NamingException ne) {
                 throw new RuntimeException(ne);
             }

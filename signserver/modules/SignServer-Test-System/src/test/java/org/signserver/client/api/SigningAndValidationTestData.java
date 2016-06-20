@@ -20,67 +20,6 @@ package org.signserver.client.api;
 public class SigningAndValidationTestData {
 
     /**
-     * 		Certificate:
-                Data:
-                    Version: 3 (0x2)
-                    Serial Number:
-                        4b:f4:0c:cc:8c:f0:36:d7
-                    Signature Algorithm: sha1WithRSAEncryption
-                    Issuer: CN=EightCA, O=EJBCA Testing, C=SE
-                    Validity
-                        Not Before: Jun 10 15:44:51 2009 GMT
-                        Not After : Jun  8 15:44:51 2019 GMT
-                    Subject: CN=EightCA, O=EJBCA Testing, C=SE
-                    Subject Public Key Info:
-                        Public Key Algorithm: rsaEncryption
-                        RSA Public Key: (1024 bit)
-                            Modulus (1024 bit):
-                                00:93:6a:42:dc:42:65:5f:b9:2c:88:62:9e:72:ed:
-                                d4:fe:58:9a:7a:5a:d4:f8:50:4d:7e:94:97:27:b8:
-                                3e:93:67:a6:0b:6a:b0:da:2c:b7:ce:a6:01:6c:26:
-                                57:ae:c5:7b:47:7e:02:fc:de:8b:db:b4:4a:38:79:
-                                ac:de:29:61:a1:8e:e7:53:77:eb:50:14:71:15:2b:
-                                ca:5b:62:07:12:23:48:38:a6:15:fb:74:b5:d9:51:
-                                c6:9e:d5:2e:e1:b3:af:63:80:eb:64:09:38:76:e1:
-                                4b:8d:7f:e8:fc:07:84:0f:98:d6:aa:30:8c:c2:25:
-                                fd:f7:09:35:a8:7f:cb:ab:b7
-                            Exponent: 65537 (0x10001)
-                    X509v3 extensions:
-                        X509v3 Subject Key Identifier: 
-                            DE:7D:65:1E:67:74:37:83:B0:F8:EC:61:E4:7C:BC:F5:5C:67:DB:D3
-                        X509v3 Basic Constraints: critical
-                            CA:TRUE
-                        X509v3 Authority Key Identifier: 
-                            keyid:DE:7D:65:1E:67:74:37:83:B0:F8:EC:61:E4:7C:BC:F5:5C:67:DB:D3
-
-                        X509v3 Key Usage: critical
-                            Digital Signature, Certificate Sign, CRL Sign
-                Signature Algorithm: sha1WithRSAEncryption
-                    7a:5f:6e:3d:93:b0:52:33:b2:d6:25:73:38:7c:83:0b:06:6f:
-                    4b:5e:8a:2e:19:10:52:94:ce:df:0f:13:22:ec:30:02:1f:d5:
-                    a5:47:06:87:78:2a:35:40:1f:09:12:5d:5b:05:fc:de:99:88:
-                    c7:1f:f8:d6:3d:7d:ee:1d:dd:6c:ac:fd:04:1a:2e:2d:b0:dd:
-                    5d:16:e8:4d:54:e4:ca:a8:65:d7:ee:da:e0:9e:10:bd:ec:74:
-                    c5:90:ae:cb:f2:cb:e0:e5:fe:a7:d3:37:21:9a:1b:ab:95:91:
-                    01:26:c6:9c:6b:90:6e:b8:61:e5:4f:93:e2:af:d0:67:e1:39:
-                    7a:6a
-     */
-    private static final String CERT_EIGHTCA = 
-            "MIICTjCCAbegAwIBAgIIS/QMzIzwNtcwDQYJKoZIhvcNAQEFBQAwNzEQMA4GA1UE"
-            + "AwwHRWlnaHRDQTEWMBQGA1UECgwNRUpCQ0EgVGVzdGluZzELMAkGA1UEBhMCU0Uw"
-            + "HhcNMDkwNjEwMTU0NDUxWhcNMTkwNjA4MTU0NDUxWjA3MRAwDgYDVQQDDAdFaWdo"
-            + "dENBMRYwFAYDVQQKDA1FSkJDQSBUZXN0aW5nMQswCQYDVQQGEwJTRTCBnzANBgkq"
-            + "hkiG9w0BAQEFAAOBjQAwgYkCgYEAk2pC3EJlX7ksiGKecu3U/liaelrU+FBNfpSX"
-            + "J7g+k2emC2qw2iy3zqYBbCZXrsV7R34C/N6L27RKOHms3ilhoY7nU3frUBRxFSvK"
-            + "W2IHEiNIOKYV+3S12VHGntUu4bOvY4DrZAk4duFLjX/o/AeED5jWqjCMwiX99wk1"
-            + "qH/Lq7cCAwEAAaNjMGEwHQYDVR0OBBYEFN59ZR5ndDeDsPjsYeR8vPVcZ9vTMA8G"
-            + "A1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAU3n1lHmd0N4Ow+Oxh5Hy89Vxn29Mw"
-            + "DgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBBQUAA4GBAHpfbj2TsFIzstYlczh8"
-            + "gwsGb0teii4ZEFKUzt8PEyLsMAIf1aVHBod4KjVAHwkSXVsF/N6ZiMcf+NY9fe4d"
-            + "3Wys/QQaLi2w3V0W6E1U5MqoZdfu2uCeEL3sdMWQrsvyy+Dl/qfTNyGaG6uVkQEm"
-            + "xpxrkG64YeVPk+Kv0GfhOXpq";
-
-    /**
      * signer00001 from dss10_keystore.p12.
      */
     private static final String CERT_SIGNER00001 =
@@ -141,70 +80,6 @@ public class SigningAndValidationTestData {
             "LGzt5lSJEpMHMbquYfWJxQiKCbvfxQsP5dLUMEIqTgjNdo98OlM7Z7zjYH9Kimz3\n" +
             "wgAKSAIoQZr7Oy1dMHO5GK4jBtZ8wgsyyQ6DzQQ7R68XFVKarIW8SATeyubAP+Wj\n" +
             "dMwk/ZXzsDjMZEtENaBXzAefYA==";
-    
-	
-    /**
-     * Subject: CN=FirstCA,O=EJBCA Testing,C=SE
-     * Issuer:  CN=FirstCA,O=EJBCA Testing,C=SE
-     */
-    private static final String CERT_FIRSTCA =
-            "MIICTjCCAbegAwIBAgIIFJUfMRSPUTswDQYJKoZIhvcNAQEFBQAwNzEQMA4GA1UE"
-            + "AwwHRmlyc3RDQTEWMBQGA1UECgwNRUpCQ0EgVGVzdGluZzELMAkGA1UEBhMCU0Uw"
-            + "HhcNMDkwNjA0MTYzOTQ0WhcNMTkwNjAyMTYzOTQ0WjA3MRAwDgYDVQQDDAdGaXJz"
-            + "dENBMRYwFAYDVQQKDA1FSkJDQSBUZXN0aW5nMQswCQYDVQQGEwJTRTCBnzANBgkq"
-            + "hkiG9w0BAQEFAAOBjQAwgYkCgYEAqiN9DJGgViydLMfu9YbhJuPink5UyFwGOKBz"
-            + "RmS03w0Qdjr59auzq0WCpypQ8+s1Tu8nISWOVI1mX/30fgbpnYvMcLQFyEWuBOrs"
-            + "ZBnFGGOZTnMVMti9TQgVf+bTfEDXoYmHvLS8k8ZHGlGoibh8D8lAPIYOm4mC3nFP"
-            + "42J/668CAwEAAaNjMGEwHQYDVR0OBBYEFONib4wtykPvtqlshrrxAP+sXDTxMA8G"
-            + "A1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAU42JvjC3KQ++2qWyGuvEA/6xcNPEw"
-            + "DgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBBQUAA4GBAJNZVYkN2AIAvExdduy6"
-            + "tJ5MYhfOYA2V0hflWmzrbBYK0OLubzEtAU6aWeh/UYYg6f2Wf7mBbQw/DMIczDvl"
-            + "l9pAkuUFAWZczh1D4ytwl9ASRuQUWL+n/S5PyjTQ0uuWa0m510HV0drzBSNS4mZk"
-            + "NkdfpNx3/NJVOyzaSp56KR4c";
-	
-    /**
-     * Subject    : C=SE, O=EJBCA Testing, CN=endentity1
-     * Issuer     : C=SE, O=EJBCA Testing, CN=FirstCA
-     */
-    private static final String CERT_ENDENTITY1 = 
-            "MIICbTCCAdagAwIBAgIIdpfNAUY23BQwDQYJKoZIhvcNAQEFBQAwNzEQMA4GA1UE"
-            + "AwwHRmlyc3RDQTEWMBQGA1UECgwNRUpCQ0EgVGVzdGluZzELMAkGA1UEBhMCU0Uw"
-            + "HhcNMDkwNjA4MDgyMzQzWhcNMTEwNjA4MDgyMzQzWjA6MRMwEQYDVQQDDAplbmRl"
-            + "bnRpdHkxMRYwFAYDVQQKDA1FSkJDQSBUZXN0aW5nMQswCQYDVQQGEwJTRTCBnzAN"
-            + "BgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEApYHGk52L1XQtZNYien9L3fju8deSpB5c"
-            + "Ne5cqr0Pce37KK1guknmHf7svm7mHEwsbpdMBrdQ+YNtMAREOKvQeRAm9FO4twYg"
-            + "MnkzDp3v/K9CNbYGxoVZB5rI+PQug8aTSohnD2ZzyJh+vBEpAktxCWNonyhscsxK"
-            + "dxSdESZ3ncUCAwEAAaN/MH0wHQYDVR0OBBYEFAf1rnolyolNsOeJbHfSfi/KOnbd"
-            + "MAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAU42JvjC3KQ++2qWyGuvEA/6xcNPEw"
-            + "DgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDAN"
-            + "BgkqhkiG9w0BAQUFAAOBgQBktjK+6N7rgh2RmLSBrDDbh5EeBJHhid3flgl/Pfpr"
-            + "Ac041PrY4a08ezzW2oECcVfmCMk0GZSrmhgNELFP0LCGAq25C6Zz/wCOlSRZNSeK"
-            + "jzYr+d41hz4EHNp+42qJlEGrSY6wUhDXO9kMuQzVw/GEQBW9dDBE9TImQBQ2HC4i"
-            + "iw==";
-	
-    /**
-     * 
-     */
-    private static final String CERT_ENDENTITY2 =
-            "MIICSDCCAbGgAwIBAgIIJMFclCdO0dowDQYJKoZIhvcNAQEFBQAwNzEQMA4GA1UE"
-            + "AwwHRmlyc3RDQTEWMBQGA1UECgwNRUpCQ0EgVGVzdGluZzELMAkGA1UEBhMCU0Uw"
-            + "HhcNMDkwNjA4MDkzNTM1WhcNMTEwNjA4MDkzNTM1WjAVMRMwEQYDVQQDDAplbmRl"
-            + "bnRpdHkyMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDHFOv1Fz6Q1oJsLlL9"
-            + "seIHH+MYvRhMq8Fj+dfRYei0DpktcFrtARpZjTsSnN410iebtZqJmBmmKeYEu9cn"
-            + "UyhQhNDi8hQ+lyWE4noiudLMehFruZiTojP+IhKqtcRMPCsRLG8UhBdoJUwRniMw"
-            + "wsSt+/n2Mw0RAJOYJl/0ADYkMwIDAQABo38wfTAdBgNVHQ4EFgQU+iib9vsdNq0O"
-            + "mQHVMY9gQzsHNMswDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBTjYm+MLcpD77ap"
-            + "bIa68QD/rFw08TAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0lBBYwFAYIKwYBBQUHAwIG"
-            + "CCsGAQUFBwMEMA0GCSqGSIb3DQEBBQUAA4GBAHLv0Y5qQbqV6ta2nOV/YVX4fYAL"
-            + "goFFAeZwbz0P/4dNUT+1kZqxd/ju3pGUofj21P2wqMmvRcIqPQFNoycx8I9x5p04"
-            + "tnxtTMj9U9hNKZUR69LtTAwVY3uUk3bGxfSQRvejHkaffSXaf43vtOSp1DpSaHbU"
-            + "GUfKfM8Tu+OKjA0+";
-		
-	
-    private static final String SIGNATURE_BY_ENDENTITY1 =
-            "eBS5DYS3QWmpAIRoHgMuR1a72OPXC5cYg1M3KXzlRW471vOQq0zx7LI3NnNSyfhjWuQf0zQTyGv9"
-            + "oKhCnGSFqTO+uwSfsajGL4HsWWm8ot+HkzgL0fcWl5EATntqGmaS2nKPR/cVl+P4BehjFcD3BZ70"
-            + "gD+07DZjFd/tmjioH/w=";
 	
     private static final String SIGNATURE_BY_SIGNER00001 =
             "TVHbxQyoBoLXqDICQ1gGHxfkVn3HUZ6KW66bNRWmwjzXvyjEkqcRYHohj9Z8hbnRxBObw3feZRkHz8UFaELXH1QcEiklGDTIMQoqiaWUQ9rwa8gnaN9hjHx2R82vwztNu0DhG51ovzUj29XXBth3+Lo84WtbbfZo1vXOApKd25R574Ethelxss0zRjfCTiCMyg4GCt3fF0u3JElydg6EfpOtA8wSEolQ6S/KS/FEkjCBCy/0EwkimTZuBoR7CFlMlox2pUV9hAfS5VavzdYCVB1kRCTAVs+Pjc+hSOUUH+cNpwHmacKoy0eQTgM5L8/l3Ep/p443dEmbTmx2doDIew==";
@@ -268,7 +143,7 @@ public class SigningAndValidationTestData {
                             +"    <SignatureValue>"+SIGNATURE_BY_SIGNER00001+"</SignatureValue>"
                             +"    <KeyInfo>"
                             +"        <X509Data>"
-                            +"        <X509Certificate>"+CERT_EIGHTCA+"</X509Certificate>"
+                            +"        <X509Certificate>"+CERT_DSSROOTCA10+"</X509Certificate>"
                             +"        </X509Data>"
                             +"    </KeyInfo>"
                             +"</Signature ></root>";

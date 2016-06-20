@@ -182,6 +182,10 @@
 # Default: false
 #module.timemonitormanager.enabled=false
 
+# Set to enable build of the ExtendedTimeStampSigner (Enterprise Edition only)
+# Default: false
+#module.tsa-enterprise.enabled=false
+
 
 # -------------- Additional Web Deployments -----------------------------------
 

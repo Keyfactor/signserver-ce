@@ -703,6 +703,8 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 fatalErrors.contains("Can not set ACCEPTANYPOLICY to true and ACCEPTEDPOLICIES at the same time"));
         assertFalse("should not contain error",
                 fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true"));
+        assertFalse("should not contain error",
+                fatalErrors.contains("Illegal value for ACCEPTANYPOLICY: false"));
     }
     
     /**

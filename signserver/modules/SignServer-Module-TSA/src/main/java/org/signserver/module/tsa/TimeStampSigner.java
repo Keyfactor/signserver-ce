@@ -421,8 +421,10 @@ public class TimeStampSigner extends BaseSigner {
                     break;
                 case "false":
                     acceptAnyPolicy = false;
+                    break;
                 case "":
                     acceptAnyPolicy = false;
+                    break;
                 default:
                     configErrors.add("Illegal value for ACCEPTANYPOLICY: " +
                                      acceptAnyPolicyValue);

@@ -61,6 +61,7 @@ public class TimeStampCommandTest extends ModulesTestCase {
     public void test00SetupDatabase() throws Exception {
         addTimeStampSigner(getSignerIdTimeStampSigner1(), getSignerNameTimeStampSigner1(), true);
         workerSession.setWorkerProperty(getSignerIdTimeStampSigner1(), "DEFAULTTSAPOLICYOID", "1.2.13.1");
+        workerSession.removeWorkerProperty(getSignerIdTimeStampSigner1(), "ACCEPTANYPOLICY");
         workerSession.setWorkerProperty(getSignerIdTimeStampSigner1(), "ACCEPTEDPOLICIES", "1.2.13.1;1.2.13.9");
         workerSession.reloadConfiguration(getSignerIdTimeStampSigner1());
     }

@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.module.xmlvalidator;
 
-import org.signserver.ejb.interfaces.IWorkerSession;
+import org.signserver.ejb.interfaces.IInternalWorkerSession;
 
 /**
  * Mocked version of the XMLValidator.
@@ -21,14 +21,14 @@ import org.signserver.ejb.interfaces.IWorkerSession;
  * @version $Id: MockedXAdESSigner.java 4704 2014-05-16 12:38:10Z netmackan $
  */
 public class MockedXMLValidator extends XMLValidator {
-    private final IWorkerSession mockedWorkerSession;
+    private final IInternalWorkerSession mockedWorkerSession;
 
-    public MockedXMLValidator(final IWorkerSession mockedWorkerSession) {
+    public MockedXMLValidator(final IInternalWorkerSession mockedWorkerSession) {
         this.mockedWorkerSession = mockedWorkerSession;
     }
 
     @Override
-    protected IWorkerSession getWorkerSession() {
+    protected IInternalWorkerSession getWorkerSession() {
         return mockedWorkerSession;
     }
 

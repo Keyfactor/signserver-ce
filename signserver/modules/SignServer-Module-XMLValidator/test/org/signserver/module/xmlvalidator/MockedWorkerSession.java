@@ -37,6 +37,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
+import org.signserver.ejb.interfaces.IInternalWorkerSession;
 import org.signserver.ejb.interfaces.IWorkerSession;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
@@ -50,7 +51,7 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
  * @author Markus Kilås
  * @version $Id: MockedXAdESSigner.java 4704 2014-05-16 12:38:10Z netmackan $
  */
-public class MockedWorkerSession implements IWorkerSession {
+public class MockedWorkerSession implements IWorkerSession, IInternalWorkerSession {
 
     @Override
     public ProcessResponse process(int workerId, ProcessRequest request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {

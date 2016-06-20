@@ -36,7 +36,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
-import org.signserver.ejb.interfaces.ProcessSessionLocal;
+import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.log.AdminInfo;
@@ -77,10 +77,7 @@ public class XMLValidator extends BaseValidator {
     
     /** STRIPSIGNATURE property. */
     static final String PROP_STRIPSIGNATURE = "STRIPSIGNATURE";
-    
-    /** Worker session. */
-    private ProcessSessionLocal processSession;
-    
+
     // Configuration errors
     private final LinkedList<String> configErrors = new LinkedList<>();
     
@@ -277,8 +274,8 @@ public class XMLValidator extends BaseValidator {
     /**
      * @return The worker session. Can be overridden for instance by unit tests.
      */
-    protected ProcessSessionLocal getProcessSession(RequestContext requestContext) {
-        return requestContext.getServices().get(ProcessSessionLocal.class);
+    protected InternalProcessSessionLocal getProcessSession(RequestContext requestContext) {
+        return requestContext.getServices().get(InternalProcessSessionLocal.class);
     }
 
     @Override

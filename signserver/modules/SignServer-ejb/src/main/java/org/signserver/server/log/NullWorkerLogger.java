@@ -29,6 +29,6 @@ public class NullWorkerLogger extends BaseWorkerLogger implements IWorkerLogger 
     public void init(final int workerId, final WorkerConfig config, final SignServerContext context) {}
 
     @Override
-    public void log(final AdminInfo adminInfo, final Map<String, Loggable> fields, final RequestContext context) throws WorkerLoggerException {}
+    public void log(final AdminInfo adminInfo, final Map<String, Object> fields, final RequestContext context) throws WorkerLoggerException {}
 
 }

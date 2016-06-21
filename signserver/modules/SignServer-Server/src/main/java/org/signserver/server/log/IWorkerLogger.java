@@ -89,7 +89,7 @@ public interface IWorkerLogger {
      * @param requestContext the request context
      * @throws WorkerLoggerException In case there is a problem writing the log.
      */
-    void log(final AdminInfo adminInfo, Map<String, Loggable> fields, RequestContext requestContext) throws WorkerLoggerException;
+    void log(final AdminInfo adminInfo, Map<String, Object> fields, RequestContext requestContext) throws WorkerLoggerException;
 
     /**
      * Return a list of fatal errors for the logger implementation.

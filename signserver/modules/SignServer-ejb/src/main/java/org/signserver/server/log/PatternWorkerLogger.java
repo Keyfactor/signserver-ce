@@ -70,7 +70,7 @@ public class PatternWorkerLogger extends BaseWorkerLogger implements IWorkerLogg
     }
 
     @Override
-    public void log(final AdminInfo adminInfo, final Map<String, Loggable> fields, final RequestContext context) throws WorkerLoggerException {
+    public void log(final AdminInfo adminInfo, final Map<String, Object> fields, final RequestContext context) throws WorkerLoggerException {
         final EjbcaPatternLogger pl = new EjbcaPatternLogger(this.pattern.matcher(
                 this.orderString), this.orderString, ACCOUNTLOG,
                 this.logDateFormat, this.timeZone, this.logLevel);

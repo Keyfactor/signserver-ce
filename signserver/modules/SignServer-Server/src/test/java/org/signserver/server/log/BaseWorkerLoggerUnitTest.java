@@ -43,7 +43,7 @@ public class BaseWorkerLoggerUnitTest extends TestCase {
             }
 
             @Override
-            public void log(AdminInfo adminInfo, Map<String, Loggable> fields, RequestContext requestContext) throws WorkerLoggerException {
+            public void log(AdminInfo adminInfo, Map<String, Object> fields, RequestContext requestContext) throws WorkerLoggerException {
             }            
         };
         
@@ -66,7 +66,7 @@ public class BaseWorkerLoggerUnitTest extends TestCase {
             }
 
             @Override
-            public void log(AdminInfo adminInfo, Map<String, Loggable> fields, RequestContext requestContext) throws WorkerLoggerException {
+            public void log(AdminInfo adminInfo, Map<String, Object> fields, RequestContext requestContext) throws WorkerLoggerException {
             }            
         };
         
@@ -93,7 +93,7 @@ public class BaseWorkerLoggerUnitTest extends TestCase {
             }
 
             @Override
-            public void log(AdminInfo adminInfo, Map<String, Loggable> fields, RequestContext requestContext) throws WorkerLoggerException {
+            public void log(AdminInfo adminInfo, Map<String, Object> fields, RequestContext requestContext) throws WorkerLoggerException {
             }
             
             @Override
@@ -124,7 +124,7 @@ public class BaseWorkerLoggerUnitTest extends TestCase {
             }
 
             @Override
-            public void log(AdminInfo adminInfo, Map<String, Loggable> fields, RequestContext requestContext) throws WorkerLoggerException {
+            public void log(AdminInfo adminInfo, Map<String, Object> fields, RequestContext requestContext) throws WorkerLoggerException {
             }
             
             @Override
@@ -161,7 +161,7 @@ public class BaseWorkerLoggerUnitTest extends TestCase {
             }
 
             @Override
-            public void log(AdminInfo adminInfo, Map<String, Loggable> fields, RequestContext requestContext) throws WorkerLoggerException {
+            public void log(AdminInfo adminInfo, Map<String, Object> fields, RequestContext requestContext) throws WorkerLoggerException {
             }            
         };
         

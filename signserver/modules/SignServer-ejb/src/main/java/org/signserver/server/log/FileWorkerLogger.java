@@ -47,7 +47,7 @@ public class FileWorkerLogger extends BaseWorkerLogger implements IWorkerLogger 
     }
 
     @Override
-    public void log(final AdminInfo adminInfo, final Map<String, Loggable> fields, final RequestContext context) throws WorkerLoggerException {
+    public void log(final AdminInfo adminInfo, final Map<String, Object> fields, final RequestContext context) throws WorkerLoggerException {
         FileOutputStream fos = null;
 
         try {

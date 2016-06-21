@@ -56,7 +56,7 @@ public class AuthorizedUsernameAliasSelector implements AliasSelector {
             throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         if (requestContext != null) {
             final LogMap logMap = LogMap.getInstance(requestContext);
-            final Loggable loggable = logMap.get(IAuthorizer.LOG_USERNAME);
+            final Object loggable = logMap.get(IAuthorizer.LOG_USERNAME);
             
             if (loggable != null) {
                 return prefix + loggable.toString();

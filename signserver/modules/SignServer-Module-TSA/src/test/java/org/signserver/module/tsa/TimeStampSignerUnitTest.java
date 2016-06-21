@@ -75,7 +75,6 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     private static final int WORKER6 = 8895;
     private static final int WORKER7 = 8896;
     private static final int WORKER8 = 8897;
-    private static final int WORKER9 = 8898;
     private static final String NAME = "NAME";
     private static final String AUTHTYPE = "AUTHTYPE";
     private static final String CRYPTOTOKEN_CLASSNAME =

@@ -57,13 +57,13 @@ public class LogMapUnitTest extends TestCase {
         });
         
         // check that the expected values are logged to their correct log maps
-        final Loggable origLoggable = origLogMap.get("original key");
+        final Object origLoggable = origLogMap.get("original key");
         assertEquals("original log map should contain", "original value",
-                     origLoggable.toString());
+                     String.valueOf(origLoggable));
         
-        final Loggable copiedLoggable = copiedLogMap.get("copied key");
+        final Object copiedLoggable = copiedLogMap.get("copied key");
         assertEquals("copied log map should contain", "copied value",
-                     copiedLoggable.toString());
+                     String.valueOf(copiedLoggable));
         
         // check that the value written in the new log map is not visible in
         // orignal one, and vice-versa

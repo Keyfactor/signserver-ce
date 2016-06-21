@@ -321,16 +321,16 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
 
         // Check that the time source is being logged
         final LogMap logMap = LogMap.getInstance(workerMock.getLastRequestContext());
-        final Loggable timeSourceLoggable = logMap.get("TSA_TIMESOURCE");
+        final Object timeSourceLoggable = logMap.get("TSA_TIMESOURCE");
         assertEquals("timesource", ZeroTimeSource.class.getSimpleName(),
-                     timeSourceLoggable.toString());
+                     String.valueOf(timeSourceLoggable));
         
         assertNotNull("response",
                 logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED));
-        final Loggable loggable =
+        final Object loggable =
                 logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED);
         assertEquals("log line doesn't contain newlines", -1,
-                loggable.toString().lastIndexOf('\n'));
+                String.valueOf(loggable).lastIndexOf('\n'));
     }
     
     /**

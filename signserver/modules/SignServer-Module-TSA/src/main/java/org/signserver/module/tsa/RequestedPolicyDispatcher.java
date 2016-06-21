@@ -32,12 +32,9 @@ import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.dispatchers.BaseDispatcher;
 import org.signserver.server.log.AdminInfo;
-import org.signserver.server.log.ConstantStringLoggable;
 import org.signserver.server.log.ExceptionLoggable;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
-import org.signserver.server.log.Loggable;
-import org.signserver.server.log.StringValueLoggable;
 
 /**
  * Dispatching requests to a Time Stamp Unit based on the requested profile.
@@ -162,10 +159,8 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
                 final TimeStampResponse resp = gen.generateFailResponse(PKIStatus.REJECTION, PKIFailureInfo.unacceptedPolicy, statusString);
 
                 // Auditlog
-                logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED,
-                           new StringValueLoggable(false));
-                logMap.put(IWorkerLogger.LOG_EXCEPTION,
-                           new ConstantStringLoggable("requested policy not supported"));
+                logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, false);
+                logMap.put(IWorkerLogger.LOG_EXCEPTION, "requested policy not supported");
 
                 result = new GenericServletResponse(sReq.getRequestID(), resp.getEncoded(), null, null, null, RESPONSE_CONTENT_TYPE);
             } else {

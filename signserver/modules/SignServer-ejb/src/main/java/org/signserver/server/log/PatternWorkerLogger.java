@@ -75,8 +75,8 @@ public class PatternWorkerLogger extends BaseWorkerLogger implements IWorkerLogg
                 this.orderString), this.orderString, ACCOUNTLOG,
                 this.logDateFormat, this.timeZone, this.logLevel);
         final Map<String, String> map = new HashMap<String, String>();
-        for (final Map.Entry<String, Loggable> entrySet : fields.entrySet()) {
-            map.put(entrySet.getKey(), entrySet.getValue().toString());
+        for (final Map.Entry<String, Object> entrySet : fields.entrySet()) {
+            map.put(entrySet.getKey(), String.valueOf(entrySet.getValue()));
         }
         pl.putAll(map);
         pl.writeln();

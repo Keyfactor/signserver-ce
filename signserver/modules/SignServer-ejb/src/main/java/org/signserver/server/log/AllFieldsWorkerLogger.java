@@ -55,10 +55,10 @@ public class AllFieldsWorkerLogger extends BaseWorkerLogger implements IWorkerLo
             throws WorkerLoggerException {
         final StringBuilder str = new StringBuilder();
         str.append("AllVariablesLogger; ");
-        for (Map.Entry<String, Loggable> entry : fields.entrySet()) {
+        for (Map.Entry<String, Object> entry : fields.entrySet()) {
             str.append(entry.getKey());
             str.append(": ");
-            str.append(entry.getValue().toString());
+            str.append(String.valueOf(entry.getValue()));
             str.append("; ");
         }
         

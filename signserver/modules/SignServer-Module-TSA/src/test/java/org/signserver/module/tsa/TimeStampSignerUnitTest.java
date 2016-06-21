@@ -115,9 +115,9 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         timeStampResponse.validate(timeStampRequest);
 
         final LogMap logMap = LogMap.getInstance(processSession.getLastRequestContext());
-        final Loggable loggable = logMap.get("TSA_TIMESOURCE");
+        final Object loggable = logMap.get("TSA_TIMESOURCE");
         assertEquals("timesource", LocalComputerTimeSource.class.getSimpleName(),
-                     loggable.toString());
+                     String.valueOf(loggable));
     }
     
     /**
@@ -144,14 +144,14 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         timeStampResponse.validate(timeStampRequest);
 
         LogMap logMap = LogMap.getInstance(processSession.getLastRequestContext());
-        final Loggable responseLoggable =
+        final Object responseLoggable =
                 logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED);
         assertNotNull("response", responseLoggable);
         
         assertEquals("log line doesn't contain newlines", -1,
                 responseLoggable.toString().lastIndexOf('\n'));
         
-        final Loggable requestLoggable =
+        final Object requestLoggable =
                 logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_ENCODED);
         assertNotNull("request", requestLoggable);
         assertEquals("log line doesn't contain newlines", -1,

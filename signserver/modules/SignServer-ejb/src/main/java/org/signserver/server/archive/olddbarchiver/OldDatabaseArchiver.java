@@ -157,7 +157,7 @@ public class OldDatabaseArchiver extends BaseArchiver implements Archiver {
             }
 
             final LogMap logMap = LogMap.getInstance(requestContext);
-            final Loggable loggable = logMap.get(IWorkerLogger.LOG_ARCHIVE_IDS);
+            final Object loggable = logMap.get(IWorkerLogger.LOG_ARCHIVE_IDS);
 
             logMap.put(IWorkerLogger.LOG_ARCHIVE_IDS, new Loggable() {
                 @Override

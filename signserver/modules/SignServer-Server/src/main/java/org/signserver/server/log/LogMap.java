@@ -49,7 +49,7 @@ public class LogMap extends HashMap<String, Object> {
         final LogMap newLogMap = new LogMap();
         
         for (final String key : this.keySet()) {
-            final Loggable value = (Loggable) get(key);
+            final Object value = get(key);
             newLogMap.put(key, value);
         }
         

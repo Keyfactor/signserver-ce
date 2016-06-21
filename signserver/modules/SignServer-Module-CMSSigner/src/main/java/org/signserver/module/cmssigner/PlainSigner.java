@@ -134,7 +134,7 @@ public class PlainSigner extends BaseSigner {
         final byte[] digest;
         logMap.put(IWorkerLogger.LOG_REQUEST_DIGEST_ALGORITHM, new Loggable() {
             @Override
-            public String logValue() {
+            public String toString() {
                 return logRequestDigestAlgorithm;
             }
         });
@@ -143,7 +143,7 @@ public class PlainSigner extends BaseSigner {
             digest = md.digest(data);
             logMap.put(IWorkerLogger.LOG_REQUEST_DIGEST, new Loggable() {
                 @Override
-                public String logValue() {
+                public String toString() {
                     return Hex.toHexString(digest);
                 }
             });
@@ -180,7 +180,7 @@ public class PlainSigner extends BaseSigner {
             
             logMap.put(IWorkerLogger.LOG_RESPONSE_ENCODED, new Loggable() {
                 @Override
-                public String logValue() {
+                public String toString() {
                     return Base64.toBase64String(signedbytes);
                 }
             });

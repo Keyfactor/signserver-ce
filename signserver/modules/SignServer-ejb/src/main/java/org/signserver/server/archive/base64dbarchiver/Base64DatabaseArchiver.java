@@ -159,13 +159,13 @@ public class Base64DatabaseArchiver extends BaseArchiver implements Archiver {
 
             logMap.put(IWorkerLogger.LOG_ARCHIVE_IDS, new Loggable() {
                 @Override
-                public String logValue() {
+                public String toString() {
                     final String ids;
                     
                     if (loggable == null) {
                         ids = uniqueId;
                     } else {
-                        ids = loggable.logValue() + ", " + uniqueId;
+                        ids = loggable.toString() + ", " + uniqueId;
                     }
                     return ids;
                 }

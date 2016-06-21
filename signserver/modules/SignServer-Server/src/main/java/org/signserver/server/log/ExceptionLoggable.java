@@ -37,7 +37,7 @@ public class ExceptionLoggable implements Loggable {
      * @return The log message
      */
     @Override
-    public String logValue() {
+    public String toString() {
         return ex.getMessage();
     }
 }

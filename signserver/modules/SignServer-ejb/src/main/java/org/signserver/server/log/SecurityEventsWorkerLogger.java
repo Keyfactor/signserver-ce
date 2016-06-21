@@ -86,15 +86,15 @@ public class SecurityEventsWorkerLogger extends BaseWorkerLogger implements IWor
             if (!IWorkerLogger.LOG_WORKER_ID.equals(key) &&
                 (includedFields == null || includedFields.contains(key)) &&
                 (excludedFields == null || !excludedFields.contains(key))) {
-                details.put(key, fields.get(key).logValue());
+                details.put(key, fields.get(key).toString());
             }
         }
         final String serNo = adminInfo.getCertSerialNumber() != null ? adminInfo.getCertSerialNumber().toString(16) : null;
-        final String sucess = fields.get(IWorkerLogger.LOG_PROCESS_SUCCESS).logValue();
+        final String sucess = fields.get(IWorkerLogger.LOG_PROCESS_SUCCESS).toString();
         logger.log(SignServerEventTypes.PROCESS,
                 Boolean.toString(true).equals(sucess) ? EventStatus.SUCCESS : EventStatus.FAILURE,
                 SignServerModuleTypes.WORKER, SignServerServiceTypes.SIGNSERVER, adminInfo.getSubjectDN(),
-                adminInfo.getIssuerDN(), serNo, fields.get(IWorkerLogger.LOG_WORKER_ID).logValue(), details);
+                adminInfo.getIssuerDN(), serNo, fields.get(IWorkerLogger.LOG_WORKER_ID).toString(), details);
     }
 
 }

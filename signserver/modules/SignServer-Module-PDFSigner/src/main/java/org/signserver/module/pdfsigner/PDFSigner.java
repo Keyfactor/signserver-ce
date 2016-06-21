@@ -309,7 +309,7 @@ public class PDFSigner extends BaseSigner {
                 logMap.put(IWorkerLogger.LOG_PDF_PASSWORD_SUPPLIED,
                            new Loggable() {
                                @Override
-                               public String logValue() {
+                               public String toString() {
                                    return Boolean.FALSE.toString();
                                }
                            });
@@ -320,7 +320,7 @@ public class PDFSigner extends BaseSigner {
                 logMap.put(IWorkerLogger.LOG_PDF_PASSWORD_SUPPLIED,
                            new Loggable() {
                                @Override
-                               public String logValue() {
+                               public String toString() {
                                    return Boolean.TRUE.toString();
                                }
                            });

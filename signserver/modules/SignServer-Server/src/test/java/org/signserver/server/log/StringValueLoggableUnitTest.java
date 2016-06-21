@@ -31,7 +31,7 @@ public class StringValueLoggableUnitTest extends TestCase {
     public void testLoggingBoolean() throws Exception {
         final Loggable loggable = new StringValueLoggable(false);
         
-        assertEquals("Log message", "false", loggable.logValue());
+        assertEquals("Log message", "false", loggable.toString());
     }
     
     /**
@@ -43,6 +43,6 @@ public class StringValueLoggableUnitTest extends TestCase {
     public void testLoggingInteger() throws Exception {
         final Loggable loggable = new StringValueLoggable(42);
         
-        assertEquals("Log message", "42", loggable.logValue());
+        assertEquals("Log message", "42", loggable.toString());
     }
 }

@@ -58,7 +58,7 @@ public class AllFieldsWorkerLogger extends BaseWorkerLogger implements IWorkerLo
         for (Map.Entry<String, Loggable> entry : fields.entrySet()) {
             str.append(entry.getKey());
             str.append(": ");
-            str.append(entry.getValue().logValue());
+            str.append(entry.getValue().toString());
             str.append("; ");
         }
         

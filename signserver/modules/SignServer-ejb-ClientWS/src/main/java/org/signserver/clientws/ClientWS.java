@@ -259,7 +259,7 @@ public class ClientWS {
         // Add HTTP specific log entries
         logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, new Loggable() {
             @Override
-            public String logValue() {
+            public String toString() {
                 return servletRequest.getRequestURL().append("?")
                         .append(servletRequest.getQueryString()).toString();
             }
@@ -267,14 +267,14 @@ public class ClientWS {
                 
         logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH, new Loggable() {
             @Override
-            public String logValue() {
+            public String toString() {
                 return servletRequest.getHeader("Content-Length");
             }
         });
 
         logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR, new Loggable() {
             @Override
-            public String logValue() {
+            public String toString() {
                 return servletRequest.getHeader("X-Forwarded-For");
             }
         });
@@ -297,7 +297,7 @@ public class ClientWS {
                 requestContext.put(RequestContext.FILENAME, fileName);
                 logMap.put(IWorkerLogger.LOG_FILENAME, new Loggable() {
                     @Override
-                    public String logValue() {
+                    public String toString() {
                         return fileName;
                     }
                 });

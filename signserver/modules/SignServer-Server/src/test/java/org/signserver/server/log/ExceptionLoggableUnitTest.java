@@ -36,7 +36,7 @@ public class ExceptionLoggableUnitTest extends TestCase {
             final ExceptionLoggable loggable = new ExceptionLoggable(e);
             
             assertEquals("Should log error message", "An exception",
-                         loggable.logValue());
+                         loggable.toString());
         }
     }
 }

@@ -385,14 +385,14 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             logMap.put(ITimeStampLogger.LOG_TSA_TIME,
                        new Loggable() {
                            @Override
-                           public String logValue() {
+                           public String toString() {
                                return String.valueOf(date.getTime());
                            }
                        });
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESOURCE,
                        new Loggable() {
                            @Override
-                           public String logValue() {
+                           public String toString() {
                                return timeSrc.getClass().getSimpleName();
                            }
                        });
@@ -405,7 +405,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED,
                        new Loggable() {
                            @Override
-                           public String logValue() {
+                           public String toString() {
                                return new String(signedbytes);
                            }
                        });

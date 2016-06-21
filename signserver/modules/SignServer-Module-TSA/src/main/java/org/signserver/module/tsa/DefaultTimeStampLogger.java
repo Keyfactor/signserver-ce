@@ -96,7 +96,7 @@ public class DefaultTimeStampLogger extends BaseWorkerLogger implements IWorkerL
 
         // TODO: Do a new version of pattern logger instead of this copying
         for (Map.Entry<String, Loggable> entry : fields.entrySet()) {
-            pl.paramPut(entry.getKey(), entry.getValue().logValue());
+            pl.paramPut(entry.getKey(), entry.getValue().toString());
         }
         pl.writeln();
         pl.flush();

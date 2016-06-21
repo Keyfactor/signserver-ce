@@ -32,6 +32,6 @@ public class ConstantStringLoggableUnitTest extends TestCase {
     public void testConstantStringLogging() throws Exception {
         final Loggable loggable = new ConstantStringLoggable("Log message");
         
-        assertEquals("Log message", "Log message", loggable.logValue());
+        assertEquals("Log message", "Log message", loggable.toString());
     }
 }

@@ -410,7 +410,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         // Add HTTP specific log entries
         logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, new Loggable() {
             @Override
-            public String logValue() {
+            public String toString() {
                 return req.getRequestURL().append("?").append(req.getQueryString()).toString();
             }
         });
@@ -418,13 +418,13 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                    new StringValueLoggable(data.length));
         logMap.put(IWorkerLogger.LOG_FILENAME, new Loggable() {
             @Override
-            public String logValue() {
+            public String toString() {
                 return fileName;
             }
         });
         logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR, new Loggable() {
             @Override
-            public String logValue() {
+            public String toString() {
                 return xForwardedFor;
             }
         });

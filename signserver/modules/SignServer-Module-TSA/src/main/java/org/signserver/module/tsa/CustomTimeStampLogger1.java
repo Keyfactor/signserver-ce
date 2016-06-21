@@ -48,22 +48,22 @@ public class CustomTimeStampLogger1 extends BaseWorkerLogger implements ITimeSta
 
         str.append("LOG_ID");
         str.append(": ");
-        str.append(fields.get(IWorkerLogger.LOG_ID).logValue());
+        str.append(fields.get(IWorkerLogger.LOG_ID).toString());
         str.append("; ");
 
         str.append("CLIENT_IP");
         str.append(": ");
-        str.append(fields.get(IWorkerLogger.LOG_CLIENT_IP).logValue());
+        str.append(fields.get(IWorkerLogger.LOG_CLIENT_IP).toString());
         str.append("; ");
 
         str.append("REQUEST_FULLURL");
         str.append(": ");
-        str.append(fields.get(IWorkerLogger.LOG_REQUEST_FULLURL).logValue());
+        str.append(fields.get(IWorkerLogger.LOG_REQUEST_FULLURL).toString());
         str.append("; ");
 
         str.append("RequestTime");
         str.append(": ");
-        str.append(fields.get(IWorkerLogger.LOG_TIME).logValue());
+        str.append(fields.get(IWorkerLogger.LOG_TIME).toString());
         str.append("; ");
 
         str.append("ResponseTime");
@@ -73,54 +73,54 @@ public class CustomTimeStampLogger1 extends BaseWorkerLogger implements ITimeSta
 
         str.append("TimeStamp");
         str.append(": ");
-        str.append(fields.get(ITimeStampLogger.LOG_TSA_TIME).logValue());
+        str.append(fields.get(ITimeStampLogger.LOG_TSA_TIME).toString());
         str.append("; ");
 
         str.append("PKIStatus");
         str.append(": ");
-        str.append(fields.get(ITimeStampLogger.LOG_TSA_PKISTATUS).logValue());
+        str.append(fields.get(ITimeStampLogger.LOG_TSA_PKISTATUS).toString());
         str.append("; ");
 
         str.append("PKIFailureInfo");
         str.append(": ");
-        str.append(fields.get(ITimeStampLogger.LOG_TSA_PKIFAILUREINFO).logValue());
+        str.append(fields.get(ITimeStampLogger.LOG_TSA_PKIFAILUREINFO).toString());
         str.append("; ");
 
         str.append("TSA_POLICYID");
         str.append(": ");
-        str.append(fields.get(ITimeStampLogger.LOG_TSA_POLICYID).logValue());
+        str.append(fields.get(ITimeStampLogger.LOG_TSA_POLICYID).toString());
         str.append("; ");
 
         str.append("SIGNER_CERT_SERIALNUMBER");
         str.append(": ");
-        str.append(fields.get(ITimeStampLogger.LOG_SIGNER_CERT_SERIALNUMBER).logValue());
+        str.append(fields.get(ITimeStampLogger.LOG_SIGNER_CERT_SERIALNUMBER).toString());
         str.append("; ");
 
         str.append("SIGNER_CERT_ISSUERDN");
         str.append(": ");
-        str.append(fields.get(ITimeStampLogger.LOG_SIGNER_CERT_ISSUERDN).logValue());
+        str.append(fields.get(ITimeStampLogger.LOG_SIGNER_CERT_ISSUERDN).toString());
         str.append("; ");
 
         str.append("TSA_TIMESTAMPREQUEST_ENCODED");
         str.append(": ");
         str.append(fields.get(
-                ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_ENCODED).logValue());
+                ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_ENCODED).toString());
         str.append("; ");
 
         str.append("TSA_TIMESTAMPRESPONSE_ENCODED");
         str.append(": ");
         str.append(fields.get(
-                ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED).logValue());
+                ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED).toString());
         str.append("; ");
 
         str.append("TSA_EXCEPTION");
         str.append(": ");
-        str.append(fields.get(ITimeStampLogger.LOG_TSA_EXCEPTION).logValue());
+        str.append(fields.get(ITimeStampLogger.LOG_TSA_EXCEPTION).toString());
         str.append("; ");
 
         str.append("EXCEPTION");
         str.append(": ");
-        str.append(fields.get(IWorkerLogger.LOG_EXCEPTION).logValue());
+        str.append(fields.get(IWorkerLogger.LOG_EXCEPTION).toString());
         str.append("; ");
 
         ACCOUNTLOG.info(str.toString());

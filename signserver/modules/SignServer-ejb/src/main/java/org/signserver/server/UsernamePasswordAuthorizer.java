@@ -168,7 +168,7 @@ public class UsernamePasswordAuthorizer implements IAuthorizer {
         LogMap.getInstance(requestContext).put(IAuthorizer.LOG_USERNAME,
                     new Loggable() {
                         @Override
-                        public String logValue() {
+                        public String toString() {
                             return username;
                         }
                     });

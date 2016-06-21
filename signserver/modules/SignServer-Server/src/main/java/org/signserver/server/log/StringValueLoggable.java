@@ -39,7 +39,7 @@ public class StringValueLoggable<T> implements Loggable {
      * @return The log message
      */
     @Override
-    public String logValue() {
+    public String toString() {
         return String.valueOf((Object) value);
     }
 }

@@ -27,5 +27,6 @@ public interface Loggable {
      * 
      * @return The log string value
      */
-    String logValue();
+    @Override
+    String toString();
 }

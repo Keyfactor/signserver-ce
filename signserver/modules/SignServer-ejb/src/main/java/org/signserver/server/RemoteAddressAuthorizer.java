@@ -131,7 +131,7 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
         LogMap.getInstance(requestContext).put(IAuthorizer.LOG_REMOTEADDRESS,
                         new Loggable() {
                             @Override
-                            public String logValue() {
+                            public String toString() {
                                 return remote;
                             }
                         });

@@ -59,7 +59,7 @@ public class AuthorizedUsernameAliasSelector implements AliasSelector {
             final Loggable loggable = logMap.get(IAuthorizer.LOG_USERNAME);
             
             if (loggable != null) {
-                return prefix + loggable.logValue();
+                return prefix + loggable.toString();
             } else {
                 return null;
             }

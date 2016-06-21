@@ -175,7 +175,7 @@ class WorkerProcessImpl {
                    new StringValueLoggable(transactionID));
         logMap.put(IWorkerLogger.LOG_CLIENT_IP, new Loggable() {
             @Override
-            public String logValue() {
+            public String toString() {
                 return (String) requestContext.get(RequestContext.REMOTE_IP);
             }
         });
@@ -211,7 +211,7 @@ class WorkerProcessImpl {
         // Log the worker name
         logMap.put(IWorkerLogger.LOG_WORKER_NAME, new Loggable() {
             @Override
-            public String logValue() {
+            public String toString() {
                 return awc.getProperty(PropertiesConstants.NAME);
             }
         });
@@ -238,7 +238,7 @@ class WorkerProcessImpl {
             // Check authorization
             logMap.put(IWorkerLogger.LOG_WORKER_AUTHTYPE, new Loggable() {
                 @Override
-                public String logValue() {
+                public String toString() {
                     return processable.getAuthenticationType();
                 }
             });
@@ -284,21 +284,21 @@ class WorkerProcessImpl {
                 final X509Certificate cert = (X509Certificate) clientCertificate;
                 logMap.put(IWorkerLogger.LOG_CLIENT_CERT_SUBJECTDN, new Loggable() {
                     @Override
-                    public String logValue() {
+                    public String toString() {
                         return cert.getSubjectDN().getName();
                     }
                 });
                         
                 logMap.put(IWorkerLogger.LOG_CLIENT_CERT_ISSUERDN, new Loggable() {
                     @Override
-                    public String logValue() {
+                    public String toString() {
                         return cert.getIssuerDN().getName();
                     }
                 });
                         
                 logMap.put(IWorkerLogger.LOG_CLIENT_CERT_SERIALNUMBER, new Loggable() {
                     @Override
-                    public String logValue() {
+                    public String toString() {
                         return cert.getSerialNumber().toString(16);
                     }
                 });     
@@ -425,7 +425,7 @@ class WorkerProcessImpl {
                     final String error = "Purchase not granted";
                     logMap.put(IWorkerLogger.LOG_EXCEPTION, new Loggable() {
                         @Override
-                        public String logValue() {
+                        public String toString() {
                             return error;
                         }
                     });
@@ -565,19 +565,19 @@ class WorkerProcessImpl {
             // Log client certificate
             logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SUBJECTDN, new Loggable() {
                 @Override
-                public String logValue() {
+                public String toString() {
                     return cert.getSubjectDN().getName();
                 }
             });     
             logMap.put(IWorkerLogger.LOG_SIGNER_CERT_ISSUERDN, new Loggable() {
                 @Override
-                public String logValue() {
+                public String toString() {
                     return cert.getIssuerDN().getName();
                 }
             });     
             logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SERIALNUMBER, new Loggable() {
                 @Override
-                public String logValue() {
+                public String toString() {
                     return cert.getSerialNumber().toString(16);
                 }
             });

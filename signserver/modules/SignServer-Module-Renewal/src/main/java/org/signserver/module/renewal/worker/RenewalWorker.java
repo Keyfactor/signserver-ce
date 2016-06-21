@@ -200,7 +200,7 @@ public class RenewalWorker extends BaseSigner {
         logMap.put(RenewalWorkerProperties.LOG_RESPONSE_RESULT,
                    new Loggable() {
                         @Override
-                        public String logValue() {
+                        public String toString() {
                             return responseData.getProperty(RenewalWorkerProperties
                                                             .RESPONSE_RESULT);
                         }
@@ -209,7 +209,7 @@ public class RenewalWorker extends BaseSigner {
         logMap.put(RenewalWorkerProperties.LOG_RESPONSE_MESSAGE,
                    new Loggable() {
                        @Override
-                       public String logValue() {
+                       public String toString() {
                            return responseData.getProperty(RenewalWorkerProperties
                                                             .RESPONSE_MESSAGE);
                        }
@@ -269,7 +269,7 @@ public class RenewalWorker extends BaseSigner {
         logMap.put(RenewalWorkerProperties.LOG_RENEWEE,
                    new Loggable() {
                        @Override
-                       public String logValue() {
+                       public String toString() {
                            return workerName;
                        }
                    });
@@ -429,7 +429,7 @@ public class RenewalWorker extends BaseSigner {
         logMap.put(RenewalWorkerProperties.LOG_GENERATEDKEYALIAS,
                    new Loggable() {
                        @Override
-                       public String logValue() {
+                       public String toString() {
                            return newAlias;
                        }
                    });
@@ -453,7 +453,7 @@ public class RenewalWorker extends BaseSigner {
             logMap.put(RenewalWorkerProperties.LOG_GENERATEDKEYHASH, 
                        new Loggable() {
                            @Override
-                           public String logValue() {
+                           public String toString() {
                                return result.getPublicKeyHash();
                            }
                        });
@@ -568,21 +568,21 @@ public class RenewalWorker extends BaseSigner {
                 logMap.put(RenewalWorkerProperties.LOG_NEWCERTISSUERDN,
                            new Loggable() {
                                @Override
-                               public String logValue() {
+                               public String toString() {
                                    return signerCert.getIssuer().toString();
                                }
                            });
                 logMap.put(RenewalWorkerProperties.LOG_NEWCERTSERIALNO,
                            new Loggable() {
                                @Override
-                               public String logValue() {
+                               public String toString() {
                                    return signerCert.getSerialNumber().toString(16);
                                }
                            });
                 logMap.put(RenewalWorkerProperties.LOG_NEWCERTSUBJECTDN,
                            new Loggable() {
                                @Override
-                               public String logValue() {
+                               public String toString() {
                                    return signerCert.getSubject().toString();
                                }
                            });

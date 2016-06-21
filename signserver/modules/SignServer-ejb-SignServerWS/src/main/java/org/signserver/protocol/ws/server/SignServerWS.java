@@ -169,7 +169,7 @@ public class SignServerWS implements ISignServerWS {
         // Add HTTP specific log entries
         logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, new Loggable() {
             @Override
-            public String logValue() {
+            public String toString() {
                 return servletRequest.getRequestURL().append("?")
                         .append(servletRequest.getQueryString()).toString();
             }
@@ -177,14 +177,14 @@ public class SignServerWS implements ISignServerWS {
                 
         logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH, new Loggable() {
             @Override
-            public String logValue() {
+            public String toString() {
                 return servletRequest.getHeader("Content-Length");
             }
         });
                 
         logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR, new Loggable() {
             @Override
-            public String logValue() {
+            public String toString() {
                 return xForwardedFor;
             }
         });
@@ -219,7 +219,7 @@ public class SignServerWS implements ISignServerWS {
                 requestContext.put(RequestContext.FILENAME, fileName);
                 logMap.put(IWorkerLogger.LOG_FILENAME, new Loggable() {
                     @Override
-                    public String logValue() {
+                    public String toString() {
                         return fileName;
                     }
                 });
@@ -228,7 +228,7 @@ public class SignServerWS implements ISignServerWS {
             if (wi.hasName()) {
                 logMap.put(IWorkerLogger.LOG_WORKER_NAME, new Loggable() {
                     @Override
-                    public String logValue() {
+                    public String toString() {
                         return wi.getName();
                     }
                 });
@@ -236,7 +236,7 @@ public class SignServerWS implements ISignServerWS {
             if (wi.hasId()) {
                 logMap.put(IWorkerLogger.LOG_WORKER_ID, new Loggable() {
                     @Override
-                    public String logValue() {
+                    public String toString() {
                         return String.valueOf(wi.getId());
                     }
                 });

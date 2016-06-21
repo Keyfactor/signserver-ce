@@ -43,7 +43,7 @@ public class AuthorizedUsernameAliasSelectorUnitTest extends TestCase {
        
        logMap.put(IAuthorizer.LOG_USERNAME, new Loggable() {
             @Override
-            public String logValue() {
+            public String toString() {
                 return "user4711";
             }
        });
@@ -70,7 +70,7 @@ public class AuthorizedUsernameAliasSelectorUnitTest extends TestCase {
        
        logMap.put(IAuthorizer.LOG_USERNAME, new Loggable() {
            @Override
-           public String logValue() {
+           public String toString() {
                return "user4711";
            }
        });
@@ -109,7 +109,7 @@ public class AuthorizedUsernameAliasSelectorUnitTest extends TestCase {
        
         logMap.put(IAuthorizer.LOG_USERNAME, new Loggable() {
             @Override
-            public String logValue() {
+            public String toString() {
                 return "user4711";
             }
         });

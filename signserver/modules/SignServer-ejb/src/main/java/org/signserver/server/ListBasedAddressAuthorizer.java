@@ -243,13 +243,13 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
         final LogMap logMap = LogMap.getInstance(requestContext);
         logMap.put(IAuthorizer.LOG_REMOTEADDRESS, new Loggable() {
             @Override
-            public String logValue() {
+            public String toString() {
                 return remoteAddress;
             }
         });
         logMap.put(IAuthorizer.LOG_FORWARDED_ADDRESS, new Loggable() {
             @Override
-            public String logValue() {
+            public String toString() {
                 return StringUtils.join(forwardedAddresses, ",");
             }
         });

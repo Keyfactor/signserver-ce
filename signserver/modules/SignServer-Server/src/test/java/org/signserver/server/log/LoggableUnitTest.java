@@ -42,7 +42,7 @@ public class LoggableUnitTest extends TestCase {
         public boolean hasEvaluated = false;
 
         @Override
-        public String logValue() {
+        public String toString() {
             hasEvaluated = true;
             return null;
         }

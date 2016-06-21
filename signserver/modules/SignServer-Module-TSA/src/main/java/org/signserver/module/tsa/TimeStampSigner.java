@@ -523,7 +523,7 @@ public class TimeStampSigner extends BaseSigner {
         logMap.put(ITimeStampLogger.LOG_TSA_TIME,
                    new Loggable() {
                        @Override
-                       public String logValue() {
+                       public String toString() {
                            return date == null ?
                                   null : String.valueOf(date.getTime());
                        }
@@ -531,7 +531,7 @@ public class TimeStampSigner extends BaseSigner {
         logMap.put(ITimeStampLogger.LOG_TSA_SERIALNUMBER,
                    new Loggable() {
                        @Override
-                       public String logValue() {
+                       public String toString() {
                            return serialNumber.toString(16);
 
                        }
@@ -539,7 +539,7 @@ public class TimeStampSigner extends BaseSigner {
         logMap.put(ITimeStampLogger.LOG_TSA_TIMESOURCE,
                    new Loggable() {
                        @Override
-                       public String logValue() {
+                       public String toString() {
                            return timeSrc.getClass().getSimpleName();
                        }
                    });
@@ -563,42 +563,42 @@ public class TimeStampSigner extends BaseSigner {
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_CERTREQ,
                        new Loggable() {
                            @Override
-                           public String logValue() {
+                           public String toString() {
                                return String.valueOf(timeStampRequest.getCertReq());
                            }
                        });
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_CRITEXTOIDS,
                        new Loggable() {
                            @Override
-                           public String logValue() {
+                           public String toString() {
                                return String.valueOf(timeStampRequest.getCriticalExtensionOIDs());
                            }
                        });
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_ENCODED,
                        new Loggable() {
                            @Override
-                           public String logValue() {
+                           public String toString() {
                                return new String(Base64.encode(requestbytes, false));
                            }
                        });
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_NONCRITEXTOIDS,
                        new Loggable() {
                            @Override
-                           public String logValue() {
+                           public String toString() {
                                return String.valueOf(timeStampRequest.getNonCriticalExtensionOIDs());
                            }
                        });
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_NOUNCE,
                        new Loggable() {
                            @Override
-                           public String logValue() {
+                           public String toString() {
                                return String.valueOf(timeStampRequest.getNonce());
                            }
                        });
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_VERSION,
                        new Loggable() {
                            @Override
-                           public String logValue() {
+                           public String toString() {
                                return String.valueOf(timeStampRequest.getVersion());
                            }
                        });
@@ -606,7 +606,7 @@ public class TimeStampSigner extends BaseSigner {
                         .LOG_TSA_TIMESTAMPREQUEST_MESSAGEIMPRINTALGOID,
                        new Loggable() {
                            @Override
-                           public String logValue() {
+                           public String toString() {
                                return timeStampRequest.getMessageImprintAlgOID().getId();
                            }
                        });
@@ -614,7 +614,7 @@ public class TimeStampSigner extends BaseSigner {
                         .LOG_TSA_TIMESTAMPREQUEST_MESSAGEIMPRINTDIGEST,
                        new Loggable() {
                            @Override
-                           public String logValue() {
+                           public String toString() {
                                return new String(Base64.encode(
                                    timeStampRequest.getMessageImprintDigest(),
                                    false));
@@ -667,7 +667,7 @@ public class TimeStampSigner extends BaseSigner {
             logMap.put(ITimeStampLogger.LOG_TSA_PKISTATUS,
                        new Loggable() {
                            @Override
-                           public String logValue() {
+                           public String toString() {
                                return String.valueOf(tspResponse.getStatus());
                            }
                        });
@@ -676,7 +676,7 @@ public class TimeStampSigner extends BaseSigner {
                 logMap.put(ITimeStampLogger.LOG_TSA_PKIFAILUREINFO,
                            new Loggable() {
                                @Override
-                               public String logValue() {
+                               public String toString() {
                                    return String.valueOf(tspResponse.getFailInfo().intValue());
                                }
                            });
@@ -684,14 +684,14 @@ public class TimeStampSigner extends BaseSigner {
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED,
                        new Loggable() {
                            @Override
-                           public String logValue() {
+                           public String toString() {
                                return new String(Base64.encode(signedbytes, false));
                            }
                        });
             logMap.put(ITimeStampLogger.LOG_TSA_PKISTATUS_STRING,
                        new Loggable() {
                            @Override
-                           public String logValue() {
+                           public String toString() {
                                return tspResponse.getStatusString();
                            }
                        });
@@ -926,7 +926,7 @@ public class TimeStampSigner extends BaseSigner {
             logMap.put(ITimeStampLogger.LOG_TSA_POLICYID,
                        new Loggable() {
                            @Override
-                           public String logValue() {
+                           public String toString() {
                                return tSAPolicyOID.getId();
                            }
                        });

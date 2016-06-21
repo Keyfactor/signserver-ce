@@ -37,7 +37,7 @@ public class ConstantStringLoggable implements Loggable {
     }
     
     @Override
-    public String logValue() {
+    public String toString() {
         return message;
     }
 }

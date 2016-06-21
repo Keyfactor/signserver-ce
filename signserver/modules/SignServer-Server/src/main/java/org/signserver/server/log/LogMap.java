@@ -24,7 +24,7 @@ import org.signserver.common.RequestContext;
  * @author Markus Kilås
  * @version $Id$
  */
-public class LogMap extends HashMap<String, Loggable> {
+public class LogMap extends HashMap<String, Object> {
   
     /**
      * Get the LogMap from the RequestContext or create and put a new one

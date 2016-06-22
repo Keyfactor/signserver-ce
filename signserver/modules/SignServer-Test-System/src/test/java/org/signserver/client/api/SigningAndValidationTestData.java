@@ -140,72 +140,8 @@ public class SigningAndValidationTestData {
             "INe2z0lq3hzCW5DTYBKsJEexErzMpLwiEqUYJUfR9EeCM8UPMtLSqz1utdPoIYhU\n" +
             "LGzt5lSJEpMHMbquYfWJxQiKCbvfxQsP5dLUMEIqTgjNdo98OlM7Z7zjYH9Kimz3\n" +
             "wgAKSAIoQZr7Oy1dMHO5GK4jBtZ8wgsyyQ6DzQQ7R68XFVKarIW8SATeyubAP+Wj\n" +
-            "dMwk/ZXzsDjMZEtENaBXzAefYA==";
-    
-	
-    /**
-     * Subject: CN=FirstCA,O=EJBCA Testing,C=SE
-     * Issuer:  CN=FirstCA,O=EJBCA Testing,C=SE
-     */
-    private static final String CERT_FIRSTCA =
-            "MIICTjCCAbegAwIBAgIIFJUfMRSPUTswDQYJKoZIhvcNAQEFBQAwNzEQMA4GA1UE"
-            + "AwwHRmlyc3RDQTEWMBQGA1UECgwNRUpCQ0EgVGVzdGluZzELMAkGA1UEBhMCU0Uw"
-            + "HhcNMDkwNjA0MTYzOTQ0WhcNMTkwNjAyMTYzOTQ0WjA3MRAwDgYDVQQDDAdGaXJz"
-            + "dENBMRYwFAYDVQQKDA1FSkJDQSBUZXN0aW5nMQswCQYDVQQGEwJTRTCBnzANBgkq"
-            + "hkiG9w0BAQEFAAOBjQAwgYkCgYEAqiN9DJGgViydLMfu9YbhJuPink5UyFwGOKBz"
-            + "RmS03w0Qdjr59auzq0WCpypQ8+s1Tu8nISWOVI1mX/30fgbpnYvMcLQFyEWuBOrs"
-            + "ZBnFGGOZTnMVMti9TQgVf+bTfEDXoYmHvLS8k8ZHGlGoibh8D8lAPIYOm4mC3nFP"
-            + "42J/668CAwEAAaNjMGEwHQYDVR0OBBYEFONib4wtykPvtqlshrrxAP+sXDTxMA8G"
-            + "A1UdEwEB/wQFMAMBAf8wHwYDVR0jBBgwFoAU42JvjC3KQ++2qWyGuvEA/6xcNPEw"
-            + "DgYDVR0PAQH/BAQDAgGGMA0GCSqGSIb3DQEBBQUAA4GBAJNZVYkN2AIAvExdduy6"
-            + "tJ5MYhfOYA2V0hflWmzrbBYK0OLubzEtAU6aWeh/UYYg6f2Wf7mBbQw/DMIczDvl"
-            + "l9pAkuUFAWZczh1D4ytwl9ASRuQUWL+n/S5PyjTQ0uuWa0m510HV0drzBSNS4mZk"
-            + "NkdfpNx3/NJVOyzaSp56KR4c";
-	
-    /**
-     * Subject    : C=SE, O=EJBCA Testing, CN=endentity1
-     * Issuer     : C=SE, O=EJBCA Testing, CN=FirstCA
-     */
-    private static final String CERT_ENDENTITY1 = 
-            "MIICbTCCAdagAwIBAgIIdpfNAUY23BQwDQYJKoZIhvcNAQEFBQAwNzEQMA4GA1UE"
-            + "AwwHRmlyc3RDQTEWMBQGA1UECgwNRUpCQ0EgVGVzdGluZzELMAkGA1UEBhMCU0Uw"
-            + "HhcNMDkwNjA4MDgyMzQzWhcNMTEwNjA4MDgyMzQzWjA6MRMwEQYDVQQDDAplbmRl"
-            + "bnRpdHkxMRYwFAYDVQQKDA1FSkJDQSBUZXN0aW5nMQswCQYDVQQGEwJTRTCBnzAN"
-            + "BgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEApYHGk52L1XQtZNYien9L3fju8deSpB5c"
-            + "Ne5cqr0Pce37KK1guknmHf7svm7mHEwsbpdMBrdQ+YNtMAREOKvQeRAm9FO4twYg"
-            + "MnkzDp3v/K9CNbYGxoVZB5rI+PQug8aTSohnD2ZzyJh+vBEpAktxCWNonyhscsxK"
-            + "dxSdESZ3ncUCAwEAAaN/MH0wHQYDVR0OBBYEFAf1rnolyolNsOeJbHfSfi/KOnbd"
-            + "MAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAU42JvjC3KQ++2qWyGuvEA/6xcNPEw"
-            + "DgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDAN"
-            + "BgkqhkiG9w0BAQUFAAOBgQBktjK+6N7rgh2RmLSBrDDbh5EeBJHhid3flgl/Pfpr"
-            + "Ac041PrY4a08ezzW2oECcVfmCMk0GZSrmhgNELFP0LCGAq25C6Zz/wCOlSRZNSeK"
-            + "jzYr+d41hz4EHNp+42qJlEGrSY6wUhDXO9kMuQzVw/GEQBW9dDBE9TImQBQ2HC4i"
-            + "iw==";
-	
-    /**
-     * 
-     */
-    private static final String CERT_ENDENTITY2 =
-            "MIICSDCCAbGgAwIBAgIIJMFclCdO0dowDQYJKoZIhvcNAQEFBQAwNzEQMA4GA1UE"
-            + "AwwHRmlyc3RDQTEWMBQGA1UECgwNRUpCQ0EgVGVzdGluZzELMAkGA1UEBhMCU0Uw"
-            + "HhcNMDkwNjA4MDkzNTM1WhcNMTEwNjA4MDkzNTM1WjAVMRMwEQYDVQQDDAplbmRl"
-            + "bnRpdHkyMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDHFOv1Fz6Q1oJsLlL9"
-            + "seIHH+MYvRhMq8Fj+dfRYei0DpktcFrtARpZjTsSnN410iebtZqJmBmmKeYEu9cn"
-            + "UyhQhNDi8hQ+lyWE4noiudLMehFruZiTojP+IhKqtcRMPCsRLG8UhBdoJUwRniMw"
-            + "wsSt+/n2Mw0RAJOYJl/0ADYkMwIDAQABo38wfTAdBgNVHQ4EFgQU+iib9vsdNq0O"
-            + "mQHVMY9gQzsHNMswDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBTjYm+MLcpD77ap"
-            + "bIa68QD/rFw08TAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0lBBYwFAYIKwYBBQUHAwIG"
-            + "CCsGAQUFBwMEMA0GCSqGSIb3DQEBBQUAA4GBAHLv0Y5qQbqV6ta2nOV/YVX4fYAL"
-            + "goFFAeZwbz0P/4dNUT+1kZqxd/ju3pGUofj21P2wqMmvRcIqPQFNoycx8I9x5p04"
-            + "tnxtTMj9U9hNKZUR69LtTAwVY3uUk3bGxfSQRvejHkaffSXaf43vtOSp1DpSaHbU"
-            + "GUfKfM8Tu+OKjA0+";
-		
-	
-    private static final String SIGNATURE_BY_ENDENTITY1 =
-            "eBS5DYS3QWmpAIRoHgMuR1a72OPXC5cYg1M3KXzlRW471vOQq0zx7LI3NnNSyfhjWuQf0zQTyGv9"
-            + "oKhCnGSFqTO+uwSfsajGL4HsWWm8ot+HkzgL0fcWl5EATntqGmaS2nKPR/cVl+P4BehjFcD3BZ70"
-            + "gD+07DZjFd/tmjioH/w=";
-	
+            "dMwk/ZXzsDjMZEtENaBXzAefYA==";	
+
     private static final String SIGNATURE_BY_SIGNER00001 =
             "TVHbxQyoBoLXqDICQ1gGHxfkVn3HUZ6KW66bNRWmwjzXvyjEkqcRYHohj9Z8hbnRxBObw3feZRkHz8UFaELXH1QcEiklGDTIMQoqiaWUQ9rwa8gnaN9hjHx2R82vwztNu0DhG51ovzUj29XXBth3+Lo84WtbbfZo1vXOApKd25R574Ethelxss0zRjfCTiCMyg4GCt3fF0u3JElydg6EfpOtA8wSEolQ6S/KS/FEkjCBCy/0EwkimTZuBoR7CFlMlox2pUV9hAfS5VavzdYCVB1kRCTAVs+Pjc+hSOUUH+cNpwHmacKoy0eQTgM5L8/l3Ep/p443dEmbTmx2doDIew==";
 	

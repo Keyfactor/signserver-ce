@@ -445,14 +445,19 @@ public class TimeStampSigner extends BaseSigner {
     private ASN1ObjectIdentifier getCertificateDigestAlgorithmFromString(final String digestAlg) {
         switch (digestAlg) {
             case "SHA1":
+            case "SHA-1":
                 return TSPAlgorithms.SHA1;
             case "SHA224":
+            case "SHA-224":
                 return TSPAlgorithms.SHA224;
             case "SHA256":
+            case "SHA-256":
                 return TSPAlgorithms.SHA256;
             case "SHA384":
+            case "SHA-384":
                 return TSPAlgorithms.SHA384;
             case "SHA512":
+            case "SHA-512":
                 return TSPAlgorithms.SHA512;
             default:
                 configErrors.add("Unsupported certificate digest algorithm: " + digestAlg);

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>3.7.4-SNAPSHOT</version>
+        <version>3.7.4</version>
     </parent>
     <artifactId>SignServer-Lib-EJBCA-Util</artifactId>
     <name>SignServer-Lib-EJBCA-Util</name>

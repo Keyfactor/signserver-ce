@@ -447,32 +447,36 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
     public Certificate getSigningCertificate(String alias, IServices services) throws CryptoTokenOfflineException {
         final Certificate result;
-        final Certificate certFromConfig;
-        if (alias != null && !alias.equals(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY))) {
-            certFromConfig = null;
+        if (isNoCertificates()) {
+            result = null;
         } else {
-            certFromConfig = config.getSignerCertificate();
-        }
-        if (certFromConfig == null) {
-            RequestContext context = new RequestContext(true);
-            context.setServices(services);
-            ICryptoInstance crypto = null;
-            try {
-                crypto = acquireDefaultCryptoInstance(alias, context);
-                result = crypto.getCertificate();
-            } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | SignServerException ex) {
-                throw new CryptoTokenOfflineException("Unable to get certificate from token: " + ex.getLocalizedMessage(), ex);
-            } finally {
-                if (crypto != null) {
-                    try {
-                        releaseCryptoInstance(crypto, context);
-                    } catch (SignServerException ex) {
-                        log.warn("Unable to release crypto instance", ex);
+            final Certificate certFromConfig;
+            if (alias != null && !alias.equals(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY))) {
+                certFromConfig = null;
+            } else {
+                certFromConfig = config.getSignerCertificate();
+            }
+            if (certFromConfig == null) {
+                RequestContext context = new RequestContext(true);
+                context.setServices(services);
+                ICryptoInstance crypto = null;
+                try {
+                    crypto = acquireDefaultCryptoInstance(alias, context);
+                    result = crypto.getCertificate();
+                } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | SignServerException ex) {
+                    throw new CryptoTokenOfflineException("Unable to get certificate from token: " + ex.getLocalizedMessage(), ex);
+                } finally {
+                    if (crypto != null) {
+                        try {
+                            releaseCryptoInstance(crypto, context);
+                        } catch (SignServerException ex) {
+                            log.warn("Unable to release crypto instance", ex);
+                        }
                     }
                 }
+            } else {
+                result = certFromConfig;
             }
-        } else {
-            result = certFromConfig;
         }
         return result;
     }
@@ -504,33 +508,37 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
     public List<Certificate> getSigningCertificateChain(final String alias, final IServices services) throws CryptoTokenOfflineException {
         final List<Certificate> result;
-        final List<Certificate> certChainFromConfig;
-        if (alias != null && !alias.equals(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY))) {
-            certChainFromConfig = null;
+        if (isNoCertificates()) {
+            result = null;
         } else {
-            certChainFromConfig =
-                    config == null ? null : config.getSignerCertificateChain();
-        }
-        if (certChainFromConfig == null) {
-            RequestContext context = new RequestContext(true);
-            context.setServices(services);
-            ICryptoInstance crypto = null;
-            try {
-                crypto = acquireDefaultCryptoInstance(alias, context);
-                result = crypto.getCertificateChain();
-            } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | SignServerException ex) {
-                throw new CryptoTokenOfflineException("Unable to get certificate chain from token: " + ex.getLocalizedMessage(), ex);
-            } finally {
-                if (crypto != null) {
-                    try {
-                        releaseCryptoInstance(crypto, context);
-                    } catch (SignServerException ex) {
-                        log.warn("Unable to release crypto instance", ex);
+            final List<Certificate> certChainFromConfig;
+            if (alias != null && !alias.equals(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY))) {
+                certChainFromConfig = null;
+            } else {
+                certChainFromConfig =
+                        config == null ? null : config.getSignerCertificateChain();
+            }
+            if (certChainFromConfig == null) {
+                RequestContext context = new RequestContext(true);
+                context.setServices(services);
+                ICryptoInstance crypto = null;
+                try {
+                    crypto = acquireDefaultCryptoInstance(alias, context);
+                    result = crypto.getCertificateChain();
+                } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | SignServerException ex) {
+                    throw new CryptoTokenOfflineException("Unable to get certificate chain from token: " + ex.getLocalizedMessage(), ex);
+                } finally {
+                    if (crypto != null) {
+                        try {
+                            releaseCryptoInstance(crypto, context);
+                        } catch (SignServerException ex) {
+                            log.warn("Unable to release crypto instance", ex);
+                        }
                     }
                 }
+            } else {
+                result = certChainFromConfig;
             }
-        } else {
-            result = certChainFromConfig;
         }
         return result;
     }
@@ -835,6 +843,17 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             log.error(FAILED_TO_GET_CRYPTO_TOKEN_ + ex.getMessage());
             throw new CryptoTokenOfflineException(ex);
         }
+    }
+
+    /**
+     * Indicates if this worker is configured to not be configured with any
+     * certificates.
+     * This can be overridden by worker implementations to not require the
+     * user to explicitly configure this.
+     * @return True if this worker is configured to not use any certificates
+     */
+    protected boolean isNoCertificates() {
+        return Boolean.parseBoolean(config.getProperty("NOCERTIFICATES", Boolean.FALSE.toString()));
     }
 
 }

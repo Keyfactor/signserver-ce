@@ -14,6 +14,7 @@ package org.signserver.server.log;
 
 import java.util.LinkedList;
 import java.util.List;
+import org.signserver.server.IServices;
 
 /**
  * Abstract base implementation of the IWorkerLogger interface.
@@ -27,7 +28,7 @@ public abstract class BaseWorkerLogger implements IWorkerLogger {
     private boolean hasSetError = false;
     
     @Override
-    public List<String> getFatalErrors() {
+    public List<String> getFatalErrors(IServices services) {
         return fatalErrors;
     }
     

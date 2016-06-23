@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Properties;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
+import org.signserver.server.IServices;
 import org.signserver.server.SignServerContext;
 
 /**
@@ -96,5 +97,5 @@ public interface IWorkerLogger {
      * 
      * @return A list of errors, or empty if there's no fatal errors
      */
-    List<String> getFatalErrors();
+    List<String> getFatalErrors(IServices services);
 }

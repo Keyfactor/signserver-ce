@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
+import org.signserver.server.IServices;
 import org.signserver.server.SignServerContext;
 
 /**
@@ -48,7 +49,7 @@ public class BaseWorkerLoggerUnitTest extends TestCase {
         };
         
         assertEquals("Should contain no errors",
-                     0, workerLogger.getFatalErrors().size());
+                     0, workerLogger.getFatalErrors(null).size());
         assertFalse("Should not report errors", workerLogger.hasErrors());
     }
     
@@ -73,9 +74,9 @@ public class BaseWorkerLoggerUnitTest extends TestCase {
         workerLogger.init(0, null, null);
         
         assertEquals("Should contain one error",
-                     1, workerLogger.getFatalErrors().size());
+                     1, workerLogger.getFatalErrors(null).size());
         assertTrue("Should contain the error",
-                   workerLogger.getFatalErrors().contains("An error"));
+                   workerLogger.getFatalErrors(null).contains("An error"));
         assertTrue("Should detect errors being registered",
                    workerLogger.hasErrors());
     }
@@ -97,15 +98,15 @@ public class BaseWorkerLoggerUnitTest extends TestCase {
             }
             
             @Override
-            public List<String> getFatalErrors() {
+            public List<String> getFatalErrors(IServices services) {
                 return Arrays.asList("An overridden error");
             }
         };
         
         assertEquals("Should contain one error",
-                     1, workerLogger.getFatalErrors().size());
+                     1, workerLogger.getFatalErrors(null).size());
         assertTrue("Should contain the error",
-                   workerLogger.getFatalErrors().contains("An overridden error"));
+                   workerLogger.getFatalErrors(null).contains("An overridden error"));
     }
     
     /**
@@ -128,8 +129,8 @@ public class BaseWorkerLoggerUnitTest extends TestCase {
             }
             
             @Override
-            public List<String> getFatalErrors() {
-                List<String> errors = super.getFatalErrors();
+            public List<String> getFatalErrors(IServices services) {
+                List<String> errors = super.getFatalErrors(null);
                 
                 errors.add("Overridden error");
                 return errors; 
@@ -139,11 +140,11 @@ public class BaseWorkerLoggerUnitTest extends TestCase {
         workerLogger.init(0, null, null);
 
         assertEquals("Should contain two errors",
-                     2, workerLogger.getFatalErrors().size());
+                     2, workerLogger.getFatalErrors(null).size());
         assertTrue("Should contain the base error",
-                   workerLogger.getFatalErrors().contains("Base error"));
+                   workerLogger.getFatalErrors(null).contains("Base error"));
         assertTrue("Should contain the overridden error",
-                   workerLogger.getFatalErrors().contains("Overridden error"));
+                   workerLogger.getFatalErrors(null).contains("Overridden error"));
     }
     
     /**
@@ -168,9 +169,9 @@ public class BaseWorkerLoggerUnitTest extends TestCase {
         workerLogger.init(0, null, null);
         
         assertEquals("Should contain one error",
-                     1, workerLogger.getFatalErrors().size());
+                     1, workerLogger.getFatalErrors(null).size());
         assertTrue("Should contain the error",
-                   workerLogger.getFatalErrors().contains("An error"));
+                   workerLogger.getFatalErrors(null).contains("An error"));
         assertTrue("Should show errors being registered",
                    workerLogger.hasErrors());
     }

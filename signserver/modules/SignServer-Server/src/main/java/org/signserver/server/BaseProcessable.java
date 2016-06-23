@@ -152,13 +152,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         final String alias = aliasSelector.getAlias(purpose, this, request, context);
 
         if (context != null) {
-            LogMap.getInstance(context).put(IWorkerLogger.LOG_KEYALIAS,
-                                            new Loggable() {
-                                                @Override
-                                                public String toString() {
-                                                    return alias;
-                                                }
-                                            });
+            LogMap.getInstance(context).put(IWorkerLogger.LOG_KEYALIAS, alias);
             LogMap.getInstance(context).put(IWorkerLogger.LOG_CRYPTOTOKEN,
                                             new Loggable() {
                                                 @Override

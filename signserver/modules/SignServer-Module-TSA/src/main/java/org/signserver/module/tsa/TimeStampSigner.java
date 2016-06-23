@@ -413,19 +413,15 @@ public class TimeStampSigner extends BaseSigner {
         final String acceptedPoliciesValue = config.getProperty(ACCEPTEDPOLICIES);
                 
         if (acceptAnyPolicyValue != null) {
-            switch (acceptAnyPolicyValue) {
-                case "true":
-                    acceptAnyPolicy = true;
-                    break;
-                case "false":
-                    acceptAnyPolicy = false;
-                    break;
-                case "":
-                    acceptAnyPolicy = false;
-                    break;
-                default:
-                    configErrors.add("Illegal value for ACCEPTANYPOLICY: " +
-                                     acceptAnyPolicyValue);
+            if (Boolean.TRUE.toString().equalsIgnoreCase(acceptAnyPolicyValue)) {
+                acceptAnyPolicy = true;
+            } else if (Boolean.FALSE.toString().equalsIgnoreCase(acceptAnyPolicyValue)) {
+                acceptAnyPolicy = false;
+            } else if (acceptAnyPolicyValue.isEmpty()) {
+                acceptAnyPolicy = false;
+            } else {
+                configErrors.add("Illegal value for ACCEPTANYPOLICY: " +
+                                 acceptAnyPolicyValue);
             }
         }
         

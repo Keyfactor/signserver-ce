@@ -697,6 +697,38 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     }
     
     /**
+     * Test that setting both ACCEPTANYPOLICY (with caps, TRUE) and ACCEPTEDPOLICIES results in
+     * a configuration error for defining conflicts, but not for the ACCEPTANYPOLICY value.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testBothAnyAcceptedAndAcceptedPoliciesCapsError() throws Exception {
+        LOG.info("testBothAnyAcceptedAndAcceptedPoliciesError"); 
+        
+        final WorkerConfig config = new WorkerConfig();
+        
+        config.setProperty("ACCEPTANYPOLICY", "TRUE");
+        config.setProperty("ACCEPTEDPOLICIES", "1.2.3.4");
+        
+        final TimeStampSigner signer = new TimeStampSigner() {
+            @Override
+            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+                return null;
+            }
+        };
+        
+        signer.init(WORKER1, config, null, null);
+        
+        final List<String> fatalErrors = signer.getFatalErrors(null);
+        
+        assertTrue("should contain configuration error",
+                   fatalErrors.contains("Can not set ACCEPTANYPOLICY to true and ACCEPTEDPOLICIES at the same time"));
+        assertFalse("should not contain error about ACCEPTANYPOLICY",
+                    fatalErrors.contains("Illegal value for ACCEPTANYPOLICY: TRUE"));
+    }
+    
+    /**
      * Test that setting ACCEPTANYPOLICY to explicitely false and
      * ACCEPTEDPOLICIES is accepted.
      * 
@@ -845,6 +877,37 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         
         assertTrue("should contain configuration error",
                    fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true"));
+    }
+    
+    /**
+     * Test that setting ACCEPTANYPOLICY to FALSE (with caps) without setting ACCEPTEDPOLICIES
+     * is not allowed.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testAcceptAnyPolicyFalseCapitalAndNoAcceptedPolicies() throws Exception {
+        LOG.info("testAcceptAnyPolicyFalseAndNoAcceptedPolicies"); 
+        
+        final WorkerConfig config = new WorkerConfig();
+        
+        config.setProperty("ACCEPTANYPOLICY", "FALSE");
+      
+        final TimeStampSigner signer = new TimeStampSigner() {
+            @Override
+            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+                return null;
+            }
+        };
+        
+        signer.init(WORKER1, config, null, null);
+        
+        final List<String> fatalErrors = signer.getFatalErrors(null);
+        
+        assertTrue("should contain configuration error",
+                   fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true"));
+        assertFalse("should not contain error about ACCEPTANYPOLICY",
+                    fatalErrors.contains("Illegal value for ACCEPTANYPOLICY: FALSE"));
     }
     
     /**

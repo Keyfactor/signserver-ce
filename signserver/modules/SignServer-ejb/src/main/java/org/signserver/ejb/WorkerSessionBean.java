@@ -283,7 +283,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
 
             final IWorkerLogger logger = worker.getWorkerLogger();
             if (logger != null) {
-                errorsAtEjbLevel.addAll(logger.getFatalErrors());
+                errorsAtEjbLevel.addAll(logger.getFatalErrors(servicesImpl));
             }
             
             errorsAtEjbLevel.addAll(worker.getCreateErrors());

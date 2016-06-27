@@ -142,7 +142,7 @@ From SignServer 3.2.x to SignServer 3.3.x
 
 a) Database schema change:
 
-An new column in the ArchiveData table was added. Hibernate will try to add this
+An new column in the ArchiveData table were added. Hibernate will try to add this
 column during startup of the application server. However, if the database user 
 used by the data store does not have enough privileges (ie. no alter table 
 rights) the table has to be altered manually:

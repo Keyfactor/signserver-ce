@@ -14,7 +14,6 @@ package org.signserver.server.log;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.IServices;
@@ -86,6 +85,8 @@ public interface IWorkerLogger {
     /**
      * Write out the log line. What fields that are placed in the actual log
      * and in which order etc is up to the implementing IWorkerLogger.
+     *
+     * @param adminInfo
      * @param fields Fields that potentially could be placed in the log entry.
      * @param requestContext the request context
      * @throws WorkerLoggerException In case there is a problem writing the log.
@@ -95,6 +96,8 @@ public interface IWorkerLogger {
     /**
      * Return a list of fatal errors for the logger implementation.
      * 
+     * @param services Services instance, can be used by implementations
+     *                 when gathering errors
      * @return A list of errors, or empty if there's no fatal errors
      */
     List<String> getFatalErrors(IServices services);

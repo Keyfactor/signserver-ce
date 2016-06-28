@@ -44,7 +44,7 @@ public class ArchiveDataService {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ArchiveDataService.class);
     
-    private EntityManager em;
+    private final EntityManager em;
 
     public ArchiveDataService(EntityManager em) {
         this.em = em;
@@ -52,6 +52,15 @@ public class ArchiveDataService {
 
     /**
      * Entity Bean holding info about a archive data.
+     * 
+     * @param type Archive type
+     * @param signerId Signer ID
+     * @param archiveid Archive ID
+     * @param clientCert Client certificate
+     * @param requestIP Request IP address
+     * @param archiveData Archive data
+     * @return Unique ID
+     * @see org.signserver.server.archive.olddbarchiver.ArchiveOfTypes
      */
     public String create(int type, int signerId, String archiveid, X509Certificate clientCert,
             String requestIP, ArchiveData archiveData) {
@@ -103,6 +112,12 @@ public class ArchiveDataService {
 
     /**
      * Method finding a AchiveData given its unique Id.
+     * 
+     * @param type Archive type
+     * @param signerid Signer ID
+     * @param archiveid Archive ID
+     * @return Archive data
+     * @see org.signserver.server.archive.olddbarchiver.ArchiveOfTypes
      */
     public ArchiveDataBean findByArchiveId(int type, int signerid, String archiveid) {
         try {
@@ -113,6 +128,10 @@ public class ArchiveDataService {
     
     /**
      * Method finding all ArchiveDataBeans given the archiveId.
+     * 
+     * @param signerid Signer ID
+     * @param archiveid Archive ID
+     * @return List of archive data objects given the archive ID
      */
     public List findAllByArchiveId(final int signerid, final String archiveid) {
         try {

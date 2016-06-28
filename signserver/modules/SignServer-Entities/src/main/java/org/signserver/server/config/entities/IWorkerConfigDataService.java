@@ -29,6 +29,7 @@ public interface IWorkerConfigDataService {
     /**
      * Get the worker configuration for the given worker.
      * @param workerId Id of worker
+     * @param create If true, create the config
      * @return The worker configuration
      */
     WorkerConfig getWorkerProperties(int workerId, boolean create);

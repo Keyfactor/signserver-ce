@@ -133,6 +133,8 @@ public class ArchiveDataBean implements Serializable {
      * type indicates if the archieve is of the type response or request
      * see TYPE constants for more information
      *
+     * @param type Type of archiving
+     * @see org.signserver.server.archive.olddbarchiver.ArchiveOfTypes
      */
     public void setType(int type) {
         this.type = type;
@@ -171,6 +173,8 @@ public class ArchiveDataBean implements Serializable {
 
     /**
      * The unique ID of the archive, could be the response serial number.
+     * 
+     * @param archiveid Archive ID
      */
     public void setArchiveid(String archiveid) {
         this.archiveid = archiveid;
@@ -278,6 +282,8 @@ public class ArchiveDataBean implements Serializable {
 
     /**
      * Method used to get the ArchiveDataVO representation of the data row.
+     * 
+     * @return Archive data
      */
     public ArchiveDataVO getArchiveDataVO() {
         if (LOG.isDebugEnabled()) {

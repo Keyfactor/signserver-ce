@@ -37,9 +37,10 @@ public class ValidationCLI extends CommandLineInterface {
     }
  
     /**
-     * Main
+     * Main method for the Validation CLI.
      *
      * @param args command line arguments
+     * @throws UnexpectedCommandFailureException If the command failed
      */
     public static void main(String[] args) throws UnexpectedCommandFailureException {
         ValidationCLI adminCLI = new ValidationCLI();

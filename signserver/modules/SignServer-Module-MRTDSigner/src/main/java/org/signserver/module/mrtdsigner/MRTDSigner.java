@@ -74,8 +74,11 @@ public class MRTDSigner extends BaseSigner {
      * 
      * 
      * @param signRequest must be of the class MRTDSignRequest
+     * @param requestContext
      * @return returns a MRTDSignResponse with the same number of signatures as requested.
-     *
+     * @throws IllegalRequestException
+     * @throws CryptoTokenOfflineException
+     * @throws SignServerException
      */
     @Override
     public ProcessResponse processData(ProcessRequest signRequest,

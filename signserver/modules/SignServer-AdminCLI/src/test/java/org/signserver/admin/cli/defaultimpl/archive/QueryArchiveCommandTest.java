@@ -90,6 +90,7 @@ public class QueryArchiveCommandTest extends TestCase {
     
     /**
      * Test the NULL operator.
+     * @throws java.lang.Exception
      */
     public void test05ParseCriteriaNull() throws Exception {
         final String criteria = "requestCertSerialnumber NULL";

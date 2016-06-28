@@ -47,6 +47,7 @@ public class SetDBType {
 
     /**
      * @param args
+     * @throws java.lang.Exception
      */
     public static void main(String[] args) throws Exception {
         if (args.length != 2) {

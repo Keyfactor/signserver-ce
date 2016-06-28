@@ -72,6 +72,7 @@ public class SigningAndValidationWSBalanced implements ISigningAndValidation {
      * @param clientType One of the CLIENTTYPE_ constants indication the High-Availability policy that should be used.
      * @param hosts Host names of the servers to connect to.
      * @param useHTTPS indicates if HTTPS should be used.
+     * @param faultCallback an interface to which all the problems are reported
      * @param port to connect to.
      * @param timeOut in milliseconds.
      * @param customAppURI the path to the sign server URI where the WS is deployed.
@@ -112,6 +113,7 @@ public class SigningAndValidationWSBalanced implements ISigningAndValidation {
      * @param clientType One of the CLIENTTYPE_ constants indication the High-Availability policy that should be used.
      * @param hosts Host names of the servers to connect to.
      * @param useHTTPS indicates if HTTPS should be used.
+     * @param faultCallback an interface to which all the problems are reported
      * @param port to connect to.
      * @param timeOut in milliseconds.
      * @param customAppURI the path to the sign server URI where the WS is deployed.

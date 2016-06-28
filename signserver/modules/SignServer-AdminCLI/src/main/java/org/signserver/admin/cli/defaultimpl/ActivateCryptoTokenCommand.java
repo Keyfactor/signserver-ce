@@ -61,8 +61,11 @@ public class ActivateCryptoTokenCommand extends AbstractAdminCommand {
     /**
      * Runs the command
      *
+     * @param args
+     * @return 0 if the command was successful
      * @throws IllegalCommandArgumentsException Error in command args
      * @throws CommandFailureException Error running command
+     * @throws org.signserver.cli.spi.UnexpectedCommandFailureException
      */
     @Override
     public int execute(String... args) throws IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {

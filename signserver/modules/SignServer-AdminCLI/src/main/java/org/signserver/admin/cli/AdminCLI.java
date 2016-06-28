@@ -38,6 +38,7 @@ public class AdminCLI extends CommandLineInterface {
      * Main
      *
      * @param args command line arguments
+     * @throws org.signserver.cli.spi.UnexpectedCommandFailureException
      */
     public static void main(String[] args) throws UnexpectedCommandFailureException {
         // Remove the legacy host parameter if existing

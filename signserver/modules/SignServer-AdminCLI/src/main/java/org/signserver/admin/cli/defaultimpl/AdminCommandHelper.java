@@ -133,9 +133,12 @@ public class AdminCommandHelper {
     
     /**
      * Help Method that retrieves the id of a worker given either
-     * it's id in string format or the name of a worker
-     * @throws Exception 
-     * @throws RemoteException 
+     * it's id in string format or the name of a worker.
+     *
+     * @param workerIdOrName
+     * @return Worker ID
+     * @throws RemoteException If failing to lookup remote session
+     * @throws org.signserver.cli.spi.IllegalCommandArgumentsException 
      */
     public int getWorkerId(String workerIdOrName) throws RemoteException, IllegalCommandArgumentsException {
         final int retval;

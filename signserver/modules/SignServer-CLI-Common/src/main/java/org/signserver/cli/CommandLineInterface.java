@@ -123,6 +123,7 @@ public class CommandLineInterface {
      * Main
      *
      * @param args command line arguments
+     * @throws org.signserver.cli.spi.UnexpectedCommandFailureException
      */
     public static void main(String[] args) throws UnexpectedCommandFailureException {
         CommandLineInterface cli = new CommandLineInterface();

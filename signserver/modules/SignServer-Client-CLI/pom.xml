@@ -98,6 +98,12 @@
             <artifactId>javaee-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>se.primekey.signserver.labs.signserver</groupId>
+            <artifactId>SignServer-Lib-EJBCA-util</artifactId>
+            <version>3.2.99</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

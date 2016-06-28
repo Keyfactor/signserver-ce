@@ -118,6 +118,7 @@ public class AdminWS {
      *
      * @param workerName of the worker, cannot be null
      * @return The Id of a named worker or 0 if no such name exists
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "getWorkerId")
     public int getWorkerId(
@@ -134,10 +135,12 @@ public class AdminWS {
 
     /**
      * Returns the current status of a processalbe.
-     *
      * Should be used with the cmd-line status command.
+     * 
      * @param workerId of the signer
      * @return a WorkerStatus class
+     * @throws InvalidWorkerIdException If the worker ID is invalid
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "getStatus")
     public WSWorkerStatus getStatus(
@@ -175,6 +178,7 @@ public class AdminWS {
      *
      * @param workerId of the worker that should be reloaded, or 0 to reload
      * reload of all available workers
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "reloadConfiguration")
     public void reloadConfiguration(@WebParam(name = "workerId") int workerId)
@@ -193,6 +197,8 @@ public class AdminWS {
      * @param authenticationCode (PIN) used to activate the token.
      * @throws CryptoTokenOfflineException
      * @throws CryptoTokenAuthenticationFailureException
+     * @throws InvalidWorkerIdException
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "activateSigner")
     public void activateSigner(@WebParam(name = "signerId") int signerId,
@@ -212,7 +218,8 @@ public class AdminWS {
      * @param signerId of the signer
      * @return true if deactivation was successful
      * @throws CryptoTokenOfflineException
-     * @throws CryptoTokenAuthenticationFailureException
+     * @throws InvalidWorkerIdException
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "deactivateSigner")
     public boolean deactivateSigner(@WebParam(name = "signerId") int signerId)
@@ -233,6 +240,7 @@ public class AdminWS {
      *
      * @param workerId
      * @return the current (not always active) configuration
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "getCurrentWorkerConfig")
     public WSWorkerConfig getCurrentWorkerConfig(
@@ -254,6 +262,7 @@ public class AdminWS {
      * @param workerId
      * @param key
      * @param value
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "setWorkerProperty")
     public void setWorkerProperty(
@@ -273,6 +282,7 @@ public class AdminWS {
      * @param workerId
      * @param key
      * @return true if the property did exist and was removed othervise false
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "removeWorkerProperty")
     public boolean removeWorkerProperty(
@@ -291,6 +301,7 @@ public class AdminWS {
      *
      * @param workerId
      * @return Sorted collection of authorized clients
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "getAuthorizedClients")
     public Collection<AuthorizedClient> getAuthorizedClients(
@@ -307,6 +318,7 @@ public class AdminWS {
 
      * @param workerId
      * @param authClient
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "addAuthorizedClient")
     public void addAuthorizedClient(@WebParam(name = "workerId") final int workerId,
@@ -324,6 +336,8 @@ public class AdminWS {
      *
      * @param workerId
      * @param authClient
+     * @return True if the autorized client was removed
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "removeAuthorizedClient")
     public boolean removeAuthorizedClient(
@@ -346,6 +360,10 @@ public class AdminWS {
      * @param explicitEccParameters false should be default and will use
      * NamedCurve encoding of ECC public keys (IETF recommendation), use true
      * to include all parameters explicitly (ICAO ePassport requirement).
+     * @return Base64-encoded certificate request
+     * @throws CryptoTokenOfflineException 
+     * @throws InvalidWorkerIdException 
+     * @throws AdminNotAuthorizedException 
      */
     @WebMethod(operationName = "getPKCS10CertificateRequest")
     public Base64SignerCertReqData getPKCS10CertificateRequest(
@@ -377,6 +395,10 @@ public class AdminWS {
      * to include all parameters explicitly (ICAO ePassport requirement).
      * @param defaultKey true if the default key should be used otherwise for
      * instance use next key.
+     * @return Base64-encoded certificate request
+     * @throws CryptoTokenOfflineException 
+     * @throws InvalidWorkerIdException 
+     * @throws AdminNotAuthorizedException 
      */
     @WebMethod(operationName = "getPKCS10CertificateRequestForKey")
     public Base64SignerCertReqData getPKCS10CertificateRequestForKey(
@@ -426,6 +448,7 @@ public class AdminWS {
      * been configured. Otherwise null or an exception is thrown.
      * @throws CryptoTokenOfflineException In case the crypto token or the worker
      * is not active
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "getSignerCertificate")
     public byte[] getSignerCertificate(
@@ -444,6 +467,7 @@ public class AdminWS {
      * has been configured. Otherwise null or an exception is thrown.
      * @throws CryptoTokenOfflineException In case the crypto token or the worker
      * is not active
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "getSignerCertificateChain")
     public List<byte[]> getSignerCertificateChain(
@@ -461,6 +485,7 @@ public class AdminWS {
      * @return The last date or null if no last date (=unlimited).
      * @throws CryptoTokenOfflineException In case the cryptotoken is offline
      * for some reason.
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "getSigningValidityNotAfter")
     public Date getSigningValidityNotAfter(
@@ -478,6 +503,7 @@ public class AdminWS {
      * @return The first date or null if no last date (=unlimited).
      * @throws CryptoTokenOfflineException In case the cryptotoken is offline
      * for some reason.
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "getSigningValidityNotBefore")
     public Date getSigningValidityNotBefore(
@@ -496,6 +522,7 @@ public class AdminWS {
      * @param workerId
      * @return Value of the key usage counter or -1
      * @throws CryptoTokenOfflineException
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "getKeyUsageCounterValue")
     public long getKeyUsageCounterValue(
@@ -513,6 +540,8 @@ public class AdminWS {
      * @param signerId id of the signer
      * @param purpose on of ICryptoTokenV4.PURPOSE_ constants
      * @return true if removal was successful.
+     * @throws InvalidWorkerIdException
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "destroyKey")
     public boolean destroyKey(@WebParam(name = "signerId") final int signerId,
@@ -532,7 +561,10 @@ public class AdminWS {
      * @param keySpec Key specification
      * @param alias Name of the new key
      * @param authCode Authorization code
+     * @return Key alias of generated key
      * @throws CryptoTokenOfflineException
+     * @throws InvalidWorkerIdException If the worker ID is invalid
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      * @throws IllegalArgumentException
      */
     @WebMethod(operationName = "generateSignerKey")
@@ -559,7 +591,9 @@ public class AdminWS {
      * @param authCode Authorization code
      * @return Collection with test results for each key
      * @throws CryptoTokenOfflineException
+     * @throws InvalidWorkerIdException
      * @throws KeyStoreException
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "testKey")
     @SuppressWarnings("deprecation") // We support the old KeyTestResult class as well
@@ -622,6 +656,8 @@ public class AdminWS {
      * @param signerId id of the signer
      * @param signerCert the certificate used to sign signature requests
      * @param scope one of GlobalConfiguration.SCOPE_ constants
+     * @throws IllegalRequestException
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "uploadSignerCertificate")
     public void uploadSignerCertificate(
@@ -647,6 +683,8 @@ public class AdminWS {
      * @param signerId id of the signer
      * @param signerCerts the certificate chain used to sign signature requests
      * @param scope one of GlobalConfiguration.SCOPE_ constants
+     * @throws IllegalRequestException
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "uploadSignerCertificateChain")
     public void uploadSignerCertificateChain(
@@ -672,6 +710,7 @@ public class AdminWS {
      * @param scope one of the GlobalConfiguration.SCOPE_ constants
      * @param key of the property should not have any scope prefix, never null
      * @param value the value, never null.
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "setGlobalProperty")
     public void setGlobalProperty(
@@ -690,6 +729,7 @@ public class AdminWS {
      * @param key of the property should start with either glob. or node.,
      * never null
      * @return true if removal was successful, othervise false.
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "removeGlobalProperty")
     public boolean removeGlobalProperty(
@@ -705,6 +745,7 @@ public class AdminWS {
      * Method that returns all the global properties with Global Scope and Node
      * scopes properties for this node.
      * @return A GlobalConfiguration Object, never null
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "getGlobalConfiguration")
     public WSGlobalConfiguration getGlobalConfiguration()
@@ -758,6 +799,7 @@ public class AdminWS {
      * Method that is used after a database crash to restore all cached data to
      * database.
      * @throws ResyncException if resync was unsuccessfull
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "globalResync")
     public void globalResync() throws ResyncException, AdminNotAuthorizedException {
@@ -768,6 +810,8 @@ public class AdminWS {
 
     /**
      * Method to reload all data from database.
+     * 
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "globalReload")
     public void globalReload() throws AdminNotAuthorizedException {
@@ -783,6 +827,12 @@ public class AdminWS {
      * @param workerIdOrName Name or ID of the worker who should process the
      * request
      * @param requests Collection of serialized (binary) requests.
+     * @return Collection of response data
+     * @throws InvalidWorkerIdException 
+     * @throws IllegalRequestException 
+     * @throws CryptoTokenOfflineException 
+     * @throws SignServerException 
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      *
      * @see RequestAndResponseManager#serializeProcessRequest(org.signserver.common.ProcessRequest)
      * @see RequestAndResponseManager#parseProcessRequest(byte[])
@@ -1065,6 +1115,10 @@ public class AdminWS {
      * This uses a recursive implementation not expected to work for larger 
      * lists of Elem:s, however as the number of columns are limited it is not 
      * expected to be a real problem.
+     * 
+     * @param elements
+     * @param index Recursive index
+     * @return Tree of and-criteria elements
      */
     protected Elem andAll(final List<Elem> elements, final int index) {
         if (index >= elements.size() - 1) {

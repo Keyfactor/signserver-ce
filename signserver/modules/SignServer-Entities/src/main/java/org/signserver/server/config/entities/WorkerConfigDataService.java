@@ -160,6 +160,8 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
     
     /**
      * Method that saves the Worker Config to database.
+     * 
+     * @param signconf Worker configuration
      */
     @Override
     public void setWorkerConfig(int workerId, WorkerConfig signconf) {

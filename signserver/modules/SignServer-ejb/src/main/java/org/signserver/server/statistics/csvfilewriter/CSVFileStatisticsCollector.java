@@ -69,6 +69,8 @@ public class CSVFileStatisticsCollector implements IStatisticsCollector {
 
     /**
      * Initializes the CSV File Writer statistics collector.
+     * 
+     * @throws org.signserver.common.SignServerException
      */
     @Override
     public void init(int workerId, WorkerConfig config, EntityManager em)

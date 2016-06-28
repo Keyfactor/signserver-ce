@@ -30,6 +30,7 @@ import org.signserver.common.WorkerConfig;
 public class NoAuthorizer implements IAuthorizer {
 
     /**
+     * @throws org.signserver.common.SignServerException
      * @see org.signserver.server.IAuthorizer#init(int, org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
      */
     @Override
@@ -38,6 +39,10 @@ public class NoAuthorizer implements IAuthorizer {
     }
 
     /**
+     * Check if a request is authorized.
+     * 
+     * @throws SignServerException
+     * @throws IllegalRequestException If not authorized
      * @see org.signserver.server.IAuthorizer#isAuthorized(ProcessRequest, RequestContext)
      */
     @Override

@@ -357,7 +357,10 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
     }
     
     /**
-     * Adds a timer to the bean
+     * Adds a timer to the bean.
+     * 
+     * @param interval Interval of the timer
+     * @param id ID of the timer
      */
     @Override
     public void addTimer(long interval, Integer id) {
@@ -365,8 +368,9 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
     }
 
     /**
-     * cancels a timer with the given Id
+     * Cancels a timer with the given ID.
      *
+     * @param id ID of timer to cancel
      */
     @Override
     public void cancelTimer(Integer id) {

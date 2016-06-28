@@ -106,8 +106,9 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
      * Throws AuthorizationRequiredException unless the requestor's IP address
      * is allowed.
      *
-     * @param request
-     * @param requestContext
+     * @param request Process request
+     * @param requestContext Request context
+     * @throws AccessDeniedException If not authorized
      * @throws SignServerException
      * @throws IllegalRequestException
      */

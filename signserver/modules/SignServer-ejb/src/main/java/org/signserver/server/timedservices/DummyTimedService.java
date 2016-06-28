@@ -53,6 +53,8 @@ public class DummyTimedService extends BaseTimedService {
     /**
      * Example of super simple service.
      * 
+     * @param context Service context
+     * @throws ServiceExecutionFailedException
      * @see org.signserver.server.timedservices.ITimedService#work()
      */
     @Override

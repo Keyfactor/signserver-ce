@@ -33,6 +33,9 @@ import org.signserver.common.WorkerConfig;
 public class DummyAuthorizer implements IAuthorizer {
 
     /**
+     * Initialize a DummyAuthorizer.
+     * 
+     * @throws org.signserver.common.SignServerException
      * @see org.signserver.server.IAuthorizer#init(int, org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
      */
     @Override
@@ -51,6 +54,10 @@ public class DummyAuthorizer implements IAuthorizer {
     }
 
     /**
+     * Check if request is authorized.
+     * 
+     * @throws SignServerException
+     * @throws IllegalRequestException If not authorized
      * @see org.signserver.server.IAuthorizer#isAuthorized(ProcessRequest, RequestContext)
      */
     @Override

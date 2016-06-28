@@ -200,6 +200,10 @@ public class GlobalConfigurationSessionBean implements GlobalConfigurationSessio
     }
 
     /**
+     * Method that is used after a database crash to restore all cached data to
+     * database.
+     * 
+     * @throws ResyncException ResyncException if resync was unsuccessfull
      * @see org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal#resync()
      */
     @Override

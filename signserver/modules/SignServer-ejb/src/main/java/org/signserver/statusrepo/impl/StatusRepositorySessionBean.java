@@ -69,6 +69,7 @@ public class StatusRepositorySessionBean implements
      *
      * @param key Key to get the value for
      * @return The value if existing and not expired, otherwise null
+     * @throws NoSuchPropertyException If the property doesn't exist
      */
     @Override
     @Lock(value=LockType.READ)
@@ -115,6 +116,8 @@ public class StatusRepositorySessionBean implements
      *
      * @param key The key to set the value for
      * @param newValue The value to set
+     * @param expiration Expiration time
+     * @throws org.signserver.statusrepo.common.NoSuchPropertyException
      */
     @Override
     @Lock(value=LockType.WRITE)

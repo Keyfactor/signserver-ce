@@ -38,6 +38,8 @@ public class UserMappedDispatcherUnitTest {
     
     /**
      * Tests that not setting the required property gives an error.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testMissingProperty() throws Exception {

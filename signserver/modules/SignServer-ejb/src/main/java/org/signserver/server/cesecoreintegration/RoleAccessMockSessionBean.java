@@ -86,6 +86,7 @@ public class RoleAccessMockSessionBean implements RoleAccessSessionLocal, RoleAc
     /**
      * Returns all roles.
      * 
+     * @return All roles
      * @see org.cesecore.roles.management.RoleManagementSession#getAllRoles()
      */
     @SuppressWarnings("unchecked")
@@ -135,9 +136,6 @@ public class RoleAccessMockSessionBean implements RoleAccessSessionLocal, RoleAc
      * Finds a specific role by name.
      * 
      * @see org.cesecore.roles.management.RoleManagementSession#getRole(java.lang.String)
-     * 
-     * @param token
-     *            An authentication token.
      * @param roleName
      *            Name of the sought role.
      * @return The sought roll, null otherwise.

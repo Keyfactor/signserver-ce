@@ -57,6 +57,12 @@ public class DummySigner extends BaseSigner {
      * 
      *  Expects GenericSignRequests
      * 
+     * @param signRequest Signing request
+     * @param requestContext Request context
+     * @return Process response
+     * @throws IllegalRequestException 
+     * @throws CryptoTokenOfflineException If set to offline
+     * @throws SignServerException 
      * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
     @Override
@@ -92,7 +98,12 @@ public class DummySigner extends BaseSigner {
     }
 
     /**
-     * Dummy implementation that doesn't check the auth code
+     * Dummy implementation that doesn't check the auth code.
+     * 
+     * @param authenticationCode PIN
+     * @param services Services
+     * @throws CryptoTokenAuthenticationFailureException
+     * @throws CryptoTokenOfflineException
      * @see org.signserver.server.BaseProcessable#activateSigner(java.lang.String)
      */
     @Override

@@ -42,6 +42,10 @@ public class ClientCertAuthorizer implements IAuthorizer {
     private Set<ClientEntry> authorizedClients;
     
     /**
+     * Initialize a ClientCertAuthorizer.
+     * 
+     * @param workerConfig Worker configuration
+     * @throws org.signserver.common.SignServerException
      * @see org.signserver.server.IAuthorizer#init(int,
      * org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
      */
@@ -64,6 +68,8 @@ public class ClientCertAuthorizer implements IAuthorizer {
     /**
      * Performing SignServer 2.x client certificate authentication.
      *
+     * @throws org.signserver.common.SignServerException
+     * @throws org.signserver.common.IllegalRequestException
      * @see org.signserver.server.IAuthorizer#isAuthorized(ProcessRequest,
      * RequestContext)
      */

@@ -35,14 +35,16 @@ public class AllServicesImpl extends ServicesImpl {
     
     /**
      * Add all services implementations.
-     * @param em EntityManager
-     * @param workerSession WorkerSession
-     * @param processSession ProcessSessionLocal
-     * @param globalConfigurationSession IGlobalConfigurationSession
-     * @param logSession SecurityEventsLoggerSessionLocal
-     * @param internalWorkerSession IInternalWorkerSession
-     * @param dispatcherWorkerSession IDispatcherWorkerSession
-     * @param statusRespositorySession IStatusRepositorySession
+     * 
+     * @param em Entity mananger
+     * @param workerSession Worker session
+     * @param processSession Process session
+     * @param globalConfigurationSession Global configuration session
+     * @param logSession Log session
+     * @param internalWorkerSession Worker session
+     * @param dispatcherWorkerSession Dispatcher worker session
+     * @param statusRespositorySession Status repository session
+     * @param keyUsageCounterDataService Key usage counter service
      */
     public void putAll(final EntityManager em,
             final WorkerSessionLocal workerSession,

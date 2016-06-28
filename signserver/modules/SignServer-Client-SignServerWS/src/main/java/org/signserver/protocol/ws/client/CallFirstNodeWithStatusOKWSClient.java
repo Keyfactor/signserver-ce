@@ -122,6 +122,10 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
     }
 
     /**
+     * Process a request.
+     *
+     * @param workerId
+     * @return List of responses
      * @see org.signserver.protocol.ws.client.ISignServerWSClient#process(String, List)
      */
     @Override

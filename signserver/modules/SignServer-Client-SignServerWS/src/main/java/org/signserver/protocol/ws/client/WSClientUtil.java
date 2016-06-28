@@ -13,7 +13,6 @@
 package org.signserver.protocol.ws.client;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.net.ssl.KeyManager;
@@ -34,7 +33,10 @@ import org.signserver.protocol.ws.gen.ProcessResponseWS;
 public class WSClientUtil {
 
     /**
-     * Method used to convert a coded SignRequestWS to a auto generated SignRequestWS
+     * Method used to convert a coded SignRequestWS to a auto generated SignRequestWS.
+     * 
+     * @param signRequestWS
+     * @return Generated requests
      */
     public static List<ProcessRequestWS> convertProcessRequestWS(
             List<org.signserver.protocol.ws.ProcessRequestWS> signRequestWS) {
@@ -48,7 +50,10 @@ public class WSClientUtil {
     }
 
     /**
-     * Method used to convert a auto generated ProcessResponseWS to a coded ProcessResponseWS 
+     * Method used to convert a auto generated ProcessResponseWS to a coded ProcessResponseWS.
+     *
+     * @param signResponseWS
+     * @return Generated responses
      */
     public static List<org.signserver.protocol.ws.ProcessResponseWS> convertProcessResponseWS(
             List<ProcessResponseWS> signResponseWS) {
@@ -95,6 +100,7 @@ public class WSClientUtil {
      * @param trustKeyStore Path to JKS containing all trusted CA certificates
      * @param trustKeyStorePwd password to unlock trust key store.
      * @return a generated custom SSLSocketFactory
+     * @throws java.lang.Exception In case of error
      */
     public static SSLSocketFactory genCustomSSLSocketFactory(String clientKeyStore,
             String clientKeyStorePwd, String trustKeyStore, String trustKeyStorePwd) throws Exception {

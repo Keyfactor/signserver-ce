@@ -97,7 +97,6 @@ public class BERTLVObject
 	 * 
 	 * @param tag tag of TLV object
 	 * @param value data of TLV object
-	 * @throws IOException if something goes wrong.
 	 */
 	public BERTLVObject(int tag, Object value) {
 		this(tag, value, true);
@@ -110,8 +109,7 @@ public class BERTLVObject
 	 * @param tag tag of TLV object
 	 * @param value data of TLV object
 	 * @param interpretValue whether the embedded byte[] values should be
-	 *                        interpreted/parsed. Some ASN1 streams don't like that :( 
-	 * @throws IOException if something goes wrong.
+	 *                        interpreted/parsed. Some ASN1 streams don't like that :(
 	 */
 	public BERTLVObject(int tag, Object value, boolean interpretValue) {
 		try {
@@ -233,8 +231,8 @@ public class BERTLVObject
 
 	/****************************************************************************
 	 * Adds
-	 * <code>object</object> as subobject of <code>this</code> TLV object when
-	 * <code>this</code> is not a primitive object.
+	 * &lt;code&gt;object&lt;/object&gt; as subobject of &lt;code&gt;this&lt;/code&gt; TLV object when
+	 * &lt;code&gt;this&lt;/code&gt; is not a primitive object.
 	 * 
 	 * @param object to add as a subobject.
 	 */
@@ -479,6 +477,7 @@ public class BERTLVObject
 	/**
 	 * The tag bytes of this object.
 	 * 
+         * @param tag Tag to get bytes of
 	 * @return the tag bytes of this object.
 	 */
 	public static byte[] getTagAsBytes(int tag) {
@@ -509,6 +508,7 @@ public class BERTLVObject
 	/**
 	 * The length bytes of this object.
 	 * 
+         * @param length Length
 	 * @return length of encoded value as bytes
 	 */
 	public static byte[] getLengthAsBytes(int length) {

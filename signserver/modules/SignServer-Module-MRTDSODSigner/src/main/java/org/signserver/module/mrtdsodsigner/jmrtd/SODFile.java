@@ -186,6 +186,7 @@ public class SODFile extends PassportFile
      * 
      * @throws NoSuchAlgorithmException if either of the algorithm parameters is not recognized
      * @throws CertificateException if the document signing certificate cannot be used
+     * @throws java.io.IOException
      */
     public SODFile(String digestAlgorithm, String digestEncryptionAlgorithm,
             Map<Integer, byte[]> dataGroupHashes,
@@ -213,6 +214,7 @@ public class SODFile extends PassportFile
      *
      * @throws NoSuchAlgorithmException if either of the algorithm parameters is not recognized
      * @throws CertificateException if the document signing certificate cannot be used
+     * @throws java.io.IOException
      */
     public SODFile(String digestAlgorithm, String digestEncryptionAlgorithm,
             Map<Integer, byte[]> dataGroupHashes,
@@ -238,6 +240,7 @@ public class SODFile extends PassportFile
      * 
      * @throws NoSuchAlgorithmException if either of the algorithm parameters is not recognized
      * @throws CertificateException if the document signing certificate cannot be used
+     * @throws java.io.IOException
      */
     public SODFile(String digestAlgorithm, String digestEncryptionAlgorithm,
             Map<Integer, byte[]> dataGroupHashes,
@@ -396,8 +399,10 @@ public class SODFile extends PassportFile
 	 * <i>eSignature</i> is a valid signature for
 	 * <i>eContent</i>. This certificate itself is
 	 * signed using the country signing certificate.
-     * 
+         * 
 	 * @return the document signing certificate
+         * @throws java.io.IOException
+         * @throws java.security.cert.CertificateException
 	 */
 	public X509Certificate getDocSigningCertificate()
 	throws IOException, CertificateException {

@@ -40,9 +40,10 @@ public class ValidateResponse extends ProcessResponse {
     }
 
     /**
-     * Main constructor
+     * Main constructor.
      * 
-     * @param validation of the certificate verified.
+     * @param validation of the certificate verified
+     * @param validPurposes Valid purposes
      */
     public ValidateResponse(Validation validation, String[] validPurposes) {
         super();
@@ -51,6 +52,8 @@ public class ValidateResponse extends ProcessResponse {
     }
 
     /**
+     * Get validation.
+     * 
      * @return The validation of the requested certificate
      */
     public Validation getValidation() {
@@ -58,6 +61,8 @@ public class ValidateResponse extends ProcessResponse {
     }
 
     /**
+     * Get the purposes of validation.
+     * 
      * @return a String with all valid certificate purposes separated by a ','.
      */
     public String getValidCertificatePurposes() {

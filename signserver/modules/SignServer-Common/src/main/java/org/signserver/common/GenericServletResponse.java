@@ -40,6 +40,12 @@ public class GenericServletResponse extends GenericSignResponse {
     /**
      * Creates a GenericWorkResponse, works as a simple VO.
      * 
+     * @param requestID
+     * @param processedData
+     * @param signerCertificate
+     * @param archiveId
+     * @param archivables
+     * @param contentType
      * @see org.signserver.common.ProcessRequest
      */
     public GenericServletResponse(int requestID, byte[] processedData,

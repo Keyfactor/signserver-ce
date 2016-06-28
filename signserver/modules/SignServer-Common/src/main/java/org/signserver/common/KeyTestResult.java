@@ -44,9 +44,11 @@ public class KeyTestResult implements Serializable {
 
     /**
      * Creates a new instance of KeyTestResult.
+     * 
      * @param alias The name the key
      * @param success If the signature was found consistent
      * @param status "OK" or error message
+     * @param publicKeyHash Hash of the public key
      */
     public KeyTestResult(final String alias, final boolean success,
             final String status, final String publicKeyHash) {

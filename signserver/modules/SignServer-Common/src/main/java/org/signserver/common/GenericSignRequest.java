@@ -50,6 +50,9 @@ public class GenericSignRequest extends ProcessRequest implements ISignRequest {
     }
 
     /**
+     * Get the request ID
+     * 
+     * @return Request ID
      * @see org.signserver.common.ProcessRequest
      */
     @Override
@@ -58,6 +61,9 @@ public class GenericSignRequest extends ProcessRequest implements ISignRequest {
     }
 
     /**
+     * Get the request data.
+     * 
+     * @return Request data
      * @see org.signserver.common.ProcessRequest
      */
     @Override

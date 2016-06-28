@@ -84,7 +84,9 @@ public class GenericValidationResponse extends ProcessResponse {
     }
 
     /**
+     * Get the request ID.
      * 
+     * @return The request ID
      * @see org.signserver.common.ProcessResponse#getRequestID()
      */
     public int getRequestID() {

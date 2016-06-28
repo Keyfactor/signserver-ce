@@ -44,14 +44,6 @@ public class ArchiveDataVO implements Serializable {
     private String requestIP = null;
     private int signerId = 0;
 
-    /**
-     * @param type
-     * @param time
-     * @param requestIssuerDN
-     * @param requestSerialnumber
-     * @param requestIP
-     * @param archiveData
-     */
     public ArchiveDataVO(int type, int signerId, String archiveId, Date time, String requestIssuerDN, String requestSerialnumber, String requestIP, ArchiveData archiveData) {
         super();
         this.archiveData = archiveData;

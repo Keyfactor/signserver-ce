@@ -43,7 +43,11 @@ public class MRTDSignResponse extends ProcessResponse {
     }
 
     /**
-     * Main Constuctor
+     * Main Constuctor.
+     * 
+     * @param requestID Request ID
+     * @param signedData Signed response data
+     * @param signerCertificate The signer certificate
      */
     public MRTDSignResponse(int requestID, ArrayList<byte[]> signedData, Certificate signerCertificate) {
         this.requestID = requestID;
@@ -51,10 +55,6 @@ public class MRTDSignResponse extends ProcessResponse {
         this.signerCertificate = signerCertificate;
     }
 
-    /**
-     * 
-     * @see org.signserver.common.ProcessResponse#getRequestID()
-     */
     public int getRequestID() {
         return requestID;
     }
@@ -79,6 +79,7 @@ public class MRTDSignResponse extends ProcessResponse {
 
     /**
      * Not supported, always returns null.
+     * @return Always null
      */
     public ArchiveData getArchiveData() {
         return null;
@@ -86,6 +87,7 @@ public class MRTDSignResponse extends ProcessResponse {
 
     /**
      * Not supported, always returns null.
+     * @return Always null
      */
     public String getArchiveId() {
         return null;

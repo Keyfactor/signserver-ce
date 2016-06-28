@@ -37,6 +37,11 @@ public class SODSignResponse extends GenericSignResponse {
     /**
      * Creates a SODSignResponse, works as a simple VO.
      *
+     * @param requestID ID of the request
+     * @param processedData Processed data
+     * @param signerCertificate Signer certificate
+     * @param archiveId Archive ID
+     * @param archivables Collection of archivables
      * @see org.signserver.common.ProcessRequest
      */
     public SODSignResponse(int requestID, byte[] processedData,

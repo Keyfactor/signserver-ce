@@ -51,6 +51,11 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
     /**
      * Creates a GenericWorkResponse, works as a simple VO.
      * 
+     * @param requestID
+     * @param processedData
+     * @param signerCertificate
+     * @param archiveId
+     * @param archivables
      * @see org.signserver.common.ProcessRequest
      */
     public GenericSignResponse(int requestID, byte[] processedData,

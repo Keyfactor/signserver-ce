@@ -24,7 +24,9 @@ import java.security.cert.Certificate;
 public interface ISignResponse extends IArchivableProcessResponse {
 
     /**
-     * Should contain a unique request id used to link to the request
+     * Should contain a unique request id used to link to the request.
+     * 
+     * @return Request ID
      */
     int getRequestID();
 

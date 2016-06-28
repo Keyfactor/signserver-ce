@@ -116,7 +116,10 @@ public abstract class WorkerStatus implements Serializable {
 
     /**
      * Method all inheriting workers must implement. It responsible for writing the status for that specific
-     * type of worker in the CLI
+     * type of worker in the CLI.
+     * 
+     * @param out Print stream used for output
+     * @param complete If true, print complete status report
      */
     public abstract void displayStatus(PrintStream out, boolean complete);
 

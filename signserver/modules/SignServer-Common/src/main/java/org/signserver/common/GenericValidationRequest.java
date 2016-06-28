@@ -50,6 +50,9 @@ public class GenericValidationRequest extends ProcessRequest implements IValidat
     }
 
     /**
+     * Get the request ID.
+     * 
+     * @return The request ID
      * @see org.signserver.common.ProcessRequest
      */
     @Override
@@ -58,6 +61,9 @@ public class GenericValidationRequest extends ProcessRequest implements IValidat
     }
 
     /**
+     * Get the request data.
+     * 
+     * @return The request data
      * @see org.signserver.common.ProcessRequest
      */
     @Override

@@ -47,8 +47,11 @@ public class ValidateRequest extends ProcessRequest {
 
     /**
      * Default constructor performing a full validation, verifying the complete chain
-     * returning the complete chain of the certificates
-     * @throws CertificateEncodingException 
+     * returning the complete chain of the certificates.
+     * 
+     * @param certificate Certificate
+     * @param certPurposes Certificate purpose
+     * @throws CertificateEncodingException If an encoding error occurs
      */
     public ValidateRequest(Certificate certificate, String certPurposes) throws CertificateEncodingException {
         super();

@@ -48,6 +48,10 @@ public class GlobalConfiguration implements Serializable {
     /**
      * Constructor that should only be called within
      * the GlobalConfigurationSessionBean.
+     * 
+     * @param config
+     * @param state
+     * @param appVersion
      */
     public GlobalConfiguration(Properties config, String state, String appVersion) {
         this.config = config;

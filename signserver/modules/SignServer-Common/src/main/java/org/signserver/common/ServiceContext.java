@@ -35,7 +35,7 @@ public class ServiceContext implements Serializable {
     
     private final HashMap<String, Object> context = new HashMap<>();
     
-    private transient IServices services;
+    private final transient IServices services;
     
     public ServiceContext(final IServices services) {
         this.services = services;
@@ -43,7 +43,10 @@ public class ServiceContext implements Serializable {
 
     /**
      * Retrieves specified field from the context, this could be a custom value or
-     * one of the specified constants
+     * one of the specified constants.
+     * 
+     * @param field Field to get value of
+     * @return The value of the field
      */
     public Object get(String field) {
         return context.get(field);
@@ -51,7 +54,10 @@ public class ServiceContext implements Serializable {
 
     /**
      * Sets specified field from the context, this could be a custom value or
-     * one of the specified constants
+     * one of the specified constants.
+     * 
+     * @param field The field to update the value of
+     * @param data The value to set
      */
     public void put(String field, Object data) {
         context.put(field, data);
@@ -59,7 +65,9 @@ public class ServiceContext implements Serializable {
 
     /**
      * Removes specified field from the context, this could be a custom value or
-     * one of the specified constants
+     * one of the specified constants.
+     * 
+     * @param field The field to remove
      */
     public void remove(String field) {
         context.remove(field);

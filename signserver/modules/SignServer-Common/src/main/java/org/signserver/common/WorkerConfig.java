@@ -163,7 +163,9 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     }
 
     /**
-     * Returns the specific property from the configuration
+     * Returns the specific property from the configuration.
+     * 
+     * @param key Property to get value of
      * @return the value corresponding to that property.
      */
     public String getProperty(String key) {
@@ -171,8 +173,11 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     }
 
     /**
-     * Returns the specific property from the configuration with a defaultValue option
-     * @return the value corresponding to that property.
+     * Returns the specific property from the configuration with a defaultValue option.
+     * 
+     * @param key Property to get value of
+     * @param defaultValue Default value, if the property isn't set
+     * @return the value corresponding to that property, or defaultValue if unset
      */
     public String getProperty(String key, String defaultValue) {
         return ((Properties) data.get(PROPERTIES)).getProperty(key, defaultValue);
@@ -486,9 +491,10 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     }
     
     /**
-     * Method used to store a signers certificate in the config
-     * @param signerCert
+     * Method used to store a signers certificate chain in the config
      * 
+     * @param signerCertificateChain Signer certificate chain to store
+     * @param scope Scope (global or node)
      */
     public void setSignerCertificateChain(Collection<Certificate> signerCertificateChain, String scope) {
         if (scope.equals(GlobalConfiguration.SCOPE_GLOBAL)) {

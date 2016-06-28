@@ -257,66 +257,74 @@ public abstract class PropertiesApplier {
     /**
      * Set a global property.
      * 
-     * @param scope
-     * @param key
-     * @param value
+     * @param scope Scope for the property
+     * @param key Property key
+     * @param value Property value
+     * @throws PropertiesApplierException If there was a failure setting the property
      */
     protected abstract void setGlobalProperty(final String scope, final String key, final String value) throws PropertiesApplierException;
     
     /**
      * Remove a global property.
      * 
-     * @param scope
-     * @param key
+     * @param scope Scope for the property to remove
+     * @param key Key of property to remove
+     * @throws PropertiesApplierException If there was a failure removing the property
      */
     protected abstract void removeGlobalProperty(final String scope, final String key) throws PropertiesApplierException;
     
     /**
      * Set a worker property.
      * 
-     * @param workerId
-     * @param key
-     * @param value
+     * @param workerId Worker ID
+     * @param key Key of property to set
+     * @param value Value of property to set
+     * @throws PropertiesApplierException
      */
     protected abstract void setWorkerProperty(final int workerId, final String key, final String value) throws PropertiesApplierException;
     
     /**
      * Remove a worker property.
      * 
-     * @param workerId
-     * @param key
+     * @param workerId Worker ID
+     * @param key Key of property to remove
+     * @throws PropertiesApplierException
      */
     protected abstract void removeWorkerProperty(final int workerId, final String key) throws PropertiesApplierException;
     
     /**
      * Upload a signer certificate.
      * 
-     * @param workerId
-     * @param signerCert
+     * @param workerId Worker ID
+     * @param signerCert Signer certificate to upload
+     * @throws PropertiesApplierException If there was a failure
      */
     protected abstract void uploadSignerCertificate(final int workerId, final byte[] signerCert) throws PropertiesApplierException;
     
     /**
      * Upload a signer certificate chain.
      * 
-     * @param workerId
-     * @param signerCertChain
+     * @param workerId Worker ID
+     * @param signerCertChain Signer certificate chain to upload
+     * @throws PropertiesApplierException
      */
     protected abstract void uploadSignerCertificateChain(final int workerId, final List<byte[]> signerCertChain) throws PropertiesApplierException;
     
     /**
      * Add an authorized client for a worker.
      * 
-     * @param workerId
+     * @param workerId Worker ID
      * @param ac Authorized client to add
+     * @throws PropertiesApplierException If there was a failure
      */
     protected abstract void addAuthorizedClient(final int workerId, final AuthorizedClient ac) throws PropertiesApplierException;
     
     /**
      * Remove an authorized client for a worker.
      * 
-     * @param workerId
+     * @param workerId Worker ID
      * @param ac Authorized client to remove
+     * @throws PropertiesApplierException If there was a failure
      */
     protected abstract void removeAuthorizedClient(final int workerId, final AuthorizedClient ac) throws PropertiesApplierException;
     
@@ -341,6 +349,7 @@ public abstract class PropertiesApplier {
      * Lookup next available auto-generated worker ID.
      * 
      * @return Next available worker ID
+     * @throws PropertiesApplierException If there was a failure
      */
     protected abstract int genFreeWorkerId() throws PropertiesApplierException;
     
@@ -349,6 +358,7 @@ public abstract class PropertiesApplier {
      * 
      * @param workerName
      * @return worker ID
+     * @throws PropertiesApplierException If there was a faulure looking up the worker ID
      * @throws IllegalArgumentException if given a non-existing worker name
      */
     protected abstract int getWorkerId(final String workerName) throws PropertiesApplierException;

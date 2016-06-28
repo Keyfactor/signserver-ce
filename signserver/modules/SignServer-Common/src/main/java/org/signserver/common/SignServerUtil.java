@@ -65,8 +65,10 @@ public class SignServerUtil {
      * SOMEPOSTFIX.1 = "SOMEDATA1"
      * SOMEPOSTFIX.4 = "SOMEDATA4"
      * 
-     * Return a list of {"SOMEDATA0","SOMEDATA1","","","SOMEDATA4"}
+     * Return a list of {"SOMEDATA0","SOMEDATA1","","","SOMEDATA4"}.
+     * 
      * @param propertyPrefix must be a valid property key and end with a '.'
+     * @param config Worker configuration
      * @return a list of values from the configuration, never null.
      */
     public static ArrayList<String> getCollectionOfValuesFromProperties(String propertyPrefix, WorkerConfig config) {
@@ -125,10 +127,11 @@ public class SignServerUtil {
     }
     
     /**
-     * Get a certificate from a file (PEM or binary cert)
+     * Get a certificate from a file (PEM or binary cert).
+     * 
      * @param filename
      * @return Certificate
-     * @throws IllegalCommandArgumentsException
+     * @throws IllegalArgumentException In case the PEM file contains no certificates
      */
     public static X509Certificate getCertFromFile(final String filename)
                 throws IllegalArgumentException {

@@ -26,8 +26,8 @@ public interface IArchivableProcessResponse {
     /**
      * Method that should return an Id of the archived data could be
      * the response serialnumber.
-     * 
-     * return null of not implemented.
+     *
+     * @return ID of the archived data, or null if not implemented
      */
     String getArchiveId();
     

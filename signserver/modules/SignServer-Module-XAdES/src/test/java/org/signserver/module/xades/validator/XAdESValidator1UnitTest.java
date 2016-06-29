@@ -130,6 +130,8 @@ public class XAdESValidator1UnitTest {
     
     /**
      * Test of init method with missing TRUSTANCHORS, of class XAdESValidator.
+     * 
+     * @throws java.lang.Exception
      */
     @Test(expected = SignServerException.class)
     public void testInit_missingTRUSTANCHORS() throws Exception {
@@ -161,6 +163,8 @@ public class XAdESValidator1UnitTest {
 
     /**
      * Test of processData method, of class XAdESValidator.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testProcessData_basicValidation() throws Exception {

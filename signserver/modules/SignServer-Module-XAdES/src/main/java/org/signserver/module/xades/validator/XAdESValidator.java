@@ -369,12 +369,21 @@ public class XAdESValidator extends BaseValidator {
         return chain;
     }
     
-    /** Set the time-stamp verification provider to use. This method can be overridden by unit tests. **/
+    /**
+     * Set the time-stamp verification provider to use. This method can be overridden by unit tests.
+     * 
+     * @param timeStampVerificationImplementation Verification implementation to use
+     **/
     protected void setTimeStampVerificationProviderImplementation(final Class<? extends TimeStampVerificationProvider> timeStampVerificationImplementation) {
         this.timeStampVerificationImplementation = timeStampVerificationImplementation;
     }
     
-    /** Query the OCSP responder. This method can be overridden by unit tests. **/
+    /** Query the OCSP responder. This method can be overridden by unit tests.
+     * @param url
+     * @param request
+     * @return 
+     * @throws java.io.IOException
+     * @throws org.bouncycastle.cert.ocsp.OCSPException **/
     protected OCSPResponse doQueryOCSPResponder(URL url, OCSPReq request) throws IOException, OCSPException {
         return ValidationUtils.queryOCSPResponder(url, request);
     }

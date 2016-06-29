@@ -461,6 +461,8 @@ public class XAdESSignerUnitTest {
      * Test of processData method for basic signing, of class XAdESSigner.
      * Test that by default, no commitment types are included.
      * Also test that the default signature algorithm is SHA256withRSA for an RSA key.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testProcessData_basicSigning() throws Exception {
@@ -804,7 +806,11 @@ public class XAdESSignerUnitTest {
         assertTrue("error: " + errors, errors.contains("commitment type"));
     }
     
-    /** Tests including 3 certificate levels in the document. */
+    /**
+     * Tests including 3 certificate levels in the document.
+     * 
+     * @throws java.lang.Exception
+     */
     @Test
     public void testSigningWithIntermediateCert_3levels() throws Exception {
         LOG.info("testSigningWithIntermediateCert_3levels");
@@ -831,7 +837,11 @@ public class XAdESSignerUnitTest {
         assertEquals(tokenWithIntermediateCert.getCertificateChain(ICryptoTokenV4.PURPOSE_SIGN), certs);   
     }
     
-    /** Tests specifying many more certificates than available to including all 3 certificate levels in the document. */
+    /**
+     * Tests specifying many more certificates than available to including all 3 certificate levels in the document.
+     * 
+     * @throws java.lang.Exception
+     */
     @Test
     public void testSigningWithIntermediateCert_99levels() throws Exception {
         LOG.info("testSigningWithIntermediateCert_99levels");
@@ -857,7 +867,11 @@ public class XAdESSignerUnitTest {
         assertEquals(tokenWithIntermediateCert.getCertificateChain(ICryptoTokenV4.PURPOSE_SIGN), certs);   
     }
     
-    /** Tests including 1 certificate level in the document. */
+    /**
+     * Tests including 1 certificate level in the document.
+     * 
+     * @throws java.lang.Exception
+     */
     @Test
     public void testSigningWithoutIntermediateCert_1levels() throws Exception {
         LOG.info("testSigningWithoutIntermediateCert_1levels");
@@ -883,7 +897,11 @@ public class XAdESSignerUnitTest {
         assertEquals(Arrays.asList(tokenRSA.getCertificate(ICryptoTokenV4.PURPOSE_SIGN)), certs);   
     }
     
-    /** Tests not specifying any level and using the default value of 1 certificate level. */
+    /**
+     * Tests not specifying any level and using the default value of 1 certificate level.
+     * 
+     * @throws java.lang.Exception
+     */
     @Test
     public void testSigningWithoutIntermediateCert_defaultLevels() throws Exception {
         LOG.info("testSigningWithoutIntermediateCert_defaultLevels");
@@ -909,7 +927,11 @@ public class XAdESSignerUnitTest {
         assertEquals(Arrays.asList(tokenRSA.getCertificate(ICryptoTokenV4.PURPOSE_SIGN)), certs);   
     }
     
-    /** Tests including 2 certificate levels in the document. */
+    /**
+     * Tests including 2 certificate levels in the document.
+     * 
+     * @throws java.lang.Exception
+     */
     @Test
     public void testSigningWithIntermediateCert_2levels() throws Exception {
         LOG.info("testSigningWithIntermediateCert_2levels");
@@ -940,7 +962,11 @@ public class XAdESSignerUnitTest {
         assertEquals(expected, actual);
     }
     
-    /** Tests incorrect values for the INCLUDE_CERTIFICATE_LEVELS worker property. */
+    /**
+     * Tests incorrect values for the INCLUDE_CERTIFICATE_LEVELS worker property.
+     * 
+     * @throws java.lang.Exception
+     */
     @Test
     public void testInit_includeCertificateLevelsProperty() throws Exception {
         LOG.info("testInit_includeCertificateLevelsProperty");

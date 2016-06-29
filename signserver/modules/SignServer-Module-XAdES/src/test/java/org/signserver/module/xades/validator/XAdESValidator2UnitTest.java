@@ -435,6 +435,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Setting up key-pairs, mocked crypto tokens, certificates and CRLs used
      * by the tests.
+     * 
+     * @throws java.lang.Exception
      */
     @BeforeClass
     public static void setUpClass() throws Exception {       
@@ -721,6 +723,8 @@ public class XAdESValidator2UnitTest {
     
     /**
      * Test validation of document signed by signer1 without revocation checking.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner1_noRevocationChecking() throws Exception {
@@ -748,6 +752,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Test validation of document signed by signer1 with CRL where no
      * cert is revoked.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner1_crlNoRevoked() throws Exception {
@@ -775,6 +781,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Test validation of document signed by signer1 with CRL where the signer
      * certificate is revoked.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner1_crlSignerRevoked() throws Exception {
@@ -800,6 +808,8 @@ public class XAdESValidator2UnitTest {
     
     /**
      * Test validation of document signed by signer2 without revocation checking.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner2_noRevocationChecking() throws Exception {
@@ -831,6 +841,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Test validation of document signed by signer2 with CRL where no
      * cert is revoked.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner2_crlNoRevoked() throws Exception {
@@ -861,6 +873,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Test validation of document signed by signer2 with CRL where the signer
      * certificate is revoked.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner2_crlSignerRevoked() throws Exception {
@@ -890,6 +904,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Test validation of document signed by signer2 with CRL where the sub CA
      * certificate is revoked.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner2_crlCARevoked() throws Exception {
@@ -919,6 +935,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Test validation of document signed by signer2 where the sub CA CRL is
      * signed by an other CA and thus not trusted.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner2_badCRL() throws Exception {
@@ -962,6 +980,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Positive test for signer 3 were an OCSP response is signed by the CA
      * and returns the status GOOD for the signer 3 certificate.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner3_withOnlyOCSP_ca_ok() throws Exception {
@@ -1005,6 +1025,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Positive test for signer 3 were an OCSP response is signed by external
      * responder and returns the status GOOD for the signer 3 certificate.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner3_withOnlyOCSP_responder_ok() throws Exception {
@@ -1048,6 +1070,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Negative test for signer 3 were an OCSP response is signed by an un matching private key
      * and returns the status GOOD for the signer 3 certificate.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner3_withOnlyOCSP_anotherKey() throws Exception {
@@ -1090,6 +1114,8 @@ public class XAdESValidator2UnitTest {
     
     /**
      * Negative test for signer 3 were querying the OCSP responder fails.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner3_withOnlyOCSP_unavailable() throws Exception {
@@ -1124,6 +1150,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Negative test for signer 3 were an OCSP response is signed by the CA
      * and returns the status REVOKED for the signer 3 certificate.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner3_withOnlyOCSP_revoked() throws Exception {
@@ -1167,6 +1195,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Positive test for signer 3 were an OCSP response is signed by the CA
      * and returns the status GOOD for the signer 3 certificate.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner4_withOnlyOCSP_ca_ok() throws Exception {
@@ -1219,6 +1249,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Positive test for signer 4 were an OCSP response is signed by external
      * responder and returns the status GOOD for the signer 4 certificate.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner4_withOnlyOCSP_responder_ok() throws Exception {
@@ -1272,6 +1304,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Negative test for signer 4 were an OCSP response is signed by the sub CA2
      * and returns the status REVOKED for the signer 4 certificate.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner4_withOnlyOCSP_certRevoked() throws Exception {
@@ -1324,6 +1358,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Negative test for signer 4 were an OCSP response is signed by the Root CA
      * and returns the status REVOKED for the sub CA 2 certificate.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner4_withOnlyOCSP_caRevoked() throws Exception {
@@ -1376,6 +1412,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Positive test for signer 5 were OCSP is unable and falls back to CDP
      * were CRL is ok.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner5_withOCSPandCDP_ok() throws Exception {
@@ -1409,6 +1447,8 @@ public class XAdESValidator2UnitTest {
     /**
      * Negative test for signer 5 were OCSP is unable and falls back to CDP
      * were signer is revoked in CRL.
+     * 
+     * @throws java.lang.Exception
      */
     @Test
     public void testSigner5_withOCSPandCDP_revoked() throws Exception {

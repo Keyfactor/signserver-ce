@@ -581,6 +581,9 @@ public class XAdESSigner extends BaseSigner {
      * Utility method to extract certificate chain from list of X509Certificate.
      * This will use the default of 1 certificate if the INCLUDE_CERTIFICATE_LEVELS
      * propery has not been set.
+     * 
+     * @param certs List of certificates to extract chain from
+     * @return The certificate chain, including the configured number of certificates
      */
     protected List<X509Certificate> includedX509Certificates(List<X509Certificate> certs) {
         if (hasSetIncludeCertificateLevels) {

@@ -272,6 +272,9 @@ public class XMLValidator extends BaseValidator {
     }
 
     /**
+     * Get process session.
+     * 
+     * @param requestContext Request context
      * @return The worker session. Can be overridden for instance by unit tests.
      */
     protected InternalProcessSessionLocal getProcessSession(RequestContext requestContext) {

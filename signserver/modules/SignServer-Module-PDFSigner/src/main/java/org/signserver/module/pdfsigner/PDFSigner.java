@@ -255,6 +255,8 @@ public class PDFSigner extends BaseSigner {
      * The main method performing the actual signing operation. Expects the
      * signRequest to be a GenericSignRequest containing a signed PDF file.
      * 
+     * @param signRequest
+     * @return 
      * @throws SignServerException
      * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest,
      *      org.signserver.common.RequestContext)

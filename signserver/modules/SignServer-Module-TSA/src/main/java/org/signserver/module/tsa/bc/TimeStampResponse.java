@@ -185,6 +185,9 @@ public class TimeStampResponse
     
     /**
      * return the ASN.1 encoded representation of this object.
+     * 
+     * @return the ASN1.1 encoded representation
+     * @throws IOException on encoding errors
      */
     public byte[] getEncoded() throws IOException
     {

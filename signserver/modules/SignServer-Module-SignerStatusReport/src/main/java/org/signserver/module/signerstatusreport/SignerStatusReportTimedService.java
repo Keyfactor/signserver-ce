@@ -89,6 +89,8 @@ public class SignerStatusReportTimedService extends BaseTimedService {
 
     /**
      * Called to execute this timed service.
+     * 
+     * @param context Service context
      * @see org.signserver.server.timedservices.ITimedService#work()
      * @throws ServiceExecutionFailedException in case of exception
      */

@@ -198,6 +198,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tries to sign a PDF with document restrictions. As the correct passwords 
      * are supplied it should succeed.
+     * @throws java.lang.Exception
      */
     public void test02SignWithRestrictionsPasswordSupplied() throws Exception {         
         signProtectedPDF(sampleOpen123, "open123");
@@ -211,6 +212,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tests the REJECT_PERMISSIONS with different values to see that the 
      * signer rejects documents with permissions not allowed.
+     * 
+     * @throws java.lang.Exception
      */
     public void test03RejectingPermissions() throws Exception {
         
@@ -288,6 +291,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * Tests the property SET_PERMISSIONS by setting different values and make 
      * sure they end up in the signed PDF. Also tests that when not setting 
      * the property the original permissions remain.
+     * 
+     * @throws java.lang.Exception
      */
     public void test04SetPermissions() throws Exception {
         
@@ -316,6 +321,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * the property the original permissions remain.
      * This time for documents without owner password set or with both user 
      * and owner passwords.
+     * 
+     * @throws java.lang.Exception
      */
     public void test04SetPermissionsWithoutOwner() throws Exception {
         doTestSetPermissions(WORKER1, sample, null, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
@@ -378,6 +385,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tests the REMOVE_PERMISSIONS property by setting different values for 
      * what to remove and check that they were removed from the signed PDF.
+     * 
+     * @throws java.lang.Exception
      */
     public void test04RemovePermissions() throws Exception {
         // The sampleOwner123 originally has: ALLOW_FILL_IN,ALLOW_MODIFY_ANNOTATIONS,ALLOW_MODIFY_CONTENTS
@@ -425,6 +434,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tests that rejecting permissions still works even do we set permissions 
      * explicitly.
+     * 
+     * @throws java.lang.Exception
      */
     public void test05SetAndRejectPermissions() throws Exception {
         // Setting a permission we then reject. Not so clever :)
@@ -442,6 +453,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tests that even do we remove some permission we will still check for 
      * permissions to reject. But if we remove all rejected the document is ok.
+     * 
+     * @throws java.lang.Exception
      */
     public void test06RemoveAndRejectPermissions() throws Exception {
         // Remove a permissions but still the document contains a permission we reject
@@ -464,6 +477,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tests that it is possible also to change the permissions on a document 
      * not previously protected by any password.
+     * 
+     * @throws java.lang.Exception
      */
     public void test07ChangePermissionOfUnprotectedDocument() throws Exception {
         doTestSetPermissions(WORKER1, sampleOk, null, null, Arrays.asList( "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
@@ -472,6 +487,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Test helper method for asserting that a certain owner password is really 
      * set.
+     * 
+     * @throws java.lang.Exception
      */
     public void test08assertOwnerPassword() throws Exception {
         try {
@@ -492,6 +509,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tests the worker property SET_OWNERPASSWORD with documents containing 
      * different password types.
+     * 
+     * @throws java.lang.Exception
      */
     public void test09SetOwnerPassword() throws Exception {
         // Set owner password on a document that does not have any password
@@ -532,6 +551,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tests that it is possible to sign a certified document which allows 
      * signing and not one the does not.
+     * 
+     * @throws java.lang.Exception
      */
     public void test10SignCertifiedDocument() throws Exception {
         signPDF(sampleCertifiedSigningAllowed);
@@ -551,6 +572,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     
     /**
      * Tests that it is possible to certify a document that already is signed.
+     * 
+     * @throws java.lang.Exception
      */
     public void test11CertifySignedDocument() throws Exception {
         workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "FORM_FILLING");
@@ -568,6 +591,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     
     /**
      * Tests that it is possible to sign an already signed document.
+     * 
+     * @throws java.lang.Exception
      */
     public void test12SignSignedDocument() throws Exception {
         signPDF(sampleSigned);
@@ -575,6 +600,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     
     /**
      * Tests that it is not possible to certify an already certified document.
+     * 
+     * @throws java.lang.Exception
      */
     public void test13CertifyCertifiedDocument() throws Exception {
         workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "FORM_FILLING");
@@ -605,6 +632,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      *
      * This should never fail unless we upgrade BouncyCastle and the behavior 
      * changes.
+     * 
+     * @throws java.lang.Exception
      */
     public void test14EstimatedP7Size_increaseCertSize() throws Exception {
         final int somethingLargeEnough = 31000;
@@ -696,6 +725,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      *
      * This should never fail unless we upgrade BouncyCastle and the behavior 
      * changes.
+     * 
+     * @throws java.lang.Exception
      */
     public void test14EstimatedP7Size_increaseTSRSize() throws Exception {
         final int somethingLargeEnough = 31000;
@@ -762,6 +793,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      *
      * This should never fail unless we upgrade BouncyCastle and the behavior 
      * changes.
+     * 
+     * @throws java.lang.Exception
      */
     public void test14EstimatedP7Size_increaseCRLSize() throws Exception {
         final int extraSpace = 1;
@@ -874,6 +907,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      *
      * This should never fail unless we upgrade BouncyCastle and the behavior 
      * changes.
+     * 
+     * @throws java.lang.Exception
      */
     public void test14EstimatedP7Size_increaseNumCerts() throws Exception {
         final int somethingLargeEnough = 31000;
@@ -944,6 +979,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      *
      * This should never fail unless we upgrade BouncyCastle and the behavior 
      * changes.
+     * 
+     * @throws java.lang.Exception
      */
     public void test14EstimatedP7Size_increaseNumCRLs() throws Exception {
         final int somethingLargeEnough = 31000;
@@ -1020,6 +1057,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * signature structure) so in this test only values under 7168 (the 
      * default estimate) are considered.
      * 
+     * @throws java.lang.Exception
      */
     public void test14calculateEstimatedSignatureSize() throws Exception {
        
@@ -1165,6 +1203,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * This tests tests that if we got it wrong the first time the second time
      * we make an estimate which is larger than the actual size returned from the 
      * first try.
+     * 
+     * @throws java.lang.Exception
      */
     public void test14calculateEstimatedSignatureSize_resign() throws Exception {
         

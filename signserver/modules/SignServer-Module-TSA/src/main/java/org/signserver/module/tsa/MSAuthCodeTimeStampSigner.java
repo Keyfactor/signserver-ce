@@ -217,11 +217,14 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     /**
      * The main method performing the actual timestamp operation.
      * Expects the signRequest to be a GenericSignRequest contining a
-     * TimeStampRequest
+     * TimeStampRequest.
      *
-     * @param signRequest
-     * @param requestContext
+     * @param signRequest Request
+     * @param requestContext Request context
      * @return the sign response
+     * @throws IllegalRequestException
+     * @throws CryptoTokenOfflineException
+     * @throws SignServerException
      * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
     @Override

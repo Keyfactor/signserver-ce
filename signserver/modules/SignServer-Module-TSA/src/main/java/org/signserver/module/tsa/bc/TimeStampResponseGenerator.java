@@ -187,9 +187,11 @@ public class TimeStampResponseGenerator
      * If genTime is null a timeNotAvailable or a validation exception occurs a TSPValidationException will
      * be thrown. The parent TSPException will only occur on some sort of system failure.
      * </p>
+     * 
      * @param request the request this response is for.
      * @param serialNumber serial number for the response token.
      * @param genTime generation time for the response token.
+     * @param statusString status string to include in the response
      * @return  the TimeStampResponse with a status of  PKIStatus.GRANTED
      * @throws TSPException on validation exception or internal error.
      */

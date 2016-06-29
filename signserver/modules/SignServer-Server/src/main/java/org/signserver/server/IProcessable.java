@@ -55,9 +55,12 @@ public interface IProcessable extends IWorker {
     /**
      * Main method that does the actual signing according to the data in the request.
      *
-     *  @throws IllegalRequestException if requests contain unsupported data.
-     *  @throws CryptoTokenOfflineException if the token performing cryptographic operations is off-line.
-     *  @throws SignServerException if general failure occurred during the operation.
+     * @param signRequest
+     * @param requestContext
+     * @return Signing response
+     * @throws IllegalRequestException if requests contain unsupported data.
+     * @throws CryptoTokenOfflineException if the token performing cryptographic operations is off-line.
+     * @throws SignServerException if general failure occurred during the operation.
      */
     ProcessResponse processData(ProcessRequest signRequest,
             RequestContext requestContext) throws IllegalRequestException,
@@ -68,22 +71,34 @@ public interface IProcessable extends IWorker {
      *
      * Optional method, if not supported throw a CryptoTokenOfflineException
      *
-     * @param authCode
+     * @param authCode Authentication code for crypto token
+     * @param services Services
+     * @throws CryptoTokenAuthenticationFailureException In case of token authentication failure
+     * @throws CryptoTokenOfflineException If crypto token is offline
      */
     void activateSigner(String authCode, IServices services) throws
             CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException;
 
     /**
      * Method used to deactivate a processable worker when it's not used anymore
-     *
-     * Optional method, if not supported throw a CryptoTokenOfflineException
+     * Optional method, if not supported throw a CryptoTokenOfflineException.
+     * 
+     * @param services
+     * @return True if successful
+     * @throws CryptoTokenOfflineException If crypto token is offline
      */
     boolean deactivateSigner(IServices services) throws CryptoTokenOfflineException;
 
     /**
      * Method used to tell the processable worker to create a certificate request using its crypto token.
-     *
-     * Optional method, if not supported throw a CryptoTokenOfflineException
+     * Optional method, if not supported throw a CryptoTokenOfflineException.
+     * 
+     * @param info Certificate request info
+     * @param explicitEccParameters True if explicit ECC parameters should be used
+     * @param defaultKey If true, use default key
+     * @return Certificate signing request data
+     * @throws org.signserver.common.CryptoTokenOfflineException 
+     * @throws org.signserver.common.NoSuchAliasException 
      */
     ICertReqData genCertificateRequest(ISignerCertReqInfo info,
             boolean explicitEccParameters, boolean defaultKey)
@@ -95,13 +110,28 @@ public interface IProcessable extends IWorker {
         
     /**
      * Method specifying which type of authentication that should be performed before signature is performed
-     * Returns one of the AUTHTYPE_ constants
+     * Returns one of the AUTHTYPE_ constants.
+     * 
+     * @return Authentication type
      */
     String getAuthenticationType();
 
     public boolean removeKey(String alias, IServices services) throws CryptoTokenOfflineException, KeyStoreException, SignServerException;
 
     /**
+     * Generate key.
+     * 
+     * @param keyAlgorithm
+     * @param keySpec
+     * @param alias
+     * @param authCode
+     * @param params
+     * @param services
+     * @throws CryptoTokenOfflineException
+     * @throws DuplicateAliasException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidAlgorithmParameterException
+     * @throws UnsupportedCryptoTokenParameter
      * @see ICryptoTokenV3#generateKey(java.lang.String, java.lang.String, java.lang.String, char[], java.util.Map, org.signserver.server.IServices) 
      */
     void generateKey(final String keyAlgorithm, final String keySpec, final String alias, final char[] authCode, Map<String, Object> params, final IServices services) throws
@@ -112,6 +142,13 @@ public interface IProcessable extends IWorker {
             UnsupportedCryptoTokenParameter;
     
     /**
+     * Test key.
+     * 
+     * @param alias
+     * @param authCode
+     * @return Collection of test results
+     * @throws CryptoTokenOfflineException 
+     * @throws KeyStoreException 
      * @see ICryptoToken#testKey(java.lang.String, char[])
      */
     Collection<KeyTestResult> testKey(String alias,
@@ -119,12 +156,23 @@ public interface IProcessable extends IWorker {
             throws CryptoTokenOfflineException, KeyStoreException;
 
     /**
+     * Test key.
+     * 
+     * @param alias
+     * @param authCode
+     * @param services
+     * @return Collection of test results
+     * @throws org.signserver.common.CryptoTokenOfflineException 
+     * @throws java.security.KeyStoreException 
      * @see ICryptoTokenV3#testKey(java.lang.String, char[], org.signserver.server.IServices) 
      */
     Collection<org.signserver.common.KeyTestResult> testKey(String alias,
         char[] authCode, IServices services) throws CryptoTokenOfflineException, KeyStoreException;
  
     /**
+     * Get token status.
+     * 
+     * @param services
      * @return The status of the crypto token
      * @see WorkerStatus#STATUS_ACTIVE
      * @see WorkerStatus#STATUS_OFFLINE
@@ -138,6 +186,8 @@ public interface IProcessable extends IWorker {
      * @param alias Alias to use in the crypto token
      * @param authenticationCode Authentication code for the key entry, or use
      *                           the token's authentication code if null
+     * @param params Additional parameters to pass to the crypto token
+     * @param services Services implementations for the crypto token to use
      * @throws CryptoTokenOfflineException In case the token was not active or could not function for any other reasons
      * @throws NoSuchAliasException In case the alias did not exist in the token
      * @throws InvalidAlgorithmParameterException If the supplied crypto token parameters was not valid

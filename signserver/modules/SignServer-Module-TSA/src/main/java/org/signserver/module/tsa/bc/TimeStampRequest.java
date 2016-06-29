@@ -183,7 +183,9 @@ public class TimeStampRequest
 
    /**
     * return the ASN.1 encoded representation of this object.
+    * 
     * @return the default ASN,1 byte encoding for the object.
+    * @throws IOException on encoding errors
     */
     public byte[] getEncoded() throws IOException
     {

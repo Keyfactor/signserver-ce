@@ -1008,6 +1008,9 @@ public class TimeStampSigner extends BaseSigner {
      * Help method that generates a serial number using SecureRandom.
      * Uses the configured length of the signer. This is public to allow using directly from
      * unit test.
+     * 
+     * @return Random serial number
+     * @throws SignServerException If the maximum serial number length is outside the allowed range
      */
     public BigInteger getSerialNumber() throws SignServerException {
         BigInteger serialNumber = null;

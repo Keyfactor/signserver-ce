@@ -150,7 +150,11 @@ public class ValidationWSServiceTest extends ModulesTestCase {
         ws =  wsService.getValidationWSPort();
     }
 
-    /** Overridden by org.signserver.test.validationws.v32.ValidationWSServiceTest */
+    /**
+     * Overridden by org.signserver.test.validationws.v32.ValidationWSServiceTest.
+     * 
+     * @return WS endpoint URL
+     */
     protected String getWsEndPointUrl() {
     	return ENDPOINT;
     }

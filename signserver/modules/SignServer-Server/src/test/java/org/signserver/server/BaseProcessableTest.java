@@ -555,7 +555,7 @@ public class BaseProcessableTest extends TestCase {
         }
 
         @Override
-        public void init(int workerId, Properties props) {
+        public void init(int workerId, Properties props, IServices services) {
             this.props = props;
         }
 

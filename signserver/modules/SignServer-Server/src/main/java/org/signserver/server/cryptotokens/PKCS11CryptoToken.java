@@ -93,7 +93,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     private Integer keygenerationLimit;
 
     @Override
-    public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
+    public void init(int workerId, Properties props, org.signserver.server.IServices services) throws CryptoTokenInitializationFailureException {
         try {
             final String attributesValue = props.getProperty(CryptoTokenHelper.PROPERTY_ATTRIBUTES);
             if (attributesValue != null && props.getProperty(CryptoTokenHelper.PROPERTY_ATTRIBUTESFILE) != null) {

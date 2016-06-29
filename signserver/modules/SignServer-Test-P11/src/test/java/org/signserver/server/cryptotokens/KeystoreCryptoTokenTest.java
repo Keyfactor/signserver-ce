@@ -55,6 +55,7 @@ import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.ServicesImpl;
 import org.signserver.server.log.AdminInfo;
+import org.signserver.test.utils.mock.MockedServicesImpl;
 
 /**
  * Generic CryptoToken tests using KeyStoreCryptoToken.
@@ -86,7 +87,7 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
                                        CryptoTokenOfflineException {
         Properties config = new Properties();
         config.setProperty("KEYSTOREPASSWORD", "password123123213");
-        instance.init(1, config);
+        instance.init(1, config, new MockedServicesImpl());
         instance.activate("password123123213", instance.getMockedServices());
         instance.generateKey("RSA", "1024", existingKey1, null, Collections.<String, Object>emptyMap(), instance.getMockedServices());
     }

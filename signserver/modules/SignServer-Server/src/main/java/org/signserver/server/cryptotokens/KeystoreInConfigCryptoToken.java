@@ -15,6 +15,7 @@ package org.signserver.server.cryptotokens;
 
 import java.util.Properties;
 import org.signserver.common.CryptoTokenInitializationFailureException;
+import org.signserver.server.IServices;
 import static org.signserver.server.cryptotokens.KeystoreCryptoToken.KEYSTORETYPE;
 
 /**
@@ -25,8 +26,8 @@ import static org.signserver.server.cryptotokens.KeystoreCryptoToken.KEYSTORETYP
  */
 public class KeystoreInConfigCryptoToken extends KeystoreCryptoToken {
     @Override
-    public void init(final int workerId, final Properties props) throws CryptoTokenInitializationFailureException {
+    public void init(final int workerId, final Properties props, IServices services) throws CryptoTokenInitializationFailureException {
         props.setProperty(KEYSTORETYPE, TYPE_INTERNAL);
-        super.init(workerId, props);
+        super.init(workerId, props, services);
     }
 }

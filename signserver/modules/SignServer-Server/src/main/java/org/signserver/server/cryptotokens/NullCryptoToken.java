@@ -51,7 +51,7 @@ public class NullCryptoToken extends BaseCryptoToken {
     }
     
     @Override
-    public void init(int workerId, Properties props) {
+    public void init(int workerId, Properties props, org.signserver.server.IServices services) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("init");
         }

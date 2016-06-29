@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 import static junit.framework.TestCase.assertTrue;
 import org.signserver.common.RequestContext;
 import org.signserver.common.util.PathUtil;
+import org.signserver.test.utils.mock.MockedServicesImpl;
 
 /**
  * Tests for a crypto token that uses a Java Keystore (JKS) file.
@@ -69,7 +70,7 @@ public class JKSCryptoTokenTest extends TestCase {
 
         props.setProperty("KEYSTOREPATH",
                 new File(homeDir, file).getAbsolutePath());
-        signToken.init(1, props);
+        signToken.init(1, props, new MockedServicesImpl());
 
         // Activate
         signToken.activate("foo123", null);

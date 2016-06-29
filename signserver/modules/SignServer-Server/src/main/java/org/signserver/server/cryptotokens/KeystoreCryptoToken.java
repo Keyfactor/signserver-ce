@@ -80,7 +80,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     private Integer keygenerationLimit;
 
     @Override
-    public void init(int workerId, Properties properties) throws CryptoTokenInitializationFailureException {
+    public void init(int workerId, Properties properties, IServices services) throws CryptoTokenInitializationFailureException {
         this.properties = properties;
         this.workerId = workerId;
         keystorepath = properties.getProperty(KEYSTOREPATH);

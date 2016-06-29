@@ -15,6 +15,7 @@ package org.signserver.server.cryptotokens;
 import java.util.Properties;
 
 import org.signserver.common.CryptoTokenInitializationFailureException;
+import org.signserver.server.IServices;
 
 /**
  * Class that uses a p12 file on the file system for signing. Only one key and purpose is supported
@@ -31,8 +32,8 @@ import org.signserver.common.CryptoTokenInitializationFailureException;
 public class P12CryptoToken extends KeystoreCryptoToken {
 
     @Override
-    public void init(final int workerId, final Properties props) throws CryptoTokenInitializationFailureException {
+    public void init(final int workerId, final Properties props, IServices services) throws CryptoTokenInitializationFailureException {
         props.setProperty(KEYSTORETYPE, TYPE_PKCS12);
-        super.init(workerId, props);
+        super.init(workerId, props, services);
     }
 }

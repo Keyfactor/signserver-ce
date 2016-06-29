@@ -61,7 +61,7 @@ public class MockedCryptoToken implements ICryptoTokenV4 {
     }
     
     @Override
-    public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
+    public void init(int workerId, Properties props, IServices services) throws CryptoTokenInitializationFailureException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

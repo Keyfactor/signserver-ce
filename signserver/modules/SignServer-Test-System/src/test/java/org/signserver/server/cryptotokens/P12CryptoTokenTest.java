@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.signserver.common.RequestContext;
 import org.signserver.common.util.PathUtil;
+import org.signserver.test.utils.mock.MockedServicesImpl;
 
 /**
  * TODO: Document me!
@@ -55,7 +56,7 @@ public class P12CryptoTokenTest extends TestCase {
         final String signserverhome = PathUtil.getAppHome().getAbsolutePath();
         assertNotNull(signserverhome);
         props.setProperty("KEYSTOREPATH", signserverhome + "/res/test/timestamp1.p12");
-        signToken.init(1, props);
+        signToken.init(1, props, new MockedServicesImpl());
 
         signToken.activate("foo123", null);
 

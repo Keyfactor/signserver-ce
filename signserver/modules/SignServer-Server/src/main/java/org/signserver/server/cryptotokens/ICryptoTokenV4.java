@@ -72,7 +72,7 @@ public interface ICryptoTokenV4 {
     String ALL_KEYS = "all";
 
 
-    void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException;
+    void init(int workerId, Properties props, IServices services) throws CryptoTokenInitializationFailureException;
 
     /**
      * Method used to activate SignTokens when connected after being off-line.

@@ -351,7 +351,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                         Properties properties = new Properties();
                         properties.putAll(defaultProperties);
                         properties.putAll(config.getProperties());
-                        token.init(workerId, properties);
+                        token.init(workerId, properties, services);
                         cryptoToken = token;
                     }
                 } catch (CryptoTokenInitializationFailureException e) {

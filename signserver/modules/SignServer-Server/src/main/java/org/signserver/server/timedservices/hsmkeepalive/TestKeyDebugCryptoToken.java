@@ -74,7 +74,7 @@ public class TestKeyDebugCryptoToken implements ICryptoTokenV4 {
     public static String DISABLE_TESTKEY = "DISABLE_TESTKEY";
     
     @Override
-    public void init(int workerId, Properties props) throws CryptoTokenInitializationFailureException {
+    public void init(int workerId, Properties props, org.signserver.server.IServices services) throws CryptoTokenInitializationFailureException {
         this.debugProperty = props.getProperty(TESTKEY_DEBUG_PROPERTY);
         this.testKey = props.getProperty(HSMKeepAliveTimedService.TESTKEY);
         this.disableTestKey =

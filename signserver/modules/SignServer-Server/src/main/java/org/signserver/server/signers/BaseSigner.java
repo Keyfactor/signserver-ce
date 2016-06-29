@@ -245,6 +245,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
      * Signer implementation can override this method and just return an empty 
      * list if they don't require a signer certificate to be present.
      *
+     * @param services Services for implementations to use
      * @return List of errors or an empty list in case of no errors
      */
     protected List<String> getSignerCertificateFatalErrors(IServices services) {

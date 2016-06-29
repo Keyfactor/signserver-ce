@@ -20,7 +20,6 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.IServices;
-import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 
@@ -62,6 +61,7 @@ public interface IValidationService {
     /**
      * Should return the actual status of the service, status could be if
      * the signer is activated or not, or equivalent for a service.
+     * @param services Services for implementations to use
      * @return a WorkerStatus object.
      */
     WorkerStatus getStatus(IServices services);

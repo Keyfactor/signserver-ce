@@ -63,6 +63,8 @@ public interface IWorker {
      * for instance by the WorkerSessionBean and that would not be discovered 
      * by the worker it self. Example are errors in the configuration of an 
      * IAuthorizer.
+     * 
+     * @param services services for the implementations to use
      * @return a WorkerStatus object.
      */
     WorkerStatus getStatus(final List<String> additionalFatalErrors, final IServices services);

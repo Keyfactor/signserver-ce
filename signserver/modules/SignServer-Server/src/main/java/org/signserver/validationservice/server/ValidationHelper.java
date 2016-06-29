@@ -41,12 +41,13 @@ public class ValidationHelper {
      * 
      * It will work in the following manner:
      * <ul>
-     * <li>All properties starting with 'validator<validatorId>.' or 'val<validatorId>.' will have
+     * <li>All properties starting with 'validator&lt;validatorId&gt;.' or 'val&lt;validatorId&gt;.' will have
      *   the following keys added without the 'val...' prefix.
      * <li>All properties without 'val...' prefix will be added if the key doesn't exist already. I.e
      * all properties with keys starting 'val..' overrides general properties.
-     * <li>If no 'validator<validatorId>.' exists for the given id then, null will be returned.
+     * <li>If no 'validator&lt;validatorId&gt;.' exists for the given id then, null will be returned.
      * </ul>
+     * @param validatorId
      * @param config a worker config containing all properties
      * @return a Propertes according to above specification or 'null' if no property with 'val...' exists
      * in configuration.
@@ -131,6 +132,7 @@ public class ValidationHelper {
      * 
      * @param workerId current workerId
      * @param config worker config for the ValidationServiceWorker
+     * @param em enitity manager
      * @return available validators, never null
      * @throws SignServerException if validators are missconfigured.
      */
@@ -164,12 +166,13 @@ public class ValidationHelper {
      * 
      * It will work in the following manner:
      * <ul>
-     * <li>All properties starting with 'issuer<issuerId>.'  will have
+     * <li>All properties starting with 'issuer&lt;issuerId&gt;.'  will have
      *   the following keys added without the 'issuer...' prefix.
      * <li>All properties without 'issuer...' prefix will be added if the key doesn't exist already. I.e
      * all properties with keys starting 'issuer..' overrides general properties.
-     * <li>If no 'issuer<issuerId>.' exists for the given id then, null will be returned.
+     * <li>If no 'issuer&lt;issuerId&gt;.' exists for the given id then, null will be returned.
      * </ul>
+     * @param issuerId Issuer ID
      * @param validatorProperties a worker config containing all properties
      * @return a Propertes according to above specification or 'null' if no property with 'issuer...' exists
      * in configuration.

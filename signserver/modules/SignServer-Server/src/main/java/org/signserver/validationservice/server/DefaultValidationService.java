@@ -33,6 +33,11 @@ import org.signserver.validationservice.common.Validation.Status;
 public class DefaultValidationService extends BaseValidationService {
 
     /**
+     * @param validationRequest
+     * @return 
+     * @throws org.signserver.common.IllegalRequestException 
+     * @throws org.signserver.common.CryptoTokenOfflineException 
+     * @throws org.signserver.common.SignServerException 
      * @see org.signserver.validationservice.server.IValidationService#validate(org.signserver.validationservice.common.ValidateRequest)
      */
     @Override

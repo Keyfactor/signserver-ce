@@ -65,6 +65,7 @@ public class DefaultX509CertPurposeChecker implements ICertPurposeChecker {
     }
 
     /**
+     * @param config
      * @see org.signserver.validationservice.server.ICertPurposeChecker#init(org.signserver.common.WorkerConfig)
      */
     @Override

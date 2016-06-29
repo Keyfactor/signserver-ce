@@ -125,11 +125,14 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
     }
 
     /**
-     * Generates basic ocsp request
+     * Generates basic OCSP request.
+     * 
      * @param issuerCert certificate of the issuer of the certificate to be queried for status
      * @param cert certificate to be queried for status
      * @return basic ocsp request for single certificate
-     * @throws OCSPException
+     * @throws OCSPException in case the OCSP request generation failed
+     * @throws CertificateEncodingException
+     * @throws OperatorCreationException
      */
     protected OCSPReq generateOCSPRequest(X509Certificate issuerCert, X509Certificate cert) throws OCSPException, CertificateEncodingException, OperatorCreationException {
         CertificateID idToCheck = new JcaCertificateID(new JcaDigestCalculatorProviderBuilder().build().get(CertificateID.HASH_SHA1), issuerCert, cert.getSerialNumber());
@@ -232,8 +235,8 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
      * @throws CertificateParsingException 
      * @throws CryptoTokenOfflineException 
      * @throws IllegalRequestException 
-     * @throws org.bouncycastle.operator.OperatorCreationException 
-     * @throws java.security.cert.CertificateEncodingException 
+     * @throws OperatorCreationException 
+     * @throws CertificateEncodingException 
      */
     protected void parseAndVerifyOCSPResponse(X509Certificate x509Cert, byte[] derocspresponse) throws NoSuchProviderException, OCSPException, NoSuchAlgorithmException, CertStoreException, IOException, SignServerException, CertificateParsingException, IllegalRequestException, CryptoTokenOfflineException, OperatorCreationException, CertificateEncodingException {
         //parse received ocsp response

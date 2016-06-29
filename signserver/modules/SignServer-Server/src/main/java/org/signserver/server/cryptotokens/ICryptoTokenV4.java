@@ -78,6 +78,7 @@ public interface ICryptoTokenV4 {
      * Method used to activate SignTokens when connected after being off-line.
      * 
      * @param authenticationcode used to unlock crypto token, i.e PIN for smartcard HSMs
+     * @param services services for implementations to use
      * @throws CryptoTokenOfflineException if SignToken is not available or connected.
      * @throws CryptoTokenAuthenticationFailureException with error message if authentication to crypto token fail.
      */
@@ -87,7 +88,9 @@ public interface ICryptoTokenV4 {
      * Method used to deactivate crypto tokens. 
      * Used to set a crypto token too off-line status and to reset the HSMs authorization code.
      * 
+     * @param services services for implementations to use
      * @return true if deactivation was successful.
+     * @throws CryptoTokenOfflineException
      */
     boolean deactivate(IServices services) throws CryptoTokenOfflineException;
 
@@ -112,6 +115,9 @@ public interface ICryptoTokenV4 {
             CryptoTokenOfflineException, KeyStoreException;
 
     /**
+     * Get token status.
+     * 
+     * @param services Services for implementations to use
      * @return The current state of the crypto token
      */
     int getCryptoTokenStatus(IServices services);
@@ -172,8 +178,10 @@ public interface ICryptoTokenV4 {
      * @param context the request context
      * @return an crypto instance
      * @throws CryptoTokenOfflineException In case the token was not active or could not function for any other reasons
+     * @throws NoSuchAliasException In case the alias doesn't exist
+     * @throws InvalidAlgorithmParameterException In case an algorithm is not supported by the token implementation
+     * @throws UnsupportedCryptoTokenParameter In case a parameter is not supported by the token implementation
      * @throws IllegalRequestException If the operation could not be carried out because an issue with the request
-     * @throws SignServerException If the request could not be carried out for any other reasons
      */
     ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws
             CryptoTokenOfflineException, 
@@ -253,6 +261,7 @@ public interface ICryptoTokenV4 {
      * Remove a key from the token (if supported).
      *
      * @param alias of key to remove
+     * @param services services for the implementations to use
      * @return True if the key was successfully removed or false it failed or the token does not support key removal
      * @throws CryptoTokenOfflineException if the token was not activated
      * @throws KeyStoreException for keystore related errors

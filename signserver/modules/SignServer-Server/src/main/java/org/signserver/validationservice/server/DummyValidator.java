@@ -81,6 +81,10 @@ public class DummyValidator extends BaseValidator {
 
     /**
      * @param cert
+     * @return 
+     * @throws org.signserver.common.IllegalRequestException 
+     * @throws org.signserver.common.CryptoTokenOfflineException 
+     * @throws org.signserver.common.SignServerException 
      * @see org.signserver.validationservice.server.IValidator#validate(org.signserver.validationservice.common.ICertificate)
      */
     @Override
@@ -211,6 +215,8 @@ public class DummyValidator extends BaseValidator {
     }
 
     /**
+     * @throws java.net.ConnectException
+     * @throws org.signserver.common.SignServerException
      * @see org.signserver.validationservice.server.IValidator#testConnection()
      */
     @Override

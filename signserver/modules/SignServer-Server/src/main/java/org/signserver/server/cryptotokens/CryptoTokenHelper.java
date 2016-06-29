@@ -138,8 +138,12 @@ public class CryptoTokenHelper {
     private static final String CESECORE_SUBJECT_DUMMY_L = "L=around";
     private static final String CESECORE_SUBJECT_DUMMY_C = "C=US";
     
-    /** A workaround for the feature in SignServer 2.0 that property keys are 
-     * always converted to upper case. The EJBCA CA Tokens usually use mixed case properties
+    /**
+     * A workaround for the feature in SignServer 2.0 that property keys are 
+     * always converted to upper case. The EJBCA CA Tokens usually use mixed case properties.
+     * 
+     * @param props Properties
+     * @return Properties with keys case-converted
      */
     public static Properties fixP11Properties(final Properties props) {
         String prop = props.getProperty(PROPERTY_AUTHCODE);

@@ -51,6 +51,11 @@ public class CRLValidator extends BaseValidator {
     private static final Logger LOG = Logger.getLogger(CRLValidator.class);
 
     /**
+     * @param workerId
+     * @param validatorId
+     * @param props
+     * @param em
+     * @throws org.signserver.common.SignServerException
      * @see org.signserver.validationservice.server.IValidator#init(int, int, java.util.Properties, javax.persistence.EntityManager, org.signserver.server.cryptotokens.ICryptoToken)
      */
     @Override

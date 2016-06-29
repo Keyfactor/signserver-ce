@@ -75,8 +75,9 @@ public interface IValidator {
 
     /**
      * Method that should return the entire certificate chain for the given certificate
-     * or null if the validator doesn't support the issuer of the given certificate.
-     * @param certificate to verify
+     * or null if the validator doesn't support the issuer of the given certificate
+     * 
+     * @param cert Given certificate
      * @return a certificate chain with the root CA last or null if validator doesn't support given issuer.
      */
     List<Certificate> getCertificateChain(Certificate cert);

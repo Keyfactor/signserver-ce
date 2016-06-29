@@ -138,9 +138,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * Get alias given a specific purpose and as a side-effect log the chosen
      * alias in the context (if any).
      *
-     * @param purpose
-     * @param request
-     * @param context
+     * @param purpose Key purpose
+     * @param request Process request
+     * @param context Request context
      * @return Key alias to use
      * @throws IllegalRequestException
      * @throws CryptoTokenOfflineException
@@ -282,6 +282,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * Return the crypto token used by this instance.
      * If the crypto token has not yet been initialized, it will be instanciated before being returned.
      *
+     * @param services Services to use
      * @return The used crypto token
      * @throws SignServerException
      */
@@ -648,6 +649,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
 
     /**
+     * @throws CryptoTokenOfflineException
+     * @throws KeyStoreException
      * @see IProcessable#testKey(java.lang.String, char[])
      */
     @Override
@@ -716,6 +719,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     /**
      * Returns fatal errors found while initializing the crypto token.
      *
+     * @param services Services to use
      * @return List of crypto token error message strings
      */
     protected List<String> getCryptoTokenFatalErrors(IServices services) {
@@ -740,6 +744,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * It is the caller's responsibility to make sure the call is followed up
      * by a call to releaseCryptoInstance() for each instance. Use try-final.
      *
+     * @param purpose key purpose
+     * @param request process request
      * @param context the request context
      * @return an crypto instance
      * @throws CryptoTokenOfflineException
@@ -763,11 +769,16 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * It is the caller's responsibility to make sure the call is followed up
      * by a call to releaseCryptoInstance() for each instance. Use try-final.
      *
+     * @param purpose Key purpose
+     * @param request Process request
+     * @param params Additional parameters to pass to the crypto token
      * @param context the request context
      * @return an crypto instance
      * @throws CryptoTokenOfflineException
      * @throws IllegalRequestException
      * @throws SignServerException
+     * @throws java.security.InvalidAlgorithmParameterException
+     * @throws org.signserver.common.UnsupportedCryptoTokenParameter
      */
     protected ICryptoInstance acquireCryptoInstance(final int purpose, final ProcessRequest request, final Map<String, Object> params, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
         final ICryptoInstance result;
@@ -821,7 +832,10 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
     /**
      * Releases a previously acquired crypto instance.
+     * 
      * @param instance to release
+     * @param context request context
+     * @throws SignServerException
      */
     protected void releaseCryptoInstance(final ICryptoInstance instance, RequestContext context) throws SignServerException {
         ICryptoTokenV4 token = getCryptoToken(context.getServices());

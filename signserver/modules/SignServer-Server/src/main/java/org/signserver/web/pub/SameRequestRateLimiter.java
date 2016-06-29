@@ -20,9 +20,9 @@ import java.util.concurrent.locks.ReentrantLock;
  * Instead of allowing each request to proceed, only the first will return a ticket where isFirst() is false.
  * Example use:
  * 
- * final static SameRequestRateLimiter<Object> srrl = new SameRequestRateLimiter<Object>();
+ * final static SameRequestRateLimiter&lt;Object&gt; srrl = new SameRequestRateLimiter&lt;Object&gt;();
  * ...
- * SameRequestRateLimiter<Object>.Result result = srrl.getResult();
+ * SameRequestRateLimiter&lt;Object&gt;.Result result = srrl.getResult();
  * if (result.isFirst()) {
  *   try {
  *     // Perform common action
@@ -37,6 +37,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * This class was copied from the old EJBCA-util.
  * 
  * @version $Id: SameRequestRateLimiter.java 15029 2012-06-19 08:31:20Z jeklund $
+ * @param <T> Value type
  */
 public class SameRequestRateLimiter<T> {
     
@@ -66,7 +67,11 @@ public class SameRequestRateLimiter<T> {
             return value;
         }
         
-        /** Store result of operation and release all pending threads */
+        /**
+         * Store result of operation and release all pending threads.
+         * 
+         * @param value Value to store
+         */
         public void setValue(final T value) {
             resultObjectLock.lock();
             try {
@@ -79,7 +84,11 @@ public class SameRequestRateLimiter<T> {
             }
         }
         
-        /** Store resulting exception and release all pending threads */
+        /**
+         * Store resulting exception and release all pending threads.
+         * 
+         * @param throwable Exception to store
+         */
         public void setError(final Throwable throwable) {
             resultObjectLock.lock();
             try {

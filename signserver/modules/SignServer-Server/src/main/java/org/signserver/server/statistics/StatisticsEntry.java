@@ -49,7 +49,9 @@ public class StatisticsEntry implements Delayed {
     }
 
     /**
-     * Method to add the records of this event to the statistics collector. 
+     * Method to add the records of this event to the statistics collector.
+     * 
+     * @param event Event to add
      */
     public void addEvent(Event event) {
         numberOfEvents++;

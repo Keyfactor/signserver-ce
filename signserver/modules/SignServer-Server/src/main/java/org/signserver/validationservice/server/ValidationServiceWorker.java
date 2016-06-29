@@ -47,6 +47,11 @@ public class ValidationServiceWorker extends BaseProcessable {
     
     /**
      * Initialization method creating the validation service
+     * 
+     * @param workerId  Worker ID
+     * @param config Worker configuration
+     * @param workerContext Worker context
+     * @param workerEntityManager Enitity manager
      * @see org.signserver.server.BaseWorker#init(int, org.signserver.common.WorkerConfig, javax.persistence.EntityManager)
      */
     @Override
@@ -111,6 +116,7 @@ public class ValidationServiceWorker extends BaseProcessable {
     }
 
     /**
+     * @return The status
      * @see org.signserver.server.BaseProcessable#getStatus()
      */
     @Override

@@ -60,7 +60,8 @@ public class EjbcaPatternLogger {
      * @param orderString A string that matches the pattern in m and specifies the order in which values are logged by the logger
      * @param logger A log4j Logger that is used for output
      * @param logDateFormat A string that specifies how the log-time is formatted
-     * @param timeZone
+     * @param timeZone Time zone to use
+     * @param level Priority level
      */
     public EjbcaPatternLogger(Matcher m, String orderString, Logger logger, String logDateFormat, String timeZone, Priority level) {
         this.m = m;

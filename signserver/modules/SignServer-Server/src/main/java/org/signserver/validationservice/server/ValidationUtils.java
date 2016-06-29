@@ -98,8 +98,11 @@ public class ValidationUtils {
     }
 
     /**
-     * retrieve X509CRL from specified URL, uses passed in CertificateFactory
+     * Retrieve X509CRL from specified URL, uses passed in CertificateFactory.
      * 
+     * @param url Specified URL
+     * @param certFactory Certificate factory
+     * @return X509 CRL
      * @throws SignServerException
      */
     public static X509CRL fetchCRLFromURL(URL url,

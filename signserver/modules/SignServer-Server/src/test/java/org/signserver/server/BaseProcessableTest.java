@@ -146,7 +146,11 @@ public class BaseProcessableTest extends TestCase {
           +  "BQHSf/Icgab1tANxgQSk8IOhZ0/OQ6LdfoTmRVsrxz58tzvA8Fw+FcyyIni8p6ve"
           +  "2oETepx5f5yVfLJzAdcgTXwo6R52yBgw2w==";
     
-    /** Tests the base case were no default properties are used to configure the PKCS11CryptoToken. */
+    /**
+     * Tests the base case were no default properties are used to configure the PKCS11CryptoToken.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testGetCryptoToken_noDefaults() throws Exception {
         LOG.info("testGetCryptoToken_noDefaults");
@@ -192,6 +196,8 @@ public class BaseProcessableTest extends TestCase {
      * Test default value for SLOTLISTINDEX and ATTRIBUTES. 
      * First the value is specified only as a default value and then the value 
      * is overriden by the worker.
+     * 
+     * @throws Exception
      */
     @Test
     public void testGetCryptoToken_defaultSlotListIndex() throws Exception {
@@ -249,6 +255,8 @@ public class BaseProcessableTest extends TestCase {
      * The SLOTLISTINDEX property is not specified here as it should not be 
      * specified at the same time as the SLOT property and it is also tested in 
      * a separate test.
+     * 
+     * @throws Exception
      */
     @Test
     public void testGetCryptoToken_defaultAll() throws Exception {
@@ -313,6 +321,7 @@ public class BaseProcessableTest extends TestCase {
     
     /**
      * Test the fatal error reported when setting an unknown crypto token class.
+     * 
      * @throws Exception
      */
     @Test
@@ -336,6 +345,7 @@ public class BaseProcessableTest extends TestCase {
     /**
      * Tests that when no certificate is explicitly set in the configuration
      * then certificate from the token is used.
+     * 
      * @throws Exception
      */
     @Test
@@ -361,6 +371,7 @@ public class BaseProcessableTest extends TestCase {
     /**
      * Tests that when a certificate is explicitly set in the configuration that
      * certificate is used instead of the one in the token.
+     * 
      * @throws Exception
      */
     @Test

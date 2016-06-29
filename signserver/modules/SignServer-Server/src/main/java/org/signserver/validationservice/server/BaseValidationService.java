@@ -88,6 +88,7 @@ public abstract class BaseValidationService implements IValidationService {
     }
 
     /**
+     * @param services Services to use
      * @see org.signserver.validationservice.server.IValidationService#getStatus()
      */
     @Override
@@ -127,6 +128,9 @@ public abstract class BaseValidationService implements IValidationService {
 
     /**
      * Method returning the configured cert type checker if it wasn't configured properly.
+     * 
+     * @return The configured cert purpose checker 
+     * @throws SignServerException
      */
     protected ICertPurposeChecker getCertPurposeChecker() throws SignServerException {
         if (certTypeChecker == null) {

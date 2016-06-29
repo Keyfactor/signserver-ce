@@ -214,7 +214,10 @@ public class OCSPValidator extends BaseValidator {
     }
 
     /**
-     * Find the issuer of this certificate and get the Authorized OCSP Responder Certificates
+     * Find the issuer of this certificate and get the Authorized OCSP Responder Certificates.
+     * 
+     * @param cert Given certificate
+     * @return List of authorized OSCP responder certificates
      * @throws SignServerException 
      * @throws IOException 
      * @throws CertificateException 

@@ -26,8 +26,6 @@ import org.signserver.common.ServiceContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerStatus;
-import org.signserver.server.IServices;
-import org.signserver.server.ServiceExecutionFailedException;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.server.timedservices.ITimedService;
 
@@ -72,6 +70,7 @@ public class UnloadableWorker extends BaseSigner implements ITimedService {
 
     /**
      * Get the fatal errors for this worker.
+     * 
      * @return List of errors which for this implementation always will contain
      * an error message
      */

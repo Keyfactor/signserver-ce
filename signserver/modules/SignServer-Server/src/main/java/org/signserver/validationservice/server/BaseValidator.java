@@ -64,6 +64,7 @@ public abstract class BaseValidator implements IValidator {
     }
 
     /**
+     * @throws SignServerException
      * @see org.signserver.validationservice.server.IValidator#init(int, int, java.util.Properties, javax.persistence.EntityManager, org.signserver.server.cryptotokens.ICryptoToken)
      */
     @Override
@@ -78,9 +79,8 @@ public abstract class BaseValidator implements IValidator {
      * Retrieves certificate chain for certificate given
      * Certificate chain will be retrieved from configured certchain properties for issuers 
      * 
-     * @return  
-     * 
-     * certificates starting from the CA certificate issuing this end entity cert up to root certificate, if issuer is found in configured chains
+     * @param cert given certificate
+     * @return certificates starting from the CA certificate issuing this end entity cert up to root certificate, if issuer is found in configured chains
      * null if passed in certificate's issuer is not in any of the configured chains
      * 
      */
@@ -243,8 +243,11 @@ public abstract class BaseValidator implements IValidator {
     }
 
     /**
-     * get properties of the issuer that is configured to accept this certificate (through certchain)
-     * have to match using rootCert and down the chain, until the chain for cert is exhausted 
+     * Get properties of the issuer that is configured to accept this certificate (through certchain)
+     * have to match using rootCert and down the chain, until the chain for cert is exhausted.
+     * 
+     * @param cert Given certificate
+     * @return Properties of the issuer
      */
     protected Properties getIssuerProperties(Certificate cert) {
 
@@ -317,6 +320,7 @@ public abstract class BaseValidator implements IValidator {
     }
 
     /**
+     * @param rootCACert Root CA certificate
      * @return true if passed in certificate is found as root certificate in any of configured issuers
      * 		   false otherwise 
      */
@@ -339,9 +343,12 @@ public abstract class BaseValidator implements IValidator {
     }
 
     /**
-     * find the issuer of this certificate and get the CRLPaths property which contains VALIDATIONSERVICE_ISSUERCRLPATHSDELIMITER separated
+     * Find the issuer of this certificate and get the CRLPaths property which contains VALIDATIONSERVICE_ISSUERCRLPATHSDELIMITER separated
      * list of URLs for accessing crls for that specific issuer
-     * and return as List of URLs
+     * and return as List of URLs.
+     * 
+     * @param cert Given certificate
+     * @return List of CRL URLs
      * @throws SignServerException 
      */
     protected List<URL> getIssuerCRLPaths(Certificate cert) throws SignServerException {

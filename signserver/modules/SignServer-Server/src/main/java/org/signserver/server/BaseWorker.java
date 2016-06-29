@@ -113,6 +113,8 @@ public abstract class BaseWorker implements IWorker {
      * method to succeed.
      * If the returned list is non empty the worker will be reported as offline 
      * in status listings and by the health check (unless the worker is disabled).
+     * 
+     * @param services Services for the implementations to use
      * @return A list of (short) messages describing each error or an empty list
      * in case there are no errors
      * @since SignServer 3.2.3

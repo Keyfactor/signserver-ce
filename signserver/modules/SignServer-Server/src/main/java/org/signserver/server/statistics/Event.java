@@ -78,7 +78,7 @@ public class Event {
     }
 
     /**
-     * @return @return the time the event started or null if it haven't ended yet.
+     * @return the time the event started or null if it haven't ended yet.
      */
     public Date getEndTimeStamp() {
         return endTimeStamp;

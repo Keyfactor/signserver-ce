@@ -113,6 +113,8 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      * Tests that requesting time when a leap second is near,
      * the time is returned right after for the PAUSE strategy and
      * directly returns null for the STOP strategy.
+     * 
+     * @throws Exception
      */
     public void test05RequestTimeBeforeLeapsecond() throws Exception {
         LOG.info("test05RequestTimeBeforeLeapsecond");
@@ -140,6 +142,8 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      * Test that requesting time when a negative leap second is near,
      * the time is returned right after.
      * Test that the time source is causing a pause.
+     * 
+     * @throws Exception
      */
     public void test06RequestTimeBeforeNegativeLeapsecond() throws Exception {
         LOG.info("test06RequestTimeBeforeNegativeLeapsecond");
@@ -170,6 +174,8 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     /** 
      * Test that requesting time when a leap second is not imminent
      * does not cause an extra sleep and the time is returned.
+     * 
+     * @throws Exception
      */
     public void test07RequestTimeNoLeapsecond() throws Exception {
         LOG.info("test07RequestTimeNoLeapsecond");
@@ -196,6 +202,8 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     /** 
      * Test that requesting time when leap second set to "NONE"
      * does not cause an extra sleep.
+     * 
+     * @throws Exception
      */
     public void test08RequestTimeNoLeapsecond() throws Exception {
         LOG.info("test08RequestTimeNoLeapsecond");
@@ -222,6 +230,8 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     /** 
      * Test that requesting time when leapsecond is coming up, but time source is configured
      * not to handle leapseconds, does not cause an extra sleep.
+     * 
+     * @throws Exception
      */
     public void test09RequestTimeLeapsecondNotHandled() throws Exception {
         LOG.info("test09RequestTimeLeapsecondNotHandled");
@@ -239,6 +249,8 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     
     /** 
      * Test that the time source returns null when the status property is not available.
+     * 
+     * @throws Exception
      */
     public void test10RequestTimeLeapsecondNotHandled() throws Exception {
         LOG.info("test10RequestTimeLeapsecondNotHandled");
@@ -264,6 +276,8 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      * Test that requesting time when a leap second is near,
      * but with the time stamp near midnight, but in the local time zone
      * Test that the time source is not pausing in this case.
+     * 
+     * @throws Exception
      */
     public void test11RequestTimeLocalTimezone() throws Exception {
         LOG.info("test11RequestTimeLocalTimezone");
@@ -290,7 +304,9 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     /** 
      * Test that requesting time when a leap second is near,
      * but with the time stamp near midnight, but in a non-GMT.
-     * Test that the time source is not pausing in this case
+     * Test that the time source is not pausing in this case.
+     * 
+     * @throws Exception
      */
     public void test12RequestTimeOtherTimezone() throws Exception {
         LOG.info("test12RequestTimeOtherTimezone");
@@ -390,6 +406,8 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
      * Test that requesting time when a negative leapsecond is near,
      * the time is returned right after for the PAUSE strategy and returned 
      * null for the STOP strategy.
+     * 
+     * @throws Exception
      */
     public void test20RequestTimeBeforePositiveLeapsecond() throws Exception {  
         LOG.info("test20RequestTimeBeforePositiveLeapsecond");

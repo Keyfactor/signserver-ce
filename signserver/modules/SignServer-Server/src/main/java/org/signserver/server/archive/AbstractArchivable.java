@@ -25,16 +25,18 @@ public abstract class AbstractArchivable implements Archivable, Serializable {
     
     private static final long serialVersionUID = 0L;
 
-    private String type;
+    private final String type;
     
     /** ID of the transaction. */
-    private String archiveId;
+    private final String archiveId;
     
-    private String contentType;
+    private final String contentType;
 
     /**
      * Constructor taking a type and contentType.
+     * 
      * @param type The type of Archivable this is.
+     * @param archiveId ID of archivable
      * @param contentType The MIME type of the content or similar.
      * @see Archivable#TYPE_REQUEST
      * @see Archivable#TYPE_RESPONSE

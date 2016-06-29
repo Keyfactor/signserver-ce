@@ -32,6 +32,10 @@ public class OCSPCRLValidator extends OCSPValidator {
 
     /**
      * override the ocsp validators path checker with ocspcrl pathchecker
+     * 
+     * @throws SignServerException
+     * @throws CertificateException
+     * @throws IOException
      */
     @Override
     protected void addCertPathCheckers(Certificate cert,

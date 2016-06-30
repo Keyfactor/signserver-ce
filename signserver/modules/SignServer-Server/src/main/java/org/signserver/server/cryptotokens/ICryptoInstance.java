@@ -23,12 +23,12 @@ import javax.crypto.SecretKey;
  * Represents an instance in the CryptoToken that can be used to access
  * a PrivateKey for signing or a secret key for symmetric crypto operations.
  * 
- * The instance can be obtained from an ICryptoTokenV3 and should be released
+ * The instance can be obtained from an ICryptoTokenV4 and should be released
  * as soon as it will not be used anymore.
  * 
  * @author Markus Kilås
  * @version $Id$
- * @see ICryptoTokenV3
+ * @see ICryptoTokenV4
  */
 public interface ICryptoInstance /** Java7: extends AutoClosable */ {
 

@@ -132,7 +132,7 @@ public interface IProcessable extends IWorker {
      * @throws NoSuchAlgorithmException
      * @throws InvalidAlgorithmParameterException
      * @throws UnsupportedCryptoTokenParameter
-     * @see ICryptoTokenV3#generateKey(java.lang.String, java.lang.String, java.lang.String, char[], java.util.Map, org.signserver.server.IServices) 
+     * @see ICryptoTokenV4#generateKey(java.lang.String, java.lang.String, java.lang.String, char[], java.util.Map, org.signserver.server.IServices) 
      */
     void generateKey(final String keyAlgorithm, final String keySpec, final String alias, final char[] authCode, Map<String, Object> params, final IServices services) throws
             CryptoTokenOfflineException,
@@ -149,7 +149,7 @@ public interface IProcessable extends IWorker {
      * @return Collection of test results
      * @throws CryptoTokenOfflineException 
      * @throws KeyStoreException 
-     * @see ICryptoToken#testKey(java.lang.String, char[])
+     * @see ICryptoTokenV4#testKey(java.lang.String, char[])
      */
     Collection<KeyTestResult> testKey(String alias,
             char[] authCode)
@@ -164,7 +164,7 @@ public interface IProcessable extends IWorker {
      * @return Collection of test results
      * @throws org.signserver.common.CryptoTokenOfflineException 
      * @throws java.security.KeyStoreException 
-     * @see ICryptoTokenV3#testKey(java.lang.String, char[], org.signserver.server.IServices) 
+     * @see ICryptoTokenV4#testKey(java.lang.String, char[], org.signserver.server.IServices) 
      */
     Collection<org.signserver.common.KeyTestResult> testKey(String alias,
         char[] authCode, IServices services) throws CryptoTokenOfflineException, KeyStoreException;

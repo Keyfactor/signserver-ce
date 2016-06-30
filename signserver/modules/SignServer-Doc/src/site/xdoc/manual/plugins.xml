@@ -2559,7 +2559,7 @@ The following properties can currently be specified in the global configuration:
 
                     <h4>Example usage</h4>
                         <p>
-Edit (preferably a copy of) pkcs11-crypto-configuration.properties to match your PKCS#11 token. Run the following command to set up the token:
+Edit (preferably a copy of) pkcs11-crypto.properties to match your PKCS#11 token. Run the following command to set up the token:
                         </p>
 <source>bin/signserver setproperties pkcs11-crypto-configuragtion.properties</source>
                         <p>

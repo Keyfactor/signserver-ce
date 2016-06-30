@@ -448,13 +448,11 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
     public Certificate getSigningCertificate(String alias, IServices services) throws CryptoTokenOfflineException {
         final Certificate result;
-        /* TODO: This needs to be fixed in DSS-951 but does not work out of the
-                 box as code expects getSigningCertificate() to auto-activate
-                 the crypto token (!).
         
+        // Don't return certificates when NOCERTIFICATES is specified
         if (isNoCertificates()) {
             result = null;
-        } else */{
+        } else {
             final Certificate certFromConfig;
             if (alias != null && !alias.equals(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY))) {
                 certFromConfig = null;
@@ -513,12 +511,11 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
     public List<Certificate> getSigningCertificateChain(final String alias, final IServices services) throws CryptoTokenOfflineException {
         final List<Certificate> result;
-        /* TODO: This needs to be fixed in DSS-951 but does not work out of the
-                 box as code expects getSigningCertificate() to auto-activate
-                 the crypto token (!).
+
+        // Don't return certificates when NOCERTIFICATES is specified
         if (isNoCertificates()) {
             result = null;
-        } else */{
+        } else {
             final List<Certificate> certChainFromConfig;
             if (alias != null && !alias.equals(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY))) {
                 certChainFromConfig = null;

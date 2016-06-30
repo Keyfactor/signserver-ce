@@ -65,6 +65,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
 
     private String keystorepath = null;
     private String keystorepassword = null;
+    private boolean autoActivate;
 
     private volatile KeyStore ks; // Note: Needs volatile as different threads might load the key store at activation time
     private String keystoretype;
@@ -120,6 +121,16 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                 throw new CryptoTokenInitializationFailureException("Incorrect value for " + CryptoTokenHelper.PROPERTY_KEYGENERATIONLIMIT + ": " + ex.getLocalizedMessage());
             }
         }
+        
+        // If a password is specified we are in auto-activate mode
+        autoActivate = keystorepassword != null;
+        if (autoActivate) {
+            try {
+                activate(keystorepassword, services);
+            } catch (CryptoTokenAuthenticationFailureException | CryptoTokenOfflineException ex) {
+                LOG.error("Auto activation failed: " + ex.getLocalizedMessage());
+            }
+        }
     }
 
     @Override
@@ -128,6 +139,17 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                 && (!properties.containsKey(NEXTKEY)
                     || entries.get(PURPOSE_NEXTKEY) != null)) {
             return WorkerStatus.STATUS_ACTIVE;
+        } else if (autoActivate) {
+            try {
+                activate(keystorepassword, services);
+                if (entries != null && entries.get(PURPOSE_SIGN) != null
+                        && (!properties.containsKey(NEXTKEY)
+                            || entries.get(PURPOSE_NEXTKEY) != null)) {
+                    return WorkerStatus.STATUS_ACTIVE;
+                }
+            } catch (CryptoTokenAuthenticationFailureException | CryptoTokenOfflineException ex) {
+                LOG.error("Auto activation failed: " + ex.getLocalizedMessage());
+            }
         }
 
         return WorkerStatus.STATUS_OFFLINE;

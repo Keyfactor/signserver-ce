@@ -303,7 +303,7 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
                    IllegalArgumentException, 
                    CertificateEncodingException, 
                    OperationUnsupportedException, InvalidWorkerIdException, 
-                   SignServerException {
+                   SignServerException, AuthorizationDeniedException, QueryException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
         final String additionalAlias = "additionalKey";
         
         try {
@@ -320,11 +320,12 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
             // import certficate chain
             importCertificateChain(Arrays.asList(CertTools.getCertfromByteArray(cert.getEncoded())), existingKey);
 
-            List<Certificate> chain = getCertificateChain(existingKey);
-
-            assertEquals("Number of certs", 1, chain.size());
-
-            Certificate foundCert = chain.get(0);
+            // Find the certificate chain
+            TokenSearchResults searchResults = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), existingKey)), true);
+            assertEquals("Entry exists", 1, searchResults.getEntries().size());
+            Certificate[] chain = searchResults.getEntries().iterator().next().getParsedChain();
+            assertEquals("Number of certs", 1, chain.length);
+            Certificate foundCert = chain[0];
 
             assertTrue("Imported cert",
                     Arrays.equals(foundCert.getEncoded(), cert.getEncoded()));
@@ -343,22 +344,22 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
             importCertificateChain(Arrays.asList(CertTools.getCertfromByteArray(newCert.getEncoded())), additionalAlias);
 
             // check that previously imported cert chain is un-affected
-            chain = getCertificateChain(existingKey);
-
-            assertEquals("Number of certs", 1, chain.size());
-
-            foundCert = chain.get(0);
+            searchResults = searchTokenEntries(0, Integer.MAX_VALUE, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), existingKey)), true);
+            assertEquals("Entry exists", 1, searchResults.getEntries().size());
+            chain = searchResults.getEntries().iterator().next().getParsedChain();
+            assertEquals("Number of certs", 1, chain.length);
+            foundCert = chain[0];
 
             assertTrue("Imported cert",
                     Arrays.equals(foundCert.getEncoded(), cert.getEncoded()));
-            
+
             
             // Test that it is not allowed to import a certificate for
             // an other key
             try {
-                final List<Certificate> chainForExistingKey = chain;
+                final Certificate[] chainForExistingKey = chain;
                 final String aliasForAnOtherKey = additionalAlias;
-                importCertificateChain(chainForExistingKey, aliasForAnOtherKey);
+                importCertificateChain(Arrays.asList(chainForExistingKey), aliasForAnOtherKey);
                 fail("Should have thrown exception about the key not matching");
             } catch (CryptoTokenOfflineException expected) {
                 assertTrue("ex: " + expected.getMessage(), expected.getMessage().contains("does not match"));

@@ -23,8 +23,8 @@
             </p>-->
             <section name="JavaDoc">
                     <p>
-                            The JavaDoc for SignServer is available at SIGNSERVER_HOME/doc/api/index.html
-                            after running "mvn javadoc:javadoc".    
+                            The JavaDoc for SignServer is available at SIGNSERVER_HOME/target/site/apidocs/index.html
+                            after running "mvn javadoc:aggregate".
                     </p>
 		</section>
 

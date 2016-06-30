@@ -1932,11 +1932,11 @@ Finally we can see that both workers are configured with "RENEWWORKER=RenewalWor
                     <source>$ bin/signserver setproperties configuration.properties</source>
                     <p>Example:</p>
                     <source>
-$ bin/signserver setproperties doc/sample-configs/signerstatusreport_configuration.properties
+$ bin/signserver setproperties doc/sample-configs/signerstatusreport.properties
 ===========================================
   Executing Command on host : localhost
 ===========================================
-Configuring properties as defined in the file : doc/sample-configs/signerstatusreport_configuration.properties
+Configuring properties as defined in the file : doc/sample-configs/signerstatusreport.properties
 Setting the property ACTIVE to TRUE for worker 2
 Setting the property INTERVAL to 10 for worker 2
 Setting the global property WORKER2.CLASSPATH to org.signserver.server.timedservices.SignerStatusReportTimedService with scope GLOB.

@@ -30,7 +30,7 @@ public class ExceptionUtil {
      * @param exception The obtain all exception messages from
      * @return List of exception messages
      */
-    public static final List<String> getCauseMessages(Exception exception) {
+    public static final List<String> getCauseMessages(Throwable exception) {
         // collect cause messages
         final List<String> causes = new LinkedList<>();
 

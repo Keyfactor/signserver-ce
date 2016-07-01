@@ -182,13 +182,15 @@ public interface ICryptoTokenV4 {
      * @throws InvalidAlgorithmParameterException In case an algorithm is not supported by the token implementation
      * @throws UnsupportedCryptoTokenParameter In case a parameter is not supported by the token implementation
      * @throws IllegalRequestException If the operation could not be carried out because an issue with the request
+     * @throws SignServerException For other internal (not to be leaked to the client side) errors
      */
     ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws
             CryptoTokenOfflineException, 
             NoSuchAliasException, 
             InvalidAlgorithmParameterException,
             UnsupportedCryptoTokenParameter,
-            IllegalRequestException;
+            IllegalRequestException, 
+            SignServerException;
 
     /**
      * Releases a previously acquired crypto instance.

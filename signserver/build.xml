@@ -421,6 +421,7 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <exclude name="bin/setstatusinsync.sh"/>
             <exclude name="bin/signclient"/>
             <exclude name="bin/signserver"/>
+	    <exclude name="bin/signserver-db"/>
             <exclude name="bin/signserver.sh"/>
             <exclude name="bin/signserver-gui"/>
 	    <exclude name="bin/stresstest"/>
@@ -457,6 +458,7 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <include name="bin/setstatusinsync.sh"/>
             <include name="bin/signclient"/>
             <include name="bin/signserver"/>
+	    <include name="bin/signserver-db"/>
             <include name="bin/signserver.sh"/>
             <include name="bin/signserver-gui"/>
 	    <include name="bin/stresstest"/>
@@ -474,6 +476,7 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <exclude name="bin/setstatusinsync.sh"/>
             <exclude name="bin/signclient"/>
             <exclude name="bin/signserver"/>
+	    <exclude name="bin/signserver-db"/>
             <exclude name="bin/signserver.sh"/>
             <exclude name="bin/signserver-gui"/>
 	    <exclude name="bin/stresstest"/>
@@ -511,6 +514,7 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <include name="bin/setstatusinsync.sh"/>
             <include name="bin/signclient"/>
             <include name="bin/signserver"/>
+	    <include name="bin/signserver-db"/>
             <!-- <include name="bin/signserver.sh"/>-->
             <include name="bin/signserver-gui"/>
 	    <include name="bin/stresstest"/>
@@ -529,6 +533,7 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <exclude name="bin/setstatusinsync.sh"/>
             <exclude name="bin/signclient"/>
             <exclude name="bin/signserver"/>
+	    <exclude name="bin/signserver-db"/>
             <exclude name="bin/signserver.sh"/>
             <exclude name="bin/signserver-gui"/>
 	    <exclude name="bin/stresstest"/>

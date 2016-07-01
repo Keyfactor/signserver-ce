@@ -417,6 +417,7 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <exclude name="bin/admingui.sh"/>
             <exclude name="bin/ant"/>
             <exclude name="bin/client.sh"/>
+	    <exclude name="bin/randomtest"/>
             <exclude name="bin/setstatusinsync.sh"/>
             <exclude name="bin/signclient"/>
             <exclude name="bin/signserver"/>
@@ -452,6 +453,7 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <include name="bin/admingui.sh"/>
             <include name="bin/ant"/>
             <include name="bin/client.sh"/>
+	    <include name="bin/randomtest"/>
             <include name="bin/setstatusinsync.sh"/>
             <include name="bin/signclient"/>
             <include name="bin/signserver"/>
@@ -468,6 +470,7 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <exclude name="bin/admingui.sh"/>
             <exclude name="bin/ant"/>
             <exclude name="bin/client.sh"/>
+	    <exclude name="bin/randomtest"/>
             <exclude name="bin/setstatusinsync.sh"/>
             <exclude name="bin/signclient"/>
             <exclude name="bin/signserver"/>
@@ -504,6 +507,7 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <!-- <include name="bin/admingui.sh"/>-->
             <include name="bin/ant"/>
             <!-- <include name="bin/client.sh"/>-->
+	    <include name="bin/randomtest"/>
             <include name="bin/setstatusinsync.sh"/>
             <include name="bin/signclient"/>
             <include name="bin/signserver"/>
@@ -521,6 +525,7 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <exclude name="bin/admingui.sh"/>
             <exclude name="bin/ant"/>
             <exclude name="bin/client.sh"/>
+	    <exclude name="bin/randomtest"/>
             <exclude name="bin/setstatusinsync.sh"/>
             <exclude name="bin/signclient"/>
             <exclude name="bin/signserver"/>

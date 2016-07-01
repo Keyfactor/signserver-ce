@@ -422,6 +422,7 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <exclude name="bin/signserver"/>
             <exclude name="bin/signserver.sh"/>
             <exclude name="bin/signserver-gui"/>
+	    <exclude name="bin/stresstest"/>
             <exclude name="bin/timemonitor-in-background.sh"/>
             
             <exclude name="**/CVS/**" />
@@ -456,6 +457,7 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <include name="bin/signserver"/>
             <include name="bin/signserver.sh"/>
             <include name="bin/signserver-gui"/>
+	    <include name="bin/stresstest"/>
             <include name="bin/timemonitor-in-background.sh"/>
         </patternset>
         
@@ -471,6 +473,7 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <exclude name="bin/signserver"/>
             <exclude name="bin/signserver.sh"/>
             <exclude name="bin/signserver-gui"/>
+	    <exclude name="bin/stresstest"/>
             <exclude name="bin/timemonitor-in-background.sh"/>
 
             <exclude name="signserver_deploy.properties" />
@@ -506,6 +509,7 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <include name="bin/signserver"/>
             <!-- <include name="bin/signserver.sh"/>-->
             <include name="bin/signserver-gui"/>
+	    <include name="bin/stresstest"/>
             <include name="bin/timemonitor-in-background.sh"/>
         </patternset>
         
@@ -522,6 +526,7 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
             <exclude name="bin/signserver"/>
             <exclude name="bin/signserver.sh"/>
             <exclude name="bin/signserver-gui"/>
+	    <exclude name="bin/stresstest"/>
             <exclude name="bin/timemonitor-in-background.sh"/>
 
             <exclude name="doc/lgpl-**" />

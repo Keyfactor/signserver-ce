@@ -183,12 +183,8 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             final byte[] postData = ("\r\n--" + BOUNDARY + "--\r\n").getBytes("ASCII");
             
             if (size >= 0) {
-                long totalSize = (long) preData.length + size + (long) postData.length;
-                if (totalSize > Integer.MAX_VALUE) {
-                    LOG.warn("Too large input to use streaming mode in Java 6");
-                } else {
-                    conn.setFixedLengthStreamingMode((int) totalSize);
-                }
+                final long totalSize = (long) preData.length + size + (long) postData.length;
+                conn.setFixedLengthStreamingMode(totalSize);
             }
 
             // Write the request: preData, data, postData

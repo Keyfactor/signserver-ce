@@ -334,20 +334,21 @@ public class ValidateDocumentCommand extends AbstractCommand {
      * Execute the signing operation.
      */
     public final void run() {
-        FileInputStream fin = null;
+        InputStream fin = null;
         try {
-            final byte[] bytes;
+            final long size;
             final Map<String, Object> requestContext = new HashMap<>();
             
             if (inFile == null) {
-                bytes = data.getBytes();
+                byte[] bs = data.getBytes();
+                fin = new ByteArrayInputStream(bs);
+                size = bs.length;
             } else {
                 requestContext.put("FILENAME", inFile.getName());
-                fin = new FileInputStream(inFile);
-                bytes = new byte[(int) inFile.length()];
-                fin.read(bytes);
+                fin = new BufferedInputStream(new FileInputStream(inFile));
+                size = inFile.length();
             }
-            createValidator().validate(bytes, requestContext);
+            createValidator().validate(fin, size, requestContext);
 
         } catch (FileNotFoundException ex) {
             LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),

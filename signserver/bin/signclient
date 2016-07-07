@@ -70,6 +70,7 @@ OPTIONAL_CLASSPATH=${SIGNSRV_HOME}/lib/SignServer-Client-ValidationCLI.jar:${EXT
 # Construct the classpath
 CP="${MAIN_JAR}"
 CP="${SIGNSRV_HOME}/conf":"$CP"
+CP="$CP:$SIGNSRV_HOME/res/deploytools/cesecore"
 CP="$CP":${OPTIONAL_CLASSPATH}
 
 # For Cygwin, switch paths to Windows format before running java

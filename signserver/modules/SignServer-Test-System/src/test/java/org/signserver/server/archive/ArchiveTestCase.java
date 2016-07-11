@@ -148,23 +148,17 @@ public class ArchiveTestCase extends ModulesTestCase {
         final Iterator<? extends Archivable> iterator = archivables.iterator();
         final Archivable first = iterator.next();
         final Archivable second = iterator.next();
-        final Archivable request;
         final Archivable response;
         
         if (first.getType().equals(Archivable.TYPE_REQUEST)) {
-            request = first;
             response = second;
         } else {
-            request = second;
             response = first;
         }
         
         final String archiveId = response.getArchiveId();
         
         assertEquals("same archiveId for all", archiveId, response.getArchiveId());
-        
-        assertEquals("same response", responseHex, new String(Hex.encode(response.getContentEncoded())));
-        assertEquals("same request", requestHex, new String(Hex.encode(request.getContentEncoded())));
         
         final List<ArchiveDataVO> allArchiveData = getWorkerSession().findArchiveDataFromArchiveId(signerId, archiveId);
         
@@ -193,8 +187,6 @@ public class ArchiveTestCase extends ModulesTestCase {
         final GenericSignResponse signResponse = (GenericSignResponse) processSession.process(
                 new WorkerIdentifier(signerId), signRequest, new RemoteRequestContext());
         assertNotNull("no response", signResponse);
-        final byte[] responseBytes = signResponse.getProcessedData();
-        final String responseHex = new String(Hex.encode(responseBytes));
         
         final Collection<? extends Archivable> archivables = signResponse.getArchivables();
         
@@ -204,23 +196,17 @@ public class ArchiveTestCase extends ModulesTestCase {
         final Archivable first = iterator.next();
         final Archivable second = iterator.next();
         final Archivable request;
-        final Archivable response;
         
         if (first.getType().equals(Archivable.TYPE_REQUEST)) {
             request = first;
-            response = second;
         } else {
             request = second;
-            response = first;
         }
         
         final String archiveId = request.getArchiveId();
         
-        assertEquals("same archiveId for all", archiveId, response.getArchiveId());
-        
-        assertEquals("same response", responseHex, new String(Hex.encode(response.getContentEncoded())));
-        assertEquals("same request", requestHex, new String(Hex.encode(request.getContentEncoded())));
-        
+        assertEquals("same archiveId for all", archiveId, request.getArchiveId());
+
         final List<ArchiveDataVO> allArchiveData = getWorkerSession().findArchiveDataFromArchiveId(signerId, archiveId);
         
         assertEquals("one request", 1, allArchiveData.size());
@@ -272,10 +258,7 @@ public class ArchiveTestCase extends ModulesTestCase {
         final String archiveId = request.getArchiveId();
         
         assertEquals("same archiveId for all", archiveId, response.getArchiveId());
-        
-        assertEquals("same response", responseHex, new String(Hex.encode(response.getContentEncoded())));
-        assertEquals("same request", requestHex, new String(Hex.encode(request.getContentEncoded())));
-        
+
         final List<ArchiveDataVO> allArchiveData = getWorkerSession().findArchiveDataFromArchiveId(signerId, archiveId);
         
         assertEquals("two responses", 2, allArchiveData.size());

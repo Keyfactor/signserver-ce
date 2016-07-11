@@ -40,7 +40,7 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
     private byte[] signerCertificateBytes;
     private String archiveId;
     
-    private transient Collection<? extends Archivable> archivables; // Don't serialize the archivables. Let them stay a server side.
+    private Collection<? extends Archivable> archivables;
 
     /**
      * Default constructor used during serialization.

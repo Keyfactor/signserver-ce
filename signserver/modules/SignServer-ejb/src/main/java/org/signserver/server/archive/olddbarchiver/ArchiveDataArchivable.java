@@ -29,7 +29,7 @@ public class ArchiveDataArchivable extends AbstractArchivable {
     /** Content type for this Archivable. */
     public static final String ARCHIVEDATA = "ARCHIVEDATA";
 
-    private ArchiveData archiveData;
+    private transient ArchiveData archiveData; // // Don't serialize the data. Let it stay a server side.
 
     public ArchiveDataArchivable(final String archiveId, 
             final ArchiveData archiveData, final String type,

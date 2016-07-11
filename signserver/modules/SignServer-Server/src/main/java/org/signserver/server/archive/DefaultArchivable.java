@@ -27,7 +27,7 @@ public class DefaultArchivable extends AbstractArchivable {
             = "application/octet-stream";
 
     /** The data. */
-    private byte[] bytes;
+    private transient byte[] bytes; // Don't serialize the data. Let it stay a server side.
 
     /**
      * Creates an instance of DefaultArchivable with the given type, data and  

@@ -18,7 +18,6 @@ import java.nio.file.Files;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.data.ReadableData;
-import org.signserver.common.data.WritableData;
 
 /**
  * TODO: document.
@@ -88,7 +87,7 @@ public class TemporarlyWritableData extends CloseableWritableData {
             throw new IllegalStateException("Can not write response data after starting reading it");
         }
         if (responseFile == null) {
-            responseFile = File.createTempFile("response_", ".tmp", new File("/home/user/tmp/signserver/")); // TODO: configurable path
+            responseFile = File.createTempFile("response_", ".tmp", new File(System.getProperty("java.io.tmpdir"))); //new File("/home/user/tmp/signserver/")); // TODO: configurable path
         }
         return responseFile;
     }

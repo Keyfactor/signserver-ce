@@ -27,12 +27,13 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericServletResponse;
 import org.signserver.common.ISignRequest;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.server.signers.BaseSigner;
 import org.apache.xml.security.Init;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNServletRequest;
 
 /**
  * Signer outputting debug information.
@@ -53,11 +54,11 @@ public class DebugSigner extends BaseSigner {
     public static final String SIGNSERVER_NODEID_VALUE = "signserver_nodeid.value";
     
     @Override
-    public ProcessResponse processData(ProcessRequest signRequest,
+    public ProcessResponse processData(TBNRequest signRequest,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
         final Properties props = new Properties();
-        final ISignRequest sReq = (ISignRequest) signRequest;
+        final TBNServletRequest sReq = (TBNServletRequest) signRequest;
 
         // Due to a bug in Glassfish, using getImplementationVersion isn't working...
         //props.put(XMLSEC_VERSION, Init.class.getPackage().getImplementationVersion());

@@ -15,9 +15,9 @@ package org.signserver.server.aliasselectors;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.server.IProcessable;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.CryptoTokenHelper;
@@ -47,7 +47,7 @@ public class DefaultAliasSelector implements AliasSelector {
 
     @Override
     public String getAlias(final int purpose, final IProcessable processble,
-                           final ProcessRequest signRequest,
+                           final TBNRequest signRequest,
                            final RequestContext requestContext) {
         return purpose == ICryptoTokenV4.PURPOSE_NEXTKEY ? nextKeyAlias : defaultAlias;
     }

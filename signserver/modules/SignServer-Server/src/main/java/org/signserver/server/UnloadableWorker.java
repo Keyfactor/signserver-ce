@@ -19,13 +19,13 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerStatus;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.server.timedservices.ITimedService;
 
@@ -92,7 +92,7 @@ public class UnloadableWorker extends BaseSigner implements ITimedService {
      * @throws SignServerException always as the worker is misconfigured
      */
     @Override
-    public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         throw new SignServerException("Worker is misconfigured");
     }
 

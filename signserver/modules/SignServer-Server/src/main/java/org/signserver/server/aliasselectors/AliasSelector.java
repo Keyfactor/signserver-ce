@@ -16,12 +16,12 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.IProcessable;
 import org.signserver.server.WorkerContext;
+import org.signserver.common.data.TBNRequest;
 
 /**
  * Key alias selector interface.
@@ -59,7 +59,7 @@ public interface AliasSelector {
      * @throws CryptoTokenOfflineException
      * @throws SignServerException 
      */
-    String getAlias(final int purpose, final IProcessable processble, final ProcessRequest signRequest,
+    String getAlias(final int purpose, final IProcessable processble, final TBNRequest signRequest,
                     final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
                    SignServerException;

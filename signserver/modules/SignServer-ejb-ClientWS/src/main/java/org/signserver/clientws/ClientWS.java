@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.clientws;
 
+import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.*;
@@ -24,10 +25,22 @@ import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNSODRequest;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.CredentialUtils;
+import org.signserver.server.data.impl.TemporarlyWritableData;
+import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.TBNServletResponse;
+import org.signserver.server.data.impl.CloseableReadableData;
+import org.signserver.server.data.impl.CloseableWritableData;
+import org.signserver.server.data.impl.UploadConfig;
+import org.signserver.server.data.impl.UploadUtil;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
@@ -55,6 +68,9 @@ public class ClientWS {
     @EJB
     private ProcessSessionLocal processSession;
     
+    @EJB
+    private GlobalConfigurationSessionLocal globalSession;
+
     private ProcessSessionLocal getProcessSession() {
         return processSession;
     }
@@ -78,21 +94,27 @@ public class ClientWS {
             @WebParam(name = "metadata") List<Metadata> requestMetadata, 
             @WebParam(name = "data") byte[] data) throws RequestFailedException, InternalServerException {
         final DataResponse result;
-        try {
+        
+        try (
+                CloseableReadableData requestData = UploadUtil.handleUpload(UploadConfig.create(globalSession), data);
+                CloseableWritableData responseData = new TemporarlyWritableData(requestData.isFile());
+            ) {
             final RequestContext requestContext = handleRequestContext(requestMetadata);
-
             final int requestId = random.nextInt();
             
-            final ProcessRequest req = new GenericSignRequest(requestId, data);
+            // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
+            
+            final TBNRequest req = new TBNServletRequest(requestId, requestData, responseData, null);
+
             final ProcessResponse resp = getProcessSession().process(new AdminInfo("CLI user", null, null), WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
             
-            if (resp instanceof GenericSignResponse) {
-                final GenericSignResponse signResponse = (GenericSignResponse) resp;
+            if (resp instanceof TBNServletResponse) {
+                final TBNServletResponse signResponse = (TBNServletResponse) resp;
                 if (signResponse.getRequestID() != requestId) {
                     LOG.error("Response ID " + signResponse.getRequestID() + " not matching request ID " + requestId);
                     throw new InternalServerException("Error in process operation, response id didn't match request id");
                 }
-                result = new DataResponse(requestId, signResponse.getProcessedData(), signResponse.getArchiveId(), signResponse.getSignerCertificate() == null ? null : signResponse.getSignerCertificate().getEncoded(), getResponseMetadata(requestContext));
+                result = new DataResponse(requestId, signResponse.getResponseData().toReadableData().getAsByteArray(), signResponse.getArchiveId(), signResponse.getSignerCertificate() == null ? null : signResponse.getSignerCertificate().getEncoded(), getResponseMetadata(requestContext));
             } else {
                 LOG.error("Unexpected return type: " + resp.getClass().getName());
                 throw new InternalServerException("Unexpected return type");
@@ -119,10 +141,23 @@ public class ClientWS {
                 LOG.debug("Internal server error", ex);
             }
             throw new InternalServerException("Internal server error: " + ex.getMessage());
+        } catch (FileUploadBase.SizeLimitExceededException ex) {
+            LOG.error("Maximum content length exceeded: " + ex.getLocalizedMessage());
+            throw new RequestFailedException("Maximum content length exceeded");
+        } catch (FileUploadException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Upload failed", ex);
+            }
+            throw new RequestFailedException("Upload failed: " + ex.getLocalizedMessage());
+        } catch (IOException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Internal IO error", ex);
+            }
+            throw new InternalServerException("Internal IO error: " + ex.getMessage());
         }
         return result;
     }
-
+    
     /**
      * Operation for requesting signing and production of an MRTD SOd based on 
      * the supplied data groups / data group hashes.
@@ -139,7 +174,7 @@ public class ClientWS {
             @WebParam(name = "metadata") final List<Metadata> requestMetadata,
             @WebParam(name = "sodData") final SODRequest data) throws RequestFailedException, InternalServerException {
         final SODResponse result;
-        try {
+        try (CloseableWritableData responseData = new TemporarlyWritableData(false)) {
             final RequestContext requestContext = handleRequestContext(requestMetadata);
             final int requestId = random.nextInt();
         
@@ -183,7 +218,8 @@ public class ClientWS {
                         + ", Unicode=" + unicodeVersion);
             }
 
-            final SODSignRequest req = new SODSignRequest(requestId, dataGroupsMap, ldsVersion, unicodeVersion);
+            // Use special SOD sign request type
+            final TBNSODRequest req = new TBNSODRequest(requestId, dataGroupsMap, ldsVersion, unicodeVersion, responseData);
             final ProcessResponse resp = getProcessSession().process(new AdminInfo("CLI user", null, null), WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
             
             if (resp instanceof SODSignResponse) {
@@ -193,7 +229,7 @@ public class ClientWS {
                     throw new SignServerException("Error in process operation, response id didn't match request id");
                 }
 
-                result = new SODResponse(requestId, signResponse.getProcessedData(), signResponse.getArchiveId(), signResponse.getSignerCertificate() == null ? null : signResponse.getSignerCertificate().getEncoded(), getResponseMetadata(requestContext));
+                result = new SODResponse(requestId, responseData.toReadableData().getAsByteArray(), signResponse.getArchiveId(), signResponse.getSignerCertificate() == null ? null : signResponse.getSignerCertificate().getEncoded(), getResponseMetadata(requestContext));
             } else {
                 LOG.error("Unexpected return type: " + resp.getClass().getName());
                 throw new SignServerException("Unexpected return type");
@@ -219,7 +255,12 @@ public class ClientWS {
                 LOG.debug("Internal server error", ex);
             }
             throw new InternalServerException("Internal server error: " + ex.getMessage());
-        } 
+        } catch (IOException ex) { 
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Internal IO error", ex);
+            }
+            throw new InternalServerException("Internal IO error: " + ex.getMessage());
+        }
         return result;
     }
     

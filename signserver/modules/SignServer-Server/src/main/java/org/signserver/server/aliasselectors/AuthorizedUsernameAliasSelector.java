@@ -17,16 +17,15 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.server.IAuthorizer;
 import org.signserver.server.IProcessable;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.CryptoTokenHelper;
 import org.signserver.server.log.LogMap;
-import org.signserver.server.log.Loggable;
 
 /**
  * Alias selector implementation selecting a key alias based
@@ -51,7 +50,7 @@ public class AuthorizedUsernameAliasSelector implements AliasSelector {
 
     @Override
     public String getAlias(final int purpose, final IProcessable processble,
-                           final ProcessRequest signRequest,
+                           final TBNRequest signRequest,
                            final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         if (requestContext != null) {

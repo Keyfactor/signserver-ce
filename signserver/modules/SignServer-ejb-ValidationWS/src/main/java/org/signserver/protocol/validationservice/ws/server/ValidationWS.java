@@ -13,7 +13,6 @@
 package org.signserver.protocol.validationservice.ws.server;
 
 import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.LinkedList;
@@ -32,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
+import org.signserver.common.data.TBNCertificateValidationRequest;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.healthcheck.HealthCheckUtils;
@@ -40,7 +40,6 @@ import org.signserver.protocol.validationservice.ws.ValidationResponse;
 import org.signserver.server.CredentialUtils;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
-import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.server.ValidationServiceWorker;
 
@@ -96,7 +95,7 @@ public class ValidationWS implements IValidationWS {
 
         ValidateResponse res = null;
         try {
-            ValidateRequest req = new ValidateRequest(reqCert, certPurposes);
+            TBNCertificateValidationRequest req = new TBNCertificateValidationRequest(reqCert, certPurposes);
             X509Certificate clientCertificate = getClientCertificate();
             RequestContext context = new RequestContext(clientCertificate, getRequestIP());
             
@@ -105,8 +104,6 @@ public class ValidationWS implements IValidationWS {
             CredentialUtils.addToRequestContext(context, (HttpServletRequest) msgContext.get(MessageContext.SERVLET_REQUEST), clientCertificate);
         
             res = (ValidateResponse) getProcessSession().process(new AdminInfo("Client user", null, null), WorkerIdentifier.createFromIdOrName(serviceNameOrId), req, context);
-        } catch (CertificateEncodingException e) {
-            throw new IllegalRequestException("Error in request, the requested certificate seem to have a unsupported encoding : " + e.getMessage());
         } catch (CryptoTokenOfflineException e) {
             throw new SignServerException("Error using cryptotoken when validating certificate, it seems to be offline : " + e.getMessage());
         } catch (NoSuchWorkerException ex) {

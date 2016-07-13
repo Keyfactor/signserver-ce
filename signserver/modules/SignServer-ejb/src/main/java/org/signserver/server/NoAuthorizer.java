@@ -20,6 +20,7 @@ import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.data.TBNRequest;
 
 /**
  * Simple IAuthorizer accepting all requests.
@@ -46,7 +47,7 @@ public class NoAuthorizer implements IAuthorizer {
      * @see org.signserver.server.IAuthorizer#isAuthorized(ProcessRequest, RequestContext)
      */
     @Override
-    public void isAuthorized(ProcessRequest request, RequestContext requestContext)
+    public void isAuthorized(TBNRequest request, RequestContext requestContext)
             throws SignServerException, IllegalRequestException {
     }
 

@@ -33,14 +33,12 @@ import org.signserver.common.ISignResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.NotGrantedException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
-import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.RequestContext;
-import org.signserver.common.RequestMetadata;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.common.util.PropertiesConstants;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.ejb.worker.impl.WorkerWithComponents;
@@ -49,7 +47,6 @@ import org.signserver.server.IAuthorizer;
 import org.signserver.server.IClientCredential;
 import org.signserver.server.IProcessable;
 import org.signserver.server.KeyUsageCounterHash;
-import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.ValidityTimeUtils;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.ArchiveException;
@@ -104,37 +101,12 @@ class WorkerProcessImpl {
         this.logSession = logSession;
     }
 
-    public ProcessResponse process(WorkerIdentifier wi, ProcessRequest request, RemoteRequestContext remoteContext, AllServicesImpl servicesImpl) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        // Create a new RequestContext at server-side
-        final RequestContext requestContext = new RequestContext(true);
-
-        if (remoteContext != null) {
-            // Put metadata from the request
-            RequestMetadata metadata = remoteContext.getMetadata();
-            if (metadata != null) {
-                RequestMetadata.getInstance(requestContext).putAll(remoteContext.getMetadata());
-            }
-
-            // Put username/password
-            if (remoteContext.getUsername() != null) {
-                UsernamePasswordClientCredential credential = new UsernamePasswordClientCredential(remoteContext.getUsername(), remoteContext.getPassword());
-                requestContext.put(RequestContext.CLIENT_CREDENTIAL, credential);
-                requestContext.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, credential);
-            }
-        }
-        
-        // Put transaction ID
-        requestContext.put(RequestContext.TRANSACTION_ID, UUID.randomUUID().toString());
-
-        // Put services
-        requestContext.setServices(servicesImpl);
-        return process(new AdminInfo("Client user", null, null), wi, request, requestContext);
-    }
+    
 
     /**
      * @see WorkerSession#process(int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
-    public ProcessResponse process(WorkerIdentifier wi, ProcessRequest request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public ProcessResponse process(WorkerIdentifier wi, TBNRequest request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         return process(new AdminInfo("Client user", null, null), wi, request, requestContext);
     }
 
@@ -142,7 +114,7 @@ class WorkerProcessImpl {
      * @see WorkerSessionLocal#process(org.signserver.server.log.AdminInfo, int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
     public ProcessResponse process(final AdminInfo adminInfo, final WorkerIdentifier wi,
-            final ProcessRequest request, final RequestContext requestContext)
+            final TBNRequest request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
 

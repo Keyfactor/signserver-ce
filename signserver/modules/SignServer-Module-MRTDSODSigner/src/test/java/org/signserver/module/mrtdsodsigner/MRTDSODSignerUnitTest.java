@@ -34,11 +34,11 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
-import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.data.TBNSODRequest;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
@@ -47,8 +47,10 @@ import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.server.IServices;
+import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.test.utils.mock.MockedServicesImpl;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * Unit tests for MRTDSODSigner.
@@ -579,28 +581,30 @@ public class MRTDSODSignerUnitTest extends TestCase {
         RequestContext context = new RequestContext();
         context.setServices(services);
         
-        SODSignResponse res = (SODSignResponse) processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId),
-                new SODSignRequest(requestId, dataGroups),
-                context);
-        assertNotNull(res);
-        assertEquals(requestId, res.getRequestID());
-        Certificate signercert = res.getSignerCertificate();
-        assertNotNull(signercert);
+        try (CloseableWritableData responseData = ModulesTestCase.createResponseData(false)) {
+            SODSignResponse res = (SODSignResponse) processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId),
+                    new TBNSODRequest(requestId, dataGroups, null, null, responseData),
+                    context);
+            assertNotNull(res);
+            assertEquals(requestId, res.getRequestID());
+            Certificate signercert = res.getSignerCertificate();
+            assertNotNull(signercert);
 
-        byte[] sodBytes = res.getProcessedData();
-        SODFile sod = new SODFile(new ByteArrayInputStream(sodBytes));
-        boolean verify = sod.checkDocSignature(signercert);
-        assertTrue("Signature verification", verify);
+            byte[] sodBytes = responseData.toReadableData().getAsByteArray();
+            SODFile sod = new SODFile(new ByteArrayInputStream(sodBytes));
+            boolean verify = sod.checkDocSignature(signercert);
+            assertTrue("Signature verification", verify);
 
-        // Check the SOD
-        Map<Integer, byte[]> actualDataGroupHashes = sod.getDataGroupHashes();
-        assertEquals(expectedHashes.size(), actualDataGroupHashes.size());
-        for(Map.Entry<Integer, byte[]> entry : actualDataGroupHashes.entrySet()) {
-            assertTrue("DG"+entry.getKey(), Arrays.equals(expectedHashes.get(entry.getKey()), entry.getValue()));
+            // Check the SOD
+            Map<Integer, byte[]> actualDataGroupHashes = sod.getDataGroupHashes();
+            assertEquals(expectedHashes.size(), actualDataGroupHashes.size());
+            for(Map.Entry<Integer, byte[]> entry : actualDataGroupHashes.entrySet()) {
+                assertTrue("DG"+entry.getKey(), Arrays.equals(expectedHashes.get(entry.getKey()), entry.getValue()));
+            }
+            assertEquals(digestAlg, sod.getDigestAlgorithm());
+            assertEquals(sigAlg, sod.getDigestEncryptionAlgorithm());
+            return sod;
         }
-        assertEquals(digestAlg, sod.getDigestAlgorithm());
-        assertEquals(sigAlg, sod.getDigestEncryptionAlgorithm());
-        return sod;
     }
 
     private byte[] digestHelper(byte[] data, String digestAlgorithm) throws NoSuchAlgorithmException {

@@ -18,16 +18,16 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
+import org.signserver.common.data.TBNCertificateValidationRequest;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
-import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 
 /**
@@ -104,12 +104,12 @@ public class ValidationServiceWorker extends BaseProcessable {
      * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest, org.signserver.common.RequestContext) 
      */
     @Override
-    public ProcessResponse processData(ProcessRequest processRequest,
+    public ProcessResponse processData(TBNRequest processRequest,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
 
-        if (processRequest instanceof ValidateRequest) {
-            return validationService.validate((ValidateRequest) processRequest);
+        if (processRequest instanceof TBNCertificateValidationRequest) {
+            return validationService.validate((TBNCertificateValidationRequest) processRequest);
         } else {
             throw new IllegalRequestException("The process request sent to validation service with id " + workerId + " isn't supported");
         }

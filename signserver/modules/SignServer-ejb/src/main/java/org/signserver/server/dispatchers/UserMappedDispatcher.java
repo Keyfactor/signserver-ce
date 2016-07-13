@@ -16,19 +16,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.NoSuchWorkerException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
-import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.UsernamePasswordClientCredential;
@@ -94,7 +92,7 @@ public class UserMappedDispatcher extends BaseDispatcher {
     }
 
     @Override
-    public ProcessResponse processData(final ProcessRequest signRequest,
+    public ProcessResponse processData(final TBNRequest signRequest,
             final RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
         final ProcessResponse response;

@@ -29,10 +29,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
+import org.signserver.common.data.ReadableData;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.WritableData;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.UsernamePasswordClientCredential;
@@ -262,22 +268,16 @@ public class PDFSigner extends BaseSigner {
      *      org.signserver.common.RequestContext)
      */
     @Override
-    public ProcessResponse processData(ProcessRequest signRequest,
+    public ProcessResponse processData(TBNRequest signRequest,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {        
-        // Check that the request contains a valid GenericSignRequest object
-        // with a byte[].
-        if (!(signRequest instanceof GenericSignRequest)) {
+        if (!(signRequest instanceof TBNServletRequest)) {
             throw new IllegalRequestException(
                     "Received request wasn't an expected GenericSignRequest.");
         }
-        
-        final ISignRequest sReq = (ISignRequest) signRequest;
-        
-        if (!(sReq.getRequestData() instanceof byte[])) {
-            throw new IllegalRequestException(
-                    "Received request data wasn't an expected byte[].");
-        }
+        final TBNServletRequest sReq = (TBNServletRequest) signRequest;
+        final String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
+        final ReadableData requestData = sReq.getRequestData();
 
         // Log values
         final LogMap logMap = LogMap.getInstance(requestContext);
@@ -286,20 +286,30 @@ public class PDFSigner extends BaseSigner {
         PDFSignerParameters params = new PDFSignerParameters(workerId, config);
 
         // Start processing the actual signature
-        GenericSignResponse signResponse = null;
-        byte[] pdfbytes = (byte[]) sReq.getRequestData();
-        final String archiveId = createArchiveId(pdfbytes, (String) requestContext.get(RequestContext.TRANSACTION_ID));
+        
         if (requestContext.get(RequestContext.STATISTICS_EVENT) != null) {
             Event event = (Event) requestContext.get(RequestContext.STATISTICS_EVENT);
-            event.addCustomStatistics("PDFBYTES", pdfbytes.length);
+            event.addCustomStatistics("PDFBYTES", (int) sReq.getRequestData().getLength());
         }
         
         ICryptoInstance crypto = null;
         try {
             crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);
 
+            // Get the data as file or byte array
+            final File pdfFile;
+            final byte[] pdfBytes;
+            if (requestData.isFile()) {
+                pdfFile = requestData.getAsFile();
+                pdfBytes = null;
+            } else {
+                pdfFile = null;
+                pdfBytes = requestData.getAsByteArray();
+            }
+            final WritableData responseData = sReq.getResponseData();
+            
             if (params.isRefuseDoubleIndirectObjects()) {
-                checkForDuplicateObjects(pdfbytes);
+                checkForDuplicateObjects(pdfBytes != null ? new PRTokeniser(pdfBytes) : new PRTokeniser(pdfFile.getAbsolutePath()));
             }
 
             // Get the password to open the PDF with
@@ -328,31 +338,27 @@ public class PDFSigner extends BaseSigner {
                            });
             }
             
-            byte[] signedbytes =
-                    addSignatureToPDFDocument(crypto, params, pdfbytes, password, 0,
-                                              signRequest, requestContext);
-            final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, signedbytes, archiveId));
+            addSignatureToPDFDocument(crypto, params, pdfBytes, pdfFile, password, 0,
+                                              signRequest, responseData, requestContext);
+            final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, responseData.toReadableData(), archiveId));
             
-            if (signRequest instanceof GenericServletRequest) {
-                signResponse = new GenericServletResponse(sReq.getRequestID(),
-                        signedbytes,
-                        crypto.getCertificate(),
-                        archiveId, archivables, CONTENT_TYPE);
-            } else {
-                signResponse = new GenericSignResponse(sReq.getRequestID(),
-                        signedbytes, 
-                        crypto.getCertificate(),
-                        archiveId, archivables);
-            }
+            
+            
 
             // Archive to disk
             if (StringUtils.equalsIgnoreCase("TRUE",
                     config.getProperty(PROPERTY_ARCHIVETODISK))) {
-                archiveToDisk(sReq, signedbytes, requestContext);
+                archiveToDisk(sReq, responseData.toReadableData(), requestContext);
             }
             
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
+            
+            
+            return new TBNServletResponse(sReq.getRequestID(),
+                    responseData,
+                    crypto.getCertificate(),
+                    archiveId, archivables, CONTENT_TYPE);
         } catch (DocumentException e) {
             throw new IllegalRequestException("Could not sign document: "
                     + e.getMessage(), e);
@@ -367,8 +373,6 @@ public class PDFSigner extends BaseSigner {
         } finally {
             releaseCryptoInstance(crypto, requestContext);
         }
-
-        return signResponse;
     }
 
     /**
@@ -555,9 +559,9 @@ public class PDFSigner extends BaseSigner {
         }
     }
     
-    protected byte[] addSignatureToPDFDocument(final ICryptoInstance crypto, PDFSignerParameters params,
-            byte[] pdfbytes, byte[] password, int contentEstimated,
-            final ProcessRequest request, final RequestContext context)
+    protected void addSignatureToPDFDocument(final ICryptoInstance crypto, PDFSignerParameters params,
+            byte[] pdfBytes, File pdfFile, byte[] password, int contentEstimated,
+            final TBNRequest request, final WritableData responseData, final RequestContext context)
             throws IOException, DocumentException,
                    CryptoTokenOfflineException, SignServerException, IllegalRequestException {
     	// when given a content length (i.e. non-zero), it means we are running a second try
@@ -581,7 +585,12 @@ public class PDFSigner extends BaseSigner {
             }
         }
         
-        PdfReader reader = new PdfReader(pdfbytes, password);
+        final PdfReader reader;
+        if (pdfBytes != null) {
+            reader = new PdfReader(pdfBytes, password);
+        } else {
+            reader = new PdfReader(pdfFile.getAbsolutePath(), password);
+        }
         boolean appendMode = true; // TODO: This could be good to have as a property in the future
 
         int pdfVersion;
@@ -648,195 +657,195 @@ public class PDFSigner extends BaseSigner {
             }
         }
         
-        ByteArrayOutputStream fout = new ByteArrayOutputStream();
-        
-        // increase PDF version if needed by digest algorithm
-        final char updatedPdfVersion;
-        if (minimumPdfVersion > pdfVersion) {
-            updatedPdfVersion = Character.forDigit(minimumPdfVersion, 10);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Need to upgrade PDF to version 1." + updatedPdfVersion);
-            }
-            
-            // check that the document isn't already signed 
-            // when trying to upgrade version
-            final AcroFields af = reader.getAcroFields();
-            final List<String> sigNames = af.getSignatureNames();
-            
-            if (!sigNames.isEmpty()) {
-                // TODO: in the future we might want to support
-                // a fallback option in this case to allow re-signing using the same version (using append)
-                throw new IllegalRequestException("Can not upgrade an already signed PDF and a higher version is required to support the configured digest algorithm");
-            }
-            
-            appendMode = false;
-        } else {
-            updatedPdfVersion = '\0';
-        }
-        
-        PdfStamper stp =
-                PdfStamper.createSignature(reader, fout, updatedPdfVersion, null,
-                        appendMode);
-        PdfSignatureAppearance sap = stp.getSignatureAppearance();
-        
-        // Set the new permissions
-        if (newPermissions != null || params.getSetOwnerPassword() != null) {
-            if (cryptoMode < 0) {
-                cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
+        try (OutputStream fout = responseData.getAsOutputStream()) {
+
+            // increase PDF version if needed by digest algorithm
+            final char updatedPdfVersion;
+            if (minimumPdfVersion > pdfVersion) {
+                updatedPdfVersion = Character.forDigit(minimumPdfVersion, 10);
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Setting default encryption algorithm");
+                    LOG.debug("Need to upgrade PDF to version 1." + updatedPdfVersion);
                 }
-            }
-            if (newPermissions == null) {
-                newPermissions = currentPermissions;
-            }
-            if (params.getSetOwnerPassword() != null) {
-                password = params.getSetOwnerPassword().getBytes("ISO-8859-1");
-            } else if (isUserPassword(reader, password)) {
-                // We do not have an owner password so lets use a random one
-                password = new byte[16];
-                random.nextBytes(password);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Setting random owner password");
+
+                // check that the document isn't already signed 
+                // when trying to upgrade version
+                final AcroFields af = reader.getAcroFields();
+                final List<String> sigNames = af.getSignatureNames();
+
+                if (!sigNames.isEmpty()) {
+                    // TODO: in the future we might want to support
+                    // a fallback option in this case to allow re-signing using the same version (using append)
+                    throw new IllegalRequestException("Can not upgrade an already signed PDF and a higher version is required to support the configured digest algorithm");
                 }
-            }
-            stp.setEncryption(userPassword, password, newPermissions.asInt(), cryptoMode);
-            currentPermissions = newPermissions;
-        }
-        
-        // Reject if any permissions are rejected and the document does not use a permission password
-        // or if it contains any of the rejected permissions
-        if (rejectPermissions.asInt() != 0) {
-            if (cryptoMode < 0 || currentPermissions.containsAnyOf(rejectPermissions)) {
-                throw new IllegalRequestException("Document contains permissions not allowed by this signer");
-            }
-        }
-        
-        // include signer certificate crl inside cms package if requested
-        CRL[] crlList = null;
-        if (params.isEmbed_crl()) {
-            crlList = getCrlsForChain(certs);
-        }
-        sap.setCrypto(null, certChain, crlList,
-                PdfSignatureAppearance.SELF_SIGNED);
 
-        // add visible signature if requested
-        if (params.isAdd_visible_signature()) {
-            int signaturePage = getPageNumberForSignature(reader, params);
-            sap.setVisibleSignature(new com.lowagie.text.Rectangle(params.getVisible_sig_rectangle_llx(), params.getVisible_sig_rectangle_lly(), params.getVisible_sig_rectangle_urx(), params.getVisible_sig_rectangle_ury()), signaturePage, null);
-
-            // set custom image if requested
-            if (params.isUse_custom_image()) {
-                sap.setAcro6Layers(true);
-                PdfTemplate n2 = sap.getLayer(2);
-                params.getCustom_image().setAbsolutePosition(0, 0);
-                n2.addImage(params.getCustom_image());
-            }
-        }
-
-        // Certification level
-        sap.setCertificationLevel(params.getCertification_level());
-
-        PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE, new PdfName(
-                "adbe.pkcs7.detached"));
-        dic.setReason(params.getReason());
-        dic.setLocation(params.getLocation());
-        dic.setDate(new PdfDate(Calendar.getInstance()));
-
-        sap.setCryptoDictionary(dic);
-
-        // add timestamp to signature if requested
-        TSAClient tsc = null;
-        if (params.isUse_timestamp()) {
-            final String tsaUrl = params.getTsa_url();
-            
-            if (tsaUrl != null) {
-                tsc = getTimeStampClient(params.getTsa_url(), params.getTsa_username(), params.getTsa_password());
+                appendMode = false;
             } else {
-                tsc = new InternalTSAClient(getProcessSession(context.getServices()),
-                        WorkerIdentifier.createFromIdOrName(params.getTsa_worker()), params.getTsa_username(), params.getTsa_password());
+                updatedPdfVersion = '\0';
             }
-        }
 
-        
-        // embed ocsp response in cms package if requested
-        // for ocsp request to be formed there needs to be issuer certificate in
-        // chain
-        byte[] ocsp = null;
-        if (params.isEmbed_ocsp_response() && certChain.length >= 2) {
-            String url;
-            try {
-                url = PdfPKCS7.getOCSPURL((X509Certificate) certChain[0]);
-                if (url != null && url.length() > 0) {
-                    ocsp = new OcspClientBouncyCastle(
-                            (X509Certificate) certChain[0],
-                            (X509Certificate) certChain[1], url).getEncoded();
+            PdfStamper stp =
+                    PdfStamper.createSignature(reader, fout, updatedPdfVersion, null,
+                            appendMode);
+            PdfSignatureAppearance sap = stp.getSignatureAppearance();
+
+            // Set the new permissions
+            if (newPermissions != null || params.getSetOwnerPassword() != null) {
+                if (cryptoMode < 0) {
+                    cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Setting default encryption algorithm");
+                    }
                 }
-            } catch (CertificateParsingException e) {
-                throw new SignServerException(
-                        "Error getting OCSP URL from certificate", e);
+                if (newPermissions == null) {
+                    newPermissions = currentPermissions;
+                }
+                if (params.getSetOwnerPassword() != null) {
+                    password = params.getSetOwnerPassword().getBytes("ISO-8859-1");
+                } else if (isUserPassword(reader, password)) {
+                    // We do not have an owner password so lets use a random one
+                    password = new byte[16];
+                    random.nextBytes(password);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Setting random owner password");
+                    }
+                }
+                stp.setEncryption(userPassword, password, newPermissions.asInt(), cryptoMode);
+                currentPermissions = newPermissions;
             }
 
+            // Reject if any permissions are rejected and the document does not use a permission password
+            // or if it contains any of the rejected permissions
+            if (rejectPermissions.asInt() != 0) {
+                if (cryptoMode < 0 || currentPermissions.containsAnyOf(rejectPermissions)) {
+                    throw new IllegalRequestException("Document contains permissions not allowed by this signer");
+                }
+            }
+
+            // include signer certificate crl inside cms package if requested
+            CRL[] crlList = null;
+            if (params.isEmbed_crl()) {
+                crlList = getCrlsForChain(certs);
+            }
+            sap.setCrypto(null, certChain, crlList,
+                    PdfSignatureAppearance.SELF_SIGNED);
+
+            // add visible signature if requested
+            if (params.isAdd_visible_signature()) {
+                int signaturePage = getPageNumberForSignature(reader, params);
+                sap.setVisibleSignature(new com.lowagie.text.Rectangle(params.getVisible_sig_rectangle_llx(), params.getVisible_sig_rectangle_lly(), params.getVisible_sig_rectangle_urx(), params.getVisible_sig_rectangle_ury()), signaturePage, null);
+
+                // set custom image if requested
+                if (params.isUse_custom_image()) {
+                    sap.setAcro6Layers(true);
+                    PdfTemplate n2 = sap.getLayer(2);
+                    params.getCustom_image().setAbsolutePosition(0, 0);
+                    n2.addImage(params.getCustom_image());
+                }
+            }
+
+            // Certification level
+            sap.setCertificationLevel(params.getCertification_level());
+
+            PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE, new PdfName(
+                    "adbe.pkcs7.detached"));
+            dic.setReason(params.getReason());
+            dic.setLocation(params.getLocation());
+            dic.setDate(new PdfDate(Calendar.getInstance()));
+
+            sap.setCryptoDictionary(dic);
+
+            // add timestamp to signature if requested
+            TSAClient tsc = null;
+            if (params.isUse_timestamp()) {
+                final String tsaUrl = params.getTsa_url();
+
+                if (tsaUrl != null) {
+                    tsc = getTimeStampClient(params.getTsa_url(), params.getTsa_username(), params.getTsa_password());
+                } else {
+                    tsc = new InternalTSAClient(getProcessSession(context.getServices()),
+                            WorkerIdentifier.createFromIdOrName(params.getTsa_worker()), params.getTsa_username(), params.getTsa_password());
+                }
+            }
+
+
+            // embed ocsp response in cms package if requested
+            // for ocsp request to be formed there needs to be issuer certificate in
+            // chain
+            byte[] ocsp = null;
+            if (params.isEmbed_ocsp_response() && certChain.length >= 2) {
+                String url;
+                try {
+                    url = PdfPKCS7.getOCSPURL((X509Certificate) certChain[0]);
+                    if (url != null && url.length() > 0) {
+                        ocsp = new OcspClientBouncyCastle(
+                                (X509Certificate) certChain[0],
+                                (X509Certificate) certChain[1], url).getEncoded();
+                    }
+                } catch (CertificateParsingException e) {
+                    throw new SignServerException(
+                            "Error getting OCSP URL from certificate", e);
+                }
+
+            }
+
+            PdfPKCS7 sgn;
+            try {
+                sgn = new PdfPKCS7(privKey, certChain, crlList, digestAlgorithm, null, false);
+            } catch (InvalidKeyException | NoSuchProviderException | NoSuchAlgorithmException e) {
+                throw new SignServerException("Error constructing PKCS7 package", e);
+            }
+
+            MessageDigest messageDigest;
+            try {
+                messageDigest = MessageDigest.getInstance(digestAlgorithm);
+            } catch (NoSuchAlgorithmException e) {
+                throw new SignServerException("Error creating " + digestAlgorithm + " digest", e);
+            }
+
+            Calendar cal = Calendar.getInstance();
+
+            // calculate signature size
+            if (contentEstimated == 0) {
+                    contentEstimated =
+                            calculateEstimatedSignatureSize(certChain, tsc, ocsp, crlList);
+            }
+
+            byte[] encodedSig = calculateSignature(sgn, contentEstimated, messageDigest, cal, params, certChain, tsc, ocsp, sap);
+
+            if (LOG.isDebugEnabled()) {
+                    LOG.debug("Estimated size: " + contentEstimated);
+                    LOG.debug("Encoded length: " + encodedSig.length);
+            }
+
+            if (contentEstimated + 2 < encodedSig.length) {
+                    if (!secondTry) {
+                            int contentExact = encodedSig.length;
+                            LOG.warn("Estimated signature size too small, usinging accurate calculation (resulting in an extra signature computation).");
+
+                            if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Estimated size: " + contentEstimated + ", actual size: " + contentExact);
+                            }
+
+                            // try signing again
+                            addSignatureToPDFDocument(crypto, params, pdfBytes, pdfFile,
+                                                             password, contentExact,
+                                                             request, responseData, context);
+                            return;
+                    } else {
+                            // if we fail to get an accurate signature size on the second attempt, bail out (this shouldn't happen)
+                            throw new SignServerException("Failed to calculate signature size");
+                    }
+            }
+
+            byte[] paddedSig = new byte[contentEstimated];
+            System.arraycopy(encodedSig, 0, paddedSig, 0, encodedSig.length);
+
+            PdfDictionary dic2 = new PdfDictionary();
+            dic2.put(PdfName.CONTENTS, new PdfString(paddedSig).setHexWriting(true));
+            sap.close(dic2);
+            reader.close();
+
         }
-        
-        PdfPKCS7 sgn;
-        try {
-            sgn = new PdfPKCS7(privKey, certChain, crlList, digestAlgorithm, null, false);
-        } catch (InvalidKeyException | NoSuchProviderException | NoSuchAlgorithmException e) {
-            throw new SignServerException("Error constructing PKCS7 package", e);
-        }
-
-        MessageDigest messageDigest;
-        try {
-            messageDigest = MessageDigest.getInstance(digestAlgorithm);
-        } catch (NoSuchAlgorithmException e) {
-            throw new SignServerException("Error creating " + digestAlgorithm + " digest", e);
-        }
-        
-        Calendar cal = Calendar.getInstance();
-        
-        // calculate signature size
-        if (contentEstimated == 0) {
-        	contentEstimated =
-        		calculateEstimatedSignatureSize(certChain, tsc, ocsp, crlList);
-        }
-        	
-        byte[] encodedSig = calculateSignature(sgn, contentEstimated, messageDigest, cal, params, certChain, tsc, ocsp, sap);
-
-        if (LOG.isDebugEnabled()) {
-        	LOG.debug("Estimated size: " + contentEstimated);
-        	LOG.debug("Encoded length: " + encodedSig.length);
-        }
-
-        if (contentEstimated + 2 < encodedSig.length) {
-        	if (!secondTry) {
-        		int contentExact = encodedSig.length;
-        		LOG.warn("Estimated signature size too small, usinging accurate calculation (resulting in an extra signature computation).");
-
-        		if (LOG.isDebugEnabled()) {
-        			LOG.debug("Estimated size: " + contentEstimated + ", actual size: " + contentExact);
-        		}
- 
-           		// try signing again
-        		return addSignatureToPDFDocument(crypto, params, pdfbytes,
-                                                         password, contentExact,
-                                                         request, context);
-        	} else {
-        		// if we fail to get an accurate signature size on the second attempt, bail out (this shouldn't happen)
-        		throw new SignServerException("Failed to calculate signature size");
-        	}
-        }
-
-        byte[] paddedSig = new byte[contentEstimated];
-        System.arraycopy(encodedSig, 0, paddedSig, 0, encodedSig.length);
-
-        PdfDictionary dic2 = new PdfDictionary();
-        dic2.put(PdfName.CONTENTS, new PdfString(paddedSig).setHexWriting(true));
-        sap.close(dic2);
-        reader.close();
-
-        fout.close();
-        return fout.toByteArray();
     }
     
     protected InternalProcessSessionLocal getProcessSession(IServices services) {
@@ -915,7 +924,7 @@ public class PDFSigner extends BaseSigner {
         }
     }
 
-    private void archiveToDisk(ISignRequest sReq, byte[] signedbytes, RequestContext requestContext) throws SignServerException {
+    private void archiveToDisk(TBNServletRequest sReq, ReadableData data, RequestContext requestContext) throws SignServerException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Archiving to disk");
         }
@@ -964,23 +973,11 @@ public class PDFSigner extends BaseSigner {
                     + outputFile.getAbsolutePath());
         }
 
-        OutputStream out = null;
-        try {
-            out = new FileOutputStream(outputFile);
-            out.write(signedbytes);
+        try (OutputStream out = new FileOutputStream(outputFile)) {
+            IOUtils.copyLarge(data.getAsInputStream(), out);
         } catch (IOException ex) {
             throw new SignServerException(
                     "Could not archive signed document", ex);
-        } finally {
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException ex) {
-                    LOG.debug("Exception closing file", ex);
-                    throw new SignServerException(
-                            "Could not archive signed document", ex);
-                }
-            }
         }
     }
 
@@ -1045,12 +1042,11 @@ public class PDFSigner extends BaseSigner {
         return result;
     }
 
-    private void checkForDuplicateObjects(byte[] pdfbytes) throws IOException,
+    private void checkForDuplicateObjects(PRTokeniser tokens) throws IOException,
             SignServerException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(">checkForDuplicateObjects");
         }
-        final PRTokeniser tokens = new PRTokeniser(pdfbytes);
         final Set<String> idents = new HashSet<>();
         final byte[] line = new byte[16];
 

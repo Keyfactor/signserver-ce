@@ -35,7 +35,7 @@ public abstract class ProcessRequest implements Externalizable {
     }
 
     /**
-     * Method used to populate an empty IProcessRequest from a byte representation
+     * Method used to populate an empty ITBNRequest from a byte representation
      * 
      * The parse and serialize method are the methods that should be used
      * by protocols to external clients. The Externalizable interface

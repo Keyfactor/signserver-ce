@@ -19,11 +19,12 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.RequestMetadata;
 import org.signserver.common.SignServerException;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNServletRequest;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.olddbarchiver.ArchiveDataArchivable;
 import org.signserver.server.signers.BaseSigner;
@@ -43,16 +44,16 @@ public class Test1Signer extends BaseSigner {
     public static final String METADATA_FAILREQUEST = "DO_FAIL_REQUEST";
 
     @Override
-    public ProcessResponse processData(final ProcessRequest processRequest,
+    public ProcessResponse processData(final TBNRequest processRequest,
             final RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
         LOG.debug(">processData");
         
         final ProcessResponse result;
-        final GenericSignRequest request;
+        final TBNServletRequest request;
         
-        if (processRequest instanceof GenericSignRequest) {
-            request = (GenericSignRequest) processRequest;
+        if (processRequest instanceof TBNServletRequest) {
+            request = (TBNServletRequest) processRequest;
         } else {
             throw new IllegalRequestException("Unexpeted request type: "
                     + processRequest.getClass());

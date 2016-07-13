@@ -12,9 +12,9 @@
  *************************************************************************/
 package org.signserver.module.xades.signer;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.NoSuchProviderException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -34,17 +34,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.server.signers.BaseSigner;
 import org.apache.log4j.Logger;
-import org.signserver.common.GenericServletRequest;
-import org.signserver.common.GenericServletResponse;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.common.ISignRequest;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
@@ -55,6 +49,10 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.WritableData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -303,25 +301,21 @@ public class XAdESSigner extends BaseSigner {
     }
 
     @Override
-    public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 
-        // Check that the request contains a valid GenericSignRequest object with a byte[].
-        if (!(signRequest instanceof GenericSignRequest)) {
-            throw new IllegalRequestException("Received request wasn't an expected GenericSignRequest.");
+        // Check that the request contains a valid GenericSignRequest object
+        // with a byte[].
+        if (!(signRequest instanceof TBNServletRequest)) {
+            throw new IllegalRequestException(
+                    "Received request wasn't an expected GenericSignRequest.");
         }
-        
-        final ISignRequest sReq = (ISignRequest) signRequest;
-        if (!(sReq.getRequestData() instanceof byte[])) {
-            throw new IllegalRequestException("Received request data wasn't an expected byte[].");
-        }
+        final TBNServletRequest sReq = (TBNServletRequest) signRequest;
 
         if (!configErrors.isEmpty()) {
             throw new SignServerException("Worker is misconfigured");
         }
-        
-        
-        final byte[] data = (byte[]) sReq.getRequestData();
-        final String archiveId = createArchiveId(data, (String) requestContext.get(RequestContext.TRANSACTION_ID));
+
+        final String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
         final byte[] signedbytes;
        
         // take role from request user name in first hand when CLAIMED_ROLE_FROM_USERNAME
@@ -343,9 +337,13 @@ public class XAdESSigner extends BaseSigner {
             throw new SignServerException("Received a request with no user name set, while configured to get claimed role from user name and no default value for claimed role is set.");
         }
         
+        final WritableData responseData = sReq.getResponseData();
         Certificate cert = null;
         ICryptoInstance crypto = null;
-        try {
+        try (
+                InputStream in = sReq.getRequestData().getAsInputStream();
+                OutputStream out = responseData.getAsOutputStream()
+            ) {
             crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);
 
             // Parse
@@ -367,7 +365,7 @@ public class XAdESSigner extends BaseSigner {
             dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 
             final DocumentBuilder builder = dbf.newDocumentBuilder();
-            final Document doc = builder.parse(new ByteArrayInputStream(data));
+            final Document doc = builder.parse(in);
 
             // Sign
             final Node node = doc.getDocumentElement();
@@ -380,12 +378,9 @@ public class XAdESSigner extends BaseSigner {
             signer.sign(dataObjs, doc);
             
             // Render result
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer trans = tf.newTransformer();
-            trans.transform(new DOMSource(doc), new StreamResult(bout));
-            signedbytes = bout.toByteArray();
-
+            trans.transform(new DOMSource(doc), new StreamResult(out));
         } catch (SAXException ex) {
             throw new IllegalRequestException("Document parsing error", ex);
         } catch (IOException | ParserConfigurationException ex) {
@@ -401,20 +396,13 @@ public class XAdESSigner extends BaseSigner {
         }
         
         // Response
-        final ProcessResponse response;
-        final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, signedbytes, archiveId));
-        if (signRequest instanceof GenericServletRequest) {
-            response = new GenericServletResponse(sReq.getRequestID(), signedbytes,
-                    cert, archiveId, archivables, CONTENT_TYPE);
-        } else {
-            response = new GenericSignResponse(sReq.getRequestID(), signedbytes,
-                    cert, archiveId, archivables);
-        }
-        
+        final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, responseData.toReadableData(), archiveId));
+
         // The client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);
         
-        return response;
+        return new TBNServletResponse(sReq.getRequestID(), responseData,
+                    cert, archiveId, archivables, CONTENT_TYPE);
     }
 
     /**
@@ -433,7 +421,7 @@ public class XAdESSigner extends BaseSigner {
     private XadesSigner createSigner(final ICryptoInstance crypto,
                                     final XAdESSignerParameters params,
                                     final String claimedRole,
-                                    final ProcessRequest request,
+                                    final TBNRequest request,
                                     final RequestContext context)
             throws SignServerException, XadesProfileResolutionException,
                    CryptoTokenOfflineException, IllegalRequestException {

@@ -12,11 +12,13 @@
  *************************************************************************/
 package org.signserver.testutils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -28,6 +30,7 @@ import java.security.cert.CertificateException;
 import java.util.*;
 import javax.naming.NamingException;
 import junit.framework.TestCase;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
@@ -50,6 +53,13 @@ import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import org.signserver.server.data.impl.CloseableReadableData;
+import org.signserver.server.data.impl.CloseableWritableData;
+import org.signserver.server.data.impl.FileReadableData;
+import org.signserver.server.data.impl.TemporarlyWritableData;
+import org.signserver.server.data.impl.UploadConfig;
+import org.signserver.server.data.impl.UploadUtil;
+import org.signserver.server.log.AdminInfo;
 import org.signserver.statusrepo.StatusRepositorySessionRemote;
 
 /**
@@ -626,5 +636,29 @@ public class ModulesTestCase extends TestCase {
         final JcaPKCS10CertificationRequest jcaPKCS10CertificationRequest =
                 new JcaPKCS10CertificationRequest(req);
         return jcaPKCS10CertificationRequest.getPublicKey();
+    }
+    
+    public static CloseableReadableData createRequestData(byte[] data) throws FileUploadException {
+        return UploadUtil.handleUpload(new UploadConfig(), data);
+    }
+    
+    public static CloseableReadableData createRequestData(Properties properties) throws FileUploadException, IOException {
+        try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+            properties.store(bout, null);
+            return UploadUtil.handleUpload(new UploadConfig(), bout.toByteArray());
+        }
+    }
+    
+    public static CloseableReadableData createRequestDataKeepingFile(File file) throws FileUploadException {
+        return new FileReadableData(file);
+    }
+   
+    
+    public static CloseableWritableData createResponseData(final boolean defaultToDisk) {
+        return new TemporarlyWritableData(defaultToDisk);
+    }
+    
+    public static AdminInfo createAdminInfo() {
+        return new AdminInfo("CN=Unit Tester", "CN=Testing CA", new BigInteger("4242"));
     }
 }

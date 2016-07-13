@@ -36,6 +36,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
+import org.signserver.common.data.TBNCertificateValidationRequest;
+import org.signserver.common.data.TBNDocumentValidationRequest;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
@@ -96,29 +99,29 @@ public class XMLValidator extends BaseValidator {
     }
 
     @Override
-    public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        if (!configErrors.isEmpty()) {
-            throw new SignServerException("Worker is misconfigured");
-        }
-
-        // Check that the request contains a valid GenericSignRequest object with a byte[].
-        if (!(signRequest instanceof GenericValidationRequest)) {
-            throw new IllegalRequestException("Received request wasn't an expected GenericValidationRequest.");
-        }
-        IValidationRequest sReq = (IValidationRequest) signRequest;
-
-        if (!(sReq.getRequestData() instanceof byte[])) {
-            throw new IllegalRequestException("Received request data wasn't an expected byte[].");
-        }
-
-        byte[] data = (byte[]) sReq.getRequestData();
-
-        GenericValidationResponse response = validate(sReq.getRequestID(), data, requestContext);
-        
-        // The client can be charged for the request
-        requestContext.setRequestFulfilledByWorker(true);
+    public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        try {
+            if (!configErrors.isEmpty()) {
+                throw new SignServerException("Worker is misconfigured");
+            }
             
-        return response;
+            // Check that the request contains a valid GenericSignRequest object with a byte[].
+            if (!(signRequest instanceof TBNDocumentValidationRequest)) {
+                throw new IllegalRequestException("Received request wasn't an expected GenericValidationRequest.");
+            }
+            TBNDocumentValidationRequest sReq = (TBNDocumentValidationRequest) signRequest;
+            
+            byte[] data = (byte[]) sReq.getRequestData().getAsByteArray();
+            
+            GenericValidationResponse response = validate(sReq.getRequestID(), data, requestContext);
+            
+            // The client can be charged for the request
+            requestContext.setRequestFulfilledByWorker(true);
+            
+            return response;
+        } catch (IOException ex) {
+            throw new SignServerException("IO error", ex);
+        }
     }
 
     private GenericValidationResponse validate(final int requestId, byte[] data, RequestContext requestContext) throws SignServerException {
@@ -195,13 +198,8 @@ public class XMLValidator extends BaseValidator {
                         + "\"" + choosenCert.getNotAfter() + "\")");
             }
 
-            ValidateRequest vr;
+            TBNCertificateValidationRequest vr = new TBNCertificateValidationRequest(choosenCert, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
             ProcessResponse response;
-            try {
-                vr = new ValidateRequest(choosenCert, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
-            } catch (CertificateEncodingException e) {
-                throw new SignServerException("Error validating certificate", e);
-            }
 
             try {
                 LOG.info("Requesting certificate validation from worker: " + PROP_VALIDATIONSERVICEWORKER);

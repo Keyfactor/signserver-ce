@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.ejb;
 
+import java.io.IOException;
+import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -19,17 +21,29 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
+import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GenericServletResponse;
+import org.signserver.common.GenericSignRequest;
+import org.signserver.common.GenericValidationRequest;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.RequestContext;
+import org.signserver.common.RequestMetadata;
+import org.signserver.common.SODSignRequest;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.data.TBNCertificateValidationRequest;
+import org.signserver.common.data.TBNDocumentValidationRequest;
+import org.signserver.common.data.TBNLegacyRequest;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNSODRequest;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
@@ -42,7 +56,16 @@ import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.server.UsernamePasswordClientCredential;
+import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.TBNServletResponse;
+import org.signserver.server.data.impl.CloseableReadableData;
+import org.signserver.server.data.impl.CloseableWritableData;
+import org.signserver.server.data.impl.TemporarlyWritableData;
+import org.signserver.server.data.impl.UploadConfig;
+import org.signserver.server.data.impl.UploadUtil;
 import org.signserver.statusrepo.StatusRepositorySessionLocal;
+import org.signserver.validationservice.common.ValidateRequest;
 
 /**
  * Session Bean handling the worker process requests.
@@ -121,17 +144,119 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         }
     }
     
+    // Note: This is the remote interface
     @Override
     public ProcessResponse process(final WorkerIdentifier wi,
             final ProcessRequest request, final RemoteRequestContext remoteContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
-        return processImpl.process(wi, request, remoteContext, servicesImpl);
+        
+        CloseableReadableData requestData = null;
+        CloseableWritableData responseData = null;
+        try {
+            final TBNRequest req2;
+            
+            // Use the new request types with large file support for
+            // GenericSignRequest and GenericValidationRequest
+            if (request instanceof GenericSignRequest) {
+                byte[] data = ((GenericSignRequest) request).getRequestData();
+                int requestID = ((GenericSignRequest) request).getRequestID();
+
+                // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
+                requestData = UploadUtil.handleUpload(UploadConfig.create(globalConfigurationSession), data);
+                responseData = new TemporarlyWritableData(requestData.isFile());
+                req2 = new TBNServletRequest(requestID, requestData, responseData, null);
+            } else if (request instanceof GenericValidationRequest) {
+                byte[] data = ((GenericValidationRequest) request).getRequestData();
+                int requestID = ((GenericValidationRequest) request).getRequestID();
+
+                // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
+                requestData = UploadUtil.handleUpload(UploadConfig.create(globalConfigurationSession), data);
+                req2 = new TBNDocumentValidationRequest(requestID, requestData);
+            } else if (request instanceof ValidateRequest) {
+                final ValidateRequest vr = (ValidateRequest) request;
+
+                // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
+                req2 = new TBNCertificateValidationRequest(vr.getCertificate(), vr.getCertPurposesString());
+            } else if (request instanceof SODSignRequest) {
+                SODSignRequest sod = (SODSignRequest) request;
+                responseData = new TemporarlyWritableData(false);
+                req2 = new TBNSODRequest(sod.getRequestID(), sod.getDataGroupHashes(), sod.getLdsVersion(), sod.getUnicodeVersion(), responseData);
+            } else {
+                // Passthrough for all legacy requests
+                req2 = new TBNLegacyRequest(request);
+            }
+            
+            ProcessResponse result;
+            ProcessResponse response = process(wi, req2, remoteContext, servicesImpl);
+            
+            if (response instanceof TBNServletResponse) {
+                TBNServletResponse tbnResp = (TBNServletResponse) response;
+                
+                result = new GenericServletResponse(tbnResp.getRequestID(), tbnResp.getProcessedData(), tbnResp.getSignerCertificate(), tbnResp.getArchiveId(), tbnResp.getArchivables(), tbnResp.getContentType());
+            } else {
+                // Passthrough for all other
+                result = response;
+            }
+            
+            return result;
+        
+        } catch (FileUploadBase.SizeLimitExceededException ex) {
+            LOG.error("Maximum content length exceeded: " + ex.getLocalizedMessage());
+            throw new IllegalRequestException("Maximum content length exceeded");
+        } catch (FileUploadException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Upload failed", ex);
+            }
+            throw new IllegalRequestException("Upload failed: " + ex.getLocalizedMessage());
+        } finally {
+            if (requestData != null) {
+                try {
+                    requestData.close();
+                } catch (IOException ex) {
+                    LOG.error("Unable to remove temporary upload file: " + ex.getLocalizedMessage());
+                }
+            }
+            if (responseData != null) {
+                try {
+                    responseData.close();
+                } catch (IOException ex) {
+                    LOG.error("Unable to remove temporary response file: " + ex.getLocalizedMessage());
+                }
+            }
+        }
+    }
+    
+    private ProcessResponse process(WorkerIdentifier wi, TBNRequest request, RemoteRequestContext remoteContext, AllServicesImpl servicesImpl) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        // Create a new RequestContext at server-side
+        final RequestContext requestContext = new RequestContext(true);
+
+        if (remoteContext != null) {
+            // Put metadata from the request
+            RequestMetadata metadata = remoteContext.getMetadata();
+            if (metadata != null) {
+                RequestMetadata.getInstance(requestContext).putAll(remoteContext.getMetadata());
+            }
+
+            // Put username/password
+            if (remoteContext.getUsername() != null) {
+                UsernamePasswordClientCredential credential = new UsernamePasswordClientCredential(remoteContext.getUsername(), remoteContext.getPassword());
+                requestContext.put(RequestContext.CLIENT_CREDENTIAL, credential);
+                requestContext.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, credential);
+            }
+        }
+        
+        // Put transaction ID
+        requestContext.put(RequestContext.TRANSACTION_ID, UUID.randomUUID().toString());
+
+        // Put services
+        requestContext.setServices(servicesImpl);
+        return process(new AdminInfo("Client user", null, null), wi, request, requestContext);
     }
     
     @Override
     public ProcessResponse process(final AdminInfo adminInfo, final WorkerIdentifier wi,
-            final ProcessRequest request, final RequestContext requestContext)
+            final TBNRequest request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);

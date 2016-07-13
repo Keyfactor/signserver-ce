@@ -20,7 +20,6 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GenericValidationRequest;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RemoteRequestContext;
@@ -28,7 +27,6 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
-import org.signserver.ejb.interfaces.WorkerSessionRemote;
 
 /**
  * Implements ISigningAndValidation using EJB remote interface.
@@ -38,7 +36,6 @@ import org.signserver.ejb.interfaces.WorkerSessionRemote;
  */
 public class SigningAndValidationEJB implements ISigningAndValidation {
 
-    private final WorkerSessionRemote signserver;
     private final ProcessSessionRemote processSession;
 
     /**
@@ -48,8 +45,6 @@ public class SigningAndValidationEJB implements ISigningAndValidation {
      * @throws NamingException If an naming exception is encountered.
      */
     public SigningAndValidationEJB() throws NamingException {
-        signserver = ServiceLocator.getInstance().lookupRemote(
-                WorkerSessionRemote.class);
         processSession = ServiceLocator.getInstance().lookupRemote(
                 ProcessSessionRemote.class);
     }
@@ -71,21 +66,6 @@ public class SigningAndValidationEJB implements ISigningAndValidation {
             throw new SignServerException("Unexpected response type: " + resp.getClass().getName());
         }
         return (GenericValidationResponse) resp;
-    }
-
-    private int getWorkerId(String workerIdOrName) throws IllegalRequestException {
-        int retval = 0;
-
-        if (workerIdOrName.substring(0, 1).matches("\\d")) {
-            retval = Integer.parseInt(workerIdOrName);
-        } else {
-            try {
-                retval = signserver.getWorkerId(workerIdOrName);
-            } catch (InvalidWorkerIdException ex) {
-                throw new IllegalRequestException("Error: No worker with the given name could be found");
-            }
-        }
-        return retval;
     }
 
     @Override

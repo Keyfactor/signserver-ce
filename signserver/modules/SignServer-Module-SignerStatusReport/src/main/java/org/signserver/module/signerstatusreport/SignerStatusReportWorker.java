@@ -21,12 +21,13 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericServletResponse;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNServletRequest;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
@@ -80,10 +81,10 @@ public class SignerStatusReportWorker extends BaseSigner {
     }
     
     @Override
-    public ProcessResponse processData(ProcessRequest request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        final GenericSignRequest signRequest;
-        if (request instanceof GenericSignRequest) {
-            signRequest = (GenericSignRequest) request;
+    public ProcessResponse processData(TBNRequest request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        final TBNServletRequest signRequest;
+        if (request instanceof TBNServletRequest) {
+            signRequest = (TBNServletRequest) request;
         } else {
             throw new IllegalRequestException("Received request was not of expected type.");
         }

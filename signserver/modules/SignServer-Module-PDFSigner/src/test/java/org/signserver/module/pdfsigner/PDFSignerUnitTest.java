@@ -36,9 +36,11 @@ import org.bouncycastle.cert.jcajce.JcaX509CRLConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.signserver.common.*;
+import org.signserver.common.data.ReadableData;
+import org.signserver.common.data.TBNServletRequest;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
-import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertBuilderException;
 import org.signserver.test.utils.builders.CertExt;
@@ -50,6 +52,9 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.server.data.impl.CloseableReadableData;
+import org.signserver.server.data.impl.CloseableWritableData;
+import org.signserver.server.log.AdminInfo;
 
 /**
  * Unit tests for PDFSigner.
@@ -82,7 +87,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     
     private GlobalConfigurationSessionLocal globalConfig;
     private WorkerSessionRemote workerSession;
-    private ProcessSessionRemote processSession;
+    private ProcessSessionLocal processSession;
 
     private File sampleOk;
     private File sampleRestricted;
@@ -135,17 +140,22 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * @throws Exception in case of error
      */
     public void test01signOk() throws Exception {
-        byte[] data = readFile(sampleOk);
+        ReadableData requestData = createRequestDataKeepingFile(sampleOk);
+        try (CloseableWritableData responseData = createResponseData(true)) {
 
-        final GenericSignRequest request = new GenericSignRequest(100,
-                data);
+            final TBNServletRequest request = new TBNServletRequest(100,
+                    requestData, responseData, null);
 
-        final GenericSignResponse response = (GenericSignResponse)
-                processSession.process(new WorkerIdentifier(WORKER1), request, new RemoteRequestContext());
-        assertEquals("requestId", 100, response.getRequestID());
+            final GenericSignResponse response = (GenericSignResponse)
+                    processSession.process(createAdminInfo(), new WorkerIdentifier(WORKER1), request, new RequestContext(true));
+            assertEquals("requestId", 100, response.getRequestID());
 
-        Certificate signercert = response.getSignerCertificate();
-        assertNotNull(signercert);
+            Certificate signercert = response.getSignerCertificate();
+            assertNotNull(signercert);
+            
+            assertTrue("data processed", responseData.toReadableData().getLength() > 0);
+            assertTrue("data processed", responseData.toReadableData().getAsByteArray().length > 0);
+        }
     }
 
     /**
@@ -154,41 +164,56 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * @throws Exception in case of error
      */
     public void test02SignWithRestrictionsNoPasswordSupplied() throws Exception { 
-        try {
-            processSession.process(
+        try (
+                CloseableReadableData requestData = createRequestDataKeepingFile(sampleRestricted);
+                CloseableWritableData responseData = createResponseData(true);
+            ) {
+            processSession.process(createAdminInfo(),
                 new WorkerIdentifier(WORKER1),
-                new GenericSignRequest(200, readFile(sampleRestricted)),
-                new RemoteRequestContext());
+                new TBNServletRequest(200, requestData, responseData, null),
+                new RequestContext(true));
             fail("Should have thrown exception");
         } catch (IllegalRequestException ignored) {
             // OK
         }
         
-        try {
+        try (
+                CloseableReadableData requestData = createRequestDataKeepingFile(sampleOpen123);
+                CloseableWritableData responseData = createResponseData(true);
+            ) {
             processSession.process(
+                createAdminInfo(),
                 new WorkerIdentifier(WORKER1),
-                new GenericSignRequest(200, readFile(sampleOpen123)),
-                new RemoteRequestContext());
+                new TBNServletRequest(200, requestData, responseData, null),
+                new RequestContext(true));
             fail("Should have thrown exception");
         } catch (IllegalRequestException ignored) {
             // OK
         }
         
-        try {
+        try (
+                CloseableReadableData requestData = createRequestDataKeepingFile(sampleOpen123Owner123);
+                CloseableWritableData responseData = createResponseData(true);
+            ) {
             processSession.process(
+                createAdminInfo(),
                 new WorkerIdentifier(WORKER1),
-                new GenericSignRequest(200, readFile(sampleOpen123Owner123)),
-                new RemoteRequestContext());
+                new TBNServletRequest(200, requestData, responseData, null),
+                new RequestContext(true));
             fail("Should have thrown exception");
         } catch (IllegalRequestException ignored) {
             // OK
         }
         
-        try {
+        try (
+                CloseableReadableData requestData = createRequestDataKeepingFile(sampleOwner123);
+                CloseableWritableData responseData = createResponseData(true);
+            ) {
             processSession.process(
+                createAdminInfo(),
                 new WorkerIdentifier(WORKER1),
-                new GenericSignRequest(200, readFile(sampleOwner123)),
-                new RemoteRequestContext());
+                new TBNServletRequest(200, requestData, responseData, null),
+                new RequestContext());
             fail("Should have thrown exception");
         } catch (IllegalRequestException ignored) {
             // OK
@@ -1421,11 +1446,13 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         
         instance.setIncludeCertificateLevels(1);
         
-        try {
-            byte[] signedPdfbytes =
-                    instance.addSignatureToPDFDocument(token.acquireCryptoInstance("any-alias", Collections.<String, Object>emptyMap(), null), params, pdfbytes, null, 0,
-                                                       null, null);
+        try (CloseableWritableData responseData = createResponseData(false)) {
+            
+            instance.addSignatureToPDFDocument(token.acquireCryptoInstance("any-alias", Collections.<String, Object>emptyMap(), null), params, pdfbytes, null, null, 0,
+                                                       null, responseData, null);
+            byte[] signedPdfbytes = responseData.toReadableData().getAsByteArray();
             assertNotNull(signedPdfbytes);
+            assertTrue("some data", signedPdfbytes.length > 0);
         } catch (SignServerException ex) {
             LOG.debug("failed to sign", ex);
             fail(ex.getMessage());
@@ -1470,17 +1497,20 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             LOG.debug("\"" + password + "\" " + Arrays.toString(password.toCharArray()));
         }
         
-        RemoteRequestContext context = new RemoteRequestContext();
-        RequestMetadata metadata = new RequestMetadata();
-        metadata.put(RequestContext.METADATA_PDFPASSWORD, password);
-        context.setMetadata(metadata);
+        RequestContext context = new RequestContext();
+        RequestMetadata.getInstance(context).put(RequestContext.METADATA_PDFPASSWORD, password);
 
-        final GenericSignResponse response = 
-                (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKER1), 
-                new GenericSignRequest(200, readFile(file)), 
-                context);
-        assertNotNull(response);
-        return response.getProcessedData();
+        try (
+                CloseableReadableData requestData = createRequestDataKeepingFile(file);
+                CloseableWritableData responseData = createResponseData(true);
+            ) {
+            final ProcessResponse response = 
+                    processSession.process(createAdminInfo(), new WorkerIdentifier(WORKER1), 
+                    new TBNServletRequest(200, requestData, responseData, null),
+                    context);
+            assertNotNull(response);
+            return responseData.toReadableData().getAsByteArray();
+        }
     }
 
     private void setupWorkers()

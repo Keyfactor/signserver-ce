@@ -16,13 +16,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
-import org.signserver.common.ServiceLocator;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 
 /**
@@ -72,7 +70,7 @@ public class GlobalConfigSampleAccounter implements IAccounter {
 
     @Override
     public boolean purchase(final IClientCredential credential,
-            final ProcessRequest request, final ProcessResponse response,
+            final TBNRequest request, final ProcessResponse response,
             final RequestContext context) throws AccounterException {
 
         if (LOG.isDebugEnabled()) {

@@ -38,6 +38,8 @@ import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.fileupload.FileUploadException;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
@@ -50,6 +52,11 @@ import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.clauses.Order;
 import org.cesecore.util.query.elems.Term;
 import org.signserver.common.*;
+import org.signserver.common.data.TBNDocumentValidationRequest;
+import org.signserver.common.data.TBNLegacyRequest;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNSODRequest;
+import org.signserver.common.data.TBNServletRequest;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IClientCredential;
@@ -57,6 +64,11 @@ import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.server.data.impl.CloseableReadableData;
+import org.signserver.server.data.impl.CloseableWritableData;
+import org.signserver.server.data.impl.TemporarlyWritableData;
+import org.signserver.server.data.impl.UploadConfig;
+import org.signserver.server.data.impl.UploadUtil;
 
 /**
  * Class implementing the Admin WS interface.
@@ -902,13 +914,70 @@ public class AdminWS {
                 throw new IllegalRequestException(
                         "Error parsing process request", ex);
             }
+            
+            // TODO: Duplicated in SignServerWS, AdminWS, ProcessSessionBean (remote)
+            CloseableReadableData requestData = null;
+            CloseableWritableData responseData = null;
             try {
-                result.add(RequestAndResponseManager.serializeProcessResponse(
-                    processSession.process(adminInfo, WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext)));
-            } catch (IOException ex) {
-                LOG.error("Error serializing process response", ex);
-                throw new IllegalRequestException(
-                        "Error serializing process response", ex);
+                final TBNRequest req2;
+                
+                // Use the new request types with large file support for
+                // GenericSignRequest and GenericValidationRequest
+                if (req instanceof GenericSignRequest) {
+                    byte[] data = ((GenericSignRequest) req).getRequestData();
+                    int requestID = ((GenericSignRequest) req).getRequestID();
+                    
+                    // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
+                    requestData = UploadUtil.handleUpload(UploadConfig.create(global), data);
+                    responseData = new TemporarlyWritableData(requestData.isFile());
+                    req2 = new TBNServletRequest(requestID, requestData, responseData, null);
+                } else if (req instanceof GenericValidationRequest) {
+                    byte[] data = ((GenericValidationRequest) req).getRequestData();
+                    int requestID = ((GenericValidationRequest) req).getRequestID();
+                    
+                    // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
+                    requestData = UploadUtil.handleUpload(UploadConfig.create(global), data);
+                    req2 = new TBNDocumentValidationRequest(requestID, requestData);
+                } else if (req instanceof SODSignRequest) {
+                    SODSignRequest sodReq = (SODSignRequest) req;
+                    req2 = new TBNSODRequest(sodReq.getRequestID(), sodReq.getDataGroupHashes(), sodReq.getLdsVersion(), sodReq.getUnicodeVersion(), responseData);
+                } else {
+                    // Passthrough for all legacy requests
+                    req2 = new TBNLegacyRequest(req);
+                }
+
+                try {
+                    result.add(RequestAndResponseManager.serializeProcessResponse(
+                        processSession.process(adminInfo, WorkerIdentifier.createFromIdOrName(workerIdOrName), req2, requestContext)));
+                } catch (IOException ex) {
+                    LOG.error("Error serializing process response", ex);
+                    throw new IllegalRequestException(
+                            "Error serializing process response", ex);
+                }
+                
+            } catch (FileUploadBase.SizeLimitExceededException ex) {
+                LOG.error("Maximum content length exceeded: " + ex.getLocalizedMessage());
+                throw new IllegalRequestException("Maximum content length exceeded");
+            } catch (FileUploadException ex) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Upload failed", ex);
+                }
+                throw new IllegalRequestException("Upload failed: " + ex.getLocalizedMessage());
+            } finally {
+                if (requestData != null) {
+                    try {
+                        requestData.close();
+                    } catch (IOException ex) {
+                        LOG.error("Unable to remove temporary upload file: " + ex.getLocalizedMessage());
+                    }
+                }
+                if (responseData != null) {
+                    try {
+                        responseData.close();
+                    } catch (IOException ex) {
+                        LOG.error("Unable to remove temporary response file: " + ex.getLocalizedMessage());
+                    }
+                }
             }
         }
         return result;

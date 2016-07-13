@@ -34,9 +34,9 @@ import org.junit.Test;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertBuilderException;
 
@@ -135,7 +135,7 @@ public class ClientCertAuthorizerTest {
    
         instance.init(DUMMY_WORKER_ID, config, null);
         
-        final ProcessRequest request = new GenericSignRequest();
+        final TBNRequest request = null;
         final RequestContext context = new RequestContext();
         
         context.put(RequestContext.CLIENT_CERTIFICATE, cert);

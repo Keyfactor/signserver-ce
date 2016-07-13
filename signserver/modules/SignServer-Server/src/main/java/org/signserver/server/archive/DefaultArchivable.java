@@ -12,35 +12,37 @@
  *************************************************************************/
 package org.signserver.server.archive;
 
+import java.io.IOException;
+import org.signserver.common.data.ReadableData;
+
 /**
- * Default Archivable holding any byte[].
+ * Default Archivable with support for large files.
+ * The old default Archivable implementation is now called ByteArrayArchivable.
  *
  * @author Markus Kilås
  * @version $Id$
+ * @see ByteArrayArchivable
  */
 public class DefaultArchivable extends AbstractArchivable {
-    
-    private static final long serialVersionUID = 0L;
 
     /** The default content-type. */
     private static final String APPLICATION_OCTET_STREAM 
             = "application/octet-stream";
 
     /** The data. */
-    private transient byte[] bytes; // Don't serialize the data. Let it stay a server side.
+    private ReadableData data; // Don't serialize the data. Let it stay a server side.
 
     /**
      * Creates an instance of DefaultArchivable with the given type, data and  
      * archive ID
      * @param type The type of Archivable.
-     * @param bytes The data to archive.
+     * @param data The data to archive.
      * @param archiveId Some ID of the transaction
      * @see Archivable#TYPE_REQUEST
      * @see Archivable#TYPE_RESPONSE
-     * @since SignServer 3.3
      */
-    public DefaultArchivable(final String type, final byte[] bytes, final String archiveId) {
-        this(type, APPLICATION_OCTET_STREAM, bytes, archiveId);
+    public DefaultArchivable(final String type, final ReadableData data, final String archiveId) {
+        this(type, APPLICATION_OCTET_STREAM, data, archiveId);
     }
 
     /** Creates an instance of DefaultArchivable with the given type, 
@@ -48,20 +50,23 @@ public class DefaultArchivable extends AbstractArchivable {
      * @param type The type of Archivable.
      * @param archiveId Some ID of the transaction
      * @param contentType The content-type of the data.
-     * @param bytes The data to archive.
+     * @param data The data to archive.
      * @see Archivable#TYPE_REQUEST
      * @see Archivable#TYPE_RESPONSE
-     * @since SignServer 3.3
      */
     public DefaultArchivable(final String type, 
-            final String contentType, final byte[] bytes, final String archiveId) {
+            final String contentType, final ReadableData data, final String archiveId) {
         super(type, archiveId, contentType);
-        this.bytes = bytes;
+        this.data = data;
     }
 
     @Override
     public byte[] getContentEncoded() {
-        return bytes;
+        try {
+            return data.getAsByteArray();
+        } catch (IOException ex) {
+            throw new IllegalStateException("Archive data unavailable: " + ex.getLocalizedMessage(), ex);
+        }
     }
 
 }

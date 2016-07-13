@@ -150,8 +150,9 @@ public class GenericSignResponse extends ProcessResponse implements ISignRespons
         } else {
             out.writeInt(0);
         }
-        out.writeInt(processedData.length);
-        out.write(processedData);
+        final byte[] data = getProcessedData(); // This can be overridden
+        out.writeInt(data.length);
+        out.write(data);
     }
 
     @Override

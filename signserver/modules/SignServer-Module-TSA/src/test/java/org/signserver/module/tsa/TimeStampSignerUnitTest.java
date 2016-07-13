@@ -33,13 +33,11 @@ import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampTokenInfo;
 import org.junit.Before;
 import org.junit.Test;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.server.LocalComputerTimeSource;
 import org.signserver.server.log.LogMap;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
@@ -49,8 +47,10 @@ import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.common.data.TBNServletRequest;
+import org.signserver.server.data.impl.CloseableReadableData;
+import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.log.AdminInfo;
-import org.signserver.server.log.Loggable;
 import org.signserver.test.utils.mock.MockedRequestContext;
 import org.signserver.test.utils.mock.MockedServicesImpl;
 
@@ -105,13 +105,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
-        byte[] requestBytes = timeStampRequest.getEncoded();
-        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
-                new WorkerIdentifier(WORKER1), signRequest, new MockedRequestContext(services));
-
-        final TimeStampResponse timeStampResponse = new TimeStampResponse(
-                (byte[]) res.getProcessedData());
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER1);
         timeStampResponse.validate(timeStampRequest);
 
         final LogMap logMap = LogMap.getInstance(processSession.getLastRequestContext());
@@ -134,13 +128,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[2000], BigInteger.valueOf(100));
-        byte[] requestBytes = timeStampRequest.getEncoded();
-        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
-                new WorkerIdentifier(WORKER1), signRequest, new MockedRequestContext(services));
-
-        final TimeStampResponse timeStampResponse = new TimeStampResponse(
-                (byte[]) res.getProcessedData());
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER1);
         timeStampResponse.validate(timeStampRequest);
 
         LogMap logMap = LogMap.getInstance(processSession.getLastRequestContext());
@@ -270,7 +258,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner() {
                 @Override
-                protected Extensions getAdditionalExtensions(ProcessRequest request, RequestContext context) {
+                protected Extensions getAdditionalExtensions(TBNRequest request, RequestContext context) {
                      final Extension ext =
                              new Extension(new ASN1ObjectIdentifier("1.2.7.9"),
                                            false,
@@ -300,7 +288,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner() {
                 @Override
-                protected Extensions getAdditionalExtensions(ProcessRequest request, RequestContext context) {
+                protected Extensions getAdditionalExtensions(TBNRequest request, RequestContext context) {
                      final Extension ext =
                              new Extension(new ASN1ObjectIdentifier("1.2.7.9"),
                                            false,
@@ -374,17 +362,23 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
-        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
-                new WorkerIdentifier(WORKER2), signRequest, new MockedRequestContext(services));
+        try (
+                CloseableReadableData requestData = createRequestData(requestBytes);
+                CloseableWritableData responseData = createResponseData(false);
+            ) {
+            TBNServletRequest signRequest = new TBNServletRequest(100, requestData, responseData, null);
+            processSession.process(new AdminInfo("Client user", null, null),
+                    new WorkerIdentifier(WORKER2), signRequest, new MockedRequestContext(services));
 
-        final TimeStampResponse timeStampResponse = new TimeStampResponse(
-                (byte[]) res.getProcessedData());
-        timeStampResponse.validate(timeStampRequest);
-        assertEquals("rejection", PKIStatus.REJECTION, timeStampResponse.getStatus());
-        assertEquals("unacceptedExtension", PKIFailureInfo.unacceptedExtension, timeStampResponse.getFailInfo().intValue());
+            final TimeStampResponse timeStampResponse = new TimeStampResponse(responseData.toReadableData().getAsByteArray());
+            timeStampResponse.validate(timeStampRequest);
+            assertEquals("rejection", PKIStatus.REJECTION, timeStampResponse.getStatus());
+            assertEquals("unacceptedExtension", PKIFailureInfo.unacceptedExtension, timeStampResponse.getFailInfo().intValue());
+        } finally {
+            
+        }
     }
-
+    
     /**
      * Tests that a request including an extension listed will accept
      * the extension.
@@ -398,13 +392,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         timeStampRequestGenerator.addExtension(new ASN1ObjectIdentifier("1.2.7.2"), false, new DEROctetString("Value".getBytes("UTF-8")));
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
-        byte[] requestBytes = timeStampRequest.getEncoded();
-        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
-                new WorkerIdentifier(WORKER2), signRequest, new MockedRequestContext(services));
-
-        final TimeStampResponse timeStampResponse = new TimeStampResponse(
-                (byte[]) res.getProcessedData());
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER2);
         timeStampResponse.validate(timeStampRequest);
         assertEquals("granted", PKIStatus.GRANTED, timeStampResponse.getStatus());
         assertEquals("extensions in token",
@@ -425,13 +413,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         timeStampRequestGenerator.addExtension(new ASN1ObjectIdentifier("1.2.7.2"), false, new DEROctetString("Value".getBytes("UTF-8")));
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
-        byte[] requestBytes = timeStampRequest.getEncoded();
-        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
-                new WorkerIdentifier(WORKER4), signRequest, new MockedRequestContext(services));
-
-        final TimeStampResponse timeStampResponse = new TimeStampResponse(
-                (byte[]) res.getProcessedData());
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER4);
         timeStampResponse.validate(timeStampRequest);
         assertEquals("granted", PKIStatus.GRANTED, timeStampResponse.getStatus());
         assertEquals("extensions in token",
@@ -451,16 +433,25 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
-        byte[] requestBytes = timeStampRequest.getEncoded();
-        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
-                new WorkerIdentifier(WORKER3), signRequest, new MockedRequestContext(services));
-
-        final TimeStampResponse timeStampResponse = new TimeStampResponse(
-                (byte[]) res.getProcessedData());
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER3);
         timeStampResponse.validate(timeStampRequest);
         assertEquals("granted", PKIStatus.GRANTED, timeStampResponse.getStatus());
         assertNull("extensions in token", timeStampResponse.getTimeStampToken().getTimeStampInfo().toASN1Structure().getExtensions());
+    }
+    
+    private TimeStampResponse timestamp(TimeStampRequest timeStampRequest, int workerId) throws Exception {
+        byte[] requestBytes = timeStampRequest.getEncoded();
+        try (
+                CloseableReadableData requestData = createRequestData(requestBytes);
+                CloseableWritableData responseData = createResponseData(false);
+            ) {
+            TBNServletRequest signRequest = new TBNServletRequest(100, requestData, responseData, null);
+        
+            processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId), signRequest, new MockedRequestContext(services));
+
+            final TimeStampResponse timeStampResponse = new TimeStampResponse(responseData.toReadableData().getAsInputStream());
+            return timeStampResponse;
+        }
     }
 
     /**
@@ -476,13 +467,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         timeStampRequestGenerator.addExtension(new ASN1ObjectIdentifier("1.2.7.9"), false, new DEROctetString("Value".getBytes("UTF-8")));
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
-        byte[] requestBytes = timeStampRequest.getEncoded();
-        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
-                new WorkerIdentifier(WORKER3), signRequest, new MockedRequestContext(services));
-
-        final TimeStampResponse timeStampResponse = new TimeStampResponse(
-                (byte[]) res.getProcessedData());
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER3);
         timeStampResponse.validate(timeStampRequest);
         assertEquals("rejection", PKIStatus.REJECTION, timeStampResponse.getStatus());
         assertEquals("unacceptedExtension", PKIFailureInfo.unacceptedExtension, timeStampResponse.getFailInfo().intValue());
@@ -500,15 +485,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
-        byte[] requestBytes = timeStampRequest.getEncoded();
-        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final RequestContext requestContext = new MockedRequestContext(services);
-        final GenericSignResponse res =
-                (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
-                new WorkerIdentifier(WORKER5), signRequest, requestContext);
-
-        final TimeStampResponse timeStampResponse = new TimeStampResponse(
-                (byte[]) res.getProcessedData());
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER5);
         timeStampResponse.validate(timeStampRequest);
     
         TimeStampTokenInfo timeStampInfo = timeStampResponse.getTimeStampToken().getTimeStampInfo();
@@ -538,15 +515,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
-        byte[] requestBytes = timeStampRequest.getEncoded();
-        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final RequestContext requestContext = new MockedRequestContext(services);
-        final GenericSignResponse res =
-                (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
-                new WorkerIdentifier(WORKER6), signRequest, requestContext);
-
-        final TimeStampResponse timeStampResponse = new TimeStampResponse(
-                (byte[]) res.getProcessedData());
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER6);
         timeStampResponse.validate(timeStampRequest);
     
         TimeStampTokenInfo timeStampInfo = timeStampResponse.getTimeStampToken().getTimeStampInfo();
@@ -581,13 +550,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.2.3.4"));
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
-        byte[] requestBytes = timeStampRequest.getEncoded();
-        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
-                new WorkerIdentifier(WORKER7), signRequest, new MockedRequestContext(services));
-
-        final TimeStampResponse timeStampResponse = new TimeStampResponse(
-                (byte[]) res.getProcessedData());
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER7);
         timeStampResponse.validate(timeStampRequest);
         assertEquals("acceptance", PKIStatus.GRANTED, timeStampResponse.getStatus());
     }
@@ -606,13 +569,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.2.3.4"));
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
-        byte[] requestBytes = timeStampRequest.getEncoded();
-        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
-                new WorkerIdentifier(WORKER8), signRequest, new MockedRequestContext(services));
-
-        final TimeStampResponse timeStampResponse = new TimeStampResponse(
-                (byte[]) res.getProcessedData());
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER8);
         timeStampResponse.validate(timeStampRequest);
         assertEquals("acceptance", PKIStatus.GRANTED, timeStampResponse.getStatus());
     }
@@ -631,13 +588,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.2.3.5"));
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
-        byte[] requestBytes = timeStampRequest.getEncoded();
-        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
-                new WorkerIdentifier(WORKER7), signRequest, new MockedRequestContext(services));
-
-        final TimeStampResponse timeStampResponse = new TimeStampResponse(
-                (byte[]) res.getProcessedData());
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER7);
         timeStampResponse.validate(timeStampRequest);
         assertEquals("acceptance", PKIStatus.REJECTION, timeStampResponse.getStatus());
     }
@@ -655,13 +606,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.2.3.5"));
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
-        byte[] requestBytes = timeStampRequest.getEncoded();
-        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final GenericSignResponse res = (GenericSignResponse) processSession.process(new AdminInfo("Client user", null, null),
-                new WorkerIdentifier(WORKER1), signRequest, new MockedRequestContext(services));
-
-        final TimeStampResponse timeStampResponse = new TimeStampResponse(
-                (byte[]) res.getProcessedData());
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER1);
         timeStampResponse.validate(timeStampRequest);
         assertEquals("acceptance", PKIStatus.GRANTED, timeStampResponse.getStatus());
     }

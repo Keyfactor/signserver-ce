@@ -18,15 +18,15 @@ import java.util.Properties;
 
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericServletResponse;
-import org.signserver.common.GenericSignRequest;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.RequestMetadata;
-import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerException;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNSODRequest;
+import org.signserver.common.data.TBNServletRequest;
 
 /**
  * Test signer returning the content of REQUEST_METADATA in properties file format.
@@ -38,7 +38,7 @@ import org.signserver.common.SignServerException;
 public class EchoRequestMetadataSigner extends BaseSigner {
 
     @Override
-    public ProcessResponse processData(ProcessRequest signRequest,
+    public ProcessResponse processData(TBNRequest signRequest,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
         
@@ -46,12 +46,12 @@ public class EchoRequestMetadataSigner extends BaseSigner {
         final int reqId;
         final boolean isSOD;
         
-        if (signRequest instanceof GenericSignRequest) {
-            final GenericSignRequest req = (GenericSignRequest) signRequest;
+        if (signRequest instanceof TBNServletRequest) {
+            final TBNServletRequest req = (TBNServletRequest) signRequest;
             reqId = req.getRequestID();
             isSOD = false;
-        } else if (signRequest instanceof SODSignRequest) {
-            final SODSignRequest req = (SODSignRequest) signRequest;
+        } else if (signRequest instanceof TBNSODRequest) {
+            final TBNSODRequest req = (TBNSODRequest) signRequest;
             reqId = req.getRequestID();
             isSOD = true;
         } else {

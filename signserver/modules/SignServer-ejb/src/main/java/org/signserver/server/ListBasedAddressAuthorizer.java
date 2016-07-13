@@ -23,10 +23,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.AccessDeniedException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.common.util.XForwardedForUtils;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
@@ -134,7 +134,7 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
     }
 
     @Override
-    public void isAuthorized(ProcessRequest request,
+    public void isAuthorized(TBNRequest request,
             RequestContext requestContext) throws IllegalRequestException,
             AccessDeniedException, SignServerException {
         final String remote = (String) requestContext.get(RequestContext.REMOTE_IP);

@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.xmlvalidator;
 
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.Security;
 import java.security.cert.Certificate;
@@ -32,9 +33,11 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerType;
+import org.signserver.common.data.TBNDocumentValidationRequest;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.test.utils.mock.MockedCryptoToken;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.Validation;
 import org.xml.sax.SAXParseException;
 
@@ -95,7 +98,7 @@ public class XMLValidatorUnitTest {
 
         System.err.println(instance.getFatalErrors(null));
         
-        GenericValidationRequest request = new GenericValidationRequest(100, xml.getBytes("UTF-8"));
+        TBNDocumentValidationRequest request = new TBNDocumentValidationRequest(100, ModulesTestCase.createRequestData(xml.getBytes(StandardCharsets.UTF_8)));
         GenericValidationResponse res = (GenericValidationResponse) instance.processData(request, requestContext);
 
         assertTrue("valid document", res.isValid());

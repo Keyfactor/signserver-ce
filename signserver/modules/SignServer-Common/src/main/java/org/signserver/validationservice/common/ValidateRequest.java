@@ -91,6 +91,10 @@ public class ValidateRequest extends ProcessRequest {
 
         return retval;
     }
+    
+    public String getCertPurposesString() {
+        return certPurposes;
+    }
 
     @Override
     public void parse(DataInput in) throws IOException {

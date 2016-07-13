@@ -23,6 +23,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.soap.MTOMFeature;
 import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.encoders.Base64;
@@ -70,7 +71,7 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
                     + url, ex);
         }
         
-        this.signServer = service.getClientWSPort();
+        this.signServer = service.getPort(new QName("http://clientws.signserver.org/", "ClientWSPort"), ClientWS.class, new MTOMFeature(true));
         this.workerName = workerName;
         this.pdfPassword = pdfPassword;
         this.metadata = metadata;

@@ -13,6 +13,7 @@
 package org.signserver.module.xades.signer;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
@@ -57,10 +58,14 @@ import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.common.data.TBNServletRequest;
+import org.signserver.server.data.impl.CloseableReadableData;
+import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.test.utils.mock.MockedCryptoToken;
+import org.signserver.testutils.ModulesTestCase;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXParseException;
@@ -308,12 +313,18 @@ public class XAdESSignerUnitTest {
             requestContext.put(RequestContext.CLIENT_CREDENTIAL, cred);
         }
         
-        GenericSignRequest request = new GenericSignRequest(100, toSign.getBytes("UTF-8"));
-        GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);
-        
-        byte[] data = response.getProcessedData();
-        final String signedXml = new String(data);
-        LOG.debug("signedXml: " + signedXml);
+        byte[] data;
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestData(toSign.getBytes(StandardCharsets.UTF_8));
+                CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
+            ) {
+            TBNServletRequest request = new TBNServletRequest(100, requestData, responseData, null);
+            instance.processData(request, requestContext);
+
+            data = responseData.toReadableData().getAsByteArray();
+            final String signedXml = new String(data, StandardCharsets.UTF_8);
+            LOG.debug("signedXml: " + signedXml);
+        }
         
         // Validation: setup
         CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters());
@@ -722,10 +733,15 @@ public class XAdESSignerUnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
-        GenericSignRequest request = new GenericSignRequest(100, "<test100/>".getBytes("UTF-8"));
-        GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);
-        
-        byte[] data = response.getProcessedData();
+        byte[] data;
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestData("<test100/>".getBytes(StandardCharsets.UTF_8));
+                CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
+            ) {
+            TBNServletRequest request = new TBNServletRequest(100, requestData, responseData, null);
+            instance.processData(request, requestContext);
+            data = responseData.toReadableData().getAsByteArray();
+        }
         final String signedXml = new String(data);
         LOG.debug("signedXml: " + signedXml);
         

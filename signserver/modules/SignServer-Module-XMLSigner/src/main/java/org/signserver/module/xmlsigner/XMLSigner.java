@@ -12,9 +12,9 @@
  *************************************************************************/
 package org.signserver.module.xmlsigner;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -39,7 +39,6 @@ import javax.xml.crypto.dsig.keyinfo.X509Data;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -51,6 +50,11 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.common.data.ReadableData;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.WritableData;
 import org.signserver.server.signers.BaseSigner;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -106,24 +110,16 @@ public class XMLSigner extends BaseSigner {
     }
 
     @Override
-    public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 
-        ProcessResponse signResponse;
-
-        // Check that the request contains a valid GenericSignRequest object with a byte[].
-        if (!(signRequest instanceof GenericSignRequest)) {
-            throw new IllegalRequestException("Received request wasn't an expected GenericSignRequest.");
+        // Check that the request contains a valid GenericSignRequest object
+        // with a byte[].
+        if (!(signRequest instanceof TBNServletRequest)) {
+            throw new IllegalRequestException(
+                    "Received request wasn't an expected GenericSignRequest.");
         }
-        
-        final ISignRequest sReq = (ISignRequest) signRequest;
-        
-        if (!(sReq.getRequestData() instanceof byte[])) {
-            throw new IllegalRequestException("Received request data wasn't an expected byte[].");
-        }
-
-        byte[] data = (byte[]) sReq.getRequestData();
-        String archiveId = createArchiveId(data, (String) requestContext.get(RequestContext.TRANSACTION_ID));
-
+        final TBNServletRequest sReq = (TBNServletRequest) signRequest;
+        String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
         String providerName = System.getProperty("jsr105Provider", "org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI");
         XMLSignatureFactory fac;
@@ -133,6 +129,8 @@ public class XMLSigner extends BaseSigner {
             throw new SignServerException("Problem with JSR105 provider", e);
         }
 
+        final ReadableData requestData = sReq.getRequestData();
+        final WritableData responseData = sReq.getResponseData();
         Certificate cert;
         Document doc;
         ICryptoInstance crypto = null;
@@ -189,7 +187,7 @@ public class XMLSigner extends BaseSigner {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
 
-            try {
+            try (InputStream in = requestData.getAsInputStream()) {
                 // Xerces 1 - http://xerces.apache.org/xerces-j/features.html#external-general-entities
                 // Xerces 2 - http://xerces.apache.org/xerces2-j/features.html#external-general-entities
                 dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
@@ -201,7 +199,7 @@ public class XMLSigner extends BaseSigner {
                 // Xerces 2 only - http://xerces.apache.org/xerces2-j/features.html#disallow-doctype-decl
                 dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 
-                doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(data));
+                doc = dbf.newDocumentBuilder().parse(in);
             } catch (SAXException ex) {
                 throw new IllegalRequestException("Document parsing error", ex);
             } catch (ParserConfigurationException | IOException ex) {
@@ -219,36 +217,23 @@ public class XMLSigner extends BaseSigner {
             releaseCryptoInstance(crypto, requestContext);
         }
 
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer trans;
-        try {
+        try (OutputStream out = responseData.getAsOutputStream()) {
             trans = tf.newTransformer();
-            trans.transform(new DOMSource(doc), new StreamResult(bout));
-        } catch (TransformerConfigurationException ex) {
-            throw new SignServerException("XML transformation error", ex);
-        } catch (TransformerException ex) {
+            trans.transform(new DOMSource(doc), new StreamResult(out));
+        } catch (TransformerException | IOException ex) {
             throw new SignServerException("XML transformation error", ex);
         }
 
-        final byte[] signedbytes = bout.toByteArray();
-        final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, signedbytes, archiveId));
-
-        if (signRequest instanceof GenericServletRequest) {
-            signResponse = new GenericServletResponse(sReq.getRequestID(), signedbytes,
-                    cert,
-                    archiveId, archivables, CONTENT_TYPE);
-        } else {
-            signResponse = new GenericSignResponse(sReq.getRequestID(), signedbytes,
-                    cert,
-                    archiveId, archivables);
-        }
+        final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, responseData.toReadableData(), archiveId));
         
         // The client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);
         
-        return signResponse;
+        return new TBNServletResponse(sReq.getRequestID(), responseData,
+                    cert,
+                    archiveId, archivables, CONTENT_TYPE);
     }
 
     /**

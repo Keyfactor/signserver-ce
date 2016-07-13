@@ -13,9 +13,9 @@
 package org.signserver.server.aliasselectors;
 
 import junit.framework.TestCase;
-import org.signserver.common.GenericSignRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.data.TBNServletRequest;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 
 /**
@@ -43,7 +43,7 @@ public class DefaultAliasSelectorUnitTest extends TestCase {
        selector.init(4711, config, null, null);
        assertEquals("default alias", "defaultkey",
                selector.getAlias(ICryptoTokenV4.PURPOSE_SIGN, null,
-                                 new GenericSignRequest(4711, new byte[1]),
+                                 new TBNServletRequest(4711, null, null, null),
                                  new RequestContext()));
     }
     
@@ -64,7 +64,7 @@ public class DefaultAliasSelectorUnitTest extends TestCase {
        selector.init(4711, config, null, null);
        assertEquals("next key alias", "nextkey",
                selector.getAlias(ICryptoTokenV4.PURPOSE_NEXTKEY, null,
-                                 new GenericSignRequest(4711, new byte[1]),
+                                 new TBNServletRequest(4711, null, null, null),
                                  new RequestContext()));
     }
 }

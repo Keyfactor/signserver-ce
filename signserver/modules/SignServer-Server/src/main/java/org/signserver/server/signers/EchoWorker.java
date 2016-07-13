@@ -12,15 +12,13 @@
  *************************************************************************/
 package org.signserver.server.signers;
 
+import java.io.IOException;
+import java.util.logging.Level;
 import javax.persistence.EntityManager;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericServletRequest;
-import org.signserver.common.GenericServletResponse;
-import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
-import org.signserver.common.ISignRequest;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
@@ -28,6 +26,11 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.server.WorkerContext;
 import org.apache.log4j.Logger;
 import org.signserver.server.BaseProcessable;
+import org.signserver.common.data.ReadableData;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.WritableData;
 
 /**
  * Worker simply echoing the request back.
@@ -54,23 +57,23 @@ public class EchoWorker extends BaseProcessable {
     }
 
     @Override
-    public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        
-        ProcessResponse signResponse;
+    public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 
-        // Check that the request contains a valid GenericSignRequest object with a byte[].
-        if (!(signRequest instanceof GenericSignRequest)) {
-            throw new IllegalRequestException("Received request wasn't an expected GenericSignRequest.");
+        // Check that the request is of right type
+        if (!(signRequest instanceof TBNServletRequest)) {
+            throw new IllegalRequestException("Unexpected request type");
         }
-        
-        final ISignRequest sReq = (ISignRequest) signRequest;
-        
-        if (!(sReq.getRequestData() instanceof byte[])) {
-            throw new IllegalRequestException("Received request data wasn't an expected byte[].");
-        }
-        
+        final TBNServletRequest request = (TBNServletRequest) signRequest;
+
         // The result is simply the data from the request
-        byte[] signedbytes = (byte[]) sReq.getRequestData();
+        final ReadableData requestData = request.getRequestData();
+        final WritableData responseData = request.getResponseData();
+        byte[] signedbytes;
+        try {
+            signedbytes = requestData.getAsByteArray();
+        } catch (IOException ex) {
+            throw new SignServerException("Unable to obtain data", ex);
+        }
         
         String archiveId = createArchiveId(signedbytes, (String) requestContext.get(RequestContext.TRANSACTION_ID));
         
@@ -86,18 +89,11 @@ public class EchoWorker extends BaseProcessable {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Done with crypto");
         }
-        
+
         // Return the response as usual
-        if (signRequest instanceof GenericServletRequest) {
-            signResponse = new GenericServletResponse(sReq.getRequestID(), signedbytes,
+        return new TBNServletResponse(request.getRequestID(), responseData,
                     null,
                     archiveId, null, "application/octet-stream");
-        } else {
-            signResponse = new GenericSignResponse(sReq.getRequestID(), signedbytes,
-                    null,
-                    archiveId, null);
-        }
-        return signResponse;
     }
 
 }

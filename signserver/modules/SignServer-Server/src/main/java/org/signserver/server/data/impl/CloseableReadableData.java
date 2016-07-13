@@ -10,16 +10,21 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.ejb.interfaces;
+package org.signserver.server.data.impl;
 
-import javax.ejb.Remote;
+import org.signserver.common.data.ReadableData;
 
 /**
- * Interface for the internal process session bean.
- *
+ * Represents a writable data that it also auto closable and can thus be used
+ * in a try-with-resources clause.
+ * 
+ * This class is intended to be used by the Servlet (or WS) implementation
+ * to handle the response data in order for it to be properly cleaned up (i.e.
+ * any temporary response file being removed).
+ * 
+ * @author Markus Kilås
  * @version $Id$
+ * @see CloseableWritableData
  */
-@Remote
-public interface InternalProcessSessionRemote extends ProcessSessionRemote {
-    
+public abstract class CloseableReadableData extends ResourcesAutoCloseable implements ReadableData {
 }

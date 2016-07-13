@@ -44,6 +44,7 @@ import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
@@ -146,7 +147,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @throws CryptoTokenOfflineException
      * @throws SignServerException
      */
-    private String getAliasAndLog(final int purpose, final ProcessRequest request,
+    private String getAliasAndLog(final int purpose, final TBNRequest request,
                             final RequestContext context)
             throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         final String alias = aliasSelector.getAlias(purpose, this, request, context);
@@ -749,7 +750,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @throws IllegalRequestException
      * @throws SignServerException
      */
-    protected ICryptoInstance acquireCryptoInstance(final int purpose, final ProcessRequest request, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException {
+    protected ICryptoInstance acquireCryptoInstance(final int purpose, final TBNRequest request, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException {
         try {
             return acquireCryptoInstance(purpose, request, Collections.<String, Object>emptyMap(), context);
         } catch (UnsupportedCryptoTokenParameter ex) {
@@ -777,7 +778,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @throws java.security.InvalidAlgorithmParameterException
      * @throws org.signserver.common.UnsupportedCryptoTokenParameter
      */
-    protected ICryptoInstance acquireCryptoInstance(final int purpose, final ProcessRequest request, final Map<String, Object> params, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
+    protected ICryptoInstance acquireCryptoInstance(final int purpose, final TBNRequest request, final Map<String, Object> params, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
         final ICryptoInstance result;
         final String alias = getAliasAndLog(purpose, request, context);
         ICryptoTokenV4 token = getCryptoToken(context.getServices());
@@ -873,5 +874,5 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     protected boolean isNoCertificates() {
         return Boolean.parseBoolean(config.getProperty("NOCERTIFICATES", Boolean.FALSE.toString()));
     }
-
+    
 }

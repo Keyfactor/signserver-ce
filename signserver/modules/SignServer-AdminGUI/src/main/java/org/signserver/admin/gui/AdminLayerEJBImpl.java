@@ -96,7 +96,7 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
-import org.signserver.ejb.interfaces.InternalProcessSessionRemote;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.server.cryptotokens.TokenEntry;
 
@@ -125,13 +125,13 @@ public class AdminLayerEJBImpl implements AdminWS {
     }
 
     private WorkerSessionRemote worker;
-    private InternalProcessSessionRemote processSession;
+    private ProcessSessionRemote processSession;
     private GlobalConfigurationSessionRemote global;
     private SecurityEventsAuditorSessionRemote auditor;
 
     public AdminLayerEJBImpl() throws NamingException {
         worker = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
-        processSession = ServiceLocator.getInstance().lookupRemote(InternalProcessSessionRemote.class);
+        processSession = ServiceLocator.getInstance().lookupRemote(ProcessSessionRemote.class);
         global = ServiceLocator.getInstance().lookupRemote(GlobalConfigurationSessionRemote.class);
         auditor = ServiceLocator.getInstance().lookupRemote(SecurityEventsAuditorSessionRemote.class, CESeCoreModules.CORE);
     }

@@ -13,6 +13,8 @@
 package org.signserver.module.cmssigner;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -24,6 +26,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.EntityManager;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.*;
@@ -33,6 +36,11 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.signserver.common.*;
+import org.signserver.common.data.ReadableData;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.WritableData;
 import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
@@ -100,33 +108,23 @@ public class CMSSigner extends BaseSigner {
     }
 
     @Override
-    public ProcessResponse processData(final ProcessRequest signRequest,
+    public ProcessResponse processData(final TBNRequest signRequest,
             final RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
-
-        ProcessResponse signResponse;
-
         // Check that the request contains a valid GenericSignRequest object
         // with a byte[].
-        if (!(signRequest instanceof GenericSignRequest)) {
+        if (!(signRequest instanceof TBNServletRequest)) {
             throw new IllegalRequestException(
                     "Received request wasn't an expected GenericSignRequest.");
         }
-        
-        final ISignRequest sReq = (ISignRequest) signRequest;
-        
-        if (!(sReq.getRequestData() instanceof byte[])) {
-            throw new IllegalRequestException(
-                    "Received request data wasn't an expected byte[].");
-        }
+        final TBNServletRequest sReq = (TBNServletRequest) signRequest;
 
         if (!configErrors.isEmpty()) {
             throw new SignServerException("Worker is misconfigured");
         }
-
-        byte[] data = (byte[]) sReq.getRequestData();
-        final String archiveId = createArchiveId(data, (String) requestContext.get(RequestContext.TRANSACTION_ID));
-
+        
+        final ReadableData requestData = sReq.getRequestData();
+        final WritableData responseData = sReq.getResponseData();
         X509Certificate cert = null;
         List<Certificate> certs = null;
         ICryptoInstance crypto = null;
@@ -143,8 +141,8 @@ public class CMSSigner extends BaseSigner {
                 throw new IllegalArgumentException("Null certificate chain. This signer needs a certificate.");
             }
             
-            final CMSSignedDataGenerator generator
-                    = new CMSSignedDataGenerator();
+            final CMSSignedDataStreamGenerator generator
+                    = new CMSSignedDataStreamGenerator();
             final String sigAlg = signatureAlgorithm == null ? getDefaultSignatureAlgorithm(crypto.getPublicKey()) : signatureAlgorithm;
             final ContentSigner contentSigner = new JcaContentSignerBuilder(sigAlg).setProvider(crypto.getProvider()).build(crypto.getPrivateKey());
             generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
@@ -152,7 +150,6 @@ public class CMSSigner extends BaseSigner {
                      .build(contentSigner, cert));
 
             generator.addCertificates(new JcaCertStore(certs));
-            final CMSTypedData content = new CMSProcessableByteArray(data);
 
             // Should the content be detached or not
             final boolean detached;
@@ -176,23 +173,18 @@ public class CMSSigner extends BaseSigner {
                 detached = detachedRequested;
             }
 
-            final CMSSignedData signedData = generator.generate(content, !detached);
-
-            final byte[] signedbytes = signedData.getEncoded();
-            final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, signedbytes, archiveId));
-
-            if (signRequest instanceof GenericServletRequest) {
-                signResponse = new GenericServletResponse(sReq.getRequestID(),
-                        signedbytes,
-                        cert,
-                        archiveId, archivables, CONTENT_TYPE);
-            } else {
-                signResponse = new GenericSignResponse(sReq.getRequestID(),
-                        signedbytes,
-                        cert,
-                        archiveId, archivables);
+            // Generate the signature
+            try (
+                    final OutputStream responseOutputStream = requestData.isFile() && !detached ? responseData.getAsFileOutputStream() : responseData.getAsInMemoryOutputStream();
+                    final OutputStream out = generator.open(responseOutputStream, !detached);
+                    final InputStream requestIn = requestData.getAsInputStream();
+                ) {
+                IOUtils.copyLarge(requestIn, out);
             }
-            
+
+            final String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
+            final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, responseData.toReadableData(), archiveId));
+
             // Suggest new file name
             final Object fileNameOriginal = requestContext.get(RequestContext.FILENAME);
             if (fileNameOriginal instanceof String) {
@@ -202,7 +194,7 @@ public class CMSSigner extends BaseSigner {
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
             
-            return signResponse;
+            return new TBNServletResponse(sReq.getRequestID(), responseData, cert, archiveId, archivables, CONTENT_TYPE);
         } catch (OperatorCreationException ex) {
             LOG.error("Error initializing signer", ex);
             throw new SignServerException("Error initializing signer", ex);

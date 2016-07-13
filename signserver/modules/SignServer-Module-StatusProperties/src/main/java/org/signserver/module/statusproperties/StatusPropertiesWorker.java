@@ -12,9 +12,9 @@
  *************************************************************************/
 package org.signserver.module.statusproperties;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.*;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -25,11 +25,15 @@ import org.signserver.common.GenericServletResponse;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerStatus;
+import org.signserver.common.data.ReadableData;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.WritableData;
 import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.cryptotokens.NullCryptoToken;
@@ -77,18 +81,24 @@ public class StatusPropertiesWorker extends BaseSigner {
     }
     
     @Override
-    public ProcessResponse processData(ProcessRequest request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         
         final ProcessResponse ret;
-        final Properties requestData, responseData;
+        final Properties requestProperties, responseProperties;
         
         // Check that the request contains a valid request
-        if (request instanceof GenericPropertiesRequest) {
-            requestData = ((GenericPropertiesRequest) request).getProperties();
-        } else if (request instanceof GenericSignRequest) {
-            requestData = new Properties();
-            try {
-                requestData.load(new ByteArrayInputStream(((GenericSignRequest) request).getRequestData()));
+        if (!(signRequest instanceof TBNServletRequest)) {
+            throw new IllegalRequestException(
+                "Received request was not of expected type.");
+        }
+        final TBNServletRequest request = (TBNServletRequest) signRequest;
+        final ReadableData requestData = request.getRequestData();
+        final WritableData responseData = request.getResponseData();
+        
+        if (request instanceof TBNServletRequest) {
+            requestProperties = new Properties();
+            try (InputStream in = requestData.getAsInputStream()) {
+                requestProperties.load(in);
             } catch (IOException ex) {
                 LOG.error("Error in request: " + requestContext.get(RequestContext.TRANSACTION_ID), ex);
                 throw new IllegalRequestException("Error parsing request. " + "See server log for information.");
@@ -99,35 +109,24 @@ public class StatusPropertiesWorker extends BaseSigner {
         }
         
         // Process the request
-        responseData = process(requestData, requestContext);
+        responseProperties = process(requestProperties, requestContext);
 
-        if (request instanceof GenericSignRequest) {
-            final GenericSignRequest signRequest = (GenericSignRequest) request;
-            try {
-                final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-                responseData.store(bout, null);
-                if (request instanceof GenericServletRequest) {
-                    ret = new GenericServletResponse(signRequest.getRequestID(),
-                        bout.toByteArray(), null, null, null, "text/plain");
-                } else {
-                    ret = new GenericSignResponse(signRequest.getRequestID(),
-                        signRequest.getRequestData(), null, null, null);
-                }
-            } catch (IOException ex) {
-                LOG.error("Error constructing response for request: "
-                        + requestContext.get(RequestContext.TRANSACTION_ID),
-                        ex);
-                throw new SignServerException("Error constructing response."
-                        + "See server log for information.");
-            }
-        } else {
-            ret = new GenericPropertiesResponse(responseData);
+        try (OutputStream out = responseData.getAsOutputStream()) {
+            responseProperties.store(out, null);
+        } catch (IOException ex) {
+            LOG.error("Error constructing response for request: "
+                    + requestContext.get(RequestContext.TRANSACTION_ID),
+                    ex);
+            throw new SignServerException("Error constructing response."
+                    + "See server log for information.");
         }
+        
         
         // The client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);
 
-        return ret;
+        return new TBNServletResponse(request.getRequestID(),
+                    responseData, null, null, null, "text/plain");
     }
 
     private Properties process(final Properties requestData, final RequestContext context) throws IllegalRequestException {

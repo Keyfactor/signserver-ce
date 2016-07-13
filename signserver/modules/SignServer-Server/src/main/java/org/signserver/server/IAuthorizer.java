@@ -15,10 +15,10 @@ package org.signserver.server;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.data.TBNRequest;
 
 /**
  * Interface that all authorization devices should implement regulating
@@ -61,7 +61,7 @@ public interface IAuthorizer {
 	 * @throws SignServerException if unexpected error occurred during authorization.
 	 * @throws IllegalRequestException if the requester isn't authorized or couldn't be authenticated for some other reason.
 	 */
-	void isAuthorized(ProcessRequest request, RequestContext requestContext) throws IllegalRequestException, SignServerException;
+	void isAuthorized(TBNRequest request, RequestContext requestContext) throws IllegalRequestException, SignServerException;
     
     /**
      * Checks if the Authorizer reports anything that would lead to it not to be 

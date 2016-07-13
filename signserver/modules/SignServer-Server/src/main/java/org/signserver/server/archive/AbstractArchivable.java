@@ -21,9 +21,7 @@ import java.io.Serializable;
  * @author Markus Kilås
  * @version $Id$
  */
-public abstract class AbstractArchivable implements Archivable, Serializable {
-    
-    private static final long serialVersionUID = 0L;
+public abstract class AbstractArchivable implements Archivable {
 
     private final String type;
     

@@ -44,24 +44,22 @@ import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.util.encoders.Base64;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.TBNServletResponse;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.ZeroTimeSource;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.server.data.impl.CloseableReadableData;
+import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.LogMap;
-import org.signserver.server.log.Loggable;
 import org.signserver.test.utils.CertTools;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertExt;
@@ -172,20 +170,18 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
      * 
      * @param signingAlgo Signature algorithm to use
      * @param expectedDigestOID Expected digest OID
-     * @param requestData Request data to test with
+     * @param data Request data to test with
      * @param includeSigningCertAttr If true, include and test the SigningCertificate attribute
      * @throws Exception
      */
     private void testProcessDataWithAlgo(final String signingAlgo, final String expectedDigestOID,
-            final byte[] requestData, final boolean includeSigningCertAttr,
+            final byte[] data, final boolean includeSigningCertAttr,
             final String includeCertificateLevels) throws Exception {
         SignServerUtil.installBCProvider();
         
         final String CRYPTOTOKEN_CLASSNAME =
                 "org.signserver.server.cryptotokens.KeystoreCryptoToken";
-        
-        final ProcessRequest signRequest;
-        
+
         final GlobalConfigurationSessionMock globalConfig
                 = new GlobalConfigurationSessionMock();
         final WorkerSessionMock workerMock = new WorkerSessionMock();
@@ -227,14 +223,21 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
                     errors.contains(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported."));
             return;
         }
-        
-        // create sample hard-coded request
-        signRequest = new GenericSignRequest(REQUEST_ID, requestData);
 
-        GenericSignResponse resp = (GenericSignResponse) workerMock.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(SIGNER_ID), signRequest, new MockedRequestContext(services));
-        
-        // check that the response contains the needed attributes
-        byte[] buf = resp.getProcessedData();
+        TBNServletResponse resp;
+        byte[] buf;        
+        try (
+                CloseableReadableData requestData = createRequestData(data);
+                CloseableWritableData responseData = createResponseData(false);
+            ) {   
+            // create sample hard-coded request
+            TBNServletRequest signRequest = new TBNServletRequest(REQUEST_ID, requestData, responseData, null);
+
+            resp = (TBNServletResponse) workerMock.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(SIGNER_ID), signRequest, new MockedRequestContext(services));
+
+            // check that the response contains the needed attributes
+            buf = responseData.toReadableData().getAsByteArray();
+        }
         ASN1Sequence asn1seq = ASN1Sequence.getInstance(Base64.decode(buf));
         CMSSignedData signedData = new CMSSignedData(asn1seq.getEncoded());
         ASN1TaggedObject ato = ASN1TaggedObject.getInstance(asn1seq.getObjectAt(1));
@@ -290,12 +293,12 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         final byte[] content = (byte[]) signedData.getSignedContent()
                 .getContent();
         
-        final ASN1Sequence seq = ASN1Sequence.getInstance(Base64.decode(requestData));
+        final ASN1Sequence seq = ASN1Sequence.getInstance(Base64.decode(data));
         final ASN1Sequence seq2 = ASN1Sequence.getInstance(seq.getObjectAt(1));
         final ASN1TaggedObject tag = ASN1TaggedObject.getInstance(seq2.getObjectAt(1));
-        final ASN1OctetString data = ASN1OctetString.getInstance(tag.getObject());
+        final ASN1OctetString octets = ASN1OctetString.getInstance(tag.getObject());
 
-        assertTrue("Contains request data", Arrays.equals(data.getOctets(), content));
+        assertTrue("Contains request data", Arrays.equals(octets.getOctets(), content));
     
         // check the signing certificate
         final X509Certificate signercert = (X509Certificate) resp.getSignerCertificate();
@@ -366,20 +369,6 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
     public void testBogusRequest() throws Exception {
         try {
             testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, "bogus request".getBytes(), false, null);
-        } catch (IllegalRequestException e) {
-            // expected
-        } catch (Exception e) {
-            fail("Unexpected exception thrown: " + e.getClass().getName());
-        }
-    }
-    
-    /**
-     * Test with a null requestData. Shall give an IllegalRequestException.
-     * @throws Exception
-     */
-    public void testNullRequest() throws Exception {
-        try {
-            testProcessDataWithAlgo("SHA1withRSA", SHA1_OID, null, false, null);
         } catch (IllegalRequestException e) {
             // expected
         } catch (Exception e) {

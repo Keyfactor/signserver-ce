@@ -19,6 +19,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
+import org.signserver.common.data.TBNCertificateValidationRequest;
 import org.signserver.server.IServices;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
@@ -56,7 +57,7 @@ public interface IValidationService {
      * @see org.signserver.validationservice.common.ValidateRequest
      * @see org.signserver.validationservice.common.ValidateResponse
      */
-    ValidateResponse validate(ValidateRequest validationRequest) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
+    ValidateResponse validate(TBNCertificateValidationRequest validationRequest) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException;
 
     /**
      * Should return the actual status of the service, status could be if

@@ -43,6 +43,8 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerType;
+import org.signserver.common.data.TBNLegacyRequest;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
@@ -157,11 +159,11 @@ public class WorkerSessionMock implements WorkerSessionLocal,
                 RequestMetadata.getInstance(requestContext).putAll(remoteContext.getMetadata());
             }
         }
-        return process(new AdminInfo("Mock user", null, null), workerId, request, requestContext);
+        return process(new AdminInfo("Mock user", null, null), workerId, new TBNLegacyRequest(request), requestContext); // TODO: Maybe this should't be LegacyRequest?
     }
 
     @Override
-    public ProcessResponse process(final AdminInfo adminInfo, WorkerIdentifier workerId, ProcessRequest request,
+    public ProcessResponse process(final AdminInfo adminInfo, WorkerIdentifier workerId, TBNRequest request,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
         lastRequestContext = requestContext;

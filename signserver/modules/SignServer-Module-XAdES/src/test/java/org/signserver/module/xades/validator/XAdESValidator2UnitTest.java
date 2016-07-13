@@ -36,9 +36,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
-import org.signserver.common.GenericValidationRequest;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
@@ -53,6 +51,7 @@ import org.signserver.validationservice.common.Validation;
 
 import com.google.inject.Inject;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
@@ -69,11 +68,16 @@ import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.cesecore.util.CertTools;
 import org.junit.Before;
 import org.signserver.common.SignServerException;
+import org.signserver.common.data.TBNDocumentValidationRequest;
+import org.signserver.common.data.TBNServletRequest;
 import org.signserver.server.ServicesImpl;
 import org.signserver.server.SignServerContext;
+import org.signserver.server.data.impl.CloseableReadableData;
+import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.test.utils.builders.ocsp.OCSPResponseBuilder;
 import org.signserver.test.utils.builders.ocsp.OcspRespObject;
 import org.signserver.test.utils.mock.MockedCryptoToken;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.server.OCSPResponse;
 import org.xml.sax.SAXParseException;
 
@@ -508,11 +512,9 @@ public class XAdESValidator2UnitTest {
         RequestContext requestContext = new RequestContext();
         requestContext.setServices(new ServicesImpl());
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-201-1");
-        GenericSignRequest request = new GenericSignRequest(201, "<test201/>".getBytes("UTF-8"));
-        GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);
-        byte[] data = response.getProcessedData();
-        signedXml1 = new String(data);
+        signedXml1 = signXML(instance, "<test201/>", requestContext);
         LOG.debug("Signed document by signer 1:\n\n" + signedXml1 + "\n");
+        
         
         
         // Signer 2 is issued by the sub CA
@@ -544,10 +546,7 @@ public class XAdESValidator2UnitTest {
         instance.init(4713, config, null, null);
         requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-202-1");
-        request = new GenericSignRequest(202, "<test202/>".getBytes("UTF-8"));
-        response = (GenericSignResponse) instance.processData(request, requestContext);
-        data = response.getProcessedData();
-        signedXml2 = new String(data);
+        signedXml2 = signXML(instance, "<test202/>", requestContext);
         LOG.debug("Signed document by signer 2:\n\n" + signedXml2 + "\n");
         
         // CRL with all active (empty CRL)
@@ -653,10 +652,7 @@ public class XAdESValidator2UnitTest {
         instance.init(4714, config, null, null);
         requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-203-1");
-        request = new GenericSignRequest(202, "<test203/>".getBytes("UTF-8"));
-        response = (GenericSignResponse) instance.processData(request, requestContext);
-        data = response.getProcessedData();
-        signedXml3 = new String(data);
+        signedXml3 = signXML(instance, "<test203/>", requestContext);
         LOG.debug("Signed document by signer 3:\n\n" + signedXml3 + "\n"); 
         
         // Sign a document by signer 4
@@ -665,10 +661,7 @@ public class XAdESValidator2UnitTest {
         instance.init(4715, config, null, null);
         requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-204-1");
-        request = new GenericSignRequest(203, "<test204/>".getBytes("UTF-8"));
-        response = (GenericSignResponse) instance.processData(request, requestContext);
-        data = response.getProcessedData();
-        signedXml4 = new String(data);
+        signedXml4 = signXML(instance, "<test204/>", requestContext);
         LOG.debug("Signed document by signer 4:\n\n" + signedXml4 + "\n"); 
         
         // Signer 5 is issued directly by the root CA
@@ -702,10 +695,7 @@ public class XAdESValidator2UnitTest {
         instance.init(4712, config, null, null);
         requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-205-1");
-        request = new GenericSignRequest(205, "<test205/>".getBytes("UTF-8"));
-        response = (GenericSignResponse) instance.processData(request, requestContext);
-        data = response.getProcessedData();
-        signedXml5 = new String(data);
+        signedXml5 = signXML(instance, "<test205/>", requestContext);
         LOG.debug("Signed document by signer 5:\n\n" + signedXml5 + "\n");
         
         // CRL with signer 5 revoked
@@ -716,6 +706,18 @@ public class XAdESValidator2UnitTest {
                 .build();
     }
     
+    private static String signXML(XAdESSigner instance, String xml, RequestContext requestContext) throws Exception {
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestData(xml.getBytes(StandardCharsets.UTF_8));
+                CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
+                ) {
+            TBNServletRequest request = new TBNServletRequest(201, requestData, responseData, null);
+            GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);
+            byte[] data = responseData.toReadableData().getAsByteArray();
+            return new String(data, StandardCharsets.UTF_8);
+        }
+    }
+
     @Before
     public void beforeTest() throws Exception {
         updateCRLs(rootcaCRLEmpty, subca1CRLEmpty);
@@ -741,8 +743,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-300-0");
-        GenericValidationRequest request = new GenericValidationRequest(300, signedXml1.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 300, signedXml1, requestContext);
         
         assertTrue("valid document", response.isValid());
         assertNotNull("returned signer cert", response.getSignerCertificate());
@@ -770,8 +771,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-301-1");
-        GenericValidationRequest request = new GenericValidationRequest(301, signedXml1.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 301, signedXml1, requestContext);
         
         assertTrue("valid document", response.isValid());
         assertNotNull("returned signer cert", response.getSignerCertificate());
@@ -799,8 +799,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-302-1");
-        GenericValidationRequest request = new GenericValidationRequest(302, signedXml1.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 302, signedXml1, requestContext);
         
         assertFalse("valid document", response.isValid());
         assertNotEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
@@ -830,8 +829,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-303-1");
-        GenericValidationRequest request = new GenericValidationRequest(303, signedXml2.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 303, signedXml2, requestContext);
         
         assertTrue("valid document", response.isValid());
         assertNotNull("returned signer cert", response.getSignerCertificate());
@@ -862,8 +860,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-304-1");
-        GenericValidationRequest request = new GenericValidationRequest(304, signedXml2.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 304, signedXml2, requestContext);
         
         assertTrue("valid document", response.isValid());
         assertNotNull("returned signer cert", response.getSignerCertificate());
@@ -894,8 +891,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-305-1");
-        GenericValidationRequest request = new GenericValidationRequest(305, signedXml2.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 305, signedXml2, requestContext);
         
         assertFalse("valid document", response.isValid());
         assertNotEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
@@ -925,8 +921,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-305-1");
-        GenericValidationRequest request = new GenericValidationRequest(305, signedXml2.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 305, signedXml2, requestContext);
         
         assertFalse("valid document", response.isValid());
         assertNotEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
@@ -956,8 +951,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-306-1");
-        GenericValidationRequest request = new GenericValidationRequest(306, signedXml2.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 306, signedXml2, requestContext);
         
         assertFalse("valid document", response.isValid());
         assertNotEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
@@ -1013,8 +1007,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-307-1");
-        GenericValidationRequest request = new GenericValidationRequest(307, signedXml3.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 307, signedXml3, requestContext);
         
         assertEquals("OCSP calls", 1, requests.size());
         
@@ -1058,8 +1051,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-307-1");
-        GenericValidationRequest request = new GenericValidationRequest(307, signedXml3.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 307, signedXml3, requestContext);
         
         assertEquals("OCSP calls", 1, requests.size());
         
@@ -1103,8 +1095,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-307-1");
-        GenericValidationRequest request = new GenericValidationRequest(307, signedXml3.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 307, signedXml3, requestContext);
         
         assertEquals("OCSP calls", 1, requests.size());
         
@@ -1138,8 +1129,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-307-1");
-        GenericValidationRequest request = new GenericValidationRequest(307, signedXml3.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 307, signedXml3, requestContext);
         
         assertEquals("OCSP calls", 1, requests.size());
         
@@ -1183,8 +1173,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-307-1");
-        GenericValidationRequest request = new GenericValidationRequest(307, signedXml3.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 307, signedXml3, requestContext);
         
         assertEquals("OCSP calls", 1, requests.size());
         
@@ -1237,8 +1226,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-407-1");
-        GenericValidationRequest request = new GenericValidationRequest(407, signedXml4.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 407, signedXml4, requestContext);
         
         assertEquals("OCSP calls", 2, requests.size());
         
@@ -1291,8 +1279,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-407-2");
-        GenericValidationRequest request = new GenericValidationRequest(407, signedXml4.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 407, signedXml4, requestContext);
         
         assertEquals("OCSP calls", 2, requests.size());
         
@@ -1346,8 +1333,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-407-4");
-        GenericValidationRequest request = new GenericValidationRequest(407, signedXml4.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 407, signedXml4, requestContext);
         
         assertEquals("OCSP calls", 2, requests.size());
         
@@ -1400,8 +1386,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-407-4");
-        GenericValidationRequest request = new GenericValidationRequest(407, signedXml4.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 407, signedXml4, requestContext);
         
         assertTrue("OCSP calls: " + requests.size(), requests.size() == 1 || requests.size() == 2);
         
@@ -1435,8 +1420,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-307-1");
-        GenericValidationRequest request = new GenericValidationRequest(307, signedXml5.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 307, signedXml5, requestContext);
         
         assertEquals("OCSP calls", 1, requests.size());
         
@@ -1472,8 +1456,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-307-1");
-        GenericValidationRequest request = new GenericValidationRequest(307, signedXml5.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 307, signedXml5, requestContext);
         
         assertEquals("OCSP calls", 1, requests.size());
         
@@ -1505,8 +1488,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-308-0");
-        GenericValidationRequest request = new GenericValidationRequest(308, SIGNED_XML_FORM_T.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 308, SIGNED_XML_FORM_T, requestContext);
         
         assertTrue("valid document", response.isValid());
         assertNotNull("returned signer cert", response.getSignerCertificate());
@@ -1538,8 +1520,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-308-0");
-        GenericValidationRequest request = new GenericValidationRequest(308, SIGNED_XML_FORM_T.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 308, SIGNED_XML_FORM_T, requestContext);
         
         assertFalse("invalid document", response.isValid());
         assertTrue("time stamp verification performed", ProxyTimeStampTokenVerificationProvider.performedVerification);
@@ -1571,8 +1552,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-309-0");
-        GenericValidationRequest request = new GenericValidationRequest(309, SIGNED_XML_WITH_INTERMEDIATE_TS_CERT.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 309, SIGNED_XML_WITH_INTERMEDIATE_TS_CERT, requestContext);
         
         assertTrue("valid document", response.isValid());
         assertTrue("time stamp verification performed", ProxyTimeStampTokenVerificationProvider.performedVerification);
@@ -1604,8 +1584,7 @@ public class XAdESValidator2UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-309-0");
-        GenericValidationRequest request = new GenericValidationRequest(309, SIGNED_XML_WITH_INTERMEDIATE_TS_CERT.getBytes("UTF-8"));
-         GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+        GenericValidationResponse response = validateXML(instance, 309, SIGNED_XML_WITH_INTERMEDIATE_TS_CERT, requestContext);
         
         assertTrue("valid document", response.isValid());
         assertTrue("time stamp verification performed", ProxyTimeStampTokenVerificationProvider.performedVerification);
@@ -1631,8 +1610,7 @@ public class XAdESValidator2UnitTest {
 
             RequestContext requestContext = new RequestContext();
             requestContext.put(RequestContext.TRANSACTION_ID, "0000-300-0");
-            GenericValidationRequest request = new GenericValidationRequest(300, SIGNED_XML_DOCTYPE.getBytes("UTF-8"));
-            instance.processData(request, requestContext);
+            validateXML(instance, 300, SIGNED_XML_DOCTYPE, requestContext);
 
             fail("Should have thrown IllegalRequestException as the document contained a DTD");
         } catch (SignServerException expected) {
@@ -1686,6 +1664,13 @@ public class XAdESValidator2UnitTest {
             }
             
             return ret;
+        }
+    }
+    
+    private GenericValidationResponse validateXML(XAdESValidator instance, int requestId, String xml, RequestContext requestContext) throws Exception {
+        try (CloseableReadableData requestData = ModulesTestCase.createRequestData(xml.getBytes("UTF-8"))) {
+            TBNDocumentValidationRequest request = new TBNDocumentValidationRequest(requestId, requestData);
+            return (GenericValidationResponse) instance.processData(request, requestContext);
         }
     }
 

@@ -23,12 +23,12 @@ import org.apache.log4j.Logger;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
@@ -124,7 +124,7 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
 
     @Override
     public ProcessResponse process(final AdminInfo adminInfo, final WorkerIdentifier wi,
-            final ProcessRequest request, final RequestContext requestContext)
+            final TBNRequest request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);

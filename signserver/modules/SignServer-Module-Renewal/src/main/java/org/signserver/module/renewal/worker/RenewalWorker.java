@@ -13,18 +13,30 @@
 package org.signserver.module.renewal.worker;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URL;
-import java.security.*;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.Principal;
+import java.security.PrivateKey;
+import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
 import javax.net.ssl.*;
 import javax.persistence.EntityManager;
 import javax.xml.namespace.QName;
@@ -40,16 +52,25 @@ import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.data.ReadableData;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.WritableData;
 import org.signserver.common.util.RandomPasswordGenerator;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.module.renewal.common.RenewalWorkerProperties;
-import org.signserver.module.renewal.ejbcaws.gen.*;
+import org.signserver.module.renewal.ejbcaws.gen.CertificateResponse;
+import org.signserver.module.renewal.ejbcaws.gen.EjbcaWS;
+import org.signserver.module.renewal.ejbcaws.gen.EjbcaWSService;
+import org.signserver.module.renewal.ejbcaws.gen.UserDataVOWS;
+import org.signserver.module.renewal.ejbcaws.gen.UserMatch;
+import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.KeystoreCryptoToken;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.signers.BaseSigner;
-import org.signserver.ejb.interfaces.WorkerSessionLocal;
-import org.signserver.server.IServices;
 import org.signserver.server.log.Loggable;
 
 /**
@@ -163,45 +184,43 @@ public class RenewalWorker extends BaseSigner {
     }
 
     @Override
-    public ProcessResponse processData(final ProcessRequest request,
+    public ProcessResponse processData(final TBNRequest signRequest,
             final RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
 
-        final ProcessResponse ret;
-        final Properties requestData, responseData;
-
-
         // Check that the request contains a valid request
-        if (request instanceof GenericPropertiesRequest) {
-            requestData = ((GenericPropertiesRequest) request).getProperties();
-        } else if (request instanceof GenericSignRequest) {
-            requestData = new Properties();
-            try {
-                requestData.load(new ByteArrayInputStream(
-                    ((GenericSignRequest) request).getRequestData()));
-            } catch (IOException ex) {
-                LOG.error("Error in request: "
-                        + requestContext.get(RequestContext.TRANSACTION_ID),
-                        ex);
-                throw new IllegalRequestException("Error parsing request. "
-                        + "See server log for information.");
-            }
-        } else {
+        if (!(signRequest instanceof TBNServletRequest)) {
             throw new IllegalRequestException(
                 "Received request was not of expected type.");
+        }
+        final TBNServletRequest request = (TBNServletRequest) signRequest;
+        final ReadableData requestData = request.getRequestData();
+        final WritableData responseData = request.getResponseData();
+        
+        final Properties requestProperties, propertiesResponse;
+
+        requestProperties = new Properties();
+        try (InputStream in = requestData.getAsInputStream()) {
+            requestProperties.load(in);
+        } catch (IOException ex) {
+            LOG.error("Error in request: "
+                    + requestContext.get(RequestContext.TRANSACTION_ID),
+                    ex);
+            throw new IllegalRequestException("Error parsing request. "
+                    + "See server log for information.");
         }
 
         // Log values
         final LogMap logMap = LogMap.getInstance(requestContext);
 
-        responseData = process(requestData, logMap, requestContext);
+        propertiesResponse = process(requestProperties, logMap, requestContext);
 
         // Log result
         logMap.put(RenewalWorkerProperties.LOG_RESPONSE_RESULT,
                    new Loggable() {
                         @Override
                         public String toString() {
-                            return responseData.getProperty(RenewalWorkerProperties
+                            return propertiesResponse.getProperty(RenewalWorkerProperties
                                                             .RESPONSE_RESULT);
                         }
                     }); 
@@ -210,36 +229,25 @@ public class RenewalWorker extends BaseSigner {
                    new Loggable() {
                        @Override
                        public String toString() {
-                           return responseData.getProperty(RenewalWorkerProperties
+                           return propertiesResponse.getProperty(RenewalWorkerProperties
                                                             .RESPONSE_MESSAGE);
                        }
                    });
 
-        if (request instanceof GenericSignRequest) {
-            final GenericSignRequest signRequest =
-                    (GenericSignRequest) request;
-            try {
-                final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-                responseData.store(bout, null);
-                if (request instanceof GenericServletRequest) {
-                    ret = new GenericServletResponse(signRequest.getRequestID(),
-                        bout.toByteArray(), null, null, null, "text/plain");
-                } else {
-                    ret = new GenericSignResponse(signRequest.getRequestID(),
-                        signRequest.getRequestData(), null, null, null);
-                }
-            } catch (IOException ex) {
-                LOG.error("Error constructing response for request: "
-                        + requestContext.get(RequestContext.TRANSACTION_ID),
-                        ex);
-                throw new SignServerException("Error constructing response."
-                        + "See server log for information.");
-            }
-        } else {
-            ret = new GenericPropertiesResponse(responseData);
+
+
+        try (OutputStream out = responseData.getAsOutputStream()) {
+            propertiesResponse.store(out, null);
+        } catch (IOException ex) {
+            LOG.error("Error constructing response for request: "
+                    + requestContext.get(RequestContext.TRANSACTION_ID),
+                    ex);
+            throw new SignServerException("Error constructing response."
+                    + "See server log for information.");
         }
 
-        return ret;
+        return new TBNServletResponse(request.getRequestID(),
+                    responseData, null, null, null, "text/plain");
     }
 
     /**

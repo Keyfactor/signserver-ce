@@ -48,6 +48,9 @@ import org.cesecore.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
+import org.signserver.common.data.ReadableData;
+import org.signserver.common.data.TBNDocumentValidationRequest;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.server.validators.BaseValidator;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
@@ -174,25 +177,21 @@ public class XAdESValidator extends BaseValidator {
     }
 
     @Override
-    public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 
         // Check that the request contains a valid GenericSignRequest object with a byte[].
-        if (!(signRequest instanceof GenericValidationRequest)) {
-            throw new IllegalRequestException("Received request wasn't an expected GenericValidationRequest.");
+        if (!(signRequest instanceof TBNDocumentValidationRequest)) {
+            throw new IllegalRequestException(
+                    "Received request wasn't an expected GenericValidationRequest.");
         }
-        IValidationRequest sReq = (IValidationRequest) signRequest;
-
-        if (!(sReq.getRequestData() instanceof byte[])) {
-            throw new IllegalRequestException("Received request data wasn't an expected byte[].");
-        }
+        
+        final TBNDocumentValidationRequest request = (TBNDocumentValidationRequest) signRequest;
         
         if (!configErrors.isEmpty()) {
             throw new SignServerException("Worker is misconfigured");
         }
 
-        byte[] data = (byte[]) sReq.getRequestData();
-
-        GenericValidationResponse response = validate(sReq.getRequestID(), data);
+        GenericValidationResponse response = validate(request.getRequestID(), request.getRequestData());
         
         // The client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);
@@ -200,7 +199,7 @@ public class XAdESValidator extends BaseValidator {
         return response;
     }
 
-    private GenericValidationResponse validate(final int requestId, byte[] data) throws SignServerException {
+    private GenericValidationResponse validate(final int requestId, ReadableData data) throws SignServerException {
         
         // Validation: parse
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -218,7 +217,7 @@ public class XAdESValidator extends BaseValidator {
             // Xerces 2 only - http://xerces.apache.org/xerces2-j/features.html#disallow-doctype-decl
             dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 
-            doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(data));
+            doc = dbf.newDocumentBuilder().parse(data.getAsInputStream());
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             throw new SignServerException("Document parsing error", ex);
         }

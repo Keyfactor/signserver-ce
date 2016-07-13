@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.xades.validator;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Security;
 import java.util.Collections;
 import javax.persistence.EntityManager;
@@ -29,6 +30,9 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerType;
 import org.signserver.module.xades.signer.XAdESSignerUnitTest;
 import org.signserver.server.WorkerContext;
+import org.signserver.common.data.TBNDocumentValidationRequest;
+import org.signserver.server.data.impl.CloseableReadableData;
+import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.Validation;
 
 /**
@@ -152,8 +156,9 @@ public class XAdESValidator1UnitTest {
         // Sending an request should give error
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-200-0");
-        GenericValidationRequest request = new GenericValidationRequest(200, SIGNED_DOCUMENT1.getBytes("UTF-8"));
-        try {
+        
+        try (CloseableReadableData requestData = ModulesTestCase.createRequestData(SIGNED_DOCUMENT1.getBytes(StandardCharsets.UTF_8))) {
+            TBNDocumentValidationRequest request = new TBNDocumentValidationRequest(200, requestData);
             instance.processData(request, requestContext);
             fail("Should have thrown SignServer exception");
         } catch (IllegalRequestException ex) {
@@ -179,12 +184,14 @@ public class XAdESValidator1UnitTest {
         
         RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-201-0");
-        GenericValidationRequest request = new GenericValidationRequest(201, SIGNED_DOCUMENT1.getBytes("UTF-8"));
-        GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
-        
-        assertTrue("valid document", response.isValid());
-        assertNotNull("returned signer cert", response.getSignerCertificate());
-        assertEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
+        try (CloseableReadableData requestData = ModulesTestCase.createRequestData(SIGNED_DOCUMENT1.getBytes(StandardCharsets.UTF_8))) {
+            TBNDocumentValidationRequest request = new TBNDocumentValidationRequest(201, requestData);
+            GenericValidationResponse response = (GenericValidationResponse) instance.processData(request, requestContext);
+
+            assertTrue("valid document", response.isValid());
+            assertNotNull("returned signer cert", response.getSignerCertificate());
+            assertEquals("cert validation status", Validation.Status.VALID, response.getCertificateValidation().getStatus());
+        }
     }
     
 }

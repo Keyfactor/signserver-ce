@@ -14,6 +14,7 @@ package org.signserver.module.mrtdsodsigner;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -36,6 +37,9 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.jcajce.JcaX500NameUtil;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNSODRequest;
+import org.signserver.common.data.WritableData;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
@@ -111,20 +115,17 @@ public class MRTDSODSigner extends BaseSigner {
     }
 
     @Override
-    public ProcessResponse processData(ProcessRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         if (log.isTraceEnabled()) {
             log.trace(">processData");
         }
-        ProcessResponse ret = null;
 
         // Check that the request contains a valid SODSignRequest object.
-        if (!(signRequest instanceof SODSignRequest)) {
+        if (!(signRequest instanceof TBNSODRequest)) {
             throw new IllegalRequestException("Received request wasn't an expected SODSignRequest.");
         }
         
-        final ISignRequest sReq = (ISignRequest) signRequest;
-        
-        final SODSignRequest sodRequest = (SODSignRequest) signRequest;
+        final TBNSODRequest sodRequest = (TBNSODRequest) signRequest;
 
         final IServices services = requestContext.getServices();
         final ICryptoTokenV4 token = getCryptoToken(services);
@@ -156,6 +157,7 @@ public class MRTDSODSigner extends BaseSigner {
         }
 
         // Construct SOD
+        final WritableData responseData = sodRequest.getResponseData();
         final SODFile sod;
         final X509Certificate cert;
         final List<Certificate> certChain;
@@ -261,7 +263,7 @@ public class MRTDSODSigner extends BaseSigner {
         }
 
         // Verify the Signature before returning
-        try {
+        try (OutputStream out = responseData.getAsOutputStream()) {
             verifySignatureAndChain(sod, certChain);
 
             if (log.isDebugEnabled()) {
@@ -269,13 +271,15 @@ public class MRTDSODSigner extends BaseSigner {
             }
             // Return response
             final byte[] signedbytes = sod.getEncoded();
+            out.write(signedbytes);
             final String archiveId = createArchiveId(signedbytes, (String) requestContext.get(RequestContext.TRANSACTION_ID));
-            final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, signedbytes, archiveId));
-            ret = new SODSignResponse(sReq.getRequestID(), signedbytes, cert,
-                    archiveId, archivables);
-            
+            final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, responseData.toReadableData(), archiveId));
+
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
+            
+            return new SODSignResponse(sodRequest.getRequestID(), signedbytes, cert,
+                    archiveId, archivables);
         } catch (GeneralSecurityException e) {
             log.error("Error verifying the SOD we signed ourselves. ", e);
             throw new SignServerException("SOD verification failure", e);
@@ -283,11 +287,6 @@ public class MRTDSODSigner extends BaseSigner {
         	log.error("Error encoding SOD", e);
         	throw new SignServerException("SOD encoding failure", e);
         }
-
-        if (log.isTraceEnabled()) {
-            log.trace("<processData");
-        }
-        return ret;
     }
 
     private X509Certificate findIssuerCert(Collection<Certificate> chain, X509Certificate sodCert) {

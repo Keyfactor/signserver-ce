@@ -24,14 +24,27 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNSODRequest;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.protocol.ws.*;
 import org.signserver.server.CredentialUtils;
+import org.signserver.server.data.impl.TemporarlyWritableData;
+import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.TBNDocumentValidationRequest;
+import org.signserver.common.data.TBNLegacyRequest;
+import org.signserver.server.data.impl.CloseableReadableData;
+import org.signserver.server.data.impl.CloseableWritableData;
+import org.signserver.server.data.impl.UploadConfig;
+import org.signserver.server.data.impl.UploadUtil;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
@@ -58,7 +71,7 @@ public class SignServerWS implements ISignServerWS {
     private static final String HTTP_AUTH_BASIC_AUTHORIZATION = "Authorization";
     
     @EJB
-    private GlobalConfigurationSessionLocal globalconfigsession;
+    private GlobalConfigurationSessionLocal globalSession;
     
     @EJB
     private WorkerSessionLocal workersession;
@@ -241,27 +254,81 @@ public class SignServerWS implements ISignServerWS {
                     }
                 });
             }
-
-            ProcessResponse resp = getProcessSession().process(new AdminInfo("Client user", null, null),
-                    wi, req, requestContext);
-            ProcessResponseWS wsresp = new ProcessResponseWS();
+            
+            // TODO: Duplicated in SignServerWS, AdminWS, ProcessSessionBean (remote)
+            CloseableReadableData requestData = null;
+            CloseableWritableData responseData = null;
             try {
-                wsresp.setResponseData(RequestAndResponseManager.serializeProcessResponse(resp));
-            } catch (IOException e1) {
-                LOG.error("Error parsing process response", e1);
-                throw new SignServerException(e1.getMessage());
-            }
-            if (resp instanceof ISignResponse) {
-                wsresp.setRequestID(((ISignResponse) resp).getRequestID());
-                try {
-                    wsresp.setWorkerCertificate(new Certificate(((ISignResponse) resp).getSignerCertificate()));
-                    wsresp.setWorkerCertificateChain(signerCertificateChain);
-                } catch (CertificateEncodingException e) {
-                    LOG.error(e);
+                final TBNRequest req2;
+                
+                // Use the new request types with large file support for
+                // GenericSignRequest and GenericValidationRequest
+                if (req instanceof GenericSignRequest) {
+                    byte[] data = ((GenericSignRequest) req).getRequestData();
+                    int requestID = ((GenericSignRequest) req).getRequestID();
+                    
+                    // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
+                    requestData = UploadUtil.handleUpload(UploadConfig.create(globalSession), data);
+                    responseData = new TemporarlyWritableData(requestData.isFile());
+                    req2 = new TBNServletRequest(requestID, requestData, responseData, null);
+                } else if (req instanceof GenericValidationRequest) {
+                    byte[] data = ((GenericValidationRequest) req).getRequestData();
+                    int requestID = ((GenericValidationRequest) req).getRequestID();
+                    
+                    // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
+                    requestData = UploadUtil.handleUpload(UploadConfig.create(globalSession), data);
+                    req2 = new TBNDocumentValidationRequest(requestID, requestData);
+                } else if (req instanceof SODSignRequest) {
+                    SODSignRequest sodReq = (SODSignRequest) req;
+                    req2 = new TBNSODRequest(sodReq.getRequestID(), sodReq.getDataGroupHashes(), sodReq.getLdsVersion(), sodReq.getUnicodeVersion(), responseData);
+                } else {
+                    // Passthrough for all legacy requests
+                    req2 = new TBNLegacyRequest(req);
                 }
 
+                ProcessResponse resp = getProcessSession().process(new AdminInfo("Client user", null, null),
+                        wi, req2, requestContext);
+                ProcessResponseWS wsresp = new ProcessResponseWS();
+                try {
+                    wsresp.setResponseData(RequestAndResponseManager.serializeProcessResponse(resp));
+                } catch (IOException e1) {
+                    LOG.error("Error parsing process response", e1);
+                    throw new SignServerException(e1.getMessage());
+                }
+                if (resp instanceof TBNServletResponse) {
+                    wsresp.setRequestID(((TBNServletResponse) resp).getRequestID());
+                    try {
+                        wsresp.setWorkerCertificate(new Certificate(((TBNServletResponse) resp).getSignerCertificate()));
+                        wsresp.setWorkerCertificateChain(signerCertificateChain);
+                    } catch (CertificateEncodingException e) {
+                        LOG.error(e);
+                    }
+                }
+                retval.add(wsresp);
+            } catch (FileUploadBase.SizeLimitExceededException ex) {
+                LOG.error("Maximum content length exceeded: " + ex.getLocalizedMessage());
+                throw new IllegalRequestException("Maximum content length exceeded");
+            } catch (FileUploadException ex) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Upload failed", ex);
+                }
+                throw new IllegalRequestException("Upload failed: " + ex.getLocalizedMessage());
+            } finally {
+                if (requestData != null) {
+                    try {
+                        requestData.close();
+                    } catch (IOException ex) {
+                        LOG.error("Unable to remove temporary upload file: " + ex.getLocalizedMessage());
+                    }
+                }
+                if (responseData != null) {
+                    try {
+                        responseData.close();
+                    } catch (IOException ex) {
+                        LOG.error("Unable to remove temporary response file: " + ex.getLocalizedMessage());
+                    }
+                }
             }
-            retval.add(wsresp);
         }
         return retval;
     }
@@ -333,7 +400,4 @@ public class SignServerWS implements ISignServerWS {
         return processSession;
     }
 
-    private GlobalConfigurationSessionLocal getGlobalConfigurationSession() {
-        return globalconfigsession;
-    }
 }

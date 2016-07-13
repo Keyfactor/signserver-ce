@@ -12,8 +12,7 @@
  *************************************************************************/
 package org.signserver.module.odfsigner;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,6 +31,11 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.common.data.ReadableData;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.WritableData;
 import org.signserver.server.signers.BaseSigner;
 
 /**
@@ -69,7 +73,7 @@ public class ODFSigner extends BaseSigner {
     }
 
     @Override
-    public ProcessResponse processData(ProcessRequest signRequest,
+    public ProcessResponse processData(TBNRequest signRequest,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
 
@@ -77,24 +81,17 @@ public class ODFSigner extends BaseSigner {
 
         // Check that the request contains a valid GenericSignRequest object
         // with a byte[].
-        if (!(signRequest instanceof GenericSignRequest)) {
+        if (!(signRequest instanceof TBNServletRequest)) {
             throw new IllegalRequestException(
                     "Received request wasn't an expected GenericSignRequest.");
         }
-        
-        final ISignRequest sReq = (ISignRequest) signRequest;
-        
-        if (!(sReq.getRequestData() instanceof byte[])) {
-            throw new IllegalRequestException(
-                    "Received request data wasn't an expected byte[].");
-        }
-
-        byte[] data = (byte[]) sReq.getRequestData();
-        final String archiveId = createArchiveId(data, (String) requestContext.get(RequestContext.TRANSACTION_ID));
+        final TBNServletRequest sReq = (TBNServletRequest) signRequest;
+        ReadableData data = sReq.getRequestData();
+        final String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
         OdfDocument odfDoc;
         try {
-            odfDoc = OdfDocument.loadDocument(new ByteArrayInputStream(data));
+            odfDoc = OdfDocument.loadDocument(data.getAsFile());
         } catch (Exception e) {
             throw new SignServerException(
                     "Data received is not in valid odf format", e);
@@ -131,33 +128,25 @@ public class ODFSigner extends BaseSigner {
         }
 
         // save document to output stream
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        try {
-            odfDoc.save(bout);
+        final WritableData responseData = sReq.getResponseData();
+        try (OutputStream out = responseData.getAsOutputStream()) {
+            odfDoc.save(out);
         } catch (Exception e) {
             throw new SignServerException(
                     "Error saving document to output stream", e);
+        } finally {
+            odfDoc.close();
         }
-        odfDoc.close();
 
         // return result
-        byte[] signedbytes = bout.toByteArray();
-        final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, signedbytes, archiveId));
+        final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, responseData.toReadableData(), archiveId));
 
-        if (signRequest instanceof GenericServletRequest) {
-            signResponse = new GenericServletResponse(sReq.getRequestID(),
-                    signedbytes, cert,
-                    archiveId, archivables, CONTENT_TYPE);
-        } else {
-            signResponse = new GenericSignResponse(sReq.getRequestID(),
-                    signedbytes, cert,
-                    archiveId, archivables);
-        }
-        
         // The client can be charged for the request
-            requestContext.setRequestFulfilledByWorker(true);
+        requestContext.setRequestFulfilledByWorker(true);
 
-        return signResponse;
+        return new TBNServletResponse(sReq.getRequestID(),
+                    responseData, cert,
+                    archiveId, archivables, CONTENT_TYPE);
     }
 
     @Override

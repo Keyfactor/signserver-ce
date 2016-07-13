@@ -47,7 +47,6 @@ import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.RequestContext;
@@ -55,6 +54,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.module.renewal.common.RenewalWorkerProperties;
@@ -877,7 +877,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         
         workerSession.setupWorker(signerId, CRYPTOTOKEN_CLASSNAME, config, new BaseSigner() {
             @Override
-            public ProcessResponse processData(ProcessRequest signRequest,
+            public ProcessResponse processData(TBNRequest signRequest,
                     RequestContext requestContext)
                     throws IllegalRequestException,
                     CryptoTokenOfflineException, SignServerException {

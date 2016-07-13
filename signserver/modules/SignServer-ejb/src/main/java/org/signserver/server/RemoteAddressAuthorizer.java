@@ -22,10 +22,10 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.AccessDeniedException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
 
@@ -113,7 +113,7 @@ public class RemoteAddressAuthorizer implements IAuthorizer {
      * @throws IllegalRequestException
      */
     @Override
-    public void isAuthorized(final ProcessRequest request,
+    public void isAuthorized(final TBNRequest request,
             final RequestContext requestContext)
             throws AccessDeniedException, SignServerException, IllegalRequestException {
 

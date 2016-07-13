@@ -17,15 +17,15 @@ import java.util.Arrays;
 import java.util.List;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.data.TBNCertificateValidationRequest;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.log.AdminInfo;
-import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.ValidationServiceConstants;
@@ -40,8 +40,8 @@ import org.signserver.validationservice.common.ValidationServiceConstants;
 public class MockedWorkerSession implements ProcessSessionLocal, InternalProcessSessionLocal {
 
     @Override
-    public ProcessResponse process(AdminInfo admin, WorkerIdentifier workerId, ProcessRequest request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        ValidateRequest vr = (ValidateRequest) request;
+    public ProcessResponse process(AdminInfo admin, WorkerIdentifier workerId, TBNRequest request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        TBNCertificateValidationRequest vr = (TBNCertificateValidationRequest) request;
         String[] validPurposes = new String[] { ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE };
 
         Certificate icert = vr.getCertificate();

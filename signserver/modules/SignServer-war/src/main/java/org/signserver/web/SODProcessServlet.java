@@ -36,15 +36,17 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.RequestMetadata;
-import org.signserver.common.SODSignRequest;
 import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.data.TBNSODRequest;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.CredentialUtils;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.LogMap;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.server.data.impl.CloseableWritableData;
+import org.signserver.server.data.impl.TemporarlyWritableData;
 
 /**
  * SODProcessServlet is a Servlet that takes data group hashes from a htto post and puts them in a Map for passing
@@ -248,10 +250,8 @@ public class SODProcessServlet extends AbstractProcessServlet {
             Random rand = new Random();
             int requestId = rand.nextInt();
 
-            final SODSignRequest signRequest = new SODSignRequest(requestId,
-                    dataGroups, ldsVersion, unicodeVersion);
             SODSignResponse response;
-            try {
+            try (CloseableWritableData responseData = new TemporarlyWritableData(false)) {
                 final RequestContext context = new RequestContext((X509Certificate) clientCertificate, remoteAddr);
                 final String xForwardedFor = req.getHeader(RequestContext.X_FORWARDED_FOR);
                 final LogMap logMap = LogMap.getInstance(context);
@@ -265,6 +265,9 @@ public class SODProcessServlet extends AbstractProcessServlet {
                 CredentialUtils.addToRequestContext(context, req, clientCertificate);
                 
                 addRequestMetaData(metadataHolder, metadata);
+                
+                final TBNSODRequest signRequest = new TBNSODRequest(requestId,
+                    dataGroups, ldsVersion, unicodeVersion, responseData);
 
                 response = (SODSignResponse) getProcessSession().process(new AdminInfo("Client user", null, null),
                         wi, signRequest, context);

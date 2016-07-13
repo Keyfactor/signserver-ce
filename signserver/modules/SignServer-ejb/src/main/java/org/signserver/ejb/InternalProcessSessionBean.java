@@ -23,16 +23,14 @@ import org.apache.log4j.Logger;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
-import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
-import org.signserver.ejb.interfaces.InternalProcessSessionRemote;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.server.entities.FileBasedKeyUsageCounterDataService;
@@ -53,7 +51,7 @@ import org.signserver.statusrepo.StatusRepositorySessionLocal;
  * @version $Id$
  */
 @Stateless
-public class InternalProcessSessionBean implements InternalProcessSessionLocal, InternalProcessSessionRemote {
+public class InternalProcessSessionBean implements InternalProcessSessionLocal {
 
     /** Log4j instance for this class. */
     private static final Logger LOG = Logger.getLogger(InternalProcessSessionBean.class);
@@ -125,16 +123,8 @@ public class InternalProcessSessionBean implements InternalProcessSessionLocal, 
     }
 
     @Override
-    public ProcessResponse process(final WorkerIdentifier wi,
-            final ProcessRequest request, final RemoteRequestContext remoteContext)
-            throws IllegalRequestException, CryptoTokenOfflineException,
-            SignServerException {
-        return processImpl.process(wi, request, remoteContext, servicesImpl);
-    }
-
-    @Override
     public ProcessResponse process(final AdminInfo adminInfo, final WorkerIdentifier wi,
-            final ProcessRequest request, final RequestContext requestContext)
+            final TBNRequest request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);

@@ -17,12 +17,13 @@ import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.cesecore.util.CertTools;
-import org.signserver.common.GenericSignRequest;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNServletRequest;
 
 /**
  * Dummy authorizer used for testing and demonstration purposes
@@ -61,7 +62,7 @@ public class DummyAuthorizer implements IAuthorizer {
      * @see org.signserver.server.IAuthorizer#isAuthorized(ProcessRequest, RequestContext)
      */
     @Override
-    public void isAuthorized(ProcessRequest request, RequestContext requestContext)
+    public void isAuthorized(TBNRequest request, RequestContext requestContext)
             throws SignServerException, IllegalRequestException {
 
         String clientIP = (String) requestContext.get(RequestContext.REMOTE_IP);
@@ -76,7 +77,7 @@ public class DummyAuthorizer implements IAuthorizer {
                 || clientCert.getSerialNumber().toString(16).equalsIgnoreCase("58ece0453711fe20"))) {
             throw new IllegalRequestException("Not authorized");
         }
-        if (request instanceof GenericSignRequest && ((GenericSignRequest) request).getRequestID() != 1) {
+        if (request instanceof TBNServletRequest && ((TBNServletRequest) request).getRequestID() != 1) {
             throw new IllegalRequestException("Not authorized");
         }
     }

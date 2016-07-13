@@ -130,6 +130,10 @@
             <artifactId>javaee-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.ejbca.cvc</groupId>
+            <artifactId>cert-cvc</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

@@ -14,9 +14,9 @@ package org.signserver.server;
 
 import java.util.Properties;
 import org.apache.log4j.Logger;
-import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
+import org.signserver.common.data.TBNRequest;
 
 /**
  * Default account that grants all requests without charging anybody.
@@ -35,7 +35,7 @@ public class NoAccounter implements IAccounter {
 
     @Override
     public boolean purchase(final IClientCredential credential,
-            final ProcessRequest request, final ProcessResponse response,
+            final TBNRequest request, final ProcessResponse response,
             final RequestContext context) throws AccounterException {
 
         if (LOG.isDebugEnabled()) {

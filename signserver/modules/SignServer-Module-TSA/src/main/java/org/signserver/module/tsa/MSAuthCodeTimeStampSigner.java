@@ -13,6 +13,7 @@
 package org.signserver.module.tsa;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.*;
@@ -60,6 +61,7 @@ import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.cesecore.util.Base64;
 import org.signserver.common.*;
+import org.signserver.common.data.TBNRequest;
 import org.signserver.module.tsa.bc.MSAuthCodeCMSUtils;
 import org.signserver.server.IServices;
 import org.signserver.server.ITimeSource;
@@ -68,6 +70,9 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.WritableData;
 import org.signserver.server.log.ExceptionLoggable;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
@@ -228,40 +233,31 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
      * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
     @Override
-    public ProcessResponse processData(final ProcessRequest signRequest,
+    public ProcessResponse processData(final TBNRequest signRequest,
             final RequestContext requestContext) throws
                 IllegalRequestException,
                 CryptoTokenOfflineException,
                 SignServerException {
 
+        // Check that the request contains a valid TimeStampRequest object.
+        if (!(signRequest instanceof TBNServletRequest)) {
+            final IllegalRequestException exception =
+                    new IllegalRequestException(
+                    "Received request wasn't an expected GenericSignRequest. ");
+            throw exception;
+        }
+        final TBNServletRequest sReq = (TBNServletRequest) signRequest;
+        
+        
     	// Log values
-		final LogMap logMap = LogMap.getInstance(requestContext);
+        final LogMap logMap = LogMap.getInstance(requestContext);
     	
     	try {
-            final ISignRequest sReq = (ISignRequest) signRequest;
-            final byte[] requestbytes = (byte[]) sReq.getRequestData();
+            final byte[] requestbytes = sReq.getRequestData().getAsByteArray();
 
             if (requestbytes == null || requestbytes.length == 0) {
                 LOG.error("Request must contain data");
                 throw new IllegalRequestException("Request must contain data");
-            }
-            
-            // Check that the request contains a valid TimeStampRequest object.
-            if (!(signRequest instanceof GenericSignRequest)) {
-                    final IllegalRequestException exception =
-                                    new IllegalRequestException(
-                                                    "Received request wasn't an expected GenericSignRequest. ");
-                    LOG.error("Received request wasn't an expected GenericSignRequest");
-                    throw exception;
-            }
-
-            if (!((sReq.getRequestData() instanceof TimeStampRequest)
-            || (sReq.getRequestData() instanceof byte[]))) {
-                    final IllegalRequestException exception =
-                                    new IllegalRequestException(
-                                                    "Received request data wasn't an expected TimeStampRequest. ");
-                    LOG.error("Received request data wasn't an expected TimeStampRequest");
-                    throw exception;
             }
 
             if (!validChain) {
@@ -307,12 +303,14 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             ASN1OctetString octets = ASN1OctetString.getInstance(tag.getObject());
             byte[] content = octets.getOctets();
            
+            final byte[] signedbytes;
+            final WritableData responseData = sReq.getResponseData();
             X509Certificate x509cert = null;
             final ITimeSource timeSrc;
             final Date date;
             byte[] der;
             ICryptoInstance crypto = null;
-            try {
+            try (OutputStream out = responseData.getAsInMemoryOutputStream()) {
                 crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);
 
                 // get signing cert certificate chain and private key
@@ -380,6 +378,8 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                         MSAuthCodeCMSUtils.getCertificatesFromStore(cs), Collections.emptyList(), ci);
 
                 der = ASN1Primitive.fromByteArray(cmssd.getEncoded()).getEncoded(); 
+                signedbytes = Base64.encode(der, false);
+                out.write(signedbytes);
             } finally {
                 releaseCryptoInstance(crypto, requestContext);
             }
@@ -403,8 +403,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             final String archiveId = createArchiveId(requestbytes, (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
             final GenericSignResponse signResponse;
-            final byte[] signedbytes = Base64.encode(der, false);
-            
+
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED,
                        new Loggable() {
                            @Override
@@ -414,29 +413,18 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                        });
 
             final Collection<? extends Archivable> archivables = Arrays.asList(
-                    new DefaultArchivable(Archivable.TYPE_REQUEST, REQUEST_CONTENT_TYPE, requestbytes, archiveId),
-                    new DefaultArchivable(Archivable.TYPE_RESPONSE, RESPONSE_CONTENT_TYPE, signedbytes, archiveId));
-
-            
-            if (signRequest instanceof GenericServletRequest) {
-                signResponse = new GenericServletResponse(sReq.getRequestID(),
-                        		signedbytes,
-                                    x509cert,
-                                    archiveId,
-                                    archivables,
-                                    RESPONSE_CONTENT_TYPE);
-            } else {
-                signResponse = new GenericSignResponse(sReq.getRequestID(),
-                        signedbytes,
-                        x509cert,
-                        archiveId,
-                        archivables);
-            }
+                    new DefaultArchivable(Archivable.TYPE_REQUEST, REQUEST_CONTENT_TYPE, sReq.getRequestData(), archiveId),
+                    new DefaultArchivable(Archivable.TYPE_RESPONSE, RESPONSE_CONTENT_TYPE, responseData.toReadableData(), archiveId));
             
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
         
-            return signResponse;
+            return new TBNServletResponse(sReq.getRequestID(),
+                        		responseData,
+                                    x509cert,
+                                    archiveId,
+                                    archivables,
+                                    RESPONSE_CONTENT_TYPE);
 
         } catch (IOException e) {
             final IllegalRequestException exception =

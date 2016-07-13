@@ -200,6 +200,12 @@
                         <additionalClasspathElement>${basedir}/../../lib/ext/jdbc/jdbc.jar"</additionalClasspathElement>
                         <additionalClasspathElement>${appserver.home}/bin/client/jboss-client.jar</additionalClasspathElement>
                         <additionalClasspathElement>${appserver.home}/client/jbossall-client.jar</additionalClasspathElement>
+                        <!-- Include res/cesecore for defaultvalues.properties. -->
+                        <additionalClasspathElement>res/deploytools/cesecore/</additionalClasspathElement>
+                        <additionalClasspathElement>../res/deploytools/cesecore/</additionalClasspathElement>
+                        <additionalClasspathElement>../../res/deploytools/cesecore/</additionalClasspathElement>
+                        <additionalClasspathElement>../../../res/deploytools/cesecore/</additionalClasspathElement>
+                        <additionalClasspathElement>../../../../res/deploytools/cesecore/</additionalClasspathElement>
                     </additionalClasspathElements>
                     <classpathDependencyExcludes>
                         <classpathDependencyExcludes>org.apache.openejb:javaee-api</classpathDependencyExcludes>

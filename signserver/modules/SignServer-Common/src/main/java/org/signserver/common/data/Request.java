@@ -12,26 +12,11 @@
  *************************************************************************/
 package org.signserver.common.data;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
 /**
  * TODO.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-public interface ReadableData {
-
-    byte[] getAsByteArray() throws IOException;
-
-    InputStream getAsInputStream() throws IOException;
-
-    File getAsFile() throws IOException;
-    
-    long getLength();
-
-    boolean isFile();
-    
+public abstract class Request {
 }

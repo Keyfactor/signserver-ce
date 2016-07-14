@@ -46,11 +46,14 @@ import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
+import org.signserver.common.data.CertificateValidationResponse;
 import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 import org.signserver.common.data.ReadableData;
-import org.signserver.common.data.TBNDocumentValidationRequest;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.DocumentValidationRequest;
+import org.signserver.common.data.DocumentValidationResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
 import org.signserver.server.validators.BaseValidator;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
@@ -177,21 +180,21 @@ public class XAdESValidator extends BaseValidator {
     }
 
     @Override
-    public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public Response processData(Request signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 
         // Check that the request contains a valid GenericSignRequest object with a byte[].
-        if (!(signRequest instanceof TBNDocumentValidationRequest)) {
+        if (!(signRequest instanceof DocumentValidationRequest)) {
             throw new IllegalRequestException(
                     "Received request wasn't an expected GenericValidationRequest.");
         }
         
-        final TBNDocumentValidationRequest request = (TBNDocumentValidationRequest) signRequest;
+        final DocumentValidationRequest request = (DocumentValidationRequest) signRequest;
         
         if (!configErrors.isEmpty()) {
             throw new SignServerException("Worker is misconfigured");
         }
 
-        GenericValidationResponse response = validate(request.getRequestID(), request.getRequestData());
+        DocumentValidationResponse response = validate(request.getRequestID(), request.getRequestData());
         
         // The client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);
@@ -199,7 +202,7 @@ public class XAdESValidator extends BaseValidator {
         return response;
     }
 
-    private GenericValidationResponse validate(final int requestId, ReadableData data) throws SignServerException {
+    private DocumentValidationResponse validate(final int requestId, ReadableData data) throws SignServerException {
         
         // Validation: parse
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -237,7 +240,7 @@ public class XAdESValidator extends BaseValidator {
             throw new SignServerException("XML signature validation error", ex);
         } catch (XAdES4jException ex) {
             LOG.info("Request " + requestId + " signature valid: false, " + ex.getMessage());
-            return new GenericValidationResponse(requestId, false);
+            return new DocumentValidationResponse(requestId, false);
         }
         
         List<X509Certificate> xchain = result.getValidationData().getCerts();
@@ -256,7 +259,7 @@ public class XAdESValidator extends BaseValidator {
                 v = validate(cert, certChain, rootCert);
             } catch (IllegalRequestException ex) {
                 LOG.info("Request " + requestId + " signature valid: false, " + ex.getMessage());
-                return new GenericValidationResponse(requestId, false);
+                return new DocumentValidationResponse(requestId, false);
             } catch (CryptoTokenOfflineException ex) {
                 throw new SignServerException("Certificate validation error", ex);
             }
@@ -267,9 +270,9 @@ public class XAdESValidator extends BaseValidator {
         }
         LOG.info("Request " + requestId + " signature valid: " + (v.getStatus() == Status.VALID));
         
-        ValidateResponse vresponse = new ValidateResponse(v, null);
+        CertificateValidationResponse vresponse = new CertificateValidationResponse(v, null);
 
-        return new GenericValidationResponse(requestId, v.getStatus().equals(Status.VALID), vresponse, null);
+        return new DocumentValidationResponse(requestId, v.getStatus().equals(Status.VALID), vresponse);
     }
 
     @Override

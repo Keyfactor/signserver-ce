@@ -15,11 +15,11 @@ package org.signserver.ejb.interfaces;
 import javax.ejb.Local;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
 import org.signserver.server.log.AdminInfo;
 
 /**
@@ -45,7 +45,7 @@ public interface ProcessSessionLocal {
      * @throws SignServerException if some other error occurred server side
      * during process.
      */
-    ProcessResponse process(final AdminInfo info, WorkerIdentifier wi, TBNRequest request,
+    Response process(final AdminInfo info, WorkerIdentifier wi, Request request,
             RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException;

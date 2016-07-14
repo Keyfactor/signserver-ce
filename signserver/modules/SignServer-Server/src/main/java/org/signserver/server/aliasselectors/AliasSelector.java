@@ -21,7 +21,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.IProcessable;
 import org.signserver.server.WorkerContext;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
 
 /**
  * Key alias selector interface.
@@ -59,7 +59,7 @@ public interface AliasSelector {
      * @throws CryptoTokenOfflineException
      * @throws SignServerException 
      */
-    String getAlias(final int purpose, final IProcessable processble, final TBNRequest signRequest,
+    String getAlias(final int purpose, final IProcessable processble, final Request signRequest,
                     final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
                    SignServerException;

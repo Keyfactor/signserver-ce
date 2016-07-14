@@ -12,22 +12,25 @@
  *************************************************************************/
 package org.signserver.module.signerstatusreport;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericServletResponse;
-import org.signserver.common.GenericSignRequest;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
+import org.signserver.common.data.WritableData;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
@@ -81,22 +84,28 @@ public class SignerStatusReportWorker extends BaseSigner {
     }
     
     @Override
-    public ProcessResponse processData(TBNRequest request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        final TBNServletRequest signRequest;
-        if (request instanceof TBNServletRequest) {
-            signRequest = (TBNServletRequest) request;
+    public Response processData(Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        final SignatureRequest signRequest;
+        if (request instanceof SignatureRequest) {
+            signRequest = (SignatureRequest) request;
         } else {
             throw new IllegalRequestException("Received request was not of expected type.");
         }
         
         // Process the request
+        WritableData responseData = ((SignatureRequest) request).getResponseData();
         SignerStatusReportBuilder reportBuilder = new SignerStatusReportBuilder(workers, requestContext.getServices().get(WorkerSessionLocal.class), requestContext.getServices().get(IKeyUsageCounterDataService.class));
-        String responseData = reportBuilder.buildReport().toString();
+        
+        try (PrintWriter out = new PrintWriter(responseData.getAsOutputStream())) {
+            out.append(reportBuilder.buildReport());
+        } catch (IOException ex) {
+            throw new SignServerException("IO error", ex);
+        }
         
         // The client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);
 
-        return new GenericServletResponse(signRequest.getRequestID(), responseData.getBytes(), null, null, null, "text/plain");
+        return new SignatureResponse(signRequest.getRequestID(), responseData, null, null, null, "text/plain");
     }
 
     @Override

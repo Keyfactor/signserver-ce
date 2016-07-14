@@ -29,11 +29,11 @@ import junit.framework.TestCase;
 
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
 import org.signserver.server.WorkerContext;
 
 /**
@@ -52,8 +52,8 @@ public class IncludeCertificateLevelsTest extends TestCase {
      */
     private static class DummySigner extends BaseSigner {
         @Override
-        public ProcessResponse processData(
-                TBNRequest signRequest,
+        public Response processData(
+                Request signRequest,
                 RequestContext requestContext)
                 throws IllegalRequestException,
                 CryptoTokenOfflineException, SignServerException {

@@ -13,13 +13,9 @@
 package org.signserver.server.signers;
 
 import java.io.IOException;
-import java.util.logging.Level;
 import javax.persistence.EntityManager;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericServletRequest;
-import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -27,9 +23,10 @@ import org.signserver.server.WorkerContext;
 import org.apache.log4j.Logger;
 import org.signserver.server.BaseProcessable;
 import org.signserver.common.data.ReadableData;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.WritableData;
 
 /**
@@ -57,13 +54,13 @@ public class EchoWorker extends BaseProcessable {
     }
 
     @Override
-    public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public Response processData(Request signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 
         // Check that the request is of right type
-        if (!(signRequest instanceof TBNServletRequest)) {
+        if (!(signRequest instanceof SignatureRequest)) {
             throw new IllegalRequestException("Unexpected request type");
         }
-        final TBNServletRequest request = (TBNServletRequest) signRequest;
+        final SignatureRequest request = (SignatureRequest) signRequest;
 
         // The result is simply the data from the request
         final ReadableData requestData = request.getRequestData();
@@ -91,7 +88,7 @@ public class EchoWorker extends BaseProcessable {
         }
 
         // Return the response as usual
-        return new TBNServletResponse(request.getRequestID(), responseData,
+        return new SignatureResponse(request.getRequestID(), responseData,
                     null,
                     archiveId, null, "application/octet-stream");
     }

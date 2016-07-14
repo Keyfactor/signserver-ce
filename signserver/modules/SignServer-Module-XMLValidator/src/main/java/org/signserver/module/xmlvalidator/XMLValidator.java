@@ -36,9 +36,12 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
-import org.signserver.common.data.TBNCertificateValidationRequest;
-import org.signserver.common.data.TBNDocumentValidationRequest;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.CertificateValidationRequest;
+import org.signserver.common.data.CertificateValidationResponse;
+import org.signserver.common.data.DocumentValidationRequest;
+import org.signserver.common.data.DocumentValidationResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
@@ -99,21 +102,21 @@ public class XMLValidator extends BaseValidator {
     }
 
     @Override
-    public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public Response processData(Request signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         try {
             if (!configErrors.isEmpty()) {
                 throw new SignServerException("Worker is misconfigured");
             }
             
             // Check that the request contains a valid GenericSignRequest object with a byte[].
-            if (!(signRequest instanceof TBNDocumentValidationRequest)) {
+            if (!(signRequest instanceof DocumentValidationRequest)) {
                 throw new IllegalRequestException("Received request wasn't an expected GenericValidationRequest.");
             }
-            TBNDocumentValidationRequest sReq = (TBNDocumentValidationRequest) signRequest;
+            DocumentValidationRequest sReq = (DocumentValidationRequest) signRequest;
             
             byte[] data = (byte[]) sReq.getRequestData().getAsByteArray();
             
-            GenericValidationResponse response = validate(sReq.getRequestID(), data, requestContext);
+            DocumentValidationResponse response = validate(sReq.getRequestID(), data, requestContext);
             
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
@@ -124,7 +127,7 @@ public class XMLValidator extends BaseValidator {
         }
     }
 
-    private GenericValidationResponse validate(final int requestId, byte[] data, RequestContext requestContext) throws SignServerException {
+    private DocumentValidationResponse validate(final int requestId, byte[] data, RequestContext requestContext) throws SignServerException {
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
@@ -149,7 +152,7 @@ public class XMLValidator extends BaseValidator {
         NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
         if (nl.getLength() == 0) {
             LOG.info("Request " + requestId + ": No signature found");
-            return new GenericValidationResponse(requestId, false);
+            return new DocumentValidationResponse(requestId, false);
         }
 
         String providerName = System.getProperty("jsr105Provider", "org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI");
@@ -174,7 +177,7 @@ public class XMLValidator extends BaseValidator {
             throw new SignServerException("XML signature validation error", ex);
         } catch (XMLSignatureException ex) {
             LOG.info("Request " + requestId + ": XML signature validation error", ex);
-            return new GenericValidationResponse(requestId, false);
+            return new DocumentValidationResponse(requestId, false);
         }
 
         LOG.info("Request " + requestId + " signature valid: " + validSignature);
@@ -186,7 +189,7 @@ public class XMLValidator extends BaseValidator {
 
         // Check certificate
         boolean validCertificate = false;
-        ValidateResponse vresponse = null;
+        CertificateValidationResponse vresponse = null;
 
         // No need to check certificate if the signature anyway is inconsistent
         if (validSignature) {
@@ -198,8 +201,8 @@ public class XMLValidator extends BaseValidator {
                         + "\"" + choosenCert.getNotAfter() + "\")");
             }
 
-            TBNCertificateValidationRequest vr = new TBNCertificateValidationRequest(choosenCert, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
-            ProcessResponse response;
+            CertificateValidationRequest vr = new CertificateValidationRequest(choosenCert, ValidationServiceConstants.CERTPURPOSE_ELECTRONIC_SIGNATURE);
+            Response response;
 
             try {
                 LOG.info("Requesting certificate validation from worker: " + PROP_VALIDATIONSERVICEWORKER);
@@ -210,10 +213,10 @@ public class XMLValidator extends BaseValidator {
                     throw new SignServerException("Error communicating with validation servers, no server in the cluster seem available.");
                 }
 
-                if (!(response instanceof ValidateResponse)) {
+                if (!(response instanceof CertificateValidationResponse)) {
                     throw new SignServerException("Unexpected certificate validation response: " + response);
                 }
-                vresponse = (ValidateResponse) response;
+                vresponse = (CertificateValidationResponse) response;
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Request " + requestId + ": validateCertificate:response("
@@ -247,7 +250,7 @@ public class XMLValidator extends BaseValidator {
             }
         }
 
-        return new GenericValidationResponse(requestId, validSignature && validCertificate, vresponse, processedBytes);
+        return new DocumentValidationResponse(requestId, validSignature && validCertificate, vresponse);
     }
 
     private byte[] unwrapSignature(Document doc, String tagName) throws TransformerConfigurationException, TransformerException {

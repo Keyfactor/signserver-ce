@@ -35,9 +35,10 @@ import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.data.ReadableData;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.WritableData;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.server.IServices;
@@ -268,14 +269,14 @@ public class PDFSigner extends BaseSigner {
      *      org.signserver.common.RequestContext)
      */
     @Override
-    public ProcessResponse processData(TBNRequest signRequest,
+    public Response processData(Request signRequest,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {        
-        if (!(signRequest instanceof TBNServletRequest)) {
+        if (!(signRequest instanceof SignatureRequest)) {
             throw new IllegalRequestException(
                     "Received request wasn't an expected GenericSignRequest.");
         }
-        final TBNServletRequest sReq = (TBNServletRequest) signRequest;
+        final SignatureRequest sReq = (SignatureRequest) signRequest;
         final String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
         final ReadableData requestData = sReq.getRequestData();
 
@@ -355,7 +356,7 @@ public class PDFSigner extends BaseSigner {
             requestContext.setRequestFulfilledByWorker(true);
             
             
-            return new TBNServletResponse(sReq.getRequestID(),
+            return new SignatureResponse(sReq.getRequestID(),
                     responseData,
                     crypto.getCertificate(),
                     archiveId, archivables, CONTENT_TYPE);
@@ -561,7 +562,7 @@ public class PDFSigner extends BaseSigner {
     
     protected void addSignatureToPDFDocument(final ICryptoInstance crypto, PDFSignerParameters params,
             byte[] pdfBytes, File pdfFile, byte[] password, int contentEstimated,
-            final TBNRequest request, final WritableData responseData, final RequestContext context)
+            final Request request, final WritableData responseData, final RequestContext context)
             throws IOException, DocumentException,
                    CryptoTokenOfflineException, SignServerException, IllegalRequestException {
     	// when given a content length (i.e. non-zero), it means we are running a second try
@@ -924,7 +925,7 @@ public class PDFSigner extends BaseSigner {
         }
     }
 
-    private void archiveToDisk(TBNServletRequest sReq, ReadableData data, RequestContext requestContext) throws SignServerException {
+    private void archiveToDisk(SignatureRequest sReq, ReadableData data, RequestContext requestContext) throws SignServerException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Archiving to disk");
         }

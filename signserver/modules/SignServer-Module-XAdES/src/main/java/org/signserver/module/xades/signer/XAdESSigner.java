@@ -34,7 +34,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.server.signers.BaseSigner;
@@ -49,9 +48,10 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.WritableData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -301,15 +301,15 @@ public class XAdESSigner extends BaseSigner {
     }
 
     @Override
-    public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public Response processData(Request signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 
         // Check that the request contains a valid GenericSignRequest object
         // with a byte[].
-        if (!(signRequest instanceof TBNServletRequest)) {
+        if (!(signRequest instanceof SignatureRequest)) {
             throw new IllegalRequestException(
                     "Received request wasn't an expected GenericSignRequest.");
         }
-        final TBNServletRequest sReq = (TBNServletRequest) signRequest;
+        final SignatureRequest sReq = (SignatureRequest) signRequest;
 
         if (!configErrors.isEmpty()) {
             throw new SignServerException("Worker is misconfigured");
@@ -401,7 +401,7 @@ public class XAdESSigner extends BaseSigner {
         // The client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);
         
-        return new TBNServletResponse(sReq.getRequestID(), responseData,
+        return new SignatureResponse(sReq.getRequestID(), responseData,
                     cert, archiveId, archivables, CONTENT_TYPE);
     }
 
@@ -421,7 +421,7 @@ public class XAdESSigner extends BaseSigner {
     private XadesSigner createSigner(final ICryptoInstance crypto,
                                     final XAdESSignerParameters params,
                                     final String claimedRole,
-                                    final TBNRequest request,
+                                    final Request request,
                                     final RequestContext context)
             throws SignServerException, XadesProfileResolutionException,
                    CryptoTokenOfflineException, IllegalRequestException {

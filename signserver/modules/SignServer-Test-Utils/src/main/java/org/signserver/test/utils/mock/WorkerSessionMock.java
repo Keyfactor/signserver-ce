@@ -32,21 +32,16 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.OperationUnsupportedException;
-import org.signserver.common.ProcessRequest;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.QueryException;
-import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.RequestContext;
-import org.signserver.common.RequestMetadata;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerType;
-import org.signserver.common.data.TBNLegacyRequest;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
-import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.server.IProcessable;
@@ -61,7 +56,7 @@ import org.signserver.server.log.LogMap;
  * $version $Id$
  */
 public class WorkerSessionMock implements WorkerSessionLocal,
-        WorkerSessionRemote, ProcessSessionLocal, ProcessSessionRemote {
+        WorkerSessionRemote, ProcessSessionLocal/*, ProcessSessionRemote*/ {
 
     private static final Logger LOG = Logger.getLogger(WorkerSessionMock.class);
 
@@ -148,7 +143,7 @@ public class WorkerSessionMock implements WorkerSessionLocal,
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
+    /*@Override
     public ProcessResponse process(WorkerIdentifier workerId, ProcessRequest request,
             RemoteRequestContext remoteContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
@@ -159,11 +154,11 @@ public class WorkerSessionMock implements WorkerSessionLocal,
                 RequestMetadata.getInstance(requestContext).putAll(remoteContext.getMetadata());
             }
         }
-        return process(new AdminInfo("Mock user", null, null), workerId, new TBNLegacyRequest(request), requestContext); // TODO: Maybe this should't be LegacyRequest?
-    }
+        return process(new AdminInfo("Mock user", null, null), workerId, new LegacyRequest(request), requestContext); // TODO: Maybe this should't be LegacyRequest?
+    }*/
 
     @Override
-    public ProcessResponse process(final AdminInfo adminInfo, WorkerIdentifier workerId, TBNRequest request,
+    public Response process(final AdminInfo adminInfo, WorkerIdentifier workerId, Request request,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
         lastRequestContext = requestContext;

@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -44,11 +45,13 @@ import org.signserver.common.SODSignRequest;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.common.data.TBNCertificateValidationRequest;
-import org.signserver.common.data.TBNDocumentValidationRequest;
-import org.signserver.common.data.TBNLegacyRequest;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNSODRequest;
+import org.signserver.common.data.DocumentValidationRequest;
+import org.signserver.common.data.CertificateValidationRequest;
+import org.signserver.common.data.LegacyRequest;
+import org.signserver.common.data.LegacyResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SODRequest;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
@@ -62,8 +65,8 @@ import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.server.UsernamePasswordClientCredential;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.data.impl.TemporarlyWritableData;
@@ -160,7 +163,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         CloseableReadableData requestData = null;
         CloseableWritableData responseData = null;
         try {
-            final TBNRequest req2;
+            final Request req2;
             
             // Use the new request types with large file support for
             // GenericSignRequest and GenericValidationRequest
@@ -171,23 +174,23 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
                 // Upload handling
                 requestData = UploadUtil.handleUpload(UploadConfig.create(globalConfigurationSession), data);
                 responseData = new TemporarlyWritableData(requestData.isFile());
-                req2 = new TBNServletRequest(requestID, requestData, responseData);
+                req2 = new SignatureRequest(requestID, requestData, responseData);
             } else if (request instanceof GenericValidationRequest) {
                 byte[] data = ((GenericValidationRequest) request).getRequestData();
                 int requestID = ((GenericValidationRequest) request).getRequestID();
 
                 // Upload handling
                 requestData = UploadUtil.handleUpload(UploadConfig.create(globalConfigurationSession), data);
-                req2 = new TBNDocumentValidationRequest(requestID, requestData);
+                req2 = new DocumentValidationRequest(requestID, requestData);
             } else if (request instanceof ValidateRequest) {
                 final ValidateRequest vr = (ValidateRequest) request;
 
                 // Upload handling
-                req2 = new TBNCertificateValidationRequest(vr.getCertificate(), vr.getCertPurposesString());
+                req2 = new CertificateValidationRequest(vr.getCertificate(), vr.getCertPurposesString());
             } else if (request instanceof SODSignRequest) {
                 SODSignRequest sod = (SODSignRequest) request;
                 responseData = new TemporarlyWritableData(false);
-                req2 = new TBNSODRequest(sod.getRequestID(), sod.getDataGroupHashes(), sod.getLdsVersion(), sod.getUnicodeVersion(), responseData);
+                req2 = new SODRequest(sod.getRequestID(), sod.getDataGroupHashes(), sod.getLdsVersion(), sod.getUnicodeVersion(), responseData);
             } else if (request instanceof GenericPropertiesRequest) {
                 GenericPropertiesRequest prop = (GenericPropertiesRequest) request;
                 
@@ -197,21 +200,21 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
                     // Upload handling
                     requestData = UploadUtil.handleUpload(UploadConfig.create(globalConfigurationSession), bout.toByteArray());
                     responseData = new TemporarlyWritableData(false);
-                    req2 = new TBNServletRequest(prop.hashCode(), requestData, responseData);
+                    req2 = new SignatureRequest(prop.hashCode(), requestData, responseData);
 
                 } catch (IOException ex) {
                     throw new SignServerException("IO error", ex);
                 }
             } else {
                 // Passthrough for all legacy requests
-                req2 = new TBNLegacyRequest(request);
+                req2 = new LegacyRequest(request);
             }
             
             ProcessResponse result;
-            ProcessResponse response = process(wi, req2, remoteContext, servicesImpl);
+            Response response = process(wi, req2, remoteContext, servicesImpl);
             
-            if (response instanceof TBNServletResponse) {
-                TBNServletResponse tbnResp = (TBNServletResponse) response;
+            if (response instanceof SignatureResponse) {
+                SignatureResponse sigResp = (SignatureResponse) response;
                 if (request instanceof GenericPropertiesRequest) { // Still support old-style GenericPropertiesRequest/Response
                     Properties properties = new Properties();
                     try (InputStream in = responseData.toReadableData().getAsInputStream()) {
@@ -221,11 +224,13 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
                     }
                     result = new GenericPropertiesResponse(properties);
                 } else {
-                    result = new GenericServletResponse(tbnResp.getRequestID(), tbnResp.getProcessedData(), tbnResp.getSignerCertificate(), tbnResp.getArchiveId(), tbnResp.getArchivables(), tbnResp.getContentType());
+                    result = new GenericServletResponse(sigResp.getRequestID(), responseData.toReadableData().getAsByteArray(), sigResp.getSignerCertificate(), sigResp.getArchiveId(), sigResp.getArchivables(), sigResp.getContentType());
                 }
-            } else {
+            } else if (response instanceof LegacyResponse) {
                 // Passthrough for all other
-                result = response;
+                result = ((LegacyResponse) response).getLegacyResponse();
+            } else {
+                throw new SignServerException("Unexpected response type: " + response);
             }
             
             return result;
@@ -238,6 +243,8 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
                 LOG.debug("Upload failed", ex);
             }
             throw new IllegalRequestException("Upload failed: " + ex.getLocalizedMessage());
+        } catch (IOException ex) {
+            throw new SignServerException("IO error", ex);
         } finally {
             if (requestData != null) {
                 try {
@@ -256,7 +263,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         }
     }
     
-    private ProcessResponse process(WorkerIdentifier wi, TBNRequest request, RemoteRequestContext remoteContext, AllServicesImpl servicesImpl) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    private Response process(WorkerIdentifier wi, Request request, RemoteRequestContext remoteContext, AllServicesImpl servicesImpl) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         // Create a new RequestContext at server-side
         final RequestContext requestContext = new RequestContext(true);
 
@@ -284,8 +291,8 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
     }
     
     @Override
-    public ProcessResponse process(final AdminInfo adminInfo, final WorkerIdentifier wi,
-            final TBNRequest request, final RequestContext requestContext)
+    public Response process(final AdminInfo adminInfo, final WorkerIdentifier wi,
+            final Request request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);

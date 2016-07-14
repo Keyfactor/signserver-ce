@@ -26,7 +26,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
 import org.signserver.common.util.XForwardedForUtils;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
@@ -134,7 +134,7 @@ public class ListBasedAddressAuthorizer implements IAuthorizer {
     }
 
     @Override
-    public void isAuthorized(TBNRequest request,
+    public void isAuthorized(Request request,
             RequestContext requestContext) throws IllegalRequestException,
             AccessDeniedException, SignServerException {
         final String remote = (String) requestContext.get(RequestContext.REMOTE_IP);

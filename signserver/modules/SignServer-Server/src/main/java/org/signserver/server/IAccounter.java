@@ -13,9 +13,9 @@
 package org.signserver.server;
 
 import java.util.Properties;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
 
 /**
  * Interface for Accounters.
@@ -47,8 +47,8 @@ public interface IAccounter {
      * @throws AccounterException in case of error other than that the purchase
      * was not granted
      */
-    boolean purchase(IClientCredential credential, TBNRequest request,
-            ProcessResponse response, RequestContext context)
+    boolean purchase(IClientCredential credential, Request request,
+            Response response, RequestContext context)
                 throws AccounterException;
 
 }

@@ -61,7 +61,8 @@ import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.cesecore.util.Base64;
 import org.signserver.common.*;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
 import org.signserver.module.tsa.bc.MSAuthCodeCMSUtils;
 import org.signserver.server.IServices;
 import org.signserver.server.ITimeSource;
@@ -70,8 +71,8 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.WritableData;
 import org.signserver.server.log.ExceptionLoggable;
 import org.signserver.server.log.LogMap;
@@ -233,20 +234,20 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
      * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
     @Override
-    public ProcessResponse processData(final TBNRequest signRequest,
+    public Response processData(final Request signRequest,
             final RequestContext requestContext) throws
                 IllegalRequestException,
                 CryptoTokenOfflineException,
                 SignServerException {
 
         // Check that the request contains a valid TimeStampRequest object.
-        if (!(signRequest instanceof TBNServletRequest)) {
+        if (!(signRequest instanceof SignatureRequest)) {
             final IllegalRequestException exception =
                     new IllegalRequestException(
                     "Received request wasn't an expected GenericSignRequest. ");
             throw exception;
         }
-        final TBNServletRequest sReq = (TBNServletRequest) signRequest;
+        final SignatureRequest sReq = (SignatureRequest) signRequest;
         
         
     	// Log values
@@ -419,7 +420,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
         
-            return new TBNServletResponse(sReq.getRequestID(),
+            return new SignatureResponse(sReq.getRequestID(),
                         		responseData,
                                     x509cert,
                                     archiveId,

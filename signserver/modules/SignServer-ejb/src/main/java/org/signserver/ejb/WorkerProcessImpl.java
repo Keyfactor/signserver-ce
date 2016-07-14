@@ -33,12 +33,13 @@ import org.signserver.common.ISignResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.NotGrantedException;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.util.PropertiesConstants;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
 import org.signserver.ejb.worker.impl.WorkerWithComponents;
@@ -106,15 +107,15 @@ class WorkerProcessImpl {
     /**
      * @see WorkerSession#process(int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
-    public ProcessResponse process(WorkerIdentifier wi, TBNRequest request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public Response process(WorkerIdentifier wi, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         return process(new AdminInfo("Client user", null, null), wi, request, requestContext);
     }
 
     /**
      * @see WorkerSessionLocal#process(org.signserver.server.log.AdminInfo, int, org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
-    public ProcessResponse process(final AdminInfo adminInfo, final WorkerIdentifier wi,
-            final TBNRequest request, final RequestContext requestContext)
+    public Response process(final AdminInfo adminInfo, final WorkerIdentifier wi,
+            final Request request, final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
 
@@ -291,7 +292,7 @@ class WorkerProcessImpl {
             requestContext.put(RequestContext.STATISTICS_EVENT, event);
 
             // Process the request
-            final ProcessResponse res;
+            final Response res;
             try {
                 res = processable.processData(request, requestContext);
             } catch (AuthorizationRequiredException ex) {
@@ -334,8 +335,8 @@ class WorkerProcessImpl {
                 LOG.error("Worker]" + wi + "]: Configuration error: " +  SignServerConstants.DISABLEKEYUSAGECOUNTER + "=TRUE but " + SignServerConstants.KEYUSAGELIMIT + " is also configured. Key usage counter will still be used.");
             }
             Certificate signerCertificate = null;
-            if (res instanceof GenericSignResponse) {
-                signerCertificate = ((GenericSignResponse) res).getSignerCertificate();
+            if (res instanceof SignatureResponse) {
+                signerCertificate = ((SignatureResponse) res).getSignerCertificate();
             }
             try {
                 // Check if the signer has a signer certificate and if that

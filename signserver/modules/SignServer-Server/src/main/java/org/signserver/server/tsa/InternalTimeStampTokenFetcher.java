@@ -15,16 +15,12 @@ package org.signserver.server.tsa;
 import java.math.BigInteger;
 
 import org.apache.log4j.Logger;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.server.UsernamePasswordClientCredential;
 
 import java.io.IOException;
-import java.util.logging.Level;
 import org.apache.commons.fileupload.FileUploadException;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIStatus;
@@ -33,7 +29,8 @@ import org.bouncycastle.tsp.*;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureRequest;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.data.impl.TemporarlyWritableData;
@@ -90,10 +87,9 @@ public class InternalTimeStampTokenFetcher {
                 context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, cred);
             }
 
-            final ProcessResponse resp = session.process(new AdminInfo("Client user", null, null), 
-                    wi, new TBNServletRequest(hashCode(), requestData, responseData), context);
+            session.process(new AdminInfo("Client user", null, null), 
+                    wi, new SignatureRequest(hashCode(), requestData, responseData), context);
 
-            
             final byte[] respBytes = responseData.toReadableData().getAsByteArray();
             TimeStampResponse response = new TimeStampResponse(respBytes);
 

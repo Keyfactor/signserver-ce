@@ -14,10 +14,10 @@ package org.signserver.server.signers;
 
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
 
 /**
  * Worker not performing any operations on its own.
@@ -28,7 +28,7 @@ import org.signserver.common.data.TBNRequest;
 public class NullSigner extends BaseSigner {
 
     @Override
-    public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public Response processData(Request signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         throw new UnsupportedOperationException("Not supported.");
     }
 

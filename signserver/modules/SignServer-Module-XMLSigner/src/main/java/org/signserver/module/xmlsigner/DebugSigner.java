@@ -14,8 +14,10 @@ package org.signserver.module.xmlsigner;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,16 +26,16 @@ import org.apache.xalan.Version;
 import org.apache.xalan.processor.TransformerFactoryImpl;
 
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericServletResponse;
-import org.signserver.common.ISignRequest;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.server.signers.BaseSigner;
 import org.apache.xml.security.Init;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
+import org.signserver.common.data.WritableData;
 
 /**
  * Signer outputting debug information.
@@ -54,11 +56,12 @@ public class DebugSigner extends BaseSigner {
     public static final String SIGNSERVER_NODEID_VALUE = "signserver_nodeid.value";
     
     @Override
-    public ProcessResponse processData(TBNRequest signRequest,
+    public Response processData(Request signRequest,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
         final Properties props = new Properties();
-        final TBNServletRequest sReq = (TBNServletRequest) signRequest;
+        final SignatureRequest sReq = (SignatureRequest) signRequest;
+        final WritableData responseData = sReq.getResponseData();
 
         // Due to a bug in Glassfish, using getImplementationVersion isn't working...
         //props.put(XMLSEC_VERSION, Init.class.getPackage().getImplementationVersion());
@@ -88,14 +91,16 @@ public class DebugSigner extends BaseSigner {
         String nodeId = System.getenv("SIGNSERVER_NODEID");
         props.put(SIGNSERVER_NODEID_VALUE, nodeId == null ? "(null)" : nodeId);
         
-        final StringWriter writer = new StringWriter();
-        props.list(new PrintWriter(writer));
+        try (PrintWriter out = new PrintWriter(responseData.getAsOutputStream())) {
+            props.list(out);
+        } catch (IOException ex) {
+            throw new SignServerException("IO error", ex);
+        }
         
-        final GenericServletResponse resp =
-                new GenericServletResponse(sReq.getRequestID(),
-                        writer.getBuffer().toString().getBytes(),
+        final SignatureResponse resp =
+                new SignatureResponse(sReq.getRequestID(),
+                        responseData,
                         null, null, null, null);
-
         return resp;
     }
     

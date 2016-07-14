@@ -51,9 +51,10 @@ import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.common.data.ReadableData;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.WritableData;
 import org.signserver.server.signers.BaseSigner;
 import org.w3c.dom.Document;
@@ -110,15 +111,15 @@ public class XMLSigner extends BaseSigner {
     }
 
     @Override
-    public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public Response processData(Request signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 
         // Check that the request contains a valid GenericSignRequest object
         // with a byte[].
-        if (!(signRequest instanceof TBNServletRequest)) {
+        if (!(signRequest instanceof SignatureRequest)) {
             throw new IllegalRequestException(
                     "Received request wasn't an expected GenericSignRequest.");
         }
-        final TBNServletRequest sReq = (TBNServletRequest) signRequest;
+        final SignatureRequest sReq = (SignatureRequest) signRequest;
         String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
         String providerName = System.getProperty("jsr105Provider", "org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI");
@@ -231,7 +232,7 @@ public class XMLSigner extends BaseSigner {
         // The client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);
         
-        return new TBNServletResponse(sReq.getRequestID(), responseData,
+        return new SignatureResponse(sReq.getRequestID(), responseData,
                     cert,
                     archiveId, archivables, CONTENT_TYPE);
     }

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import java.util.logging.Level;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -28,9 +29,10 @@ import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
-import org.signserver.common.data.TBNCertificateValidationRequest;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNSODRequest;
+import org.signserver.common.data.CertificateValidationRequest;
+import org.signserver.common.data.CertificateValidationResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.SODRequest;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
@@ -38,10 +40,14 @@ import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.protocol.ws.*;
 import org.signserver.server.CredentialUtils;
 import org.signserver.server.data.impl.TemporarlyWritableData;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
-import org.signserver.common.data.TBNDocumentValidationRequest;
-import org.signserver.common.data.TBNLegacyRequest;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
+import org.signserver.common.data.DocumentValidationRequest;
+import org.signserver.common.data.DocumentValidationResponse;
+import org.signserver.common.data.LegacyRequest;
+import org.signserver.common.data.LegacyResponse;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SODResponse;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.data.impl.UploadConfig;
@@ -52,6 +58,7 @@ import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.validationservice.common.ValidateRequest;
+import org.signserver.validationservice.common.ValidateResponse;
 
 /**
  * Implementor of the ISignServerWS interface.
@@ -260,57 +267,82 @@ public class SignServerWS implements ISignServerWS {
             // TODO: Duplicated in SignServerWS, AdminWS, ProcessSessionBean (remote)
             CloseableReadableData requestData = null;
             CloseableWritableData responseData = null;
+            Integer requestID = null;
             try {
-                final TBNRequest req2;
+                final Request req2;
                 
                 // Use the new request types with large file support for
                 // GenericSignRequest and GenericValidationRequest
                 if (req instanceof GenericSignRequest) {
                     byte[] data = ((GenericSignRequest) req).getRequestData();
-                    int requestID = ((GenericSignRequest) req).getRequestID();
+                    requestID = ((GenericSignRequest) req).getRequestID();
                     
                     // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
                     requestData = UploadUtil.handleUpload(UploadConfig.create(globalSession), data);
                     responseData = new TemporarlyWritableData(requestData.isFile());
-                    req2 = new TBNServletRequest(requestID, requestData, responseData);
+                    req2 = new SignatureRequest(requestID, requestData, responseData);
                 } else if (req instanceof GenericValidationRequest) {
                     byte[] data = ((GenericValidationRequest) req).getRequestData();
-                    int requestID = ((GenericValidationRequest) req).getRequestID();
+                    requestID = ((GenericValidationRequest) req).getRequestID();
                     
                     // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
                     requestData = UploadUtil.handleUpload(UploadConfig.create(globalSession), data);
-                    req2 = new TBNDocumentValidationRequest(requestID, requestData);
+                    req2 = new DocumentValidationRequest(requestID, requestData);
                 } else if (req instanceof ValidateRequest) {
                     final ValidateRequest vr = (ValidateRequest) req;
 
                     // Upload handling
-                    req2 = new TBNCertificateValidationRequest(vr.getCertificate(), vr.getCertPurposesString());
+                    req2 = new CertificateValidationRequest(vr.getCertificate(), vr.getCertPurposesString());
                 } else if (req instanceof SODSignRequest) {
                     SODSignRequest sodReq = (SODSignRequest) req;
-                    req2 = new TBNSODRequest(sodReq.getRequestID(), sodReq.getDataGroupHashes(), sodReq.getLdsVersion(), sodReq.getUnicodeVersion(), responseData);
+                    req2 = new SODRequest(sodReq.getRequestID(), sodReq.getDataGroupHashes(), sodReq.getLdsVersion(), sodReq.getUnicodeVersion(), responseData);
                 } else {
                     // Passthrough for all legacy requests
-                    req2 = new TBNLegacyRequest(req);
+                    req2 = new LegacyRequest(req);
                 }
 
-                ProcessResponse resp = getProcessSession().process(new AdminInfo("Client user", null, null),
+                final Response resp = getProcessSession().process(new AdminInfo("Client user", null, null),
                         wi, req2, requestContext);
-                ProcessResponseWS wsresp = new ProcessResponseWS();
-                try {
-                    wsresp.setResponseData(RequestAndResponseManager.serializeProcessResponse(resp));
-                } catch (IOException e1) {
-                    LOG.error("Error parsing process response", e1);
-                    throw new SignServerException(e1.getMessage());
+                final ProcessResponse processResponse;
+                
+                if (resp instanceof SignatureResponse) {
+                    SignatureResponse sigResp = (SignatureResponse) resp;
+                    processResponse = new GenericSignResponse(sigResp.getRequestID(), responseData.toReadableData().getAsByteArray(), sigResp.getSignerCertificate(), sigResp.getArchiveId(), sigResp.getArchivables());
+                } else if (resp instanceof DocumentValidationResponse) {
+                    DocumentValidationResponse docResp = (DocumentValidationResponse) resp;
+                    processResponse = new GenericValidationResponse(docResp.getRequestID(), docResp.isValid(), convert(docResp.getCertificateValidationResponse()), responseData.toReadableData().getAsByteArray());
+                } else if (resp instanceof CertificateValidationResponse) {
+                    CertificateValidationResponse certResp = (CertificateValidationResponse) resp;
+                    processResponse = new ValidateResponse(certResp.getValidation(), certResp.getValidCertificatePurposes());
+                } else if (resp instanceof SODResponse) {
+                    SODResponse sodResp = (SODResponse) resp;
+                    processResponse = new SODSignResponse(sodResp.getRequestID(), responseData.toReadableData().getAsByteArray(), sodResp.getSignerCertificate(), sodResp.getArchiveId(), sodResp.getArchivables());
+                } else if (resp instanceof LegacyResponse) {
+                    processResponse = ((LegacyResponse) resp).getLegacyResponse();
+                } else {
+                    throw new SignServerException("Unexpected response type: " + resp);
                 }
-                if (resp instanceof TBNServletResponse) {
-                    wsresp.setRequestID(((TBNServletResponse) resp).getRequestID());
+                
+                ProcessResponseWS wsresp = new ProcessResponseWS();
+                
+                if (processResponse instanceof GenericSignResponse) {
+                    GenericSignResponse sigResp = (GenericSignResponse) processResponse;
+                    wsresp.setRequestID(sigResp.getRequestID());
                     try {
-                        wsresp.setWorkerCertificate(new Certificate(((TBNServletResponse) resp).getSignerCertificate()));
+                        wsresp.setWorkerCertificate(new Certificate(sigResp.getSignerCertificate()));
                         wsresp.setWorkerCertificateChain(signerCertificateChain);
                     } catch (CertificateEncodingException e) {
                         LOG.error(e);
                     }
                 }
+                
+                try {
+                    wsresp.setResponseData(RequestAndResponseManager.serializeProcessResponse(processResponse));
+                } catch (IOException e1) {
+                    LOG.error("Error parsing process response", e1);
+                    throw new SignServerException(e1.getMessage());
+                }
+
                 retval.add(wsresp);
             } catch (FileUploadBase.SizeLimitExceededException ex) {
                 LOG.error("Maximum content length exceeded: " + ex.getLocalizedMessage());
@@ -320,6 +352,8 @@ public class SignServerWS implements ISignServerWS {
                     LOG.debug("Upload failed", ex);
                 }
                 throw new IllegalRequestException("Upload failed: " + ex.getLocalizedMessage());
+            } catch (IOException ex) {
+                throw new SignServerException("IO error", ex);
             } finally {
                 if (requestData != null) {
                     try {
@@ -405,6 +439,10 @@ public class SignServerWS implements ISignServerWS {
     
     private ProcessSessionLocal getProcessSession() {
         return processSession;
+    }
+
+    private ValidateResponse convert(CertificateValidationResponse from) {
+        return new ValidateResponse(from.getValidation(), from.getValidCertificatePurposes());
     }
 
 }

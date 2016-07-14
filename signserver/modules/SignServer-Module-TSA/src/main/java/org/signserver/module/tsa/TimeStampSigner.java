@@ -60,7 +60,8 @@ import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.cesecore.util.Base64;
 import org.signserver.common.*;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
 import org.signserver.module.tsa.bc.TimeStampRequest;
 import org.signserver.module.tsa.bc.TimeStampResponse;
 import org.signserver.module.tsa.bc.TimeStampResponseGenerator;
@@ -72,8 +73,8 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.WritableData;
 import org.signserver.server.log.ExceptionLoggable;
 import org.signserver.server.log.IWorkerLogger;
@@ -480,20 +481,20 @@ public class TimeStampSigner extends BaseSigner {
      * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
     @Override
-    public ProcessResponse processData(final TBNRequest signRequest,
+    public Response processData(final Request signRequest,
             final RequestContext requestContext) throws
                 IllegalRequestException,
                 CryptoTokenOfflineException,
                 SignServerException {
 
         // Check that the request contains a valid TimeStampRequest object.
-        if (!(signRequest instanceof TBNServletRequest)) {
+        if (!(signRequest instanceof SignatureRequest)) {
             final IllegalRequestException exception =
                     new IllegalRequestException(
                     "Received request wasn't an expected GenericSignRequest. ");
             throw exception;
         }
-        final TBNServletRequest sReq = (TBNServletRequest) signRequest;
+        final SignatureRequest sReq = (SignatureRequest) signRequest;
 
         // Log values
         final LogMap logMap = LogMap.getInstance(requestContext);
@@ -720,7 +721,7 @@ public class TimeStampSigner extends BaseSigner {
             	logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, false);
             }
             
-            return new TBNServletResponse(sReq.getRequestID(),
+            return new SignatureResponse(sReq.getRequestID(),
                         responseData,
                                     cert,
                                     archiveId,
@@ -1158,7 +1159,7 @@ public class TimeStampSigner extends BaseSigner {
      *         should be included
      * @throws java.io.IOException
      */
-    protected Extensions getAdditionalExtensions(TBNRequest request,
+    protected Extensions getAdditionalExtensions(Request request,
                                                  RequestContext context)
             throws IOException {
         return null;

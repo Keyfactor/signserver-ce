@@ -18,15 +18,15 @@ import java.util.Properties;
 
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.RequestMetadata;
-import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerException;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNSODRequest;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SODRequest;
+import org.signserver.common.data.SODResponse;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.WritableData;
 
 /**
@@ -39,7 +39,7 @@ import org.signserver.common.data.WritableData;
 public class EchoRequestMetadataSigner extends BaseSigner {
 
     @Override
-    public ProcessResponse processData(TBNRequest signRequest,
+    public Response processData(Request signRequest,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
         
@@ -48,13 +48,13 @@ public class EchoRequestMetadataSigner extends BaseSigner {
         final boolean isSOD;
         final WritableData responseData;
         
-        if (signRequest instanceof TBNServletRequest) {
-            final TBNServletRequest req = (TBNServletRequest) signRequest;
+        if (signRequest instanceof SignatureRequest) {
+            final SignatureRequest req = (SignatureRequest) signRequest;
             reqId = req.getRequestID();
             responseData = req.getResponseData();
             isSOD = false;
-        } else if (signRequest instanceof TBNSODRequest) {
-            final TBNSODRequest req = (TBNSODRequest) signRequest;
+        } else if (signRequest instanceof SODRequest) {
+            final SODRequest req = (SODRequest) signRequest;
             reqId = req.getRequestID();
             responseData = req.getResponseData();
             isSOD = true;
@@ -77,9 +77,9 @@ public class EchoRequestMetadataSigner extends BaseSigner {
             writer.close();
 
             if (!isSOD) {
-                return new TBNServletResponse(reqId, responseData, null, null, null, "text/plain");
+                return new SignatureResponse(reqId, responseData, null, null, null, "text/plain");
             } else {
-                return new SODSignResponse(reqId, responseData.toReadableData().getAsByteArray(), null, null, null);            
+                return new SODResponse(reqId, responseData, null, null, null, null);            
             }
         } catch (IOException ex) {
             throw new SignServerException("IO error", ex);

@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -52,11 +53,18 @@ import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.clauses.Order;
 import org.cesecore.util.query.elems.Term;
 import org.signserver.common.*;
-import org.signserver.common.data.TBNDocumentValidationRequest;
-import org.signserver.common.data.TBNLegacyRequest;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNSODRequest;
-import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.CertificateValidationRequest;
+import org.signserver.common.data.CertificateValidationResponse;
+import org.signserver.common.data.DocumentValidationRequest;
+import org.signserver.common.data.DocumentValidationResponse;
+import org.signserver.common.data.LegacyRequest;
+import org.signserver.common.data.LegacyResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SODRequest;
+import org.signserver.common.data.SODResponse;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.IClientCredential;
@@ -69,6 +77,8 @@ import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.data.impl.TemporarlyWritableData;
 import org.signserver.server.data.impl.UploadConfig;
 import org.signserver.server.data.impl.UploadUtil;
+import org.signserver.validationservice.common.ValidateRequest;
+import org.signserver.validationservice.common.ValidateResponse;
 
 /**
  * Class implementing the Admin WS interface.
@@ -919,7 +929,7 @@ public class AdminWS {
             CloseableReadableData requestData = null;
             CloseableWritableData responseData = null;
             try {
-                final TBNRequest req2;
+                final Request req2;
                 
                 // Use the new request types with large file support for
                 // GenericSignRequest and GenericValidationRequest
@@ -930,25 +940,49 @@ public class AdminWS {
                     // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
                     requestData = UploadUtil.handleUpload(UploadConfig.create(global), data);
                     responseData = new TemporarlyWritableData(requestData.isFile());
-                    req2 = new TBNServletRequest(requestID, requestData, responseData);
+                    req2 = new SignatureRequest(requestID, requestData, responseData);
                 } else if (req instanceof GenericValidationRequest) {
                     byte[] data = ((GenericValidationRequest) req).getRequestData();
                     int requestID = ((GenericValidationRequest) req).getRequestID();
                     
                     // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
                     requestData = UploadUtil.handleUpload(UploadConfig.create(global), data);
-                    req2 = new TBNDocumentValidationRequest(requestID, requestData);
+                    req2 = new DocumentValidationRequest(requestID, requestData);
+                } else if (req instanceof ValidateRequest) {
+                    ValidateRequest vr = (ValidateRequest) req;
+                    req2 = new CertificateValidationRequest(vr.getCertificate(), vr.getCertPurposesString());
                 } else if (req instanceof SODSignRequest) {
                     SODSignRequest sodReq = (SODSignRequest) req;
-                    req2 = new TBNSODRequest(sodReq.getRequestID(), sodReq.getDataGroupHashes(), sodReq.getLdsVersion(), sodReq.getUnicodeVersion(), responseData);
+                    req2 = new SODRequest(sodReq.getRequestID(), sodReq.getDataGroupHashes(), sodReq.getLdsVersion(), sodReq.getUnicodeVersion(), responseData);
                 } else {
                     // Passthrough for all legacy requests
-                    req2 = new TBNLegacyRequest(req);
+                    req2 = new LegacyRequest(req);
                 }
 
+                Response resp = processSession.process(adminInfo, WorkerIdentifier.createFromIdOrName(workerIdOrName), req2, requestContext);
+                
+                
+                ProcessResponse processResponse;
+                if (resp instanceof SignatureResponse) {
+                    SignatureResponse sigResp = (SignatureResponse) resp;
+                    processResponse = new GenericSignResponse(sigResp.getRequestID(), responseData.toReadableData().getAsByteArray(), sigResp.getSignerCertificate(), sigResp.getArchiveId(), sigResp.getArchivables());
+                } else if (resp instanceof DocumentValidationResponse) {
+                    DocumentValidationResponse docResp = (DocumentValidationResponse) resp;
+                    processResponse = new GenericValidationResponse(docResp.getRequestID(), docResp.isValid(), convert(docResp.getCertificateValidationResponse()), responseData.toReadableData().getAsByteArray());
+                } else if (resp instanceof CertificateValidationResponse) {
+                    CertificateValidationResponse certResp = (CertificateValidationResponse) resp;
+                    processResponse = new ValidateResponse(certResp.getValidation(), certResp.getValidCertificatePurposes());
+                } else if (resp instanceof SODResponse) {
+                    SODResponse sodResp = (SODResponse) resp;
+                    processResponse = new SODSignResponse(sodResp.getRequestID(), responseData.toReadableData().getAsByteArray(), sodResp.getSignerCertificate(), sodResp.getArchiveId(), sodResp.getArchivables());
+                } else if (resp instanceof LegacyResponse) {
+                    processResponse = ((LegacyResponse) resp).getLegacyResponse();
+                } else {
+                    throw new SignServerException("Unexpected response type: " + resp);
+                }
+                
                 try {
-                    result.add(RequestAndResponseManager.serializeProcessResponse(
-                        processSession.process(adminInfo, WorkerIdentifier.createFromIdOrName(workerIdOrName), req2, requestContext)));
+                    result.add(RequestAndResponseManager.serializeProcessResponse(processResponse));
                 } catch (IOException ex) {
                     LOG.error("Error serializing process response", ex);
                     throw new IllegalRequestException(
@@ -963,6 +997,8 @@ public class AdminWS {
                     LOG.debug("Upload failed", ex);
                 }
                 throw new IllegalRequestException("Upload failed: " + ex.getLocalizedMessage());
+            } catch (IOException ex) {
+                throw new SignServerException("IO error", ex);
             } finally {
                 if (requestData != null) {
                     try {
@@ -1354,6 +1390,10 @@ public class AdminWS {
                 (X509Certificate[]) req.getAttribute(
                     "javax.servlet.request.X509Certificate");
         return certificates;
+    }
+    
+    private ValidateResponse convert(CertificateValidationResponse from) {
+        return new ValidateResponse(from.getValidation(), from.getValidCertificatePurposes());
     }
 
     // "Insert Code > Add Web Service Operation")

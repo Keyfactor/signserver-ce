@@ -26,7 +26,8 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.UsernamePasswordClientCredential;
@@ -92,10 +93,10 @@ public class UserMappedDispatcher extends BaseDispatcher {
     }
 
     @Override
-    public ProcessResponse processData(final TBNRequest signRequest,
+    public Response processData(final Request signRequest,
             final RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
-        final ProcessResponse response;
+        final Response response;
         
         if (!configErrors.isEmpty()) {
             throw new SignServerException("Worker is misconfigured");

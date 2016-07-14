@@ -37,9 +37,10 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.signserver.common.*;
 import org.signserver.common.data.ReadableData;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.WritableData;
 import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
@@ -108,16 +109,16 @@ public class CMSSigner extends BaseSigner {
     }
 
     @Override
-    public ProcessResponse processData(final TBNRequest signRequest,
+    public Response processData(final Request signRequest,
             final RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
         // Check that the request contains a valid GenericSignRequest object
         // with a byte[].
-        if (!(signRequest instanceof TBNServletRequest)) {
+        if (!(signRequest instanceof SignatureRequest)) {
             throw new IllegalRequestException(
                     "Received request wasn't an expected GenericSignRequest.");
         }
-        final TBNServletRequest sReq = (TBNServletRequest) signRequest;
+        final SignatureRequest sReq = (SignatureRequest) signRequest;
 
         if (!configErrors.isEmpty()) {
             throw new SignServerException("Worker is misconfigured");
@@ -194,7 +195,7 @@ public class CMSSigner extends BaseSigner {
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
             
-            return new TBNServletResponse(sReq.getRequestID(), responseData, cert, archiveId, archivables, CONTENT_TYPE);
+            return new SignatureResponse(sReq.getRequestID(), responseData, cert, archiveId, archivables, CONTENT_TYPE);
         } catch (OperatorCreationException ex) {
             LOG.error("Error initializing signer", ex);
             throw new SignServerException("Error initializing signer", ex);

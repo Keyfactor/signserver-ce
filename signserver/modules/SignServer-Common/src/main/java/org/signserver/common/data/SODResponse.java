@@ -13,44 +13,19 @@
 package org.signserver.common.data;
 
 import java.security.cert.Certificate;
+import java.util.Collection;
+import org.signserver.server.archive.Archivable;
 
 /**
- * A Generic work request class implementing the minimal required functionality.
- * 
- * Could be used for XML signature validation requests.
- * 
+ * TODO.
+ *
  * @author Markus Kilås
  * @version $Id$
  */
-public class TBNCertificateValidationRequest extends TBNRequest {
+public class SODResponse extends SignatureResponse {
 
-    private final Certificate certificate;
-    private final String certPurposes;
-
-    public TBNCertificateValidationRequest(Certificate cert, String certPurposes) {
-        this.certificate = cert;
-        this.certPurposes = certPurposes;
-    }
-
-    public Certificate getCertificate() {
-        return certificate;
-    }
-
-    /**
-     * @return the certPurposes the client want's to check that the certificate can be used for a list that is splitted by ","
-     */
-    public String[] getCertPurposes() {
-
-        String[] retval = null;
-        if (certPurposes != null && !certPurposes.trim().equals("")) {
-            retval = certPurposes.split(",");
-
-            for (String purpose : retval) {
-                purpose = purpose.trim();
-            }
-        }
-
-        return retval;
+    public SODResponse(int requestID, WritableData responseData, Certificate signerCertificate, String archiveId, Collection<? extends Archivable> archivables, String contentType) {
+        super(requestID, responseData, signerCertificate, archiveId, archivables, contentType);
     }
 
 }

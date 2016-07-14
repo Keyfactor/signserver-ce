@@ -34,14 +34,14 @@ public class MockedODFSigner extends ODFSigner {
     }
 
     @Override
-    public Certificate getSigningCertificate(final TBNRequest request,
+    public Certificate getSigningCertificate(final Request request,
                                              final RequestContext context)
             throws CryptoTokenOfflineException {
         return mockedToken.getCertificate(ICryptoTokenV4.PURPOSE_SIGN);
     }
 
     @Override
-    public List<Certificate> getSigningCertificateChain(final TBNRequest request,
+    public List<Certificate> getSigningCertificateChain(final Request request,
                                                         final RequestContext context)
             throws CryptoTokenOfflineException {
         return mockedToken.getCertificateChain(ICryptoTokenV4.PURPOSE_SIGN);

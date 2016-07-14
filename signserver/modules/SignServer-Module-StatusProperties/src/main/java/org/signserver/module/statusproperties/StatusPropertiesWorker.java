@@ -20,19 +20,16 @@ import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericPropertiesRequest;
 import org.signserver.common.GenericPropertiesResponse;
-import org.signserver.common.GenericServletRequest;
-import org.signserver.common.GenericServletResponse;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.data.ReadableData;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.WritableData;
 import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
@@ -81,21 +78,21 @@ public class StatusPropertiesWorker extends BaseSigner {
     }
     
     @Override
-    public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public Response processData(Request signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         
         final ProcessResponse ret;
         final Properties requestProperties, responseProperties;
         
         // Check that the request contains a valid request
-        if (!(signRequest instanceof TBNServletRequest)) {
+        if (!(signRequest instanceof SignatureRequest)) {
             throw new IllegalRequestException(
                 "Received request was not of expected type.");
         }
-        final TBNServletRequest request = (TBNServletRequest) signRequest;
+        final SignatureRequest request = (SignatureRequest) signRequest;
         final ReadableData requestData = request.getRequestData();
         final WritableData responseData = request.getResponseData();
         
-        if (request instanceof TBNServletRequest) {
+        if (request instanceof SignatureRequest) {
             requestProperties = new Properties();
             try (InputStream in = requestData.getAsInputStream()) {
                 requestProperties.load(in);
@@ -125,7 +122,7 @@ public class StatusPropertiesWorker extends BaseSigner {
         // The client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);
 
-        return new TBNServletResponse(request.getRequestID(),
+        return new SignatureResponse(request.getRequestID(),
                     responseData, null, null, null, "text/plain");
     }
 

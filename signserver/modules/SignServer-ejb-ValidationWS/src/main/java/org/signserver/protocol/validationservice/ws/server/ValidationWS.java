@@ -31,7 +31,8 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
-import org.signserver.common.data.TBNCertificateValidationRequest;
+import org.signserver.common.data.CertificateValidationRequest;
+import org.signserver.common.data.CertificateValidationResponse;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.healthcheck.HealthCheckUtils;
@@ -40,7 +41,6 @@ import org.signserver.protocol.validationservice.ws.ValidationResponse;
 import org.signserver.server.CredentialUtils;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
-import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.server.ValidationServiceWorker;
 
 /**
@@ -93,9 +93,9 @@ public class ValidationWS implements IValidationWS {
             certPurposes = certPurposes.trim();
         }
 
-        ValidateResponse res = null;
+        CertificateValidationResponse res = null;
         try {
-            TBNCertificateValidationRequest req = new TBNCertificateValidationRequest(reqCert, certPurposes);
+            CertificateValidationRequest req = new CertificateValidationRequest(reqCert, certPurposes);
             X509Certificate clientCertificate = getClientCertificate();
             RequestContext context = new RequestContext(clientCertificate, getRequestIP());
             
@@ -103,13 +103,13 @@ public class ValidationWS implements IValidationWS {
             MessageContext msgContext = wsContext.getMessageContext();
             CredentialUtils.addToRequestContext(context, (HttpServletRequest) msgContext.get(MessageContext.SERVLET_REQUEST), clientCertificate);
         
-            res = (ValidateResponse) getProcessSession().process(new AdminInfo("Client user", null, null), WorkerIdentifier.createFromIdOrName(serviceNameOrId), req, context);
+            res = (CertificateValidationResponse) getProcessSession().process(new AdminInfo("Client user", null, null), WorkerIdentifier.createFromIdOrName(serviceNameOrId), req, context);
         } catch (CryptoTokenOfflineException e) {
             throw new SignServerException("Error using cryptotoken when validating certificate, it seems to be offline : " + e.getMessage());
         } catch (NoSuchWorkerException ex) {
             throw new IllegalRequestException(ex.getMessage());
         }
-        return new ValidationResponse(res.getValidation(), res.getValidCertificatePurposes());
+        return new ValidationResponse(res.getValidation(), res.getValidCertificatePurposesString());
     }
 
     /**

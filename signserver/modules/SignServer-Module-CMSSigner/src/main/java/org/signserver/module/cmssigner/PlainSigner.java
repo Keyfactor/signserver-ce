@@ -35,9 +35,10 @@ import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 import org.signserver.common.*;
 import org.signserver.common.data.ReadableData;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.WritableData;
 import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
@@ -102,22 +103,20 @@ public class PlainSigner extends BaseSigner {
     }
 
     @Override
-    public ProcessResponse processData(final TBNRequest signRequest,
+    public Response processData(final Request signRequest,
             final RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
-
-        ProcessResponse signResponse;
         
         // Log values
         final LogMap logMap = LogMap.getInstance(requestContext);
 
         // Check that the request contains a valid GenericSignRequest object
         // with a byte[].
-        if (!(signRequest instanceof TBNServletRequest)) {
+        if (!(signRequest instanceof SignatureRequest)) {
             throw new IllegalRequestException(
                     "Received request wasn't an expected GenericSignRequest.");
         }
-        final TBNServletRequest sReq = (TBNServletRequest) signRequest;
+        final SignatureRequest sReq = (SignatureRequest) signRequest;
 
         if (!configErrors.isEmpty()) {
             throw new SignServerException("Worker is misconfigured");
@@ -212,7 +211,7 @@ public class PlainSigner extends BaseSigner {
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
 
-            return new TBNServletResponse(sReq.getRequestID(),
+            return new SignatureResponse(sReq.getRequestID(),
                         responseData, cert, archiveId,
                         archivables,
                         CONTENT_TYPE);

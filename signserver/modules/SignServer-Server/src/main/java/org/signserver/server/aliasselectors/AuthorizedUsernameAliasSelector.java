@@ -20,7 +20,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
 import org.signserver.server.IAuthorizer;
 import org.signserver.server.IProcessable;
 import org.signserver.server.WorkerContext;
@@ -50,7 +50,7 @@ public class AuthorizedUsernameAliasSelector implements AliasSelector {
 
     @Override
     public String getAlias(final int purpose, final IProcessable processble,
-                           final TBNRequest signRequest,
+                           final Request signRequest,
                            final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         if (requestContext != null) {

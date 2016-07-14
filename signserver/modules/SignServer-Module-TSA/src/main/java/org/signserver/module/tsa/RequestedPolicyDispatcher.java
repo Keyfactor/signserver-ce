@@ -14,12 +14,12 @@ package org.signserver.module.tsa;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import javax.persistence.EntityManager;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
@@ -28,8 +28,11 @@ import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampResponseGenerator;
 import org.signserver.common.*;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
+import org.signserver.common.data.WritableData;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
@@ -112,10 +115,10 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
     }
 
     @Override
-    public ProcessResponse processData(final TBNRequest signRequest,
+    public Response processData(final Request signRequest,
             final RequestContext context) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
-        final GenericSignResponse result;
+        final Response result;
         
         // Log values
         final LogMap logMap = LogMap.getInstance(context);
@@ -129,10 +132,10 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
         }
 
         // Check that the request contains a valid TimeStampRequest object.
-        if (!(signRequest instanceof TBNServletRequest)) {
+        if (!(signRequest instanceof SignatureRequest)) {
             throw new IllegalRequestException("Received request wasn't an expected GenericSignRequest.");
         }
-        final TBNServletRequest request = (TBNServletRequest) signRequest;
+        final SignatureRequest request = (SignatureRequest) signRequest;
         
         // Get TimeStampRequest
 
@@ -161,8 +164,13 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
                 // Auditlog
                 logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, false);
                 logMap.put(IWorkerLogger.LOG_EXCEPTION, "requested policy not supported");
+                
+                final WritableData responseData = request.getResponseData();
+                try (OutputStream out = responseData.getAsInMemoryOutputStream()) {
+                    out.write(resp.getEncoded());
+                }
 
-                result = new GenericServletResponse(request.getRequestID(), resp.getEncoded(), null, null, null, RESPONSE_CONTENT_TYPE);
+                result = new SignatureResponse(request.getRequestID(), responseData, null, null, null, RESPONSE_CONTENT_TYPE);
             } else {
                 // Mark request comming from a dispatcher so the DispatchedAuthorizer can be used
                 nextContext.put(RequestContext.DISPATCHER_AUTHORIZED_CLIENT, true);
@@ -171,9 +179,9 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
                 //if (request instanceof GenericServletRequest) {
                 //    httpRequest = ((GenericServletRequest) request).getHttpServletRequest();   
                 //}
-                //TBNRequest newRequest = new GenericServletRequest(request.getRequestID(), (byte[]) request.getRequestData(), httpRequest);
+                //Request newRequest = new GenericServletRequest(request.getRequestID(), (byte[]) request.getRequestData(), httpRequest);
                 
-                result = (GenericSignResponse) getProcessSession(context.getServices()).process(new AdminInfo("Client user", null, null), toWorker, request, nextContext);
+                result = getProcessSession(context.getServices()).process(new AdminInfo("Client user", null, null), toWorker, request, nextContext);
             }
         } catch (final IOException e) {
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION, new ExceptionLoggable(e));

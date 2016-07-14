@@ -18,8 +18,8 @@ import org.cesecore.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
-import org.signserver.common.data.TBNCertificateValidationRequest;
-import org.signserver.validationservice.common.ValidateRequest;
+import org.signserver.common.data.CertificateValidationRequest;
+import org.signserver.common.data.CertificateValidationResponse;
 import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.Validation.Status;
@@ -42,7 +42,7 @@ public class DefaultValidationService extends BaseValidationService {
      * @see org.signserver.validationservice.server.IValidationService#validate(org.signserver.validationservice.common.ValidateRequest)
      */
     @Override
-    public ValidateResponse validate(TBNCertificateValidationRequest validationRequest)
+    public CertificateValidationResponse validate(CertificateValidationRequest validationRequest)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
 
@@ -53,7 +53,7 @@ public class DefaultValidationService extends BaseValidationService {
             Validation valRes = new Validation(validationRequest.getCertificate(), null,
                     Validation.Status.ISSUERNOTSUPPORTED,
                     "Issuer of given certificate isn't supported");
-            return new ValidateResponse(valRes, null);
+            return new CertificateValidationResponse(valRes, null);
         }
         // Verify and check validity
         Validation validation = ICertificateManager.verifyCertAndChain(
@@ -126,7 +126,7 @@ public class DefaultValidationService extends BaseValidationService {
             }
         }
 
-        return new ValidateResponse(validation, validPurposes);
+        return new CertificateValidationResponse(validation, validPurposes);
     }
 
     /**

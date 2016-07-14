@@ -12,21 +12,24 @@
  *************************************************************************/
 package org.signserver.common.data;
 
-import java.io.IOException;
 import java.security.cert.Certificate;
 import java.util.Collection;
-import org.signserver.common.GenericServletResponse;
 import org.signserver.server.archive.Archivable;
 
 /**
- * 
+ * TODO.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-public class TBNServletResponse extends GenericServletResponse {
+public class SignatureResponse extends Response {
 
+    private final int requestID;
     private final WritableData responseData;
+    private final Certificate signerCertificate;
+    private final String archiveId;
+    private final String contentType;
+    private final Collection<? extends Archivable> archivables;
     
     /**
      * Creates a GenericWorkResponse, works as a simple VO.
@@ -39,27 +42,40 @@ public class TBNServletResponse extends GenericServletResponse {
      * @param contentType
      * @see org.signserver.common.ProcessRequest
      */
-    public TBNServletResponse(int requestID, WritableData responseData,
+    public SignatureResponse(int requestID, WritableData responseData,
             Certificate signerCertificate,
             String archiveId, Collection<? extends Archivable> archivables,
             String contentType) {
-        super(requestID, new byte[0], signerCertificate, archiveId, archivables, contentType); // TODO
+        this.requestID = requestID;
         this.responseData = responseData;
+        this.signerCertificate = signerCertificate;
+        this.archiveId = archiveId;
+        this.archivables = archivables;
+        this.contentType = contentType;
+    }
+
+    public int getRequestID() {
+        return requestID;
     }
 
     public WritableData getResponseData() {
         return responseData;
     }
 
-    @Override
-    public byte[] getProcessedData() {
-        try {
-            return responseData.toReadableData().getAsByteArray();
-        } catch (IOException ex) {
-            throw new IllegalStateException("Unable to obtain data", ex);
-        }
+    public Certificate getSignerCertificate() {
+        return signerCertificate;
     }
-    
-    
+
+    public String getArchiveId() {
+        return archiveId;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public Collection<? extends Archivable> getArchivables() {
+        return archivables;
+    }
 
 }

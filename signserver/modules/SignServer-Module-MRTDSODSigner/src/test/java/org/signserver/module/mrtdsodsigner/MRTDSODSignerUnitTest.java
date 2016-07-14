@@ -38,7 +38,8 @@ import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.common.data.TBNSODRequest;
+import org.signserver.common.data.SODRequest;
+import org.signserver.common.data.SODResponse;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
@@ -582,8 +583,8 @@ public class MRTDSODSignerUnitTest extends TestCase {
         context.setServices(services);
         
         try (CloseableWritableData responseData = ModulesTestCase.createResponseData(false)) {
-            SODSignResponse res = (SODSignResponse) processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId),
-                    new TBNSODRequest(requestId, dataGroups, null, null, responseData),
+            SODResponse res = (SODResponse) processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId),
+                    new SODRequest(requestId, dataGroups, null, null, responseData),
                     context);
             assertNotNull(res);
             assertEquals(requestId, res.getRequestID());

@@ -12,30 +12,48 @@
  *************************************************************************/
 package org.signserver.common.data;
 
+import java.util.Map;
+
 /**
- * A Generic work request class implementing the minimal required functionality.
- * 
- * Could be used for XML signature validation requests.
- * 
+ * TODO.
+ *
  * @author Markus Kilås
  * @version $Id$
  */
-public class TBNDocumentValidationRequest extends TBNRequest {
+public class SODRequest extends Request {
 
     private final int requestID;
-    private final ReadableData requestData;
-
-    public TBNDocumentValidationRequest(int requestID, ReadableData requestData) {
+    private final Map<Integer, byte[]> dataGroupHashes;
+    private final String ldsVersion;
+    private final String unicodeVersion;
+    private final WritableData responseData;
+    
+    public SODRequest(int requestID, Map<Integer, byte[]> dataGroupHashes, String ldsVersion, String unicodeVersion, WritableData responseData) {
         this.requestID = requestID;
-        this.requestData = requestData;
+        this.dataGroupHashes = dataGroupHashes;
+        this.ldsVersion = ldsVersion;
+        this.unicodeVersion = unicodeVersion;
+        this.responseData = responseData;
     }
 
     public int getRequestID() {
         return requestID;
     }
 
-    public ReadableData getRequestData() {
-        return requestData;
+    public Map<Integer, byte[]> getDataGroupHashes() {
+        return dataGroupHashes;
+    }
+
+    public String getLdsVersion() {
+        return ldsVersion;
+    }
+
+    public String getUnicodeVersion() {
+        return unicodeVersion;
+    }
+
+    public WritableData getResponseData() {
+        return responseData;
     }
     
 }

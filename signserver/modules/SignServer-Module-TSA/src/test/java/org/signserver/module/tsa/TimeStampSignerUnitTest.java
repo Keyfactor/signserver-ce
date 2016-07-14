@@ -37,7 +37,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
 import org.signserver.server.LocalComputerTimeSource;
 import org.signserver.server.log.LogMap;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
@@ -47,7 +47,7 @@ import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
-import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.SignatureRequest;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.log.AdminInfo;
@@ -258,7 +258,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner() {
                 @Override
-                protected Extensions getAdditionalExtensions(TBNRequest request, RequestContext context) {
+                protected Extensions getAdditionalExtensions(Request request, RequestContext context) {
                      final Extension ext =
                              new Extension(new ASN1ObjectIdentifier("1.2.7.9"),
                                            false,
@@ -288,7 +288,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner() {
                 @Override
-                protected Extensions getAdditionalExtensions(TBNRequest request, RequestContext context) {
+                protected Extensions getAdditionalExtensions(Request request, RequestContext context) {
                      final Extension ext =
                              new Extension(new ASN1ObjectIdentifier("1.2.7.9"),
                                            false,
@@ -366,7 +366,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 CloseableReadableData requestData = createRequestData(requestBytes);
                 CloseableWritableData responseData = createResponseData(false);
             ) {
-            TBNServletRequest signRequest = new TBNServletRequest(100, requestData, responseData);
+            SignatureRequest signRequest = new SignatureRequest(100, requestData, responseData);
             processSession.process(new AdminInfo("Client user", null, null),
                     new WorkerIdentifier(WORKER2), signRequest, new MockedRequestContext(services));
 
@@ -445,7 +445,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 CloseableReadableData requestData = createRequestData(requestBytes);
                 CloseableWritableData responseData = createResponseData(false);
             ) {
-            TBNServletRequest signRequest = new TBNServletRequest(100, requestData, responseData);
+            SignatureRequest signRequest = new SignatureRequest(100, requestData, responseData);
         
             processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId), signRequest, new MockedRequestContext(services));
 

@@ -35,13 +35,13 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.PKCS10CertReqInfo;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.ResyncException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
 import org.signserver.server.aliasselectors.AliasSelector;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
@@ -594,7 +594,7 @@ public class BaseProcessableTest extends TestCase {
         }
 
         @Override
-        public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        public Response processData(Request signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
@@ -684,7 +684,7 @@ public class BaseProcessableTest extends TestCase {
         }
 
         @Override
-        public String getAlias(int purpose, IProcessable processble, TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        public String getAlias(int purpose, IProcessable processble, Request signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
             return "Test";
         }
 

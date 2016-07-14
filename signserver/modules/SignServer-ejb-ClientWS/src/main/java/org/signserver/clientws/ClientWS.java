@@ -29,14 +29,16 @@ import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNSODRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SODRequest;
+import org.signserver.common.data.SODResponse;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.CredentialUtils;
 import org.signserver.server.data.impl.TemporarlyWritableData;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.data.impl.UploadConfig;
@@ -104,12 +106,12 @@ public class ClientWS {
             
             // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
             
-            final TBNRequest req = new TBNServletRequest(requestId, requestData, responseData);
+            final Request req = new SignatureRequest(requestId, requestData, responseData);
 
-            final ProcessResponse resp = getProcessSession().process(new AdminInfo("CLI user", null, null), WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
+            final Response resp = getProcessSession().process(new AdminInfo("CLI user", null, null), WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
             
-            if (resp instanceof TBNServletResponse) {
-                final TBNServletResponse signResponse = (TBNServletResponse) resp;
+            if (resp instanceof SignatureResponse) {
+                final SignatureResponse signResponse = (SignatureResponse) resp;
                 if (signResponse.getRequestID() != requestId) {
                     LOG.error("Response ID " + signResponse.getRequestID() + " not matching request ID " + requestId);
                     throw new InternalServerException("Error in process operation, response id didn't match request id");
@@ -169,11 +171,11 @@ public class ClientWS {
      * @throws InternalServerException In case the request could not be processed by some error at the server side.
      */
     @WebMethod(operationName = "processSOD")
-    public SODResponse processSOD(
+    public org.signserver.clientws.SODResponse processSOD(
             @WebParam(name = "worker") final String workerIdOrName, 
             @WebParam(name = "metadata") final List<Metadata> requestMetadata,
-            @WebParam(name = "sodData") final SODRequest data) throws RequestFailedException, InternalServerException {
-        final SODResponse result;
+            @WebParam(name = "sodData") final org.signserver.clientws.SODRequest data) throws RequestFailedException, InternalServerException {
+        final org.signserver.clientws.SODResponse result;
         try (CloseableWritableData responseData = new TemporarlyWritableData(false)) {
             final RequestContext requestContext = handleRequestContext(requestMetadata);
             final int requestId = random.nextInt();
@@ -219,17 +221,17 @@ public class ClientWS {
             }
 
             // Use special SOD sign request type
-            final TBNSODRequest req = new TBNSODRequest(requestId, dataGroupsMap, ldsVersion, unicodeVersion, responseData);
-            final ProcessResponse resp = getProcessSession().process(new AdminInfo("CLI user", null, null), WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
+            final SODRequest req = new SODRequest(requestId, dataGroupsMap, ldsVersion, unicodeVersion, responseData);
+            final Response resp = getProcessSession().process(new AdminInfo("CLI user", null, null), WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
             
-            if (resp instanceof SODSignResponse) {
-                SODSignResponse signResponse = (SODSignResponse) resp; 
+            if (resp instanceof SODResponse) {
+                SODResponse signResponse = (SODResponse) resp; 
                 if (signResponse.getRequestID() != requestId) {
                     LOG.error("Response ID " + signResponse.getRequestID() + " not matching request ID " + requestId);
                     throw new SignServerException("Error in process operation, response id didn't match request id");
                 }
 
-                result = new SODResponse(requestId, responseData.toReadableData().getAsByteArray(), signResponse.getArchiveId(), signResponse.getSignerCertificate() == null ? null : signResponse.getSignerCertificate().getEncoded(), getResponseMetadata(requestContext));
+                result = new org.signserver.clientws.SODResponse(requestId, responseData.toReadableData().getAsByteArray(), signResponse.getArchiveId(), signResponse.getSignerCertificate() == null ? null : signResponse.getSignerCertificate().getEncoded(), getResponseMetadata(requestContext));
             } else {
                 LOG.error("Unexpected return type: " + resp.getClass().getName());
                 throw new SignServerException("Unexpected return type");

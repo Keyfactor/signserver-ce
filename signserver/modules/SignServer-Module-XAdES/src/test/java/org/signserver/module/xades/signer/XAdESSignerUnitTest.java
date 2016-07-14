@@ -58,7 +58,7 @@ import org.signserver.server.CertificateClientCredential;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
-import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.SignatureRequest;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.test.utils.builders.CertBuilder;
@@ -318,7 +318,7 @@ public class XAdESSignerUnitTest {
                 CloseableReadableData requestData = ModulesTestCase.createRequestData(toSign.getBytes(StandardCharsets.UTF_8));
                 CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
             ) {
-            TBNServletRequest request = new TBNServletRequest(100, requestData, responseData);
+            SignatureRequest request = new SignatureRequest(100, requestData, responseData);
             instance.processData(request, requestContext);
 
             data = responseData.toReadableData().getAsByteArray();
@@ -738,7 +738,7 @@ public class XAdESSignerUnitTest {
                 CloseableReadableData requestData = ModulesTestCase.createRequestData("<test100/>".getBytes(StandardCharsets.UTF_8));
                 CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
             ) {
-            TBNServletRequest request = new TBNServletRequest(100, requestData, responseData);
+            SignatureRequest request = new SignatureRequest(100, requestData, responseData);
             instance.processData(request, requestContext);
             data = responseData.toReadableData().getAsByteArray();
         }

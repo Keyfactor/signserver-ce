@@ -53,9 +53,10 @@ import org.cesecore.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.data.ReadableData;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.WritableData;
 import org.signserver.common.util.RandomPasswordGenerator;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
@@ -184,16 +185,16 @@ public class RenewalWorker extends BaseSigner {
     }
 
     @Override
-    public ProcessResponse processData(final TBNRequest signRequest,
+    public Response processData(final Request signRequest,
             final RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
 
         // Check that the request contains a valid request
-        if (!(signRequest instanceof TBNServletRequest)) {
+        if (!(signRequest instanceof SignatureRequest)) {
             throw new IllegalRequestException(
                 "Received request was not of expected type.");
         }
-        final TBNServletRequest request = (TBNServletRequest) signRequest;
+        final SignatureRequest request = (SignatureRequest) signRequest;
         final ReadableData requestData = request.getRequestData();
         final WritableData responseData = request.getResponseData();
         
@@ -246,7 +247,7 @@ public class RenewalWorker extends BaseSigner {
                     + "See server log for information.");
         }
 
-        return new TBNServletResponse(request.getRequestID(),
+        return new SignatureResponse(request.getRequestID(),
                     responseData, null, null, null, "text/plain");
     }
 

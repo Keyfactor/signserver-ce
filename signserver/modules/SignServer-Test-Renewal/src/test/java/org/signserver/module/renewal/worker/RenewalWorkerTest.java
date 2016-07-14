@@ -47,16 +47,16 @@ import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.InvalidWorkerIdException;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.module.renewal.common.RenewalWorkerProperties;
@@ -619,9 +619,9 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 CloseableReadableData requestData = ModulesTestCase.createRequestData(reqProperties);
                 CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
             ) {
-            TBNServletResponse response
-                    = (TBNServletResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
-                        new WorkerIdentifier(6110), new TBNServletRequest(1010, requestData, responseData), new RequestContext(true));
+            SignatureResponse response
+                    = (SignatureResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
+                        new WorkerIdentifier(6110), new SignatureRequest(1010, requestData, responseData), new RequestContext(true));
             assertNotNull(response);
             assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
         }
@@ -655,9 +655,9 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 CloseableReadableData requestData = ModulesTestCase.createRequestData(reqProperties);
                 CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
             ) {
-            TBNServletResponse response
-                    = (TBNServletResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
-                        new WorkerIdentifier(6110), new TBNServletRequest(1010, requestData, responseData), new RequestContext(true));
+            SignatureResponse response
+                    = (SignatureResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
+                        new WorkerIdentifier(6110), new SignatureRequest(1010, requestData, responseData), new RequestContext(true));
             assertNotNull(response);
             assertTrue("Explicit ECC parameters set", workerSession.explicitEccParametersSet);
         }
@@ -691,9 +691,9 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 CloseableReadableData requestData = ModulesTestCase.createRequestData(reqProperties);
                 CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
             ) {
-            TBNServletResponse response
-                    = (TBNServletResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
-                        new WorkerIdentifier(6110), new TBNServletRequest(1010, requestData, responseData), new RequestContext(true));
+            SignatureResponse response
+                    = (SignatureResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
+                        new WorkerIdentifier(6110), new SignatureRequest(1010, requestData, responseData), new RequestContext(true));
             assertNotNull(response);
             assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
         }
@@ -890,7 +890,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
         
         workerSession.setupWorker(signerId, CRYPTOTOKEN_CLASSNAME, config, new BaseSigner() {
             @Override
-            public ProcessResponse processData(TBNRequest signRequest,
+            public Response processData(Request signRequest,
                     RequestContext requestContext)
                     throws IllegalRequestException,
                     CryptoTokenOfflineException, SignServerException {

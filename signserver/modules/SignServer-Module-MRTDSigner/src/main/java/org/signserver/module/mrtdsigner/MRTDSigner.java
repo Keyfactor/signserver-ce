@@ -33,10 +33,12 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.common.data.ReadableData;
-import org.signserver.common.data.TBNLegacyRequest;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.LegacyRequest;
+import org.signserver.common.data.LegacyResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.WritableData;
 import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
@@ -89,20 +91,20 @@ public class MRTDSigner extends BaseSigner {
      * @throws SignServerException
      */
     @Override
-    public ProcessResponse processData(TBNRequest signRequest,
+    public Response processData(Request signRequest,
             RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
 
         if (log.isTraceEnabled()) {
             log.trace(">processData");
         }
-        ProcessResponse ret = null;
+        Response ret = null;
 
         ICryptoInstance crypto = null;
         try {
             crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);
 
-            if (signRequest instanceof TBNLegacyRequest) {
-                MRTDSignRequest req = (MRTDSignRequest) ((TBNLegacyRequest) signRequest).getLegacyRequest();
+            if (signRequest instanceof LegacyRequest) {
+                MRTDSignRequest req = (MRTDSignRequest) ((LegacyRequest) signRequest).getLegacyRequest();
 
                 ArrayList<byte[]> genSignatures = new ArrayList<>();
 
@@ -119,11 +121,11 @@ public class MRTDSigner extends BaseSigner {
                     genSignatures.add(encrypt(data, signRequest, requestContext, crypto));
                 }
 
-                ret = new MRTDSignResponse(req.getRequestID(), genSignatures,
-                                           getSigningCertificate(crypto));
+                ret = new LegacyResponse(new MRTDSignResponse(req.getRequestID(), genSignatures,
+                                           getSigningCertificate(crypto)));
 
-            } else if (signRequest instanceof TBNServletRequest) {
-                TBNServletRequest req = (TBNServletRequest) signRequest;
+            } else if (signRequest instanceof SignatureRequest) {
+                SignatureRequest req = (SignatureRequest) signRequest;
                 final ReadableData requestData = req.getRequestData();
                 final WritableData responseData = req.getResponseData();
                 
@@ -139,7 +141,7 @@ public class MRTDSigner extends BaseSigner {
                     // The client can be charged for the request
                     requestContext.setRequestFulfilledByWorker(true);
                     
-                    return new TBNServletResponse(req.getRequestID(), responseData,
+                    return new SignatureResponse(req.getRequestID(), responseData,
                                                          getSigningCertificate(crypto),
                                                          archiveId, archivables, CONTENT_TYPE);
                 } catch (IOException ex) {
@@ -157,7 +159,7 @@ public class MRTDSigner extends BaseSigner {
         return ret;
     }
 
-    private byte[] encrypt(final byte[] data, final TBNRequest request,
+    private byte[] encrypt(final byte[] data, final Request request,
                            final RequestContext context, final ICryptoInstance crypto)
             throws CryptoTokenOfflineException, SignServerException, IllegalRequestException {
         Cipher c;

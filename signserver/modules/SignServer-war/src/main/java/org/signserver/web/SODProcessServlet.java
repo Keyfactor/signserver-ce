@@ -13,6 +13,8 @@
 package org.signserver.web;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -26,6 +28,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.IOUtils;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
@@ -36,10 +39,11 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.RequestMetadata;
-import org.signserver.common.SODSignResponse;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.common.data.TBNSODRequest;
+import org.signserver.common.data.ReadableData;
+import org.signserver.common.data.SODRequest;
+import org.signserver.common.data.SODResponse;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.CredentialUtils;
 import org.signserver.server.log.AdminInfo;
@@ -250,7 +254,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
             Random rand = new Random();
             int requestId = rand.nextInt();
 
-            SODSignResponse response;
+            SODResponse response;
             try (CloseableWritableData responseData = new TemporarlyWritableData(false)) {
                 final RequestContext context = new RequestContext((X509Certificate) clientCertificate, remoteAddr);
                 final String xForwardedFor = req.getHeader(RequestContext.X_FORWARDED_FOR);
@@ -266,10 +270,10 @@ public class SODProcessServlet extends AbstractProcessServlet {
                 
                 addRequestMetaData(metadataHolder, metadata);
                 
-                final TBNSODRequest signRequest = new TBNSODRequest(requestId,
+                final SODRequest signRequest = new SODRequest(requestId,
                     dataGroups, ldsVersion, unicodeVersion, responseData);
 
-                response = (SODSignResponse) getProcessSession().process(new AdminInfo("Client user", null, null),
+                response = (SODResponse) getProcessSession().process(new AdminInfo("Client user", null, null),
                         wi, signRequest, context);
 
                 if (response.getRequestID() != requestId) {
@@ -279,12 +283,18 @@ public class SODProcessServlet extends AbstractProcessServlet {
                             "Error in process operation, response id didn't match request id");
                     return;
                 }
-                byte[] processedBytes = (byte[]) response.getProcessedData();
 
+                ReadableData readable = responseData.toReadableData();
                 res.setContentType(CONTENT_TYPE_BINARY);
-                res.setContentLength(processedBytes.length);
-                res.getOutputStream().write(processedBytes);
-                res.getOutputStream().close();
+                
+                //EE7:res.setContentLengthLong()
+                res.addHeader("Content-Length", String.valueOf(readable.getLength()));
+                try (
+                        InputStream in = readable.getAsInputStream();
+                        OutputStream out = res.getOutputStream();
+                    ) {
+                    IOUtils.copyLarge(in, out);
+                }
             }  catch (AuthorizationRequiredException e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Sending back HTTP 401: " + e.getLocalizedMessage());

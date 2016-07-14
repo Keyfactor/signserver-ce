@@ -13,21 +13,19 @@
 package org.signserver.common.data;
 
 /**
- * To be named servlet request.
+ * TODO.
  * 
  * @author Markus Kilås
  * @version $Id$
  */
-public class TBNServletRequest extends TBNRequest {
+public class DocumentValidationRequest extends Request {
 
     private final int requestID;
     private final ReadableData requestData;
-    private final WritableData responseData;
-    
-    public TBNServletRequest(int requestID, ReadableData requestData, WritableData responseData) {
+
+    public DocumentValidationRequest(int requestID, ReadableData requestData) {
         this.requestID = requestID;
         this.requestData = requestData;
-        this.responseData = responseData;
     }
 
     public int getRequestID() {
@@ -37,9 +35,5 @@ public class TBNServletRequest extends TBNRequest {
     public ReadableData getRequestData() {
         return requestData;
     }
-
-    public WritableData getResponseData() {
-        return responseData;
-    }
-
+    
 }

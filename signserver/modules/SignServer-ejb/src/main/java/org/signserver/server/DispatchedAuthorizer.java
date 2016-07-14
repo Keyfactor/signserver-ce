@@ -17,7 +17,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
 
 /**
  * Authorizer that examines the RequestContext and only accepts requests if
@@ -65,7 +65,7 @@ public class DispatchedAuthorizer implements IAuthorizer {
     }
 
     @Override
-    public void isAuthorized(final TBNRequest request,
+    public void isAuthorized(final Request request,
             final RequestContext requestContext)
                 throws IllegalRequestException, SignServerException {
 

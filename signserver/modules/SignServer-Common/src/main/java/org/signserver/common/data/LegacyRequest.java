@@ -10,41 +10,26 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server;
+package org.signserver.common.data;
 
-import java.util.Properties;
-import org.apache.log4j.Logger;
-import org.signserver.common.RequestContext;
-import org.signserver.common.data.Request;
-import org.signserver.common.data.Response;
+import org.signserver.common.ProcessRequest;
 
 /**
- * Default account that grants all requests without charging anybody.
- * 
+ * TODO.
+ *
  * @author Markus Kilås
  * @version $Id$
  */
-public class NoAccounter implements IAccounter {
+public class LegacyRequest extends Request {
 
-    private static final Logger LOG = Logger.getLogger(NoAccounter.class);
+    private final ProcessRequest legacyRequest;
 
-    @Override
-    public void init(final Properties props) {
-        LOG.debug("init");
+    public LegacyRequest(ProcessRequest legacyRequest) {
+        this.legacyRequest = legacyRequest;
     }
 
-    @Override
-    public boolean purchase(final IClientCredential credential,
-            final Request request, final Response response,
-            final RequestContext context) throws AccounterException {
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("purchase called for "
-                + (String) context.get(RequestContext.TRANSACTION_ID));
-        }
-
-        // This IAccounter always grants without charging anybody
-        return true;
+    public ProcessRequest getLegacyRequest() {
+        return legacyRequest;
     }
     
 }

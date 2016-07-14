@@ -49,8 +49,8 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.SignServerContext;
@@ -224,16 +224,16 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
             return;
         }
 
-        TBNServletResponse resp;
+        SignatureResponse resp;
         byte[] buf;        
         try (
                 CloseableReadableData requestData = createRequestData(data);
                 CloseableWritableData responseData = createResponseData(false);
             ) {   
             // create sample hard-coded request
-            TBNServletRequest signRequest = new TBNServletRequest(REQUEST_ID, requestData, responseData);
+            SignatureRequest signRequest = new SignatureRequest(REQUEST_ID, requestData, responseData);
 
-            resp = (TBNServletResponse) workerMock.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(SIGNER_ID), signRequest, new MockedRequestContext(services));
+            resp = (SignatureResponse) workerMock.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(SIGNER_ID), signRequest, new MockedRequestContext(services));
 
             // check that the response contains the needed attributes
             buf = responseData.toReadableData().getAsByteArray();

@@ -25,7 +25,7 @@ import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
 
 /**
  * Client certificate authorizer.
@@ -75,7 +75,7 @@ public class ClientCertAuthorizer implements IAuthorizer {
      * RequestContext)
      */
     @Override
-    public void isAuthorized(final TBNRequest request,
+    public void isAuthorized(final Request request,
             final RequestContext requestContext)
             throws SignServerException, IllegalRequestException {
         final X509Certificate clientCert = (X509Certificate)

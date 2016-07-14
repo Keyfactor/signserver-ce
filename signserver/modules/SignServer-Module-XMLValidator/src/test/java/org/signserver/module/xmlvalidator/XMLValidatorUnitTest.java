@@ -27,13 +27,13 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.cesecore.util.CertTools;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.signserver.common.GenericValidationRequest;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerType;
-import org.signserver.common.data.TBNDocumentValidationRequest;
+import org.signserver.common.data.DocumentValidationRequest;
+import org.signserver.common.data.DocumentValidationResponse;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.test.utils.mock.MockedCryptoToken;
@@ -98,19 +98,19 @@ public class XMLValidatorUnitTest {
 
         System.err.println(instance.getFatalErrors(null));
         
-        TBNDocumentValidationRequest request = new TBNDocumentValidationRequest(100, ModulesTestCase.createRequestData(xml.getBytes(StandardCharsets.UTF_8)));
-        GenericValidationResponse res = (GenericValidationResponse) instance.processData(request, requestContext);
+        DocumentValidationRequest request = new DocumentValidationRequest(100, ModulesTestCase.createRequestData(xml.getBytes(StandardCharsets.UTF_8)));
+        DocumentValidationResponse res = (DocumentValidationResponse) instance.processData(request, requestContext);
 
         assertTrue("valid document", res.isValid());
 
         // Check certificate and path
-        Certificate signercert = res.getCertificateValidation().getCertificate();
+        Certificate signercert = res.getCertificateValidationResponse().getValidation().getCertificate();
         assertEquals("Signer certificate", expectedSubjectDN, CertTools.getSubjectDN(signercert));
-        List<Certificate> caChain = res.getCertificateValidation().getCAChain();
+        List<Certificate> caChain = res.getCertificateValidationResponse().getValidation().getCAChain();
         assertEquals("ca certificate 0", expectedIssuerDN, CertTools.getSubjectDN(caChain.get(0)));
         assertEquals("caChain length", 1, caChain.size());
-        LOG.info("Status message: " + res.getCertificateValidation().getStatusMessage());
-        assertEquals(Validation.Status.VALID, res.getCertificateValidation().getStatus());
+        LOG.info("Status message: " + res.getCertificateValidationResponse().getValidation().getStatusMessage());
+        assertEquals(Validation.Status.VALID, res.getCertificateValidationResponse().getValidation().getStatus());
     }
 
     @Test

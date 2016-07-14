@@ -16,13 +16,13 @@ import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerStatus;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.server.IServices;
 
 /**
@@ -66,7 +66,7 @@ public class DummySigner extends BaseSigner {
      * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest, org.signserver.common.RequestContext)
      */
     @Override
-    public ProcessResponse processData(TBNRequest signRequest,
+    public Response processData(Request signRequest,
             RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
 
@@ -80,9 +80,9 @@ public class DummySigner extends BaseSigner {
             LOG.info(e.getMessage());
         }
 
-        TBNServletRequest req = (TBNServletRequest) signRequest;
+        SignatureRequest req = (SignatureRequest) signRequest;
 
-        return new TBNServletResponse(req.getRequestID(), req.getResponseData(), null, null, null, "text/plain");
+        return new SignatureResponse(req.getRequestID(), req.getResponseData(), null, null, null, "text/plain");
     }
 
     private long getWaitTime() {

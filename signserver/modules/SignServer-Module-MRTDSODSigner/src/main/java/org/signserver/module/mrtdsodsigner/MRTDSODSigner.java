@@ -37,8 +37,10 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.jcajce.JcaX500NameUtil;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
-import org.signserver.common.data.TBNRequest;
-import org.signserver.common.data.TBNSODRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
+import org.signserver.common.data.SODRequest;
+import org.signserver.common.data.SODResponse;
 import org.signserver.common.data.WritableData;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
 import org.signserver.server.IServices;
@@ -115,17 +117,17 @@ public class MRTDSODSigner extends BaseSigner {
     }
 
     @Override
-    public ProcessResponse processData(TBNRequest signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+    public Response processData(Request signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         if (log.isTraceEnabled()) {
             log.trace(">processData");
         }
 
         // Check that the request contains a valid SODSignRequest object.
-        if (!(signRequest instanceof TBNSODRequest)) {
+        if (!(signRequest instanceof SODRequest)) {
             throw new IllegalRequestException("Received request wasn't an expected SODSignRequest.");
         }
         
-        final TBNSODRequest sodRequest = (TBNSODRequest) signRequest;
+        final SODRequest sodRequest = (SODRequest) signRequest;
 
         final IServices services = requestContext.getServices();
         final ICryptoTokenV4 token = getCryptoToken(services);
@@ -278,8 +280,8 @@ public class MRTDSODSigner extends BaseSigner {
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
             
-            return new SODSignResponse(sodRequest.getRequestID(), signedbytes, cert,
-                    archiveId, archivables);
+            return new SODResponse(sodRequest.getRequestID(), responseData, cert,
+                    archiveId, archivables, "application/octet-stream");
         } catch (GeneralSecurityException e) {
             log.error("Error verifying the SOD we signed ourselves. ", e);
             throw new SignServerException("SOD verification failure", e);

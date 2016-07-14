@@ -12,26 +12,37 @@
  *************************************************************************/
 package org.signserver.common.data;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
 /**
  * TODO.
  *
- * @author Markus Kilås
  * @version $Id$
  */
-public interface ReadableData {
+public class DocumentValidationResponse extends Response {
 
-    byte[] getAsByteArray() throws IOException;
+    private final int requestID;
+    private final boolean valid;
+    private final CertificateValidationResponse certificateValidationResponse;
 
-    InputStream getAsInputStream() throws IOException;
+    public DocumentValidationResponse(int requestID, boolean valid, CertificateValidationResponse certificateValidationResponse) {
+        this.requestID = requestID;
+        this.valid = valid;
+        this.certificateValidationResponse = certificateValidationResponse;
+    }
 
-    File getAsFile() throws IOException;
-    
-    long getLength();
+    public DocumentValidationResponse(int requestId, boolean b) {
+        this(requestId, b, null);
+    }
 
-    boolean isFile();
+    public int getRequestID() {
+        return requestID;
+    }
+
+    public boolean isValid() {
+        return valid;
+    }
+
+    public CertificateValidationResponse getCertificateValidationResponse() {
+        return certificateValidationResponse;
+    }
     
 }

@@ -18,9 +18,9 @@ import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 
 /**
@@ -70,7 +70,7 @@ public class GlobalConfigSampleAccounter implements IAccounter {
 
     @Override
     public boolean purchase(final IClientCredential credential,
-            final TBNRequest request, final ProcessResponse response,
+            final Request request, final Response response,
             final RequestContext context) throws AccounterException {
 
         if (LOG.isDebugEnabled()) {

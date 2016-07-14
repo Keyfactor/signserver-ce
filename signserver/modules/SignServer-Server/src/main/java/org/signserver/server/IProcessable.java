@@ -22,7 +22,6 @@ import java.util.Map;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.ProcessResponse;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
@@ -37,7 +36,8 @@ import org.signserver.common.NoSuchAliasException;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
-import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.Request;
+import org.signserver.common.data.Response;
 
 /**
  * IProcessable is an interface that all processable workers should implement.
@@ -63,7 +63,7 @@ public interface IProcessable extends IWorker {
      * @throws CryptoTokenOfflineException if the token performing cryptographic operations is off-line.
      * @throws SignServerException if general failure occurred during the operation.
      */
-    ProcessResponse processData(TBNRequest signRequest,
+    Response processData(Request signRequest,
             RequestContext requestContext) throws IllegalRequestException,
                 CryptoTokenOfflineException, SignServerException;
 

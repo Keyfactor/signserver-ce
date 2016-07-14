@@ -42,16 +42,19 @@ import org.signserver.server.log.LogMap;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.server.data.impl.DiskFileItemReadableData;
 import org.signserver.common.data.ReadableData;
-import org.signserver.common.data.TBNCertificateValidationRequest;
+import org.signserver.common.data.CertificateValidationRequest;
+import org.signserver.common.data.CertificateValidationResponse;
 import org.signserver.server.data.impl.TemporarlyWritableData;
-import org.signserver.common.data.TBNServletRequest;
-import org.signserver.common.data.TBNServletResponse;
-import org.signserver.common.data.TBNDocumentValidationRequest;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
+import org.signserver.common.data.DocumentValidationRequest;
+import org.signserver.common.data.DocumentValidationResponse;
+import org.signserver.common.data.LegacyResponse;
+import org.signserver.common.data.Response;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.data.impl.UploadConfig;
 import org.signserver.server.log.Loggable;
-import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
 
 /**
@@ -507,102 +510,101 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             String responseText;
             
             switch (processType) {
-            case signDocument:
-                final GenericServletResponse servletResponse =
-                    (GenericServletResponse) processSession.process(new AdminInfo("Client user", null, null), wi,
-                        new TBNServletRequest(requestId, data, responseData), context);
-               
-                if (servletResponse.getRequestID() != requestId) { // TODO: Is this possible to get at all?
-                    LOG.error("Response ID " + servletResponse.getRequestID()
-                            + " not matching request ID " + requestId);
-                    res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                            "Request and response ID missmatch");
-                    return;
-                }
-                
-                res.setContentType(servletResponse.getContentType());
-                Object responseFileName = context.get(RequestContext.RESPONSE_FILENAME);
-                if (responseFileName instanceof String) {
-                    res.setHeader("Content-Disposition", "attachment; filename=\"" + responseFileName + "\"");
-                }
+                case signDocument: {
+                    final Response response = processSession.process(new AdminInfo("Client user", null, null), wi,
+                            new SignatureRequest(requestId, data, responseData), context);
 
-                if (servletResponse instanceof TBNServletResponse) {
-                    TBNServletResponse tbnResponse = (TBNServletResponse) servletResponse;
-                    ReadableData readable = tbnResponse.getResponseData().toReadableData();
-                   
-                    //EE7:res.setContentLengthLong()
-                    res.addHeader("Content-Length", String.valueOf(readable.getLength()));
-                   
-                    IOUtils.copyLarge(readable.getAsInputStream(), res.getOutputStream());
-                } else {
-                    byte[] processedBytes = (byte[]) servletResponse.getProcessedData();
-                    res.setContentLength(processedBytes.length);
-                    res.getOutputStream().write(processedBytes);
-                }
 
-                break;
-            case validateDocument:
-                final GenericValidationResponse validationResponse =
-                    (GenericValidationResponse) processSession.process(new AdminInfo("Client user", null, null), wi, 
-                            new TBNDocumentValidationRequest(requestId, data), context);
-                    
-                responseText = validationResponse.isValid() ? "VALID" : "INVALID";
-                
-                if (LOG.isDebugEnabled()) {
-                    final Validation validation = validationResponse.getCertificateValidation();
-                    
-                    if (validation != null) {
-                        LOG.debug("Cert validation status: " + validationResponse.getCertificateValidation().getStatusMessage());
-                    }
-                }
-                
-                res.setContentType("text/plain");
-                res.setContentLength(responseText.getBytes().length);
-                res.getOutputStream().write(responseText.getBytes());
-                break;
-            case validateCertificate:
-                final Certificate cert;
-                try {
-                    cert = CertTools.getCertfromByteArray(data.getAsByteArray());
-
-                    final String certPurposes = req.getParameter(CERT_PURPOSES_PROPERTY_NAME);
-                    final ValidateResponse certValidationResponse =
-                            (ValidateResponse) processSession.process(new AdminInfo("Client user", null, null), wi,
-                                    new TBNCertificateValidationRequest(cert, certPurposes), context);
-                    final Validation validation = certValidationResponse.getValidation();
-                    
-                    final StringBuilder sb = new StringBuilder(validation.getStatus().name());
-                    
-                    sb.append(";");
-                    
-                    final String validPurposes = certValidationResponse.getValidCertificatePurposes();
-                    
-                    if (validPurposes != null) {
-                        sb.append(certValidationResponse.getValidCertificatePurposes());
-                    }
-                    sb.append(";");
-                    sb.append(certValidationResponse.getValidation().getStatusMessage());
-                    sb.append(";");
-                    sb.append(certValidationResponse.getValidation().getRevokationReason());
-                    sb.append(";");
-                    
-                    final Date revocationDate = certValidationResponse.getValidation().getRevokedDate();
-                    
-                    if (revocationDate != null) {
-                        sb.append(certValidationResponse.getValidation().getRevokedDate().getTime());
+                    Object responseFileName = context.get(RequestContext.RESPONSE_FILENAME);
+                    if (responseFileName instanceof String) {
+                        res.setHeader("Content-Disposition", "attachment; filename=\"" + responseFileName + "\"");
                     }
 
-                    responseText = sb.toString();
-                    
+                    if (response instanceof SignatureResponse) {
+                        SignatureResponse sigResponse = (SignatureResponse) response;
+                        ReadableData readable = sigResponse.getResponseData().toReadableData();
+
+                        res.setContentType(sigResponse.getContentType());
+
+                        //EE7:res.setContentLengthLong()
+                        res.addHeader("Content-Length", String.valueOf(readable.getLength()));
+
+                        IOUtils.copyLarge(readable.getAsInputStream(), res.getOutputStream());
+                    } else if (response instanceof LegacyResponse) {
+                        LegacyResponse legResponse = (LegacyResponse) response;
+                        byte[] processedBytes = (byte[]) ((GenericSignResponse) legResponse.getLegacyResponse()).getProcessedData();
+                        res.setContentLength(processedBytes.length);
+                        res.getOutputStream().write(processedBytes);
+                    } else {
+                        throw new SignServerException("Unexpected response type: " + response);
+                    }
+
+                    break;
+                }
+                case validateDocument: {
+                    final DocumentValidationResponse validationResponse = (DocumentValidationResponse) processSession.process(new AdminInfo("Client user", null, null), wi, 
+                                new DocumentValidationRequest(requestId, data), context);
+
+                    responseText = validationResponse.isValid() ? "VALID" : "INVALID";
+
+                    if (LOG.isDebugEnabled()) {
+                        if (validationResponse.getCertificateValidationResponse() != null) {
+                            final Validation validation = validationResponse.getCertificateValidationResponse().getValidation();
+                            if (validation != null) {
+                                LOG.debug("Cert validation status: " + validation.getStatusMessage());
+                            }
+                        }
+                    }
+
                     res.setContentType("text/plain");
                     res.setContentLength(responseText.getBytes().length);
                     res.getOutputStream().write(responseText.getBytes());
-                } catch (CertificateException e) {
-                    LOG.error("Invalid certificate: " + e.getMessage());
-                    sendBadRequest(res, "Invalid certificate: " + e.getMessage());
-                    return;
+                    break;
                 }
-                break;
+                case validateCertificate: {
+                    final Certificate cert;
+                    try {
+                        cert = CertTools.getCertfromByteArray(data.getAsByteArray());
+
+                        final String certPurposes = req.getParameter(CERT_PURPOSES_PROPERTY_NAME);
+                        final CertificateValidationResponse certValidationResponse = (CertificateValidationResponse) processSession.process(new AdminInfo("Client user", null, null), wi,
+                                        new CertificateValidationRequest(cert, certPurposes), context);
+                        
+                        final Validation validation = certValidationResponse.getValidation();
+                        
+                        final StringBuilder sb = new StringBuilder(validation.getStatus().name());
+
+                        sb.append(";");
+
+                        final String validPurposes = certValidationResponse.getValidCertificatePurposesString();
+
+                        if (validPurposes != null) {
+                            sb.append(certValidationResponse.getValidCertificatePurposesString());
+                        }
+                        sb.append(";");
+                        sb.append(certValidationResponse.getValidation().getStatusMessage());
+                        sb.append(";");
+                        sb.append(certValidationResponse.getValidation().getRevokationReason());
+                        sb.append(";");
+
+                        final Date revocationDate = certValidationResponse.getValidation().getRevokedDate();
+
+                        if (revocationDate != null) {
+                            sb.append(certValidationResponse.getValidation().getRevokedDate().getTime());
+                        }
+
+                        responseText = sb.toString();
+
+                        res.setContentType("text/plain");
+                        res.setContentLength(responseText.getBytes().length);
+                        res.getOutputStream().write(responseText.getBytes());
+                    } catch (CertificateException e) {
+                        LOG.error("Invalid certificate: " + e.getMessage());
+                        sendBadRequest(res, "Invalid certificate: " + e.getMessage());
+                        return;
+                    }
+                    break;
+                }
             }
             
             res.getOutputStream().close();

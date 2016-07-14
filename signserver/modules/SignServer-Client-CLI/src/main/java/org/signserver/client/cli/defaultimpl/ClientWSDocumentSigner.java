@@ -144,7 +144,7 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
                         response.getRequestId(),
                         response.getArchiveId(),
                         response.getData().length,
-                        new String(Base64.encode(response.getSignerCertificate()))));
+                        response.getSignerCertificate() == null ? "(null)" : Base64.toBase64String(response.getSignerCertificate())));
             }
 
             // Write the signed data

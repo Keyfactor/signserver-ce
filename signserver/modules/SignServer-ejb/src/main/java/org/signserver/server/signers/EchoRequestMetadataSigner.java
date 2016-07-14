@@ -12,12 +12,11 @@
  *************************************************************************/
 package org.signserver.server.signers;
 
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Properties;
 
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericServletResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
@@ -27,6 +26,8 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.data.TBNRequest;
 import org.signserver.common.data.TBNSODRequest;
 import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.TBNServletResponse;
+import org.signserver.common.data.WritableData;
 
 /**
  * Test signer returning the content of REQUEST_METADATA in properties file format.
@@ -45,14 +46,17 @@ public class EchoRequestMetadataSigner extends BaseSigner {
         final Properties props = new Properties();
         final int reqId;
         final boolean isSOD;
+        final WritableData responseData;
         
         if (signRequest instanceof TBNServletRequest) {
             final TBNServletRequest req = (TBNServletRequest) signRequest;
             reqId = req.getRequestID();
+            responseData = req.getResponseData();
             isSOD = false;
         } else if (signRequest instanceof TBNSODRequest) {
             final TBNSODRequest req = (TBNSODRequest) signRequest;
             reqId = req.getRequestID();
+            responseData = req.getResponseData();
             isSOD = true;
         } else {
             throw new SignServerException("Unknown sign request");
@@ -68,13 +72,16 @@ public class EchoRequestMetadataSigner extends BaseSigner {
             }
         }
         
-        final StringWriter writer = new StringWriter();
-        props.list(new PrintWriter(writer));
-        
-        if (!isSOD) {
-            return new GenericServletResponse(reqId, writer.getBuffer().toString().getBytes(), null, null, null, "text/plain");
-        } else {
-            return new SODSignResponse(reqId, writer.getBuffer().toString().getBytes(), null, null, null);            
+        try (PrintWriter writer = new PrintWriter(responseData.getAsOutputStream())) {
+            props.list(writer);
+
+            if (!isSOD) {
+                return new TBNServletResponse(reqId, responseData, null, null, null, "text/plain");
+            } else {
+                return new SODSignResponse(reqId, responseData.toReadableData().getAsByteArray(), null, null, null);            
+            }
+        } catch (IOException ex) {
+            throw new SignServerException("IO error", ex);
         }
     }
     

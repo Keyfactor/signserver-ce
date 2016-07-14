@@ -25,12 +25,14 @@ import org.signserver.common.data.ReadableData;
  */
 public class DefaultArchivable extends AbstractArchivable {
 
+    private static final long serialVersionUID = 0L;
+
     /** The default content-type. */
     private static final String APPLICATION_OCTET_STREAM 
             = "application/octet-stream";
 
     /** The data. */
-    private ReadableData data; // Don't serialize the data. Let it stay a server side.
+    private transient ReadableData data; // Don't serialize the data. Let it stay a server side.
 
     /**
      * Creates an instance of DefaultArchivable with the given type, data and  

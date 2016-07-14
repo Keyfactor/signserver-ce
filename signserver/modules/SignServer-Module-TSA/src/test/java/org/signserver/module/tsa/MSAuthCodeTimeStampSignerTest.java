@@ -231,7 +231,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
                 CloseableWritableData responseData = createResponseData(false);
             ) {   
             // create sample hard-coded request
-            TBNServletRequest signRequest = new TBNServletRequest(REQUEST_ID, requestData, responseData, null);
+            TBNServletRequest signRequest = new TBNServletRequest(REQUEST_ID, requestData, responseData);
 
             resp = (TBNServletResponse) workerMock.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(SIGNER_ID), signRequest, new MockedRequestContext(services));
 

@@ -318,7 +318,7 @@ public class XAdESSignerUnitTest {
                 CloseableReadableData requestData = ModulesTestCase.createRequestData(toSign.getBytes(StandardCharsets.UTF_8));
                 CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
             ) {
-            TBNServletRequest request = new TBNServletRequest(100, requestData, responseData, null);
+            TBNServletRequest request = new TBNServletRequest(100, requestData, responseData);
             instance.processData(request, requestContext);
 
             data = responseData.toReadableData().getAsByteArray();
@@ -738,7 +738,7 @@ public class XAdESSignerUnitTest {
                 CloseableReadableData requestData = ModulesTestCase.createRequestData("<test100/>".getBytes(StandardCharsets.UTF_8));
                 CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
             ) {
-            TBNServletRequest request = new TBNServletRequest(100, requestData, responseData, null);
+            TBNServletRequest request = new TBNServletRequest(100, requestData, responseData);
             instance.processData(request, requestContext);
             data = responseData.toReadableData().getAsByteArray();
         }

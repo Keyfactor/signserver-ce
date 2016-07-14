@@ -272,7 +272,7 @@ public class SignServerWS implements ISignServerWS {
                     // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
                     requestData = UploadUtil.handleUpload(UploadConfig.create(globalSession), data);
                     responseData = new TemporarlyWritableData(requestData.isFile());
-                    req2 = new TBNServletRequest(requestID, requestData, responseData, null);
+                    req2 = new TBNServletRequest(requestID, requestData, responseData);
                 } else if (req instanceof GenericValidationRequest) {
                     byte[] data = ((GenericValidationRequest) req).getRequestData();
                     int requestID = ((GenericValidationRequest) req).getRequestID();

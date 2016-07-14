@@ -366,7 +366,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 CloseableReadableData requestData = createRequestData(requestBytes);
                 CloseableWritableData responseData = createResponseData(false);
             ) {
-            TBNServletRequest signRequest = new TBNServletRequest(100, requestData, responseData, null);
+            TBNServletRequest signRequest = new TBNServletRequest(100, requestData, responseData);
             processSession.process(new AdminInfo("Client user", null, null),
                     new WorkerIdentifier(WORKER2), signRequest, new MockedRequestContext(services));
 
@@ -445,7 +445,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 CloseableReadableData requestData = createRequestData(requestBytes);
                 CloseableWritableData responseData = createResponseData(false);
             ) {
-            TBNServletRequest signRequest = new TBNServletRequest(100, requestData, responseData, null);
+            TBNServletRequest signRequest = new TBNServletRequest(100, requestData, responseData);
         
             processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId), signRequest, new MockedRequestContext(services));
 

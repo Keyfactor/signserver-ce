@@ -43,7 +43,7 @@ public class DefaultAliasSelectorUnitTest extends TestCase {
        selector.init(4711, config, null, null);
        assertEquals("default alias", "defaultkey",
                selector.getAlias(ICryptoTokenV4.PURPOSE_SIGN, null,
-                                 new TBNServletRequest(4711, null, null, null),
+                                 new TBNServletRequest(4711, null, null),
                                  new RequestContext()));
     }
     
@@ -64,7 +64,7 @@ public class DefaultAliasSelectorUnitTest extends TestCase {
        selector.init(4711, config, null, null);
        assertEquals("next key alias", "nextkey",
                selector.getAlias(ICryptoTokenV4.PURPOSE_NEXTKEY, null,
-                                 new TBNServletRequest(4711, null, null, null),
+                                 new TBNServletRequest(4711, null, null),
                                  new RequestContext()));
     }
 }

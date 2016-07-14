@@ -171,7 +171,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
                 // Upload handling
                 requestData = UploadUtil.handleUpload(UploadConfig.create(globalConfigurationSession), data);
                 responseData = new TemporarlyWritableData(requestData.isFile());
-                req2 = new TBNServletRequest(requestID, requestData, responseData, null);
+                req2 = new TBNServletRequest(requestID, requestData, responseData);
             } else if (request instanceof GenericValidationRequest) {
                 byte[] data = ((GenericValidationRequest) request).getRequestData();
                 int requestID = ((GenericValidationRequest) request).getRequestID();
@@ -197,7 +197,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
                     // Upload handling
                     requestData = UploadUtil.handleUpload(UploadConfig.create(globalConfigurationSession), bout.toByteArray());
                     responseData = new TemporarlyWritableData(false);
-                    req2 = new TBNServletRequest(prop.hashCode(), requestData, responseData, null);
+                    req2 = new TBNServletRequest(prop.hashCode(), requestData, responseData);
 
                 } catch (IOException ex) {
                     throw new SignServerException("IO error", ex);

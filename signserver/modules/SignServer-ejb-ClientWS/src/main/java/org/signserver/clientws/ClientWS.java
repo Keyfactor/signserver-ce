@@ -104,7 +104,7 @@ public class ClientWS {
             
             // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
             
-            final TBNRequest req = new TBNServletRequest(requestId, requestData, responseData, null);
+            final TBNRequest req = new TBNServletRequest(requestId, requestData, responseData);
 
             final ProcessResponse resp = getProcessSession().process(new AdminInfo("CLI user", null, null), WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
             

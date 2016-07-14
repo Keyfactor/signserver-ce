@@ -91,7 +91,7 @@ public class InternalTimeStampTokenFetcher {
             }
 
             final ProcessResponse resp = session.process(new AdminInfo("Client user", null, null), 
-                    wi, new TBNServletRequest(hashCode(), requestData, responseData, null), context);
+                    wi, new TBNServletRequest(hashCode(), requestData, responseData), context);
 
             
             final byte[] respBytes = responseData.toReadableData().getAsByteArray();

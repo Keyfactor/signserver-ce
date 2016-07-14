@@ -711,7 +711,7 @@ public class XAdESValidator2UnitTest {
                 CloseableReadableData requestData = ModulesTestCase.createRequestData(xml.getBytes(StandardCharsets.UTF_8));
                 CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
                 ) {
-            TBNServletRequest request = new TBNServletRequest(201, requestData, responseData, null);
+            TBNServletRequest request = new TBNServletRequest(201, requestData, responseData);
             GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);
             byte[] data = responseData.toReadableData().getAsByteArray();
             return new String(data, StandardCharsets.UTF_8);

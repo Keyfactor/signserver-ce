@@ -12,8 +12,6 @@
  *************************************************************************/
 package org.signserver.common.data;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * To be named servlet request.
  * 
@@ -26,13 +24,10 @@ public class TBNServletRequest extends TBNRequest {
     private final ReadableData requestData;
     private final WritableData responseData;
     
-    private final HttpServletRequest req; // XXX should probably be in requestContext instead
-    
-    public TBNServletRequest(int requestID, ReadableData requestData, WritableData responseData, HttpServletRequest req) {
+    public TBNServletRequest(int requestID, ReadableData requestData, WritableData responseData) {
         this.requestID = requestID;
         this.requestData = requestData;
         this.responseData = responseData;
-        this.req = req;
     }
 
     public int getRequestID() {
@@ -46,11 +41,5 @@ public class TBNServletRequest extends TBNRequest {
     public WritableData getResponseData() {
         return responseData;
     }
-
-    public HttpServletRequest getReq() {
-        return req;
-    }
-
-    
 
 }

@@ -510,7 +510,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             case signDocument:
                 final GenericServletResponse servletResponse =
                     (GenericServletResponse) processSession.process(new AdminInfo("Client user", null, null), wi,
-                        new TBNServletRequest(requestId, data, responseData, req), context);
+                        new TBNServletRequest(requestId, data, responseData), context);
                
                 if (servletResponse.getRequestID() != requestId) { // TODO: Is this possible to get at all?
                     LOG.error("Response ID " + servletResponse.getRequestID()

@@ -621,7 +621,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
             ) {
             TBNServletResponse response
                     = (TBNServletResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
-                        new WorkerIdentifier(6110), new TBNServletRequest(1010, requestData, responseData, null), new RequestContext(true));
+                        new WorkerIdentifier(6110), new TBNServletRequest(1010, requestData, responseData), new RequestContext(true));
             assertNotNull(response);
             assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
         }
@@ -657,7 +657,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
             ) {
             TBNServletResponse response
                     = (TBNServletResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
-                        new WorkerIdentifier(6110), new TBNServletRequest(1010, requestData, responseData, null), new RequestContext(true));
+                        new WorkerIdentifier(6110), new TBNServletRequest(1010, requestData, responseData), new RequestContext(true));
             assertNotNull(response);
             assertTrue("Explicit ECC parameters set", workerSession.explicitEccParametersSet);
         }
@@ -693,7 +693,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
             ) {
             TBNServletResponse response
                     = (TBNServletResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
-                        new WorkerIdentifier(6110), new TBNServletRequest(1010, requestData, responseData, null), new RequestContext(true));
+                        new WorkerIdentifier(6110), new TBNServletRequest(1010, requestData, responseData), new RequestContext(true));
             assertNotNull(response);
             assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
         }

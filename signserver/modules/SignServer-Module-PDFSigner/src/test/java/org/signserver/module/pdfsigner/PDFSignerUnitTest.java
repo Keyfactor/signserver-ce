@@ -54,7 +54,6 @@ import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
-import org.signserver.server.log.AdminInfo;
 
 /**
  * Unit tests for PDFSigner.
@@ -144,7 +143,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         try (CloseableWritableData responseData = createResponseData(true)) {
 
             final TBNServletRequest request = new TBNServletRequest(100,
-                    requestData, responseData, null);
+                    requestData, responseData);
 
             final GenericSignResponse response = (GenericSignResponse)
                     processSession.process(createAdminInfo(), new WorkerIdentifier(WORKER1), request, new RequestContext(true));
@@ -170,7 +169,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             ) {
             processSession.process(createAdminInfo(),
                 new WorkerIdentifier(WORKER1),
-                new TBNServletRequest(200, requestData, responseData, null),
+                new TBNServletRequest(200, requestData, responseData),
                 new RequestContext(true));
             fail("Should have thrown exception");
         } catch (IllegalRequestException ignored) {
@@ -184,7 +183,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             processSession.process(
                 createAdminInfo(),
                 new WorkerIdentifier(WORKER1),
-                new TBNServletRequest(200, requestData, responseData, null),
+                new TBNServletRequest(200, requestData, responseData),
                 new RequestContext(true));
             fail("Should have thrown exception");
         } catch (IllegalRequestException ignored) {
@@ -198,7 +197,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             processSession.process(
                 createAdminInfo(),
                 new WorkerIdentifier(WORKER1),
-                new TBNServletRequest(200, requestData, responseData, null),
+                new TBNServletRequest(200, requestData, responseData),
                 new RequestContext(true));
             fail("Should have thrown exception");
         } catch (IllegalRequestException ignored) {
@@ -212,7 +211,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             processSession.process(
                 createAdminInfo(),
                 new WorkerIdentifier(WORKER1),
-                new TBNServletRequest(200, requestData, responseData, null),
+                new TBNServletRequest(200, requestData, responseData),
                 new RequestContext());
             fail("Should have thrown exception");
         } catch (IllegalRequestException ignored) {
@@ -1506,7 +1505,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             ) {
             final ProcessResponse response = 
                     processSession.process(createAdminInfo(), new WorkerIdentifier(WORKER1), 
-                    new TBNServletRequest(200, requestData, responseData, null),
+                    new TBNServletRequest(200, requestData, responseData),
                     context);
             assertNotNull(response);
             return responseData.toReadableData().getAsByteArray();

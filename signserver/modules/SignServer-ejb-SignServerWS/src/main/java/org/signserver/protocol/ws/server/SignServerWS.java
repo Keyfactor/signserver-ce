@@ -28,6 +28,7 @@ import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
+import org.signserver.common.data.TBNCertificateValidationRequest;
 import org.signserver.common.data.TBNRequest;
 import org.signserver.common.data.TBNSODRequest;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
@@ -50,6 +51,7 @@ import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
+import org.signserver.validationservice.common.ValidateRequest;
 
 /**
  * Implementor of the ISignServerWS interface.
@@ -278,6 +280,11 @@ public class SignServerWS implements ISignServerWS {
                     // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
                     requestData = UploadUtil.handleUpload(UploadConfig.create(globalSession), data);
                     req2 = new TBNDocumentValidationRequest(requestID, requestData);
+                } else if (req instanceof ValidateRequest) {
+                    final ValidateRequest vr = (ValidateRequest) req;
+
+                    // Upload handling
+                    req2 = new TBNCertificateValidationRequest(vr.getCertificate(), vr.getCertPurposesString());
                 } else if (req instanceof SODSignRequest) {
                     SODSignRequest sodReq = (SODSignRequest) req;
                     req2 = new TBNSODRequest(sodReq.getRequestID(), sodReq.getDataGroupHashes(), sodReq.getLdsVersion(), sodReq.getUnicodeVersion(), responseData);

@@ -232,10 +232,29 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                         return;
                     }
 
+                    // Special handling of base64 encoded data. Note: no large file support for this
                     if (encoding != null && !encoding.isEmpty()) {
-                        // We don't support the explicit base64 encoding when running in multipart mode
-                        sendBadRequest(res, "Encoded content not supported for multipart");
-                        return;
+                        // Read in all data and base64 decode it
+                        byte[] bytes;
+                        try {
+                            bytes = Base64.decode(data.getAsByteArray());
+                        } finally {
+                            data.close();
+                        }
+                        
+                        // Now put the decoded data
+                        final BinaryFileUpload binUpload = new BinaryFileUpload(new ByteArrayInputStream(bytes), req.getContentType(), factory);
+                        binUpload.setSizeMax(uploadConfig.getMaxUploadSize());
+                        try {
+                            data = new DiskFileItemReadableData((DiskFileItem) binUpload.parseTheRequest());
+                        } catch (FileUploadBase.SizeLimitExceededException ex) {
+                            LOG.error(HTTP_MAX_UPLOAD_SIZE + " exceeded: " + ex.getLocalizedMessage());
+                            res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
+                                "Maximum content length is " + uploadConfig.getMaxUploadSize() + " bytes");
+                            return;
+                        } catch (FileUploadException ex) {
+                            throw new ServletException("Upload failed", ex);
+                        }
                     }
                 } catch (FileUploadBase.SizeLimitExceededException ex) {
                     LOG.error(HTTP_MAX_UPLOAD_SIZE + " exceeded: " + ex.getLocalizedMessage());

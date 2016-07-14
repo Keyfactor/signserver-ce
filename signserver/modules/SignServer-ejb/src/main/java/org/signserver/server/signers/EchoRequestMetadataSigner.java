@@ -74,6 +74,7 @@ public class EchoRequestMetadataSigner extends BaseSigner {
         
         try (PrintWriter writer = new PrintWriter(responseData.getAsOutputStream())) {
             props.list(writer);
+            writer.close();
 
             if (!isSOD) {
                 return new TBNServletResponse(reqId, responseData, null, null, null, "text/plain");

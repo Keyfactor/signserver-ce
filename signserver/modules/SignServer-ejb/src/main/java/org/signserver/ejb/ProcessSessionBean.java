@@ -12,7 +12,10 @@
  *************************************************************************/
 package org.signserver.ejb;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -26,6 +29,8 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GenericPropertiesRequest;
+import org.signserver.common.GenericPropertiesResponse;
 import org.signserver.common.GenericServletResponse;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericValidationRequest;
@@ -151,6 +156,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         
+        // XXX This is somewhat duplicated in SignSeverWS and other places
         CloseableReadableData requestData = null;
         CloseableWritableData responseData = null;
         try {
@@ -162,7 +168,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
                 byte[] data = ((GenericSignRequest) request).getRequestData();
                 int requestID = ((GenericSignRequest) request).getRequestID();
 
-                // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
+                // Upload handling
                 requestData = UploadUtil.handleUpload(UploadConfig.create(globalConfigurationSession), data);
                 responseData = new TemporarlyWritableData(requestData.isFile());
                 req2 = new TBNServletRequest(requestID, requestData, responseData, null);
@@ -170,18 +176,32 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
                 byte[] data = ((GenericValidationRequest) request).getRequestData();
                 int requestID = ((GenericValidationRequest) request).getRequestID();
 
-                // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
+                // Upload handling
                 requestData = UploadUtil.handleUpload(UploadConfig.create(globalConfigurationSession), data);
                 req2 = new TBNDocumentValidationRequest(requestID, requestData);
             } else if (request instanceof ValidateRequest) {
                 final ValidateRequest vr = (ValidateRequest) request;
 
-                // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
+                // Upload handling
                 req2 = new TBNCertificateValidationRequest(vr.getCertificate(), vr.getCertPurposesString());
             } else if (request instanceof SODSignRequest) {
                 SODSignRequest sod = (SODSignRequest) request;
                 responseData = new TemporarlyWritableData(false);
                 req2 = new TBNSODRequest(sod.getRequestID(), sod.getDataGroupHashes(), sod.getLdsVersion(), sod.getUnicodeVersion(), responseData);
+            } else if (request instanceof GenericPropertiesRequest) {
+                GenericPropertiesRequest prop = (GenericPropertiesRequest) request;
+                
+                try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
+                    prop.getProperties().store(bout, null);
+                
+                    // Upload handling
+                    requestData = UploadUtil.handleUpload(UploadConfig.create(globalConfigurationSession), bout.toByteArray());
+                    responseData = new TemporarlyWritableData(false);
+                    req2 = new TBNServletRequest(prop.hashCode(), requestData, responseData, null);
+
+                } catch (IOException ex) {
+                    throw new SignServerException("IO error", ex);
+                }
             } else {
                 // Passthrough for all legacy requests
                 req2 = new TBNLegacyRequest(request);
@@ -192,8 +212,17 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
             
             if (response instanceof TBNServletResponse) {
                 TBNServletResponse tbnResp = (TBNServletResponse) response;
-                
-                result = new GenericServletResponse(tbnResp.getRequestID(), tbnResp.getProcessedData(), tbnResp.getSignerCertificate(), tbnResp.getArchiveId(), tbnResp.getArchivables(), tbnResp.getContentType());
+                if (request instanceof GenericPropertiesRequest) { // Still support old-style GenericPropertiesRequest/Response
+                    Properties properties = new Properties();
+                    try (InputStream in = responseData.toReadableData().getAsInputStream()) {
+                        properties.load(in);
+                    } catch (IOException ex) {
+                        throw new SignServerException("IO error", ex);
+                    }
+                    result = new GenericPropertiesResponse(properties);
+                } else {
+                    result = new GenericServletResponse(tbnResp.getRequestID(), tbnResp.getProcessedData(), tbnResp.getSignerCertificate(), tbnResp.getArchiveId(), tbnResp.getArchivables(), tbnResp.getContentType());
+                }
             } else {
                 // Passthrough for all other
                 result = response;

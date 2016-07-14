@@ -55,6 +55,8 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
 import org.signserver.common.data.TBNRequest;
+import org.signserver.common.data.TBNServletRequest;
+import org.signserver.common.data.TBNServletResponse;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.module.renewal.common.RenewalWorkerProperties;
@@ -63,10 +65,13 @@ import org.signserver.module.renewal.ejbcaws.gen.EjbcaWSService;
 import org.signserver.module.renewal.ejbcaws.gen.UserDataVOWS;
 import org.signserver.server.IProcessable;
 import org.signserver.server.IServices;
+import org.signserver.server.data.impl.CloseableReadableData;
+import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 import org.signserver.testutils.CLITestHelper;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * Test case for the RenewalWorker.
@@ -610,14 +615,16 @@ public class RenewalWorkerTest extends AbstractTestCase {
         reqProperties.setProperty(RenewalWorkerProperties.REQUEST_AUTHCODE,
                 "foo123");
         reqProperties.setProperty(RenewalWorkerProperties.REQUEST_FORDEFAULTKEY, "true");
-        final GenericPropertiesRequest request = new GenericPropertiesRequest(
-                reqProperties);
-        GenericPropertiesResponse response
-                = (GenericPropertiesResponse) workerSession.process(
-                    new WorkerIdentifier(6110), request, new RemoteRequestContext());
-        assertNotNull(response);
-        
-        assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestData(reqProperties);
+                CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
+            ) {
+            TBNServletResponse response
+                    = (TBNServletResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
+                        new WorkerIdentifier(6110), new TBNServletRequest(1010, requestData, responseData, null), new RequestContext(true));
+            assertNotNull(response);
+            assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
+        }
     }
     
     /**
@@ -643,14 +650,17 @@ public class RenewalWorkerTest extends AbstractTestCase {
         reqProperties.setProperty(RenewalWorkerProperties.REQUEST_AUTHCODE,
                 "foo123");
         reqProperties.setProperty(RenewalWorkerProperties.REQUEST_FORDEFAULTKEY, "true");
-        final GenericPropertiesRequest request = new GenericPropertiesRequest(
-                reqProperties);
-        GenericPropertiesResponse response
-                = (GenericPropertiesResponse) workerSession.process(
-                    new WorkerIdentifier(6110), request, new RemoteRequestContext());
-        assertNotNull(response);
         
-        assertTrue("Explicit ECC parameters set", workerSession.explicitEccParametersSet);
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestData(reqProperties);
+                CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
+            ) {
+            TBNServletResponse response
+                    = (TBNServletResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
+                        new WorkerIdentifier(6110), new TBNServletRequest(1010, requestData, responseData, null), new RequestContext(true));
+            assertNotNull(response);
+            assertTrue("Explicit ECC parameters set", workerSession.explicitEccParametersSet);
+        }
     }
 
     /**
@@ -676,14 +686,17 @@ public class RenewalWorkerTest extends AbstractTestCase {
         reqProperties.setProperty(RenewalWorkerProperties.REQUEST_AUTHCODE,
                 "foo123");
         reqProperties.setProperty(RenewalWorkerProperties.REQUEST_FORDEFAULTKEY, "true");
-        final GenericPropertiesRequest request = new GenericPropertiesRequest(
-                reqProperties);
-        GenericPropertiesResponse response
-                = (GenericPropertiesResponse) workerSession.process(
-                    new WorkerIdentifier(6110), request, new RemoteRequestContext());
-        assertNotNull(response);
         
-        assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestData(reqProperties);
+                CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
+            ) {
+            TBNServletResponse response
+                    = (TBNServletResponse) workerSession.process(ModulesTestCase.createAdminInfo(),
+                        new WorkerIdentifier(6110), new TBNServletRequest(1010, requestData, responseData, null), new RequestContext(true));
+            assertNotNull(response);
+            assertFalse("Explicit ECC parameters not set", workerSession.explicitEccParametersSet);
+        }
     }
     
     /**

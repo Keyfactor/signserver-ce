@@ -310,7 +310,7 @@ public class SignServerWS implements ISignServerWS {
                     processResponse = new GenericSignResponse(sigResp.getRequestID(), responseData.toReadableData().getAsByteArray(), sigResp.getSignerCertificate(), sigResp.getArchiveId(), sigResp.getArchivables());
                 } else if (resp instanceof DocumentValidationResponse) {
                     DocumentValidationResponse docResp = (DocumentValidationResponse) resp;
-                    processResponse = new GenericValidationResponse(docResp.getRequestID(), docResp.isValid(), convert(docResp.getCertificateValidationResponse()), responseData.toReadableData().getAsByteArray());
+                    processResponse = new GenericValidationResponse(docResp.getRequestID(), docResp.isValid(), convert(docResp.getCertificateValidationResponse()), requestData.getAsByteArray());
                 } else if (resp instanceof CertificateValidationResponse) {
                     CertificateValidationResponse certResp = (CertificateValidationResponse) resp;
                     processResponse = new ValidateResponse(certResp.getValidation(), certResp.getValidCertificatePurposes());
@@ -442,7 +442,11 @@ public class SignServerWS implements ISignServerWS {
     }
 
     private ValidateResponse convert(CertificateValidationResponse from) {
-        return new ValidateResponse(from.getValidation(), from.getValidCertificatePurposes());
+        if (from == null) {
+            return null;
+        } else {
+            return new ValidateResponse(from.getValidation(), from.getValidCertificatePurposes());
+        }
     }
 
 }

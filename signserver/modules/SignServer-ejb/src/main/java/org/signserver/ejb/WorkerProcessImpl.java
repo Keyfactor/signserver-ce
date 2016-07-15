@@ -37,6 +37,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.data.DocumentValidationResponse;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.Response;
 import org.signserver.common.data.SignatureResponse;
@@ -437,9 +438,13 @@ class WorkerProcessImpl {
 
             // Output successfully
             if (LOG.isDebugEnabled()) {
-                if (res instanceof ISignResponse) {
+                if (res instanceof SignatureResponse) {
                     LOG.debug("Worker " + wi + " Processed request "
-                            + ((ISignResponse) res).getRequestID()
+                            + ((SignatureResponse) res).getRequestID()
+                            + " successfully");
+                } else if (res instanceof DocumentValidationResponse) {
+                    LOG.debug("Worker " + wi + " Processed request "
+                            + ((DocumentValidationResponse) res).getRequestID()
                             + " successfully");
                 } else {
                     LOG.debug("Worker " + wi
@@ -449,8 +454,10 @@ class WorkerProcessImpl {
 
             // Old log entries (SignServer 3.1) added for backward compatibility
             // Log: REQUESTID
-            if (res instanceof ISignResponse) {
-                logMap.put("REQUESTID", ((ISignResponse) res).getRequestID());
+            if (res instanceof SignatureResponse) {
+                logMap.put("REQUESTID", ((SignatureResponse) res).getRequestID());
+            } else if (res instanceof DocumentValidationResponse) {
+                logMap.put("REQUESTID", ((DocumentValidationResponse) res).getRequestID());
             }
 
             // Log

@@ -14,6 +14,7 @@ package org.signserver.common.data;
 
 import java.security.cert.Certificate;
 import java.util.Collection;
+import org.signserver.common.IArchivableProcessResponse;
 import org.signserver.server.archive.Archivable;
 
 /**
@@ -22,7 +23,7 @@ import org.signserver.server.archive.Archivable;
  * @author Markus Kilås
  * @version $Id$
  */
-public class SignatureResponse extends Response {
+public class SignatureResponse extends Response implements IArchivableProcessResponse {
 
     private final int requestID;
     private final WritableData responseData;

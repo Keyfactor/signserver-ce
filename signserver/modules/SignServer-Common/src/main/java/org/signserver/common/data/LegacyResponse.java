@@ -12,8 +12,10 @@
  *************************************************************************/
 package org.signserver.common.data;
 
-import org.signserver.common.ProcessRequest;
+import java.util.Collection;
+import org.signserver.common.IArchivableProcessResponse;
 import org.signserver.common.ProcessResponse;
+import org.signserver.server.archive.Archivable;
 
 /**
  * TODO.
@@ -21,16 +23,32 @@ import org.signserver.common.ProcessResponse;
  * @author Markus Kilås
  * @version $Id$
  */
-public class LegacyResponse extends Response {
+public class LegacyResponse extends Response implements IArchivableProcessResponse {
 
     private final ProcessResponse legacyResponse;
+    private String archiveId;
+    private Collection<? extends Archivable> archivables;
 
     public LegacyResponse(ProcessResponse legacyResponse) {
         this.legacyResponse = legacyResponse;
+        if (legacyResponse instanceof IArchivableProcessResponse) {
+            archiveId = ((IArchivableProcessResponse) legacyResponse).getArchiveId();
+            archivables = ((IArchivableProcessResponse) legacyResponse).getArchivables();
+        }
     }
 
     public ProcessResponse getLegacyResponse() {
         return legacyResponse;
     }
-    
+
+    @Override
+    public String getArchiveId() {
+        return archiveId;
+    }
+
+    @Override
+    public Collection<? extends Archivable> getArchivables() {
+        return archivables;
+    }
+
 }

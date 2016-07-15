@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.UUID;
-import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -43,6 +42,7 @@ import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.RequestContext;
 import org.signserver.common.RequestMetadata;
 import org.signserver.common.SODSignRequest;
+import org.signserver.common.SODSignResponse;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
@@ -55,6 +55,7 @@ import org.signserver.common.data.LegacyResponse;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.Response;
 import org.signserver.common.data.SODRequest;
+import org.signserver.common.data.SODResponse;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
@@ -217,7 +218,10 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
             ProcessResponse result;
             Response response = process(wi, req2, remoteContext, servicesImpl);
             
-            if (response instanceof SignatureResponse) {
+            if (response instanceof SODResponse) {
+                SODResponse sigResp = (SODResponse) response;
+                result = new SODSignResponse(sigResp.getRequestID(), responseData.toReadableData().getAsByteArray(), sigResp.getSignerCertificate(), sigResp.getArchiveId(), sigResp.getArchivables());
+            } else if (response instanceof SignatureResponse) {
                 SignatureResponse sigResp = (SignatureResponse) response;
                 if (request instanceof GenericPropertiesRequest) { // Still support old-style GenericPropertiesRequest/Response
                     Properties properties = new Properties();

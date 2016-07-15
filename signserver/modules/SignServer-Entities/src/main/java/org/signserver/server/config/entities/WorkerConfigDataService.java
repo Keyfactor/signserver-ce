@@ -275,6 +275,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
         final int result;
         try {
             Query query = em.createQuery("SELECT w.signerId from WorkerConfigDataBean w WHERE w.signerName = :name").setParameter("name", workerName);
+            query.setMaxResults(1);
             Object o = query.getSingleResult();
             if (o instanceof Integer) {
                 result = (Integer) o;

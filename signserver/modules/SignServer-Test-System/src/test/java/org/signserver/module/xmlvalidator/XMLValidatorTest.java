@@ -341,46 +341,6 @@ public class XMLValidatorTest extends ModulesTestCase {
     }
 
     @Test
-    public void test091DocumentReturnedWithoutSignature() throws Exception {
-        workerSession.setWorkerProperty(WORKERID.getId(), "RETURNDOCUMENT", "true");
-        workerSession.setWorkerProperty(WORKERID.getId(), "STRIPSIGNATURE", "true");
-        workerSession.reloadConfiguration(WORKERID.getId());
-
-        // Just some validation
-        int reqid = 21;
-        {
-            byte[] data = XMLValidatorTestData.TESTXML5.getBytes();
-
-            // XML Document
-            checkXmlWellFormed(new ByteArrayInputStream(data));
-
-            GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
-            GenericValidationResponse res = (GenericValidationResponse) processSession.process(
-                    WORKERID, signRequest, new RemoteRequestContext());
-
-            assertTrue("answer to right question", reqid == res.getRequestID());
-
-            assertTrue("valid document", res.isValid());
-
-            // Check certificate and path
-            Certificate signercert = res.getCertificateValidation().getCertificate();
-            assertEquals("Signer certificate", SIGNER2_SUBJECTDN, CertTools.getSubjectDN(signercert));
-            List<Certificate> caChain = res.getCertificateValidation().getCAChain();
-            assertEquals("ca certificate 0", SIGNER2_ISSUERDN, CertTools.getSubjectDN(caChain.get(0)));
-            assertEquals("caChain length", 1, caChain.size());
-            log.info("Status message: " + res.getCertificateValidation().getStatusMessage());
-            assertEquals(Validation.Status.VALID, res.getCertificateValidation().getStatus());
-
-            // The test
-            byte[] processedData = res.getProcessedData();
-            assertNotNull(processedData);
-            String document = new String(processedData);
-            assertTrue(document.indexOf("Signature") == -1);
-            assertTrue(document.indexOf("<my-tag>") != -1);
-        }
-    }
-
-    @Test
     public void test11SigOkCertRevoced() throws Exception {
         workerSession.setWorkerProperty(17, "VAL1.REVOKED", SIGNER2_SUBJECTDN);
         workerSession.reloadConfiguration(17);

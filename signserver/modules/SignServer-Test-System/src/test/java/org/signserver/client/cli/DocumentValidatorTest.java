@@ -33,7 +33,6 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.WorkerSession;
-import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 
 /**
  * Tests for the validatedocument command of Client CLI.

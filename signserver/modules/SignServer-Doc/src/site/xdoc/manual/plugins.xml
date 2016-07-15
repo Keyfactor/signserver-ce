@@ -1379,9 +1379,6 @@ The XML validator validates the signature of XML documents. The certificate is c
 
                     <h4>Available Properties</h4>
                         <p><b>VALIDATIONSERVICEWORKER</b> = Name or ID of validation service worker for handling certificate validation</p>
-                        <p><b>RETURNDOCUMENT</b> = True if the response should contain the validated document</p>
-                        <p><b>STRIPSIGNATURE</b> = True if the signature should be removed from the document if it is returned</p>
-
                 </subsection>
                 
                 <subsection name="XAdES Validator">

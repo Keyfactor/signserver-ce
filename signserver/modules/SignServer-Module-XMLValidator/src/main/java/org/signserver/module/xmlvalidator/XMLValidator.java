@@ -13,10 +13,8 @@
 package org.signserver.module.xmlvalidator;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.Provider;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,12 +26,6 @@ import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.common.data.CertificateValidationRequest;
@@ -47,12 +39,9 @@ import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.validators.BaseValidator;
-import org.signserver.validationservice.common.ValidateRequest;
-import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -62,9 +51,6 @@ import org.xml.sax.SAXException;
  * Implements IValidator and have the following properties:
  * VALIDATIONSERVICEWORKER = Name or id of validation service worker for
  *                           handling certificate validation
- * RETURNDOCUMENT = True if the response should contain the validated document
- * STRIPSIGNATURE = True if the signature should be removed from the document
- *                  if it is returned
  *
  * @author Markus Kilås
  * @version $Id$
@@ -77,12 +63,6 @@ public class XMLValidator extends BaseValidator {
     /** VALIDATIONSERVICEWORKER property. */
     static final String PROP_VALIDATIONSERVICEWORKER =
             "VALIDATIONSERVICEWORKER";
-    
-    /** RETURNDOCUMENT property. */
-    static final String PROP_RETURNDOCUMENT = "RETURNDOCUMENT";
-    
-    /** STRIPSIGNATURE property. */
-    static final String PROP_STRIPSIGNATURE = "STRIPSIGNATURE";
 
     // Configuration errors
     private final LinkedList<String> configErrors = new LinkedList<>();
@@ -235,41 +215,7 @@ public class XMLValidator extends BaseValidator {
             LOG.info("Request " + requestId + " valid certificate: " + validCertificate);
         }
 
-        byte[] processedBytes = null;
-        if (Boolean.parseBoolean(config.getProperty(PROP_RETURNDOCUMENT))) {
-            if (Boolean.parseBoolean(config.getProperty(PROP_STRIPSIGNATURE))) {
-                try {
-                    processedBytes = unwrapSignature(doc, "Signature");
-                } catch (TransformerConfigurationException ex) {
-                    throw new SignServerException("Error stripping Signature tag", ex);
-                } catch (TransformerException ex) {
-                    throw new SignServerException("Error stripping Signature tag", ex);
-                }
-            } else {
-                processedBytes = data;
-            }
-        }
-
         return new DocumentValidationResponse(requestId, validSignature && validCertificate, vresponse);
-    }
-
-    private byte[] unwrapSignature(Document doc, String tagName) throws TransformerConfigurationException, TransformerException {
-
-        // Remove Signature element
-        Node rootNode = doc.getFirstChild();
-        NodeList nodeList = rootNode.getChildNodes();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node node = nodeList.item(i);
-            if (tagName.equals(node.getLocalName())) {
-                rootNode.removeChild(node);
-            }
-        }
-
-        // Render the result
-        Transformer xformer = TransformerFactory.newInstance().newTransformer();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        xformer.transform(new DOMSource(doc), new StreamResult(out));
-        return out.toByteArray();
     }
 
     /**

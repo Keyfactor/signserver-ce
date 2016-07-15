@@ -35,6 +35,7 @@ import org.signserver.common.GenericPropertiesResponse;
 import org.signserver.common.GenericServletResponse;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericValidationRequest;
+import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
@@ -47,6 +48,8 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.data.DocumentValidationRequest;
 import org.signserver.common.data.CertificateValidationRequest;
+import org.signserver.common.data.CertificateValidationResponse;
+import org.signserver.common.data.DocumentValidationResponse;
 import org.signserver.common.data.LegacyRequest;
 import org.signserver.common.data.LegacyResponse;
 import org.signserver.common.data.Request;
@@ -74,6 +77,7 @@ import org.signserver.server.data.impl.UploadConfig;
 import org.signserver.server.data.impl.UploadUtil;
 import org.signserver.statusrepo.StatusRepositorySessionLocal;
 import org.signserver.validationservice.common.ValidateRequest;
+import org.signserver.validationservice.common.ValidateResponse;
 
 /**
  * Session Bean handling the worker process requests.
@@ -229,6 +233,14 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
             } else if (response instanceof LegacyResponse) {
                 // Passthrough for all other
                 result = ((LegacyResponse) response).getLegacyResponse();
+            } else if (response instanceof DocumentValidationResponse) {
+                DocumentValidationResponse docResp = (DocumentValidationResponse) response;
+                CertificateValidationResponse cvr = docResp.getCertificateValidationResponse();
+                result = new GenericValidationResponse(docResp.getRequestID(), docResp.isValid(), cvr == null ? null : new ValidateResponse(cvr.getValidation(), cvr.getValidCertificatePurposes()));
+            } else if (response instanceof CertificateValidationResponse) {
+                CertificateValidationResponse certResp = (CertificateValidationResponse) response;
+                
+                result = new ValidateResponse(certResp.getValidation(), certResp.getValidCertificatePurposes());
             } else {
                 throw new SignServerException("Unexpected response type: " + response);
             }

@@ -15,9 +15,24 @@
         <bouncycastle.bcprov.artifact>bcprov-jdk15on</bouncycastle.bcprov.artifact>
     </properties>
 
-    <modules>
-        <module>modules</module>
-    </modules>
+    <profiles>
+        <!-- Default profile. -->
+        <profile>
+            <id>profile-default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>modules</module>
+            </modules>
+        </profile>
+        
+        <!-- Empty profile without modules. This profile should be used together with the antrun:run goal in order to run the ant deploy target -->
+        <profile>
+            <id>profile-empty</id>
+            <modules/>
+        </profile>
+    </profiles>
 
     <dependencyManagement>
         <dependencies>
@@ -195,6 +210,12 @@
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>2.10</version>
                 </plugin>
+                
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                </plugin>
 
                 <plugin>
                     <groupId>org.jvnet.jax-ws-commons</groupId>
@@ -203,6 +224,20 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <!-- Run ant deploy from Maven (or the IDE) using: mvn -Pprofile-empty antrun:run. -->
+            <!-- Note: This requers a profile without sub modules otherwise the Ant target is run in each sub module. -->
+            <!-- Note: This is mapped to Run Project in NetBeans IDE (nbactions.xml). -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <configuration>
+                    <target>
+                        <ant target="deploy"/>
+                    </target>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
     
 </project>

@@ -66,6 +66,17 @@ The latest NetBeans IDE (currently 8.1) is recommended with one exception:
 The SignServer AdminGUI uses the Swing Application Framework and requires 
 NetBeans IDE =7.0.x for changing some of the GUI parts.
 
+Tips:
+- Define the top-level project "SignServer" as the main project open in the IDE
+  by right-clicking on it and choose "Set as Main Project".
+  This way hitting F6 will be the same as running ant deploy.
+  The downside of this is that F11 now maps to "Build Main project" and if I
+  only work on a small number of modules I don't want to rebuild everything
+  all the time so I redefine the shortcut to be "Build project" and only the
+  selected project (or the project belonging to the current open file) is built
+  when hitting F11. Then the few times I want to build everything I simply
+  select the Main Project first.
+
 
 Eclipse
 -------

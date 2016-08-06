@@ -15,6 +15,7 @@ package org.signserver.validationservice.common;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestAndResponseManager;
@@ -88,7 +89,7 @@ public class ValidateResponse extends ProcessResponse {
                 int stringLen = in.readInt();
                 byte[] stringData = new byte[stringLen];
                 in.readFully(stringData);
-                validCertificatePurposes[i] = new String(stringData, "UTF-8");
+                validCertificatePurposes[i] = new String(stringData, StandardCharsets.UTF_8);
             }
         }
     }
@@ -102,7 +103,7 @@ public class ValidateResponse extends ProcessResponse {
         } else {
             out.writeInt(validCertificatePurposes.length);
             for (String validCertificatePurpose : validCertificatePurposes) {
-                byte[] stringData = validCertificatePurpose.getBytes("UTF-8");
+                byte[] stringData = validCertificatePurpose.getBytes(StandardCharsets.UTF_8);
                 out.writeInt(stringData.length);
                 out.write(stringData);
             }

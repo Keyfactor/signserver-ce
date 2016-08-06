@@ -16,6 +16,7 @@ import java.beans.XMLEncoder;
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import javax.ejb.EJBException;
@@ -233,26 +234,22 @@ public class ArchiveDataBean implements Serializable {
      */
     public ArchiveData getArchiveDataObject() {
         final ArchiveData result;
-        
-        try {
-            if (dataEncoding != null && dataEncoding == DATA_ENCODING_BASE64) {
-                result = new ArchiveData(Base64.decode(getArchiveData().getBytes("UTF8")));
-            } else {
-                java.beans.XMLDecoder decoder;
 
-                    decoder =
-                            new java.beans.XMLDecoder(
-                            new java.io.ByteArrayInputStream(getArchiveData().getBytes("UTF8")));
-                HashMap<?, ?> h = (HashMap<?, ?>) decoder.readObject();
-                decoder.close();
+        if (dataEncoding != null && dataEncoding == DATA_ENCODING_BASE64) {
+            result = new ArchiveData(Base64.decode(getArchiveData().getBytes(StandardCharsets.UTF_8)));
+        } else {
+            java.beans.XMLDecoder decoder;
 
-                HashMap<?, ?> data = new Base64GetHashMap(h);
+                decoder =
+                        new java.beans.XMLDecoder(
+                        new java.io.ByteArrayInputStream(getArchiveData().getBytes(StandardCharsets.UTF_8)));
+            HashMap<?, ?> h = (HashMap<?, ?>) decoder.readObject();
+            decoder.close();
 
-                result = new ArchiveData();
-                result.loadData(data);
-            }
-        } catch (UnsupportedEncodingException e) {
-            throw new EJBException(e);
+            HashMap<?, ?> data = new Base64GetHashMap(h);
+
+            result = new ArchiveData();
+            result.loadData(data);
         }
 
         return result;
@@ -274,7 +271,7 @@ public class ArchiveDataBean implements Serializable {
         }
 
         try {
-            setArchiveData(baos.toString("UTF8"));
+            setArchiveData(baos.toString(StandardCharsets.UTF_8.name()));
         } catch (UnsupportedEncodingException e) {
             throw new EJBException(e);
         }
@@ -293,7 +290,7 @@ public class ArchiveDataBean implements Serializable {
             try {
                 return new ArchiveDataVO(getType(), getSignerid(), getArchiveid(), new Date(getTime()),
                     getRequestIssuerDN(), getRequestCertSerialnumber(), getRequestIP(),
-                    Base64.decode(getArchiveData().getBytes("UTF8")));
+                    Base64.decode(getArchiveData().getBytes(StandardCharsets.UTF_8.name())));
             } catch (UnsupportedEncodingException ex) {
                 throw new RuntimeException(ex);
             }

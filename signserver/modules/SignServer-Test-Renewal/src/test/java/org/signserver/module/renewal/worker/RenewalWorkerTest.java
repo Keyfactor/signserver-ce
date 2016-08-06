@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -946,7 +947,7 @@ public class RenewalWorkerTest extends AbstractTestCase {
                 + "-----END CERTIFICATE-----";
         KeyStore keystore = KeyStore.getInstance("JKS");
         keystore.load(null, null);
-        final Collection certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(trustChain.getBytes("UTF-8")));
+        final Collection certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(trustChain.getBytes(StandardCharsets.UTF_8)));
         int i = 0;
         for (Object o : certs) {
             if (o instanceof Certificate) {

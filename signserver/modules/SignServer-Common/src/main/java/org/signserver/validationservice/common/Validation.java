@@ -16,6 +16,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -201,13 +202,13 @@ public class Validation implements Serializable {
         size = in.readInt();
         byte[] stringData = new byte[size];
         in.readFully(stringData);
-        status = Status.valueOf(new String(stringData, "UTF-8"));
+        status = Status.valueOf(new String(stringData, StandardCharsets.UTF_8));
 
         size = in.readInt();
         if (size != 0) {
             stringData = new byte[size];
             in.readFully(stringData);
-            statusMessage = new String(stringData, "UTF-8");
+            statusMessage = new String(stringData, StandardCharsets.UTF_8);
         }
 
         long time = in.readLong();
@@ -232,14 +233,14 @@ public class Validation implements Serializable {
         out.writeInt(certificateData.length);
         out.write(certificateData);
 
-        byte[] stringData = status.name().getBytes("UTF-8");
+        byte[] stringData = status.name().getBytes(StandardCharsets.UTF_8);
         out.writeInt(stringData.length);
         out.write(stringData);
 
         if (statusMessage == null) {
             out.writeInt(0);
         } else {
-            stringData = statusMessage.getBytes("UTF-8");
+            stringData = statusMessage.getBytes(StandardCharsets.UTF_8);
             out.writeInt(stringData.length);
             out.write(stringData);
         }

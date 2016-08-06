@@ -14,6 +14,7 @@ package org.signserver.cli;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
@@ -118,7 +119,7 @@ public class TokenEntriesCLITest extends ModulesTestCase {
 
             assertEquals(CommandLineInterface.RETURN_SUCCESS,
                      cli.execute("querytokenentries", "-token", String.valueOf(tokenId)));
-            String output = cli.getOut().toString("UTF-8");
+            String output = cli.getOut().toString(StandardCharsets.UTF_8.name());
             for (String alias : aliases) {
                 assertTrue("should contain: " + alias + " but was " + output, output.contains(alias));
             }

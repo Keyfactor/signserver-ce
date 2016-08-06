@@ -15,6 +15,7 @@ package org.signserver.server.config.entities;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -129,7 +130,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
             if (wcdb != null) {
                 XMLDecoder decoder;
                 try {
-                    decoder = new XMLDecoder(new ByteArrayInputStream(wcdb.getSignerConfigData().getBytes("UTF8")));
+                    decoder = new XMLDecoder(new ByteArrayInputStream(wcdb.getSignerConfigData().getBytes(StandardCharsets.UTF_8.name())));
                 } catch (UnsupportedEncodingException e) {
                     throw new EJBException(e);
                 }
@@ -188,11 +189,11 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
 
             try {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("WorkerConfig data: \n" + baos.toString("UTF8"));
+                    LOG.trace("WorkerConfig data: \n" + baos.toString(StandardCharsets.UTF_8.name()));
                 }
                 WorkerConfigDataBean wcdb = new WorkerConfigDataBean();
                 wcdb.setSignerId(workerId);
-                wcdb.setSignerConfigData(baos.toString("UTF8"));
+                wcdb.setSignerConfigData(baos.toString(StandardCharsets.UTF_8.name()));
                 
                 // Update name if needed
                 String newName = signconf.getProperty("NAME");
@@ -390,7 +391,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         final File file = new File(folder, DATA_PREFIX + workerId + SUFFIX);
 
         try {
-            final String data = FileUtils.readFileToString(file, "UTF-8");
+            final String data = FileUtils.readFileToString(file, StandardCharsets.UTF_8.name());
             result = new WorkerConfigDataBean();
             result.setSignerId(workerId);
             result.setSignerConfigData(data);
@@ -423,7 +424,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
             }
             fout = new FileOutputStream(file);
             out = new BufferedOutputStream(fout);
-            out.write(dataStore.getSignerConfigData().getBytes("UTF-8"));
+            out.write(dataStore.getSignerConfigData().getBytes(StandardCharsets.UTF_8));
             out.flush();
             fout.getFD().sync();
             if (LOG.isDebugEnabled()) {
@@ -548,7 +549,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         if (LOG.isDebugEnabled()) {
             LOG.debug("Write name \"" + name + "\" for ID " + id + " to " + file.getName());
         }
-        FileUtils.writeStringToFile(file, name, "UTF-8"); // TODO: Replace with one that fd.sync()
+        FileUtils.writeStringToFile(file, name, StandardCharsets.UTF_8.name()); // TODO: Replace with one that fd.sync()
     }
     
     private void writeID(String name, int id) throws IOException {
@@ -556,7 +557,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         if (LOG.isDebugEnabled()) {
             LOG.debug("Write ID " + id + " for name \"" + name + "\" to " + file.getName());
         }
-        FileUtils.writeStringToFile(file, String.valueOf(id), "UTF-8");  // TODO: Replace with one that fd.sync()
+        FileUtils.writeStringToFile(file, String.valueOf(id), StandardCharsets.UTF_8.name());  // TODO: Replace with one that fd.sync()
     }
     
     private void writeType(int id, int type) throws IOException {
@@ -564,7 +565,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         if (LOG.isDebugEnabled()) {
             LOG.debug("Write type \"" + type + "\" for ID " + id + " to " + file.getName());
         }
-        FileUtils.writeStringToFile(file, String.valueOf(type), "UTF-8"); // TODO: Replace with one that fd.sync()
+        FileUtils.writeStringToFile(file, String.valueOf(type), StandardCharsets.UTF_8.name()); // TODO: Replace with one that fd.sync()
     }
 
     private List<Integer> findAllWithoutName() {
@@ -601,7 +602,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
             final File idFile = getIdFile(workerName);
             if (idFile.exists()) {
                 try {
-                    result = Integer.parseInt(FileUtils.readFileToString(idFile, "UTF-8"));
+                    result = Integer.parseInt(FileUtils.readFileToString(idFile, StandardCharsets.UTF_8.name()));
                 } catch (IOException ex) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Unable to read " + idFile.getAbsolutePath() + ": " + ex.getMessage());
@@ -621,7 +622,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
 
     private File getIdFile(final String name) {
         try {
-            return new File(folder, ID_PREFIX + Base64.toBase64String(name.getBytes("UTF-8")) + SUFFIX);
+            return new File(folder, ID_PREFIX + Base64.toBase64String(name.getBytes(StandardCharsets.UTF_8.name())) + SUFFIX);
         } catch (UnsupportedEncodingException ex) {
             throw new RuntimeException("Unable to UTF-8 encode", ex);
         }

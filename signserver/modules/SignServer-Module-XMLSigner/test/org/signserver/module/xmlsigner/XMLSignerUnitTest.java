@@ -123,7 +123,7 @@ public class XMLSignerUnitTest {
         final RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
 
-        GenericSignRequest request = new GenericSignRequest(100, document.getBytes("UTF-8"));
+        GenericSignRequest request = new GenericSignRequest(100, document.getBytes(StandardCharsets.UTF_8));
         GenericSignResponse res = (GenericSignResponse) instance.processData(request, requestContext);
 
         final byte[] data = res.getProcessedData();

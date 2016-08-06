@@ -1667,7 +1667,7 @@ public class XAdESValidator2UnitTest {
     }
     
     private DocumentValidationResponse validateXML(XAdESValidator instance, int requestId, String xml, RequestContext requestContext) throws Exception {
-        try (CloseableReadableData requestData = ModulesTestCase.createRequestData(xml.getBytes("UTF-8"))) {
+        try (CloseableReadableData requestData = ModulesTestCase.createRequestData(xml.getBytes(StandardCharsets.UTF_8))) {
             DocumentValidationRequest request = new DocumentValidationRequest(requestId, requestData);
             return (DocumentValidationResponse) instance.processData(request, requestContext);
         }

@@ -15,6 +15,7 @@ package org.signserver.validationservice.common;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -106,7 +107,7 @@ public class ValidateRequest extends ProcessRequest {
         if (stringLen > 0) {
             byte[] stringData = new byte[stringLen];
             in.readFully(stringData);
-            this.certPurposes = new String(stringData, "UTF-8");
+            this.certPurposes = new String(stringData, StandardCharsets.UTF_8);
         }
     }
 
@@ -116,7 +117,7 @@ public class ValidateRequest extends ProcessRequest {
         out.writeInt(certificateData.length);
         out.write(certificateData);
         if (certPurposes != null) {
-            byte[] stringData = certPurposes.getBytes("UTF-8");
+            byte[] stringData = certPurposes.getBytes(StandardCharsets.UTF_8);
             out.writeInt(stringData.length);
             out.write(stringData);
         } else {

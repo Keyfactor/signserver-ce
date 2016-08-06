@@ -15,6 +15,7 @@ package org.signserver.module.xades.validator;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -55,7 +56,6 @@ import org.signserver.common.data.DocumentValidationResponse;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.Response;
 import org.signserver.server.validators.BaseValidator;
-import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.Validation.Status;
 import org.signserver.validationservice.server.OCSPResponse;
@@ -128,7 +128,7 @@ public class XAdESValidator extends BaseValidator {
             if (value == null) {
                 logMissingProperty(workerId, TRUSTANCHORS);
             } else {
-                final Collection<Certificate> trustedCertificates = CertTools.getCertsFromPEM(new ByteArrayInputStream(value.getBytes("UTF-8")));
+                final Collection<Certificate> trustedCertificates = CertTools.getCertsFromPEM(new ByteArrayInputStream(value.getBytes(StandardCharsets.UTF_8)));
                 trustAnchors = KeyStore.getInstance("JKS");
                 trustAnchors.load(null, null);
                 int i = 0;
@@ -174,7 +174,7 @@ public class XAdESValidator extends BaseValidator {
         if (value == null) {
             results = Collections.emptyList();
         } else {
-            results = CertTools.getCertsFromPEM(new ByteArrayInputStream(value.getBytes("UTF-8")));
+            results = CertTools.getCertsFromPEM(new ByteArrayInputStream(value.getBytes(StandardCharsets.UTF_8)));
         }
         return results;
     }

@@ -14,6 +14,7 @@ package org.signserver.module.tsa;
 
 import java.io.File;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.List;
@@ -358,7 +359,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         LOG.info("testNotAcceptedExtensionPrevented");
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
-        timeStampRequestGenerator.addExtension(new ASN1ObjectIdentifier("1.2.7.9"), false, new DEROctetString("Value".getBytes("UTF-8")));
+        timeStampRequestGenerator.addExtension(new ASN1ObjectIdentifier("1.2.7.9"), false, new DEROctetString("Value".getBytes(StandardCharsets.UTF_8)));
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         byte[] requestBytes = timeStampRequest.getEncoded();
@@ -389,7 +390,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         LOG.info("testAcceptedExtensions");
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
-        timeStampRequestGenerator.addExtension(new ASN1ObjectIdentifier("1.2.7.2"), false, new DEROctetString("Value".getBytes("UTF-8")));
+        timeStampRequestGenerator.addExtension(new ASN1ObjectIdentifier("1.2.7.2"), false, new DEROctetString("Value".getBytes(StandardCharsets.UTF_8)));
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER2);
@@ -410,7 +411,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         LOG.info("testAcceptedExtensionsWithSpaces");
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
-        timeStampRequestGenerator.addExtension(new ASN1ObjectIdentifier("1.2.7.2"), false, new DEROctetString("Value".getBytes("UTF-8")));
+        timeStampRequestGenerator.addExtension(new ASN1ObjectIdentifier("1.2.7.2"), false, new DEROctetString("Value".getBytes(StandardCharsets.UTF_8)));
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER4);
@@ -464,7 +465,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         LOG.info("testEmptyAcceptedExtensionsPreventsExtension");
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
-        timeStampRequestGenerator.addExtension(new ASN1ObjectIdentifier("1.2.7.9"), false, new DEROctetString("Value".getBytes("UTF-8")));
+        timeStampRequestGenerator.addExtension(new ASN1ObjectIdentifier("1.2.7.9"), false, new DEROctetString("Value".getBytes(StandardCharsets.UTF_8)));
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER3);

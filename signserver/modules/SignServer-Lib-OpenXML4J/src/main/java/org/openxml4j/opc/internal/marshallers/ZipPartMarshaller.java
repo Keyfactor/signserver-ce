@@ -49,6 +49,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -184,7 +185,7 @@ public class ZipPartMarshaller implements PartMarshaller {
 				// Save the target as-is - we don't need to validate it,
 				//  alter it etc
 				try {
-					targetValue = URLEncoder.encode(uri.toString(), "UTF-8");
+					targetValue = URLEncoder.encode(uri.toString(), StandardCharsets.UTF_8.name());
 				} catch (UnsupportedEncodingException e) {
 					targetValue = uri.toString();
 				}

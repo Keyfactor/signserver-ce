@@ -62,6 +62,7 @@ import org.xml.sax.SAXException;
 
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.xml.XmlDomWriter;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Reads an XMP stream into an org.w3c.dom.Document objects.
@@ -168,7 +169,7 @@ public class XmpReader {
 		XmlDomWriter xw = new XmlDomWriter();
         ByteArrayOutputStream fout = new ByteArrayOutputStream();
         xw.setOutput(fout, null);
-        fout.write(XmpWriter.XPACKET_PI_BEGIN.getBytes("UTF-8"));
+        fout.write(XmpWriter.XPACKET_PI_BEGIN.getBytes(StandardCharsets.UTF_8));
         fout.flush();
         NodeList xmpmeta = domDocument.getElementsByTagName("x:xmpmeta");
         xw.write(xmpmeta.item(0));

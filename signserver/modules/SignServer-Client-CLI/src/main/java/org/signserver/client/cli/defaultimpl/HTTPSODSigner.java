@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
@@ -144,7 +145,7 @@ public class HTTPSODSigner extends AbstractSODSigner {
             sb.append("encoding=").append(encoding).append("&");
             for (Map.Entry<Integer, byte[]> entry : data.entrySet()) {
                 sb.append("dataGroup").append(entry.getKey()).append("=")
-                    .append(URLEncoder.encode(new String(entry.getValue()), "UTF-8"))
+                    .append(URLEncoder.encode(new String(entry.getValue()), StandardCharsets.UTF_8.name()))
                     .append("&");
             }
 
@@ -153,7 +154,7 @@ public class HTTPSODSigner extends AbstractSODSigner {
                     final String value = metadata.get(key);
                     
                     sb.append("REQUEST_METADATA.").append(key)
-                        .append("=").append(URLEncoder.encode(value, "UTF-8"))
+                        .append("=").append(URLEncoder.encode(value, StandardCharsets.UTF_8.name()))
                         .append("&");
                 }
             }

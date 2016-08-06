@@ -20,12 +20,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.signserver.testutils.ModulesTestCase;
-import static org.junit.Assert.*;
 
 /**
  * Abstract test case that can be used by test cases that wants to the HTTP 
@@ -191,7 +191,7 @@ public abstract class WebTestCase extends ModulesTestCase {
     		final Map<String, String> fields, String method) throws IOException {
     	final StringBuilder buff = new StringBuilder();
         for (Entry<String, String> entry : fields.entrySet()) {
-            buff.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), "UTF-8")).append("&");
+            buff.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.name())).append("&");
         }
         final String body = buff.toString();
         HttpURLConnection con = openConnection(baseURL, body);
@@ -270,7 +270,7 @@ public abstract class WebTestCase extends ModulesTestCase {
             final Map<String, String> fields) throws MalformedURLException, IOException {
         final StringBuilder buff = new StringBuilder();
         for (Entry<String, String> entry : fields.entrySet()) {
-            buff.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), "UTF-8")).append("&");
+            buff.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.name())).append("&");
         }
         final String body = buff.toString();
 

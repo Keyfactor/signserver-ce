@@ -13,6 +13,7 @@
 package org.signserver.module.xades.signer;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.cert.CertStore;
 import java.security.cert.CollectionCertStoreParameters;
@@ -74,7 +75,7 @@ public class XAdESSignerTest extends ModulesTestCase {
             workerSession.reloadConfiguration(TS_ID);
             workerSession.reloadConfiguration(WORKER_ID);
 
-            GenericSignRequest request = new GenericSignRequest(100, "<test100/>".getBytes("UTF-8"));
+            GenericSignRequest request = new GenericSignRequest(100, "<test100/>".getBytes(StandardCharsets.UTF_8));
             GenericSignResponse response = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKER_ID), request, new RemoteRequestContext());
 
             byte[] data = response.getProcessedData();

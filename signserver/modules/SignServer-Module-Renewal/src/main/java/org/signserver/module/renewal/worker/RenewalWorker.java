@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -687,7 +688,7 @@ public class RenewalWorker extends BaseSigner {
             if (TRUSTSTORE_TYPE_PEM.equals(truststoreType)) {
                 keystoreTrusted = KeyStore.getInstance("JKS");
                 keystoreTrusted.load(null, null);
-                final Collection certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(truststoreValue.getBytes("UTF-8")));
+                final Collection certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(truststoreValue.getBytes(StandardCharsets.UTF_8)));
                 int i = 0;
                 for (Object o : certs) {
                     if (o instanceof Certificate) {

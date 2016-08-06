@@ -16,6 +16,7 @@ import java.io.*;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -664,7 +665,7 @@ public class TimeStampCommand extends AbstractCommand {
 
             byte[] digest = new byte[20];
             if (instring != null) {
-                final byte[] digestBytes = instring.getBytes("UTF-8");
+                final byte[] digestBytes = instring.getBytes(StandardCharsets.UTF_8);
                 final MessageDigest dig = MessageDigest.getInstance(
                         TSPAlgorithms.SHA1.getId(),
                         "BC");

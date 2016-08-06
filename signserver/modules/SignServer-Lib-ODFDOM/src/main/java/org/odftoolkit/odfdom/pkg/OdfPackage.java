@@ -34,11 +34,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -306,11 +306,7 @@ public class OdfPackage {
             if (zipEntry.getName().equals(OdfPackage.OdfFile.MEDIA_TYPE.getPath())) {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 StreamHelper.stream(mZipFile.getInputStream(zipEntry), out);
-                try {
-                    mMediaType = new String(out.toByteArray(), 0, out.size(), "UTF-8");
-                } catch (UnsupportedEncodingException ex) {
-                    mLog.log(Level.SEVERE, null, ex);
-                }
+                mMediaType = new String(out.toByteArray(), 0, out.size(), StandardCharsets.UTF_8);
             }
         }
     }
@@ -1038,11 +1034,7 @@ public class OdfPackage {
         }
         try {
             if (OdfPackage.OdfFile.MEDIA_TYPE.getPath().equals(packagePath)) {
-                try {
-                    setMediaType(new String(fileBytes, "UTF-8"));
-                } catch (UnsupportedEncodingException useEx) {
-                    mLog.log(Level.WARNING, "ODF file could not be created as string!", useEx);
-                }
+                setMediaType(new String(fileBytes, StandardCharsets.UTF_8));
                 return;
             }
             if (fileBytes == null) {
@@ -1091,11 +1083,7 @@ public class OdfPackage {
     private void insert(ZipEntry zipe, byte[] content) {
         if (content != null) {
             if (zipe.getName().equals(OdfPackage.OdfFile.MEDIA_TYPE.getPath())) {
-                try {
-                    mMediaType = new String(content, 0, content.length, "UTF-8");
-                } catch (UnsupportedEncodingException ex) {
-                    mLog.log(Level.SEVERE, null, ex);
-                }
+                mMediaType = new String(content, 0, content.length, StandardCharsets.UTF_8);
             } else {
                 mContentStreams.put(zipe.getName(), content);
             }
@@ -1242,12 +1230,7 @@ public class OdfPackage {
             if (mMediaType == null) {
                 return null;
             }
-            try {
-                data = mMediaType.getBytes("UTF-8");
-            } catch (UnsupportedEncodingException use) {
-                mLog.log(Level.SEVERE, null, use);
-                return null;
-            }
+            data = mMediaType.getBytes(StandardCharsets.UTF_8);
         } else if (mPackageEntries.contains(packagePath) && mContentDoms.get(packagePath) != null) {
             {
                 Document doc = mContentDoms.get(packagePath);
@@ -1281,7 +1264,7 @@ public class OdfPackage {
             if (s == null) {
                 return null;
             } else {
-                data = s.getBytes("UTF-8");
+                data = s.getBytes(StandardCharsets.UTF_8);
             }
         }
 

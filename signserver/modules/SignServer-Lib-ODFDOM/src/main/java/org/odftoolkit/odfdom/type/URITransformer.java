@@ -21,11 +21,9 @@
  ************************************************************************/
 package org.odftoolkit.odfdom.type;
 
-import java.io.UnsupportedEncodingException;
 import java.util.BitSet;
 import java.io.ByteArrayOutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Transformations for transporting URIs in URLs.
@@ -200,28 +198,24 @@ class URITransformer {
 	 * @see #decodePath(String)
 	 */
 	public static String encodePath(String path) {
-		try {
-			StringBuilder pathc = new StringBuilder();
-			byte[] bytes = null;
-			bytes = path.getBytes("UTF-8");
-			for (int i = 0; i < bytes.length; i++) {
-				int v = bytes[i];
-				if (v < 0) {
-					v += 256;
-				}
-				if (v > 0 && v < 256 && safeCharacters.get(v)) {
-					pathc.append((char) v);
-				} else if ((char) v == '/') {
-					pathc.append((char) v);
-				} else {
-					pathc.append("%" + Integer.toHexString(v));
-				}
-			}
-			path = pathc.toString();
-		} catch (UnsupportedEncodingException ex) {
-			Logger.getLogger(URITransformer.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		return path;
+            StringBuilder pathc = new StringBuilder();
+            byte[] bytes = null;
+            bytes = path.getBytes(StandardCharsets.UTF_8);
+            for (int i = 0; i < bytes.length; i++) {
+                    int v = bytes[i];
+                    if (v < 0) {
+                            v += 256;
+                    }
+                    if (v > 0 && v < 256 && safeCharacters.get(v)) {
+                            pathc.append((char) v);
+                    } else if ((char) v == '/') {
+                            pathc.append((char) v);
+                    } else {
+                            pathc.append("%" + Integer.toHexString(v));
+                    }
+            }
+            path = pathc.toString();
+            return path;
 	}
 
 	/**
@@ -253,21 +247,15 @@ class URITransformer {
 		byte[] b = {0};
 		while (j != -1) {
 			if (j + 3 <= l) {
-				try {
-					b = pathc.substring(0, j).getBytes("UTF-8");
-					ba.write(b, 0, b.length);
-				} catch (java.io.UnsupportedEncodingException e) {
-				}
+                                b = pathc.substring(0, j).getBytes(StandardCharsets.UTF_8);
+                                ba.write(b, 0, b.length);
 				String hex = pathc.substring(j + 1, j + 3);
 				try {
 					int n = Integer.parseInt(hex, 16);
 					ba.write(n);
 				} catch (NumberFormatException e) {
 					String tmp = "=" + hex;
-					try {
-						b = tmp.getBytes("UTF-8");
-					} catch (java.io.UnsupportedEncodingException e2) {
-					}
+                                        b = tmp.getBytes(StandardCharsets.UTF_8);
 					ba.write(b, 0, b.length);
 				}
 				pathc = pathc.substring(j + 3);
@@ -277,10 +265,7 @@ class URITransformer {
 				j = -1;
 			}
 		}
-		try {
-			uri.append(new String(ba.toByteArray(), "UTF-8"));
-		} catch (java.io.UnsupportedEncodingException e2) {
-		}
+                uri.append(new String(ba.toByteArray(), StandardCharsets.UTF_8));
 
 		uri.append(pathc);
 
@@ -395,21 +380,16 @@ class URITransformer {
 			byte[] b = {0};
 			while (j != -1) {
 				if (j + 3 <= l) {
-					try {
-						b = auth.substring(0, j).getBytes("UTF-8");
-						ba.write(b, 0, b.length);
-					} catch (java.io.UnsupportedEncodingException e) {
-					}
+                                        b = auth.substring(0, j).getBytes(StandardCharsets.UTF_8);
+                                        ba.write(b, 0, b.length);
+
 					String hex = auth.substring(j + 1, j + 3);
 					try {
 						int n = Integer.parseInt(hex, 16);
 						ba.write(n);
 					} catch (NumberFormatException e) {
 						String tmp = "=" + hex;
-						try {
-							b = tmp.getBytes("UTF-8");
-						} catch (java.io.UnsupportedEncodingException e2) {
-						}
+                                                b = tmp.getBytes(StandardCharsets.UTF_8);
 						ba.write(b, 0, b.length);
 					}
 					auth = auth.substring(j + 3);
@@ -419,10 +399,7 @@ class URITransformer {
 					j = -1;
 				}
 			}
-			try {
-				uri.append(new String(ba.toByteArray(), "UTF-8"));
-			} catch (java.io.UnsupportedEncodingException e2) {
-			}
+                        uri.append(new String(ba.toByteArray(), StandardCharsets.UTF_8));
 			uri.append(auth);
 
 		} else {
@@ -540,11 +517,7 @@ class URITransformer {
 			path.append("==0/");
 		}
 
-		byte[] bytes = null;
-		try {
-			bytes = auth.getBytes("UTF-8");
-		} catch (java.io.UnsupportedEncodingException e) {
-		}
+		byte[] bytes = auth.getBytes(StandardCharsets.UTF_8);
 		for (i = 0; i < bytes.length; i++) {
 			int v = bytes[i];
 			if (v < 0) {

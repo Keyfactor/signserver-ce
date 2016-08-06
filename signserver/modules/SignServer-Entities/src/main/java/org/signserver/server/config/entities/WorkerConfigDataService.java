@@ -12,7 +12,10 @@
  *************************************************************************/
 package org.signserver.server.config.entities;
 
+import java.beans.XMLDecoder;
+import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -92,14 +95,9 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
     
     private WorkerConfig parseWorkerConfig(WorkerConfigDataBean wcdb) {
         final WorkerConfig workerConf = new WorkerConfig();
-        java.beans.XMLDecoder decoder;
-        try {
-            decoder =
-                    new java.beans.XMLDecoder(
-                    new java.io.ByteArrayInputStream(wcdb.getSignerConfigData().getBytes("UTF8")));
-        } catch (UnsupportedEncodingException e) {
-            throw new EJBException(e);
-        }
+        XMLDecoder decoder =
+                    new XMLDecoder(
+                    new ByteArrayInputStream(wcdb.getSignerConfigData().getBytes(StandardCharsets.UTF_8)));
 
         HashMap h = (HashMap) decoder.readObject();
         decoder.close();
@@ -203,7 +201,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
 
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("WorkerConfig data: \n" + baos.toString("UTF8"));
+                LOG.debug("WorkerConfig data: \n" + baos.toString(StandardCharsets.UTF_8.name()));
             }
             if (wcdb == null) {
                 wcdb = em.find(WorkerConfigDataBean.class, workerId);
@@ -212,7 +210,7 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
                     wcdb = em.find(WorkerConfigDataBean.class, workerId);
                 }
             }
-            wcdb.setSignerConfigData(baos.toString("UTF8"));
+            wcdb.setSignerConfigData(baos.toString(StandardCharsets.UTF_8.name()));
             
             // Update name
             if (signconf.getProperty("NAME") != null) {

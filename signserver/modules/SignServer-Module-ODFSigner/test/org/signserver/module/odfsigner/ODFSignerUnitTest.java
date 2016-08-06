@@ -433,7 +433,7 @@ public class ODFSignerUnitTest {
         final RequestContext requestContext = new RequestContext();
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
 
-        GenericSignRequest request = new GenericSignRequest(100, Base64.decode(document.getBytes("UTF-8")));
+        GenericSignRequest request = new GenericSignRequest(100, Base64.decode(document.getBytes(StandardCharsets.UTF_8)));
         GenericSignResponse res = (GenericSignResponse) instance.processData(request, requestContext);
 
         // Check certificate

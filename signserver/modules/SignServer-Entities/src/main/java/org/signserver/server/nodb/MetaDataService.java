@@ -13,6 +13,7 @@
 package org.signserver.server.nodb;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.signserver.common.FileBasedDatabaseException;
@@ -88,7 +89,7 @@ public class MetaDataService {
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(file);
-            properties.storeToXML(out, null, "UTF-8");
+            properties.storeToXML(out, null, StandardCharsets.UTF_8.name());
             out.flush();
             out.getFD().sync();
         } finally {

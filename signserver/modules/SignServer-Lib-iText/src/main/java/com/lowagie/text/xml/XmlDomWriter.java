@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -68,7 +69,7 @@ public class XmlDomWriter {
     throws UnsupportedEncodingException {
         
         if (encoding == null) {
-            encoding = "UTF8";
+            encoding = StandardCharsets.UTF_8.name();
         }
         
         java.io.Writer writer = new OutputStreamWriter(stream, encoding);

@@ -13,6 +13,7 @@
 package org.signserver.ejb;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -254,7 +255,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
         // First test that there isn't anything wrong with the worker before
-        GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
+        GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes(StandardCharsets.UTF_8));
         processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, new RemoteRequestContext());
         
         try {
@@ -262,7 +263,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
             workerSession.reloadConfiguration(getSignerIdDummy1());
             
             // Test signing
-            request = new GenericSignRequest(124, "<test/>".getBytes("UTF-8"));
+            request = new GenericSignRequest(124, "<test/>".getBytes(StandardCharsets.UTF_8));
             processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, new RemoteRequestContext());
             fail("Request should have failed as worker is disabled");
         } catch (CryptoTokenOfflineException ex) { // OK

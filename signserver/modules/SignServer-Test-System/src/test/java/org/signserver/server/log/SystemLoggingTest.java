@@ -21,6 +21,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
@@ -1028,7 +1029,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         LOG.info(">test01WorkerProcess");
         int linesBefore = readEntriesCount(auditLogFile);
         
-        GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
+        GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes(StandardCharsets.UTF_8));
         processSession.process(new WorkerIdentifier(signerId), request, new RemoteRequestContext());
         
         List<String> lines = readEntries(auditLogFile, linesBefore, 1);
@@ -1053,7 +1054,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         int linesBefore = readEntriesCount(auditLogFile);
         
-        GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
+        GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes(StandardCharsets.UTF_8));
         processSession.process(new WorkerIdentifier(signerId), request, new RemoteRequestContext());
         
         List<String> lines = readEntries(auditLogFile, linesBefore, 1);
@@ -1077,7 +1078,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         
         int linesBefore = readEntriesCount(auditLogFile);
         
-        GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
+        GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes(StandardCharsets.UTF_8));
         processSession.process(new WorkerIdentifier(signerId), request, new RemoteRequestContext());
         
         List<String> lines = readEntries(auditLogFile, linesBefore, 1);
@@ -1098,7 +1099,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         setLoggingFields("CLIENT_IP", "LOG_ID");
         
         try {
-            GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
+            GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes(StandardCharsets.UTF_8));
             processSession.process(new WorkerIdentifier(signerId), request, new RemoteRequestContext());
         } catch (SignServerException e) {
             // expected
@@ -1120,7 +1121,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         int linesBefore = readEntriesCount(auditLogFile);
         
         try {
-            GenericSignRequest request = new GenericSignRequest(123, "bogus".getBytes("UTF-8"));
+            GenericSignRequest request = new GenericSignRequest(123, "bogus".getBytes(StandardCharsets.UTF_8));
             processSession.process(new WorkerIdentifier(signerId), request, new RemoteRequestContext());
         } catch (IllegalRequestException e) {
             // expected
@@ -1183,7 +1184,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         LOG.info(">test07WorkerProcessKeyAlias");
         int linesBefore = readEntriesCount(auditLogFile);
         
-        GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes("UTF-8"));
+        GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes(StandardCharsets.UTF_8));
         processSession.process(new WorkerIdentifier(signerId), request, new RemoteRequestContext());
         
         List<String> lines = readEntries(auditLogFile, linesBefore, 1);

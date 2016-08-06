@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -159,7 +160,7 @@ public class CredentialUtilsTest {
         String password = "foo456";
         RequestContext context = new RequestContext();
         HashMap<String, String> headers = new HashMap<>();
-        headers.put("Authorization", "basic " + Base64.toBase64String((username + ":" + password).getBytes("UTF-8")));
+        headers.put("Authorization", "basic " + Base64.toBase64String((username + ":" + password).getBytes(StandardCharsets.UTF_8)));
         HttpServletRequest req = new MockedHttpServletRequest(headers);
         CertificateFactory factory = CertificateFactory.getInstance("X.509");
         X509Certificate cert = (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(Base64.decode(CERT)));
@@ -193,7 +194,7 @@ public class CredentialUtilsTest {
         String password = "foo456";
         RequestContext context = new RequestContext();
         HashMap<String, String> headers = new HashMap<>();
-        headers.put("Authorization", "basic " + Base64.toBase64String((username + ":" + password).getBytes("UTF-8")));
+        headers.put("Authorization", "basic " + Base64.toBase64String((username + ":" + password).getBytes(StandardCharsets.UTF_8)));
         HttpServletRequest req = new MockedHttpServletRequest(headers);
 
         CredentialUtils.addToRequestContext(context, req, null);
@@ -216,10 +217,10 @@ public class CredentialUtilsTest {
         LOG.info("testAddToRequestContext_incorrectSyntax");
 
         // Missing colon is not correct
-        assertNotAddedToContext("no colon", "Authorization", "basic " + Base64.toBase64String("NoColon".getBytes("UTF-8")));
+        assertNotAddedToContext("no colon", "Authorization", "basic " + Base64.toBase64String("NoColon".getBytes(StandardCharsets.UTF_8)));
 
         // Empty data in base64 is not correct
-        assertNotAddedToContext("empty user+pass", "Authorization", "basic " + Base64.toBase64String("".getBytes("UTF-8")));
+        assertNotAddedToContext("empty user+pass", "Authorization", "basic " + Base64.toBase64String("".getBytes(StandardCharsets.UTF_8)));
 
         // Missing base64 is not correct
         assertNotAddedToContext("empty after basic 1", "Authorization", "basic ");

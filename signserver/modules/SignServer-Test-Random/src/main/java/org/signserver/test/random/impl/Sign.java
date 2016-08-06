@@ -15,6 +15,7 @@ package org.signserver.test.random.impl;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.Provider;
 import java.security.PublicKey;
@@ -179,7 +180,7 @@ public class Sign implements Task {
             dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 
-            doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes("UTF-8")));
+            doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
         } catch (ParserConfigurationException | SAXException | IOException ex) {
             throw new FailedException("Document parsing error", ex);
         }

@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.server;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
@@ -708,8 +708,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         try {
             final MessageDigest md = MessageDigest.getInstance("SHA1");
             md.update(data);
-            return new String(Hex.encode(md.digest(transactionId.getBytes("UTF-8"))), "UTF-8");
-        } catch (UnsupportedEncodingException | NoSuchAlgorithmException ex) {
+            return new String(Hex.encode(md.digest(transactionId.getBytes(StandardCharsets.UTF_8))), StandardCharsets.UTF_8);
+        } catch (NoSuchAlgorithmException ex) {
             throw new SignServerException("Unable to compute archive id", ex);
         }
     }
@@ -807,7 +807,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     protected ICryptoInstance acquireDefaultCryptoInstance(RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {
         return acquireDefaultCryptoInstance(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY), context);
     }
-
+    
     // XXX: Should not be needed, XXX: Mostly duplicated
     protected ICryptoInstance acquireDefaultCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {
         final ICryptoInstance result;

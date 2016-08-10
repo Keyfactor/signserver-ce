@@ -25,7 +25,15 @@
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
                           http://maven.apache.org/xsd/settings-1.0.0.xsd">
 
-    <offline>false</offline>
+    <mirrors>
+        <!-- PrimeKey Developers: Use PrimeKey Internal Repository for everything -->
+        <mirror>
+            <id>primekey-test</id>
+            <name>PrimeKey Internal Repository (Test)</name>
+            <mirrorOf>*</mirrorOf>
+            <url>https://binrepo-test.se.lab.primekey/maven2</url>
+        </mirror>
+    </mirrors>
 
     <profiles>
         <profile>

@@ -23,7 +23,7 @@ if not exist %SIGNSRV_HOME%\lib\SignServer-Client-CLI.jar  (
 rem Optional JARs
 set OPTIONAL_CLASSPATH=%SIGNSRV_HOME%\lib\SignServer-Client-ValidationCLI.jar;%EXTRA_CLASSPATH%
 
-set CLASSPATH=%SIGNSRV_HOME%\conf;%SIGNSRV_HOME%\bin;%SIGNSRV_HOME%\lib\SignServer-Client-CLI.jar;%J2EE_CP%;%OPTIONAL_CLASSPATH%
+set CLASSPATH=%SIGNSRV_HOME%\conf;%SIGNSRV_HOME%\bin;%SIGNSRV_HOME%\lib\SignServer-Client-CLI.jar;%J2EE_CP%;%SIGNSRV_HOME%\res\deploytools\cesecore;"%OPTIONAL_CLASSPATH%
 rem echo %CLASSPATH%
 
 rem Enable Java network debug logs

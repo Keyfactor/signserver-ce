@@ -287,13 +287,9 @@ public class ArchiveDataBean implements Serializable {
             LOG.debug("getArchiveDataVO: dataEncoding: " + getDataEncoding());
         }
         if (getDataEncoding() != null && getDataEncoding() == DATA_ENCODING_BASE64) {
-            try {
-                return new ArchiveDataVO(getType(), getSignerid(), getArchiveid(), new Date(getTime()),
-                    getRequestIssuerDN(), getRequestCertSerialnumber(), getRequestIP(),
-                    Base64.decode(getArchiveData().getBytes(StandardCharsets.UTF_8.name())));
-            } catch (UnsupportedEncodingException ex) {
-                throw new RuntimeException(ex);
-            }
+            return new ArchiveDataVO(getType(), getSignerid(), getArchiveid(), new Date(getTime()),
+                getRequestIssuerDN(), getRequestCertSerialnumber(), getRequestIP(),
+                Base64.decode(getArchiveData().getBytes(StandardCharsets.UTF_8)));
         } else {
             return new ArchiveDataVO(getType(), getSignerid(), getArchiveid(), new Date(getTime()),
                 getRequestIssuerDN(), getRequestCertSerialnumber(), getRequestIP(),

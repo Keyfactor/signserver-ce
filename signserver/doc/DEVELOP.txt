@@ -77,6 +77,10 @@ Tips:
   when hitting F11. Then the few times I want to build everything I simply
   select the Main Project first.
 
+Note: When deploying from within the IDE, currently you need to have the
+environment variable APPSRV_HOME specified so the script knows where to deploy
+to. DSS-1231 was created to eventually be able to specify this within the IDE.
+
 
 Eclipse
 -------

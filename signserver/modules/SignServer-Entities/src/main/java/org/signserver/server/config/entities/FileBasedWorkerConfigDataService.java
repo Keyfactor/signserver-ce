@@ -128,14 +128,10 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
             }
             
             if (wcdb != null) {
-                XMLDecoder decoder;
-                try {
-                    decoder = new XMLDecoder(new ByteArrayInputStream(wcdb.getSignerConfigData().getBytes(StandardCharsets.UTF_8.name())));
-                } catch (UnsupportedEncodingException e) {
-                    throw new EJBException(e);
+                HashMap h;
+                try (XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(wcdb.getSignerConfigData().getBytes(StandardCharsets.UTF_8)))) {
+                    h = (HashMap) decoder.readObject();
                 }
-                HashMap h = (HashMap) decoder.readObject();
-                decoder.close();
                 // Handle Base64 encoded string values
                 HashMap data = new Base64GetHashMap(h);
                 result = new WorkerConfig();
@@ -621,11 +617,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     }
 
     private File getIdFile(final String name) {
-        try {
-            return new File(folder, ID_PREFIX + Base64.toBase64String(name.getBytes(StandardCharsets.UTF_8.name())) + SUFFIX);
-        } catch (UnsupportedEncodingException ex) {
-            throw new RuntimeException("Unable to UTF-8 encode", ex);
-        }
+        return new File(folder, ID_PREFIX + Base64.toBase64String(name.getBytes(StandardCharsets.UTF_8)) + SUFFIX);
     }
     
     private File getTypeFile(final int workerId) {

@@ -13,8 +13,10 @@
 package org.signserver.server;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import org.signserver.common.RequestContext;
+import org.signserver.common.WorkerStatusInfo;
 
 /**
  * Interface defining an accurate time source, could be the local computer
@@ -39,4 +41,11 @@ public interface ITimeSource {
      * @return an accurate current time or null if it is not available.
      */
     Date getGenTime(RequestContext context);
+    
+    /**
+     * Get brief status entries to be presented in worker statuses.
+     *
+     * @return List of status entries
+     */
+    List<WorkerStatusInfo.Entry> getStatusBriefEntries();
 }

@@ -13,11 +13,14 @@
 package org.signserver.server;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import java.util.TimeZone;
 import org.apache.log4j.Logger;
 import org.signserver.common.RequestContext;
+import org.signserver.common.WorkerStatusInfo;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.StatusName;
@@ -46,7 +49,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
 
     // property constants
     private static final String LEAPSECOND_HANDLING = "LEAPSECOND_HANDLING";
-    
+  
     /** defines leap second handling strategies */
     protected enum LeapSecondHandlingStrategy {
         /** Don't do anything special for leap seconds. **/
@@ -251,5 +254,11 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
         return (day == 1 && hour == 0 && min == 0 && sec <= 1 && milli <= 10) ||
         	(day == lastDayOfMonth && hour == 23 && min == 59 && ((sec == 58 && milli >= 989) || sec >= 59));
     }
-
+   
+    @Override
+    public List<WorkerStatusInfo.Entry> getStatusBriefEntries() {
+        return Collections.singletonList(
+                new WorkerStatusInfo.Entry("Leapsecond strategy",
+                                           leapSecondHandlingStrategy.name()));
+    }
 }

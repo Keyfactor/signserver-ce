@@ -12,9 +12,12 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import org.signserver.common.RequestContext;
+import org.signserver.common.WorkerStatusInfo;
 
 /**
  * Simple class implementing the ITimeSource interface taking the current time
@@ -42,5 +45,10 @@ public class LocalComputerTimeSource implements ITimeSource {
     @Override
     public Date getGenTime(final RequestContext context) {
         return new Date();
+    }
+
+    @Override
+    public List<WorkerStatusInfo.Entry> getStatusBriefEntries() {
+        return Collections.emptyList();
     }
 }

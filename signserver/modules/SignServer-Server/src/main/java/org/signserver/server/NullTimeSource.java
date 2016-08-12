@@ -12,9 +12,12 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import org.signserver.common.RequestContext;
+import org.signserver.common.WorkerStatusInfo;
 
 /**
  * Simple class implementing the ITimeSource interface but always returns null
@@ -45,5 +48,10 @@ public class NullTimeSource implements ITimeSource {
     @Override
     public final Date getGenTime(final RequestContext context) {
         return null;
+    }
+
+    @Override
+    public List<WorkerStatusInfo.Entry> getStatusBriefEntries() {
+        return Collections.emptyList();
     }
 }

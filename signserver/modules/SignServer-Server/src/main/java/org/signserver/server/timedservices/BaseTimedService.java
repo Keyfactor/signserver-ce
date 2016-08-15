@@ -144,7 +144,7 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     }
 
     @Override
-    public WorkerStatus getStatus(final List<String> additionalFatalErrors, final IServices services) {
+    public WorkerStatusInfo getStatus(final List<String> additionalFatalErrors, final IServices services) {
         final List<String> fatalErrorsIncludingAdditionalErrors = new LinkedList<>(additionalFatalErrors);
         fatalErrorsIncludingAdditionalErrors.addAll(getFatalErrors(services));
 
@@ -163,7 +163,11 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
         }
         completeEntries.add(new WorkerStatusInfo.Entry("Active Properties are", configValue.toString()));
 
-        return new StaticWorkerStatus(new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Service", WorkerStatus.STATUS_ACTIVE, briefEntries, fatalErrorsIncludingAdditionalErrors, completeEntries, config));
+        return new WorkerStatusInfo(workerId, config.getProperty("NAME"),
+                                    "Service", WorkerStatus.STATUS_ACTIVE,
+                                    briefEntries,
+                                    fatalErrorsIncludingAdditionalErrors,
+                                    completeEntries, config);
     }
 
     /**

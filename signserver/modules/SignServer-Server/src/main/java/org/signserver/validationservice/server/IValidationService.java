@@ -18,7 +18,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.common.WorkerStatus;
+import org.signserver.common.WorkerStatusInfo;
 import org.signserver.common.data.CertificateValidationRequest;
 import org.signserver.common.data.CertificateValidationResponse;
 import org.signserver.server.IServices;
@@ -64,5 +64,5 @@ public interface IValidationService {
      * @param services Services for implementations to use
      * @return a WorkerStatus object.
      */
-    WorkerStatus getStatus(IServices services);
+    WorkerStatusInfo getStatus(IServices services);
 }

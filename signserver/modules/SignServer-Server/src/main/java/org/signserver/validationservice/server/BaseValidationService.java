@@ -92,7 +92,7 @@ public abstract class BaseValidationService implements IValidationService {
      * @see org.signserver.validationservice.server.IValidationService#getStatus()
      */
     @Override
-    public WorkerStatus getStatus(final IServices services) {
+    public WorkerStatusInfo getStatus(final IServices services) {
         final List<WorkerStatusInfo.Entry> briefEntries = new LinkedList<>();
         final List<WorkerStatusInfo.Entry> completeEntries = new LinkedList<>();
 
@@ -123,7 +123,11 @@ public abstract class BaseValidationService implements IValidationService {
         }
         completeEntries.add(new WorkerStatusInfo.Entry("Validators", validatorsValue.toString()));
 
-        return new StaticWorkerStatus(new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Validation Service", WorkerStatus.STATUS_ACTIVE, briefEntries, Collections.<String>emptyList(), completeEntries, config));
+        return new WorkerStatusInfo(workerId, config.getProperty("NAME"),
+                                    "Validation Service",
+                                    WorkerStatus.STATUS_ACTIVE, briefEntries,
+                                    Collections.<String>emptyList(),
+                                    completeEntries, config);
     }
 
     /**

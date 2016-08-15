@@ -131,7 +131,7 @@ public abstract class BaseWorker implements IWorker {
      * @return the status information
      */
     @Override
-    public WorkerStatus getStatus(List<String> additionalFatalErrors, final IServices services) {
+    public WorkerStatusInfo getStatus(List<String> additionalFatalErrors, final IServices services) {
         final List<String> errors = new LinkedList<>(additionalFatalErrors);
         errors.addAll(getFatalErrors(services));
 
@@ -163,15 +163,14 @@ public abstract class BaseWorker implements IWorker {
         completeEntries.add(new WorkerStatusInfo.Entry("Authorized clients (serial number, issuer DN)", clientsValue.toString()));
 
         // Return everything
-        return new StaticWorkerStatus(new WorkerStatusInfo(
-                workerId, 
+        return new WorkerStatusInfo(workerId, 
                 config.getProperty("NAME"), 
                 "Worker", 
                 active ? WorkerStatus.STATUS_ACTIVE : WorkerStatus.STATUS_OFFLINE, 
                 briefEntries, 
                 errors, 
                 completeEntries, 
-                config));
+                config);
     }
 
     /**

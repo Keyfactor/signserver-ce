@@ -15,7 +15,7 @@ package org.signserver.server;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.signserver.common.WorkerConfig;
-import org.signserver.common.WorkerStatus;
+import org.signserver.common.WorkerStatusInfo;
 import org.signserver.common.WorkerType;
 
 /**
@@ -67,5 +67,5 @@ public interface IWorker {
      * @param services services for the implementations to use
      * @return a WorkerStatus object.
      */
-    WorkerStatus getStatus(final List<String> additionalFatalErrors, final IServices services);
+    WorkerStatusInfo getStatus(final List<String> additionalFatalErrors, final IServices services);
 }

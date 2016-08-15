@@ -36,7 +36,7 @@ public abstract class BaseValidator extends BaseProcessable implements IValidato
      * @see org.signserver.server.IProcessable#getStatus()
      */
     @Override
-    public WorkerStatus getStatus(final List<String> additionalFatalErrors, final IServices services) {
+    public WorkerStatusInfo getStatus(final List<String> additionalFatalErrors, final IServices services) {
         final List<String> fatalErrors = new LinkedList<>(additionalFatalErrors);
         fatalErrors.addAll(getFatalErrors(services));
 
@@ -66,6 +66,9 @@ public abstract class BaseValidator extends BaseProcessable implements IValidato
         }
         completeEntries.add(new WorkerStatusInfo.Entry("Authorized clients (serial number, issuer DN)", clientsValue.toString()));
 
-        return new StaticWorkerStatus(new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Validator", WorkerStatus.STATUS_ACTIVE, briefEntries, fatalErrors, completeEntries, config));
+        return new WorkerStatusInfo(workerId, config.getProperty("NAME"),
+                                    "Validator", WorkerStatus.STATUS_ACTIVE,
+                                    briefEntries, fatalErrors, completeEntries,
+                                    config);
     }
 }

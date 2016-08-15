@@ -87,7 +87,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
      * @see org.signserver.server.IProcessable#getStatus()
      */
     @Override
-    public WorkerStatus getStatus(final List<String> additionalFatalErrors, final IServices services) {
+    public WorkerStatusInfo getStatus(final List<String> additionalFatalErrors, final IServices services) {
         WorkerStatusInfo info;
         final List<String> fatalErrors = new LinkedList<>(additionalFatalErrors);
         fatalErrors.addAll(getFatalErrors(services));
@@ -217,8 +217,9 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             completeEntries.add(new WorkerStatusInfo.Entry("Signer certificate", certificateValue));
         }
 
-        info = new WorkerStatusInfo(workerId, config.getProperty("NAME"), "Signer", status, briefEntries, fatalErrors, completeEntries, config);
-        return new StaticWorkerStatus(info);
+        return new WorkerStatusInfo(workerId, config.getProperty("NAME"),
+                                    "Signer", status, briefEntries, fatalErrors,
+                                    completeEntries, config);
     }
 
     @Override

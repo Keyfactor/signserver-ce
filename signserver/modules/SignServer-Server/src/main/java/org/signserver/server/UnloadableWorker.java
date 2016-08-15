@@ -24,6 +24,7 @@ import org.signserver.common.ServiceContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerStatus;
+import org.signserver.common.WorkerStatusInfo;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.Response;
 import org.signserver.server.signers.BaseSigner;
@@ -59,12 +60,11 @@ public class UnloadableWorker extends BaseSigner implements ITimedService {
     }
 
     @Override
-    public WorkerStatus getStatus(List<String> additionalFatalErrors, final IServices services) {
-        WorkerStatus status = super.getStatus(additionalFatalErrors, services);
-        if (status instanceof StaticWorkerStatus) {
-            // Adjust worker type
-            ((StaticWorkerStatus) status).getInfo().setWorkerType(WORKER_TYPE);
-        }
+    public WorkerStatusInfo getStatus(List<String> additionalFatalErrors, final IServices services) {
+        WorkerStatusInfo status = super.getStatus(additionalFatalErrors, services);
+        
+        status.setWorkerType(WORKER_TYPE);
+
         return status;
     }
 

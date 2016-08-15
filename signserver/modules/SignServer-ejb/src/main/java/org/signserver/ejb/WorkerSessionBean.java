@@ -288,7 +288,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             
             errorsAtEjbLevel.addAll(worker.getCreateErrors());
         
-            return worker.getWorker().getStatus(errorsAtEjbLevel, servicesImpl);
+            return new StaticWorkerStatus(worker.getWorker().getStatus(errorsAtEjbLevel, servicesImpl));
         } catch (NoSuchWorkerException ex) {
             throw new InvalidWorkerIdException(ex.getMessage());
         }

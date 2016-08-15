@@ -22,7 +22,9 @@ public class UploadConfig {
     
     private static final String HTTP_MAX_UPLOAD_SIZE = "HTTP_MAX_UPLOAD_SIZE";
     private static final long DEFAULT_MAX_UPLOAD_SIZE = 100 * 1024 * 1024; // 100MB (100*1024*1024);
-    private static final int DEFAULT_SIZE_THRESHOLD = 10240;
+
+    private static final String FILE_SIZE_THRESHOLD = "FILE_SIZE_THRESHOLD";
+    private static final int DEFAULT_FILE_SIZE_THRESHOLD = 1 * 1024 * 1024; // 1 MB
     
     private long maxUploadSize;
     private int sizeThreshold;
@@ -32,7 +34,7 @@ public class UploadConfig {
      * Creates an instance of UploadConfig with the default configuration.
      */
     public UploadConfig() {
-        this(DEFAULT_MAX_UPLOAD_SIZE, DEFAULT_SIZE_THRESHOLD, new File(System.getProperty("java.io.tmpdir")));
+        this(DEFAULT_MAX_UPLOAD_SIZE, DEFAULT_FILE_SIZE_THRESHOLD, new File(System.getProperty("java.io.tmpdir")));
     }
 
     public UploadConfig(long maxUploadSize, int sizeThreshold, File repository) {
@@ -42,20 +44,16 @@ public class UploadConfig {
     }
     
     public static UploadConfig create(GlobalConfigurationSessionLocal globalSession) {
-        final int sizeThreshold = 1024 * 1024; // TODO: Configurable
         final File repository = new File(System.getProperty("java.io.tmpdir")); // TODO new File("/home/user/tmp/signserver/");  // XXX: Fix this!
-        final long maxUploadSize = getMaxUploadSize(globalSession);
-        return new UploadConfig(maxUploadSize, sizeThreshold, repository);
-    }
-    
-    private static long getMaxUploadSize(GlobalConfigurationSessionLocal globalSession) {
-        final String confValue = globalSession.getGlobalConfiguration().getProperty(GlobalConfiguration.SCOPE_GLOBAL, HTTP_MAX_UPLOAD_SIZE);
-        long result = DEFAULT_MAX_UPLOAD_SIZE;
+        
+        // Max upload size
+        String confValue = globalSession.getGlobalConfiguration().getProperty(GlobalConfiguration.SCOPE_GLOBAL, HTTP_MAX_UPLOAD_SIZE);
+        long maxUploadSize = DEFAULT_MAX_UPLOAD_SIZE;
         if (confValue != null) {
             try {
-                result = Long.parseLong(confValue);
+                maxUploadSize = Long.parseLong(confValue);
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Using " + HTTP_MAX_UPLOAD_SIZE + ": " + result);
+                    LOG.debug("Using " + HTTP_MAX_UPLOAD_SIZE + ": " + maxUploadSize);
                 }
             } catch (NumberFormatException ex) {
                 LOG.error("Incorrect value for global configuration property " + HTTP_MAX_UPLOAD_SIZE + ": " + ex.getLocalizedMessage());
@@ -65,7 +63,26 @@ public class UploadConfig {
                 LOG.debug("Using default max upload size as no " + HTTP_MAX_UPLOAD_SIZE + " configured");
             }
         }
-        return result;
+
+        // Max upload size
+        confValue = globalSession.getGlobalConfiguration().getProperty(GlobalConfiguration.SCOPE_GLOBAL, FILE_SIZE_THRESHOLD);
+        int sizeThreshold = DEFAULT_FILE_SIZE_THRESHOLD;
+        if (confValue != null) {
+            try {
+                sizeThreshold = Integer.parseInt(confValue);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Using " + FILE_SIZE_THRESHOLD + ": " + sizeThreshold);
+                }
+            } catch (NumberFormatException ex) {
+                LOG.error("Incorrect value for global configuration property " + FILE_SIZE_THRESHOLD + ": " + ex.getLocalizedMessage());
+            }
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using default file size threshold as no " + FILE_SIZE_THRESHOLD + " configured");
+            }
+        }
+
+        return new UploadConfig(maxUploadSize, sizeThreshold, repository);
     }
 
     public long getMaxUploadSize() {

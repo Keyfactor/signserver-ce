@@ -82,7 +82,6 @@ public class GenericProcessServlet extends AbstractProcessServlet {
     private static final String DATA_PROPERTY_NAME = "data";
     private static final String ENCODING_PROPERTY_NAME = "encoding";
     private static final String ENCODING_BASE64 = "base64";
-    private static final long MAX_UPLOAD_SIZE = 100 * 1024 * 1024; // 100MB (100*1024*1024);
     private static final String PDFPASSWORD_PROPERTY_NAME = "pdfPassword";
 
     private static final String PROCESS_TYPE_PROPERTY_NAME = "processType";

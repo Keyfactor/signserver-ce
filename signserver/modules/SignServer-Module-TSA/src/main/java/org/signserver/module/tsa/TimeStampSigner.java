@@ -1164,4 +1164,14 @@ public class TimeStampSigner extends BaseSigner {
             throws IOException {
         return null;
     }
+
+    @Override
+    public WorkerStatusInfo getStatus(List<String> additionalFatalErrors, IServices services) {
+        final WorkerStatusInfo status =
+                super.getStatus(additionalFatalErrors, services);
+        
+        status.getBriefEntries().addAll(timeSource.getStatusBriefEntries());
+
+        return status;
+    }
 }

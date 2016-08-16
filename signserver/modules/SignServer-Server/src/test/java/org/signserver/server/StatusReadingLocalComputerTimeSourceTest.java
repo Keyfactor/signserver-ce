@@ -14,11 +14,15 @@ package org.signserver.server;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TimeZone;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
+import org.junit.Test;
 import org.signserver.common.RequestContext;
+import org.signserver.common.WorkerStatusInfo;
 import org.signserver.server.StatusReadingLocalComputerTimeSource.LeapSecondHandlingStrategy;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.statusrepo.common.StatusEntry;
@@ -434,6 +438,109 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
         assertFalse("Should not pause", timeSource.pauseCalled);
         assertNull("Should not get a time", date);
+    }
+    
+    /**
+     * Test that status entries contains one item stating leapsecond status
+     * NONE by default.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test21DefaultLeapSecondStrategyStatus() throws Exception {
+        final ITimeSource timeSource = new StatusReadingLocalComputerTimeSource();
+        final Properties props = new Properties();
+        
+        timeSource.init(props);
+
+        final List<WorkerStatusInfo.Entry> statusBriefEntries =
+                timeSource.getStatusBriefEntries();
+        
+        assertEquals("Number of status entries", 1, statusBriefEntries.size());
+        
+        final WorkerStatusInfo.Entry entry = statusBriefEntries.get(0);
+        
+        assertEquals("Contains leap second strategy message",
+                     "Leapsecond strategy", entry.getTitle());
+        assertEquals("Default strategy", "NONE", entry.getValue());
+    }
+
+    /**
+     * Test that explicitly setting leapsecond strategy NONE gives the
+     * appropriate status message.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test22LeapSecondStrategyNoneStatus() throws Exception {
+        final ITimeSource timeSource = new StatusReadingLocalComputerTimeSource();
+        final Properties props = new Properties();
+        
+        props.setProperty("LEAPSECOND_HANDLING", "NONE");
+        timeSource.init(props);
+        
+        final List<WorkerStatusInfo.Entry> statusBriefEntries =
+                timeSource.getStatusBriefEntries();
+        
+        assertEquals("Number of status entries", 1, statusBriefEntries.size());
+        
+        final WorkerStatusInfo.Entry entry = statusBriefEntries.get(0);
+        
+        assertEquals("Contains leap second strategy message",
+                     "Leapsecond strategy", entry.getTitle());
+        assertEquals("Default strategy", "NONE", entry.getValue());
+    }
+    
+    /**
+     * Test that explicitly setting leapsecond strategy PAUSE gives the
+     * appropriate status message.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test23LeapSecondStrategyPauseStatus() throws Exception {
+        final ITimeSource timeSource = new StatusReadingLocalComputerTimeSource();
+        final Properties props = new Properties();
+        
+        props.setProperty("LEAPSECOND_HANDLING", "PAUSE");
+        timeSource.init(props);
+        
+        final List<WorkerStatusInfo.Entry> statusBriefEntries =
+                timeSource.getStatusBriefEntries();
+        
+        assertEquals("Number of status entries", 1, statusBriefEntries.size());
+        
+        final WorkerStatusInfo.Entry entry = statusBriefEntries.get(0);
+        
+        assertEquals("Contains leap second strategy message",
+                     "Leapsecond strategy", entry.getTitle());
+        assertEquals("Default strategy", "PAUSE", entry.getValue());
+    }
+    
+    /**
+     * Test that explicitly setting leapsecond strategy STOP gives the
+     * appropriate status message.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test24LeapSecondStrategyStopStatus() throws Exception {
+        final ITimeSource timeSource = new StatusReadingLocalComputerTimeSource();
+        final Properties props = new Properties();
+        
+        props.setProperty("LEAPSECOND_HANDLING", "STOP");
+        timeSource.init(props);
+        
+        final List<WorkerStatusInfo.Entry> statusBriefEntries =
+                timeSource.getStatusBriefEntries();
+        
+        assertEquals("Number of status entries", 1, statusBriefEntries.size());
+        
+        final WorkerStatusInfo.Entry entry = statusBriefEntries.get(0);
+        
+        assertEquals("Contains leap second strategy message",
+                     "Leapsecond strategy", entry.getTitle());
+        assertEquals("Default strategy", "STOP", entry.getValue());
     }
     
     /**

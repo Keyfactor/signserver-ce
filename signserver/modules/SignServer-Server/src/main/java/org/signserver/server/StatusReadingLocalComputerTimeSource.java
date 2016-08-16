@@ -259,6 +259,8 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     public List<WorkerStatusInfo.Entry> getStatusBriefEntries() {
         return Collections.singletonList(
                 new WorkerStatusInfo.Entry("Leapsecond strategy",
-                                           leapSecondHandlingStrategy.name()));
+                                           leapSecondHandlingStrategy != null ?
+                                           leapSecondHandlingStrategy.name() :
+                                           "invalid"));
     }
 }

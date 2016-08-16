@@ -21,6 +21,7 @@ import java.util.TimeZone;
 import org.apache.log4j.Logger;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerStatusInfo;
+import org.signserver.server.log.LogMap;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.StatusName;
@@ -49,6 +50,11 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
 
     // property constants
     private static final String LEAPSECOND_HANDLING = "LEAPSECOND_HANDLING";
+    
+    // log values
+    private static final String LEAP_UPCOMING = "LEAP_UPCOMING";
+    private static final String LEAP_PERIOD = "LEAP_PERIOD";
+    private static final String LEAP_ACTION = "LEAP_ACTION";
   
     /** defines leap second handling strategies */
     protected enum LeapSecondHandlingStrategy {
@@ -112,9 +118,13 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
             final StatusRepositorySessionLocal statusSession = context.getServices().get(StatusRepositorySessionLocal.class);
             final StatusEntry entry = statusSession.getValidEntry(insyncPropertyName.name());
             
+            final LogMap logMap = LogMap.getInstance(context);
+            
             if (entry != null && Boolean.valueOf(entry.getValue())) {
                 Date date = getCurrentDate();
 
+                logMap.put(LEAP_ACTION, leapSecondHandlingStrategy.name());
+                
                 // If we are handling leap seconds
                 if (leapSecondHandlingStrategy == LeapSecondHandlingStrategy.PAUSE
                         || leapSecondHandlingStrategy == LeapSecondHandlingStrategy.STOP) {
@@ -130,12 +140,17 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                         // leapsecond property is expired
                         LOG.error("Leapsecond status has expired");
                         result = null;
+                        logMap.put(LEAP_UPCOMING, "unknown");
                     } else {
                         final String leapsecondValue = leapsecond.getValue();
+                        boolean potentialLeap = isPotentialLeapsecond(date);
+
+                        logMap.put(LEAP_PERIOD, Boolean.toString(potentialLeap));
+                        
                         if (LEAPSECOND_POSITIVE.equals(leapsecondValue) ||
                             LEAPSECOND_NEGATIVE.equals(leapsecondValue)) {
-                            boolean potentialLeap = isPotentialLeapsecond(date);
-
+                            logMap.put(LEAP_UPCOMING, Boolean.TRUE.toString());
+                            
                             // Handle leap second strategy STOP
                             if (leapSecondHandlingStrategy == LeapSecondHandlingStrategy.STOP 
                                     && potentialLeap) {
@@ -174,6 +189,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                                 }
                             }
                         } else {
+                            logMap.put(LEAP_UPCOMING, Boolean.FALSE.toString());
                             result = date;
                         }
                     }

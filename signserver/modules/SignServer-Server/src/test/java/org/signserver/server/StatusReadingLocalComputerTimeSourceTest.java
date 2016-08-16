@@ -544,6 +544,32 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     }
     
     /**
+     * Test that explicitly setting leapsecond strategy to an invalid value
+     * gives the appropriate status message.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test25LeapSecondStrategyInvalidStatus() throws Exception {
+        final ITimeSource timeSource = new StatusReadingLocalComputerTimeSource();
+        final Properties props = new Properties();
+        
+        props.setProperty("LEAPSECOND_HANDLING", "invalid_value");
+        timeSource.init(props);
+        
+        final List<WorkerStatusInfo.Entry> statusBriefEntries =
+                timeSource.getStatusBriefEntries();
+        
+        assertEquals("Number of status entries", 1, statusBriefEntries.size());
+        
+        final WorkerStatusInfo.Entry entry = statusBriefEntries.get(0);
+        
+        assertEquals("Contains leap second strategy message",
+                     "Leapsecond strategy", entry.getTitle());
+        assertEquals("Default strategy", "invalid", entry.getValue());
+    }
+    
+    /**
      * Base class for status repository mockups.
      */
     private class LeapsecondStatusRepositorySession implements StatusRepositorySessionLocal {

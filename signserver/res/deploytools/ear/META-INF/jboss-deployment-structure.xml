@@ -2,6 +2,13 @@
     <ear-subdeployments-isolated>true</ear-subdeployments-isolated>
     <deployment>
         <dependencies>
+            <system export="true">
+                <paths>
+                    <path name="sun/security/x509"/>
+                    <path name="sun/security/pkcs11"/>
+                    <path name="sun/security/pkcs11/wrapper"/>
+                </paths>
+            </system>
         </dependencies>
         <resources>
             <!-- This is needed for BC when OracleJDK is used on JBoss 7. See DSS-606. -->

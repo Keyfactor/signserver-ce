@@ -47,4 +47,9 @@ public class FixedTimeSource implements ITimeSource {
     public List<WorkerStatusInfo.Entry> getStatusBriefEntries() {
         return Collections.emptyList();
     }
+
+    @Override
+    public List<WorkerStatusInfo.Entry> getStatusCompleteEntries() {
+        return Collections.emptyList();
+    }
 }

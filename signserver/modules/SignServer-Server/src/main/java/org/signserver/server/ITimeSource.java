@@ -48,4 +48,11 @@ public interface ITimeSource {
      * @return List of status entries
      */
     List<WorkerStatusInfo.Entry> getStatusBriefEntries();
+    
+    /**
+     * Get complete status entries to be presented in worker statuses.
+     * 
+     * @return List of complete status entries 
+     */
+    List<WorkerStatusInfo.Entry> getStatusCompleteEntries();
 }

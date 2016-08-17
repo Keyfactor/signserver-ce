@@ -55,7 +55,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     private static final String LEAP_UPCOMING = "LEAP_UPCOMING";
     private static final String LEAP_PERIOD = "LEAP_PERIOD";
     private static final String LEAP_ACTION = "LEAP_ACTION";
-  
+
     /** defines leap second handling strategies */
     protected enum LeapSecondHandlingStrategy {
         /** Don't do anything special for leap seconds. **/
@@ -279,5 +279,10 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                                            leapSecondHandlingStrategy != null ?
                                            leapSecondHandlingStrategy.name() :
                                            "invalid"));
+    }
+    
+    @Override
+    public List<WorkerStatusInfo.Entry> getStatusCompleteEntries() {
+        return Collections.emptyList();
     }
 }

@@ -45,4 +45,9 @@ public class ZeroTimeSource implements ITimeSource {
         return Collections.emptyList();
     }
 
+    @Override
+    public List<WorkerStatusInfo.Entry> getStatusCompleteEntries() {
+        return Collections.emptyList();
+    }
+
 }

@@ -1171,6 +1171,7 @@ public class TimeStampSigner extends BaseSigner {
                 super.getStatus(additionalFatalErrors, services);
         
         status.getBriefEntries().addAll(timeSource.getStatusBriefEntries());
+        status.getCompleteEntries().addAll(timeSource.getStatusCompleteEntries());
 
         return status;
     }

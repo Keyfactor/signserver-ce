@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerStatusInfo;
 import org.signserver.server.StatusReadingLocalComputerTimeSource.LeapSecondHandlingStrategy;
+import org.signserver.server.log.LogMap;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.StatusName;
@@ -129,17 +130,35 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         MockTimeSource timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         
-        Date date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
+        RequestContext context =
+            createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE);
+        Date date = timeSource.getGenTime(context);
+        LogMap logMap = LogMap.getInstance(context);
+        
         assertTrue("Timesource did not pause", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
+        assertEquals("Should log upcoming leapsecond",
+                     "true", logMap.get("LEAP_UPCOMING"));
+        assertEquals("Should log not in leap period",
+                     "true", logMap.get("LEAP_PERIOD"));
+        assertEquals("Should log leap strategy",
+                     "PAUSE", logMap.get("LEAP_ACTION"));
         
         // Strategy: STOP
         timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.STOP);
 
-        date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
+        context = createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE);
+        date = timeSource.getGenTime(context);
+        logMap = LogMap.getInstance(context);
         assertFalse("Timesource should not pause", timeSource.pauseCalled);
         assertNull("Should not get a time", date);
+        assertEquals("Should log upcoming leapsecond",
+                     "true", logMap.get("LEAP_UPCOMING"));
+        assertEquals("Should log not in leap period",
+                     "true", logMap.get("LEAP_PERIOD"));
+        assertEquals("Should log leap strategy",
+                     "STOP", logMap.get("LEAP_ACTION"));
     }
     
     /**
@@ -162,17 +181,32 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         MockTimeSource timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
         
-        Date date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
+        RequestContext context =
+                createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE);
+        Date date = timeSource.getGenTime(context);
+        LogMap logMap = LogMap.getInstance(context);
         assertTrue("Timesource did not pause", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
+        assertEquals("Should log upcoming leapsecond",
+                "true", logMap.get("LEAP_UPCOMING"));
+        assertEquals("Should log leap period", "true", logMap.get("LEAP_PERIOD"));
+        assertEquals("Should log leap strategy",
+                "PAUSE", logMap.get("LEAP_ACTION"));
         
         // Strategy: STOP
         timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.STOP);
 
-        date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
+        context = createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE);
+        date = timeSource.getGenTime(context);
+        logMap = LogMap.getInstance(context);
         assertFalse("Timesource should not pause", timeSource.pauseCalled);
         assertNull("Should not get a time", date);
+        assertEquals("Should log upcoming leapsecond",
+                "true", logMap.get("LEAP_UPCOMING"));
+        assertEquals("Should log leap period", "true", logMap.get("LEAP_PERIOD"));
+        assertEquals("Should log leap strategy",
+                "STOP", logMap.get("LEAP_ACTION"));
     }
     
     /** 
@@ -190,17 +224,34 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     	MockTimeSource timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
 
-        Date date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
+        RequestContext context =
+                createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE);
+        Date date = timeSource.getGenTime(context);
+        LogMap logMap = LogMap.getInstance(context);
         assertFalse("Should not paused", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
-
+        assertEquals("Should log upcoming leapsecond",
+                "true", logMap.get("LEAP_UPCOMING"));
+        assertEquals("Should log not in leap period",
+                "false", logMap.get("LEAP_PERIOD"));
+        assertEquals("Should log leap strategy",
+                "PAUSE", logMap.get("LEAP_ACTION"));
+        
         // Strategy: STOP
     	timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.STOP);
 
-        date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE));
+        context = createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NEGATIVE);
+        date = timeSource.getGenTime(context);
+        logMap = LogMap.getInstance(context);
         assertFalse("Should not paused", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
+        assertEquals("Should log upcoming leapsecond",
+                "true", logMap.get("LEAP_UPCOMING"));
+        assertEquals("Should log not in leap period",
+                "false", logMap.get("LEAP_PERIOD"));
+        assertEquals("Should log leap strategy",
+                "STOP", logMap.get("LEAP_ACTION"));
     }
     
     /** 
@@ -218,17 +269,32 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         MockTimeSource timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
 
-        Date date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NONE));
+        RequestContext context =
+                createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NONE);
+        Date date = timeSource.getGenTime(context);
+        LogMap logMap = LogMap.getInstance(context);
         assertFalse("Timesource paused", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
-        
+        assertEquals("Should log not upcoming leapsecond",
+                "false", logMap.get("LEAP_UPCOMING"));
+        assertNull("Should not log leap period", logMap.get("LEAP_PERIOD"));
+        assertEquals("Should log leap strategy",
+                "PAUSE", logMap.get("LEAP_ACTION"));
+
         // Strategy: STOP
         timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.STOP);
 
-        date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NONE));
+        context = createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_NONE);
+        date = timeSource.getGenTime(context);
+        logMap = LogMap.getInstance(context);
         assertFalse("Timesource paused", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
+        assertEquals("Should log not upcoming leapsecond",
+                "false", logMap.get("LEAP_UPCOMING"));
+        assertNull("Should not log in leap period", logMap.get("LEAP_PERIOD"));
+        assertEquals("Should log leap strategy",
+                "STOP", logMap.get("LEAP_ACTION"));
     }
     
     /** 
@@ -246,9 +312,16 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
 
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.NONE);
 
-        final Date date = timeSource.getGenTime(createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE));
+        final RequestContext context =
+                createContext(StatusReadingLocalComputerTimeSource.LEAPSECOND_POSITIVE);
+        final Date date = timeSource.getGenTime(context);
+        final LogMap logMap = LogMap.getInstance(context);
         assertFalse("Timesource paused", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
+        assertNull("Should not log upcoming leap second", logMap.get("LEAP_UPCOMING"));
+        assertNull("Should not log leap period", logMap.get("LEAP_PERIOD"));
+        assertEquals("Should log leap strategy",
+                "NONE", logMap.get("LEAP_ACTION"));
     }
     
     /** 
@@ -265,15 +338,27 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         MockTimeSource timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
 
-        Date date = timeSource.getGenTime(createContext(null));
+        final RequestContext context = createContext(null);
+        Date date = timeSource.getGenTime(context);
+        final LogMap logMap = LogMap.getInstance(context);
         assertNull("Should not get a time", date);
+        assertEquals("Should log unknown upcoming leap",
+                     "unknown", logMap.get("LEAP_UPCOMING"));
+        assertNull("Should not log leap period", logMap.get("LEAP_PERIOD"));
+        assertEquals("Should log leap strategy",
+                     "PAUSE", logMap.get("LEAP_ACTION"));
 
         // Strategy: STOP
         timeSource = new MockTimeSource(cal.getTime());
         timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.STOP);
 
-        date = timeSource.getGenTime(createContext(null));
+        date = timeSource.getGenTime(context);
         assertNull("Should not get a time", date);
+        assertEquals("Should log unknown upcoming leap",
+                     "unknown", logMap.get("LEAP_UPCOMING"));
+        assertNull("Should not log leap period", logMap.get("LEAP_PERIOD"));
+        assertEquals("Should log leap strategy",
+                     "STOP", logMap.get("LEAP_ACTION"));
     }
     
     /** 

@@ -143,14 +143,15 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                         logMap.put(LEAP_UPCOMING, "unknown");
                     } else {
                         final String leapsecondValue = leapsecond.getValue();
-                        boolean potentialLeap = isPotentialLeapsecond(date);
-
-                        logMap.put(LEAP_PERIOD, Boolean.toString(potentialLeap));
+                        
                         
                         if (LEAPSECOND_POSITIVE.equals(leapsecondValue) ||
                             LEAPSECOND_NEGATIVE.equals(leapsecondValue)) {
+                            boolean potentialLeap = isPotentialLeapsecond(date);
+
+                            logMap.put(LEAP_PERIOD, Boolean.toString(potentialLeap));
                             logMap.put(LEAP_UPCOMING, Boolean.TRUE.toString());
-                            
+
                             // Handle leap second strategy STOP
                             if (leapSecondHandlingStrategy == LeapSecondHandlingStrategy.STOP 
                                     && potentialLeap) {

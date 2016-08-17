@@ -149,6 +149,27 @@ If the LEAPSECOND status property value has expired, no valid time will be retur
                                             </p>
                                         </li>
                                     </ul>
+                                    <p>
+This time source will add an additional worker status item indicating the currently used leap second strategy.
+                                    </p>
+                                    <p>
+The following additional log fields will be included for a logger implementation to use:
+                                    </p>
+                                    <ul>
+                                        <li>
+                                            <p>
+<i>LEAP_UPCOMING</i> This field will have the value <i>true</i> if a leap second is known to be coming soon,
+<i>false</i> if there is no leap second known to be coming, or <i>unknown</i> if it was unable to read the status.
+                                            </p>
+                                            <p>
+<i>LEAP_PERIOD</i> This field will be included when <i>LEAP_UPCOMING</i> is true and has the value <i>true</i> or <i>false</i>
+depending on whether the request was made during the time interval surrounding a leap second.
+                                            </p>
+                                            <p>
+<i>LEAP_ACTION</i> This field will include the value of the currently used leap second strategy.
+                                            </p>
+                                        </li>
+                                    </ul>
                                 </td>
                             </tr>
                         </table>

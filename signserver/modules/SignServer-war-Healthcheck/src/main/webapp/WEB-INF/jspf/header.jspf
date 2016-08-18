@@ -1,0 +1,10 @@
+<%@page import="org.signserver.common.CompileTimeSettings"%>
+<%@ page pageEncoding="UTF-8" %>
+
+    <p class="logo">
+        <img src="/signserver/logo.png" width="245" height="76" alt="SignServer - PKI by PrimeKey"/>
+    </p>
+    <p class="header">
+        <%=CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION)%>
+    </p>
+    <hr class="topSeparator"/>

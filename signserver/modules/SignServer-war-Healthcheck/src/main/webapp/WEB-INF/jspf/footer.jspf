@@ -1,0 +1,6 @@
+<%@page import="java.util.Date"%>
+<%@page import="java.text.DateFormat"%>
+<%@ page pageEncoding="UTF-8" %>
+        <p id="footer">
+            <%=DateFormat.getDateTimeInstance().format(new Date())%>
+        </p>

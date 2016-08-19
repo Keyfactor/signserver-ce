@@ -115,7 +115,7 @@ public class HealthCheckTest extends WebTestCase {
         LOG.info("test03TimeSourceNotInsync");
         try {
             addTimeStampSigner(TSA_WORKER, "TestTSA4", true);
-            workerSession.setWorkerProperty(TSA_WORKER, "DEFAULTTSAPOLICYOID", "1.2.3");
+            workerSession.setWorkerProperty(TSA_WORKER, "DEFAULTTSAPOLICYOID", "1.3.6.1.4.1.22408.1.2.1.1");
             workerSession.setWorkerProperty(TSA_WORKER, "TIMESOURCE", "org.signserver.server.StatusReadingLocalComputerTimeSource");
             workerSession.reloadConfiguration(TSA_WORKER);
 

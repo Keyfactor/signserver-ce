@@ -164,7 +164,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty(NAME, "TestTimeStampSigner1");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-                               "1.3.6.1.4.1.22408.1.2.1.1");
+                               "1.3.6.1.4.1.22408.1.2.3.45");
             config.setProperty("DEFAULTKEY", KEY_ALIAS);
             config.setProperty("KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" +
@@ -185,7 +185,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty(NAME, "TestTimeStampSigner3");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-                               "1.3.6.1.4.1.22408.1.2.1.1");
+                               "1.3.6.1.4.1.22408.1.2.3.45");
             config.setProperty("DEFAULTKEY", KEY_ALIAS);
             config.setProperty("ACCEPTEDEXTENSIONS", "1.2.74;1.2.7.2;1.2.7.8");
             config.setProperty("KEYSTOREPATH",
@@ -207,7 +207,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty(NAME, "TestTimeStampSigner2");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-                              "1.3.6.1.4.1.22408.1.2.1.1");
+                              "1.3.6.1.4.1.22408.1.2.3.45");
             config.setProperty("DEFAULTKEY", KEY_ALIAS);
             config.setProperty("ACCEPTEDEXTENSIONS", "");
             config.setProperty("KEYSTOREPATH",
@@ -229,7 +229,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty(NAME, "TestTimeStampSigner3");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-                               "1.3.6.1.4.1.22408.1.2.1.1");
+                               "1.3.6.1.4.1.22408.1.2.3.45");
             config.setProperty("DEFAULTKEY", KEY_ALIAS);
             config.setProperty("ACCEPTEDEXTENSIONS", "1.2.74; 1.2.7.2; 1.2.7.8");
             config.setProperty("KEYSTOREPATH",
@@ -251,7 +251,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty(NAME, "TestTimeStampSigner4");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-                               "1.3.6.1.4.1.22408.1.2.1.1");
+                               "1.3.6.1.4.1.22408.1.2.3.45");
             config.setProperty("DEFAULTKEY", KEY_ALIAS);
             config.setProperty("KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" +
@@ -282,7 +282,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty(NAME, "TestTimeStampSigner4");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-                               "1.3.6.1.4.1.22408.1.2.1.1");
+                               "1.3.6.1.4.1.22408.1.2.3.45");
             config.setProperty("DEFAULTKEY", KEY_ALIAS);
             config.setProperty("KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" +
@@ -319,7 +319,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty(NAME, "TestTimeStampSigner7");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-                               "1.3.6.1.4.1.22408.1.2.1.1");
+                               "1.3.6.1.4.1.22408.1.2.3.45");
             config.setProperty("DEFAULTKEY", KEY_ALIAS);
             config.setProperty("KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" +
@@ -328,7 +328,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             config.setProperty("ACCEPTEDPOLICIES",
-                               "1.3.6.1.4.1.22408.1.2.1.1");
+                               "1.3.6.1.4.1.22408.1.2.3.45");
             
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner());
@@ -342,7 +342,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty(NAME, "TestTimeStampSigner8");
             config.setProperty(AUTHTYPE, "NOAUTH");
             config.setProperty(TimeStampSigner.DEFAULTTSAPOLICYOID,
-                               "1.3.6.1.4.1.22408.1.2.1.1");
+                               "1.3.6.1.4.1.22408.1.2.3.45");
             config.setProperty("DEFAULTKEY", KEY_ALIAS);
             config.setProperty("KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" +
@@ -351,7 +351,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             config.setProperty("ACCEPTEDPOLICIES",
-                               "1.3.6.1.4.1.22408.1.2.1.1; 1.3.6.1.4.1.22408.1.2.1.2");
+                               "1.3.6.1.4.1.22408.1.2.3.45; 1.3.6.1.4.1.22408.1.2.3.46");
             
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner());
@@ -558,7 +558,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         LOG.info("testOnlyAcceptedPolicy");
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
-        timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.3.6.1.4.1.22408.1.2.1.1"));
+        timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.3.6.1.4.1.22408.1.2.3.45"));
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER7);
@@ -577,7 +577,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         LOG.info("testAnyAcceptedPolicy");
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
-        timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.3.6.1.4.1.22408.1.2.1.1"));
+        timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier("1.3.6.1.4.1.22408.1.2.3.45"));
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER8);
@@ -635,7 +635,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         final WorkerConfig config = new WorkerConfig();
         
         config.setProperty("ACCEPTANYPOLICY", "true");
-        config.setProperty("ACCEPTEDPOLICIES", "1.3.6.1.4.1.22408.1.2.1.1");
+        config.setProperty("ACCEPTEDPOLICIES", "1.3.6.1.4.1.22408.1.2.3.45");
         
         final TimeStampSigner signer = new TimeStampSigner() {
             @Override
@@ -665,7 +665,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         final WorkerConfig config = new WorkerConfig();
         
         config.setProperty("ACCEPTANYPOLICY", "TRUE");
-        config.setProperty("ACCEPTEDPOLICIES", "1.3.6.1.4.1.22408.1.2.1.1");
+        config.setProperty("ACCEPTEDPOLICIES", "1.3.6.1.4.1.22408.1.2.3.45");
         
         final TimeStampSigner signer = new TimeStampSigner() {
             @Override
@@ -697,7 +697,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         final WorkerConfig config = new WorkerConfig();
         
         config.setProperty("ACCEPTANYPOLICY", "false");
-        config.setProperty("ACCEPTEDPOLICIES", "1.3.6.1.4.1.22408.1.2.1.1");
+        config.setProperty("ACCEPTEDPOLICIES", "1.3.6.1.4.1.22408.1.2.3.45");
         
         final TimeStampSigner signer = new TimeStampSigner() {
             @Override
@@ -731,7 +731,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         final WorkerConfig config = new WorkerConfig();
         
         config.setProperty("ACCEPTANYPOLICY", "");
-        config.setProperty("ACCEPTEDPOLICIES", "1.3.6.1.4.1.22408.1.2.1.1");
+        config.setProperty("ACCEPTEDPOLICIES", "1.3.6.1.4.1.22408.1.2.3.45");
         
         final TimeStampSigner signer = new TimeStampSigner() {
             @Override

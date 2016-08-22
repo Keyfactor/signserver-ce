@@ -658,7 +658,16 @@ public class PDFSigner extends BaseSigner {
             }
         }
         
-        try (OutputStream fout = responseData.getAsOutputStream()) {
+        OutputStream responseOut = null;
+        try {
+            // Use stream for in-memory data but use file when we got it as file
+            final File responseFile;
+            if (pdfFile == null) {
+                responseOut = responseData.getAsOutputStream();
+                responseFile = null;
+            } else {
+                responseFile = responseData.getAsFile();
+            }
 
             // increase PDF version if needed by digest algorithm
             final char updatedPdfVersion;
@@ -684,9 +693,7 @@ public class PDFSigner extends BaseSigner {
                 updatedPdfVersion = '\0';
             }
 
-            PdfStamper stp =
-                    PdfStamper.createSignature(reader, fout, updatedPdfVersion, null,
-                            appendMode);
+            PdfStamper stp = PdfStamper.createSignature(reader, responseOut, updatedPdfVersion, responseFile, appendMode);
             PdfSignatureAppearance sap = stp.getSignatureAppearance();
 
             // Set the new permissions
@@ -846,6 +853,8 @@ public class PDFSigner extends BaseSigner {
             sap.close(dic2);
             reader.close();
 
+        } finally {
+            IOUtils.closeQuietly(responseOut);
         }
     }
     

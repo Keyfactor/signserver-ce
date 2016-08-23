@@ -14,6 +14,7 @@ package org.signserver.server.data.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import static java.lang.String.format;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.fileupload.FileItem;
@@ -21,6 +22,7 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.RequestContext;
+import org.apache.commons.fileupload.util.LimitedInputStream;
 import org.apache.commons.fileupload.util.Streams;
 
 /**
@@ -33,8 +35,7 @@ public class BinaryFileUpload extends FileUpload {
     
     private final InputStream input;
     private final String contentType;
-    
-    
+
     public BinaryFileUpload(InputStream input, String contentType, FileItemFactory fileItemFactory) {
         super(fileItemFactory);
         this.contentType = contentType;
@@ -55,7 +56,16 @@ public class BinaryFileUpload extends FileUpload {
                 throw new NullPointerException("No FileItemFactory has been set.");
             }
             fileItem = fac.createItem("data", contentType, false, null);
-            Streams.copy(input, fileItem.getOutputStream(), true);
+            Streams.copy(new LimitedInputStream(input, getSizeMax()) {
+                @Override
+                protected void raiseError(long pSizeMax, long pCount) throws IOException {
+                    FileUploadException ex = new SizeLimitExceededException(
+                        format("the request was rejected because its size (%s) exceeds the configured maximum (%s)",
+                            pCount, pSizeMax),
+                           pCount, pSizeMax);
+                    throw new FileUploadIOException(ex);
+                }
+            }, fileItem.getOutputStream(), true);
             successful = true;
             return fileItem;
         } catch (FileUploadIOException e) {

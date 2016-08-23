@@ -258,7 +258,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                         }
                     }
                 } catch (FileUploadBase.SizeLimitExceededException ex) {
-                    LOG.error(HTTP_MAX_UPLOAD_SIZE + " exceeded: " + ex.getLocalizedMessage());
+                    LOG.error(HTTP_MAX_UPLOAD_SIZE + " exceeded: " + ex.getLocalizedMessage(), ex);
                     res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
                         "Maximum content length is " + uploadConfig.getMaxUploadSize() + " bytes");
                     return;

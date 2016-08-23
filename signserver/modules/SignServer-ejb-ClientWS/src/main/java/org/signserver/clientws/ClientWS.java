@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -41,8 +42,9 @@ import org.signserver.common.data.SignatureRequest;
 import org.signserver.common.data.SignatureResponse;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
+import org.signserver.server.data.impl.DataFactory;
+import org.signserver.server.data.impl.DataUtils;
 import org.signserver.server.data.impl.UploadConfig;
-import org.signserver.server.data.impl.UploadUtil;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
@@ -73,10 +75,17 @@ public class ClientWS {
     @EJB
     private GlobalConfigurationSessionLocal globalSession;
 
+    private DataFactory dataFactory;
+    
+    @PostConstruct
+    public void init() {
+        dataFactory = DataUtils.createDataFactory();
+    }
+    
     private ProcessSessionLocal getProcessSession() {
         return processSession;
     }
-    
+
     private final Random random = new Random();
     
     /**
@@ -97,9 +106,10 @@ public class ClientWS {
             @WebParam(name = "data") byte[] data) throws RequestFailedException, InternalServerException {
         final DataResponse result;
         
+        final UploadConfig uploadConfig = UploadConfig.create(globalSession);
         try (
-                CloseableReadableData requestData = UploadUtil.handleUpload(UploadConfig.create(globalSession), data);
-                CloseableWritableData responseData = new TemporarlyWritableData(requestData.isFile());
+                CloseableReadableData requestData = dataFactory.createReadableData(data, uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
+                CloseableWritableData responseData = dataFactory.createWritableData(requestData, uploadConfig.getRepository());
             ) {
             final RequestContext requestContext = handleRequestContext(requestMetadata);
             final int requestId = random.nextInt();
@@ -176,7 +186,7 @@ public class ClientWS {
             @WebParam(name = "metadata") final List<Metadata> requestMetadata,
             @WebParam(name = "sodData") final org.signserver.clientws.SODRequest data) throws RequestFailedException, InternalServerException {
         final org.signserver.clientws.SODResponse result;
-        try (CloseableWritableData responseData = new TemporarlyWritableData(false)) {
+        try (CloseableWritableData responseData = new TemporarlyWritableData(false, new UploadConfig().getRepository())) {
             final RequestContext requestContext = handleRequestContext(requestMetadata);
             final int requestId = random.nextInt();
         

@@ -13,6 +13,7 @@
 package org.signserver.adminws;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.security.InvalidAlgorithmParameterException;
@@ -28,7 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Level;
+import javax.annotation.PostConstruct;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -74,7 +75,8 @@ import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
-import org.signserver.server.data.impl.TemporarlyWritableData;
+import org.signserver.server.data.impl.DataFactory;
+import org.signserver.server.data.impl.DataUtils;
 import org.signserver.server.data.impl.UploadConfig;
 import org.signserver.server.data.impl.UploadUtil;
 import org.signserver.validationservice.common.ValidateRequest;
@@ -121,7 +123,13 @@ public class AdminWS {
     
     @EJB
     private SecurityEventsAuditorSessionLocal auditor;
-    
+
+    private DataFactory dataFactory;
+        
+    @PostConstruct
+    public void init() {
+        dataFactory = DataUtils.createDataFactory();
+    }
     
     private Set<ClientEntry> getWSClients(final String propertyName) {
         final String adminsProperty = global.getGlobalConfiguration().getProperty(
@@ -937,16 +945,18 @@ public class AdminWS {
                     byte[] data = ((GenericSignRequest) req).getRequestData();
                     int requestID = ((GenericSignRequest) req).getRequestID();
                     
-                    // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
-                    requestData = UploadUtil.handleUpload(UploadConfig.create(global), data);
-                    responseData = new TemporarlyWritableData(requestData.isFile());
+                    // Upload handling (Note: close in finally clause)
+                    UploadConfig uploadConfig = UploadConfig.create(global);
+                    requestData = dataFactory.createReadableData(data, uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
+                    responseData = dataFactory.createWritableData(requestData, uploadConfig.getRepository());
                     req2 = new SignatureRequest(requestID, requestData, responseData);
                 } else if (req instanceof GenericValidationRequest) {
                     byte[] data = ((GenericValidationRequest) req).getRequestData();
                     int requestID = ((GenericValidationRequest) req).getRequestID();
                     
-                    // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
-                    requestData = UploadUtil.handleUpload(UploadConfig.create(global), data);
+                    // Upload handling (Note: close in finally clause)
+                    UploadConfig uploadConfig = UploadConfig.create(global);
+                    requestData = dataFactory.createReadableData(data, uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
                     req2 = new DocumentValidationRequest(requestID, requestData);
                 } else if (req instanceof ValidateRequest) {
                     ValidateRequest vr = (ValidateRequest) req;

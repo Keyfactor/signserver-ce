@@ -31,7 +31,11 @@ public class TemporarlyWritableData extends CloseableWritableData {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(TemporarlyWritableData.class);
     
+    private static final String FILE_PREFIX = "signserver-response_";
+    private static final String FILE_SUFFIX = ".tmp";
+    
     private final boolean defaultToDisk;
+    private final File repository;
     
     // Write
     private OutputStream outputStream;
@@ -44,8 +48,9 @@ public class TemporarlyWritableData extends CloseableWritableData {
     // State
     private boolean noMoreWrite;
 
-    public TemporarlyWritableData(boolean defaultToDisk) {
+    public TemporarlyWritableData(boolean defaultToDisk, File repository) {
         this.defaultToDisk = defaultToDisk;
+        this.repository = repository;
     }
     
     @Override
@@ -62,7 +67,7 @@ public class TemporarlyWritableData extends CloseableWritableData {
         ensureValid();
         if (outputStream == null) {
             if (responseFile == null) {
-                responseFile = File.createTempFile("response_", ".tmp", new File(System.getProperty("java.io.tmpdir"))); //new File("/home/user/tmp/signserver/")); // TODO: configurable path
+                responseFile = File.createTempFile(FILE_PREFIX, FILE_SUFFIX, repository);
             }
             outputStream = register(new FileOutputStream(responseFile));
         }
@@ -87,7 +92,7 @@ public class TemporarlyWritableData extends CloseableWritableData {
             throw new IllegalStateException("Can not write response data after starting reading it");
         }
         if (responseFile == null) {
-            responseFile = File.createTempFile("response_", ".tmp", new File(System.getProperty("java.io.tmpdir"))); //new File("/home/user/tmp/signserver/")); // TODO: configurable path
+            responseFile = File.createTempFile(FILE_PREFIX, FILE_SUFFIX, repository);
         }
         return responseFile;
     }
@@ -141,7 +146,7 @@ public class TemporarlyWritableData extends CloseableWritableData {
                 if (responseFile != null) {
                     return responseFile;
                 } else {
-                    responseFile = File.createTempFile("response_", ".tmp", new File("/home/user/tmp/signserver/")); // TODO: configurable path
+                    responseFile = File.createTempFile(FILE_PREFIX, FILE_SUFFIX, repository);
                     FileUtils.writeByteArrayToFile(responseFile, inMemoryOutputStream.toByteArray());
                 }
                 return responseFile;

@@ -31,6 +31,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.data.Response;
 import org.signserver.common.data.SignatureRequest;
+import org.signserver.server.data.impl.ByteArrayReadableData;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.data.impl.TemporarlyWritableData;
@@ -73,9 +74,10 @@ public class InternalTimeStampTokenFetcher {
         BigInteger nonce = BigInteger.valueOf(System.currentTimeMillis());
         TimeStampRequest request = tsqGenerator.generate(digestOID, imprint, nonce);
         byte[] requestBytes = request.getEncoded();
+        final UploadConfig uploadConfig = new UploadConfig();
         try (
-                CloseableReadableData requestData = UploadUtil.handleUpload(new UploadConfig(), requestBytes);
-                CloseableWritableData responseData = new TemporarlyWritableData(false);
+                CloseableReadableData requestData = new ByteArrayReadableData(requestBytes, uploadConfig.getRepository());
+                CloseableWritableData responseData = new TemporarlyWritableData(false, uploadConfig.getRepository());
             ) {
         
             final RequestContext context = new RequestContext();
@@ -103,9 +105,7 @@ public class InternalTimeStampTokenFetcher {
             }
             response.validate(request);
 
-            return tsToken;   
-        } catch (FileUploadException ex) {
-            throw new SignServerException("Request error", ex);
+            return tsToken;
         }
     }
 

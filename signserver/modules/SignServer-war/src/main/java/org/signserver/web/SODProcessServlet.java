@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.web;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,7 +25,6 @@ import java.util.Map;
 import java.util.Random;
 import javax.ejb.EJB;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,7 +50,9 @@ import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.LogMap;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.data.impl.CloseableWritableData;
-import org.signserver.server.data.impl.TemporarlyWritableData;
+import org.signserver.server.data.impl.DataFactory;
+import org.signserver.server.data.impl.DataUtils;
+import org.signserver.server.data.impl.UploadConfig;
 
 /**
  * SODProcessServlet is a Servlet that takes data group hashes from a htto post and puts them in a Map for passing
@@ -97,6 +99,9 @@ public class SODProcessServlet extends AbstractProcessServlet {
     @EJB
     private WorkerSessionLocal workerSession;
 
+    private DataFactory dataFactory;
+    private final File fileRepository = new UploadConfig().getRepository();
+    
     private ProcessSessionLocal getProcessSession() {
         return processSession;
     }
@@ -106,7 +111,8 @@ public class SODProcessServlet extends AbstractProcessServlet {
     }
 
     @Override
-    public void init(ServletConfig config) {
+    public void init() throws ServletException {
+        dataFactory = DataUtils.createDataFactory();
     }
 
     /**
@@ -255,7 +261,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
             int requestId = rand.nextInt();
 
             SODResponse response;
-            try (CloseableWritableData responseData = new TemporarlyWritableData(false)) {
+            try (CloseableWritableData responseData = dataFactory.createWritableData(false, fileRepository)) {
                 final RequestContext context = new RequestContext((X509Certificate) clientCertificate, remoteAddr);
                 final String xForwardedFor = req.getHeader(RequestContext.X_FORWARDED_FOR);
                 final LogMap logMap = LogMap.getInstance(context);

@@ -5,11 +5,11 @@
  */
 package org.signserver.server.data.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -21,56 +21,48 @@ import org.apache.log4j.Logger;
  * 
  * @author user
  */
-public class DiskFileItemReadableData extends CloseableReadableData {
+public class ByteArrayReadableData extends CloseableReadableData {
     
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(DiskFileItemReadableData.class);
+    private static final Logger LOG = Logger.getLogger(ByteArrayReadableData.class);
     
-    private final DiskFileItem fileItem;
+    private final byte[] data;
+    private final File repository;
     private File file;
     
-    public DiskFileItemReadableData(DiskFileItem fileItem) {
-        this.fileItem = fileItem;
+    public ByteArrayReadableData(byte[] data, File repository) {
+        this.data = data;
+        this.repository = repository;
     }
     
     @Override
     public long getLength() {
-        return fileItem.getSize();
+        return data.length;
     }
 
     @Override
     public byte[] getAsByteArray() {
-        return fileItem.get();
+        return data;
     }
     
     @Override
     public boolean isFile() {
-        return !fileItem.isInMemory();
+        return false;
     }
 
     @Override
     public File getAsFile() throws IOException {
         if (file == null) {
-            // Get the file location
-            file = fileItem.getStoreLocation();
-
-            // Did not have a file location
-            if (file == null) {
-                // Create a temp file
-                throw new UnsupportedOperationException("getAsFile for fileItem without store location not yet implemented, DSS-1180");
-            }
-
-            // Write out the data to the file    
-            if (fileItem.isInMemory()) {
-                FileUtils.writeByteArrayToFile(file, fileItem.get());
-            }
+            // Write out the data to the file
+            file = File.createTempFile("signserver-upload", ".tmp", repository);
+            FileUtils.writeByteArrayToFile(file, data);
         }
         return file;
     }
 
     @Override
     public InputStream getAsInputStream() throws IOException {
-        return register(fileItem.getInputStream());
+        return register(new ByteArrayInputStream(data));
     }
 
     @Override
@@ -83,10 +75,6 @@ public class DiskFileItemReadableData extends CloseableReadableData {
     }
 
     private void removeFile() throws IOException {
-        if (fileItem != null) {
-            fileItem.delete();
-        }
-        
         if (file != null) {
             final boolean existed = Files.deleteIfExists(file.toPath());
             if (LOG.isDebugEnabled()) {

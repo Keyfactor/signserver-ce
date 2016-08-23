@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
@@ -40,11 +39,9 @@ import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
-import org.signserver.server.data.impl.DiskFileItemReadableData;
 import org.signserver.common.data.ReadableData;
 import org.signserver.common.data.CertificateValidationRequest;
 import org.signserver.common.data.CertificateValidationResponse;
-import org.signserver.server.data.impl.TemporarlyWritableData;
 import org.signserver.common.data.SignatureRequest;
 import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.DocumentValidationRequest;
@@ -53,6 +50,8 @@ import org.signserver.common.data.LegacyResponse;
 import org.signserver.common.data.Response;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
+import org.signserver.server.data.impl.DataFactory;
+import org.signserver.server.data.impl.DataUtils;
 import org.signserver.server.data.impl.UploadConfig;
 import org.signserver.server.log.Loggable;
 import org.signserver.validationservice.common.Validation;
@@ -101,6 +100,8 @@ public class GenericProcessServlet extends AbstractProcessServlet {
     
     @EJB
     private GlobalConfigurationSessionLocal globalSession;
+
+    private DataFactory dataFactory;
 
     /**
      * Handles http post.
@@ -217,7 +218,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                         } else {
                             // We only care for one upload at a time right now
                             if (data == null) {
-                                data = new DiskFileItemReadableData((DiskFileItem) item);
+                                data = dataFactory.createReadableData(item, uploadConfig.getRepository());
                                 fileName = item.getName();
                             } else {
                                 LOG.error("Only one upload at a time supported!");
@@ -245,10 +246,8 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                         }
                         
                         // Now put the decoded data
-                        final BinaryFileUpload binUpload = new BinaryFileUpload(new ByteArrayInputStream(bytes), req.getContentType(), factory);
-                        binUpload.setSizeMax(uploadConfig.getMaxUploadSize());
                         try {
-                            data = new DiskFileItemReadableData((DiskFileItem) binUpload.parseTheRequest());
+                            data = dataFactory.createReadableData(bytes, uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
                         } catch (FileUploadBase.SizeLimitExceededException ex) {
                             LOG.error(HTTP_MAX_UPLOAD_SIZE + " exceeded: " + ex.getLocalizedMessage());
                             res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
@@ -346,12 +345,9 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                             return;
                         }
                     }
-                    
-                    final BinaryFileUpload upload = new BinaryFileUpload(new ByteArrayInputStream(bytes), req.getContentType(), factory);
-                    upload.setSizeMax(uploadConfig.getMaxUploadSize());
 
                     try {
-                        data = new DiskFileItemReadableData((DiskFileItem) upload.parseTheRequest());
+                        data = dataFactory.createReadableData(bytes, uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
                     } catch (FileUploadBase.SizeLimitExceededException ex) {
                         LOG.error(HTTP_MAX_UPLOAD_SIZE + " exceeded: " + ex.getLocalizedMessage());
                         res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
@@ -371,7 +367,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                     upload.setSizeMax(uploadConfig.getMaxUploadSize());
                     
                     try {
-                        data = new DiskFileItemReadableData((DiskFileItem) upload.parseTheRequest());
+                        data = dataFactory.createReadableData(upload.parseTheRequest(), uploadConfig.getRepository());
                     } catch (FileUploadBase.SizeLimitExceededException ex) {
                         LOG.error(HTTP_MAX_UPLOAD_SIZE + " exceeded: " + ex.getLocalizedMessage());
                         res.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
@@ -396,7 +392,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                 if (wi == null) {
                     res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing worker name or ID");
                 } else {
-                    processRequest(req, res, wi, data, fileName, pdfPassword, processType,
+                    processRequest(req, res, wi, data, uploadConfig, fileName, pdfPassword, processType,
                         metadataHolder);
                 }
             }
@@ -441,7 +437,13 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         LOG.debug("<doGet()");
     } // doGet
 
-    private void processRequest(final HttpServletRequest req, final HttpServletResponse res, final WorkerIdentifier wi, final CloseableReadableData data,
+        
+    @Override
+    public void init() throws ServletException {
+        dataFactory = DataUtils.createDataFactory();
+    }
+
+    private void processRequest(final HttpServletRequest req, final HttpServletResponse res, final WorkerIdentifier wi, final CloseableReadableData data, final UploadConfig uploadConfig,
             final String fileName, final String pdfPassword, final ProcessType processType,
             final MetaDataHolder metadataHolder) throws java.io.IOException, ServletException {
         final String remoteAddr = req.getRemoteAddr();
@@ -505,7 +507,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
 
         final int requestId = random.nextInt();
 
-        try (CloseableWritableData responseData = new TemporarlyWritableData(data.isFile())) {
+        try (CloseableWritableData responseData = dataFactory.createWritableData(data, uploadConfig.getRepository())) {
             String responseText;
             
             switch (processType) {

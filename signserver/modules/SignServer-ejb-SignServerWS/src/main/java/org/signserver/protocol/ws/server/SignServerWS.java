@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.*;
-import java.util.logging.Level;
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -39,7 +39,6 @@ import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.protocol.ws.*;
 import org.signserver.server.CredentialUtils;
-import org.signserver.server.data.impl.TemporarlyWritableData;
 import org.signserver.common.data.SignatureRequest;
 import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.DocumentValidationRequest;
@@ -50,8 +49,9 @@ import org.signserver.common.data.Response;
 import org.signserver.common.data.SODResponse;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
+import org.signserver.server.data.impl.DataFactory;
+import org.signserver.server.data.impl.DataUtils;
 import org.signserver.server.data.impl.UploadConfig;
-import org.signserver.server.data.impl.UploadUtil;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
@@ -94,6 +94,13 @@ public class SignServerWS implements ISignServerWS {
     private String checkDBString = "Select count(*) from signerconfigdata";
 
     private int minimumFreeMemory = 1;
+    
+    private DataFactory dataFactory;
+    
+    @PostConstruct
+    public void init() {
+        dataFactory = DataUtils.createDataFactory();
+    }
     
     @Override
     public Collection<WorkerStatusWS> getStatus(String workerIdOrName)
@@ -277,16 +284,18 @@ public class SignServerWS implements ISignServerWS {
                     byte[] data = ((GenericSignRequest) req).getRequestData();
                     requestID = ((GenericSignRequest) req).getRequestID();
                     
-                    // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
-                    requestData = UploadUtil.handleUpload(UploadConfig.create(globalSession), data);
-                    responseData = new TemporarlyWritableData(requestData.isFile());
+                    // Upload handling (Note: close in finally clause)
+                    UploadConfig uploadConfig = UploadConfig.create(globalSession);
+                    requestData = dataFactory.createReadableData(data, uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
+                    responseData = dataFactory.createWritableData(requestData, uploadConfig.getRepository());
                     req2 = new SignatureRequest(requestID, requestData, responseData);
                 } else if (req instanceof GenericValidationRequest) {
                     byte[] data = ((GenericValidationRequest) req).getRequestData();
                     requestID = ((GenericValidationRequest) req).getRequestID();
                     
-                    // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
-                    requestData = UploadUtil.handleUpload(UploadConfig.create(globalSession), data);
+                    // Upload handling (Note: close in finally clause)
+                    UploadConfig uploadConfig = UploadConfig.create(globalSession);
+                    requestData = dataFactory.createReadableData(data, uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
                     req2 = new DocumentValidationRequest(requestID, requestData);
                 } else if (req instanceof ValidateRequest) {
                     final ValidateRequest vr = (ValidateRequest) req;

@@ -53,6 +53,7 @@ import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import org.signserver.server.data.impl.ByteArrayReadableData;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.data.impl.FileReadableData;
@@ -639,13 +640,13 @@ public class ModulesTestCase extends TestCase {
     }
     
     public static CloseableReadableData createRequestData(byte[] data) throws FileUploadException {
-        return UploadUtil.handleUpload(new UploadConfig(), data);
+        return new ByteArrayReadableData(data, new UploadConfig().getRepository());
     }
     
     public static CloseableReadableData createRequestData(Properties properties) throws FileUploadException, IOException {
         try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
             properties.store(bout, null);
-            return UploadUtil.handleUpload(new UploadConfig(), bout.toByteArray());
+            return new ByteArrayReadableData(bout.toByteArray(), new UploadConfig().getRepository());
         }
     }
     
@@ -655,7 +656,7 @@ public class ModulesTestCase extends TestCase {
    
     
     public static CloseableWritableData createResponseData(final boolean defaultToDisk) {
-        return new TemporarlyWritableData(defaultToDisk);
+        return new TemporarlyWritableData(defaultToDisk, new UploadConfig().getRepository());
     }
     
     public static AdminInfo createAdminInfo() {

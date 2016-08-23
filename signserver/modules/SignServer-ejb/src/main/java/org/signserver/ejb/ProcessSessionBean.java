@@ -73,9 +73,10 @@ import org.signserver.common.data.SignatureRequest;
 import org.signserver.common.data.SignatureResponse;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
+import org.signserver.server.data.impl.DataFactory;
+import org.signserver.server.data.impl.DataUtils;
 import org.signserver.server.data.impl.TemporarlyWritableData;
 import org.signserver.server.data.impl.UploadConfig;
-import org.signserver.server.data.impl.UploadUtil;
 import org.signserver.statusrepo.StatusRepositorySessionLocal;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
@@ -110,9 +111,12 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
 
     private WorkerProcessImpl processImpl;
     private final AllServicesImpl servicesImpl = new AllServicesImpl();
+    private DataFactory dataFactory;
 
     @PostConstruct
     public void create() {
+        dataFactory = DataUtils.createDataFactory();
+
         if (em == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No EntityManager injected. Running without database.");
@@ -177,15 +181,17 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
                 int requestID = ((GenericSignRequest) request).getRequestID();
 
                 // Upload handling
-                requestData = UploadUtil.handleUpload(UploadConfig.create(globalConfigurationSession), data);
-                responseData = new TemporarlyWritableData(requestData.isFile());
+                UploadConfig uploadConfig = UploadConfig.create(globalConfigurationSession);
+                requestData = dataFactory.createReadableData(data, uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
+                responseData = dataFactory.createWritableData(requestData, uploadConfig.getRepository());
                 req2 = new SignatureRequest(requestID, requestData, responseData);
             } else if (request instanceof GenericValidationRequest) {
                 byte[] data = ((GenericValidationRequest) request).getRequestData();
                 int requestID = ((GenericValidationRequest) request).getRequestID();
 
                 // Upload handling
-                requestData = UploadUtil.handleUpload(UploadConfig.create(globalConfigurationSession), data);
+                UploadConfig uploadConfig = UploadConfig.create(globalConfigurationSession);
+                requestData = dataFactory.createReadableData(data, uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
                 req2 = new DocumentValidationRequest(requestID, requestData);
             } else if (request instanceof ValidateRequest) {
                 final ValidateRequest vr = (ValidateRequest) request;
@@ -194,7 +200,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
                 req2 = new CertificateValidationRequest(vr.getCertificate(), vr.getCertPurposesString());
             } else if (request instanceof SODSignRequest) {
                 SODSignRequest sod = (SODSignRequest) request;
-                responseData = new TemporarlyWritableData(false);
+                responseData = new TemporarlyWritableData(false, new UploadConfig().getRepository());
                 req2 = new SODRequest(sod.getRequestID(), sod.getDataGroupHashes(), sod.getLdsVersion(), sod.getUnicodeVersion(), responseData);
             } else if (request instanceof GenericPropertiesRequest) {
                 GenericPropertiesRequest prop = (GenericPropertiesRequest) request;
@@ -203,8 +209,9 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
                     prop.getProperties().store(bout, null);
                 
                     // Upload handling
-                    requestData = UploadUtil.handleUpload(UploadConfig.create(globalConfigurationSession), bout.toByteArray());
-                    responseData = new TemporarlyWritableData(false);
+                    UploadConfig uploadConfig = UploadConfig.create(globalConfigurationSession);
+                    requestData = dataFactory.createReadableData(bout.toByteArray(), uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
+                    responseData = dataFactory.createWritableData(requestData, uploadConfig.getRepository());
                     req2 = new SignatureRequest(prop.hashCode(), requestData, responseData);
 
                 } catch (IOException ex) {
@@ -250,7 +257,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
             }
             
             return result;
-        
+
         } catch (FileUploadBase.SizeLimitExceededException ex) {
             LOG.error("Maximum content length exceeded: " + ex.getLocalizedMessage());
             throw new IllegalRequestException("Maximum content length exceeded");

@@ -44,10 +44,12 @@ public class UploadConfig {
     }
     
     public static UploadConfig create(GlobalConfigurationSessionLocal globalSession) {
-        final File repository = new File(System.getProperty("java.io.tmpdir")); // TODO new File("/home/user/tmp/signserver/");  // XXX: Fix this!
+        final File repository = new File(System.getProperty("java.io.tmpdir"));
+        
+        final GlobalConfiguration globalConfiguration = globalSession.getGlobalConfiguration();
         
         // Max upload size
-        String confValue = globalSession.getGlobalConfiguration().getProperty(GlobalConfiguration.SCOPE_GLOBAL, HTTP_MAX_UPLOAD_SIZE);
+        String confValue = globalConfiguration.getProperty(GlobalConfiguration.SCOPE_GLOBAL, HTTP_MAX_UPLOAD_SIZE);
         long maxUploadSize = DEFAULT_MAX_UPLOAD_SIZE;
         if (confValue != null) {
             try {
@@ -65,7 +67,7 @@ public class UploadConfig {
         }
 
         // Max upload size
-        confValue = globalSession.getGlobalConfiguration().getProperty(GlobalConfiguration.SCOPE_GLOBAL, FILE_SIZE_THRESHOLD);
+        confValue = globalConfiguration.getProperty(GlobalConfiguration.SCOPE_GLOBAL, FILE_SIZE_THRESHOLD);
         int sizeThreshold = DEFAULT_FILE_SIZE_THRESHOLD;
         if (confValue != null) {
             try {

@@ -12,34 +12,31 @@
  *************************************************************************/
 package org.signserver.module.cmssigner;
 
-import org.signserver.server.IServices;
-import org.signserver.server.cryptotokens.ICryptoTokenV4;
-import org.signserver.test.utils.mock.MockedCryptoToken;
+import java.security.cert.Certificate;
 
 /**
- * Mocked version of the PlainSigner using a MockedCryptoToken.
+ * Holder for the response data and certificate to simplify migration of the
+ * unit tests that was designed for the old API.
+ *
  * @author Markus Kilås
  * @version $Id$
  */
-public class MockedPlainSigner extends PlainSigner {
-    private final MockedCryptoToken mockedToken;
+class SimplifiedResponse {
+    
+    private final byte[] processedData;
+    private final Certificate signerCertificate;
 
-    public MockedPlainSigner(final MockedCryptoToken mockedToken) {
-        this.mockedToken = mockedToken;
+    public SimplifiedResponse(byte[] processedData, Certificate signerCertificate) {
+        this.processedData = processedData;
+        this.signerCertificate = signerCertificate;
+    }
+
+    public byte[] getProcessedData() {
+        return processedData;
+    }
+
+    public Certificate getSignerCertificate() {
+        return signerCertificate;
     }
     
-    /*@Override
-    public Certificate getSigningCertificate() throws CryptoTokenOfflineException {
-        return mockedToken.getCertificate(ICryptoTokenV4.PURPOSE_SIGN);
-    }
-
-    @Override
-    public List<Certificate> getSigningCertificateChain() throws CryptoTokenOfflineException {
-        return mockedToken.getCertificateChain(ICryptoTokenV4.PURPOSE_SIGN);
-    }*/
-
-    @Override
-    public ICryptoTokenV4 getCryptoToken(IServices services) {
-        return mockedToken;
-    }
 }

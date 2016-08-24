@@ -40,17 +40,19 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.server.SignServerContext;
-import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.data.impl.CloseableReadableData;
+import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.log.LogMap;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.test.utils.mock.MockedCryptoToken;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * Unit tests for the PlainSigner class.
@@ -172,7 +174,7 @@ public class PlainSignerTest {
     public void testNormalSigning_RSA() throws Exception {
         LOG.info("testNormalSigning_RSA");
         byte[] plainText = "some-data".getBytes("ASCII");
-        GenericSignResponse resp = sign(plainText, tokenRSA, createConfig(null));
+        SimplifiedResponse resp = sign(plainText, tokenRSA, createConfig(null));
         assertSignedAndVerifiable(plainText, "SHA1withRSA", tokenRSA, resp);
     }
 
@@ -184,7 +186,7 @@ public class PlainSignerTest {
     public void testNormalSigning_DSA() throws Exception {
         LOG.info("testNormalSigning_DSA");
         byte[] plainText = "some-data".getBytes("ASCII");
-        GenericSignResponse resp = sign(plainText, tokenDSA, createConfig(null));
+        SimplifiedResponse resp = sign(plainText, tokenDSA, createConfig(null));
         assertSignedAndVerifiable(plainText, "SHA1withDSA", tokenDSA, resp);
     }
 
@@ -196,7 +198,7 @@ public class PlainSignerTest {
     public void testNormalSigning_ECDSA() throws Exception {
         LOG.info("testNormalSigning_ECDSA");
         byte[] plainText = "some-data".getBytes("ASCII");
-        GenericSignResponse resp = sign(plainText, tokenECDSA, createConfig(null));
+        SimplifiedResponse resp = sign(plainText, tokenECDSA, createConfig(null));
         assertSignedAndVerifiable(plainText, "SHA1withECDSA", tokenECDSA, resp);
     }
     
@@ -208,7 +210,7 @@ public class PlainSignerTest {
     public void testNormalSigning_SHA1withRSA() throws Exception {
         LOG.info("testNormalSigning_RSA");
         byte[] plainText = "some-data".getBytes("ASCII");
-        GenericSignResponse resp = sign(plainText, tokenRSA, createConfig("SHA1withRSA"));
+        SimplifiedResponse resp = sign(plainText, tokenRSA, createConfig("SHA1withRSA"));
         assertSignedAndVerifiable(plainText, "SHA1withRSA", tokenRSA, resp);
     }
 
@@ -220,7 +222,7 @@ public class PlainSignerTest {
     public void testNormalSigning_SHA1withDSA() throws Exception {
         LOG.info("testNormalSigning_DSA");
         byte[] plainText = "some-data".getBytes("ASCII");
-        GenericSignResponse resp = sign(plainText, tokenDSA, createConfig("SHA1withDSA"));
+        SimplifiedResponse resp = sign(plainText, tokenDSA, createConfig("SHA1withDSA"));
         assertSignedAndVerifiable(plainText, "SHA1withDSA", tokenDSA, resp);
     }
     
@@ -232,7 +234,7 @@ public class PlainSignerTest {
     public void testNormalSigning_SHA1withECDSA() throws Exception {
         LOG.info("testNormalSigning_ECDSA");
         byte[] plainText = "some-data".getBytes("ASCII");
-        GenericSignResponse resp = sign(plainText, tokenECDSA, createConfig("SHA1withECDSA"));
+        SimplifiedResponse resp = sign(plainText, tokenECDSA, createConfig("SHA1withECDSA"));
         assertSignedAndVerifiable(plainText, "SHA1withECDSA", tokenECDSA, resp);
     }
     
@@ -244,7 +246,7 @@ public class PlainSignerTest {
     public void testNormalSigning_SHA256withRSA() throws Exception {
         LOG.info("testNormalSigning_RSA");
         byte[] plainText = "some-data".getBytes("ASCII");
-        GenericSignResponse resp = sign(plainText, tokenRSA, createConfig("SHA256withRSA"));
+        SimplifiedResponse resp = sign(plainText, tokenRSA, createConfig("SHA256withRSA"));
         assertSignedAndVerifiable(plainText, "SHA256withRSA", tokenRSA, resp);
     }
 
@@ -256,7 +258,7 @@ public class PlainSignerTest {
     public void testNormalSigning_SHA256withRSAandMGF1() throws Exception {
         LOG.info("testNormalSigning_RSAandMGF1");
         byte[] plainText = "some-data".getBytes("ASCII");
-        GenericSignResponse resp = sign(plainText, tokenRSA, createConfig("SHA256withRSAandMGF1"));
+        SimplifiedResponse resp = sign(plainText, tokenRSA, createConfig("SHA256withRSAandMGF1"));
         assertSignedAndVerifiable(plainText, "SHA256withRSAandMGF1", tokenRSA, resp);
     }
 
@@ -268,7 +270,7 @@ public class PlainSignerTest {
     public void testNormalSigning_SHA256withDSA() throws Exception {
         LOG.info("testNormalSigning_DSA");
         byte[] plainText = "some-data".getBytes("ASCII");
-        GenericSignResponse resp = sign(plainText, tokenDSA, createConfig("SHA256withDSA"));
+        SimplifiedResponse resp = sign(plainText, tokenDSA, createConfig("SHA256withDSA"));
         assertSignedAndVerifiable(plainText, "SHA256withDSA", tokenDSA, resp);
     }
     
@@ -280,7 +282,7 @@ public class PlainSignerTest {
     public void testNormalSigning_SHA256withECDSA() throws Exception {
         LOG.info("testNormalSigning_ECDSA");
         byte[] plainText = "some-data".getBytes("ASCII");
-        GenericSignResponse resp = sign(plainText, tokenECDSA, createConfig("SHA256withECDSA"));
+        SimplifiedResponse resp = sign(plainText, tokenECDSA, createConfig("SHA256withECDSA"));
         assertSignedAndVerifiable(plainText, "SHA256withECDSA", tokenECDSA, resp);
     }
     
@@ -299,11 +301,11 @@ public class PlainSignerTest {
         return config;
     }
 
-    private GenericSignResponse sign(final byte[] data, MockedCryptoToken token, WorkerConfig config) throws Exception {
+    private SimplifiedResponse sign(final byte[] data, MockedCryptoToken token, WorkerConfig config) throws Exception {
         return sign(data, token, config, null);
     }
     
-    private GenericSignResponse sign(final byte[] data, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext) throws Exception {
+    private SimplifiedResponse sign(final byte[] data, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext) throws Exception {
         MockedPlainSigner instance = new MockedPlainSigner(token);
         instance.init(1, config, new SignServerContext(), null);
 
@@ -312,25 +314,34 @@ public class PlainSignerTest {
         }
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
 
-        GenericSignRequest request = new GenericSignRequest(100, data);
-        GenericSignResponse res = (GenericSignResponse) instance.processData(request, requestContext);
-        return res;
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestData(data);
+                CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
+            ) {
+            SignatureRequest request = new SignatureRequest(100, requestData, responseData);
+            SignatureResponse response = (SignatureResponse) instance.processData(request, requestContext);
+
+            byte[] signedBytes = responseData.toReadableData().getAsByteArray();
+            Certificate signerCertificate = response.getSignerCertificate();
+            return new SimplifiedResponse(signedBytes, signerCertificate);
+        }
     }
     
-    private void assertSignedAndVerifiable(byte[] plainText, String signatureAlgorithm, MockedCryptoToken token, GenericSignResponse resp) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException {
+
+    private void assertSignedAndVerifiable(byte[] plainText, String signatureAlgorithm, MockedCryptoToken token, SimplifiedResponse resp) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException {
         Signature signature = Signature.getInstance(signatureAlgorithm, "BC");
         signature.initVerify(resp.getSignerCertificate());
         signature.update(plainText);
         assertTrue("consistent signature", signature.verify(resp.getProcessedData()));
     }
     
-    private void assertRequestDigestMatches(byte[] plainText, String digestAlgorithm, GenericSignResponse resp, RequestContext context) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException, UnsupportedEncodingException {
-        assertEquals("digestAlg", digestAlgorithm, LogMap.getInstance(context).get("REQUEST_DIGEST_ALGORITHM"));
+    private void assertRequestDigestMatches(byte[] plainText, String digestAlgorithm, SimplifiedResponse resp, RequestContext context) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException, UnsupportedEncodingException {
+        assertEquals("digestAlg", digestAlgorithm, String.valueOf(LogMap.getInstance(context).get("REQUEST_DIGEST_ALGORITHM")));
         
         final MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
         final String expected = Hex.toHexString(md.digest(plainText));
-        String actual = LogMap.getInstance(context).get("REQUEST_DIGEST");
-        assertEquals("digest", expected, actual);
+        Object actual = LogMap.getInstance(context).get("REQUEST_DIGEST");
+        assertEquals("digest", expected, String.valueOf(actual));
     }
 
     /**
@@ -343,7 +354,7 @@ public class PlainSignerTest {
         LOG.info("testLogRequestDigestDefault");
         final RequestContext context = new RequestContext();
         final byte[] plainText = "some-data".getBytes("ASCII");
-        final GenericSignResponse resp = sign(plainText, tokenRSA, createConfig(null), context);
+        final SimplifiedResponse resp = sign(plainText, tokenRSA, createConfig(null), context);
 
         assertRequestDigestMatches(plainText, "SHA256", resp, context);
     }
@@ -358,7 +369,7 @@ public class PlainSignerTest {
         LOG.info("testLogRequestDigestSHA1");
         final RequestContext context = new RequestContext();
         final byte[] plainText = "some-data".getBytes("ASCII");
-        final GenericSignResponse resp = sign(plainText, tokenRSA, createConfig(null, "SHA1"), context);
+        final SimplifiedResponse resp = sign(plainText, tokenRSA, createConfig(null, "SHA1"), context);
 
         assertRequestDigestMatches(plainText, "SHA1", resp, context);
     }
@@ -372,10 +383,10 @@ public class PlainSignerTest {
         LOG.info("testLogResponseEncoded");
         final RequestContext context = new RequestContext();
         final byte[] plainText = "some-data".getBytes("ASCII");
-        final GenericSignResponse resp = sign(plainText, tokenRSA, createConfig(null), context);
+        final SimplifiedResponse resp = sign(plainText, tokenRSA, createConfig(null), context);
 
         final String expected = new String(Base64.encode(resp.getProcessedData()), "ASCII");
-        assertEquals("responseEncoded", expected, LogMap.getInstance(context).get("RESPONSE_ENCODED"));
+        assertEquals("responseEncoded", expected, String.valueOf(LogMap.getInstance(context).get("RESPONSE_ENCODED")));
     }
 
 }

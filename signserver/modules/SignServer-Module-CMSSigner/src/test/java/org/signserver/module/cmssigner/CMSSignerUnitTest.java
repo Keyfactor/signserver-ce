@@ -26,17 +26,21 @@ import org.bouncycastle.util.encoders.Hex;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.signserver.common.GenericSignRequest;
-import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.RequestMetadata;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.server.SignServerContext;
+import org.signserver.server.data.impl.CloseableReadableData;
+import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.test.utils.mock.MockedCryptoToken;
+import org.signserver.test.utils.mock.MockedServicesImpl;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * Unit tests for the CMSSigner class.
@@ -81,7 +85,7 @@ public class CMSSignerUnitTest {
         CMSSigner instance = new MockedCMSSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
 
-        String errors = instance.getFatalErrors().toString();
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("DETACHEDSIGNATURE"));
     }
 
@@ -98,7 +102,7 @@ public class CMSSignerUnitTest {
         CMSSigner instance = new MockedCMSSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
 
-        String errors = instance.getFatalErrors().toString();
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("ALLOW_DETACHEDSIGNATURE_OVERRIDE"));
     }
 
@@ -115,10 +119,7 @@ public class CMSSignerUnitTest {
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        RequestContext requestContext = new RequestContext();
-        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
-        GenericSignRequest request = new GenericSignRequest(100, data);
-        instance.processData(request, requestContext);
+        sign(data, tokenRSA, config);
         fail("Should have thrown exception");
     }
 
@@ -136,10 +137,7 @@ public class CMSSignerUnitTest {
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        RequestContext requestContext = new RequestContext();
-        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
-        GenericSignRequest request = new GenericSignRequest(100, data);
-        GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);
+        SimplifiedResponse response = sign(data, tokenRSA, config);
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -162,12 +160,10 @@ public class CMSSignerUnitTest {
 
         final byte[] data = "my-data".getBytes("ASCII");
         RequestContext requestContext = new RequestContext();
-        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
-        GenericSignRequest request = new GenericSignRequest(100, data);
 
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "true");
-        instance.processData(request, requestContext);
+        sign(data, tokenRSA, config, requestContext);
         fail("Should have thrown exception as detached signature option can not be overridden");
     }
     
@@ -187,12 +183,10 @@ public class CMSSignerUnitTest {
 
         final byte[] data = "my-data".getBytes("ASCII");
         RequestContext requestContext = new RequestContext();
-        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
-        GenericSignRequest request = new GenericSignRequest(100, data);
 
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "false");
-        instance.processData(request, requestContext);
+        sign(data, tokenRSA, config, requestContext);
         fail("Should have thrown exception as detached signature option can not be overridden");
     }
 
@@ -212,11 +206,9 @@ public class CMSSignerUnitTest {
 
         final byte[] data = "my-data".getBytes("ASCII");
         RequestContext requestContext = new RequestContext();
-        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
-        GenericSignRequest request = new GenericSignRequest(100, data);
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "false");
-        GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);
+        SimplifiedResponse response = sign(data, tokenRSA, config, requestContext);
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -241,11 +233,9 @@ public class CMSSignerUnitTest {
 
         final byte[] data = "my-data".getBytes("ASCII");
         RequestContext requestContext = new RequestContext();
-        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
-        GenericSignRequest request = new GenericSignRequest(100, data);
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "TRUE");
-        GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);
+        SimplifiedResponse response = sign(data, tokenRSA, config, requestContext);
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -263,17 +253,15 @@ public class CMSSignerUnitTest {
         WorkerConfig config = new WorkerConfig();
         config.setProperty("DETACHEDSIGNATURE", "FALSE");
         config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "TRUE");
-        CMSSigner instance = new MockedCMSSigner(tokenRSA);
-        instance.init(1, config, new SignServerContext(), null);
+
+        RequestContext requestContext = new RequestContext();
 
         final byte[] data = "my-data".getBytes("ASCII");
-        RequestContext requestContext = new RequestContext();
-        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
-        GenericSignRequest request = new GenericSignRequest(100, data);
+        
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "TRUE");
-        GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);
-
+        
+        SimplifiedResponse response = sign(data, tokenRSA, config, requestContext);
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
         CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
@@ -295,11 +283,10 @@ public class CMSSignerUnitTest {
 
         final byte[] data = "my-data".getBytes("ASCII");
         RequestContext requestContext = new RequestContext();
-        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
-        GenericSignRequest request = new GenericSignRequest(100, data);
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "false");
-        GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);
+        
+        SimplifiedResponse response = sign(data, tokenRSA, config, requestContext);
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
@@ -323,15 +310,39 @@ public class CMSSignerUnitTest {
 
         final byte[] data = "my-data".getBytes("ASCII");
         RequestContext requestContext = new RequestContext();
-        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
-        GenericSignRequest request = new GenericSignRequest(100, data);
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "");
-        GenericSignResponse response = (GenericSignResponse) instance.processData(request, requestContext);
+        SimplifiedResponse response = sign(data, tokenRSA, config, requestContext);
 
         byte[] cms = response.getProcessedData();
         CMSSignedData signedData = new CMSSignedData(cms);
         CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
         assertNull("detached", signedContent);
+    }
+    
+    private SimplifiedResponse sign(final byte[] data, MockedCryptoToken token, WorkerConfig config) throws Exception {
+        return sign(data, token, config, null);
+    }
+    
+    private SimplifiedResponse sign(final byte[] data, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext) throws Exception {
+        MockedCMSSigner instance = new MockedCMSSigner(token);
+        instance.init(1, config, new SignServerContext(), null);
+
+        if (requestContext == null) {
+            requestContext = new RequestContext();
+        }
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
+
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestData(data);
+                CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
+            ) {
+            SignatureRequest request = new SignatureRequest(100, requestData, responseData);
+            SignatureResponse response = (SignatureResponse) instance.processData(request, requestContext);
+
+            byte[] signedBytes = responseData.toReadableData().getAsByteArray();
+            Certificate signerCertificate = response.getSignerCertificate();
+            return new SimplifiedResponse(signedBytes, signerCertificate);
+        }
     }
 }

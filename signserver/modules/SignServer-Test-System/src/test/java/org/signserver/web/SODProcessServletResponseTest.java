@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.web;
 
+import org.signserver.testutils.WebTestCase;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;

@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.web;
 
+import org.signserver.testutils.WebTestCase;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;

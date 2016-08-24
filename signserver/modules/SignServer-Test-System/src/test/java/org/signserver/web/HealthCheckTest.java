@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.web;
 
+import org.signserver.testutils.WebTestCase;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Properties;

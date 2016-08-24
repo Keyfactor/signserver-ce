@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.web;
+package org.signserver.testutils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

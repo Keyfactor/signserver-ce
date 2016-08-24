@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.statusproperties;
 
+import org.signserver.testutils.WebTestCase;
 import java.io.ByteArrayInputStream;
 import java.util.Enumeration;
 import java.util.HashMap;

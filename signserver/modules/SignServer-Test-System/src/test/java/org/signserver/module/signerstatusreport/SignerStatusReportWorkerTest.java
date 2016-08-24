@@ -22,7 +22,7 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerStatus;
-import org.signserver.web.WebTestCase;
+import org.signserver.testutils.WebTestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.WorkerConfig;

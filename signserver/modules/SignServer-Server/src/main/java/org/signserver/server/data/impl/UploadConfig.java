@@ -20,10 +20,10 @@ public class UploadConfig {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(UploadConfig.class);
     
-    private static final String HTTP_MAX_UPLOAD_SIZE = "HTTP_MAX_UPLOAD_SIZE";
+    public static final String HTTP_MAX_UPLOAD_SIZE = "HTTP_MAX_UPLOAD_SIZE";
     private static final long DEFAULT_MAX_UPLOAD_SIZE = 100 * 1024 * 1024; // 100MB (100*1024*1024);
 
-    private static final String FILE_SIZE_THRESHOLD = "FILE_SIZE_THRESHOLD";
+    public static final String FILE_SIZE_THRESHOLD = "FILE_SIZE_THRESHOLD";
     private static final int DEFAULT_FILE_SIZE_THRESHOLD = 1 * 1024 * 1024; // 1 MB
     
     private long maxUploadSize;

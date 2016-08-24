@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.web;
 
+import org.signserver.testutils.WebTestCase;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.After;

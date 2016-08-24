@@ -18,7 +18,7 @@ import org.signserver.common.IArchivableProcessResponse;
 import org.signserver.server.archive.Archivable;
 
 /**
- * TODO.
+ * Data holder for a generic process response.
  *
  * @author Markus Kilås
  * @version $Id$

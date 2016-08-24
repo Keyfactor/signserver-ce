@@ -1,8 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.server.data.impl;
 
 import java.io.File;
@@ -12,17 +19,21 @@ import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 
 
 /**
+ * Configuration settings for file uploads (and storage of response data).
  *
- * @author user
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class UploadConfig {
     
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(UploadConfig.class);
-    
+  
+    /** Global configuration property for the maximum upload size. */
     public static final String HTTP_MAX_UPLOAD_SIZE = "HTTP_MAX_UPLOAD_SIZE";
     private static final long DEFAULT_MAX_UPLOAD_SIZE = 100 * 1024 * 1024; // 100MB (100*1024*1024);
 
+    /** Global configuration property for the file size threshold. */
     public static final String FILE_SIZE_THRESHOLD = "FILE_SIZE_THRESHOLD";
     private static final int DEFAULT_FILE_SIZE_THRESHOLD = 1 * 1024 * 1024; // 1 MB
     
@@ -37,12 +48,23 @@ public class UploadConfig {
         this(DEFAULT_MAX_UPLOAD_SIZE, DEFAULT_FILE_SIZE_THRESHOLD, new File(System.getProperty("java.io.tmpdir")));
     }
 
+    /**
+     * Creates an instance of UploadConfig with the provided configuration.
+     * @param maxUploadSize
+     * @param sizeThreshold
+     * @param repository 
+     */
     public UploadConfig(long maxUploadSize, int sizeThreshold, File repository) {
         this.maxUploadSize = maxUploadSize;
         this.sizeThreshold = sizeThreshold;
         this.repository = repository;
     }
     
+    /**
+     * Creates an UploadConfig instance by querying the global configuration.
+     * @param globalSession to query for configuration
+     * @return the instance
+     */
     public static UploadConfig create(GlobalConfigurationSessionLocal globalSession) {
         final File repository = new File(System.getProperty("java.io.tmpdir"));
         

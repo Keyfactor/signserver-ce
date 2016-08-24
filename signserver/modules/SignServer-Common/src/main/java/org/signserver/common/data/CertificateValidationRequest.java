@@ -15,8 +15,8 @@ package org.signserver.common.data;
 import java.security.cert.Certificate;
 
 /**
- * TODO.
- * 
+ * Data holder for a certificate validation request.
+ *
  * @author Markus Kilås
  * @version $Id$
  */

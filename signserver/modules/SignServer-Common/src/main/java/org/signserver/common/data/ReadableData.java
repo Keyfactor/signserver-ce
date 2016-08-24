@@ -17,21 +17,44 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * TODO.
+ * Abstraction for request data that can be read using various different methods.
  *
  * @author Markus Kilås
  * @version $Id$
  */
 public interface ReadableData {
 
+    /**
+     * Get the data as an in-memory byte array.
+     * If the data was backed by a file it will first be read into memory.
+     * @return the byte array
+     * @throws IOException in case of error reading the data
+     */
     byte[] getAsByteArray() throws IOException;
 
+    /**
+     * Get the data as an InputStream.
+     * @return the input stream
+     * @throws IOException  in case of error reading the data
+     */
     InputStream getAsInputStream() throws IOException;
 
+    /**
+     * Get the data as a file.
+     * If the data was not already in a file it will be written out first.
+     * @return the file
+     * @throws IOException  in case of error writing the data
+     */
     File getAsFile() throws IOException;
     
+    /**
+     * @return the size of the data in memory or on disk
+     */
     long getLength();
 
+    /**
+     * @return true if the backing data was in a file
+     */
     boolean isFile();
     
 }

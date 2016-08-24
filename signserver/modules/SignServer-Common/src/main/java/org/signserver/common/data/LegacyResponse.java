@@ -18,7 +18,7 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.server.archive.Archivable;
 
 /**
- * TODO.
+ * Data holder wrapping a legacy ProcessResponse.
  *
  * @author Markus Kilås
  * @version $Id$

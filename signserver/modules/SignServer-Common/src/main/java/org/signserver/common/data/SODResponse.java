@@ -17,7 +17,7 @@ import java.util.Collection;
 import org.signserver.server.archive.Archivable;
 
 /**
- * TODO.
+ * Data holder for a MRTD SOD signing response.
  *
  * @author Markus Kilås
  * @version $Id$

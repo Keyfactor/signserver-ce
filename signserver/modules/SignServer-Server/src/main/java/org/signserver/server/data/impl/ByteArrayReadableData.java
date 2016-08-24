@@ -1,8 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.server.data.impl;
 
 import java.io.ByteArrayInputStream;
@@ -14,12 +21,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 /**
- * TODO: Document.
+ * CloseableReadableData created from a byte array.
  * 
  * Create the instance in try-with-resource or manually call close().
  * The backing temporary file (if one) is removed when the instance is closed.
  * 
- * @author user
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class ByteArrayReadableData extends CloseableReadableData {
     

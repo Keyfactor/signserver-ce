@@ -13,7 +13,7 @@
 package org.signserver.common.data;
 
 /**
- * TODO.
+ * Represents a process response.
  *
  * @author Markus Kilås
  * @version $Id$

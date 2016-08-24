@@ -15,7 +15,7 @@ package org.signserver.common.data;
 import java.util.Map;
 
 /**
- * TODO.
+ * Data holder for a MRTD SOD signing request.
  *
  * @author Markus Kilås
  * @version $Id$

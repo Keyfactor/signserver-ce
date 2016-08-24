@@ -26,8 +26,10 @@ import org.apache.commons.fileupload.util.LimitedInputStream;
 import org.apache.commons.fileupload.util.Streams;
 
 /**
- * File upload one binary file (i.e. not mixed/multipart).
+ * File upload for one single binary file (i.e. not mixed/multipart).
  *
+ * Use parseTheRequest() to get a FileItem.
+ * 
  * @author Markus Kilås
  * @version $Id$
  */
@@ -36,6 +38,13 @@ public class BinaryFileUpload extends FileUpload {
     private final InputStream input;
     private final String contentType;
 
+    /**
+     * Create a FileUpload from the provided InputStream.
+     *
+     * @param input to read the data from
+     * @param contentType of the data
+     * @param fileItemFactory to use for creating the FileItem
+     */
     public BinaryFileUpload(InputStream input, String contentType, FileItemFactory fileItemFactory) {
         super(fileItemFactory);
         this.contentType = contentType;
@@ -47,6 +56,11 @@ public class BinaryFileUpload extends FileUpload {
         return Collections.singletonList(parseTheRequest());
     }
     
+    /**
+     * Read the InputStream as a FileItem.
+     * @return the parsed FileItem
+     * @throws FileUploadException in case of error or to large input etc. 
+     */
     public FileItem parseTheRequest() throws FileUploadException {
         FileItem fileItem = null;
         boolean successful = false;

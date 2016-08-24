@@ -15,7 +15,7 @@ package org.signserver.common.data;
 import org.signserver.validationservice.common.Validation;
 
 /**
- * TODO.
+ * Data holder for a certificate validation response.
  *
  * @version $Id$
  */

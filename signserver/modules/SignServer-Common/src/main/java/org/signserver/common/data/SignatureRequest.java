@@ -13,8 +13,8 @@
 package org.signserver.common.data;
 
 /**
- * TODO.
- * 
+ * Data holder for a generic process request.
+ *
  * @author Markus Kilås
  * @version $Id$
  */

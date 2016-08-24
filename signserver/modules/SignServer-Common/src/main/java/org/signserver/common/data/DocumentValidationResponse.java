@@ -13,7 +13,7 @@
 package org.signserver.common.data;
 
 /**
- * TODO.
+ * Data holder for a document validation response.
  *
  * @version $Id$
  */

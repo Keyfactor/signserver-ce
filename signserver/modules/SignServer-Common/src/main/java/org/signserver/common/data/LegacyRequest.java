@@ -15,7 +15,7 @@ package org.signserver.common.data;
 import org.signserver.common.ProcessRequest;
 
 /**
- * TODO.
+ * Data holder wrapping a legacy ProcessRequest.
  *
  * @author Markus Kilås
  * @version $Id$

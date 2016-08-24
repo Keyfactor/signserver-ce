@@ -1,8 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.server.data.impl;
 
 import java.io.BufferedInputStream;
@@ -16,7 +23,7 @@ import org.apache.log4j.Logger;
 /**
  * ReadableData backed by a file.
  * Useful for unit tests.
- * The file is not removed.
+ * Note: The file is not removed.
  *
  * @author Markus Kilås
  * @version $Id$
@@ -28,6 +35,11 @@ public class FileReadableData extends CloseableReadableData {
     
     private final File file;
 
+    /**
+     * Creates a ReadableData backed by the provided file.
+     * The file will not be removed.
+     * @param file that will back this instance
+     */
     public FileReadableData(File file) {
         this.file = file;
     }

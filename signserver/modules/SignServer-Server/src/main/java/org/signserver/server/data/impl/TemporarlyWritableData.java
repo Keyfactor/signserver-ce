@@ -1,8 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.server.data.impl;
 
 import java.io.BufferedInputStream;
@@ -21,11 +28,14 @@ import org.apache.log4j.Logger;
 import org.signserver.common.data.ReadableData;
 
 /**
- * TODO: document.
+ * WritableData implementation backed by a file, byte array or
+ * ByteArrayOutputStream and where the file is removed on close.
  * 
  * Create the instance in try-with-resource or manually call close().
  * The backing temporary file (if one) is removed when the instance is closed.
- * @author user
+ *
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class TemporarlyWritableData extends CloseableWritableData {
     
@@ -49,6 +59,12 @@ public class TemporarlyWritableData extends CloseableWritableData {
     // State
     private boolean noMoreWrite;
 
+    /**
+     * Create an new instance of this WritableData.
+     * @param defaultToDisk if the getAsOutputStream method should be backed
+     * by a file or otherwise be in memory
+     * @param repository to create the file in (if requested)
+     */
     public TemporarlyWritableData(boolean defaultToDisk, File repository) {
         this.defaultToDisk = defaultToDisk;
         this.repository = repository;
@@ -103,9 +119,6 @@ public class TemporarlyWritableData extends CloseableWritableData {
             throw new IllegalStateException("Output stream/file can only be obtained once");
         }
     }
-    
-    
-    //////////////
 
     @Override
     public ReadableData toReadableData() {

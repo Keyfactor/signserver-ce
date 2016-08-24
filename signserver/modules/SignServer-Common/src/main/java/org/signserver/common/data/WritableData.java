@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
+ * Abstraction for response data that can be written using various different
+ * methods.
  *
  * @author Markus Kilås
  * @version $Id$

@@ -1,8 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.server.data.impl;
 
 import java.io.ByteArrayInputStream;
@@ -15,17 +22,15 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.signserver.common.data.ReadableData;
 
 /**
+ * Unit tests for the DataFactory.
  *
- * @author user
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class DataFactoryUnitTest {
     
@@ -33,36 +38,25 @@ public class DataFactoryUnitTest {
     private static final Logger LOG = Logger.getLogger(DataFactoryUnitTest.class);
     
     private final File fileRepository = new UploadConfig().getRepository();
-    
-    public DataFactoryUnitTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-    
-    protected DataFactory createDataFactory() {
+
+    private DataFactory createDataFactory() {
         return new DefaultDataFactory();
     }
 
+    /**
+     * Tests that a DataFactory can be created.
+     * @throws Exception 
+     */
     @Test
     public void testCreateDataFactory() throws Exception {
         DataFactory dataFactory = DataUtils.createDataFactory();
         assertNotNull("created instance", dataFactory);
     }
-    
+
+    /**
+     * Tests the method DataFactory.createReadabeData(byte[],...).
+     * @throws Exception 
+     */
     @Test
     public void testDataFactoryCreateReadableData_byteArray() throws Exception {
         DataFactory dataFactory = createDataFactory();
@@ -92,13 +86,23 @@ public class DataFactoryUnitTest {
         assertFalse("file removed", file.exists());
     }
 
+    /**
+     * Tests that the method DataFactory.createReadabeData(byte[],...) throws
+     * an Exception on too large data (+3000).
+     * @throws Exception 
+     */
     @Test(expected = FileUploadBase.SizeLimitExceededException.class)
     public void testDataFactoryCreateReadableData_byteArray_tooLarge3000() throws Exception {
         DataFactory dataFactory = createDataFactory();
         byte[] bytes = new byte[13000];
         try (CloseableReadableData readableData = dataFactory.createReadableData(bytes, 10000, fileRepository)) {}
     }
-    
+
+    /**
+     * Tests that the method DataFactory.createReadabeData(byte[],...) throws
+     * an Exception on too large data (+1).
+     * @throws Exception 
+     */
     @Test(expected = FileUploadBase.SizeLimitExceededException.class)
     public void testDataFactoryCreateReadableData_byteArray_tooLarge1() throws Exception {
         DataFactory dataFactory = createDataFactory();
@@ -106,7 +110,10 @@ public class DataFactoryUnitTest {
         try (CloseableReadableData readableData = dataFactory.createReadableData(bytes, 10000, fileRepository)) {}
     }
     
-    
+    /**
+     * Tests the method DataFactory.createReadabeData(boolean,...).
+     * @throws Exception 
+     */    
     @Test
     public void testDataFactoryCreateWritableData_boolean() throws Exception {
         DataFactory dataFactory = createDataFactory();
@@ -255,7 +262,11 @@ public class DataFactoryUnitTest {
         // File removed (auto-closeable)
         assertFalse("file removed", file.exists());
     }
-    
+
+    /**
+     * Tests the method DataFactory.createReadabeData(FileItem,...).
+     * @throws Exception 
+     */
     @Test
     public void testDataFactoryCreateReadableData_fileItem() throws Exception {
         DataFactory dataFactory = createDataFactory();
@@ -291,7 +302,12 @@ public class DataFactoryUnitTest {
         // File removed (auto-closeable)
         assertFalse("file removed", file.exists());
     }
-    
+
+    /**
+     * Tests that the method DataFactory.createReadabeData(FileItem,...) throws
+     * an Exception on too large data (+1).
+     * @throws Exception 
+     */    
     @Test(expected = FileUploadBase.SizeLimitExceededException.class)
     public void testDataFactoryCreateReadableData_fileItem_tooLarge1() throws Exception {
         DataFactory dataFactory = createDataFactory();

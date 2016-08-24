@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.input.NullInputStream;
 import org.apache.log4j.Logger;
 import org.signserver.common.data.ReadableData;
 
@@ -116,8 +117,10 @@ public class TemporarlyWritableData extends CloseableWritableData {
                     return data;
                 } else if (inMemoryOutputStream != null) {
                     data = inMemoryOutputStream.toByteArray();
-                } else {
+                } else if (responseFile != null) {
                     data = FileUtils.readFileToByteArray(responseFile);
+                } else {
+                    data = new byte[0];
                 }
                 return data;
             }
@@ -133,10 +136,7 @@ public class TemporarlyWritableData extends CloseableWritableData {
                     data = inMemoryOutputStream.toByteArray();
                     result = new ByteArrayInputStream(data);
                 } else {
-                    if (data == null) {
-                        data = FileUtils.readFileToByteArray(responseFile);
-                    }
-                    result = new ByteArrayInputStream(data);
+                    return new NullInputStream(0);
                 }
                 return result;
             }
@@ -147,7 +147,7 @@ public class TemporarlyWritableData extends CloseableWritableData {
                     return responseFile;
                 } else {
                     responseFile = File.createTempFile(FILE_PREFIX, FILE_SUFFIX, repository);
-                    FileUtils.writeByteArrayToFile(responseFile, inMemoryOutputStream.toByteArray());
+                    FileUtils.writeByteArrayToFile(responseFile, inMemoryOutputStream == null ? new byte[0] : inMemoryOutputStream.toByteArray());
                 }
                 return responseFile;
             }
@@ -157,8 +157,10 @@ public class TemporarlyWritableData extends CloseableWritableData {
                 noMoreWrite = true;
                 if (responseFile != null) {
                     return responseFile.length();
-                } else {
+                } else if (inMemoryOutputStream != null) {
                     return inMemoryOutputStream.size();
+                } else {
+                    return 0;
                 }
             }
 

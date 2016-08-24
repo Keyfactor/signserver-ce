@@ -14,6 +14,7 @@ package org.signserver.module.cmssigner;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -163,7 +164,10 @@ public class PlainSigner extends BaseSigner {
         final String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
         ICryptoInstance crypto = null;
-        try (InputStream in = requestData.getAsInputStream()) {
+        try (
+                InputStream in = requestData.getAsInputStream();
+                OutputStream out = responseData.getAsInMemoryOutputStream()
+            ) {
             crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);
             // Get certificate chain and signer certificate
             final List<Certificate> certs = this.getSigningCertificateChain(crypto);
@@ -191,6 +195,7 @@ public class PlainSigner extends BaseSigner {
             }
             
             final byte[] signedbytes = signature.sign();
+            out.write(signedbytes);
             
             logMap.put(IWorkerLogger.LOG_RESPONSE_ENCODED, new Loggable() {
                 @Override

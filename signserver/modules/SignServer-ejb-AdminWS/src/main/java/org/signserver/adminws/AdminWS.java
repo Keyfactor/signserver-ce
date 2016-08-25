@@ -13,7 +13,6 @@
 package org.signserver.adminws;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.security.InvalidAlgorithmParameterException;
@@ -78,7 +77,6 @@ import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.data.impl.DataFactory;
 import org.signserver.server.data.impl.DataUtils;
 import org.signserver.server.data.impl.UploadConfig;
-import org.signserver.server.data.impl.UploadUtil;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 
@@ -970,8 +968,7 @@ public class AdminWS {
                 }
 
                 Response resp = processSession.process(adminInfo, WorkerIdentifier.createFromIdOrName(workerIdOrName), req2, requestContext);
-                
-                
+    
                 ProcessResponse processResponse;
                 if (resp instanceof SignatureResponse) {
                     SignatureResponse sigResp = (SignatureResponse) resp;
@@ -997,8 +994,7 @@ public class AdminWS {
                     LOG.error("Error serializing process response", ex);
                     throw new IllegalRequestException(
                             "Error serializing process response", ex);
-                }
-                
+                }                
             } catch (FileUploadBase.SizeLimitExceededException ex) {
                 LOG.error("Maximum content length exceeded: " + ex.getLocalizedMessage());
                 throw new IllegalRequestException("Maximum content length exceeded");

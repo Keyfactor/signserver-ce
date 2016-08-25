@@ -59,7 +59,6 @@ import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.data.impl.FileReadableData;
 import org.signserver.server.data.impl.TemporarlyWritableData;
 import org.signserver.server.data.impl.UploadConfig;
-import org.signserver.server.data.impl.UploadUtil;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.statusrepo.StatusRepositorySessionRemote;
 
@@ -228,8 +227,6 @@ public class ModulesTestCase extends TestCase {
         }
         return clientCLI;
     }
-    
-    
 
     public WorkerSessionRemote getWorkerSession() {
         if (workerSession == null) {
@@ -496,7 +493,6 @@ public class ModulesTestCase extends TestCase {
         addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_AUTHCODESIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
     
-    
     public void addXMLValidator() throws Exception {
         // VALIDATION SERVICE
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
@@ -653,7 +649,6 @@ public class ModulesTestCase extends TestCase {
     public static CloseableReadableData createRequestDataKeepingFile(File file) throws FileUploadException {
         return new FileReadableData(file);
     }
-   
     
     public static CloseableWritableData createResponseData(final boolean defaultToDisk) {
         return new TemporarlyWritableData(defaultToDisk, new UploadConfig().getRepository());

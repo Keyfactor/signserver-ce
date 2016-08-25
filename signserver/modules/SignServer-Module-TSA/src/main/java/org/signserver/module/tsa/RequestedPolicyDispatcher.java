@@ -62,10 +62,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
             RequestedPolicyDispatcher.class);
 
     public static final String TSA_REQUESTEDPOLICYOID = "TSA_REQUESTEDPOLICYOID";
-    
-    /** Workersession. */
-    private DispatcherProcessSessionLocal processSession;
-    
+
     private static final String MAPPINGS = "MAPPINGS";
     private static final String DEFAULTWORKER = "DEFAULTWORKER";
     private static final String USEDEFAULTIFMISMATCH = "USEDEFAULTIFMISMATCH";
@@ -174,13 +171,7 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
             } else {
                 // Mark request comming from a dispatcher so the DispatchedAuthorizer can be used
                 nextContext.put(RequestContext.DISPATCHER_AUTHORIZED_CLIENT, true);
-                
-                //HttpServletRequest httpRequest = null;
-                //if (request instanceof GenericServletRequest) {
-                //    httpRequest = ((GenericServletRequest) request).getHttpServletRequest();   
-                //}
-                //Request newRequest = new GenericServletRequest(request.getRequestID(), (byte[]) request.getRequestData(), httpRequest);
-                
+
                 result = getProcessSession(context.getServices()).process(new AdminInfo("Client user", null, null), toWorker, request, nextContext);
             }
         } catch (final IOException e) {

@@ -51,6 +51,7 @@ import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.LogMap;
 
 /**
+ * Mocked WorkerSession.
  *
  * @author Markus Kilås
  * $version $Id$
@@ -142,20 +143,6 @@ public class WorkerSessionMock implements WorkerSessionLocal,
                     throws CertificateException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    /*@Override
-    public ProcessResponse process(WorkerIdentifier workerId, ProcessRequest request,
-            RemoteRequestContext remoteContext) throws IllegalRequestException,
-            CryptoTokenOfflineException, SignServerException {
-        final RequestContext requestContext = new RequestContext(true);
-        if (remoteContext != null) {
-            RequestMetadata metadata = remoteContext.getMetadata();
-            if (metadata != null) {
-                RequestMetadata.getInstance(requestContext).putAll(remoteContext.getMetadata());
-            }
-        }
-        return process(new AdminInfo("Mock user", null, null), workerId, new LegacyRequest(request), requestContext); // TODO: Maybe this should't be LegacyRequest?
-    }*/
 
     @Override
     public Response process(final AdminInfo adminInfo, WorkerIdentifier workerId, Request request,

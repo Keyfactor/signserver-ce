@@ -340,8 +340,8 @@ try {
                         </p>
 
                         <h4>Configuration</h4>
-                            <p><b>HTTP_MAX_UPLOAD_SIZE</b> = Global configuration property that can be set to specify the maximum size (in bytes) of the HTTP request (Defaut: 104857600).</p>
-                        
+                            <p><b>HTTP_MAX_UPLOAD_SIZE</b> = Global configuration property that can be set to specify the maximum size (in bytes) of the HTTP request. Defaut: "104857600" (100 MB).</p>
+                            <p><b>FILE_SIZE_THRESHOLD</b> = Global configuration property that can be set to specify the size threshold (in bytes) after which the data is written to disk Default: "1048576" (1 MB). The directory uploaded files are temporarly stored to is the default temp directory and can be changed by starting the application server with a different value for the Java property java.io.tmpdir.</p>
 
                         <h4>Samples</h4>
                             <ul>

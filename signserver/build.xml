@@ -115,19 +115,19 @@ bin/ant -p                  Prints the main Ant targets supported by this
                             script.
 bin/ant usage               Prints this text with sample usages.
 bin/ant clean               Cleans temporary files, the final EAR file and if 
-                            this is a source distribution all the built 
-                            binaries.
-
-Some targets available in both binary and source distribution:
-bin/ant display-properties  Prints the properties that will be used to build or
-                            composing the EAR file.
+                            this is a source distribution the built JARs
+                            directly in the lib folder.
+bin/ant display-properties  Prints the properties that will be used to build and
+                            to configure the EAR file.
 bin/ant configure-ear       Puts together the final configured EAR file.
-bin/ant deploy              Configures the EAR file and then deploys it and 
-                            data sources etc (if supported) to the configured 
-                            application server.
-bin/ant deploy-ear          Configures the EAR file and then deploys it but does
-                            not do any other application server configurations.
+bin/ant deploy              Configures the EAR file and then deploys it to
+                            the application server.
 bin/ant systemtest:jars     Run all available systemtest JARs.
+            
+Note:
+For the binary distribution this commands can be used directly. In other
+cases SignServer needs to be built first. See doc/README.txt and the
+Installation Guide for details.
         </echo>
     </target>
 
@@ -388,9 +388,11 @@ bin/ant systemtest:jars     Run all available systemtest JARs.
     
     <target name="build">
         <echo level="warn">
-            
-            Build SignServer using:
-            mvn install
+Please see doc/README.txt and the Installation Guide for how to build SignServer
+or use the pre-built binary distribution instead.            
+
+After reading the documentation SignServer can be built with:
+mvn install
         </echo>
         <fail message="Use Maven for building SignServer"/>
     </target>

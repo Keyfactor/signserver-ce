@@ -20,22 +20,32 @@
 
 
             <section name="Server installation">
+                
+                <div class="frame note">
+                        <div class="label">Note</div>
+                        <div class="content">Make sure you are reading the version of the manual corresponding to the
+software version you are about to install. The version of the manual is written
+in the top of this page. See doc/README.txt within the release package for
+information about how to build this manual for your version.</div>
+                </div>
+                
                 <subsection name="1. Check prerequisites">
                     <p>
 Make sure all required softwares are installed:
                     </p>
                     <ul>
-                        <li>Java: OpenJDK 7**, Oracle JDK 7* or OpenJDK 8**</li>
-                        <li>Application server: JBoss AS 7.1.1, JBoss EAP 6.x, GlassFish Server Open Source Edition 3.1.2, WildFly 9 or Payara Server 4.1.1.162****</li>
-                        <li>Database: MySQL or MariaDB 5.5, PostgreSQL 9.x, Oracle Database 10/11g or without***</li>
-                        <li>Deploy tool: Apache Ant 1.8.0 or later</li>
-                        <li>(Build tool: Apache Maven 3)</li>
+                        <li>Java: OpenJDK 7, Oracle JDK 7* or OpenJDK 8**</li>
+                        <li>Application server: JBoss AS 7.1.1, JBoss EAP 6.x, GlassFish Server Open Source Edition 3.1.2, WildFly 9 or Payara Server 4.1.1.162***</li>
+                        <li>Database: MySQL or MariaDB 5.5, PostgreSQL 9.x, Oracle Database 10/11g or without****</li>
+                        <li>Deployment tool: Apache Ant 1.8.0 or later</li>
+                        <li>Build tool (optional*****): Apache Maven 3</li>
                     </ul>
                     <p>
 * When using Oracle JDK you must install the 'Unlimited Strength Jurisdiction Policy Files' for JDK for the parts of SignServer that  makes use of strong crypto to work. The policy files can be found at the same place as the JDK download at Oracle. Further information on this can be found in the Oracle documentation on the JCE. <br/>
-** Assuming the application server supports that version.<br/>
-*** See <a href="misc.html#SignServer without Database">SignServer without Database</a><br/>
-**** Experimental support for Payara. Currently uses EclipseLink instead of Hibernate.
+** If supported by the application server.<br/>
+*** Experimental support for Payara. Currently uses EclipseLink instead of Hibernate.<br/>
+**** See <a href="misc.html#SignServer without Database">SignServer without Database</a><br/>
+***** Only required when building the software from source
                     </p>
                 </subsection>
 
@@ -43,40 +53,78 @@ Make sure all required softwares are installed:
                     <p>
 Download and unzip the
 <a href="https://sourceforge.net/projects/signserver/files/signserver/">latest
-SignServer release</a> archive from SourceForge or for the absolutely latest
-unstable version checkout from the Subversion (SVN)
+SignServer Community Edition release</a> archive from SourceForge.
+                    </p>
+                    <p>
+Note that SignServer is available in different distributions:
+                    </p>
+                    <ul>
+                        <li><b>signserver-4.x.y-bin.zip</b>:<br/>
+                        The binary distribution (recommended)</li>
+                        <li><b>signserver-4.x.y.zip:</b><br/>
+                        The mixed distribution. Contains the sources as well as all required libraries. This requires you to build SignServer before deploying.</li>
+                        <li><b>signserver-4.x.y-src.tar.gz:</b><br/>
+                        The source-only tarball distribution. This one can not be deployed without first gathering all the dependencies and then building it. If you choose this one you are on your own.</li>
+                    </ul>
+
+                    <p>
+Make sure to compare the checksums as provided on <a href="https://www.signserver.org/download.html">https://signserver.org/download.html</a> or from a by PrimeKey provided download site.
+                    </p>                    
+                    <source>
+sha256sum signserver-4.x.y-bin.zip
+unzip signserver-4.x.y-bin.zip</source>
+                    
+                    <p>
+Alternatively, you can checkout the latest unstable version from version the Subversion (SVN)
 <a href="https://svn.cesecore.eu/svn/signserver/trunk/">repository</a>.
+Note that as with the mixed distribution this one needs to be built before deploying.
                     </p>
                 </subsection>
+                
+                <subsection name="3. Build SignServer">
+                    <p>
+Skip this step if you downloaded the binary distribution (recommended).
+                    </p>
+                    <p>
+If you instead downloaded the mixed disribution or checked out from SVN and want to build SignServer your self before copying it to the target server then you need to peform the following steps on your build machine.
+                    </p>
+                    <p>
+Note: Before running any of the Maven (mvn) commands you must make sure you have a secure Maven installation that does not contact the Central repository over insecure HTTP.
+You should make sure that the URL for the Central repository is specified with HTTTPS (and/or to use an internal repository).<br/>
+See sample-maven-settings-community.xml for an example on how one can override the default Maven settings in ~/.m2/settings.xml.
+                    </p>
+                    <source>mvn help:effective-settings</source>
+                    
+                    <p>
+Then to build the sources run:
+                    </p>
+                    <source>mvn install -DskipTests</source>
+                </subsection>
 
-                <subsection name="3. Set environment variables">
+                <subsection name="4. Set environment variables">
                     <h4>APPSRV_HOME</h4>
                         <p>
 Set APPSRV_HOME to point to your application server installation (<code>/opt/jboss</code> could be a symbolic link).
                         </p>
                         <source>export APPSRV_HOME=/opt/jboss</source>
-
-                    <h4>ANT_OPTS</h4>
+                        
                         <p>
-Set ANT_OPTS to give Ant more memory for building SignServer.
+This variable is used when deploying to the application server and could for instance be set in your .bashrc or similar file or provided everytime the deploy command is executed.
                         </p>
-                        <source>export ANT_OPTS="-Xmx512m -XX:MaxPermSize=128m"</source>
-
-                    <h4>SIGNSERVER_HOME</h4>
-                        <p>
-Set SIGNSERVER_HOME to point to your SignServer installation.
-                        </p>
-                        <source>export SIGNSERVER_HOME=/opt/signserver</source>
 
                     <h4>SIGNSERVER_NODEID</h4>
                         <p>
 Set SIGNSERVER_NODEID to an unique ID for the server.
                         </p>
                         <source>export SIGNSERVER_NODEID=node1</source>
+                        
+                        <p>
+This variable should be available to the application server so it might have to be set in /etc/environment or similar. It is normally not required to have it set but without it there will be warnings printed in the log.
+                        </p>
 
                 </subsection>
 
-                <subsection name="4. Setup database">
+                <subsection name="5. Setup database">
                     <p>
 Skip this section and instead follow the instructions in 
 <a href="misc.html#SignServer without Database">SignServer without Database</a> if
@@ -248,7 +296,7 @@ Then restart the application server.
                     
                 </subsection>
 
-                <subsection name="5. Configure web server keystores">
+                <subsection name="6. Configure web server keystores">
                     <h4>GlassFish/Payara SSL configuration</h4>
                         <p>
 For GlassFish/Payara enable client authentication for http-listener-2 and manually
@@ -342,7 +390,7 @@ Set-up the public SSL port which doesn't require the client certificate.
                         <source>reload</source>
                 </subsection>
 
-                <subsection name="6. Configure application server">
+                <subsection name="7. Configure application server">
                     <h4>Fix web service problem in JBoss AS 7/EAP 6/WildFly</h4>
                         <p>
 Configure WSDL web-host rewriting to use the request host. Needed for webservices to work correctly when requiring client certificate.
@@ -424,7 +472,7 @@ Run pkg install in the GlassFish folder:
                 </subsection>
 
 
-                <subsection name="7. Configure build">
+                <subsection name="8. Configure deploymet">
                     <p>
 Copy conf/signserver_deploy.properties.sample to conf/signserver_deploy.properties and open
 it for editing in your favorite text editor.
@@ -442,41 +490,33 @@ See <a href="misc.html#Signed%20log">Signed log</a> for how to configure for sig
                     </p>
                 </subsection>
 
-                <subsection name="8. Build and deploy SignServer">
+                <subsection name="9. Deploy SignServer">
                     <p>
-Run "bin/ant build deploy" to build SignServer and deploy it to the selected application
+Run "bin/ant deploy" to build the configuration and deploy it to the selected application
 server.
                     </p>
-                    <source>bin/ant clean build deploy</source>
+                    <source>bin/ant deploy</source>
                     <p>
-Start the application server and verify that SignServer was deployed and
-database tables were created. 
+Start the application server and verify that SignServer was deployed.
                     </p>
-				</subsection>
-				<subsection name="9. Accessing SignServer">
-					<p>
+                </subsection>
+
+                <subsection name="9. Accessing SignServer">
+                    <p>
 After startup a few different user interfaces are available.	
-					</p>
-                                        <h4>Command Line Interface</h4>
+                    </p>
+                    <h4>Command Line Interface</h4>
                     <source>
 bin/signserver getstatus brief all
-Assuming JBoss JNDI provider...
-===========================================
-Executing Command on host : localhost
-===========================================
+Current version of server is : SignServer EE 4.0.0</source>
 
+                    <h4>Graphical User Interface</h4>
+                    <source>bin/signserver-gui</source>
 
-Current version of server is : SignServer 3.5.0alpha0</source>
-
-                                        <h4>Graphical User Interface</h4>
-						<source>
-bin/signserver-gui
-bin/signserver-gui -ws</source>
-
-                                        <h4>Web Interface</h4>
-					<p>
+                    <h4>Web Interface</h4>
+                    <p>
 Point your web browser to <a href="http://localhost:8080/signserver">http://localhost:8080/signserver</a> for demo web pages and local documentation.
-					</p>
+                    </p>
                 </subsection>
             </section>
 
@@ -495,7 +535,7 @@ The "setproperties" command loads all the properties from a property file that
 can define one or many signers. The code for the signers needs to be deployed
 to the application server together with SignServer either by setting
 includemodulesinbuild=true to include all modules or by setting individual
-module.MODULENAME.include=true properties in signserver_deploy.properties.
+module.MODULENAME.enabled=true properties in signserver_deploy.properties.
                         </p>
                         <source>bin/signserver setproperties doc/sample-configs/CONFIGURATION.PROPERTIES</source>
 

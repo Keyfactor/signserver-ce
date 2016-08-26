@@ -24,10 +24,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.ejb.EJBException;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.Base64GetHashMap;
 import org.cesecore.util.Base64PutHashMap;
 import org.signserver.common.FileBasedDatabaseException;
@@ -52,19 +50,36 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     private final FileBasedDatabaseManager manager;
     private final File folder;
     private static final String DATA_PREFIX = "signerdata-";
-    private static final String NAME_PREFIX = "signername-";
-    private static final String ID_PREFIX = "signerid-";
     private static final String SUFFIX = ".dat";
-    private static final String TYPE_FOLDER_PREFIX = "signertypes-";
-    private static final String TYPE_PREFIX = "signertype-";
     private static final int EXPECTED_SCHEMA_VERSION = 1;
     private static final int TABLE_VERSION_10 = 10;
     private static final int EXPECTED_TABLE_VERSION = TABLE_VERSION_10;
     private static final String TABLE_VERSION_PROPERTY = "FileBasedWorkerConfigDataService.version";
+    
+    private static FileBasedWorkerConfigDataIndex index;
 
     public FileBasedWorkerConfigDataService(FileBasedDatabaseManager manager) {
         this.manager = manager;
         this.folder = manager.getDataFolder();
+    }
+
+    private FileBasedWorkerConfigDataIndex getIndex() {
+        assert Thread.holdsLock(manager);
+        if (index == null) {
+            LOG.info("Loading all worker configurations");
+            List<Integer> ids = findAllIdsFromDisk();
+            LOG.info("Available worker configurations: " + ids.size());
+            index = new FileBasedWorkerConfigDataIndex(ids.size());
+            for (Integer id : ids) {
+                try {
+                    WorkerConfig config = getWorkerConfig(id, true);
+                    index.update(id, config.getProperty("NAME"), WorkerType.valueOf(config.getProperty("TYPE")).getType());
+                } catch (FileBasedDatabaseException ex) {
+                    LOG.error("Failed to load worker configuration " + id + ": " + ex.getLocalizedMessage(), ex);
+                }
+            }
+        }
+        return index;
     }
 
     @Override
@@ -90,7 +105,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
      *
      */
     @SuppressWarnings("unchecked")
-    private WorkerConfig getWorkerConfig(int workerId, boolean fixName)  throws FileBasedDatabaseException {
+    private WorkerConfig getWorkerConfig(int workerId, boolean fixNameAndType)  throws FileBasedDatabaseException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(">getWorkerConfig(" + workerId + ")");
         }
@@ -100,60 +115,45 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         try {
             synchronized (manager) {
                 wcdb = loadData(workerId);
+
                 if (wcdb != null) {
-                    final File nameFile = getNameFile(workerId);
-                    final String name;
-                    if (nameFile.exists()) {
-                        name = FileUtils.readFileToString(nameFile);
-                        wcdb.setSignerName(name);
-                    } else if (fixName) {
-                        name = "UnamedWorker" + workerId;
-                        wcdb.setSignerName(name);
+                    HashMap h;
+                    try (XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(wcdb.getSignerConfigData().getBytes(StandardCharsets.UTF_8)))) {
+                        h = (HashMap) decoder.readObject();
+                    }
+                    // Handle Base64 encoded string values
+                    HashMap data = new Base64GetHashMap(h);
+                    result = new WorkerConfig();
+                    try {
+                        result.loadData(data);
+                        result.upgrade();
+                    } catch (Exception e) {
+                        LOG.error(e);
                     }
                     
-                    final File typeFile = getTypeFile(workerId);
-                    if (typeFile.exists()) {
-                        final String typeValue = FileUtils.readFileToString(typeFile);
-                        try {
-                            final int type = Integer.parseInt(typeValue);
-                            wcdb.setSignerType(type);
-                        } catch (IllegalArgumentException ex) {
-                            LOG.error("Unsupported worker type: " + typeValue + ": " + ex.getLocalizedMessage());
-                            wcdb.setSignerType(WorkerType.UNKNOWN.getType());
+                    if (fixNameAndType) {
+                        String name = result.getProperty("NAME");
+                        if (name == null || name.trim().isEmpty()) {
+                            name = "UnamedWorker" + workerId;
                         }
-                    } else {
-                        LOG.warn("No type file for worker " + workerId);
+                        wcdb.setSignerName(name);
+                        result.setProperty("NAME", wcdb.getSignerName());
+                        
+                        String typeValue = result.getProperty("TYPE");
+                        if (typeValue == null || typeValue.trim().isEmpty()) {
+                            result.setProperty("TYPE", WorkerType.UNKNOWN.name());
+                        } else {
+                            try {
+                                int signerType = WorkerType.valueOf(typeValue).getType();
+                                wcdb.setSignerType(signerType);
+                            } catch (IllegalArgumentException ex) {
+                                LOG.error("Unsupported worker type: " + typeValue + ": " + ex.getLocalizedMessage());
+                                result.setProperty("TYPE", WorkerType.UNKNOWN.name());
+                            }
+                        }
                     }
-                }
-            }
-            
-            if (wcdb != null) {
-                HashMap h;
-                try (XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(wcdb.getSignerConfigData().getBytes(StandardCharsets.UTF_8)))) {
-                    h = (HashMap) decoder.readObject();
-                }
-                // Handle Base64 encoded string values
-                HashMap data = new Base64GetHashMap(h);
-                result = new WorkerConfig();
-                try {
-                    result.loadData(data);
-                    result.upgrade();
-                } catch (Exception e) {
-                    LOG.error(e);
-                }
-                
-                if (wcdb.getSignerName() != null) {
-                    result.setProperty("NAME", wcdb.getSignerName());
-                }
-                
-                if (wcdb.getSignerType() != null) {
-                    Integer signerType = wcdb.getSignerType();
-                    try {
-                        result.setProperty("TYPE", WorkerType.fromType(signerType).name());
-                    } catch (IllegalArgumentException ex) {
-                        LOG.error("Unsupported worker type: " + signerType + ": " + ex.getLocalizedMessage());
-                        result.setProperty("TYPE", WorkerType.UNKNOWN.name());
-                    }
+
+                    getIndex().update(workerId, wcdb.getSignerName(), wcdb.getSignerType());
                 }
             }
         } catch (IOException ex) {
@@ -193,57 +193,18 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                 
                 // Update name if needed
                 String newName = signconf.getProperty("NAME");
-                if (newName == null) {
+                if (newName == null || newName.trim().isEmpty()) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("No name in config");
                     }
                     newName = "UnamedWorker" + workerId;
                 }
-                    
-                final File oldNameFile = getNameFile(workerId);
-                if (oldNameFile.exists()) {
-                    String oldName = FileUtils.readFileToString(oldNameFile);
+                wcdb.setSignerName(newName);
 
-                    if (!newName.equals(oldName)) {
-                        final File newIdFile = getIdFile(newName);
-                        if (newIdFile.exists()) {
-                            throw new FileBasedDatabaseException("Duplicated name: \"" + newName + "\"");
-                        }
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("New name: " + newName + ", oldName: " + oldName);
-                        }
-
-                        wcdb.setSignerName(newName);
-                        final File oldIdFile = getIdFile(oldName);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Rename from " + oldIdFile.getName() + " to " + newIdFile.getName());
-                        }
-                        if (!oldIdFile.renameTo(newIdFile)) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Old ID file " + oldIdFile.getAbsolutePath() + " exists: " + oldIdFile.exists());
-                                LOG.debug("New ID file " + newIdFile.getAbsolutePath() + " exists: " + newIdFile.exists());
-                            }
-                            throw new FileBasedDatabaseException("Could not rename from " + oldName + " to " + newName);
-                        }
-                        writeName(workerId, newName);
-                    }
-                } else {
-                    final File newIdFile = getIdFile(newName);
-                    if (newIdFile.exists()) {
-                        throw new FileBasedDatabaseException("Duplicated name: \"" + newName + "\"");
-                    }
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("New name: " + newName);
-                    }
-                    wcdb.setSignerName(newName);
-                    writeName(workerId, newName);
-                    writeID(newName, workerId);
-                }
-                
                 // Update type if needed
                 final String newTypeValue = signconf.getProperty("TYPE");
                 WorkerType wt;
-                if (newTypeValue == null) {
+                if (newTypeValue == null || newTypeValue.trim().isEmpty()) {
                     wt = WorkerType.UNKNOWN;
                 } else {
                     try {
@@ -254,71 +215,10 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                     }
                 }
                 final int newType = wt.getType();
-
-                final File oldTypeFile = getTypeFile(workerId);
-                if (oldTypeFile.exists()) {
-                    final String oldTypeValue = FileUtils.readFileToString(oldTypeFile);
-                    int oldType;
-                    try {
-                        oldType = Integer.parseInt(oldTypeValue);
-                    } catch (IllegalArgumentException ex) {
-                        LOG.error("Unable to load old worker type: " + ex.getLocalizedMessage());
-                        oldType = -1;
-                    }
-
-                    if (newType != oldType) {
-                        final File typeFolder = getTypeFolder(wt);
-                        createFolder(typeFolder);
-                        
-                        final File newTypeFile = new File(typeFolder, TYPE_PREFIX + workerId + SUFFIX);
-                        if (newTypeFile.exists()) {
-                            LOG.warn("Type file already existed: " + newTypeFile.getAbsolutePath());
-                        } else {
-                            if (!newTypeFile.createNewFile()) {
-                                throw new FileBasedDatabaseException("Could not create new type file: " + newTypeFile.getAbsolutePath());
-                            }
-                        }
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("New type: " + newType + ", oldType: " + oldType);
-                        }
-
-                        wcdb.setSignerType(wt.getType());
-
-                        try {
-                            final File oldTypeFolder = getTypeFolder(WorkerType.fromType(oldType));
-                            final File oldTypeTypeFile = new File(oldTypeFolder, TYPE_PREFIX + workerId + SUFFIX);
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Removing old type type file " + oldTypeTypeFile.getName());
-                            }
-                            if (!oldTypeTypeFile.delete()) {
-                                throw new FileBasedDatabaseException("Could not delete old type type file: " + oldTypeTypeFile.getAbsolutePath());
-                            }
-                        } catch (IllegalArgumentException ex) {
-                            LOG.warn("Unable to remove old type: " + ex.getLocalizedMessage());
-                        }
-                        writeType(workerId, newType);
-                    }
-                } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("New type: " + newType);
-                    }
-                    wcdb.setSignerType(wt.getType());
-                    writeType(workerId, newType);
-                    
-                    final File typeFolder = getTypeFolder(wt);
-                    createFolder(typeFolder);
-
-                    final File newTypeFile = new File(typeFolder, TYPE_PREFIX + workerId + SUFFIX);
-                    if (newTypeFile.exists()) {
-                        LOG.warn("Type file already existed: " + newTypeFile.getAbsolutePath());
-                    } else {
-                        if (!newTypeFile.createNewFile()) {
-                            throw new FileBasedDatabaseException("Could not create new type file: " + newTypeFile.getAbsolutePath());
-                        }
-                    }
-                }
-
+                wcdb.setSignerType(wt.getType());
+    
                 writeData(workerId, wcdb);
+                getIndex().update(workerId, newName, newType);
             } catch (IOException ex) {
                 throw new FileBasedDatabaseException("Could not load from or write data to file based database", ex);
             }
@@ -337,19 +237,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         try {
             synchronized (manager) {
                 removeData(workerId);
-                
-                File nameFile = getNameFile(workerId);
-                if (nameFile.exists()) {
-                    String name = FileUtils.readFileToString(nameFile);
-                    File idFile = getIdFile(name);
-                    if (!idFile.delete()) {
-                        LOG.error("File could not be removed: " + idFile.getAbsolutePath());
-                    }
-                    if (!nameFile.delete()) {
-                        LOG.error("File could not be removed: " + idFile.getAbsolutePath());
-                    }
-                }
-                
+                getIndex().remove(workerId);
                 retval = loadData(workerId) == null;
             }
         } catch (IOException ex) {
@@ -372,7 +260,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
                 workerConfig = new WorkerConfig();
             }
         }
-
+        
         return workerConfig;
     }
 
@@ -385,7 +273,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
         
         WorkerConfigDataBean result;
         final File file = new File(folder, DATA_PREFIX + workerId + SUFFIX);
-
+        
         try {
             final String data = FileUtils.readFileToString(file, StandardCharsets.UTF_8.name());
             result = new WorkerConfigDataBean();
@@ -455,12 +343,11 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
             throw new FileBasedDatabaseException("Unsupported schema version: " + manager.getSchemaVersion());
         }
     }
-
-    @Override
-    public List<Integer> findAllIds() {
+    
+    private List<Integer> findAllIdsFromDisk() {
         synchronized (manager) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug(">findAllIds()");
+                LOG.debug(">findAllIdsFromDisk()");
             }
             final LinkedList<Integer> result = new LinkedList<>();
 
@@ -479,157 +366,41 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
     }
     
     @Override
+    public List<Integer> findAllIds() {
+        synchronized (manager) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(">findAllIds()");
+            }
+            return getIndex().findAllWorkerIds();
+        }
+    }
+    
+    @Override
     public List<Integer> findAllIds(WorkerType workerType) {
         synchronized (manager) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(">findAllIds(" + workerType + ")");
             }
-            final LinkedList<Integer> result = new LinkedList<>();
-
             if (workerType == null) {
                 workerType = WorkerType.UNKNOWN;
             }
-            
-            File typeFolder = getTypeFolder(workerType);
-            if (typeFolder.exists()) {
-                try (DirectoryStream<Path> stream = Files.newDirectoryStream(typeFolder.toPath(), TYPE_PREFIX + "*" + SUFFIX)) {
-                    Iterator<Path> iterator = stream.iterator();
-                    while (iterator.hasNext()) {
-                        final String fileName = iterator.next().toFile().getName();
-                        final String id = fileName.substring(TYPE_PREFIX.length(), fileName.length() - SUFFIX.length());
-                        result.add(Integer.parseInt(id));
-                    }
-                } catch (IOException ex) {
-                    LOG.error("Querying all workers failed", ex);
-                }
-            }
-            return result;
+            return getIndex().findAllWorkerIds(workerType.getType());
         }
     }
-
+    
     @Override
-    public void populateNameColumn() { // TODO Check schema.version etc
-        synchronized (manager) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(">populateNameColumn()");
-            }
-            List<Integer> list = findAllWithoutName();
-
-            if (list.isEmpty()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Found no worker configurations without name column");
-                }
-            } else {
-                LOG.info("Found " + list.size() + " worker configurations without name column");
-                for (Integer id : list) {
-                    WorkerConfig config = getWorkerConfig(id, false);
-
-                    String name = config.getProperty("NAME");
-                    if (name == null) {
-                        name = "UpgradedWorker-" + id;
-                    }
-                    LOG.info("Upgrading worker configuration " + id + " with name " + name);
-                    try {
-                        writeName(id, name);
-                        writeID(name, id);
-                    } catch (IOException ex) {
-                        LOG.error("Adding name file failed for worker configuration " + id, ex);
-                    }
-                }
-            }
-        }
-    }
-    
-    private void writeName(int id, String name) throws IOException {
-        final File file = getNameFile(id);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Write name \"" + name + "\" for ID " + id + " to " + file.getName());
-        }
-        FileUtils.writeStringToFile(file, name, StandardCharsets.UTF_8.name()); // TODO: Replace with one that fd.sync()
-    }
-    
-    private void writeID(String name, int id) throws IOException {
-        final File file = getIdFile(name);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Write ID " + id + " for name \"" + name + "\" to " + file.getName());
-        }
-        FileUtils.writeStringToFile(file, String.valueOf(id), StandardCharsets.UTF_8.name());  // TODO: Replace with one that fd.sync()
-    }
-    
-    private void writeType(int id, int type) throws IOException {
-        final File file = getTypeFile(id);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Write type \"" + type + "\" for ID " + id + " to " + file.getName());
-        }
-        FileUtils.writeStringToFile(file, String.valueOf(type), StandardCharsets.UTF_8.name()); // TODO: Replace with one that fd.sync()
+    public void populateNameColumn() {
+        // Unused, we populate it on every start anyway
     }
 
-    private List<Integer> findAllWithoutName() {
-        assert Thread.holdsLock(manager);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(">findAllWithoutName()");
-        }
-        final LinkedList<Integer> result = new LinkedList<>();
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder.toPath(), DATA_PREFIX + "*" + SUFFIX)) {
-            Iterator<Path> iterator = stream.iterator();
-            while (iterator.hasNext()) {
-                final String fileName = iterator.next().toFile().getName();
-                final int id = Integer.parseInt(fileName.substring(DATA_PREFIX.length(), fileName.length() - SUFFIX.length()));
-                final File nameFile = getNameFile(id);
-                
-                if (!nameFile.exists()) {
-                    result.add(id);
-                }
-                
-            }
-        } catch (IOException ex) {
-            LOG.error("Querying all workers failed", ex);
-        }
-        return result;
-    }
-    
     @Override
     public int findId(String workerName) throws NoSuchWorkerException {
         synchronized (manager) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(">findId(" + workerName + ")");
             }
-            final int result;
-            final File idFile = getIdFile(workerName);
-            if (idFile.exists()) {
-                try {
-                    result = Integer.parseInt(FileUtils.readFileToString(idFile, StandardCharsets.UTF_8.name()));
-                } catch (IOException ex) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Unable to read " + idFile.getAbsolutePath() + ": " + ex.getMessage());
-                    }
-                    throw new NoSuchWorkerException(workerName);
-                }
-            } else {
-                throw new NoSuchWorkerException(workerName);
-            }
-            return result;
-        }
-    }
-
-    private File getNameFile(final int workerId) {
-        return new File(folder, NAME_PREFIX + String.valueOf(workerId) + SUFFIX);
-    }
-
-    private File getIdFile(final String name) {
-        return new File(folder, ID_PREFIX + Base64.toBase64String(name.getBytes(StandardCharsets.UTF_8)) + SUFFIX);
-    }
-    
-    private File getTypeFile(final int workerId) {
-        return new File(folder, TYPE_PREFIX + String.valueOf(workerId) + SUFFIX);
-    }
-    
-    private File getTypeFolder(final WorkerType workerType) {
-        return new File(folder, TYPE_FOLDER_PREFIX + workerType.name());
-    }
-    private void createFolder(final File folder) throws FileBasedDatabaseException {
-        if (!folder.exists() && !folder.mkdir()) {
-            throw new FileBasedDatabaseException("Unable to create folder " + folder.getAbsolutePath());
+            
+            return getIndex().getWorkerId(workerName);
         }
     }
     
@@ -647,34 +418,11 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
             } else if (currentTableVersion < TABLE_VERSION_10) { // Upgrade for version 10
                 // Upgrade for TABLE_VERSION_10: DSS-1121
                 // We need to set the signerType to UNKNOWN for all workers
-
-                // Create folder for the type
-                final File folderUnknown = getTypeFolder(WorkerType.UNKNOWN);
-                createFolder(folderUnknown);
-
-                // Put a marker file in the "signertype-UNKNOWN" folder for all existing worker
-                // If this fails for a worker then it will not be available in queries for WorkerType.UNKNOWN
-                // but will still be in the list of all workers so not fatal but manual upgrade for that worker
-                // will be needed (i.e. setting TYPE=something).
-                List<Integer> allIds = findAllIds();
-                for (Integer id : allIds) {
-                    File file = new File(folderUnknown, TYPE_PREFIX + String.valueOf(id) + SUFFIX);
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Setting worker type to " + WorkerType.UNKNOWN + " for worker ID " + id);
-                    }
-                    try {
-                        if (!file.createNewFile() && !file.exists()) {
-                            LOG.error("Unable to create file " + file + ". This worker will not be upgraded.");
-                        }
-                        try {
-                            writeType(id, WorkerType.UNKNOWN.getType());
-                        } catch (IOException ex) {
-                            LOG.error("Adding type file failed for worker configuration " + id, ex);
-                        }
-                    } catch (IOException ex) {
-                        LOG.error("Unable to create file " + file + ". This worker will not be upgraded: " + ex.getMessage(), ex);
-                    }
-                }
+                
+                // Upgrade is performed implicitly when the index is built so
+                // just do it now
+                List<Integer> allIDs = getIndex().findAllWorkerIds();
+                LOG.info("Processed worker configs: " + allIDs.size());
 
                 // Store the new version that we have upgraded to
                 manager.getMetadata().setProperty(TABLE_VERSION_PROPERTY, String.valueOf(TABLE_VERSION_10));

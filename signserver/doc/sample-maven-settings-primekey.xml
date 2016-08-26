@@ -1,0 +1,29 @@
+<!-- 
+    Sample of a local Maven settings file overriding the default URLs of Maven
+    central to use the PrimeKey internal repository.
+    
+    Community/non-Primekey: Instead use sample-maven-settings-community.xml
+    
+    Copy to ~/.m2/settings.xml or edit your existing file if you have one.
+    
+    The current settings can be seen by running:
+    $ mvn help:effective-settings
+
+    Version:
+    $Id$
+-->
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                          http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <mirrors>
+	<!-- PrimeKey Developers: Use PrimeKey Internal Repository for everything -->
+        <mirror>
+            <id>primekey-unverified-test</id>
+            <name>PrimeKey Internal Repository (Unverified, Test)</name>
+            <mirrorOf>*</mirrorOf>
+            <url>https://binrepo-test.se.lab.primekey/unverified</url>
+        </mirror>
+    </mirrors>
+</settings>

@@ -445,6 +445,7 @@ mvn install
             <exclude name="**/nbproject/private/**" />
             <exclude name="lib/**/*.jar" />
             <exclude name="lib/**/*.zip" />
+            <exclude name="**/target/**" />
             
             <!-- Exclude libraries moved to lib/ext during build -->
             <exclude name="lib/ext/cesecore-ce/**"/>
@@ -495,6 +496,7 @@ mvn install
             <exclude name=".classpath" />
             <exclude name=".project" />
             <exclude name="**/.svn/**" />
+            <exclude name="**/target/**" />
 
             <exclude name="res/install/**" />
 
@@ -559,6 +561,7 @@ mvn install
             <exclude name="**/.cvsignore" />
             <exclude name="**/*.sh" />
             <exclude name="**/nbproject/private/**" />
+            <exclude name="**/target/**" />
             
             <!-- Exclude libraries moved to lib/ext during build -->
             <exclude name="lib/ext/cesecore-ce/**"/>
@@ -570,6 +573,8 @@ mvn install
             <patternset refid="source.executablefiles"/>
         </patternset>
     </target>
+
+    <target name="release" depends="-warn-build, -check-built, release:binary-zip, release:zip, release:source-tarball" description="Create all 3 SignServer release artifacts"/>
 
     <!-- Deprecated: New target called release:zip -->
     <target name="ziprelease" depends="release:zip"/>

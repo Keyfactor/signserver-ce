@@ -134,11 +134,18 @@ you decide to run SignServer without a database management system.
 If you are using a database you will need to get a JDBC driver from the database
 vendor.
                     </p>
+                    <h4>Database account</h4>
                     <p>
-Create a database and user for SignServer. The application server will try to
-create tables during startup of SignServer but if the database user does not
-have table create permissions the tables must be created manually. 
-See doc/sql-scripts/create-tables-signserver-*.sql.
+Create a database and database user for SignServer. Please, refer to the database vendor's documentation for how to do that.
+                    </p>
+                    
+                    <h4>Table creation and indexes</h4>
+                    <p>
+The application server will try to create tables during startup of SignServer but if the database user does not have table create permissions the tables must be created manually.
+See <code>doc/sql-scripts/create-tables-signserver-*.sql</code> for the database schemas for different databases.
+                    </p>
+                    <p>
+In order to improve performance the appropriate database indices should also be applied. This is extra important for the AuditRecordData table which otherwise will make SignServer slower and slower to start. See <code>doc/sql-scripts/create-index-signserver.sql</code>.
                     </p>
                     <h4>MariaDB binlog format configuration</h4>
                         <p>

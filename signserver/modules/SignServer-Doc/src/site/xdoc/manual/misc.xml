@@ -875,6 +875,9 @@ Notice that all features of SignServer is not supported without having a databas
                 <p>
 To increase throughput it is recommended to disable the key usage counter as every request would otherwise have to lock and update that file. See the property DISABLEKEYUSAGECOUNTER in the section <a href="commonconf.html#Limiting the number of signatures">Limiting the number of signatures</a>.
                 </p>
+                <p>
+Upgrading to a later version should normally be handled automagically during the first startup but please read the UPGRADE.txt document and create a backup of the file-based database files before attempting to run a later version.
+                </p>
                 
                 <subsection name="Configuration">
                     <p>

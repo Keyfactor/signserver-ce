@@ -74,13 +74,6 @@ public class FileBasedWorkerConfigDataIndex {
     public int getWorkerId(String workerName) throws NoSuchWorkerException {
         return getEntry(workerName).getId();
     }
-
-    public void remove(int workerId) {
-        Entry entry = idToEntry.remove(workerId);
-        if (entry != null) { // Quietly remove
-            nameToEntry.remove(entry.getName());
-        }
-    }
     
     public boolean isExistingName(String workerName) {
         return nameToEntry.containsKey(workerName);
@@ -90,40 +83,10 @@ public class FileBasedWorkerConfigDataIndex {
         return idToEntry.containsKey(workerId);
     }
 
-    /*public void writeName(int workerId, String newName) {
-        Entry entry = idToEntry.get(workerId);
-        if (entry == null) {
-            if (isExistingName(newName)) {
-                LOG.warn("Duplicated name: \"" + newName + "\"");
-            }
-            // New entry
-            entry = new Entry(workerId);
-            entry.setName(newName);
-            idToEntry.put(workerId, entry);
-            nameToEntry.put(newName, entry);
-        } else {
-            // Existing entry so rename
-            String oldName = entry.getName();
-            if (!oldName.equals(newName)) {
-                if (isExistingName(newName)) {
-                    LOG.warn("Duplicated name: \"" + newName + "\"");
-                }
-            }
-            entry.setName(newName);
-            nameToEntry.remove(oldName);
-            nameToEntry.put(newName, entry);
-        }
-    }*/
-
-    /*public void writeType(int workerId, int newType) throws NoSuchWorkerException {
-        getEntry(workerId).setType(newType);
-        // TODO type opti
-    }*/
-
     public List<Integer> findAllWorkerIds() {
         return new ArrayList<>(idToEntry.keySet());
     }
-    
+
     public List<Integer> findAllWorkerIds(int workerType) {
         List<Integer> results;
         Set<Integer> workersOfType = typeToSetOfIDs.get(workerType);
@@ -135,12 +98,8 @@ public class FileBasedWorkerConfigDataIndex {
         return results;
     }
 
-    /*List<Integer> findAllWorkerIdsWithoutName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }*/
-
     /**
-     * Update the indices with the new data.
+     * Update all indices with the new data.
      *
      * @param workerId of worker
      * @param newName for the worker
@@ -192,6 +151,21 @@ public class FileBasedWorkerConfigDataIndex {
             typeToSetOfIDs.put(newType, workersOfType);
         }
         workersOfType.add(workerId);
+    }
+    
+    /**
+     * Removes a worker entry from all 3 indices.
+     * @param workerId to remove
+     */
+    public void remove(int workerId) {
+        Entry entry = idToEntry.remove(workerId);
+        if (entry != null) { // Quietly remove
+            nameToEntry.remove(entry.getName());
+            Set<Integer> workersOfOldType = typeToSetOfIDs.get(entry.getType());
+            if (workersOfOldType != null) {
+                workersOfOldType.remove(workerId);
+            }
+        }
     }
 
     /**

@@ -63,11 +63,12 @@ public class DefaultTimeStampLogger extends BaseWorkerLogger implements IWorkerL
                 + "TSA_TIMESTAMPRESPONSE_ENCODED: ${TSA_TIMESTAMPRESPONSE_ENCODED}; "
                 + "ARCHIVE_IDS: ${ARCHIVE_IDS}; "
                 + "PURCHASED: ${PURCHASED}; "
-                + "TSA_EXCEPTION: ${TSA_EXCEPTION}; "
-                + "EXCEPTION: ${EXCEPTION}; "
                 + "LEAP_UPCOMING: ${LEAP_UPCOMING}; "
                 + "LEAP_PERIOD: ${LEAP_PERIOD}; "
-                + "LEAP_ACTION: ${LEAP_ACTION}";
+                + "LEAP_ACTION: ${LEAP_ACTION}"
+                + "TSA_EXCEPTION: ${TSA_EXCEPTION}; "
+                + "EXCEPTION: ${EXCEPTION}; ";
+                
 
     private static final String DEFAULT_LOGDATEFORMAT =
             "yyyy-MM-dd:HH:mm:ss:z";

@@ -136,6 +136,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                     LOG.error("Leapsecond status has expired");
                     result = null;
                     logMap.put(LEAP_UPCOMING, "unknown");
+                    logMap.put(LEAP_PERIOD, "unknown");
                 } else {
                     final String leapsecondValue = leapsecond.getValue();
                     boolean potentialLeap = isPotentialLeapsecond(date);
@@ -193,6 +194,8 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                     }
                 }
             } else {
+                logMap.put(LEAP_UPCOMING, "unknown");
+                logMap.put(LEAP_PERIOD, "unknown");
                 result = null;
             }
             return result;

@@ -37,7 +37,7 @@ $ cd modules/SignServer-Doc
 $ mvn install
 
 
-Openning the SignServer Manual
+Opening the SignServer Manual
 ------------------------------
 
 $ firefox doc/htdocs/index.html

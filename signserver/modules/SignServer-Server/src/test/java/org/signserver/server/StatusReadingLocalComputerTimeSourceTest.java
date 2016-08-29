@@ -113,7 +113,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         context.setServices(services);
         return context;
     }
-    
+
     /** 
      * Tests that requesting time when a leap second is near,
      * the time is returned right after for the PAUSE strategy and
@@ -277,7 +277,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         assertNotNull("Should get a time", date);
         assertEquals("Should log not upcoming leapsecond",
                 "false", logMap.get("LEAP_UPCOMING"));
-        assertNull("Should not log leap period", logMap.get("LEAP_PERIOD"));
+        assertEquals("Should log leap period", "true", logMap.get("LEAP_PERIOD"));
         assertEquals("Should log leap strategy",
                 "PAUSE", logMap.get("LEAP_ACTION"));
 
@@ -292,7 +292,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         assertNotNull("Should get a time", date);
         assertEquals("Should log not upcoming leapsecond",
                 "false", logMap.get("LEAP_UPCOMING"));
-        assertNull("Should not log in leap period", logMap.get("LEAP_PERIOD"));
+        assertEquals("Should log in leap period", "true", logMap.get("LEAP_PERIOD"));
         assertEquals("Should log leap strategy",
                 "STOP", logMap.get("LEAP_ACTION"));
     }
@@ -318,8 +318,8 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         final LogMap logMap = LogMap.getInstance(context);
         assertFalse("Timesource paused", timeSource.pauseCalled);
         assertNotNull("Should get a time", date);
-        assertNull("Should not log upcoming leap second", logMap.get("LEAP_UPCOMING"));
-        assertNull("Should not log leap period", logMap.get("LEAP_PERIOD"));
+        assertEquals("Should log upcoming leap second", "true", logMap.get("LEAP_UPCOMING"));
+        assertEquals("Should log leap period", "true", logMap.get("LEAP_PERIOD"));
         assertEquals("Should log leap strategy",
                 "NONE", logMap.get("LEAP_ACTION"));
     }
@@ -652,6 +652,29 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         assertEquals("Contains leap second strategy message",
                      "Leapsecond strategy", entry.getTitle());
         assertEquals("Default strategy", "invalid", entry.getValue());
+    }
+    
+    /**
+     * Test that the leap action is still logged when no leap status property
+     * was set in the request context.
+     *
+     * @throws Exception 
+     */
+    public void test26NullLeapsecondStateLogStrategy() throws Exception {
+        LOG.info("test05RequestTimeBeforeLeapsecond");
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.set(2012, 11, 31, 23, 59, 59);
+        
+        // Strategy: PAUSE
+        MockTimeSource timeSource = new MockTimeSource(cal.getTime());
+        timeSource.setLeapSecondHandlingStrategy(LeapSecondHandlingStrategy.PAUSE);
+        
+        final RequestContext context = createContext(null);
+        final Date date = timeSource.getGenTime(context);
+        final LogMap logMap = LogMap.getInstance(context);
+
+        assertEquals("Should log leap strategy",
+                     "PAUSE", logMap.get("LEAP_ACTION"));
     }
     
     /**

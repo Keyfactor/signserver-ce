@@ -119,83 +119,78 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
             final StatusEntry entry = statusSession.getValidEntry(insyncPropertyName.name());
             
             final LogMap logMap = LogMap.getInstance(context);
-            
+
+            logMap.put(LEAP_ACTION, leapSecondHandlingStrategy.name());
+
             if (entry != null && Boolean.valueOf(entry.getValue())) {
-                Date date = getCurrentDate();
+                Date date = getCurrentDate();                    
+                // check if a leapsecond is near
+                final StatusEntry leapsecond = statusSession.getValidEntry(leapsecondPropertyName.name());
 
-                logMap.put(LEAP_ACTION, leapSecondHandlingStrategy.name());
-                
-                // If we are handling leap seconds
-                if (leapSecondHandlingStrategy == LeapSecondHandlingStrategy.PAUSE
-                        || leapSecondHandlingStrategy == LeapSecondHandlingStrategy.STOP) {
-                    
-                    // check if a leapsecond is near
-                    final StatusEntry leapsecond = statusSession.getValidEntry(leapsecondPropertyName.name());
-                    
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Check for leapsecond");
-                    }
-                    
-                    if (leapsecond == null) {
-                        // leapsecond property is expired
-                        LOG.error("Leapsecond status has expired");
-                        result = null;
-                        logMap.put(LEAP_UPCOMING, "unknown");
-                    } else {
-                        final String leapsecondValue = leapsecond.getValue();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Check for leapsecond");
+                }
+
+                if (leapsecond == null) {
+                    // leapsecond property is expired
+                    LOG.error("Leapsecond status has expired");
+                    result = null;
+                    logMap.put(LEAP_UPCOMING, "unknown");
+                } else {
+                    final String leapsecondValue = leapsecond.getValue();
+                    boolean potentialLeap = isPotentialLeapsecond(date);
+
+                    logMap.put(LEAP_PERIOD, Boolean.toString(potentialLeap));
+
+                    if (LEAPSECOND_POSITIVE.equals(leapsecondValue) ||
+                        LEAPSECOND_NEGATIVE.equals(leapsecondValue)) {
                         
-                        
-                        if (LEAPSECOND_POSITIVE.equals(leapsecondValue) ||
-                            LEAPSECOND_NEGATIVE.equals(leapsecondValue)) {
-                            boolean potentialLeap = isPotentialLeapsecond(date);
+                        logMap.put(LEAP_UPCOMING, Boolean.TRUE.toString());
 
-                            logMap.put(LEAP_PERIOD, Boolean.toString(potentialLeap));
-                            logMap.put(LEAP_UPCOMING, Boolean.TRUE.toString());
+                        // Handle leap second strategy STOP
+                        if (leapSecondHandlingStrategy == LeapSecondHandlingStrategy.STOP 
+                                && potentialLeap) {
+                            LOG.info("Stopping issuance");
+                            result = null;
+                        } else if (leapSecondHandlingStrategy ==
+                                   LeapSecondHandlingStrategy.PAUSE) {
+                            for (int i = 0; i < 6 && potentialLeap; i++) {
+                                    // sleep for the amount of time nessesary to skip over the leap second
+                                    try {
+                                            LOG.info("Waiting for leapsecond to pass");
 
-                            // Handle leap second strategy STOP
-                            if (leapSecondHandlingStrategy == LeapSecondHandlingStrategy.STOP 
-                                    && potentialLeap) {
-                                LOG.info("Stopping issuance");
+                                            pause();
+
+                                            if (LOG.isDebugEnabled()) {
+                                                LOG.debug("Pause finished");
+                                            }
+
+                                    } catch (InterruptedException ex) {
+                                            // if the thread gets interrupted while pausing,
+                                            // return time source not available
+                                            LOG.error("Interrupted while pausing");
+                                            potentialLeap = true;
+                                            break;
+                                    }
+
+                                    date = getCurrentDate();
+                                    potentialLeap = isPotentialLeapsecond(date);
+                            }
+
+                            if (potentialLeap) {
+                                LOG.error("Still potentially leap second after maximum pause");
                                 result = null;
                             } else {
-
-                                for (int i = 0; i < 6 && potentialLeap; i++) {
-                                        // sleep for the amount of time nessesary to skip over the leap second
-                                        try {
-                                                LOG.info("Waiting for leapsecond to pass");
-
-                                                pause();
-
-                                                if (LOG.isDebugEnabled()) {
-                                                    LOG.debug("Pause finished");
-                                                }
-
-                                        } catch (InterruptedException ex) {
-                                                // if the thread gets interrupted while pausing,
-                                                // return time source not available
-                                                LOG.error("Interrupted while pausing");
-                                                potentialLeap = true;
-                                                break;
-                                        }
-
-                                        date = getCurrentDate();
-                                        potentialLeap = isPotentialLeapsecond(date);
-                                }
-
-                                if (potentialLeap) {
-                                    LOG.error("Still potentially leap second after maximum pause");
-                                    result = null;
-                                } else {
-                                    result = date;
-                                }
+                                result = date;
                             }
                         } else {
-                            logMap.put(LEAP_UPCOMING, Boolean.FALSE.toString());
+                            // Strategy == NONE
                             result = date;
                         }
+                    } else {
+                        logMap.put(LEAP_UPCOMING, Boolean.FALSE.toString());
+                        result = date;
                     }
-                } else {
-                    result = date;
                 }
             } else {
                 result = null;

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import javax.ejb.EJBException;
 import javax.naming.NamingException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -355,7 +356,15 @@ public class AdminLayerEJBImpl implements AdminWS {
     public void setWorkerProperty(final int workerId,
             final String key,
             final String value) {
-        worker.setWorkerProperty(workerId, key, value);
+        try {
+            worker.setWorkerProperty(workerId, key, value);
+        } catch (EJBException ex) {
+            if ("java.lang.ClassNotFoundException: javax.persistence.PersistenceException".equals(ex.getMessage())) {
+                throw new EJBException("Persistence failure. Check that the worker name does not already exist.");
+            } else {
+                throw ex;
+            }
+        }
     }
 
     /**

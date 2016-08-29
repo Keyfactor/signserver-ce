@@ -1140,7 +1140,7 @@ public class TimeStampSigner extends BaseSigner {
         // check time source
         final RequestContext context = new RequestContext(true);
         context.setServices(services);
-        if (timeSource.getGenTime(context) == null) {
+        if (timeSource == null || timeSource.getGenTime(context) == null) {
         	result.add("Time source not available");
         	if (LOG.isDebugEnabled()) {
         		LOG.debug("Signer " + workerId + ": time source not available");
@@ -1170,8 +1170,10 @@ public class TimeStampSigner extends BaseSigner {
         final WorkerStatusInfo status =
                 super.getStatus(additionalFatalErrors, services);
         
-        status.getBriefEntries().addAll(timeSource.getStatusBriefEntries());
-        status.getCompleteEntries().addAll(timeSource.getStatusCompleteEntries());
+        if (timeSource != null) {
+            status.getBriefEntries().addAll(timeSource.getStatusBriefEntries());
+            status.getCompleteEntries().addAll(timeSource.getStatusCompleteEntries());
+        }
 
         return status;
     }

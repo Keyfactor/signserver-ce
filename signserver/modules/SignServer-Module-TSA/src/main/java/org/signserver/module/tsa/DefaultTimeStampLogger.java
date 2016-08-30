@@ -65,7 +65,7 @@ public class DefaultTimeStampLogger extends BaseWorkerLogger implements IWorkerL
                 + "PURCHASED: ${PURCHASED}; "
                 + "LEAP_UPCOMING: ${LEAP_UPCOMING}; "
                 + "LEAP_PERIOD: ${LEAP_PERIOD}; "
-                + "LEAP_ACTION: ${LEAP_ACTION}"
+                + "LEAP_ACTION: ${LEAP_ACTION}; "
                 + "TSA_EXCEPTION: ${TSA_EXCEPTION}; "
                 + "EXCEPTION: ${EXCEPTION}; ";
                 

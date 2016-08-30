@@ -20,7 +20,11 @@ ul#topMenu li {
     background-color: white;
     /*                background-image: url("/home/markus/VersionControlled/signserver/trunk-156/signserver/SignServer-war/web/pub/logo.png");*/
     background-repeat: no-repeat;
-    border: black thin solid;
+    
+    border: darkgray thin solid;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    
     /*                width: 40em;*/
     /*                left: 8em;
                     right: 8em;*/

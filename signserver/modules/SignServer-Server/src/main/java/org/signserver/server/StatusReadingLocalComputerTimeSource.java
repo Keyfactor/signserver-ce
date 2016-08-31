@@ -20,6 +20,7 @@ import java.util.Properties;
 import java.util.TimeZone;
 import org.apache.log4j.Logger;
 import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerStatusInfo;
 import org.signserver.server.log.LogMap;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
@@ -78,6 +79,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
     
     private static final String LEAPSECOND_HANDLING_DEFAULT = "NONE";
    
+    private String leapSecondHandlingString;
     private LeapSecondHandlingStrategy leapSecondHandlingStrategy;
     
     // number of milliseconds to sleep when waiting for a leapsecond to pass
@@ -95,15 +97,16 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
      */
     @Override
     public void init(final Properties props) {
-        final String leapHandling = props.getProperty(LEAPSECOND_HANDLING, LEAPSECOND_HANDLING_DEFAULT);
+        leapSecondHandlingString = props.getProperty(LEAPSECOND_HANDLING, LEAPSECOND_HANDLING_DEFAULT);
         try {
-            leapSecondHandlingStrategy = LeapSecondHandlingStrategy.valueOf(leapHandling);
+            leapSecondHandlingStrategy =
+                    LeapSecondHandlingStrategy.valueOf(leapSecondHandlingString);
 
             if (LOG.isDebugEnabled()) {
             	LOG.debug("Leap second handling strategy: " + leapSecondHandlingStrategy.name());
             }
         } catch (IllegalArgumentException ex) {
-            LOG.error("Illegal value for leap second handling strategy: " + leapHandling);
+            LOG.error("Illegal value for leap second handling strategy: " + leapSecondHandlingString);
         }
     }
 
@@ -112,7 +115,7 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
      * @return an accurate current time or null if it is not available.
      */
     @Override
-    public Date getGenTime(final RequestContext context) {
+    public Date getGenTime(final RequestContext context) throws SignServerException {
         try {
             final Date result;
             final StatusRepositorySessionLocal statusSession = context.getServices().get(StatusRepositorySessionLocal.class);
@@ -120,6 +123,10 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
             
             final LogMap logMap = LogMap.getInstance(context);
 
+            if (leapSecondHandlingStrategy == null) {
+                throw new SignServerException("Illegal leap second strategy: " + leapSecondHandlingString);
+            }
+            
             logMap.put(LEAP_ACTION, leapSecondHandlingStrategy.name());
 
             if (entry != null && Boolean.valueOf(entry.getValue())) {

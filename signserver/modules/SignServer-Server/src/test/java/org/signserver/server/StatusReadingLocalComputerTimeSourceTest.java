@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerStatusInfo;
 import org.signserver.server.StatusReadingLocalComputerTimeSource.LeapSecondHandlingStrategy;
 import org.signserver.server.log.LogMap;
@@ -679,6 +680,36 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
                      "PAUSE", logMap.get("LEAP_ACTION"));
         assertEquals("Should log leap upcoming", "unknown", logMap.get("LEAP_UPCOMING"));
         assertEquals("Should log leap period", "unknown", logMap.get("LEAP_PERIOD"));
+    }
+    
+    /**
+     * Test that setting an illegal leapsecond handling value results
+     * in the logging of an illegal value.
+     *
+     * @throws Exception 
+     */
+    public void test27IllegalLeapSecondStrategy() throws Exception {
+        LOG.info("test05RequestTimeBeforeLeapsecond");
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.set(2012, 11, 31, 23, 59, 59);
+        
+        final MockTimeSource timeSource = new MockTimeSource(cal.getTime());
+        final Properties props = new Properties();
+        
+        props.setProperty("LEAPSECOND_HANDLING", "foo");
+        timeSource.init(props);
+        
+        final RequestContext context = createContext(null);
+        
+        try {
+            timeSource.getGenTime(context);
+        } catch (SignServerException ex) {
+            assertEquals("Should give exception",
+                         "Illegal leap second strategy: foo",
+                         ex.getMessage());
+        } catch (Exception ex) {
+            fail("Unexpected exception: " + ex.getClass().getName());
+        }
     }
     
     /**

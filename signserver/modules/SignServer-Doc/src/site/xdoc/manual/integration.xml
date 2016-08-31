@@ -529,7 +529,7 @@ try {
                 <section name="Client Command Line Interface (CLI)" id="clientcli">
                     <p>
 Requests can be sent to the workers using the Client CLI. After building
-SignServer the script bin/client.sh can be run.
+SignServer the script bin/signclient can be run.
                     </p>
                     <source>
 $ bin/signclient
@@ -774,7 +774,7 @@ c) validatecertificate -service CertValidationWorker -hosts localhost
 Sign the specified data groups and produce an SOd (MRTD).
                         </p>
                         <source>
-$ bin/client.sh signdatagroups
+$ bin/signclient signdatagroups
 usage: signdatagroups &lt;options&gt;
 Request MRTD data groups to be signed
  -data &lt;arg&gt;            Data to send to the worker.

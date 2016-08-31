@@ -9,23 +9,19 @@ if "%SIGNSERVER_HOME%" == "" (
     set SIGNSRV_HOME=%SIGNSERVER_HOME%
 ) 
 
+rem find the JAR
+for /f "tokens=*" %%a in ('dir /b /s %SIGNSRV_HOME%\lib\SignServer-AdminGUI-*.jar') do set JAR=%%a
 
 rem check that we have built the classes
-if not exist %SIGNSRV_HOME%\lib\SignServer-AdminGUI.jar  (
-    echo You must build SignServer before using the cli, use 'ant'.
+if not exist %JAR%  (
+    echo You must build SignServer before using the CLI.
     goto end
 )
 
 set class_name=org.signserver.admin.gui.SignServerAdminGUIApplication
 
-rem check that we have built the classes
-if not exist %SIGNSRV_HOME%\lib\SignServer-AdminGUI.jar  (
-    echo SignServer AdminGUI not available. Build it by running 'ant'.
-    goto end
-)
-
 rem Construct the classpath
-set MAIN_CLASSPATH=%SIGNSRV_HOME%\conf;%SIGNSRV_HOME%\lib\SignServer-AdminGUI.jar
+set MAIN_CLASSPATH=%SIGNSRV_HOME%\conf;%JAR%
 
 rem Application server dependencies
 if exist %APPSRV_HOME%\lib\appserv-rt.jar (

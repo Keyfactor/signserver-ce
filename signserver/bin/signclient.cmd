@@ -14,8 +14,11 @@ if not "%APPSRV_HOME%" == "" (
 	set J2EE_CP=%APPSRV_HOME%\lib\jbossall-client.jar;%APPSRV_HOME%\lib\appserv-rt.jar
 )
 
+rem find the JAR
+for /f "tokens=*" %%a in ('dir /b /s %SIGNSRV_HOME%\lib\SignServer-Client-CLI-*.jar') do set JAR=%%a
+
 rem check that we have built the classes
-if not exist %SIGNSRV_HOME%\lib\SignServer-Client-CLI.jar  (
+if not exist %JAR%  (
     echo You must build SignServer Client CLI first.
     goto end
 )
@@ -23,7 +26,7 @@ if not exist %SIGNSRV_HOME%\lib\SignServer-Client-CLI.jar  (
 rem Optional JARs
 set OPTIONAL_CLASSPATH=%SIGNSRV_HOME%\lib\SignServer-Client-ValidationCLI.jar;%EXTRA_CLASSPATH%
 
-set CLASSPATH=%SIGNSRV_HOME%\conf;%SIGNSRV_HOME%\bin;%SIGNSRV_HOME%\lib\SignServer-Client-CLI.jar;%J2EE_CP%;%SIGNSRV_HOME%\res\deploytools\cesecore;"%OPTIONAL_CLASSPATH%
+set CLASSPATH=%SIGNSRV_HOME%\conf;%SIGNSRV_HOME%\bin;%JAR%;%J2EE_CP%;%SIGNSRV_HOME%\res\deploytools\cesecore;%OPTIONAL_CLASSPATH%
 rem echo %CLASSPATH%
 
 rem Enable Java network debug logs

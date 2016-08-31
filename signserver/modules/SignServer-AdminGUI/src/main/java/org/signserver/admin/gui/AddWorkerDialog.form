@@ -134,16 +134,16 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="filePathBrowseButton" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" alignment="1" max="-2" attributes="0">
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="propertiesScrollPanel" min="-2" pref="805" max="-2" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="propertiesScrollPanel" pref="817" max="32767" attributes="0"/>
                                   <Component id="propertiesLabel" alignment="0" min="-2" pref="745" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="editPropertyButton" pref="94" max="32767" attributes="1"/>
-                                  <Component id="removePropertyButton" alignment="1" pref="94" max="32767" attributes="1"/>
-                                  <Component id="addPropertyButton" pref="94" max="32767" attributes="1"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="editPropertyButton" pref="107" max="32767" attributes="1"/>
+                                  <Component id="removePropertyButton" alignment="1" pref="107" max="32767" attributes="1"/>
+                                  <Component id="addPropertyButton" pref="107" max="32767" attributes="1"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
@@ -166,11 +166,11 @@
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="workerIdComboBox" min="-2" pref="131" max="-2" attributes="0"/>
                                   <Component id="workerNameField" alignment="0" pref="659" max="32767" attributes="1"/>
                                   <Component id="workerImplementationField" alignment="0" pref="659" max="32767" attributes="1"/>
                                   <Component id="tokenImplementationField" alignment="0" pref="659" max="32767" attributes="1"/>
-                                  <Component id="typeComboBox" alignment="0" min="-2" pref="286" max="-2" attributes="0"/>
+                                  <Component id="typeComboBox" linkSize="2" alignment="0" min="-2" pref="286" max="-2" attributes="0"/>
+                                  <Component id="workerIdComboBox" linkSize="2" alignment="0" min="-2" pref="281" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>

@@ -1,3 +1,134 @@
+SignServer 4.0.0, 2016-09-xx
+----------------------------
+
+** Bug
+    * [DSS-1075] - Regression: Must create tmp folder manualy before running unit tests
+    * [DSS-1096] - No Maven module for SignServer-Test-Enterprise
+    * [DSS-1115] - ClientWS interface does not handle X-Forwarded-For header
+    * [DSS-1145] - Patch BC TimeStampResponseGenerator with accepted extensions fix
+    * [DSS-1166] - Spelling typos
+    * [DSS-1176] - Regression: Links in documentation referencing the old complete.en.html
+    * [DSS-1185] - stresstest CLI command not marked as executable
+    * [DSS-1191] - JavaDoc generation fails for jsign
+    * [DSS-1195] - Regression: TimeMonitor not starting due to new JAR name with version
+    * [DSS-1201] - Typo in UPGRADE.txt
+    * [DSS-1202] - Dependency only needed in EE put directly in lib/ext
+    * [DSS-1213] - Regression: Test sources for XMLValidator in wrong place
+    * [DSS-1223] - Regression: Missing cesecore folder on classpath for SignClient
+    * [DSS-1224] - Regression: CSR signing not working in locally running AdminGUI
+    * [DSS-1226] - Regression: validatecertificate command not available in SignClient
+    * [DSS-1230] - Regression: Windows CMD scripts using non-versioned JARs
+    * [DSS-1243] - CMSSigner module unit tests not running automatically
+    * [DSS-1244] - Regression: CMSSigner module unit tests broken
+    * [DSS-1245] - Regression: TextSigner gives NPE when trying to log REQUESTED_LOCATION null
+    * [DSS-1246] - Lib-iText resources not put in seperate resources source tree
+    * [DSS-1249] - Public web stylesheet URL incorrect on sub pages
+    * [DSS-1250] - NPE in TimeStampSigner get status on incorrect time source value
+
+** Epic
+    * [DSS-982] - Epic for Technology Upgrade
+
+** Improvement
+    * [DSS-144] - Fix errors and warnings in JavaDoc
+    * [DSS-286] - Upload signer certificate chain should take a List of CertificateS not any collection as the order is important
+    * [DSS-449] - WorkerSession should have different local and remote process methods
+    * [DSS-465] - Clean up old documentation and howtos
+    * [DSS-627] - Clean-out or deprecate unsupported ant targets
+    * [DSS-696] - Update BouncyCastle and remove custom patches
+    * [DSS-774] - Don't persist public key in HSM
+    * [DSS-778] - Upgrade to BouncyCastle 1.53
+    * [DSS-792] - Upgrade to CESeCore from EJBCA 6.4.x
+    * [DSS-808] - Create a separate session bean for admin operations
+    * [DSS-873] - Migrate from the old EJBCA-util to functionality from CESeCore
+    * [DSS-938] - Introduce error reporting for Archivers
+    * [DSS-942] - Revise worker logger interface
+    * [DSS-948] - Replace all lookups in workers with servicesImpl.getService() calls
+    * [DSS-977] - Use non-persistent timers for the services
+    * [DSS-989] - Differentiate between success and failure in the audit log to Log4j
+    * [DSS-1004] - Migrate to JDK 7
+    * [DSS-1010] - Hibernate and its dependencies should not be in its own folder
+    * [DSS-1021] - Set toolbar title
+    * [DSS-1026] - Remove SignServer-BuildTools
+    * [DSS-1036] - Use source/binary format 1.7
+    * [DSS-1049] - Refactor and remove internal deprecated methods
+    * [DSS-1062] - Use @Startup @Singleton instead of Servlets for application init
+    * [DSS-1067] - Convert StatusRepositorySessionBean to an EJB @Singleton
+    * [DSS-1106] - More status information and logging for leapsecond handling
+    * [DSS-1111] - Refactoring: Use IServices instead of getEjbs in WorkerLogger
+    * [DSS-1136] - Refactor WorkerConfig vs. ProcessableConfig
+    * [DSS-1138] - Fix documentation rendering
+    * [DSS-1142] - Upgrade Quartz
+    * [DSS-1147] - Move AdminGUI toolbar into the Worker tab
+    * [DSS-1148] - Clean up and rename the "quick start" sample configuration files
+    * [DSS-1153] - Remove left-over unused old fork of CertTools in PDFSigner
+    * [DSS-1155] - Move back tests from Test-System to Server after upgrading to BC >= 1.50
+    * [DSS-1162] - Create proper error pages for all servlet contexts
+    * [DSS-1169] - Don't accept custom request policy OIDs unless explicitly accepted
+    * [DSS-1175] - Use a PrimeKey TSA policy OID instead of the incorrect 1.2.3 as the sample policy
+    * [DSS-1187] - Use OpenEJB as compile-time dependency instead of javax:javaee-api
+    * [DSS-1188] - General clean-up for 4.0
+    * [DSS-1192] - Make sun classes for PKCS#11 available using jboss-deployment-structure.xml
+    * [DSS-1196] - Upgrade commons-cli to 1.3.1
+    * [DSS-1197] - Upgrade junit to 4.12
+    * [DSS-1198] - Upgrade commons-lang to 2.6
+    * [DSS-1199] - Upgrade commons-configuration to 1.10
+    * [DSS-1200] - Upgrade hibernate to 4.2.21
+    * [DSS-1204] - Enable unit test code coverage
+    * [DSS-1216] - JDK7: Use StandardCharsets.UTF_8 instead of "UTF8"
+    * [DSS-1217] - Init method of CryptoToken should take an IServices
+    * [DSS-1219] - Add a release target creating all release artifacts in one go
+    * [DSS-1220] - Support for files larger than 2GB in SignClient
+    * [DSS-1222] - Support for large files in Client CLI validatedocument (HTTP)
+    * [DSS-1227] - Simplify the confusing error message when the DB refused duplicated worker names
+    * [DSS-1232] - Make sure it is clear in installation guide about applying indexes
+    * [DSS-1234] - Change BaseWorker.getStatus() to return WorkerStatusInfo
+    * [DSS-1237] - Graphical update for SignServer 4
+    * [DSS-1238] - Simplify file based database implementation, a.k.a NoDB
+    * [DSS-1240] - Large file support for PDF signer
+    * [DSS-1241] - Preparation for one-time keys and certificates
+    * [DSS-1251] - AdminGUI Add worker should ask for worker type
+
+** Master Ticket
+    * [DSS-453] - Redesign worker loading
+
+** New Feature
+    * [DSS-999] - Initial Payara 4.1 support
+    * [DSS-1102] - Support for RFC 5816 time-stamps
+    * [DSS-1180] - Remove large memory requirement when signing large files by using disk
+    * [DSS-1211] - Add document validation support in stresstest client
+    * [DSS-1248] - Large file support in performance test client
+
+** Task
+    * [DSS-1027] - Remove OldPKCS11CryptoToken
+    * [DSS-1028] - Remove SoftCryptoToken
+    * [DSS-1029] - Remove HardCodedCryptoToken
+    * [DSS-1037] - Remove PrimeCardHSMCryptoToken
+    * [DSS-1045] - Upgrade to DeployTools 2.0
+    * [DSS-1054] - Remove the Ant scripts/projects for building
+    * [DSS-1063] - Remove GenericWSServlet
+    * [DSS-1074] - Make the documentation build properly with Maven
+    * [DSS-1108] - Remove unused files etc
+    * [DSS-1114] - update ant scripts and documentation
+    * [DSS-1190] - Test upgrade from 3.7 to 4.0 on PostgreSQL
+    * [DSS-1193] - Do dependency management
+    * [DSS-1239] - Run preliminary performance comparison between 3.7 and 4.0 (trunk)
+    * [DSS-1253] - Re-test upgrade instructions for 3.x to 4.0
+
+** Technical task
+    * [DSS-1055] - Make worker configuration independent of global configuration
+    * [DSS-1056] - Replace WorkerFactory and WorkerManagerSession with an EJB @Singleton
+    * [DSS-1058] - Add database column for the worker name
+    * [DSS-1065] - Create and test upgrade instructions for 3.x to 4.0
+    * [DSS-1077] - Fix deprecated usages of BouncyCastle
+    * [DSS-1080] - Upgrade and build jsign using BC 1.53
+    * [DSS-1081] - Upgrade and build xades4j using BC 1.53
+    * [DSS-1082] - Upgrade SignServer core to use BC 1.53 and switch to dependencies using it
+    * [DSS-1083] - Upgrade our itext to use BC 1.53
+    * [DSS-1109] - Upgrade to cert-cvc 1.4.3 supporting BC 1.53
+    * [DSS-1112] - Refactoring: Return a worker's all components in one go
+    * [DSS-1121] - Add database column for the worker type
+
+
 SignServer 3.7.3, 2016-03-07
 ----------------------------
 
@@ -19,6 +150,7 @@ SignServer 3.7.3, 2016-03-07
 ** New Feature
     * [DSS-331] - Auto-renewal timed service
     * [DSS-1144] - Option to specify options for the generated self-signed certificate
+
 
 SignServer 3.7.2, 2016-02-08
 ----------------------------

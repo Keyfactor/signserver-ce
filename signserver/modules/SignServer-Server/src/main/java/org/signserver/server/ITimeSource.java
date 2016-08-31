@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerStatusInfo;
 
 /**
@@ -39,8 +40,9 @@ public interface ITimeSource {
      * Main method that should retrieve the current time from the device.
      * @param context of the request
      * @return an accurate current time or null if it is not available.
+     * @throws SignServerException if the timesource was misconfigured
      */
-    Date getGenTime(RequestContext context);
+    Date getGenTime(RequestContext context) throws SignServerException;
     
     /**
      * Get brief status entries to be presented in worker statuses.

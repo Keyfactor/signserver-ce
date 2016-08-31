@@ -139,11 +139,15 @@ public class StatusReadingLocalComputerTimeSource implements ITimeSource {
                 }
 
                 if (leapsecond == null) {
-                    // leapsecond property is expired
-                    LOG.error("Leapsecond status has expired");
-                    result = null;
+                    if (leapSecondHandlingStrategy == LeapSecondHandlingStrategy.NONE) {
+                        result = date;
+                    } else {
+                        // leapsecond property is expired
+                        LOG.error("Leapsecond status has expired");
+                        result = null;
+                    }
+                    logMap.put(LEAP_PERIOD, String.valueOf(isPotentialLeapsecond(date)));
                     logMap.put(LEAP_UPCOMING, "unknown");
-                    logMap.put(LEAP_PERIOD, "unknown");
                 } else {
                     final String leapsecondValue = leapsecond.getValue();
                     boolean potentialLeap = isPotentialLeapsecond(date);

@@ -345,7 +345,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         assertNull("Should not get a time", date);
         assertEquals("Should log unknown upcoming leap",
                      "unknown", logMap.get("LEAP_UPCOMING"));
-        assertEquals("Should log unkown leap period", "unknown",
+        assertEquals("Should log leap period", "true",
                      logMap.get("LEAP_PERIOD"));
         assertEquals("Should log leap strategy",
                      "PAUSE", logMap.get("LEAP_ACTION"));
@@ -358,7 +358,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         assertNull("Should not get a time", date);
         assertEquals("Should log unknown upcoming leap",
                      "unknown", logMap.get("LEAP_UPCOMING"));
-        assertEquals("Should log unkown leap period", "unknown",
+        assertEquals("Should log leap period", "true",
                      logMap.get("LEAP_PERIOD"));
         assertEquals("Should log leap strategy",
                      "STOP", logMap.get("LEAP_ACTION"));
@@ -679,7 +679,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         assertEquals("Should log leap strategy",
                      "PAUSE", logMap.get("LEAP_ACTION"));
         assertEquals("Should log leap upcoming", "unknown", logMap.get("LEAP_UPCOMING"));
-        assertEquals("Should log leap period", "unknown", logMap.get("LEAP_PERIOD"));
+        assertEquals("Should log leap period", "true", logMap.get("LEAP_PERIOD"));
     }
     
     /**

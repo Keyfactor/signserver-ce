@@ -31,7 +31,7 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Component id="resetButton" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="538" max="32767" attributes="0"/>
+              <EmptySpace pref="540" max="32767" attributes="0"/>
               <Component id="cancelButton" linkSize="1" min="-2" pref="86" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="backButton" linkSize="1" min="-2" pref="74" max="-2" attributes="0"/>
@@ -42,7 +42,7 @@
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="wizardPanel" max="32767" attributes="0"/>
+                  <Component id="wizardPanel" pref="930" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -51,7 +51,7 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="592" max="32767" attributes="0"/>
+              <EmptySpace pref="708" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="resetButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="nextApplyButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -63,7 +63,7 @@
           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
-                  <Component id="wizardPanel" max="32767" attributes="0"/>
+                  <Component id="wizardPanel" pref="649" max="32767" attributes="0"/>
                   <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -127,53 +127,59 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="62" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="invalidWorkerIdStatusLabel" pref="906" max="32767" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                          </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="filePathTextField" pref="874" max="32767" attributes="0"/>
+                              <Component id="filePathTextField" pref="866" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="filePathBrowseButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" max="-2" attributes="0">
-                              <Component id="propertiesScrollPanel" pref="799" max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="propertiesScrollPanel" pref="799" max="32767" attributes="0"/>
+                                  <Component id="propertiesLabel" alignment="0" min="-2" pref="745" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="editPropertyButton" max="32767" attributes="1"/>
+                                  <Component id="removePropertyButton" alignment="1" pref="88" max="32767" attributes="1"/>
                                   <Component id="addPropertyButton" max="32767" attributes="1"/>
-                                  <Component id="removePropertyButton" alignment="1" min="-2" max="-2" attributes="1"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="loadFromFileRadioButton" min="-2" pref="133" max="-2" attributes="0"/>
-                              <EmptySpace pref="785" max="32767" attributes="0"/>
+                              <EmptySpace pref="772" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="editWorkerPropertiesRadioButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="195" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="propertiesLabel" alignment="0" min="-2" pref="745" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
-                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                  <Component id="tokenImplementationLabel" alignment="0" max="32767" attributes="1"/>
-                                  <Component id="workerImplementationLabel" alignment="0" max="32767" attributes="1"/>
-                                  <Component id="workerNameLabel" alignment="0" max="32767" attributes="1"/>
-                                  <Component id="workerIdLabel" alignment="0" pref="253" max="32767" attributes="1"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                      <Component id="tokenImplementationLabel" alignment="0" max="32767" attributes="1"/>
+                                      <Component id="workerImplementationLabel" alignment="0" max="32767" attributes="1"/>
+                                      <Component id="workerNameLabel" alignment="0" max="32767" attributes="1"/>
+                                      <Component id="workerIdLabel" alignment="0" pref="253" max="32767" attributes="1"/>
+                                  </Group>
+                                  <Component id="typeLabel" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="workerIdComboBox" min="-2" pref="131" max="-2" attributes="0"/>
-                                  <Component id="workerNameField" alignment="0" pref="635" max="32767" attributes="1"/>
-                                  <Component id="workerImplementationField" alignment="0" pref="635" max="32767" attributes="1"/>
-                                  <Component id="tokenImplementationField" alignment="0" pref="635" max="32767" attributes="1"/>
+                                  <Component id="workerNameField" alignment="0" pref="622" max="32767" attributes="1"/>
+                                  <Component id="workerImplementationField" alignment="0" pref="622" max="32767" attributes="1"/>
+                                  <Component id="tokenImplementationField" alignment="0" pref="622" max="32767" attributes="1"/>
+                                  <Component id="typeComboBox" alignment="0" min="-2" pref="192" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="invalidWorkerIdStatusLabel" pref="893" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -211,23 +217,26 @@
                           <Component id="tokenImplementationLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="tokenImplementationField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="typeComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="typeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                       <Component id="propertiesLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                               <Component id="addPropertyButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Component id="editPropertyButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="removePropertyButton" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="propertiesScrollPanel" min="-2" pref="189" max="-2" attributes="1"/>
-                          </Group>
+                          <Component id="propertiesScrollPanel" min="-2" pref="189" max="-2" attributes="1"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="62" max="-2" attributes="0"/>
                       <Component id="invalidWorkerIdStatusLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -414,6 +423,26 @@
                 <Property name="name" type="java.lang.String" value="invalidWorkerIdStatusLabel" noResource="true"/>
               </Properties>
             </Component>
+            <Component class="javax.swing.JComboBox" name="typeComboBox">
+              <Properties>
+                <Property name="editable" type="boolean" value="true"/>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="4">
+                    <StringItem index="0" value="PROCESSABLE"/>
+                    <StringItem index="1" value="CRYPTO_WORKER"/>
+                    <StringItem index="2" value="TIMED_SERVICE"/>
+                    <StringItem index="3" value="SPECIAL"/>
+                  </StringArray>
+                </Property>
+                <Property name="name" type="java.lang.String" value="typeComboBox" noResource="true"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="typeLabel">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="typeLabel.text"/>
+                <Property name="name" type="java.lang.String" value="typeLabel" noResource="true"/>
+              </Properties>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="configurationPanel">
@@ -446,7 +475,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="configurationLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="configurationScrollPane" pref="502" max="32767" attributes="0"/>
+                      <Component id="configurationScrollPane" pref="615" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>

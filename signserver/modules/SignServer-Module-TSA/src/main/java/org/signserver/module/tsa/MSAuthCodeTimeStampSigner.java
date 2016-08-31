@@ -627,11 +627,15 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         // check time source
         final RequestContext context = new RequestContext(true);
         context.setServices(services);
-        if (timeSource.getGenTime(context) == null) {
+        try {
+            if (timeSource.getGenTime(context) == null) {
         	result.add("Time source not available");
         	if (LOG.isDebugEnabled()) {
         		LOG.debug("Signer " + workerId + ": time source not available");
         	}
+            }
+        } catch (SignServerException ex) {
+            result.add("Time source is misconfigured: " + ex.getMessage());
         }
 
         return result;

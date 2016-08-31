@@ -20,7 +20,6 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.test.performance.FailureCallback;
@@ -65,9 +64,8 @@ public class Main {
     private static long startTime;
     private static long warmupTime;
 
-    private static String infile;
-
-    private static byte[] data;
+    private static File infile;
+    private static byte[] bytes;
 
     private static String userPrefix;
     private static Integer usersuffixMin;
@@ -208,15 +206,9 @@ public class Main {
 
             if (commandLine.hasOption(INFILE)) {
                 final String file = commandLine.getOptionValue(INFILE);
-                final File infile = new File(file);
-
-                try {
-                    data = FileUtils.readFileToByteArray(infile);
-                } catch (IOException e) {
-                    LOG.error("Failed to read input file: " + e.getMessage());
-                }
+                infile = new File(file);
             } else if (commandLine.hasOption(DATA)) {
-                data = commandLine.getOptionValue(DATA).getBytes();
+                bytes = commandLine.getOptionValue(DATA).getBytes();
             } else if (ts.equals(TestSuites.DocumentSigner1)) {
                 throw new ParseException("Must specify an input file.");
             }
@@ -524,7 +516,7 @@ public class Main {
             } else {
                 statFile = new File(statFolder, name + ".csv");
             }
-            threads.add(new DocumentSignerThread(name, failureCallback, url, useWorkerServlet, data, workerNameOrId, processType, maxWaitTime,
+            threads.add(new DocumentSignerThread(name, failureCallback, url, useWorkerServlet, bytes, infile, workerNameOrId, processType, maxWaitTime,
                     random.nextInt(), warmupTime, limitedTime, statFile,
                     userPrefix, userSuffixMin, userSuffixMax));
         }

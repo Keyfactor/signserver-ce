@@ -156,7 +156,7 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
         assertNull("Should not get a time", date);
         assertEquals("Should log upcoming leapsecond",
                      "true", logMap.get("LEAP_UPCOMING"));
-        assertEquals("Should log not in leap period",
+        assertEquals("Should log in leap period",
                      "true", logMap.get("LEAP_PERIOD"));
         assertEquals("Should log leap strategy",
                      "STOP", logMap.get("LEAP_ACTION"));

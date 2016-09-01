@@ -24,12 +24,17 @@ Notice:
    For OldPKCS11CryptoToken, configurations should be upgraded to use
    PKCS11CryptoToken.
  - The TimeStampSigner now generates RFC 5816-compliant time stamps with the
-   ESSCertIDv2 attribute. To get the old behaviour, specify SHA1 as the certificate
+   ESSCertIDv2 attribute. To get the old behavior, specify SHA1 as the certificate
    digest algorithm, using the new CERTIFICATE_DIGEST_ALGORITHM worker property.
- - For the TimeStampSigner the default behaviour is now to always require the
+ - For the TimeStampSigner the default behavior is now to always require the
    ACCEPTEDPOLICIES property to be set to a list of accepted requested policies
    (or empty to disallow requesting a policy). For backwards-compatibility
    the new ACCEPTANYPOLICY property can be set to the value "true".
+ - The old deprecated scripts in the bin folder has been removed. Please, use
+   the replacement scripts that has been available since long before:
+   admingui.sh   => signserver-gui
+   client.sh     => signclient
+   signserver.sh => signserver
 
 See ChangeLog.txt for the full list of changes.
 

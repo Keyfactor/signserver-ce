@@ -3,14 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.signserver.deploytools</groupId>
     <artifactId>DeployTools</artifactId>
-    <version>2.0</version>
+    <version>2.0.1</version>
     <packaging>pom</packaging>
     <scm>
         <connection>scm:svn:https://svn.cesecore.eu/svn/primekey/signserver-labs/deploytools/trunk</connection>
         <developerConnection>scm:svn:https://svn.cesecore.eu/svn/primekey/signserver-labs/deploytools/trunk/DeployTools</developerConnection>
         <url>http://fisheye.primekey.se/browse/SignServer-labs/deploytools/trunk</url>
     </scm>
-    <repositories>
+    <!-- <repositories>
       <repository>
           <id>nexus1.lab.primekey.se-releases</id>
           <url>http://nexus1.se.lab.primekey:8081/nexus/content/repositories/releases/</url>
@@ -39,7 +39,7 @@
             <id>nexus1.lab.primekey.se-snapshots</id>
             <url>http://nexus1.se.lab.primekey:8081/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
-    </distributionManagement>
+    </distributionManagement> -->
     <modules>
         <module>DeployTools-Common</module>
         <module>DeployTools-Ant</module>
@@ -51,4 +51,27 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
+    <name>DeployTools</name>
+    <description>Helper tools and common project structure for building and deploying Java Enterprise applications using CESeCore.</description>
+    <url>https://www.signserver.org</url>
+    <licenses>
+        <license>
+            <name>LGPL license, Version 2.1</name>
+            <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Markus Kilås</name>
+            <email>markus.kilas@primekey.se</email>
+            <organization>PrimeKey Solutions</organization>
+            <organizationUrl>https://www.primekey.se</organizationUrl>
+        </developer>
+        <developer>
+            <name>Marcus Lundblad</name>
+            <email>marcus.lundblad@primekey.se</email>
+            <organization>PrimeKey Solutions</organization>
+            <organizationUrl>https://www.primekey.se</organizationUrl>
+        </developer>
+    </developers>
 </project>

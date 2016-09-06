@@ -1,0 +1,16 @@
+
+The generateCode.js script can be used to generate a (large) C file to produce
+very large binaries for testing the MS Authenticode signer with large inputs.
+The script needs GJS to be installed (this should be available in most GNU/Linux
+distributions, such as Debian, Ubuntu, and Fedora among others).
+To run the script:
+
+$ ./generateCode.js <number of lines> > output.c
+
+Each line will contribute with 20 bytes to the size of the resulting executable.
+
+To compile the binary, use MingW gcc.
+The package to be installed is called gcc-mingw-w64 on Debian/Ubuntu.
+To compile a generated C source:
+
+$ x86_64-w64-mingw32-gcc -o output.exe output.c

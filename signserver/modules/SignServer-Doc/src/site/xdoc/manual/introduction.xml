@@ -33,7 +33,7 @@ The SignServer have been designed for high-availability and can be clustered for
 reliability.
                 </p>
                 <p>
-The SignServer comes with a RFC 3161 compliant Time-Stamp signer serving requests through
+SignServer comes with a RFC 3161/5816 compliant Time-Stamp signer serving requests through
 HTTP or client-authenticated HTTPS. A MRTD (Machine Readable Travel Document, i.e. electronic
 passport) signer. A PDF signer that adds a signature automatically to an uploaded PDF document,
 ODF signer that adds a signature automatically to uploaded ODF document, OOXML Signer that
@@ -47,6 +47,20 @@ lookup the validation of a given certificate.
             </section>
 
             <section name="Major changes from previous versions">
+                <subsection name="Changes between version 3.7 and 4.0">
+                    <ul>
+                        <li>Major internal library updates such as CESeCore 6.4 and BouncyCastle 1.53</li>
+                        <li>Build system changed from Ant to Maven. Note: Only for building/compiling. Deployment still uses Ant and does not require Maven.</li>
+                        <li>Support for large files (Enterprise Edition)</li>
+                        <li>Support for RFC 5816 time-stamps</li>
+                        <li>Many internal API improvements</li>
+                        <li>Initial Payara 4.1 support</li>
+                        <li>Dropped support for Java 6</li>
+                        <li>Dropped support for JBoss 5, JBoss EAP 5 and GlassFish V2</li>
+                        <li>Many more major changes and bug fixes. See 
+                            ChangeLog.txt and RELASE_NOTES.txt for details.</li>
+                    </ul>
+                </subsection>
                 <subsection name="Changes between version 3.6 and 3.7">
                     <ul>
                         <li>Individual keys and certificates support</li>

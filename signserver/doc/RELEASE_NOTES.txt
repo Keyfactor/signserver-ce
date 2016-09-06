@@ -1,6 +1,20 @@
 SignServer 4.0.0
 ----------------
 
+Major new features and improvements:
+    - Support for large files (Enterprise Edition)
+    - Major internal library updates such as CESeCore 6.4 and BouncyCastle 1.53
+    - Build system changed from Ant to Maven
+    - Many internal API improvements    
+    - Support for RFC 5816 time-stamps
+    - Initial Payara 4.1 support
+
+Bug fixes:
+    - Bug in BouncyCastle related to extensions in time-stamps
+    - ClientWS interface did not handle X-Forwarded-For header
+    - Fixed spelling typos
+    - Fixed unit tests not running automatically
+    - Fixed stylesheet on public web pages
 
 Notice:
  - Database changes were introduced. See UPGRADE.txt for details.
@@ -38,6 +52,7 @@ Notice:
 
 See ChangeLog.txt for the full list of changes.
 
+
 SignServer 3.7.3
 ----------------
 
@@ -48,6 +63,7 @@ Notice:
    command will not automatically (re)activate the token.
 
 See ChangeLog.txt for the full list of changes.
+
 
 SignServer 3.7.2
 ----------------
@@ -556,8 +572,6 @@ Bug fixes:
  - Ant target for testing individual tests did not work
  - Switching application server type did not update jndi.properties    
  - JavaDoc failed to build
-
-
 
 
 Notice:

@@ -2,28 +2,28 @@ SignServer 4.0.0, 2016-09-xx
 ----------------------------
 
 ** Bug
-    * [DSS-1075] - Regression: Must create tmp folder manualy before running unit tests
+    * [DSS-1075] - Regression: Must create tmp folder manually before running unit tests
     * [DSS-1096] - No Maven module for SignServer-Test-Enterprise
     * [DSS-1115] - ClientWS interface does not handle X-Forwarded-For header
     * [DSS-1145] - Patch BC TimeStampResponseGenerator with accepted extensions fix
     * [DSS-1166] - Spelling typos
     * [DSS-1176] - Regression: Links in documentation referencing the old complete.en.html
-    * [DSS-1185] - stresstest CLI command not marked as executable
-    * [DSS-1191] - JavaDoc generation fails for jsign
+    * [DSS-1185] - Stress test CLI command not marked as executable
+    * [DSS-1191] - JavaDoc generation fails for Jsign
     * [DSS-1195] - Regression: TimeMonitor not starting due to new JAR name with version
     * [DSS-1201] - Typo in UPGRADE.txt
     * [DSS-1202] - Dependency only needed in EE put directly in lib/ext
     * [DSS-1213] - Regression: Test sources for XMLValidator in wrong place
     * [DSS-1223] - Regression: Missing cesecore folder on classpath for SignClient
     * [DSS-1224] - Regression: CSR signing not working in locally running AdminGUI
-    * [DSS-1226] - Regression: validatecertificate command not available in SignClient
+    * [DSS-1226] - Regression: Certificate validation command not available in SignClient
     * [DSS-1230] - Regression: Windows CMD scripts using non-versioned JARs
     * [DSS-1243] - CMSSigner module unit tests not running automatically
     * [DSS-1244] - Regression: CMSSigner module unit tests broken
     * [DSS-1245] - Regression: TextSigner gives NPE when trying to log REQUESTED_LOCATION null
-    * [DSS-1246] - Lib-iText resources not put in seperate resources source tree
+    * [DSS-1246] - iText resources not put in separate resources source tree
     * [DSS-1249] - Public web stylesheet URL incorrect on sub pages
-    * [DSS-1250] - NPE in TimeStampSigner get status on incorrect time source value
+    * [DSS-1250] - Incorrect time source value gives NPE in TimeStampSigner
 
 ** Epic
     * [DSS-982] - Epic for Technology Upgrade
@@ -33,7 +33,7 @@ SignServer 4.0.0, 2016-09-xx
     * [DSS-286] - Upload signer certificate chain should take a List of CertificateS not any collection as the order is important
     * [DSS-449] - WorkerSession should have different local and remote process methods
     * [DSS-465] - Clean up old documentation and howtos
-    * [DSS-627] - Clean-out or deprecate unsupported ant targets
+    * [DSS-627] - Clean-out or deprecate unsupported Ant targets
     * [DSS-696] - Update BouncyCastle and remove custom patches
     * [DSS-774] - Don't persist public key in HSM
     * [DSS-778] - Upgrade to BouncyCastle 1.53
@@ -108,7 +108,7 @@ SignServer 4.0.0, 2016-09-xx
     * [DSS-1063] - Remove GenericWSServlet
     * [DSS-1074] - Make the documentation build properly with Maven
     * [DSS-1108] - Remove unused files etc
-    * [DSS-1114] - update ant scripts and documentation
+    * [DSS-1114] - Update Ant scripts and documentation
     * [DSS-1190] - Test upgrade from 3.7 to 4.0 on PostgreSQL
     * [DSS-1193] - Do dependency management
     * [DSS-1239] - Run preliminary performance comparison between 3.7 and 4.0 (trunk)

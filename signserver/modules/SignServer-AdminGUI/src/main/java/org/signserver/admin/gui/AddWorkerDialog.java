@@ -185,6 +185,46 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                 updateControls();
             }
         });
+        
+        workerNameField.getDocument().addDocumentListener(new DocumentListener() {
+           @Override
+           public void insertUpdate(DocumentEvent ev) {
+               configurationEdited = true;
+               updateControls();
+           }
+           
+           @Override
+            public void removeUpdate(DocumentEvent ev) {
+                configurationEdited = true;
+                updateControls();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent ev) {
+                configurationEdited = true;
+                updateControls();
+            }
+        });
+        
+        workerImplementationField.getDocument().addDocumentListener(new DocumentListener() {
+           @Override
+           public void insertUpdate(DocumentEvent ev) {
+               configurationEdited = true;
+               updateControls();
+           }
+           
+           @Override
+            public void removeUpdate(DocumentEvent ev) {
+                configurationEdited = true;
+                updateControls();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent ev) {
+                configurationEdited = true;
+                updateControls();
+            }
+        });
     }
     
     /**

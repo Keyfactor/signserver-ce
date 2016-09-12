@@ -15,6 +15,7 @@ package org.signserver.adminws;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
@@ -39,6 +40,7 @@ import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.FileUploadException;
 
@@ -936,6 +938,7 @@ public class AdminWS {
             CloseableWritableData responseData = null;
             try {
                 final Request req2;
+                boolean propertiesRequest = false;
                 
                 // Use the new request types with large file support for
                 // GenericSignRequest and GenericValidationRequest
@@ -962,6 +965,17 @@ public class AdminWS {
                 } else if (req instanceof SODSignRequest) {
                     SODSignRequest sodReq = (SODSignRequest) req;
                     req2 = new SODRequest(sodReq.getRequestID(), sodReq.getDataGroupHashes(), sodReq.getLdsVersion(), sodReq.getUnicodeVersion(), responseData);
+                } else if (req instanceof GenericPropertiesRequest) {
+                    GenericPropertiesRequest propReq = (GenericPropertiesRequest) req;
+                    propertiesRequest = true;
+                    
+                    // Upload handling (Note: close in finally clause)
+                    UploadConfig uploadConfig = UploadConfig.create(global);
+                    ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                    propReq.getProperties().store(bout, null);
+                    requestData = dataFactory.createReadableData(bout.toByteArray(), uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
+                    responseData = dataFactory.createWritableData(requestData, uploadConfig.getRepository());
+                    req2 = new SignatureRequest(propReq.hashCode(), requestData, responseData);
                 } else {
                     // Passthrough for all legacy requests
                     req2 = new LegacyRequest(req);
@@ -972,7 +986,13 @@ public class AdminWS {
                 ProcessResponse processResponse;
                 if (resp instanceof SignatureResponse) {
                     SignatureResponse sigResp = (SignatureResponse) resp;
-                    processResponse = new GenericSignResponse(sigResp.getRequestID(), responseData.toReadableData().getAsByteArray(), sigResp.getSignerCertificate(), sigResp.getArchiveId(), sigResp.getArchivables());
+                    if (propertiesRequest) {
+                        Properties properties = new Properties();
+                        properties.load(responseData.toReadableData().getAsInputStream());
+                        processResponse = new GenericPropertiesResponse(properties);
+                    } else {
+                        processResponse = new GenericSignResponse(sigResp.getRequestID(), responseData.toReadableData().getAsByteArray(), sigResp.getSignerCertificate(), sigResp.getArchiveId(), sigResp.getArchivables());
+                    }
                 } else if (resp instanceof DocumentValidationResponse) {
                     DocumentValidationResponse docResp = (DocumentValidationResponse) resp;
                     processResponse = new GenericValidationResponse(docResp.getRequestID(), docResp.isValid(), convert(docResp.getCertificateValidationResponse()), responseData.toReadableData().getAsByteArray());

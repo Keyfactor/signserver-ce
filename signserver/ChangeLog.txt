@@ -1,4 +1,4 @@
-SignServer 4.0.0, 2016-09-xx
+SignServer 4.0.0, 2016-09-22
 ----------------------------
 
 ** Bug
@@ -24,6 +24,12 @@ SignServer 4.0.0, 2016-09-xx
     * [DSS-1246] - iText resources not put in separate resources source tree
     * [DSS-1249] - Public web stylesheet URL incorrect on sub pages
     * [DSS-1250] - Incorrect time source value gives NPE in TimeStampSigner
+    * [DSS-1254] - Building with fixed time not working for web modules
+    * [DSS-1256] - Regression: Can not run AdminGUI over WS without specifying APPSRV_HOME
+    * [DSS-1262] - Regression: AdminGUI: the tool bar is not visible after moving and closing  
+    * [DSS-1263] - AdminGUI: Add Worker/Load Configuration: Edit Worker Properties: inconsistent behaviour of 'Next' button 
+    * [DSS-1265] - Regression: Error in XML Validator sample configuration file
+    * [DSS-1266] - Regression: RenewalWorker can not be called from AdminGUI over WS
 
 ** Epic
     * [DSS-982] - Epic for Technology Upgrade

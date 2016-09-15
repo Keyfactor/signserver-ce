@@ -479,7 +479,7 @@ Run pkg install in the GlassFish folder:
                 </subsection>
 
 
-                <subsection name="8. Configure deploymet">
+                <subsection name="8. Configure deployment">
                     <p>
 Copy conf/signserver_deploy.properties.sample to conf/signserver_deploy.properties and open
 it for editing in your favorite text editor.

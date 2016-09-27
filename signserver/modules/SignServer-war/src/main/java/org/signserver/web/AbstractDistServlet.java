@@ -34,7 +34,15 @@ import org.apache.commons.io.IOUtils;
  * @version $Id$
  */
 public abstract class AbstractDistServlet extends HttpServlet {
+
+    /**
+     * Get the download file.
+     * 
+     * @return The file to provide
+     */
     protected abstract File getFile();
+    
+    protected final SettingsBean settings = new SettingsBean();
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

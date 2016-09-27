@@ -12,18 +12,7 @@
  *************************************************************************/
 package org.signserver.web;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.io.IOUtils;
 
 /**
  * Servlet for downloading the AdminGUI.
@@ -32,9 +21,6 @@ import org.apache.commons.io.IOUtils;
  * @version $Id$
  */
 public class AdminGUIDistServlet extends AbstractDistServlet {
-
-    private final SettingsBean settings = new SettingsBean();
-
     @Override
     protected File getFile() {
         return settings.getAdminGUIDistFile();

@@ -79,6 +79,10 @@ to work on Windows. -->
         <istrue value="${web.admingui.dist.enabled}"/>
     </condition>
     
+    <condition property="web.clientcli.dist.conditionenabled">
+        <istrue value="${web.clientcli.dist.enabled}"/>
+    </condition>
+    
     <import file="${modules}/compile.xml" optional="true"/>
     
     
@@ -151,7 +155,8 @@ Installation Guide for details.
     <!-- =================================================================== -->
 
     <!-- We also create an AdminGUI dist. -->
-    <target name="-post-configure-ear" depends="-create-admingui-dist"/>
+    <target name="-post-configure-ear"
+            depends="-create-admingui-dist,-create-clientcli-dist"/>
 
     <!-- Allow the old name for configure-ear to still be working. -->
     <target name="compose-ear" depends="configure-ear"/>
@@ -375,7 +380,15 @@ Installation Guide for details.
             <param name="dist.zipprefix" value="signserver"/>
         </antcall>
     </target>
-
+    
+    <target name="-create-clientcli-dist" if="web.clientcli.dist.conditionenabled">
+        <delete dir="${tmp}/dist"/> <!-- Only include the admingui in the zip file -->
+        <antcall target="dist:clientcli"/>
+        <antcall target="dist:zip">
+            <param name="dist.zipdest" value="${web.clientcli.dist.file}"/>
+            <param name="dist.zipprefix" value="signserver"/>
+        </antcall>
+    </target>
 
     <!-- =================================================================== -->
     <!-- Main targets                                                        -->

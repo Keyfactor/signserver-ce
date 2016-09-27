@@ -29,6 +29,10 @@
         <servlet-name>AdminGUIDistServlet</servlet-name>
         <servlet-class>org.signserver.web.AdminGUIDistServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ClientCLIDistServlet</servlet-name>
+        <servlet-class>org.signserver.web.ClientCLIDistServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>WS31Dispatcher</servlet-name>
         <url-pattern>/signserverws/signserverws</url-pattern>
@@ -76,6 +80,10 @@
     <servlet-mapping>
         <servlet-name>AdminGUIDistServlet</servlet-name>
         <url-pattern>/admingui-dist/signserver-admingui.zip</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ClientCLIDistServlet</servlet-name>
+        <url-pattern>/clientcli-dist/signserver-admincli.zip</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

@@ -85,7 +85,7 @@ public class SettingsBean {
         return result;
     }
     
-    public boolean isWebAdminCLIDistAvailable() {
+    public boolean isWebClientCLIDistAvailable() {
         final boolean result;
         if (!isWebClientCLIDistEnabled()) {
             result = false;

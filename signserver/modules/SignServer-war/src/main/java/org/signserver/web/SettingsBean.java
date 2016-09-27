@@ -104,7 +104,7 @@ public class SettingsBean {
         return String.format("%.2f MB", getAdminGUIDistFile().length() / 1000000f);
     }
 
-    public String getWebAdminCLIDistSize() {
+    public String getWebClientCLIDistSize() {
         return String.format("%.2f MB", getClientCLIDistFile().length() / 1000000f);
     }
 }

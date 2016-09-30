@@ -211,6 +211,20 @@
 #web.admingui.dist.file=${basedir}/lib/signserver-admingui.zip
 #web.admingui.dist.file=/tmp/signserver-admingui.zip
 
+# Offer the ClientCLI binary dist for download from the public web
+# Note: If enabled the following configuration files will also be part of the 
+# download:
+# - conf/log4.properties
+#
+# The ZIP file is created as part of the compose-ear (deploy) Ant target.
+#
+# Default: false
+#web.clientcli.dist.enabled=false
+
+# Path to the ClientCLI binary dist file
+# Default: ${basedir}/lib/signserver-clientcli.zip
+#web.admingui.dist.file=${basedir}/lib/signserver-clientcli.zip
+#web.admingui.dist.file=/tmp/signserver-clientcli.zip
 
 # -------------- Status And Health Check Configuration -------------------------
 #

@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.server;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
@@ -45,7 +45,9 @@ public class DispatchedAuthorizer implements IAuthorizer {
 
     private boolean authorizeAllDispatchers;
 
-    
+    // Configuration errors
+    private final ArrayList<String> configErrors = new ArrayList<>(1);
+
 
     @Override
     public void init(int workerId, WorkerConfig config, EntityManager em) throws SignServerException {
@@ -53,15 +55,20 @@ public class DispatchedAuthorizer implements IAuthorizer {
         
         String value = config.getProperty(AUTHORIZEALLDISPATCHERS);
         if (value == null) {
-            LOG.error("DispatchedAuthorizer[" + workerId + "]: Missing property " + AUTHORIZEALLDISPATCHERS);
+            configErrors.add("Missing property " + AUTHORIZEALLDISPATCHERS);
+        } else if (Boolean.TRUE.toString().equalsIgnoreCase(value)) {
+            authorizeAllDispatchers = true;
+        } else if (Boolean.FALSE.toString().equalsIgnoreCase(value)) {
+            authorizeAllDispatchers = false;
         } else {
-            authorizeAllDispatchers = Boolean.parseBoolean(value);
+            configErrors.add("Incorrect value for property "
+                    + AUTHORIZEALLDISPATCHERS);
         }
     }
-    
+
     @Override
     public List<String> getFatalErrors() {
-        return Collections.emptyList();
+        return configErrors;
     }
 
     @Override

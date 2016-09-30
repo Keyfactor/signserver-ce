@@ -368,6 +368,7 @@ Installation Guide for details.
                 bin/signclient.cmd,
                 conf/log4j.properties,
                 doc/lgpl-2.1.txt,
+                res/deploytools/cesecore/defaultvalues.properties,
                 ${dist.includes.extra}
                 "/>
         </antcall>

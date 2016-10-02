@@ -52,4 +52,12 @@
             <item name="signserver.org"        href="https://www.signserver.org"/>
         </menu>
     </body>
+    
+    <!-- Remove date in header as it breaks reproducible builds. -->
+    <custom>
+        <fluidoSkin>
+            <skipGenerationDate>true</skipGenerationDate>
+            
+        </fluidoSkin>
+    </custom>
 </project>

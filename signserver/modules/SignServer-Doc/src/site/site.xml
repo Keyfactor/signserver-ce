@@ -6,7 +6,7 @@
         <src>images/SignServer_pki_by_primekey.png</src>
         <href>index.html</href>
     </bannerLeft>
-    <publishDate />
+    <publishDate position="none"/>
     <version/>
     <skin>
         <groupId>org.apache.maven.skins</groupId>

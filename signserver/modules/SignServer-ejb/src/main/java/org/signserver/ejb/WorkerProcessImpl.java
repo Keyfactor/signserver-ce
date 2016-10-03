@@ -27,9 +27,7 @@ import org.cesecore.audit.log.SecurityEventsLoggerSessionLocal;
 import org.signserver.common.AccessDeniedException;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.GenericSignResponse;
 import org.signserver.common.IArchivableProcessResponse;
-import org.signserver.common.ISignResponse;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.NotGrantedException;
@@ -538,7 +536,11 @@ class WorkerProcessImpl {
                 }
             });
 
-            ValidityTimeUtils.checkSignerValidity(new WorkerIdentifier(workerId), awc, cert);
+            // Check signer validity if configured to do so
+            if (awc.getProperties().getProperty(SignServerConstants.CHECKCERTVALIDITY, Boolean.TRUE.toString()).equalsIgnoreCase(Boolean.TRUE.toString()) 
+                    || awc.getProperties().getProperty(SignServerConstants.CHECKCERTPRIVATEKEYVALIDITY, Boolean.TRUE.toString()).equalsIgnoreCase(Boolean.TRUE.toString())) {
+                ValidityTimeUtils.checkSignerValidity(new WorkerIdentifier(workerId), awc, cert);
+            }
         } else { // if (cert != null)
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Worker does not have a signing certificate. Worker: "

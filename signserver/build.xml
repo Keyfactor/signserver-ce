@@ -383,7 +383,7 @@ Installation Guide for details.
     </target>
     
     <target name="-create-clientcli-dist" if="web.clientcli.dist.conditionenabled">
-        <delete dir="${tmp}/dist"/> <!-- Only include the admingui in the zip file -->
+        <delete dir="${tmp}/dist"/> <!-- Only include the client CLI in the zip file -->
         <antcall target="dist:clientcli"/>
         <antcall target="dist:zip">
             <param name="dist.zipdest" value="${web.clientcli.dist.file}"/>

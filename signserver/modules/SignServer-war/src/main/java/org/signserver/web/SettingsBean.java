@@ -65,7 +65,7 @@ public class SettingsBean {
     public File getClientCLIDistFile() {
         final String fileName = settings.getProperty(WEB_CLIENTCLI_DIST_FILE);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Admin CLI dist file: " + fileName);
+            LOG.debug("Client CLI dist file: " + fileName);
         }
         return fileName == null ? null : new File(fileName);
     }

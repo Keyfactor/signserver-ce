@@ -15,7 +15,7 @@ package org.signserver.web;
 import java.io.File;
 
 /**
- * Servlet for downloading the admin CLI.
+ * Servlet for downloading the client CLI.
  *
  * @author Marcus Lundblad
  * @version $Id$

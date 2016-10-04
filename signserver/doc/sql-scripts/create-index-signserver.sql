@@ -12,7 +12,7 @@ CREATE INDEX auditrecorddata_idx3 ON AuditRecordData (timeStamp);
 CREATE INDEX archivedata_idx3 ON ArchiveData (time);
 
 -- Selecting by signerType is done by the services loader
-CREATE INDEX signerconfigdata_idx2 ON SignerConfigData (signerType)
+CREATE INDEX signerconfigdata_idx2 ON SignerConfigData (signerType);
 
 -- Selecting by signerName could be done when loading a worker
-CREATE UNIQUE INDEX signerconfigdata_idx3 ON SignerConfigData (signerName)
+CREATE UNIQUE INDEX signerconfigdata_idx3 ON SignerConfigData (signerName);

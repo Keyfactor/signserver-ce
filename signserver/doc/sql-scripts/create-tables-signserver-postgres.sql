@@ -39,7 +39,7 @@ CREATE TABLE globalconfigdata (
 CREATE TABLE signerconfigdata (
     signerid integer NOT NULL,
     signername character varying(255),
-    signertype character varying(255),
+    signertype integer,
     signerconfigdata text
 );
 

@@ -40,7 +40,7 @@ CREATE TABLE `GlobalConfigData` (
 CREATE TABLE `signerconfigdata` (
   `signerId` int(11) NOT NULL,
   `signerName` VARCHAR(255),
-  `signerType` VARCHAR(255),
+  `signerType` int(11) DEFAULT NULL,
   `signerConfigData` mediumtext,
   PRIMARY KEY (`signerId`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;

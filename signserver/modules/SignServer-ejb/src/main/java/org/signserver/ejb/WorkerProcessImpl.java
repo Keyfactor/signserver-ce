@@ -194,70 +194,8 @@ class WorkerProcessImpl {
             }
             final IProcessable processable = (IProcessable) worker.getWorker();
 
-            // Check authorization
-            logMap.put(IWorkerLogger.LOG_WORKER_AUTHTYPE, new Loggable() {
-                @Override
-                public String toString() {
-                    return processable.getAuthenticationType();
-                }
-            });
-     
-            try {
-                IAuthorizer authorizer = worker.getAuthorizer();
-                if (authorizer == null) {
-                    final SignServerException exception =
-                        new SignServerException("Authorization misconfigured");
-                    logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, false);
-                    logException(adminInfo, exception, logMap, workerLogger, requestContext);
-                    throw exception;
-                } else {
-                    authorizer.isAuthorized(request, requestContext);
-                    logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, true);
-                }
-            } catch (AuthorizationRequiredException | AccessDeniedException ex) {
-                throw ex;
-            } catch (IllegalRequestException ex) {
-                final IllegalRequestException exception =
-                        new IllegalRequestException("Authorization failed: "
-                        + ex.getMessage(), ex);
-                logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, false);
-                logException(adminInfo, ex, logMap, workerLogger, requestContext);
-                throw exception;
-            } catch (SignServerException ex) {
-                final SignServerException exception =
-                        new SignServerException("Authorization failed: "
-                        + ex.getMessage(), ex);
-                logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, false);
-                logException(adminInfo, ex, logMap, workerLogger, requestContext);
-                throw exception;
-            }
-
-            // Log client certificate (if any)
-            final Certificate clientCertificate = (Certificate)
-                    requestContext.get(RequestContext.CLIENT_CERTIFICATE);
-            if (clientCertificate instanceof X509Certificate) {
-                final X509Certificate cert = (X509Certificate) clientCertificate;
-                logMap.put(IWorkerLogger.LOG_CLIENT_CERT_SUBJECTDN, new Loggable() {
-                    @Override
-                    public String toString() {
-                        return cert.getSubjectDN().getName();
-                    }
-                });
-                        
-                logMap.put(IWorkerLogger.LOG_CLIENT_CERT_ISSUERDN, new Loggable() {
-                    @Override
-                    public String toString() {
-                        return cert.getIssuerDN().getName();
-                    }
-                });
-                        
-                logMap.put(IWorkerLogger.LOG_CLIENT_CERT_SERIALNUMBER, new Loggable() {
-                    @Override
-                    public String toString() {
-                        return cert.getSerialNumber().toString(16);
-                    }
-                });     
-            }
+            // Authorizer
+            handleAuthorization(processable, worker, request, logMap, adminInfo, workerLogger, requestContext);
 
             // Check activation
             if (pwc.isDisabled()) {
@@ -285,161 +223,20 @@ class WorkerProcessImpl {
             requestContext.put(RequestContext.STATISTICS_EVENT, event);
 
             // Process the request
-            final Response res;
-            try {
-                res = processable.processData(request, requestContext);
-            } catch (AuthorizationRequiredException ex) {
-              throw ex; // This can happen in dispatching workers
-            } catch (SignServerException e) {
-                final SignServerException exception = new SignServerException(
-                        "SignServerException calling signer with id " + workerId
-                        + " : " + e.getMessage(), e);
-                LOG.error(exception.getMessage(), exception);
-                logException(adminInfo, exception, logMap, workerLogger, requestContext);
-                throw exception;
-            } catch (IllegalRequestException ex) {
-                final IllegalRequestException exception =
-                        new IllegalRequestException(ex.getMessage());
-				if (LOG.isInfoEnabled()) {
-					LOG.info("Illegal request calling signer with id " + workerId
-                        + " : " + ex.getMessage());
-				}
-				logException(adminInfo, exception, logMap, workerLogger, requestContext);
-                throw exception;
-            } catch (CryptoTokenOfflineException ex) {
-                final CryptoTokenOfflineException exception =
-                        new CryptoTokenOfflineException(ex);
-                logException(adminInfo, exception, logMap, workerLogger, requestContext);
-                throw exception;
-            }
+            final Response res = handleProcessing(processable, workerId, request, requestContext, logMap, workerLogger, adminInfo);
 
-            // Check signer certificate
+            // Check signer certificate            
             Certificate signerCertificate = null;
             if (res instanceof SignatureResponse) {
                 signerCertificate = ((SignatureResponse) res).getSignerCertificate();
             }
-            
-            if (signerCertificate instanceof X509Certificate) {
-                final X509Certificate cert = (X509Certificate) signerCertificate;
-
-                // Log client certificate
-                logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SUBJECTDN, new Loggable() {
-                    @Override
-                    public String toString() {
-                        return cert.getSubjectDN().getName();
-                    }
-                });     
-                logMap.put(IWorkerLogger.LOG_SIGNER_CERT_ISSUERDN, new Loggable() {
-                    @Override
-                    public String toString() {
-                        return cert.getIssuerDN().getName();
-                    }
-                });     
-                logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SERIALNUMBER, new Loggable() {
-                    @Override
-                    public String toString() {
-                        return cert.getSerialNumber().toString(16);
-                    }
-                });
-
-                try {
-                    // Check signer validity if configured to do so
-                    if (pwc.isCheckCertValidity() || pwc.isCheckPrivateKeyValidity()) {
-                        // Check if the signer has a signer certificate and if that
-                        // certificate have ok validity and private key usage periods.
-                        ValidityTimeUtils.checkSignerValidity(new WorkerIdentifier(workerId), pwc.isCheckCertValidity(), pwc.isCheckPrivateKeyValidity(), pwc.getMinRemainingCertValidity(), cert);
-                    }
-
-                    // Check key usage limit (preliminary check only)
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Key usage counter disabled: " + pwc.isDisableKeyUsageCounter());
-                    }
-                    if (!pwc.isDisableKeyUsageCounter() || pwc.isKeyUsageLimitSpecified()) {
-                        checkSignerKeyUsageCounter(signerCertificate, workerId, pwc.getKeyUsageLimit(), em,
-                                false, requestContext.getServices());
-                    }
-                } catch (CryptoTokenOfflineException ex) {
-                    final CryptoTokenOfflineException exception =
-                            new CryptoTokenOfflineException(ex);
-                    logException(adminInfo, exception, logMap, workerLogger, requestContext);
-                    throw exception;
-                }
-                
-            } else { // if (cert != null)
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Worker does not have a signing certificate. Worker: "
-                            + workerId);
-                }
-            }
+            handleSignerCertificate(signerCertificate, workerId, logMap, pwc, requestContext, workerLogger, adminInfo);
 
             // Charge the client if the request was successfull
-            if (requestContext.isRequestFulfilledByWorker()) {
-
-                // Billing time
-                final boolean purchased;
-                
-                try {
-                    IClientCredential credential =
-                            (IClientCredential) requestContext.get(
-                                        RequestContext.CLIENT_CREDENTIAL);
-
-                    purchased = worker.getAccounter().purchase(credential, request, res, requestContext);
-
-                    logMap.put(IWorkerLogger.LOG_PURCHASED, purchased);
-                } catch (AccounterException ex) {
-                    logMap.put(IWorkerLogger.LOG_PURCHASED, false);
-                    final SignServerException exception =
-                            new SignServerException("Accounter failed: "
-                            + ex.getMessage(), ex);
-                    logException(adminInfo, ex, logMap, workerLogger, requestContext);
-                    throw exception;
-                }
-                if (!purchased) {
-                    final String error = "Purchase not granted";
-                    logMap.put(IWorkerLogger.LOG_EXCEPTION, error);
-                    logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, false);
-
-                    workerLogger.log(adminInfo, logMap, requestContext);
-                    throw new NotGrantedException(error);
-                }
-            } else {
-                logMap.put(IWorkerLogger.LOG_PURCHASED, false);
-            }
+            handleAccounting(worker, requestContext, logMap, request, res, workerLogger, adminInfo);
 
             // Archiving
-            if (res instanceof IArchivableProcessResponse) {
-                final IArchivableProcessResponse arres =
-                        (IArchivableProcessResponse) res;
-                final Collection<? extends Archivable> archivables = arres.getArchivables();
-                if (archivables != null) {
-                    // Archive all Archivables using all ArchiverS
-                    final List<Archiver> archivers = worker.getArchivers();
-                    if (archivers != null) {
-                        try {
-                            for (Archiver archiver : archivers) {
-                                for (Archivable archivable : archivables) {
-
-                                    final boolean archived = archiver.archive(
-                                            archivable, requestContext);
-
-                                    if (LOG.isDebugEnabled()) {
-                                        final StringBuilder buff = new StringBuilder();
-                                        buff.append("Archiver ");
-                                        buff.append(archiver);
-                                        buff.append(" archived request: ");
-                                        buff.append(archived);
-                                        LOG.debug(buff.toString());
-                                    }
-                                }
-                            }
-                        } catch (ArchiveException ex) {
-                            LOG.error("Archiving failed", ex);
-                            throw new SignServerException(
-                                    "Archiving failed. See server LOG.");
-                        }
-                    }
-                }
-            }
+            handleArchiving(res, worker, requestContext);
 
             // Statistics: end event
             StatisticsManager.endEvent(workerId, awc, em, event);
@@ -569,11 +366,225 @@ class WorkerProcessImpl {
         }
     }
 
-    /**
-     * @see org.signserver.ejb.interfaces.WorkerSession#getWorkerId(java.lang.String)
-     */
-    /*public int getWorkerId(String signerName) throws NoSuchWorkerException {
-        return workerManagerSession.getIdFromName(signerName);
-    }*/
+    private static void handleArchiving(final Response res, final WorkerWithComponents worker, final RequestContext requestContext) throws SignServerException {
+        if (res instanceof IArchivableProcessResponse) {
+            final IArchivableProcessResponse arres = (IArchivableProcessResponse) res;
+            final Collection<? extends Archivable> archivables = arres.getArchivables();
+            if (archivables != null) {
+                // Archive all Archivables using all ArchiverS
+                final List<Archiver> archivers = worker.getArchivers();
+                if (archivers != null) {
+                    try {
+                        for (Archiver archiver : archivers) {
+                            for (Archivable archivable : archivables) {
+
+                                final boolean archived = archiver.archive(
+                                        archivable, requestContext);
+
+                                if (LOG.isDebugEnabled()) {
+                                    final StringBuilder buff = new StringBuilder();
+                                    buff.append("Archiver ");
+                                    buff.append(archiver);
+                                    buff.append(" archived request: ");
+                                    buff.append(archived);
+                                    LOG.debug(buff.toString());
+                                }
+                            }
+                        }
+                    } catch (ArchiveException ex) {
+                        LOG.error("Archiving failed", ex);
+                        throw new SignServerException(
+                                "Archiving failed. See server LOG.");
+                    }
+                }
+            }
+        }
+    }
+
+    private void handleAccounting(final WorkerWithComponents worker, final RequestContext requestContext, final LogMap logMap, final Request request, Response res, IWorkerLogger workerLogger, AdminInfo adminInfo) throws NotGrantedException, WorkerLoggerException, SignServerException {
+        if (requestContext.isRequestFulfilledByWorker()) {
+                
+            // Billing time
+            final boolean purchased;
+
+            try {
+                IClientCredential credential =
+                        (IClientCredential) requestContext.get(
+                                    RequestContext.CLIENT_CREDENTIAL);
+
+                purchased = worker.getAccounter().purchase(credential, request, res, requestContext);
+
+                logMap.put(IWorkerLogger.LOG_PURCHASED, purchased);
+            } catch (AccounterException ex) {
+                logMap.put(IWorkerLogger.LOG_PURCHASED, false);
+                final SignServerException exception =
+                        new SignServerException("Accounter failed: "
+                        + ex.getMessage(), ex);
+                logException(adminInfo, ex, logMap, workerLogger, requestContext);
+                throw exception;
+            }
+            if (!purchased) {
+                final String error = "Purchase not granted";
+                logMap.put(IWorkerLogger.LOG_EXCEPTION, error);
+                logMap.put(IWorkerLogger.LOG_PROCESS_SUCCESS, false);
+
+                workerLogger.log(adminInfo, logMap, requestContext);
+                throw new NotGrantedException(error);
+            }
+        } else {
+            logMap.put(IWorkerLogger.LOG_PURCHASED, false);
+        }
+    }
+
+    private void handleSignerCertificate(Certificate signerCertificate, int workerId, LogMap logMap, PreloadedWorkerConfig pwc, RequestContext requestContext, IWorkerLogger workerLogger, AdminInfo adminInfo) throws WorkerLoggerException, CryptoTokenOfflineException {
+        if (signerCertificate instanceof X509Certificate) {
+            final X509Certificate cert = (X509Certificate) signerCertificate;
+
+            // Log client certificate
+            logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SUBJECTDN, new Loggable() {
+                @Override
+                public String toString() {
+                    return cert.getSubjectDN().getName();
+                }
+            });     
+            logMap.put(IWorkerLogger.LOG_SIGNER_CERT_ISSUERDN, new Loggable() {
+                @Override
+                public String toString() {
+                    return cert.getIssuerDN().getName();
+                }
+            });     
+            logMap.put(IWorkerLogger.LOG_SIGNER_CERT_SERIALNUMBER, new Loggable() {
+                @Override
+                public String toString() {
+                    return cert.getSerialNumber().toString(16);
+                }
+            });
+
+            try {
+                // Check signer validity if configured to do so
+                if (pwc.isCheckCertValidity() || pwc.isCheckPrivateKeyValidity()) {
+                    // Check if the signer has a signer certificate and if that
+                    // certificate have ok validity and private key usage periods.
+                    ValidityTimeUtils.checkSignerValidity(new WorkerIdentifier(workerId), pwc.isCheckCertValidity(), pwc.isCheckPrivateKeyValidity(), pwc.getMinRemainingCertValidity(), cert);
+                }
+
+                // Check key usage limit (preliminary check only)
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Key usage counter disabled: " + pwc.isDisableKeyUsageCounter());
+                }
+                if (!pwc.isDisableKeyUsageCounter() || pwc.isKeyUsageLimitSpecified()) {
+                    checkSignerKeyUsageCounter(signerCertificate, workerId, pwc.getKeyUsageLimit(), em,
+                            false, requestContext.getServices());
+                }
+            } catch (CryptoTokenOfflineException ex) {
+                final CryptoTokenOfflineException exception =
+                        new CryptoTokenOfflineException(ex);
+                logException(adminInfo, exception, logMap, workerLogger, requestContext);
+                throw exception;
+            }
+
+        } else { // if (cert != null)
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Worker does not have a signing certificate. Worker: "
+                        + workerId);
+            }
+        }
+    }
+
+    private void handleAuthorization(final IProcessable processable, final WorkerWithComponents worker, final Request request, final LogMap logMap, final AdminInfo adminInfo, final IWorkerLogger workerLogger, final RequestContext requestContext) throws WorkerLoggerException, AuthorizationRequiredException, AccessDeniedException, IllegalRequestException, SignServerException {
+        // Check authorization
+        logMap.put(IWorkerLogger.LOG_WORKER_AUTHTYPE, new Loggable() {
+            @Override
+            public String toString() {
+                return processable.getAuthenticationType();
+            }
+        });
+        
+        try {
+            IAuthorizer authorizer = worker.getAuthorizer();
+            if (authorizer == null) {
+                final SignServerException exception =
+                    new SignServerException("Authorization misconfigured");
+                logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, false);
+                logException(adminInfo, exception, logMap, workerLogger, requestContext);
+                throw exception;
+            } else {
+                authorizer.isAuthorized(request, requestContext);
+                logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, true);
+            }
+        } catch (AuthorizationRequiredException | AccessDeniedException ex) {
+            throw ex;
+        } catch (IllegalRequestException ex) {
+            final IllegalRequestException exception =
+                    new IllegalRequestException("Authorization failed: "
+                    + ex.getMessage(), ex);
+            logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, false);
+            logException(adminInfo, ex, logMap, workerLogger, requestContext);
+            throw exception;
+        } catch (SignServerException ex) {
+            final SignServerException exception =
+                    new SignServerException("Authorization failed: "
+                    + ex.getMessage(), ex);
+            logMap.put(IWorkerLogger.LOG_CLIENT_AUTHORIZED, false);
+            logException(adminInfo, ex, logMap, workerLogger, requestContext);
+            throw exception;
+        }
+        
+        // Log client certificate (if any)
+        final Certificate clientCertificate = (Certificate)
+                requestContext.get(RequestContext.CLIENT_CERTIFICATE);
+        if (clientCertificate instanceof X509Certificate) {
+            final X509Certificate cert = (X509Certificate) clientCertificate;
+            logMap.put(IWorkerLogger.LOG_CLIENT_CERT_SUBJECTDN, new Loggable() {
+                @Override
+                public String toString() {
+                    return cert.getSubjectDN().getName();
+                }
+            });
+
+            logMap.put(IWorkerLogger.LOG_CLIENT_CERT_ISSUERDN, new Loggable() {
+                @Override
+                public String toString() {
+                    return cert.getIssuerDN().getName();
+                }
+            });
+
+            logMap.put(IWorkerLogger.LOG_CLIENT_CERT_SERIALNUMBER, new Loggable() {
+                @Override
+                public String toString() {
+                    return cert.getSerialNumber().toString(16);
+                }
+            });     
+        }
+    }
+
+    private Response handleProcessing(final IProcessable processable, final int workerId, final Request request, final RequestContext requestContext, final LogMap logMap, final IWorkerLogger workerLogger, final AdminInfo adminInfo) throws AuthorizationRequiredException, WorkerLoggerException, SignServerException, IllegalRequestException, CryptoTokenOfflineException {
+        try {
+            return processable.processData(request, requestContext);
+        } catch (AuthorizationRequiredException ex) {
+          throw ex; // This can happen in dispatching workers
+        } catch (SignServerException e) {
+            final SignServerException exception = new SignServerException(
+                    "SignServerException calling signer with id " + workerId
+                    + " : " + e.getMessage(), e);
+            LOG.error(exception.getMessage(), exception);
+            logException(adminInfo, exception, logMap, workerLogger, requestContext);
+            throw exception;
+        } catch (IllegalRequestException ex) {
+            final IllegalRequestException exception =
+                    new IllegalRequestException(ex.getMessage());
+                            if (LOG.isInfoEnabled()) {
+                                    LOG.info("Illegal request calling signer with id " + workerId
+                    + " : " + ex.getMessage());
+                            }
+                            logException(adminInfo, exception, logMap, workerLogger, requestContext);
+            throw exception;
+        } catch (CryptoTokenOfflineException ex) {
+            final CryptoTokenOfflineException exception =
+                    new CryptoTokenOfflineException(ex);
+            logException(adminInfo, exception, logMap, workerLogger, requestContext);
+            throw exception;
+        }
+    }
 
 }

@@ -13,7 +13,6 @@
 package org.signserver.web;
 
 import org.signserver.server.data.impl.BinaryFileUpload;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -103,6 +102,12 @@ public class GenericProcessServlet extends AbstractProcessServlet {
 
     private DataFactory dataFactory;
 
+    // UploadConfig cache
+    private static final long UPLOAD_CONFIG_CACHE_TIME = 2000;
+    private final Object uploadConfigSync = new Object();
+    private UploadConfig cachedUploadConfig;
+    private long uploadConfigNextUpdate;
+
     /**
      * Handles http post.
      *
@@ -139,7 +144,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         ProcessType processType = ProcessType.signDocument;
         final MetaDataHolder metadataHolder = new MetaDataHolder();
 
-        final UploadConfig uploadConfig = UploadConfig.create(globalSession);
+        final UploadConfig uploadConfig = getUploadConfig();
         final DiskFileItemFactory factory = new DiskFileItemFactory();
         factory.setSizeThreshold(uploadConfig.getSizeThreshold());
         factory.setRepository(uploadConfig.getRepository());
@@ -655,4 +660,17 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         res.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
     }
 
+    /**
+     * @return The cached UploadConfig or a new one if the cache expired
+     */
+    private UploadConfig getUploadConfig() {
+        synchronized (uploadConfigSync) {
+            final long now = System.currentTimeMillis();
+            if (cachedUploadConfig == null || now > uploadConfigNextUpdate) {
+                cachedUploadConfig = UploadConfig.create(globalSession);
+                uploadConfigNextUpdate = now + UPLOAD_CONFIG_CACHE_TIME;
+            }
+            return cachedUploadConfig;
+        }
+    }
 }

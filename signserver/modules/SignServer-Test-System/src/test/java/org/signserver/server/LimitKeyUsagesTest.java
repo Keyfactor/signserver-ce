@@ -170,9 +170,8 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
     }
     
     /**
-     * Tests that when the key usage counter is disabled but there is a limit
-     * it will still count. This is actually a configuration error but we want 
-     * to treat it the safe way which is to still honor the limit. 
+     * Tests that when a KEYUSAGELIMIT is specified but also
+     * DISABLEKEYUSAGECOUNTER=TRUE, the request fails.
      */
     @Test
     public void test05IncreaseWhenDisabledButThereIsALimit() throws Exception {
@@ -188,11 +187,13 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
             throw new Exception("Test case assumes non negative counter value");
         }
         
-        doSign();
-        
-        // Counter should have increased
-        final long actual = workerSession.getKeyUsageCounterValue(WORKERID_1);
-        assertEquals("counter should have increased", oldValue + 1, actual);
+        try {
+            doSign();
+
+            fail("Request should not have been accepted as both disabled and limit specified");
+        } catch (SignServerException expected) {
+            assertEquals("exception message", "Worker is misconfigured", expected.getMessage());
+        }
     }
 
     @Test
@@ -205,8 +206,7 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
         
         // Set a limit so we can only do one signing
         workerSession.setWorkerProperty(WORKERID_1.getId(), "KEYUSAGELIMIT", String.valueOf(oldValue + 1));
-        // Set to disabled
-        workerSession.setWorkerProperty(WORKERID_1.getId(), "DISABLEKEYUSAGECOUNTER", "TRUE");
+        workerSession.setWorkerProperty(WORKERID_1.getId(), "DISABLEKEYUSAGECOUNTER", "FALSE");
         workerSession.reloadConfiguration(WORKERID_1.getId());
         workerSession.activateSigner(WORKERID_1, "foo123");
         

@@ -30,15 +30,17 @@ public class WorkerWithComponents {
     private final int id;
     private final IWorker worker;
     private final List<String> createErrors;
+    private final PreloadedWorkerConfig preloadedConfig;
     private final IWorkerLogger workerLogger;
     private final IAuthorizer authorizer;
     private final IAccounter accounter;
     private final List<Archiver> archivers;
 
-    public WorkerWithComponents(int id, IWorker worker, List<String> createErrors, IWorkerLogger workerLogger, IAuthorizer authorizer, IAccounter accounter, List<Archiver> archivers) {
+    public WorkerWithComponents(int id, IWorker worker, List<String> createErrors, PreloadedWorkerConfig preloadedConfig, IWorkerLogger workerLogger, IAuthorizer authorizer, IAccounter accounter, List<Archiver> archivers) {
         this.id = id;
         this.worker = worker;
         this.createErrors = createErrors;
+        this.preloadedConfig = preloadedConfig;
         this.workerLogger = workerLogger;
         this.authorizer = authorizer;
         this.accounter = accounter;
@@ -55,6 +57,10 @@ public class WorkerWithComponents {
     
     public boolean hasCreateErrors() {
         return !createErrors.isEmpty();
+    }
+
+    public PreloadedWorkerConfig getPreloadedConfig() {
+        return preloadedConfig;
     }
 
     public IWorkerLogger getWorkerLogger() {

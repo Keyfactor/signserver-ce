@@ -155,9 +155,15 @@ public class WorkerFactory {
         final IWorker worker = getWorker(wi);
 
         final WorkerConfig config = worker.getConfig();
+
+        final List<String> createErrors = new LinkedList<>();
+        
+        // Load configuration properties used by WorkerProcess etc
+        // Lets do it now when we are on the "slow path"
+        final PreloadedWorkerConfig loadedConfig = new PreloadedWorkerConfig(config, createErrors);
+
         @SuppressWarnings("deprecation")
         final EntityManager em = context.getEntityManager();
-        final List<String> createErrors = new LinkedList<>();
 
         // Worker Logger
         IWorkerLogger workerLogger = null;
@@ -195,7 +201,7 @@ public class WorkerFactory {
         }
 
         // Worker with components
-        result = new WorkerWithComponents(workerId, worker, createErrors, workerLogger, authorizer, accounter, archivers);
+        result = new WorkerWithComponents(workerId, worker, createErrors, loadedConfig, workerLogger, authorizer, accounter, archivers);
         cache.putWorkerWithComponents(workerId, result);
         if (LOG.isTraceEnabled()) {
             LOG.trace("<loadWorkerWithComponents(" + workerId + "): " + worker + " in " + result);

@@ -18,6 +18,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -91,8 +92,6 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         validateDocument,
         validateCertificate
     };
-    
-    private final Random random = new Random();
 
     @EJB
     private ProcessSessionLocal processSession;
@@ -510,7 +509,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             LOG.debug("Received bytes of length: " + data.getLength());
         }
 
-        final int requestId = random.nextInt();
+        final int requestId = ThreadLocalRandom.current().nextInt();
 
         try (CloseableWritableData responseData = dataFactory.createWritableData(data, uploadConfig.getRepository())) {
             String responseText;

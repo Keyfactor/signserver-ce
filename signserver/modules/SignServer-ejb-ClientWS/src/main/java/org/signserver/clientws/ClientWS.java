@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -85,8 +86,6 @@ public class ClientWS {
     private ProcessSessionLocal getProcessSession() {
         return processSession;
     }
-
-    private final Random random = new Random();
     
     /**
      * Generic operation for request signing of a byte array.
@@ -112,7 +111,7 @@ public class ClientWS {
                 CloseableWritableData responseData = dataFactory.createWritableData(requestData, uploadConfig.getRepository());
             ) {
             final RequestContext requestContext = handleRequestContext(requestMetadata);
-            final int requestId = random.nextInt();
+            final int requestId = ThreadLocalRandom.current().nextInt();
             
             // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
             
@@ -188,7 +187,7 @@ public class ClientWS {
         final org.signserver.clientws.SODResponse result;
         try (CloseableWritableData responseData = new TemporarlyWritableData(false, new UploadConfig().getRepository())) {
             final RequestContext requestContext = handleRequestContext(requestMetadata);
-            final int requestId = random.nextInt();
+            final int requestId = ThreadLocalRandom.current().nextInt();
         
             // Collect all [dataGroup1, dataGroup2, ..., dataGroupN]
             final List<DataGroup> dataGroups = data.getDataGroups();

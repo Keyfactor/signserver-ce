@@ -22,7 +22,7 @@ import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.ejb.EJB;
 
 import javax.servlet.ServletException;
@@ -257,8 +257,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
                 clientCertificate = certificates[0];
             }
 
-            Random rand = new Random();
-            int requestId = rand.nextInt();
+            final int requestId = ThreadLocalRandom.current().nextInt();
 
             SODResponse response;
             try (CloseableWritableData responseData = dataFactory.createWritableData(false, fileRepository)) {

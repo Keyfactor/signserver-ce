@@ -67,11 +67,6 @@ public class RequestedPolicyDispatcher extends BaseDispatcher {
     private static final String DEFAULTWORKER = "DEFAULTWORKER";
     private static final String USEDEFAULTIFMISMATCH = "USEDEFAULTIFMISMATCH";
 
-
-    private final Random random = new Random();
-    
-        private static final String REQUEST_CONTENT_TYPE
-            = "application/timestamp-query";
     private static final String RESPONSE_CONTENT_TYPE
             = "application/timestamp-reply";
     

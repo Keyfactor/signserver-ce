@@ -43,6 +43,8 @@ import org.signserver.testutils.ModulesTestCase;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GenericProcessServletResponseTest extends WebTestCase {
 
+    private static final long UPLOAD_CONFIG_CACHE_TIME = 2000; // Note: From GeneriProcessServlet.UPLOAD_CONFIG_CACHE_TIME
+    
     @Override
     protected String getServletURL() {
         return getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/process";
@@ -522,7 +524,9 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         try {
             getGlobalSession().setProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE", "700"); // 700 bytes max
             getGlobalSession().reload();
-            
+            // Wait for caching in GenericProcessServlet to expire
+            Thread.sleep(UPLOAD_CONFIG_CACHE_TIME);
+
             Map<String, String> fields = new HashMap<>();
             fields.put("workerName", getSignerNameCMSSigner1());
             
@@ -543,6 +547,8 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         } finally {
             getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE");
             getGlobalSession().reload();
+            // Wait for caching in GenericProcessServlet to expire
+            Thread.sleep(UPLOAD_CONFIG_CACHE_TIME);
         }
     }
 

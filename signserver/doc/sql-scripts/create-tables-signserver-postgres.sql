@@ -1,4 +1,5 @@
 -- DDL for SignServer 4.0.x on Postgres
+-- Version: $Id$
 
 
 --

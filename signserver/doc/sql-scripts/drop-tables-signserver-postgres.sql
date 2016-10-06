@@ -1,4 +1,5 @@
 -- Dropping tables for SignServer 3.5.x on Postgres
+-- Version: $Id$
 
 
 --

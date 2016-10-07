@@ -595,10 +595,10 @@ mvn install
         <antcall target="-release:source-tarball-lgpl21"/>
     </target>
 
-    <target name="-release:zip-lgpl21" depends="init,clean,-init-release-patternsets,-init-tasks">
+    <target name="-release:zip-lgpl21" depends="init,clean,-init-release-patternsets">
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
         <property name="zip.dest.file" location="../signserver-${app.edition.lc}-${signserver.zipversion}.zip"/>
-        <zip destfile="${zip.dest.file}.tmp">
+        <zip destfile="${zip.dest.file}">
             <zipfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="600" dirmode="700">
                 <patternset refid="mixed.normalfiles"/>
             </zipfileset>
@@ -606,9 +606,6 @@ mvn install
                 <patternset refid="mixed.executablefiles"/>
             </zipfileset>
         </zip>
-        <copy-zip-sorted in="${zip.dest.file}.tmp" out="${zip.dest.file}"/>
-        <delete file="${zip.dest.file}.tmp"/>
-        <rewrite-zip-timestamps file="${zip.dest.file}" time="${fixedTime}"/>
         <delete file="LICENSE"/>
         <checksum file="${zip.dest.file}" algorithm="SHA1" forceOverwrite="yes" format="MD5SUM"/>
         <checksum file="${zip.dest.file}" algorithm="SHA1" property="zip.dest.file.sha1"/>
@@ -621,10 +618,10 @@ SHA-256 checksum: ${zip.dest.file.sha256}
         </echo>
     </target>
 
-    <target name="-release:source-zip-lgpl21" depends="init,clean,-init-release-patternsets,-init-tasks">
+    <target name="-release:source-zip-lgpl21" depends="init,clean,-init-release-patternsets">
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
         <property name="zip.src.dest.file" location="../signserver-${app.edition.lc}-${signserver.zipversion}-src.zip"/>
-        <zip destfile="${zip.src.dest.file}.tmp">
+        <zip destfile="${zip.src.dest.file}">
             <zipfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}-src" filemode="600" dirmode="700">
                 <patternset refid="source.normalfiles"/>
             </zipfileset>
@@ -632,9 +629,6 @@ SHA-256 checksum: ${zip.dest.file.sha256}
                 <patternset refid="source.executablefiles"/>
             </zipfileset>
         </zip>
-        <copy-zip-sorted in="${zip.src.dest.file}.tmp" out="${zip.src.dest.file}"/>
-        <delete file="${zip.src.dest.file}.tmp"/>
-        <rewrite-zip-timestamps file="${zip.src.dest.file}" time="${fixedTime}"/>
         <delete file="LICENSE"/>
         <checksum file="${zip.src.dest.file}" algorithm="SHA1" forceOverwrite="yes" format="MD5SUM"/>
         <checksum file="${zip.src.dest.file}" algorithm="SHA1" property="zip.src.dest.file.sha1"/>
@@ -702,11 +696,11 @@ SHA-256 checksum: ${tgz.bin.tar.gz.sha1}
         </echo>
     </target>
     
-    <target name="release:binary-zip" depends="init,-warn-build,-init-release-patternsets,-init-tasks" description="Make a binary zip for SignServer release">
+    <target name="release:binary-zip" depends="init,-warn-build,-init-release-patternsets" description="Make a binary zip for SignServer release">
         <property name="signserver.zipversion" value="${app.version.number}"/>
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
         <property name="zip.bin" location="../signserver-${app.edition.lc}-${signserver.zipversion}-bin.zip"/>
-        <zip destfile="${zip.bin}.tmp">
+        <zip destfile="${zip.bin}">
             <exclude name="**/**"/>
             <zipfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="600" dirmode="700">
                 <patternset refid="binary.normalfiles"/>
@@ -715,9 +709,6 @@ SHA-256 checksum: ${tgz.bin.tar.gz.sha1}
                 <patternset refid="binary.executablefiles"/>
             </zipfileset>
         </zip>
-        <copy-zip-sorted in="${zip.bin}.tmp" out="${zip.bin}"/>
-        <delete file="${zip.bin}.tmp"/>
-        <rewrite-zip-timestamps file="${zip.bin}" time="${fixedTime}"/>
         <delete file="LICENSE"/>
         <checksum file="${zip.bin}" algorithm="SHA1" forceOverwrite="yes" format="MD5SUM"/>
         <checksum file="${zip.bin}" algorithm="SHA1" property="zip.bin.sha1"/>

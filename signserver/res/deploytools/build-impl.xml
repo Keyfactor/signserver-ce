@@ -100,6 +100,7 @@
         <taskdef name="process-descriptors" classname="org.signserver.deploytools.ant.ProcessModuleDescriptorsTask" classpathref="deploytools.classpath"/>
         <taskdef name="postprocess-mods" classname="org.signserver.deploytools.ant.PostProcessModulesTask" classpathref="deploytools.classpath"/>
         <taskdef name="rewrite-zip-timestamps" classname="org.signserver.deploytools.ant.RewriteZipEntriesTimestampTask" classpathref="deploytools.classpath"/>
+        <taskdef name="copy-zip-sorted" classname="org.signserver.deploytools.ant.CopyZipEntriesSortedTask" classpathref="deploytools.classpath"/>
     </target>
 
     <!-- Target checking that the application server was identified, otherwise fails with an error message -->

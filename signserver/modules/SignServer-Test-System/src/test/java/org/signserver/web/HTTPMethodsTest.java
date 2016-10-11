@@ -81,11 +81,12 @@ public class HTTPMethodsTest extends WebTestCase {
 	 * should fail with error 403
 	 */
     @Test
-	public void test03HttpOPTIONS() {
+	public void test03HttpOPTIONS() throws Exception {
 		Map<String, String> fields = new HashMap<>();
 		fields.put("data", "<root/>");
 
-		assertStatusReturned(fields, "OPTIONS", 403);
+                final int actual = queryStatusReturned(fields, "OPTIONS");
+		assertTrue("status returned: " + actual, actual == 403 || actual == 405);
 	}
 
 	/**

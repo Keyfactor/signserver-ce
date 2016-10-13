@@ -12,8 +12,14 @@
  *************************************************************************/
 package org.signserver.server.signers;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import javax.persistence.EntityManager;
+import org.apache.commons.io.IOUtils;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
@@ -65,26 +71,39 @@ public class EchoWorker extends BaseProcessable {
         // The result is simply the data from the request
         final ReadableData requestData = request.getRequestData();
         final WritableData responseData = request.getResponseData();
-        byte[] signedbytes;
-        try {
-            signedbytes = requestData.getAsByteArray();
-        } catch (IOException ex) {
-            throw new SignServerException("Unable to obtain data", ex);
+        if (requestData.isFile()) {
+            // If request is a file, we can just use that as response
+            try {
+                Files.move(requestData.getAsFile().toPath(), responseData.getAsFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException ex) {
+                throw new SignServerException("Unable to obtain data", ex);
+            }
+        } else {
+            try (
+                    InputStream in = requestData.getAsInputStream();
+                    OutputStream out = responseData.getAsOutputStream();
+                ) {
+                    IOUtils.copyLarge(in, out);
+            } catch (IOException ex) {
+                throw new SignServerException("Unable to obtain data", ex);
+            }
         }
-        
-        String archiveId = createArchiveId(signedbytes, (String) requestContext.get(RequestContext.TRANSACTION_ID));
+
+        String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
         
         // Simulate crypto operations by sleeping
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Simulating crypto operation for " + sleep + " seconds");
-        }
-        try {
-            Thread.sleep(sleep);
-        } catch (InterruptedException ex) {
-            throw new SignServerException("Interrupted", ex);
-        }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Done with crypto");
+        if (sleep > 0) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Simulating crypto operation for " + sleep + " seconds");
+            }
+            try {
+                Thread.sleep(sleep);
+            } catch (InterruptedException ex) {
+                throw new SignServerException("Interrupted", ex);
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Done with crypto");
+            }
         }
 
         // Return the response as usual

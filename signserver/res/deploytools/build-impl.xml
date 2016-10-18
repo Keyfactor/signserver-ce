@@ -344,8 +344,6 @@ database.nodb.location              = ${database.nodb.location}
     <target name="-prepare-edition" depends="-detect-edition, -prepare-ce, -prepare-be, -prepare-ee" unless="edition.available">
         <echo level="verbose">Preparing edition</echo>
         <echo file="${basedir}/res/edition.properties" append="false" encoding="latin1">
-#Fri, 01 Jan 2016 00:00:00 +0200
-
 app.edition=${app.edition}
 app.edition.lc=${app.edition.lc}
         </echo>

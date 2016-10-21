@@ -771,11 +771,22 @@ public class AdminLayerEJBImpl implements AdminWS {
                     = worker.testKey(new WorkerIdentifier(signerId), alias, authCode == null ? null : authCode.toCharArray());
             for (Object o : ress) {
                 final KeyTestResult result = new KeyTestResult();
-                KeyTestResult key = (KeyTestResult) o;
-                result.setAlias(key.getAlias());
-                result.setSuccess(key.isSuccess());
-                result.setPublicKeyHash(key.getPublicKeyHash());
-                result.setStatus(key.getStatus());
+                if (o instanceof org.signserver.common.KeyTestResult) {
+                    // Over EJB
+                    org.signserver.common.KeyTestResult key
+                        = (org.signserver.common.KeyTestResult) o;
+                    result.setAlias(key.getAlias());
+                    result.setSuccess(key.isSuccess());
+                    result.setPublicKeyHash(key.getPublicKeyHash());
+                    result.setStatus(key.getStatus());
+                } else {
+                    // Over AdminWS
+                    KeyTestResult key = (KeyTestResult) o;
+                    result.setAlias(key.getAlias());
+                    result.setSuccess(key.isSuccess());
+                    result.setPublicKeyHash(key.getPublicKeyHash());
+                    result.setStatus(key.getStatus());
+                }
                 results.add(result);
             }
             return results;

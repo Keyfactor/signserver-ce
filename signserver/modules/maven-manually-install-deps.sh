@@ -14,7 +14,7 @@ mvn install:install-file -DgroupId=org.signserver.deploytools -DartifactId=Deplo
 
 # Install the DeployTools artifacts from JARS
 # Based on post by David Blevins: https://www.mail-archive.com/users@maven.apache.org/msg91297.html
-for jar in lib/ext/DeployTools-Common-${DPL_VERSION}.jar lib/ext/DeployTools-Maven-${DPL_VERSION}.jar lib/ext/jsign-1.2-signserver4.jar; do
+for jar in lib/ext/DeployTools-Common-${DPL_VERSION}.jar lib/ext/DeployTools-Maven-${DPL_VERSION}.jar; do
     pom=$(jar tvf $jar | grep pom.xml | perl -pe 's,.* ,,')
     props=$(jar tvf $jar | grep pom.properties | perl -pe 's,.* ,,')
 

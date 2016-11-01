@@ -145,7 +145,7 @@
             <dependency>
                 <groupId>net.jsign</groupId>
                 <artifactId>jsign</artifactId>
-                <version>1.3</version>
+                <version>1.3-signserver4</version>
             </dependency>
 
             <dependency>

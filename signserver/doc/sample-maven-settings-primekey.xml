@@ -2,7 +2,7 @@
     Sample of a local Maven settings file overriding the default URLs of Maven
     central to use the PrimeKey internal repository.
     
-    Community/non-Primekey: Instead use sample-maven-settings-community.xml
+    Community/non-PrimeKey: Instead use sample-maven-settings-community.xml
     
     Copy to ~/.m2/settings.xml or edit your existing file if you have one.
     

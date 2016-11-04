@@ -1190,8 +1190,11 @@ The signature can optionally include a timestamp response from a TSA using the A
                         <p>
                             <b>LOGRESPONSE_DIGESTALGORITHM</b> = Algorithm used to create the message digest (hash) of the response document to put in the log (default: SHA256).
                         </p>
-
-                    
+                        <p>
+                            <b>TIMESTAMP_FORMAT</b> = Specifies the timestamp format to use (default: AUTHENTICODE).
+                            Allowed values: AUTHENTICODE, RFC3161
+                            If the value is set to RFC3161, a standard RFC 3161-compliant timestamp signer is assumed, rather than the legacy Authenticode timestamp format.
+                        </p>
                     <h4>Request Properties</h4>
                         <p>
                             This worker can accept the following request metdata properties, given that they are configured to be allowed:

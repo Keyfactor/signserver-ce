@@ -4020,7 +4020,7 @@ private void displayLogEntryAction() {
                 alias = aliasTextField.getText();
                 if (res == JOptionPane.OK_OPTION && !alias.isEmpty()) {
                     res = JOptionPane.showConfirmDialog(getFrame(), 
-                            "WARNING: Will attempt to permantently remove the following key:\n" +
+                            "WARNING: Will attempt to permanently remove the following key:\n" +
                             alias + "\n" +
                             "\n" +
                             "Note: the key might be used by multiple workers.\n" +

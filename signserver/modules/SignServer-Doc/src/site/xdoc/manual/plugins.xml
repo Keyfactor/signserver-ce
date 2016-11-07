@@ -1192,7 +1192,7 @@ The signature can optionally include a timestamp response from a TSA using the A
                         </p>
                         <p>
                             <b>TIMESTAMP_FORMAT</b> = Specifies the timestamp format to use (default: AUTHENTICODE).
-                            Allowed values: AUTHENTICODE, RFC3161
+                            Allowed values: AUTHENTICODE, RFC3161<br/>
                             If the value is set to RFC3161, a standard RFC 3161-compliant timestamp signer is assumed, rather than the legacy Authenticode timestamp format.
                         </p>
                     <h4>Request Properties</h4>

@@ -23,9 +23,15 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.ess.SigningCertificate;
+import org.bouncycastle.asn1.ess.SigningCertificateV2;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.tsp.TSTInfo;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.asn1.x509.IssuerSerial;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
@@ -34,6 +40,7 @@ import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampTokenInfo;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.common.GenericSignRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -547,6 +554,93 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 extension2.getExtnValue());
     }
     
+     
+    /**
+     * Test that the default for INCLUDE_CERTID_ISSUERSERIAL is to include.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testIncludeCertIDIssuerSerialDefault() throws Exception {
+        LOG.info("testIncludeCertIDIssuerSerialDefault");
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        byte[] requestBytes = timeStampRequest.getEncoded();
+        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
+        final RequestContext requestContext = new RequestContext();
+        workerSession.setWorkerProperty(WORKER6, "INCLUDE_CERTID_ISSUERSERIAL", "");
+        workerSession.reloadConfiguration(WORKER6);
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER6);
+        timeStampResponse.validate(timeStampRequest);
+
+        assertIncludeCertIDIssuerSerial("default", true, timeStampResponse);
+    }
+    
+    /**
+     * Test that INCLUDE_CERTID_ISSUERSERIAL=true includes the IssuerSerial.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testIncludeCertIDIssuerSerialTrue() throws Exception {
+        LOG.info("testIncludeCertIDIssuerSerialTrue");
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        byte[] requestBytes = timeStampRequest.getEncoded();
+        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
+        final RequestContext requestContext = new RequestContext();
+        workerSession.setWorkerProperty(WORKER6, "INCLUDE_CERTID_ISSUERSERIAL", "TRUE");
+        workerSession.reloadConfiguration(WORKER6);
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER6);
+        timeStampResponse.validate(timeStampRequest);
+
+        assertIncludeCertIDIssuerSerial("explicit true", true, timeStampResponse);
+    }
+    
+    /**
+     * Test that INCLUDE_CERTID_ISSUERSERIAL=false includes the IssuerSerial.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testIncludeCertIDIssuerSerialFalse() throws Exception {
+        LOG.info("testIncludeCertIDIssuerSerialFalse");
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        byte[] requestBytes = timeStampRequest.getEncoded();
+        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
+        final RequestContext requestContext = new RequestContext();
+        workerSession.setWorkerProperty(WORKER6, "INCLUDE_CERTID_ISSUERSERIAL", "FALSE");
+        workerSession.reloadConfiguration(WORKER6);
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER6);
+        timeStampResponse.validate(timeStampRequest);
+
+        assertIncludeCertIDIssuerSerial("explicit false", false, timeStampResponse);
+    }
+    
+    private void assertIncludeCertIDIssuerSerial(String message, boolean expected, TimeStampResponse timeStampResponse) {
+        IssuerSerial issuerSerial;
+        
+        AttributeTable attribs = timeStampResponse.getTimeStampToken().getSignedAttributes();
+        Attribute attrib = attribs.get(PKCSObjectIdentifiers.id_aa_signingCertificate);
+        if (attrib == null) {
+            attrib = attribs.get(PKCSObjectIdentifiers.id_aa_signingCertificateV2);
+            SigningCertificateV2 signingCertificate = SigningCertificateV2.getInstance(attrib.getAttributeValues()[0]);
+            issuerSerial = signingCertificate.getCerts()[0].getIssuerSerial();
+        } else {
+            SigningCertificate signingCertificate = SigningCertificate.getInstance(attrib.getAttributeValues()[0]);
+            issuerSerial = signingCertificate.getCerts()[0].getIssuerSerial();
+        }
+        
+        assertEquals(message, expected, issuerSerial != null);
+    }
+
     /**
      * Test that setting an accepted policy works with that policy in the
      * request.

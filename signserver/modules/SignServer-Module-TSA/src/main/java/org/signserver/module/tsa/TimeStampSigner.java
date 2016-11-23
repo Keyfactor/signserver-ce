@@ -216,6 +216,7 @@ public class TimeStampSigner extends BaseSigner {
     public static final String MAXSERIALNUMBERLENGTH = "MAXSERIALNUMBERLENGTH";
     public static final String INCLUDESTATUSSTRING = "INCLUDESTATUSSTRING";
     public static final String INCLUDESIGNINGTIMEATTRIBUTE = "INCLUDESIGNINGTIMEATTRIBUTE";
+    public static final String INCLUDE_CERTID_ISSUERSERIAL = "INCLUDE_CERTID_ISSUERSERIAL";
     
     private static final String DEFAULT_WORKERLOGGER =
             DefaultTimeStampLogger.class.getName();
@@ -293,6 +294,7 @@ public class TimeStampSigner extends BaseSigner {
     private String tsaName;
     private boolean tsaNameFromCert;
     private boolean includeSigningTimeAttribute;
+    private boolean includeCertIDIssuerSerial = true;
     
     private boolean ordering;
     private boolean includeOrdering;
@@ -404,6 +406,18 @@ public class TimeStampSigner extends BaseSigner {
 
         if (hasSetIncludeCertificateLevels && includeCertificateLevels == 0) {
             configErrors.add("Illegal value for property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 1 supported.");
+        }
+        
+        // Optional property INCLUDE_CERTID_ISSUERSERIAL, default: true
+        String value = config.getProperty(INCLUDE_CERTID_ISSUERSERIAL);
+        if (value == null || value.trim().isEmpty()) {
+            includeCertIDIssuerSerial = true;
+        } else if (Boolean.TRUE.toString().equalsIgnoreCase(value)) {
+            includeCertIDIssuerSerial = true;
+        } else if (Boolean.FALSE.toString().equalsIgnoreCase(value)) {
+            includeCertIDIssuerSerial = false;
+        } else {
+            configErrors.add("Illegal value for property " + INCLUDE_CERTID_ISSUERSERIAL);
         }
 
         // Print the errors for troubleshooting
@@ -800,7 +814,7 @@ public class TimeStampSigner extends BaseSigner {
             
             SignerInfoGenerator sig = sigb.build(cs, certHolder);
             
-            timeStampTokenGen = new TimeStampTokenGenerator(calc, sig, tSAPolicyOID);
+            timeStampTokenGen = new TimeStampTokenGenerator(calc, sig, tSAPolicyOID, includeCertIDIssuerSerial);
 
             if (config.getProperties().getProperty(ACCURACYMICROS) != null) {
                 timeStampTokenGen.setAccuracyMicros(Integer.parseInt(

@@ -1,6 +1,7 @@
-// copied from BouncyCastle 1.47, modified to include the IssuerSerial structure
+// DSS-639: copied from BouncyCastle 1.47, modified to include the IssuerSerial structure
 // in the signingCertificate CMS signed attribute in the response.
 // Also modified to allow always including the ordering field in TSTInfo.
+// DSS-1310: Backporting optional inclusion of IssuerSerial from trunk.
 package org.signserver.module.tsa.bc;
 
 import java.io.ByteArrayOutputStream;
@@ -118,7 +119,8 @@ public class TimeStampTokenGenerator
     public TimeStampTokenGenerator(
         DigestCalculator sha1DigestCalculator,
         final SignerInfoGenerator         signerInfoGen,
-        ASN1ObjectIdentifier              tsaPolicy)
+        ASN1ObjectIdentifier              tsaPolicy,
+        boolean                           isIssuerSerialIncluded)
         throws IllegalArgumentException, TSPException
     {
         this.signerInfoGen = signerInfoGen;
@@ -149,7 +151,7 @@ public class TimeStampTokenGenerator
             final X500Name issuer = ch.getIssuer();                   
             final GeneralName name = new GeneralName(issuer);
             final GeneralNames names = new GeneralNames(name);
-            final IssuerSerial is = new IssuerSerial(names, ASN1Integer.getInstance(serial));
+            final IssuerSerial is = isIssuerSerialIncluded ? new IssuerSerial(names, ASN1Integer.getInstance(serial)) : null;
             
             final ESSCertID essCertid = new ESSCertID(sha1DigestCalculator.getDigest(), is);
             this.signerInfoGen = new SignerInfoGenerator(signerInfoGen, new CMSAttributeTableGenerator()
@@ -204,7 +206,7 @@ public class TimeStampTokenGenerator
                     throw new IllegalStateException("cannot find sha-1: "+ e.getMessage());
                 }
             }
-        }, signerInfoGen, tsaPolicy);
+        }, signerInfoGen, tsaPolicy, true);
     }
 
     /**

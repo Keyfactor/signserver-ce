@@ -4102,6 +4102,9 @@ The generated serial number will always be positive (so the sign bit is always a
 <b>WORKERLOGGER</b> = As for other workers this property can be used to specify which worker logger to use. By default the <a href="complete.en.html#DefaultTimeStampLogger">DefaultTimeStampLogger</a> is used.
                         </p>
                         <p>
+<b>INCLUDE_CERTID_ISSUERSERIAL</b> = Specifies if the signingCertificate (or signingCertificateV2) attribute's ESSCertID should include the issuer and serial number in addition to the certificate hash. Default true.
+                        </p>
+                        <p>
 <b>INCLUDESTATUSSTRING</b> = Specifies if the status string is to be included in the response. Setting this to true triggers a bug in some
 versions of OpenJDK's jarsigner utility. (OPTIONAL), default true.
                         </p>

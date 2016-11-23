@@ -231,6 +231,9 @@ The generated serial number will always be positive (so the sign bit is always a
 versions of OpenJDK's jarsigner utility. (OPTIONAL), default true.
                         </p>
                         <p>
+<b>INCLUDE_CERTID_ISSUERSERIAL</b> = Specifies if the signingCertificate (or signingCertificateV2) attribute's ESSCertID should include the issuer and serial number in addition to the certificate hash. Default true.
+                        </p>
+                        <p>
 <b>INCLUDESIGNINGTIMEATTRIBUTE</b> = Specifies if the signingTime signed CMS attribute should be included in the response. (OPTIONAL), default true.
                         </p>
                         <p>

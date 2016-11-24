@@ -40,7 +40,6 @@ import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.tsp.TimeStampTokenInfo;
 import org.junit.Before;
 import org.junit.Test;
-import org.signserver.common.GenericSignRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -554,22 +553,69 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 extension2.getExtnValue());
     }
     
+    /**
+     * Test that setting an invalid value for INCLUDE_CERTID_ISSUERSERIAL
+     * results in an error.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testIncludeCertIDIssuerSerialInvalid() throws Exception {
+        LOG.info("testIncludeCertIDIssuerSerialInvalid"); 
+        
+        final WorkerConfig config = new WorkerConfig();
+
+        config.setProperty("INCLUDE_CERTID_ISSUERSERIAL", "_not_a_boolean_");
+      
+        final TimeStampSigner signer = new TimeStampSigner() {
+            @Override
+            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+                return null;
+            }
+        };
+        
+        signer.init(WORKER1, config, null, null);
+        
+        final List<String> fatalErrors = signer.getFatalErrors(null);
+        
+        assertTrue("should contain configuration error but was " + fatalErrors,
+                   fatalErrors.contains("Illegal value for property INCLUDE_CERTID_ISSUERSERIAL"));
+    }
      
     /**
-     * Test that the default for INCLUDE_CERTID_ISSUERSERIAL is to include.
+     * Test that the default for INCLUDE_CERTID_ISSUERSERIAL is to include
+     * when the property is not set.
      * 
      * @throws Exception 
      */
     @Test
-    public void testIncludeCertIDIssuerSerialDefault() throws Exception {
-        LOG.info("testIncludeCertIDIssuerSerialDefault");
+    public void testIncludeCertIDIssuerSerialDefaultUnset() throws Exception {
+        LOG.info("testIncludeCertIDIssuerSerialDefaultUnset");
         TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
-        byte[] requestBytes = timeStampRequest.getEncoded();
-        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final RequestContext requestContext = new RequestContext();
+        workerSession.removeWorkerProperty(WORKER6, "INCLUDE_CERTID_ISSUERSERIAL");
+        workerSession.reloadConfiguration(WORKER6);
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER6);
+        timeStampResponse.validate(timeStampRequest);
+
+        assertIncludeCertIDIssuerSerial("default", true, timeStampResponse);
+    }
+
+    /**
+     * Test that the default for INCLUDE_CERTID_ISSUERSERIAL is to include
+     * when an empty property value is specified.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testIncludeCertIDIssuerSerialDefaultEmpty() throws Exception {
+        LOG.info("testIncludeCertIDIssuerSerialDefaultEmpty");
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         workerSession.setWorkerProperty(WORKER6, "INCLUDE_CERTID_ISSUERSERIAL", "");
         workerSession.reloadConfiguration(WORKER6);
         final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER6);
@@ -590,9 +636,6 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
-        byte[] requestBytes = timeStampRequest.getEncoded();
-        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final RequestContext requestContext = new RequestContext();
         workerSession.setWorkerProperty(WORKER6, "INCLUDE_CERTID_ISSUERSERIAL", "TRUE");
         workerSession.reloadConfiguration(WORKER6);
         final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER6);
@@ -613,9 +656,6 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
-        byte[] requestBytes = timeStampRequest.getEncoded();
-        GenericSignRequest signRequest = new GenericSignRequest(100, requestBytes);
-        final RequestContext requestContext = new RequestContext();
         workerSession.setWorkerProperty(WORKER6, "INCLUDE_CERTID_ISSUERSERIAL", "FALSE");
         workerSession.reloadConfiguration(WORKER6);
         final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER6);

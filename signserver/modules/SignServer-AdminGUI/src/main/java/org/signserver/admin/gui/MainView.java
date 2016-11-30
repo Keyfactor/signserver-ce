@@ -3130,8 +3130,8 @@ private void displayLogEntryAction() {
                         LOG.error("Error in certificate", ex);
                     }
                     final Collection<AuthorizedClient> authClients = SignServerAdminGUIApplication.getAdminWS().getAuthorizedClients(workerId);
-                    final boolean isCryptoWorker = "org.signserver.server.signers.CryptoWorker".equals(globalConfig.getProperty("GLOB.WORKER" + workerId + ".CLASSPATH"));
-                    final boolean hasCrypto = properties.containsKey(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS) || globalConfig.containsKey("GLOB.WORKER" + workerId + ".SIGNERTOKEN.CLASSPATH");
+                    final boolean isCryptoWorker = WorkerType.CRYPTO_WORKER.name().equals(properties.get(WorkerConfig.TYPE));
+                    final boolean hasCrypto = properties.containsKey(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS);
                     newSigners.add(new Worker(workerId, name, statusSummary, statusProperties, configProperties, properties, active, authClients, isCryptoWorker, hasCrypto));
                     workers++;
                 }

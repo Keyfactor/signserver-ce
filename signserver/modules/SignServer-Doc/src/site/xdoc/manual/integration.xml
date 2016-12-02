@@ -440,6 +440,8 @@ try {
                             MRTDSODSigner. The response from the servlet is the signed security
                             object in binary format.
                         </p>
+                        
+                        <h4>ePassport Signing Requests</h4>
                         <table>
                             <tr>
                                 <td>URL:</td><td><b>/signserver/sod</b></td>
@@ -469,12 +471,37 @@ try {
                             </tr>
                         </table>
 
+                        <h4>Other Requests</h4>
+                        <table>
+                            <tr>
+                                <td>URL:</td><td><b>/signserver/sod</b></td>
+                            </tr>
+                            <tr>
+                                <td>Method:</td><td> <b>GET</b></td>
+                            </tr>
+                            <tr>
+                                <td>Request parameters:</td>
+                                <td>
+                                    <ul>
+                                        <li><b>workerName</b> - Name of to get the certificate from. Required unless workerId specified.</li>
+                                        <li><b>workerId</b> - Id of the worker to get the certificate from. Required unless workerName specified.</li>
+                                        <li><b>downloadCert</b> - If set to "true" the current signer certificate is downloaded in binary (DER) format. </li>
+                                        <li><b>displayCert</b> - If set to "true" the current signer certificate is displayed in text format. </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
 
                         <h4>Samples</h4>
                             <ul>
                                 <li>
                                     See /signserver/demo/mrtdsodsign.jsp.<br/>
                                     <br/>
+                                </li>
+                                <li>
+                                    To download the configured signer certificate:<br/>
+                                    HTTP GET: 
+                                    <code>http://localhost:8080/signserver/sod?downloadCert=true&amp;workerName=CMSSigner</code>
                                 </li>
                             </ul>
                         

@@ -539,7 +539,7 @@ public class TimeStampCommand extends AbstractCommand {
                     out.println();
 
                     if (statementInfo != null) {
-                        out.println("          Statment info: " +
+                        out.println("          Statement info: " +
                                     Hex.toHexString(statementInfo.toASN1Primitive().getEncoded()));
                     }
                 }

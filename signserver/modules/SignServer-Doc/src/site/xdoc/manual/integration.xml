@@ -483,7 +483,7 @@ try {
                                 <td>Request parameters:</td>
                                 <td>
                                     <ul>
-                                        <li><b>workerName</b> - Name of to get the certificate from. Required unless workerId specified.</li>
+                                        <li><b>workerName</b> - Name of the worker to get the certificate from. Required unless workerId specified.</li>
                                         <li><b>workerId</b> - Id of the worker to get the certificate from. Required unless workerName specified.</li>
                                         <li><b>downloadCert</b> - If set to "true" the current signer certificate is downloaded in binary (DER) format. </li>
                                         <li><b>displayCert</b> - If set to "true" the current signer certificate is displayed in text format. </li>

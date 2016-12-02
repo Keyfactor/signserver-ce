@@ -283,8 +283,6 @@
 # removing the # sign in front of a definition and set the file parameter to
 # an empty string.
 
-#cryptotoken.p11.lib.0.name=SoftHSM
-#cryptotoken.p11.lib.0.file=/usr/lib/softhsm/libsofthsm.so
 #cryptotoken.p11.lib.10.name=SafeNet ProtectServer Gold Emulator
 #cryptotoken.p11.lib.10.file=/opt/ETcpsdk/lib/linux-x86_64/libctsw.so
 #cryptotoken.p11.lib.11.name=SafeNet ProtectServer Gold
@@ -295,6 +293,8 @@
 #cryptotoken.p11.lib.21.file=/usr/lunapci/lib/libCryptoki2_64.so
 #cryptotoken.p11.lib.22.name=SafeNet Luna PCI
 #cryptotoken.p11.lib.22.file=/Program Files/LunaPCI/cryptoki.dll
+#cryptotoken.p11.lib.23.name=SafeNet Luna Client
+#cryptotoken.p11.lib.23.file=/usr/safenet/lunaclient/lib/libCryptoki2_64.so
 #cryptotoken.p11.lib.30.name=Utimaco
 #cryptotoken.p11.lib.30.file=/opt/utimaco/p11/libcs2_pkcs11.so
 #cryptotoken.p11.lib.31.name=Utimaco
@@ -315,3 +315,11 @@
 #cryptotoken.p11.lib.62.file=/usr/local/lib/opensc-pkcs11.so
 #cryptotoken.p11.lib.63.name=OpenSC
 #cryptotoken.p11.lib.63.file=C:/Windows/system32/opensc-pkcs11.dll
+#cryptotoken.p11.lib.70.name=Bull TrustWay CryptoBox
+#cryptotoken.p11.lib.70.file=/usr/lib64/libcryptobox_clnt.so
+#cryptotoken.p11.lib.71.name=Bull TrustWay PCI Crypto Card
+#cryptotoken.p11.lib.71.file=/usr/lib64/libgpkcs11cc2000.so
+#cryptotoken.p11.lib.72.name=Bull TrustWay Proteccio
+#cryptotoken.p11.lib.72.file=/usr/lib64/libnethsm64.so
+#cryptotoken.p11.lib.80.name=SoftHSM
+#cryptotoken.p11.lib.80.file=/usr/local/lib/softhsm/libsofthsm2.so

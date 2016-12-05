@@ -310,8 +310,8 @@ public class WorkerFactory {
                 Class<?> c = this.getClass().getClassLoader().loadClass(authType);
                 auth = (IAuthorizer) c.newInstance();
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-                LOG.error("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.", e);
-                throw new SignServerException("Error worker with id " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
+                LOG.error("Error worker with ID " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.", e);
+                throw new SignServerException("Error worker with ID " + workerId + " misconfiguration, AUTHTYPE setting : " + authType + " is not a correct class path.");
             }
         }
 
@@ -337,7 +337,7 @@ public class WorkerFactory {
                 workerLogger = (IWorkerLogger) c.newInstance();
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                 final String error =
-                        "Error worker with id " + workerId
+                        "Error worker with ID " + workerId
                         + " misconfiguration, "
                         + WORKERLOGGER + " setting : "
                         + fullClassName
@@ -366,7 +366,7 @@ public class WorkerFactory {
                 accounter = (IAccounter) c.newInstance();
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                 final String error =
-                        "Error worker with id " + workerId
+                        "Error worker with ID " + workerId
                         + " misconfiguration, "
                         + ACCOUNTER + " setting : "
                         + fullClassName
@@ -409,7 +409,7 @@ public class WorkerFactory {
                             archiver.init(index, config, context);
                         } catch (ArchiverInitException e) {
                             final String error =
-                                    "Error worker with id " + workerId
+                                    "Error worker with ID " + workerId
                                     + " misconfiguration, "
                                     + "failed to initialize archiver "
                                     + index + ".";
@@ -419,7 +419,7 @@ public class WorkerFactory {
                         index++;
                     } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                         final String error =
-                                "Error worker with id " + workerId
+                                "Error worker with ID " + workerId
                                 + " misconfiguration, "
                                 + SignServerConstants.ARCHIVERS
                                 + " setting : "

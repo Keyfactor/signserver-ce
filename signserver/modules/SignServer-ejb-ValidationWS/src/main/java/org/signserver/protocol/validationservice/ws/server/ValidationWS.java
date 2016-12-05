@@ -190,7 +190,7 @@ public class ValidationWS implements IValidationWS {
                 result.add("Worker " + status.getWorkerId() + ": " + error + "\n");
             }
         } catch (InvalidWorkerIdException e) {
-            log.error("Error invalid worker id " + workerId + "when checking status for validation service");
+            log.error("Error invalid worker ID " + workerId + "when checking status for validation service");
         }
         return result;
     }

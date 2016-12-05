@@ -39,7 +39,7 @@ public class FindFromRequestCertCommand extends AbstractAdminCommand {
 
     @Override
     public String getUsages() {
-        return "Usage: signserver archive findfromrequestcert <signerid> <certificatesn (hex)> <issuerd> <outputpath>\n"
+        return "Usage: signserver archive findfromrequestcert <signer ID> <certificate SN (hex)> <issuerd> <outputpath>\n"
                     + "Example: signserver archive findfromrequestcert 1 EF34242D2324 \"CN=Test Root CA\" /tmp/archivedata \n\n";
     }
 
@@ -73,7 +73,7 @@ public class FindFromRequestCertCommand extends AbstractAdminCommand {
                 for(ArchiveDataVO archiveData : result) {
                     final File file = new File(outputPath, archiveData.getArchiveId() + "." + utils.getTypeName(archiveData.getType()));
                     utils.writeToFile(file, archiveData);
-                    this.getOutputStream().println("Archive data with archiveid " + archiveData.getArchiveId() + " written to file : " + file);
+                    this.getOutputStream().println("Archive data with archive ID " + archiveData.getArchiveId() + " written to file : " + file);
                 }
             }
 

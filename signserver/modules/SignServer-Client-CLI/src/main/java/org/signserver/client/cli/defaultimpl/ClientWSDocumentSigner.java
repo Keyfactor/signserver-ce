@@ -93,7 +93,7 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
             final int requestId = random.nextInt();
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending sign request with id " + requestId
+                LOG.debug("Sending sign request with ID " + requestId
                         + " containing data of length " + size + " bytes"
                         + " to worker " + workerName);
             }
@@ -138,8 +138,8 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
             final long estimatedTime = System.nanoTime() - startTime;
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug(String.format("Got sign response with id %d, "
-                        + "archive id %s, signed data of length %d bytes "
+                LOG.debug(String.format("Got sign response with ID %d, "
+                        + "archive ID %s, signed data of length %d bytes "
                         + "signed by signer with certificate:\n%s.",
                         response.getRequestId(),
                         response.getArchiveId(),

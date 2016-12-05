@@ -32,7 +32,7 @@ public class RemoveAuthorizedClientCommand extends AbstractAdminCommand {
 
     @Override
     public String getUsages() {
-        return "Usage: signserver removeauthorizedclient <signerid> <certificatesn (hex)> <issuerd>\n"
+        return "Usage: signserver removeauthorizedclient <signer ID> <certificate SN (hex)> <issuerd>\n"
                     + "Example: signserver removeauthorizedclient 1 EF34242D232 \"CN=Test Root CA\"\n\n";
     }
 
@@ -43,22 +43,22 @@ public class RemoveAuthorizedClientCommand extends AbstractAdminCommand {
         }
         try {
 
-            int signerid = getWorkerId(args[0]);
+            int signerId = getWorkerId(args[0]);
 
             String certsn = args[1];
             String issuerdn = args[2];
             BigInteger sn = new BigInteger(certsn, 16); // Test that it's a vaild number (hex)
             AuthorizedClient authClient = new AuthorizedClient(sn.toString(16), issuerdn);
 
-            this.getOutputStream().println("Removing the client certificate with SN " + certsn + " with issuerDN " + issuerdn + " from signer with id " + signerid + "\n");
+            this.getOutputStream().println("Removing the client certificate with SN " + certsn + " with issuerDN " + issuerdn + " from signer with ID " + signerId + "\n");
             this.getOutputStream().println("See current configuration with the listauthorizedclients command, activate it with the reload command\n\n");
-            if (getWorkerSession().removeAuthorizedClient(signerid, authClient)) {
+            if (getWorkerSession().removeAuthorizedClient(signerId, authClient)) {
                 this.getOutputStream().println("  Client Removed\n");
             } else {
                 this.getOutputStream().println("  Error, the given client doesn't seem to exist\n");
             }
 
-            printAuthorizedClients(getWorkerSession().getAuthorizedClients(signerid));
+            printAuthorizedClients(getWorkerSession().getAuthorizedClients(signerId));
 
             this.getOutputStream().println("\n\n");
             return 0;

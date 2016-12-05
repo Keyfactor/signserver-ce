@@ -109,7 +109,7 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
                 Date nextDate = ce.getNextValidTimeAfter(new Date());
                 retval = (long) (nextDate.getTime() - System.currentTimeMillis());
             } catch (ParseException e) {
-                log.error("Error in Service configuration, illegal CRON expression : " + cronExpression + " defined for service with id " + workerId);
+                log.error("Error in Service configuration, illegal CRON expression : " + cronExpression + " defined for service with ID " + workerId);
             }
         }
         return retval;

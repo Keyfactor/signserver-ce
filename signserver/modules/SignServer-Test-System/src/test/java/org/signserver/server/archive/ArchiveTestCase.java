@@ -95,9 +95,9 @@ public class ArchiveTestCase extends ModulesTestCase {
 
         List<ArchiveDataVO> archiveDatas = getWorkerSession().findArchiveDataFromArchiveId(getSignerIdDummy1(), expectedArchiveId);
         ArchiveDataVO archiveData = archiveDatas.get(0);
-        assertEquals("same id in db", 
+        assertEquals("same ID in db", 
                 expectedArchiveId, archiveData.getArchiveId());
-        assertEquals("same signer id in db", 
+        assertEquals("same signer ID in db", 
                 getSignerIdDummy1(), archiveData.getSignerId());
 
         return archiveData;
@@ -281,12 +281,12 @@ public class ArchiveTestCase extends ModulesTestCase {
         assertEquals("same response", responseHex, new String(Hex.encode(responseArchiveData.getArchivedBytes())));
         assertEquals("same request", requestHex, new String(Hex.encode(requestArchiveData.getArchivedBytes())));
         
-        assertEquals("same id in db", archiveId, requestArchiveData.getArchiveId());
-        assertEquals("same signer id in db", signerId, requestArchiveData.getSignerId());
+        assertEquals("same ID in db", archiveId, requestArchiveData.getArchiveId());
+        assertEquals("same signer ID in db", signerId, requestArchiveData.getSignerId());
         assertEquals("same archived data", requestHex, new String(Hex.encode(requestArchiveData.getArchivedBytes())));
         
-        assertEquals("same id in db", archiveId, responseArchiveData.getArchiveId());
-        assertEquals("same signer id in db", signerId, responseArchiveData.getSignerId());
+        assertEquals("same ID in db", archiveId, responseArchiveData.getArchiveId());
+        assertEquals("same signer ID in db", signerId, responseArchiveData.getSignerId());
         assertEquals("same archived data", requestHex, new String(Hex.encode(requestArchiveData.getArchivedBytes())));
         
     }

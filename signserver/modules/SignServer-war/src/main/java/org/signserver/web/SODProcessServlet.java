@@ -341,7 +341,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
         response.setContentType(CONTENT_TYPE_TEXT);
         if (cert == null) {
             response.getWriter().print(
-                    "No signing certificate found for worker with id "
+                    "No signing certificate found for worker with ID "
                     + wi);
         } else {
             response.getWriter().print(cert);
@@ -360,7 +360,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
         try {
             if (cert == null) {
                 response.getWriter().print(
-                        "No signing certificate found for worker with id "
+                        "No signing certificate found for worker with ID "
                         + wi);
             } else {
                 byte[] bytes;

@@ -263,7 +263,7 @@ public abstract class BaseValidator implements IValidator {
             tempCertChain = getCertChainFromProps(issuerId, getIssuerProperties().get(issuerId));
             if (tempCertChain != null) {
                 if (tempCertChain.equals(certChain)) {
-                    LOG.debug("issuer id of certificate " + CertTools.getSubjectDN(cert) + " is " + issuerId + " Exact match");
+                    LOG.debug("issuer ID of certificate " + CertTools.getSubjectDN(cert) + " is " + issuerId + " Exact match");
                     return getIssuerProperties().get(issuerId);
                 }
             }
@@ -274,7 +274,7 @@ public abstract class BaseValidator implements IValidator {
             tempCertChain = getCertChainFromProps(issuerId, getIssuerProperties().get(issuerId));
             if (tempCertChain != null) {
                 if (tempCertChain.containsAll(certChain)) {
-                    LOG.debug("issuer id of certificate " + CertTools.getSubjectDN(cert) + " is " + issuerId + " ContainsAll match");
+                    LOG.debug("issuer ID of certificate " + CertTools.getSubjectDN(cert) + " is " + issuerId + " ContainsAll match");
                     return getIssuerProperties().get(issuerId);
                 }
             }

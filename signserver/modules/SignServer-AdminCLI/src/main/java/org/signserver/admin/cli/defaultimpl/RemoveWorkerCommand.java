@@ -35,7 +35,7 @@ public class RemoveWorkerCommand extends AbstractAdminCommand {
 
     @Override
     public String getUsages() {
-        return "Usage: signserver removeworker  <workerid | workerName> \n"
+        return "Usage: signserver removeworker  <worker ID | worker Name> \n"
                     + "Example 1 : signserver removeworker 1 \n"
                     + "Example 2 : signserver removeworker mySigner\n\n";
     }
@@ -67,12 +67,12 @@ public class RemoveWorkerCommand extends AbstractAdminCommand {
         }
     }
 
-    private void removeGlobalProperties(int workerid) throws RemoteException, Exception {
+    private void removeGlobalProperties(int workerId) throws RemoteException, Exception {
         GlobalConfiguration gc = getGlobalConfigurationSession().getGlobalConfiguration();
         Enumeration<String> en = gc.getKeyEnumeration();
         while (en.hasMoreElements()) {
             String key = en.nextElement();
-            if (key.toUpperCase().startsWith("GLOB.WORKER" + workerid)) {
+            if (key.toUpperCase().startsWith("GLOB.WORKER" + workerId)) {
 
                 key = key.substring("GLOB.".length());
                 if (getGlobalConfigurationSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, key)) {
@@ -85,7 +85,7 @@ public class RemoveWorkerCommand extends AbstractAdminCommand {
     }
 
     private void removeWorker(int workerId) throws RemoteException, Exception {
-        this.getOutputStream().println("Removing all properties related to worker with id " + workerId + "\n");
+        this.getOutputStream().println("Removing all properties related to worker with ID " + workerId + "\n");
         this.getOutputStream().println("Activate the removal with the reload command\n\n");
 
         removeGlobalProperties(workerId);

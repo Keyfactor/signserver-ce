@@ -253,7 +253,7 @@ public class ServiceTimerSessionBean implements ServiceTimerSessionLocal {
                         LOG.error("Service worker execution failed.", e);
                     }
                 } else {
-                    LOG.error("Service with id " + timerInfo + " not found.");
+                    LOG.error("Service with ID " + timerInfo + " not found.");
                 }
             } else {
                 if (isSingleton) {

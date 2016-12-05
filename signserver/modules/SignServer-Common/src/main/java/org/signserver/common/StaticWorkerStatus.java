@@ -52,7 +52,7 @@ public class StaticWorkerStatus extends WorkerStatus {
         final List<String> errors = getFatalErrors();
 
         // Title
-        out.println("Status of " + info.getWorkerType() + " with id " + info.getWorkerId() + " (" + info.getWorkerName() + ") is:");
+        out.println("Status of " + info.getWorkerType() + " with ID " + info.getWorkerId() + " (" + info.getWorkerName() + ") is:");
 
         // Brief statuses
         int keyWidth = maxWidth(14, info.getBriefEntries());

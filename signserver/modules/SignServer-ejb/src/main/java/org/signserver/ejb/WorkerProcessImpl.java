@@ -565,7 +565,7 @@ class WorkerProcessImpl {
           throw ex; // This can happen in dispatching workers
         } catch (SignServerException e) {
             final SignServerException exception = new SignServerException(
-                    "SignServerException calling signer with id " + workerId
+                    "SignServerException calling signer with ID " + workerId
                     + " : " + e.getMessage(), e);
             LOG.error(exception.getMessage(), exception);
             logException(adminInfo, exception, logMap, workerLogger, requestContext);
@@ -574,7 +574,7 @@ class WorkerProcessImpl {
             final IllegalRequestException exception =
                     new IllegalRequestException(ex.getMessage());
                             if (LOG.isInfoEnabled()) {
-                                    LOG.info("Illegal request calling signer with id " + workerId
+                                    LOG.info("Illegal request calling signer with ID " + workerId
                     + " : " + ex.getMessage());
                             }
                             logException(adminInfo, exception, logMap, workerLogger, requestContext);

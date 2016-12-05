@@ -710,7 +710,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             md.update(data);
             return new String(Hex.encode(md.digest(transactionId.getBytes(StandardCharsets.UTF_8))), StandardCharsets.UTF_8);
         } catch (NoSuchAlgorithmException ex) {
-            throw new SignServerException("Unable to compute archive id", ex);
+            throw new SignServerException("Unable to compute archive ID", ex);
         }
     }
 

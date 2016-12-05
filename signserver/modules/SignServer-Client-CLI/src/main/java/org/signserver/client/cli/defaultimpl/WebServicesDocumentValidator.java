@@ -62,7 +62,7 @@ public class WebServicesDocumentValidator extends AbstractDocumentValidator {
         final int requestId = random.nextInt();
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending validation request with id " + requestId
+            LOG.debug("Sending validation request with ID " + requestId
                     + " containing data of length " + size + " bytes"
                     + " to worker " + workerName);
         }
@@ -89,7 +89,7 @@ public class WebServicesDocumentValidator extends AbstractDocumentValidator {
                     (GenericValidationResponse) response;
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug(String.format("Got validation response with id %d, "
+                LOG.debug(String.format("Got validation response with ID %d, "
                         + "signed data of length %d bytes "
                         + "signed by signer with certificate:\n%s.",
                         signResponse.getRequestID(),

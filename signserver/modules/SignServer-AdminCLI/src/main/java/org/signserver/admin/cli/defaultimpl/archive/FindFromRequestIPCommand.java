@@ -36,7 +36,7 @@ public class FindFromRequestIPCommand extends AbstractAdminCommand {
 
     @Override
     public String getUsages() {
-        return "Usage: signserver archive findfromrequestip <signerid> <requestip> <outputpath>\n"
+        return "Usage: signserver archive findfromrequestip <signer ID> <request IP> <outputpath>\n"
                     + "Example: signserver archive findfromrequestip 1 10.1.1.1 /tmp/archivedata \n\n";
     }
 
@@ -68,7 +68,7 @@ public class FindFromRequestIPCommand extends AbstractAdminCommand {
                 for (ArchiveDataVO archiveData : result) {
                     final File file = new File(outputPath, archiveData.getArchiveId() + "." + utils.getTypeName(archiveData.getType()));
                     utils.writeToFile(file, archiveData);
-                    this.getOutputStream().println("Archive data with archiveid " + archiveData.getArchiveId() + " written to file : " + file);
+                    this.getOutputStream().println("Archive data with archive ID " + archiveData.getArchiveId() + " written to file : " + file);
                 }
             }
 

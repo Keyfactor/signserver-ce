@@ -33,12 +33,12 @@ public class FindFromArchiveIdCommand extends AbstractCommand {
     
     @Override
     public String getDescription() {
-        return "Find archivables matching an archive id";
+        return "Find archivables matching an archive ID";
     }
 
     @Override
     public String getUsages() {
-        return "Usage: signserver archive findfromarchiveid <signerid> <archiveid> <outputpath>\n"
+        return "Usage: signserver archive findfromarchiveid <signer ID> <archive ID> <outputpath>\n"
                     + "Example: signserver archive findfromarchiveid 1 EF34242D2324 /tmp/archivedata\n\n";
     }
     
@@ -60,16 +60,16 @@ public class FindFromArchiveIdCommand extends AbstractCommand {
                 throw new IllegalCommandArgumentsException("Error output path " + args[2] + " isn't a directory\n\n");
             }
             
-            out.println("Trying to find all archived items with archiveid " + archiveid);
+            out.println("Trying to find all archived items with archive ID " + archiveid);
             out.println();
             final List<ArchiveDataVO> archivables = helper.getWorkerSession().findArchiveDataFromArchiveId(signerid, archiveid);
             if (archivables == null || archivables.isEmpty()) {
-                out.println("Couldn't find any archive data with archiveid " + archiveid + " from signer " + signerid);
+                out.println("Couldn't find any archive data with archive ID " + archiveid + " from signer " + signerid);
             } else {
                 for (ArchiveDataVO arc : archivables) {
                     final File file = new File(outputPath, arc.getArchiveId() + "." + utils.getTypeName(arc.getType()));
                     utils.writeToFile(file, arc);
-                    out.println("Archive data with archiveid " + arc.getArchiveId() + " written to file : " + file.getAbsolutePath());
+                    out.println("Archive data with archive ID " + arc.getArchiveId() + " written to file : " + file.getAbsolutePath());
                 }
             }
             

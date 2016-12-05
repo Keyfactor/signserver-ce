@@ -112,7 +112,7 @@ public class ValidationServiceWorker extends BaseProcessable {
         if (processRequest instanceof CertificateValidationRequest) {
             return validationService.validate((CertificateValidationRequest) processRequest);
         } else {
-            throw new IllegalRequestException("The process request sent to validation service with id " + workerId + " isn't supported");
+            throw new IllegalRequestException("The process request sent to validation service with ID " + workerId + " isn't supported");
         }
     }
 

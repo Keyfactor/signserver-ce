@@ -122,7 +122,7 @@ public class ArchiveAPITest extends ModulesTestCase {
         assertNotNull("archiver0 run", archive0.getProperty(PROCESSED));
         
         // Test workerid
-        assertEquals("worker id", String.valueOf(getSignerIdDummy1()), 
+        assertEquals("worker ID", String.valueOf(getSignerIdDummy1()), 
                 archive0.getProperty(WORKERID));
         
         // Test init with right slotListIndex
@@ -177,11 +177,11 @@ public class ArchiveAPITest extends ModulesTestCase {
         assertNotNull("archiver2 run", archive2.getProperty(PROCESSED));
         
         // Test workerid
-        assertEquals("worker id", String.valueOf(getSignerIdDummy1()), 
+        assertEquals("worker ID", String.valueOf(getSignerIdDummy1()), 
                 archive0.getProperty(WORKERID));
-        assertEquals("worker id", String.valueOf(getSignerIdDummy1()), 
+        assertEquals("worker ID", String.valueOf(getSignerIdDummy1()), 
                 archive1.getProperty(WORKERID));
-        assertEquals("worker id", String.valueOf(getSignerIdDummy1()), 
+        assertEquals("worker ID", String.valueOf(getSignerIdDummy1()), 
                 archive2.getProperty(WORKERID));
         
         // Test init with right slotListIndex
@@ -247,9 +247,9 @@ public class ArchiveAPITest extends ModulesTestCase {
         assertNotNull("archiver2 run", archive2.getProperty(PROCESSED));
         
         // Test workerid
-        assertEquals("worker id", String.valueOf(getSignerIdDummy1()), 
+        assertEquals("worker ID", String.valueOf(getSignerIdDummy1()), 
                 archive1.getProperty(WORKERID));
-        assertEquals("worker id", String.valueOf(getSignerIdDummy1()), 
+        assertEquals("worker ID", String.valueOf(getSignerIdDummy1()), 
                 archive2.getProperty(WORKERID));
         
         // Test init with right slotListIndex

@@ -1417,7 +1417,7 @@ The XAdES validator validates the signature of XAdES documents and validatates t
 
                     <h4>Available Properties</h4>
                         <p><b>TRUSTANCHORS</b> = Trusted certificates. In PEM format. When validating a XAdES form T-signed document, must include the trusted certificate for the time stamp authory as well. Required.</p>
-                        <p><b>CERTIFICATES</b> = Intermediate CA certificates that might be needed to build a trust path from the signer certificates to any of the trusted certifivcates. In PEM format.</p>
+                        <p><b>CERTIFICATES</b> = Intermediate CA certificates that might be needed to build a trust path from the signer certificates to any of the trusted certificates. In PEM format.</p>
                         <p><b>REVOCATION_CHECKING</b> = True if revocation checking should be performed. The intermediate CA certificates (if any) and the signer certificate needs to have an Authority Information Access URL to an online OCSP responder or an CRL Distribution Point from where a CRL can be downloaded. If both are available the OCSP responder will be consulted first and then the CRL if the reseponder were unavailable. Default: true</p>
 
                 </subsection>

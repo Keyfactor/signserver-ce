@@ -137,8 +137,8 @@ public class P11SignTest extends ModulesTestCase {
     public P11SignTest() throws FileNotFoundException {
         final File home = PathUtil.getAppHome();
         pdfSampleFile = new File(home, "res/test/pdf/sample.pdf");
-        odfSampleFile = new File(home, "res/signingtest/input/test.odt");
-        ooxmlSampleFile = new File(home, "res/signingtest/input/test.docx");
+        odfSampleFile = new File(home, "res/test/test.odt");
+        ooxmlSampleFile = new File(home, "res/test/test.docx");
         sharedLibraryName = getConfig().getProperty("test.p11.sharedLibraryName");
         sharedLibraryPath = getConfig().getProperty("test.p11.sharedLibraryPath");
         slot = getConfig().getProperty("test.p11.slot");

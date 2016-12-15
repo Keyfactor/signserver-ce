@@ -395,6 +395,14 @@ Set-up the public SSL port which doesn't require the client certificate.
 /socket-binding-group=standard-sockets/socket-binding=httpspub:add(port="8442",interface="httpspub")
 /subsystem=undertow/server=default-server/https-listener=httpspub:add(socket-binding="httpspub", security-realm="SSLRealm")</source>
                         <source>reload</source>
+                        <p>
+By default, Wildfly imposes a limit of 10 MB on HTTP post size. To enable signing larger files an larger limit may be set on the HTTPS listeners.<br/>
+For example, replace the /subsystem commands above with the following to set a limit at 100 MB.
+                        </p>
+                        <source>
+/subsystem=undertow/server=default-server/https-listener=httpspriv:add(socket-binding="httpspriv", security-realm="SSLRealm", verify-client=REQUIRED, max-post-size="104857600")
+/subsystem=undertow/server=default-server/https-listener=httpspub:add(socket-binding="httpspub", security-realm="SSLRealm", max-post-size="104857600")
+                        </source>
                 </subsection>
 
                 <subsection name="7. Configure application server">

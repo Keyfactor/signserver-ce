@@ -369,7 +369,7 @@ Configure interfaces using the approproate bind address (i.e. 0.0.0.0 or 127.0.0
 
                         <p>
 NOTE:<br/>
-By default, WildFly imposes a post size limit of 10 MB on HTTP/HTTPS listeners. To enable signing larger files an larger limit may be set on the HTTPS listeners.<br/>
+By default, WildFly imposes a limit of 10 MB on HTTP post size. To enable signing larger files an larger limit may be set on the HTTP/HTTPS listeners.<br/>
 Replace the value of the max-post-size parameters in the commands below with an appropriate value if needed for signing larger files.
                         </p>
 

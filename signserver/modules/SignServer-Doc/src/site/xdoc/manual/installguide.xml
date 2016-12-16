@@ -368,13 +368,23 @@ Configure interfaces using the approproate bind address (i.e. 0.0.0.0 or 127.0.0
 /interface=httpspriv:add(inet-address="0.0.0.0")</source>
 
                         <p>
+NOTE:<br/>
+By default, WildFly imposes a limit of 10 MB on HTTP post size. To enable signing larger files an larger limit may be set on the HTTPS listeners.<br/>
+Replace the value of the max-post-size parameters in the commands below with an appropriate value if needed for signing larger files.
+                        </p>
+                        <source>
+/subsystem=undertow/server=default-server/https-listener=httpspriv:add(socket-binding="httpspriv", security-realm="SSLRealm", verify-client=REQUIRED, max-post-size="10485760")
+/subsystem=undertow/server=default-server/https-listener=httpspub:add(socket-binding="httpspub", security-realm="SSLRealm", max-post-size="10485760")
+                        </source>
+
+                        <p>
 Secure the CLI by removing the http-remoting-connector from using the http port and instead use a separate port 4447.
                         </p>
                         <source>
 /subsystem=remoting/http-connector=http-remoting-connector:remove
 /subsystem=remoting/http-connector=http-remoting-connector:add(connector-ref="remoting",security-realm="ApplicationRealm")
 /socket-binding-group=standard-sockets/socket-binding=remoting:add(port="4447")
-/subsystem=undertow/server=default-server/http-listener=remoting:add(socket-binding=remoting)
+/subsystem=undertow/server=default-server/http-listener=remoting:add(socket-binding=remoting, max-post-size="10485760")
 :reload</source>
 
                         <p>
@@ -387,22 +397,15 @@ and supported protocols.
 /core-service=management/security-realm=SSLRealm:add()
 /core-service=management/security-realm=SSLRealm/server-identity=ssl:add(keystore-path="keystore/keystore.jks", keystore-relative-to="jboss.server.config.dir", keystore-password="serverpwd", alias="localhost")
 /core-service=management/security-realm=SSLRealm/authentication=truststore:add(keystore-path="keystore/truststore.jks", keystore-relative-to="jboss.server.config.dir", keystore-password="changeit")
-/subsystem=undertow/server=default-server/https-listener=httpspriv:add(socket-binding="httpspriv", security-realm="SSLRealm", verify-client=REQUIRED)</source>
+/subsystem=undertow/server=default-server/https-listener=httpspriv:add(socket-binding="httpspriv", security-realm="SSLRealm", verify-client=REQUIRED, max-post-size="10485760")</source>
                         <p>
 Set-up the public SSL port which doesn't require the client certificate.
                         </p>
                         <source>
 /socket-binding-group=standard-sockets/socket-binding=httpspub:add(port="8442",interface="httpspub")
-/subsystem=undertow/server=default-server/https-listener=httpspub:add(socket-binding="httpspub", security-realm="SSLRealm")</source>
+/subsystem=undertow/server=default-server/https-listener=httpspub:add(socket-binding="httpspub", security-realm="SSLRealm", max-post-size="10485760")</source>
                         <source>reload</source>
-                        <p>
-By default, WildFly imposes a limit of 10 MB on HTTP post size. To enable signing larger files an larger limit may be set on the HTTPS listeners.<br/>
-For example, replace the /subsystem commands above with the following to set a limit at 100 MB.
-                        </p>
-                        <source>
-/subsystem=undertow/server=default-server/https-listener=httpspriv:add(socket-binding="httpspriv", security-realm="SSLRealm", verify-client=REQUIRED, max-post-size="104857600")
-/subsystem=undertow/server=default-server/https-listener=httpspub:add(socket-binding="httpspub", security-realm="SSLRealm", max-post-size="104857600")
-                        </source>
+
                 </subsection>
 
                 <subsection name="7. Configure application server">

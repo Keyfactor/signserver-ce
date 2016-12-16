@@ -372,10 +372,6 @@ NOTE:<br/>
 By default, WildFly imposes a post size limit of 10 MB on HTTP/HTTPS listeners. To enable signing larger files an larger limit may be set on the HTTPS listeners.<br/>
 Replace the value of the max-post-size parameters in the commands below with an appropriate value if needed for signing larger files.
                         </p>
-                        <source>
-/subsystem=undertow/server=default-server/https-listener=httpspriv:add(socket-binding="httpspriv", security-realm="SSLRealm", verify-client=REQUIRED, max-post-size="10485760")
-/subsystem=undertow/server=default-server/https-listener=httpspub:add(socket-binding="httpspub", security-realm="SSLRealm", max-post-size="10485760")
-                        </source>
 
                         <p>
 Secure the CLI by removing the http-remoting-connector from using the http port and instead use a separate port 4447.

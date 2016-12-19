@@ -1,3 +1,42 @@
+SignServer 4.0.1, 2017-01-xx
+----------------------------
+
+** Bug
+    * [DSS-928] - Incorrect documentation for DispatchedAuthorizer
+    * [DSS-1215] - Typo in TimeStampCommand.java
+    * [DSS-1257] - Non-deterministic order of ZIP entries
+    * [DSS-1258] - edition.properties contains a time-stamp
+    * [DSS-1259] - Site generation contains time-stamp
+    * [DSS-1267] - Regression: Wrong icon for crypto workers in AdminGUI
+    * [DSS-1269] - Remove old signingtest directory
+    * [DSS-1270] - Version 3.7.4 missing in ChangeLog.txt in trunk
+    * [DSS-1271] - Missing source code headers and JavaDoc in Server-Enterprise module
+    * [DSS-1276] - Regression: SignServerWS not working in ClientCLI distribution due to missing resource bundle
+    * [DSS-1278] - Regression: Syntax error in SQL create index script
+    * [DSS-1279] - Regression: Incorrect SQL create scripts
+    * [DSS-1280] - Wrong case in signerconfigdata table in create index script
+    * [DSS-1284] - Regression: EchoWorker not working
+    * [DSS-1287] - Regression: ClassCastException trying to test key from AdminGUI (local)
+    * [DSS-1312] - TimeMonitorManager sample config file contains legacy property name
+
+** New Feature
+    * [DSS-933] - Add support for RFC3161 timestamps in MSAuthCodeSigner
+    * [DSS-1228] - Be able to download SignServer integration CLI in same way as GUI
+
+** Improvement
+    * [DSS-1099] - TimeMonitorManager should not print zero date as 1970-01-01
+    * [DSS-1116] - Add path to SafeNet Luna Client 6.1
+    * [DSS-1242] - Add PKCS11 library name for SoftHSM2
+    * [DSS-1255] - Replace incorrect spelled usage of "ID" in human readable strings
+    * [DSS-1272] - Improve performance
+    * [DSS-1273] - Document the certificate download feature
+    * [DSS-1275] - Remove unneeded dependencies from ClientCLI
+    * [DSS-1277] - Upgrade to DeployTools 2.0.2
+    * [DSS-1282] - Add documentation on changing max-post-size on WildFly
+    * [DSS-1298] - Add databaseprotection.sigalg to databaseprotection properties sample
+    * [DSS-1310] - Make inclusion of IssuerSerial in SigningCertificate in Time-stamp tokens optional
+    * [DSS-1314] - Rewrite MS Authcode tests to use the client CLI
+
 SignServer 4.0.0, 2016-09-22
 ----------------------------
 

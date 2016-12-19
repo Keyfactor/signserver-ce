@@ -1,3 +1,26 @@
+SignServer 4.0.1
+----------------
+
+New features:
+    - Support for RFC 3161 timestamps in the Authenticode signer
+    - Ability to download integration CLI in the same way as the Admin GUI
+
+Improvements:
+    - Performance imporovements
+    - Additional PKCS#11 library definitions
+    - Make inclusion of IssuerSerial in SigningCertificate in Time-stamp tokens
+      optional
+
+Bug fixes:
+    - ClassCastException trying to test key from Admin GUI running against
+      local SignServer instance
+    - EchoWorker not working
+    - Web service interface not working from client CLI distribution
+    - Incorrect documentation for DispatchedAuthorizer
+    - Fixes in SQL create scripts
+    - Wrong icon for crypto workers in admin GUI
+
+
 SignServer 4.0.0
 ----------------
 

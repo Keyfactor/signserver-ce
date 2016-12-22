@@ -28,6 +28,7 @@ public class SettingsBean {
     private static final Logger LOG = Logger.getLogger(SettingsBean.class);
     
     /** Key in signservercompile.properties. */
+    private static final String ADMINWEB_ENABLED_AND_AVAILABLE = "adminweb.enabled.available";
     private static final String WEBDOC_ENABLED = "webdoc.enabled";
     private static final String WEB_ADMINGUI_DIST_ENABLED = "web.admingui.dist.enabled";
     private static final String WEB_ADMINGUI_DIST_FILE = "web.admingui.dist.file";
@@ -35,7 +36,15 @@ public class SettingsBean {
     private static final String WEB_CLIENTCLI_DIST_FILE = "web.clientcli.dist.file";
     
     private final CompileTimeSettings settings = CompileTimeSettings.getInstance();
-    
+
+    /**
+     * @return If the web documentation is enabled. 
+     */
+    public boolean isAdminWebEnabledAndAvailable() {
+        final String enabled = settings.getProperty(ADMINWEB_ENABLED_AND_AVAILABLE);
+        return enabled != null && Boolean.parseBoolean(enabled);
+    }
+
     /**
      * @return If the web documentation is enabled. 
      */

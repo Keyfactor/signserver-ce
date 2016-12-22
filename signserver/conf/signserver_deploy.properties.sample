@@ -166,6 +166,10 @@
 # Default: true
 #admingui.enabled=true
 
+# Set to enable deployment of the AdminWeb
+# Default: true
+#adminweb.enabled=true
+
 # Set to enable build of the ClientCLI
 # Default: true
 #clientcli.enabled=true

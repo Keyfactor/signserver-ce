@@ -83,6 +83,17 @@ to work on Windows. -->
         <istrue value="${web.clientcli.dist.enabled}"/>
     </condition>
     
+    <!-- Check if Admin Web is both enabled and available as a module. -->
+    <condition property="adminweb.enabled.available" value="true">
+        <and>
+            <or>
+                <istrue value="${adminweb.enabled}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+            <available file="mods-available/30_adminweb.properties"/>
+        </and>
+    </condition>
+
     <import file="${modules}/compile.xml" optional="true"/>
     
     

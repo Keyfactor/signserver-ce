@@ -19,11 +19,14 @@
                 <c:if test="${settings.webDocEnabled}">
                     <li><a href="doc/">Documentation</a></li>
                 </c:if>
-                <c:if test="${settings.webAdminGUIDistEnabled}">
-                    <li><a href="admingui-dist/">AdminGUI Download</a></li>
-                </c:if>
                 <c:if test="${settings.webClientCLIDistEnabled}">
-                    <li><a href="clientcli-dist/">ClientCLI Download</a></li>
+                    <li><a href="clientcli-dist/">Client CLI Download</a></li>
+                </c:if>
+                <c:if test="${settings.webAdminGUIDistEnabled}">
+                    <li><a href="admingui-dist/">Administration GUI Download</a></li>
+                </c:if>
+                <c:if test="${settings.adminWebEnabledAndAvailable}">
+                    <li><a href="adminweb/">Administration Web</a></li>
                 </c:if>
             </ul>
 

@@ -27,7 +27,8 @@
                     <li><a href="admingui-dist/">Administration GUI Download</a></li>
                 </c:if>
                 <c:if test="${settings.adminWebEnabledAndAvailable}">
-                
+                    
+                    <%-- XXX: Duplicated in LoginBean of AdminWeb. Use that implementation instead when switching to JSF. --%>
                     <c:set var="req" value="${pageContext.request}" />
                     <c:set var="url">${req.requestURL}</c:set>
                     <c:set var="uri" value="${req.requestURI}" />

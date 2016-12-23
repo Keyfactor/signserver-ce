@@ -191,7 +191,13 @@
 #module.tsa-enterprise.enabled=false
 
 
-# -------------- Additional Web Deployments -----------------------------------
+# -------------- Web Deployment Configuration -----------------------------------
+
+# The private port exposed externally, i.e. if you run an Apache proxy in front of JBoss
+# the port may be 443 instead.
+# Default: 8443
+#httpserver.external.privhttps=8443
+#httpserver.external.privhttps=443
 
 # Deploy the documentation.
 #

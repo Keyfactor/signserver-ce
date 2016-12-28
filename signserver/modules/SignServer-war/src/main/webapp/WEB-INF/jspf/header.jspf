@@ -1,5 +1,6 @@
 <%@page import="org.signserver.common.CompileTimeSettings"%>
 <%@ page pageEncoding="UTF-8" %>
+<%@ page session="false" %>
 
     <p class="logo">
         <img src="/signserver/logo.png" width="245" height="76" alt="SignServer - PKI by PrimeKey"/>

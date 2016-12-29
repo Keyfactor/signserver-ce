@@ -3,6 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="stylesheet" href="../publicweb.css" type="text/css"/>
+        <link rel="stylesheet" href="demo.css" type="text/css"/>
         <link rel="shortcut icon" href="/signserver/favicon.png"/>
         <title>SignServer</title>
     </head>
@@ -11,7 +12,7 @@
             <%@include file="../WEB-INF/jspf/header.jspf" %>
             <%@include file="../WEB-INF/jspf/demo_menu.jspf" %>
 
-            <h2 style="margin-top: 4em;">Signing and Validation Demo</h2>
+            <h2>Signing and Validation Demo</h2>
 
             <p>
                 The demo web pages shows how calls to the different

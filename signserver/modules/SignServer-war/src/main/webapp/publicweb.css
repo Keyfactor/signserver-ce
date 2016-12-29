@@ -3,6 +3,10 @@ body {
     background: lightgray;
 }
 
+h2 {
+    margin-top: 4em;
+}
+
 ul#topMenu li {
     color: Navy;
     display: inline;

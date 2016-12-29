@@ -16,7 +16,7 @@
         <div id="container1">
             <%@include file="../WEB-INF/jspf/header.jspf" %>
 
-            <h2 style="margin-top: 4em;">HTTP Status 404 - <%=message %></h2>
+            <h2>HTTP Status 404 - <%=message %></h2>
 
             <p>
                 The requested resource could not be found:<br/>

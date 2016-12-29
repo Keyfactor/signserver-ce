@@ -16,7 +16,7 @@
         <div id="container1">
             <%@include file="../WEB-INF/jspf/header.jspf" %>
 
-            <h2 style="margin-top: 4em;">HTTP Status 403 - Forbidden</h2>
+            <h2>HTTP Status 403 - Forbidden</h2>
 
             <p>
                 The request sent by the client was not authorized:<br/>

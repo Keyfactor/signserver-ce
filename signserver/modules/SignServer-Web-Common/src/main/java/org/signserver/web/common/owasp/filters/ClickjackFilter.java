@@ -8,7 +8,7 @@
 
 // Note: moved up res.addHeader() before doFilter as suggested in http://stackoverflow.com/questions/11371755/clickjacking-filter-to-add-x-frame-options-in-response
 
-package org.signserver.web.common.owasp;
+package org.signserver.web.common.owasp.filters;
 import java.io.IOException;
 
 import javax.servlet.Filter;

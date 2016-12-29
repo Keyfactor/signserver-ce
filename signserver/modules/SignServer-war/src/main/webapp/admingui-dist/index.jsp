@@ -12,7 +12,7 @@
             <%@include file="../WEB-INF/jspf/header.jspf" %>
             <jsp:useBean class="org.signserver.web.SettingsBean" id="settings"/>
 
-            <h2 style="margin-top: 4em;">AdminGUI Download</h2>
+            <h2>AdminGUI Download</h2>
 
             <p>
                 If enabled, a binary distribution (zip-file) with the SignServer 

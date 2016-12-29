@@ -3,14 +3,22 @@
     <display-name>SignServer Health Check Configuration</display-name>
     <filter>
         <filter-name>ClickjackFilterDeny</filter-name>
-        <filter-class>org.signserver.web.common.owasp.ClickjackFilter</filter-class>
+        <filter-class>org.signserver.web.common.owasp.filters.ClickjackFilter</filter-class>
         <init-param>
             <param-name>mode</param-name>
             <param-value>DENY</param-value>
         </init-param>
     </filter>
+    <filter>
+        <filter-name>ContentSecurityPolicyFilter</filter-name>
+        <filter-class>org.signserver.web.common.owasp.filters.ContentSecurityPolicyFilter</filter-class>
+    </filter>
     <filter-mapping>
         <filter-name>ClickjackFilterDeny</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ContentSecurityPolicyFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <servlet>

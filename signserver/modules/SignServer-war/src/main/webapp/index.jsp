@@ -13,7 +13,9 @@
             <%@include file="WEB-INF/jspf/header.jspf" %>
             <jsp:useBean class="org.signserver.web.SettingsBean" id="settings"/>
 
-            <h4 style="margin-top: 4em;">Local Resources</h4>
+            <p>&nbsp;</p>
+            
+            <h4>Local Resources</h4>
             <ul class="resourcesList">
                 <li><a href="demo/">Signing and Validation Demo</a></li>
                 <li><a href="healthcheck/signserverhealth">Health Check</a></li>

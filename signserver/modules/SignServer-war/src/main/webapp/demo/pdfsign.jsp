@@ -3,39 +3,10 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="stylesheet" href="../publicweb.css" type="text/css"/>
+        <link rel="stylesheet" href="demo.css" type="text/css"/>
+        <script type="text/javascript" src="demo.js"></script>
         <link rel="shortcut icon" href="/signserver/favicon.png"/>
         <title>PDF Signing Demo - SignServer</title>
-        <style type="text/css">
-            img {
-                border: 0px;
-            }
-
-            div.header {
-                font-size: 42px;
-                font-weight: bold;
-                margin-left: 2.5em;
-                margin-top: 15px;
-                font-style: italic;
-            }
-
-            fieldset {
-                border-left: none;
-                border-right: none;
-                border-bottom: none;
-                margin-top: 2em;
-            }
-        </style>
-        <script type="text/javascript">
-            function check()
-            {
-                if (document.recievefile.filerecievefile.value == '') {
-                    alert("You must select a file");
-                } else {
-                    return true;
-                }
-                return false;
-            }
-        </script>
     </head>
     <body>
         <div id="container1">
@@ -43,7 +14,7 @@
             <%@include file="../WEB-INF/jspf/demo_menu.jspf" %>
 
 
-            <h3 style="margin-top: 4em;">PDF Signing Demo</h3>
+            <h3>PDF Signing Demo</h3>
             <p>
                 Simply upload a PDF document (small please) to the PDF signer
                 and you will get back the same PDF, but signed by SignServer.
@@ -52,29 +23,29 @@
             <form id="recievefile" action="../worker/PDFSigner" method="post" enctype="multipart/form-data" accept-charset="ISO-8859-1">
                 <table width="100%" border="0" cellspacing="3" cellpadding="3">
                     <tr id="Row2">
-                        <td style="width: 50%" valign="top" align="right">Select PDF file to upload and sign</td>
-                        <td style="width: 50%" valign="top">
-                            <input type="file" name="filerecievefile"/>
+                        <td valign="top" align="right">Select PDF file to upload and sign</td>
+                        <td valign="top">
+                            <input id="fileInput" type="file" name="filerecievefile"/>
                         </td>
                     </tr>
                     <tr id="Row1">
-                        <td style="width: 50%" valign="top" align="right">Password (if required):</td>
-                        <td style="width: 50%" valign="top">
+                        <td valign="top" align="right">Password (if required):</td>
+                        <td valign="top">
                             <input type="password" name="REQUEST_METADATA.pdfPassword"/>
                         </td>
                     </tr>
                     <tr id="Row2">
-                        <td style="width: 50%" valign="top" align="right">Additional meta data (set in the REQUEST_METADATA request parameter):</td>
-                        <td style="width: 50%" valign="top">
+                        <td valign="top" align="right">Additional meta data (set in the REQUEST_METADATA request parameter):</td>
+                        <td valign="top">
                             <textarea name="REQUEST_METADATA" cols="40" rows="5"></textarea>
                         </td>
                     </tr>
                     <tr id="Row3">
-                        <td style="width: 50%" valign="top" align="right">
+                        <td valign="top" align="right">
                             &nbsp;
                         </td>
-                        <td style="width: 50%" valign="top">
-                            <input type="submit" name="buttonrecievefile" onclick="return check()" value="Submit"/>
+                        <td valign="top">
+                            <input id="submitButton" type="submit" name="buttonrecievefile" value="Submit"/>
                         </td>
                     </tr>
                 </table>

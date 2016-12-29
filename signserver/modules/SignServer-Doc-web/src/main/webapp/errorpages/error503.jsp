@@ -16,7 +16,7 @@
         <div id="container1">
             <%@include file="../WEB-INF/jspf/header.jspf" %>
 
-            <h2 style="margin-top: 4em;">HTTP Status 503 - Service Temporally Unavailable</h2>
+            <h2>HTTP Status 503 - Service Temporally Unavailable</h2>
 
             <p>
                 The server is currently unable to handle the request:<br/>

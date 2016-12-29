@@ -3,39 +3,10 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="stylesheet" href="../publicweb.css" type="text/css"/>
+        <link rel="stylesheet" href="demo.css" type="text/css"/>
+        <script type="text/javascript" src="demo.js"></script>
         <link rel="shortcut icon" href="/signserver/favicon.png"/>
         <title>Generic Signing and Validation Demo - SignServer</title>
-        <style type="text/css">
-            img {
-                border: 0px;
-            }
-
-            div.header {
-                font-size: 42px;
-                font-weight: bold;
-                margin-left: 2.5em;
-                margin-top: 15px;
-                font-style: italic;
-            }
-
-            fieldset {
-                border-left: none;
-                border-right: none;
-                border-bottom: none;
-                margin-top: 2em;
-            }
-        </style>
-        <script type="text/javascript">
-            function check()
-            {
-                if (document.recievefile.filerecievefile.value == '') {
-                    alert("You must select a file");
-                } else {
-                    return true;
-                }
-                return false;
-            }
-        </script>
     </head>
     <body>
         <div id="container1">
@@ -43,7 +14,7 @@
             <%@include file="../WEB-INF/jspf/demo_menu.jspf" %>
 
 
-            <h3 style="margin-top: 4em;">Generic Signing and Validation Demo</h3>
+            <h3>Generic Signing and Validation Demo</h3>
             <p>
                 The forms below can be used to request signing and validation from any of the
                 generic signers and validators. The content to be signed or validated can be submitted
@@ -101,7 +72,7 @@
                         Worker name: <input type="text" name="workerName"/>
                     </p>
                     <p>
-                        File: <input type="file" name="filerecievefile"/>
+                        File: <input id="fileInput" type="file" name="filerecievefile"/>
                     </p>
                     <p>
                     	Process type:
@@ -116,7 +87,7 @@
                         <textarea name="REQUEST_METADATA" cols="40" rows="5"></textarea><br/>
                     </p>
                     <p>
-                        <input type="submit" name="buttonrecievefile" onclick="return check()" value="Submit"/>
+                        <input id="submitButton" type="submit" name="buttonrecievefile" value="Submit"/>
                     </p>
                 </form>
             </fieldset>

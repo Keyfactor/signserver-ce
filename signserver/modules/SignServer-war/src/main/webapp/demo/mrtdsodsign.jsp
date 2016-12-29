@@ -3,53 +3,10 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="stylesheet" href="../publicweb.css" type="text/css"/>
+        <link rel="stylesheet" href="demo.css" type="text/css"/>
+        <script type="text/javascript" src="demo.js"></script>
         <link rel="shortcut icon" href="/signserver/favicon.png"/>
         <title>MRTD SOD Signing Demo - SignServer</title>
-        <style type="text/css">
-            img {
-                border: 0px;
-            }
-
-            div.header {
-                font-size: 42px;
-                font-weight: bold;
-                margin-left: 2.5em;
-                margin-top: 15px;
-                font-style: italic;
-            }
-
-            fieldset {
-                border-left: none;
-                border-right: none;
-                border-bottom: none;
-                margin-top: 2em;
-            }
-        </style>
-        <script type="text/javascript">
-            //<![CDATA[
-            function getRadioCheckedValue(radio_name) {
-                var oRadio = document.forms[0].elements[radio_name];
-                for(var i = 0; i < oRadio.length; i++) {
-                    if(oRadio[i].checked) {
-                        return oRadio[i].value;
-                    }
-                }
-                return '';
-            }
-            function ldsVersionChanged() {
-                var ldsVersionValue = getRadioCheckedValue('ldsVersion');
-                if (ldsVersionValue == "0108") {
-                    document.getElementById('unicodeField').disabled = '';
-                    if (document.getElementById('unicodeField').value == '') {
-                        document.getElementById('unicodeField').value = '040000';
-                    }
-                } else {
-                    document.getElementById('unicodeField').disabled = 'disabled';
-                    document.getElementById('unicodeField').value = '';
-                }
-            }
-        //]]>
-    </script>
     </head>
     <body onload="ldsVersionChanged()">
         <div id="container1">
@@ -57,7 +14,7 @@
             <%@include file="../WEB-INF/jspf/demo_menu.jspf" %>
 
 
-            <h3 style="margin-top: 4em;">MRTD SOD Signing Demo</h3>
+            <h3>MRTD SOD Signing Demo</h3>
             <p>Enter the data for the data groups to be stored on the passport.</p>
             <p>Note 1: Please provide the hashes of the respective data groups if the signer is configured to accept hashes instead of the actual data.</p>
             <p>Note 2: When submitting this form using a web browser it is not possible to enter binary data directly into the input fields. Then first base64 encode the data and choose the Base64 encoding option and the signer will decode the data before signing it.</p>
@@ -91,9 +48,9 @@
 
                 <p>
                     Request LDS version:<br/>
-                    <input type="radio" name="ldsVersion" value="" id="ldsNo" checked="checked" onchange="ldsVersionChanged()"/><label for="ldsNo">Unspecified</label><br/>
-                    <input type="radio" name="ldsVersion" value="0107" id="lds0107" onchange="ldsVersionChanged()"/><label for="lds0107">V1.7</label><br/>
-                    <input type="radio" name="ldsVersion" value="0108" id="lds0108" onchange="ldsVersionChanged()"/><label for="lds0108">V1.8</label><br/>
+                    <input type="radio" name="ldsVersion" value="" id="ldsNo" checked="checked"/><label for="ldsNo">Unspecified</label><br/>
+                    <input type="radio" name="ldsVersion" value="0107" id="lds0107"/><label for="lds0107">V1.7</label><br/>
+                    <input type="radio" name="ldsVersion" value="0108" id="lds0108"/><label for="lds0108">V1.8</label><br/>
                     <label for="unicodeField">Unicode version:</label> <input type="text" size="6" name="unicodeVersion" id="unicodeField" value="040000"/>
                 </p>
                 <p>

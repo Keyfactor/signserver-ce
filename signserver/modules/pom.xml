@@ -42,6 +42,7 @@
         <module>CESeCore-jars</module>
         
         <!-- Interfaces -->
+        <module>SignServer-Web-Common</module>
         <module>SignServer-war</module>
         <module>SignServer-war-Healthcheck</module>
         <module>SignServer-AdminCLI</module>
@@ -95,8 +96,7 @@
         <!-- Documentation -->
         <module>SignServer-Doc</module>
         <module>SignServer-Doc-web</module>
-
-  </modules>
+    </modules>
     <dependencies>
         <dependency>
             <artifactId>${bouncycastle.bcpkix.artifact}</artifactId>

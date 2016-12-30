@@ -434,7 +434,7 @@ Installation Guide for details.
         <fileset id="dist.contents" dir="${dist.dir}/sampleconfigs" includes="*"/> 
         <property name="prop.dist.contents" refid="dist.contents"/>
         
-        <echo>Files: ${prop.dist.contents}</echo>
+        <echo level="debug">Sample config files: ${prop.dist.contents}</echo>
         
         <echo file="${dist.dir}/sampleconfigs.properties" append="false" encoding="latin1">
 sampleconfigs.files=${prop.dist.contents}

@@ -6,10 +6,11 @@ New features:
     - Ability to download integration CLI in the same way as the Admin GUI
 
 Improvements:
-    - Performance imporovements
+    - Performance improvements
     - Additional PKCS#11 library definitions
     - Make inclusion of IssuerSerial in SigningCertificate in Time-stamp tokens
       optional
+    - Security hardening
 
 Bug fixes:
     - ClassCastException trying to test key from Admin GUI running against

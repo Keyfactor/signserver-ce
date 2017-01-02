@@ -201,8 +201,8 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                                 if (processTypeAttribute != null) {
                                     try {
                                         processType = ProcessType.valueOf(processTypeAttribute);
-                                    } catch (IllegalArgumentException e) {
-                                        sendBadRequest(res, "Illegal process type: " + processTypeAttribute);
+                                    } catch (IllegalArgumentException e) { // NOPMD
+                                        sendBadRequest(res, "Illegal process type.");
                                         return;
                                     }
                                 } else {
@@ -317,8 +317,8 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Found process type in the request: " + processType.name());
                         }
-                    } catch (IllegalArgumentException e) {
-                        sendBadRequest(res, "Illegal process type: " + processTypeAttribute);
+                    } catch (IllegalArgumentException e) { // NOPMD
+                        sendBadRequest(res, "Illegal process type.");
                         return;
                     }
                 } else {
@@ -343,9 +343,11 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                             }
                             bytes = Base64.decode(bytes);
                         } else {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Unknown encoding: " + encoding);
+                            }
                             sendBadRequest(res,
-                                    "Unknown encoding for the 'data' field: "
-                                    + encoding);
+                                    "Unknown encoding for the 'data' field.");
                             return;
                         }
                     }

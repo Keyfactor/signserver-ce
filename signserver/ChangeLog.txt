@@ -1,4 +1,4 @@
-SignServer 4.0.1, 2017-01-xx
+SignServer 4.0.1, 2017-01-16
 ----------------------------
 
 ** Bug
@@ -18,6 +18,7 @@ SignServer 4.0.1, 2017-01-xx
     * [DSS-1284] - Regression: EchoWorker not working
     * [DSS-1287] - Regression: ClassCastException trying to test key from AdminGUI (local)
     * [DSS-1312] - TimeMonitorManager sample config file contains legacy property name
+    * [DSS-1333] - Security Issue
 
 ** New Feature
     * [DSS-933] - Add support for RFC3161 timestamps in MSAuthCodeSigner
@@ -36,7 +37,6 @@ SignServer 4.0.1, 2017-01-xx
     * [DSS-1298] - Add databaseprotection.sigalg to databaseprotection properties sample
     * [DSS-1310] - Make inclusion of IssuerSerial in SigningCertificate in Time-stamp tokens optional
     * [DSS-1314] - Rewrite MS Authcode tests to use the client CLI
-    * [DSS-1333] - Security hardening
 
 
 SignServer 4.0.0, 2016-09-22

@@ -10,9 +10,9 @@ Improvements:
     - Additional PKCS#11 library definitions
     - Make inclusion of IssuerSerial in SigningCertificate in Time-stamp tokens
       optional
-    - Security hardening
 
 Bug fixes:
+    - A security issue
     - ClassCastException trying to test key from Admin GUI running against
       local SignServer instance
     - EchoWorker not working

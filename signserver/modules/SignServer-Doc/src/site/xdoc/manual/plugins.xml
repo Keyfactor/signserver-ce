@@ -1139,7 +1139,7 @@ The signer has the fully qualified class name: org.signserver.module.msauthcode.
                     </p>
                     <h4>Overview</h4>
                         <p>
-The signer signs portable executable files such as Windows executables and shared libraries (.exe, .dll and .ocx etc) according to the Windows Authenticode Portable Executable Signature Format.
+The signer signs portable executable files such as Windows executables and shared libraries (.exe, .dll and .ocx etc) according to the Windows Authenticode Portable Executable Signature Format and also Windows installer packages (.msi)
 The signature can optionally include a timestamp response from a TSA using the Authenticode format.
                         </p>
 

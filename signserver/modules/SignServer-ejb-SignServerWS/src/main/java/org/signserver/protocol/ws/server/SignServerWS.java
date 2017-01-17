@@ -98,7 +98,7 @@ public class SignServerWS implements ISignServerWS {
     private DataFactory dataFactory;
     
     @PostConstruct
-    public void init() {
+    protected void init() {
         dataFactory = DataUtils.createDataFactory();
     }
     

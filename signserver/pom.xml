@@ -39,13 +39,13 @@
             <dependency>
                 <artifactId>${bouncycastle.bcpkix.artifact}</artifactId>
                 <groupId>org.bouncycastle</groupId>
-                <version>1.53</version>
+                <version>1.54</version>
             </dependency>
             <dependency>
                 <artifactId>${bouncycastle.bcprov.artifact}</artifactId>
                 <groupId>org.bouncycastle</groupId>
                 <type>jar</type>
-                <version>1.53</version>
+                <version>1.54</version>
             </dependency>
             
             <dependency>
@@ -145,7 +145,7 @@
             <dependency>
                 <groupId>org.signserver.jsign</groupId>
                 <artifactId>jsign</artifactId>
-                <version>1.3-signserver4</version>
+                <version>1.3-signserver4.1</version>
             </dependency>
 
             <dependency>

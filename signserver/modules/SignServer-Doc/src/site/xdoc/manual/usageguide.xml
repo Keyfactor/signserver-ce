@@ -1131,6 +1131,10 @@ If this property is not set (or an invalid file is given), the maintenance funct
 affect the error message returned when in maintenance mode (the part of the string after <code>MAINT:</code> 
 (defaults to <code>DOWN_FOR_MAINTENANCE</code>).
                     </p>
+                    <p>
+<source>healthcheck.customerrormessage</source> - If this set to a non-empty value, the value is used for the error message
+instead of details describing the errors (thus not exposing internal details).
+                    </p>
                 
                 <h4>Available tests and responses</h4>
                     <ul>

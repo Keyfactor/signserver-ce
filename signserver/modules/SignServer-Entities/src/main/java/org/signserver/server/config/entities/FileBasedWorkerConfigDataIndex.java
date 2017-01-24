@@ -107,7 +107,7 @@ public class FileBasedWorkerConfigDataIndex {
      */
     public void update(int workerId, String newName, Integer newType) {
         if (LOG.isDebugEnabled()) {
-            LOG.info("update(" + workerId + ", " + newName + ", " + newType + ")");
+            LOG.debug("update(" + workerId + ", " + newName + ", " + newType + ")");
         }
         Entry entry = idToEntry.get(workerId);
         if (entry == null) {

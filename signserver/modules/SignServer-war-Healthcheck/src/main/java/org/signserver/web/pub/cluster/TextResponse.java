@@ -74,7 +74,7 @@ public class TextResponse implements IHealthResponse {
         @Override
 	public void respond(String status, HttpServletResponse resp) {
             resp.setContentType("text/plain");
-            System.out.println("status: " + status);
+
             try (Writer out = resp.getWriter()) {
                 if (status == null) {
                         // Return "EJBCAOK" Message

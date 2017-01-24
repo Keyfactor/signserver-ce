@@ -53,7 +53,7 @@ public class TextResponse implements IHealthResponse {
         @Override
 	public void init(ServletConfig config) {
 		okMessage = config.getInitParameter("OKMessage");
-		if(okMessage == null){
+		if (okMessage == null) {
 			okMessage = OK_MESSAGE;
 		}
 		
@@ -64,7 +64,7 @@ public class TextResponse implements IHealthResponse {
 		
 		
 		
-		if(config.getInitParameter("SendServerError") != null){
+		if (config.getInitParameter("SendServerError") != null) {
 		  sendServerError = config.getInitParameter("SendServerError").equalsIgnoreCase("TRUE");	
 		}
 		customErrorMessage = config.getInitParameter("CustomErrorMessage");
@@ -73,27 +73,29 @@ public class TextResponse implements IHealthResponse {
 
         @Override
 	public void respond(String status, HttpServletResponse resp) {
-		resp.setContentType("text/plain");
-		try (Writer out = resp.getWriter()) {
-			if (status == null) {
-				// Return "EJBCAOK" Message
-				out.write(okMessage);
-			} else {
-				// Return failinfo
-				if (sendServerError) {
-					resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, status);
-				} else {
-					if (customErrorMessage != null) {
-						out.write(customErrorMessage);
-					} else {
-						out.write(status);
-					}
-				}
-			}
-			out.flush();
-		} catch (IOException e) {
-			log.error("Error writing to Servlet Response.", e);
-		}
+            resp.setContentType("text/plain");
+            System.out.println("status: " + status);
+            try (Writer out = resp.getWriter()) {
+                if (status == null) {
+                        // Return "EJBCAOK" Message
+                        out.write(okMessage);
+                } else {
+                    if (customErrorMessage != null &&
+                        customErrorMessage.length() > 0) {
+                        status = customErrorMessage;
+                    }
+
+                    // Return failinfo
+                    if (sendServerError) {
+                        resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, status);
+                    } else { 
+                        out.write(status);
+                    }
+                }
+                out.flush();
+            } catch (IOException e) {
+                    log.error("Error writing to Servlet Response.", e);
+            }
 
 	}
 

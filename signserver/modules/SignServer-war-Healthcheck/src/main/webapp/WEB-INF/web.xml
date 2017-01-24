@@ -95,6 +95,13 @@
         	<param-name>MaintenancePropertyName</param-name>
             <param-value>${healthcheck.maintenancepropertyname}</param-value>
         </init-param>
+        <init-param>
+            <description>
+                Parameter specifying a custom error message.
+            </description>
+            <param-name>CustomErrorMessage</param-name>
+            <param-value>${healthcheck.customerrormessage}</param-value>
+        </init-param>
         <!-- 
     <init-param>
         <description>

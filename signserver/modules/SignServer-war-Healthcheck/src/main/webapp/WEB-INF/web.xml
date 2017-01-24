@@ -78,7 +78,7 @@
                 Parameter saying if a errorcode 500 should be sent in case of error.
             </description>
             <param-name>SendServerError</param-name>
-            <param-value>true</param-value>
+            <param-value>${healthcheck.sendservererror}</param-value>
         </init-param>
         <init-param>
         	<description>

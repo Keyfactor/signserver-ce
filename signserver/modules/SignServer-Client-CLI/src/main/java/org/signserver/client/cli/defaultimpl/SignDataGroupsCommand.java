@@ -289,9 +289,9 @@ public class SignDataGroupsCommand extends AbstractCommand {
     }
 
     /**
-     * Creates a DocumentSigner using the chosen protocol.
+     * Creates a DocumentSigner using the choosen protocol.
      *
-     * @return a DocumentSigner using the chosen protocol
+     * @return a DocumentSigner using the choosen protocol
      * @throws MalformedURLException in case an URL can not be constructed
      * using the given host and port
      */

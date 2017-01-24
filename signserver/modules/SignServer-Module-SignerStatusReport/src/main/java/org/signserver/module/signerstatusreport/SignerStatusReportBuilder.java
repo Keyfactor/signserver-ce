@@ -24,7 +24,7 @@ import org.signserver.server.entities.KeyUsageCounter;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 
 /**
- * Builds a signer's status report for the chosen signers in a special format.
+ * Builds a signer's status report for the choosen signers in a special format.
  *
  * @author Markus Kilås
  * @version $Id$

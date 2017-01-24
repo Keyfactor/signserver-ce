@@ -50,7 +50,7 @@ public interface Archiver {
     /**
      * Request archival of the Archivable.
      * 
-     * The Archiver can indicate that it has chosen not archive the Archivable for 
+     * The Archiver can indicate that it has choosen not archive the Archivable for 
      * any reason by returning false. The idea is that all ArchiverS might not 
      * be configured to handle all types of Archivables. On the other hand by 
      * returning true the Archiver indicates that it has archived the item 

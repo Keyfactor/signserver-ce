@@ -185,7 +185,7 @@ public class PDFSignerParameters {
         // Set ownerpassword
         setOwnerPassword = config.getProperties().getProperty(PDFSigner.SET_OWNERPASSWORD);
         
-        // if signature is chosen to be visible proceed with setting visibility
+        // if signature is choosen to be visible proceed with setting visibility
         // properties
         if (add_visible_signature) {
             // page to draw visible signature at

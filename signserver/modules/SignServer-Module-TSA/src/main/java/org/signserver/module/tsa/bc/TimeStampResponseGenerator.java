@@ -293,7 +293,7 @@ public class TimeStampResponseGenerator
     }
 
     /**
-     * Generate a non-granted TimeStampResponse with chosen status and FailInfoField.
+     * Generate a non-granted TimeStampResponse with choosen status and FailInfoField.
      * 
      * @param status the PKIStatus to set.
      * @param failInfoField the FailInfoField to set.

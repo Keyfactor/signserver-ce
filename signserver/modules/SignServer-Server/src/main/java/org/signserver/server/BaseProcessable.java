@@ -136,7 +136,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
 
     /**
-     * Get alias given a specific purpose and as a side-effect log the chosen
+     * Get alias given a specific purpose and as a side-effect log the choosen
      * alias in the context (if any).
      *
      * @param purpose Key purpose

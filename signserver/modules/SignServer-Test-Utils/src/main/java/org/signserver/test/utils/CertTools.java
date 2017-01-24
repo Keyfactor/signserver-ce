@@ -295,7 +295,7 @@ public class CertTools {
      *          String containing DN that will be transformed into X509Name, The
      *          DN string has the format "CN=zz,OU=yy,O=foo,C=SE". Unknown OIDs in
      *          the string will be added to the end positions of OID array.
-     * @param converter BC converter for DirectoryStrings, that determines which encoding is chosen
+     * @param converter BC converter for DirectoryStrings, that determines which encoding is choosen
      * @return X509Name or null if input is null
      */
     private static X509Name stringToBcX509Name(String dn, X509NameEntryConverter converter) {

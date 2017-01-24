@@ -271,6 +271,11 @@
 # Default: DOWN_FOR_MAINTENANCE
 #healthcheck.maintenancepropertyname=DOWN_FOR_MAINTENANCE
 
+# Parameter to configure a custom error message
+# When this is not set (the default), details describing the errors will be
+# included in the error page
+#healthcheck.customerrormessage=NOTOK
+
 
 # ------------- Status Repository Configuration --------------------------------
 

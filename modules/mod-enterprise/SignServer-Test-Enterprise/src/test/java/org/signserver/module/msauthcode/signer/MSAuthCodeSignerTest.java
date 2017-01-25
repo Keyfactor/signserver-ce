@@ -152,6 +152,8 @@ public class MSAuthCodeSignerTest extends ModulesTestCase {
             workerSession.setWorkerProperty(WORKER_ID, "TSA_WORKER", TS_NAME);
             workerSession.setWorkerProperty(WORKER_ID, "PROGRAM_NAME", "Any program name");
             workerSession.setWorkerProperty(WORKER_ID, "PROGRAM_URL", "http://example.com/anyprogramname.html");
+            // test that setting an empty TIMESTAMP_FORMAT actually assumes AUTHENTICODE, as per spec.
+            workerSession.setWorkerProperty(WORKER_ID, "TIMESTAMP_FORMAT", "");
             workerSession.setWorkerProperty(TS_ID, "TIMESOURCE", FixedTimeSource.class.getName());
             workerSession.setWorkerProperty(TS_ID, "FIXEDTIME", String.valueOf(time.getTime()));
             workerSession.reloadConfiguration(TS_ID);

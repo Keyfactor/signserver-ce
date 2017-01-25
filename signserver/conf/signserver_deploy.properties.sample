@@ -276,6 +276,11 @@
 # included in the error page
 #healthcheck.customerrormessage=NOTOK
 
+# Parameter to configure whether health check errors should be reported as
+# HTTP response code 500 (internal server error) with an error page, or as
+# HTTP response code 200 (OK) with a plain text body
+# Default: true (send error), set to false to get the plain text behavior
+#healthcheck.sendservererror=false
 
 # ------------- Status Repository Configuration --------------------------------
 

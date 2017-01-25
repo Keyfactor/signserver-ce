@@ -1,0 +1,163 @@
+$Id$
+
+UPGRADE
+=======
+
+This document describes procedures needed to upgrade from one version of 
+SignServer to a new version.
+Upgrades within a major version, from 3.2.1 to 3.2.2 for example, are usually 
+plug-in upgrades and can be made simply by deploying the new software. See 
+RELEASE_NOTES.txt for more information about such upgrades.
+
+Upgrading to a major version might require manual changes in the database
+structures. In those cases the changes needed are described below.
+
+
+General procedures:
+-----------------
+
+1. Unpack the new sources
+2. Make sure to copy over the configuration from the old installation or 
+   use the provided signserver_deploy.properties.sample. Take special care 
+   in reading the "Notice:" section of the RELEASE_NOTES.txt to see if any 
+   configuration properties changed or some manual procedures in addition to
+   those mentioned in this file are needed.
+3. Copy over the p12 folder with keystores (if used).
+4. See any special instructions for the version you are upgrading below.
+5. Build and deploy as described in the installation guide.
+
+
+From SignServer 3.7.x to SignServer 4.0.x
+-----------------------------------------
+
+a) Database schema changes:
+
+Two new columns in the signerconfigdata table were added. Hibernate will try to
+ add those columns during startup of the application server. However, if the 
+database user used by the data store does not have enough privileges (i.e. no 
+alter table rights) the table has to be altered manually:
+
+For Oracle:
+ALTER TABLE signerconfigdata ADD signerName VARCHAR(255);
+ALTER TABLE signerconfigdata ADD signerType VARCHAR(255);
+
+For MySQL:
+ALTER TABLE signerconfigdata ADD signerName VARCHAR(255);
+ALTER TABLE signerconfigdata ADD signerType VARCHAR(255);
+
+After manually changing the database schema the application server should 
+be restarted.
+
+Note 1: During startup of SignServer each worker configuration will be checked
+and if an empty signerName column is found the name will be populated with
+the value from the NAME worker property.
+
+Note 2: During startup of SignServer each worker configuration without a
+worker type will get a worker type populated by loading the worker and checking
+the type of the implementation.
+
+
+From SignServer 3.6.x to SignServer 3.7.x
+-----------------------------------------
+
+a) Configuration file name change:
+   Pay attention to the change of file name for the configuration file as
+   described in the RELEASE_NOTES.txt.
+
+b) Pay attention to changes needed when using soft keystore crypto tokens
+   as described in the RELEASE_NOTES.txt.
+
+c) Pay attention to changes needed for PKCS#11 crypto token library definitions
+   as described in the RELEASE_NOTES.txt.
+
+d) Dependency upgraded:
+
+The XML Security library has been updated to version 1.5.8 and its 
+dependency to 2.7.2. This requires special handling if JBoss is used. See 
+the Notice section of RELEASE_NOTES.txt for details.
+
+e) Dependency upgraded:
+
+The Commons Collections library has been updated to version 3.2.2. This might
+also need to be take care of in the application server. See the Notice section
+of RELEASE_NOTES.txt for details.
+
+
+From SignServer 3.5.x to SignServer 3.6.x
+-----------------------------------------
+
+   (No database changes required)
+
+
+From SignServer 3.4.x to SignServer 3.5.x
+-----------------------------------------
+
+a) Database schema change: tables removed:
+   The following tables are no longer used by SignServer and can optionally be
+   removed:
+   - "enckeydata"
+   - "groupkeydata"
+
+b) Dependency upgraded:
+
+The XML Security library has been updated to version 1.5.7. This requires 
+special handling if JBoss 5 is used. See the Notice section of 
+RELEASE_NOTES.txt for details.
+
+
+From SignServer 3.3.x to SignServer 3.4.x
+-----------------------------------------
+
+a) Database schema change: table renamed:
+   A table was renamed to GlobalConfigData. For Oracle this table was previously 
+   called "GLOBALCONFIG" while for all other it was called  
+   GlobalConfigurationData.
+   
+   - "GLOBALCONFIG" was renamed to "GlobalConfigData" (Oracle only)
+   - "GlobalConfigurationData" was renamed to "GlobalConfigData" (All other)
+
+   For Oracle:
+   RENAME GLOBALCONFIG TO GlobalConfigData;
+
+   For MySQL:
+   RENAME TABLE GlobalConfigurationData TO GlobalConfigData;
+
+   Hibernate will not rename this table but add it as a new one. For an 
+   existing installation it is instead recommended to manually rename the table 
+   (using the RENAME statements described above) to not loose the existing 
+   configuration.
+
+b) Database schema change: table added:
+   - "AuditRecordData"
+
+   Hibernate will try to add this table during startup of the application 
+   server. However, if the database user used by the data store does not have 
+   enough privileges the table has to be created manually. See 
+   doc/sql-scripts/create-tables-signserver34-*.sql for the  definitions for 
+   your DBMS.
+
+
+From SignServer 3.2.x to SignServer 3.3.x
+-----------------------------------------
+
+a) Database schema change:
+
+An new column in the ArchiveData table were added. Hibernate will try to add this
+column during startup of the application server. However, if the database user 
+used by the data store does not have enough privileges (ie. no alter table 
+rights) the table has to be altered manually:
+
+For Oracle:
+ALTER TABLE ARCHIVEDATA ADD DATAENCODING NUMBER(10,0);
+
+For MySQL:
+ALTER TABLE ArchiveData ADD dataEncoding int(11) DEFAULT NULL;
+
+After manually changing the database schema the application server should 
+be restarted.
+
+b) Dependency upgraded:
+
+The BouncyCastle library has been upgraded to version 1.47. Users running 
+Oracle JDK and JBoss will have to replace all bc*.jar copied to JBoss with 
+the 1.47 version jars available under lib/ext/1.6/.

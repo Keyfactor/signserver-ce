@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <f:metadata>
+        <f:viewParam name="selected" value="#{workersBean.workersRequestedSelected}"/>
+    </f:metadata>
+    
+    <body>
+
+        <ui:composition template="./template.xhtml">
+
+            <ui:define name="title">
+                Workers
+            </ui:define>
+
+            <ui:define name="top">
+
+            </ui:define>
+
+            <ui:define name="content">
+                <h1>Workers</h1>
+
+                <h:form>
+                    
+                    <!-- Note: This buttons are somewhat duplicated in worker-menu.xhtml -->
+                    <p>
+                        <h:commandButton id="activate" value="Activate..." action="#{workersBean.bulkAction('workers-activation')}"/> <h:commandButton id="deactivate" value="Deactivate..." action="#{workersBean.bulkAction('workers-deactivation')}"/> | 
+                        <h:commandButton id="genkey" value="Renew key..." action="#{workersBean.bulkAction('workers-renewkey')}"/> <h:commandButton id="test" value="Test key..." action="#{workersBean.bulkAction('workers-testkey')}"/> <h:commandButton id="csr" value="Generate CSR..." action="#{workersBean.bulkAction('workers-csr')}"/> <h:commandButton id="install" value="Install certificates..." action="#{workersBean.bulkAction('workers-certificates')}"/> |
+                        <h:commandButton id="renewsigner" value="Renew signer..." action="#{workersBean.bulkAction('workers-renew')}"/> | 
+                        <h:commandButton id="remove" value="Remove..." action="#{workersBean.bulkAction('workers-remove')}"/> | 
+                        <h:commandButton id="reload" value="Reload from database..." action="#{workersBean.bulkAction('workers-reload')}"/> <h:commandButton id="export" value="Export..." action="#{workersBean.bulkAction('workers-export')}"/>
+                    </p>
+                    
+                    <h:dataTable id="table1" value="#{workersBean.workers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1" rowClasses="dss1,dss1_odd">
+                        <!--<f:facet name="header">
+                            <h:outputText value="Your Shopping Cart" />
+                        </f:facet>-->
+                        <h:column>
+                            <f:facet name="header">
+                                <!-- TODO: Mark all link -->
+                            </f:facet>
+                            <h:selectBooleanCheckbox id="sel-#{item.id}" value="#{workersBean.selectedIds[item.id]}" />
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Name" />
+                            </f:facet>
+                            <h:panelGrid columns="2" class="notable" columnClasses="notable,notable">
+                                <h:outputLink value="worker.xhtml">
+                                    <f:param name="id" value="#{item.id}"/>
+                                    <h:graphicImage library="images" name="#{item.imageName}" title="#{item.imageAlt}"/>
+                                </h:outputLink>
+                                <h:panelGrid columns="1" class="notable" columnClasses="notable,notable">
+                                    <h:link outcome="worker" value="#{item.name} (#{item.id})">
+                                        <f:param name="id" value="#{item.id}"/>
+                                    </h:link>
+                                    <h:outputText value="#{item.status}"/>
+                                </h:panelGrid>
+                            </h:panelGrid>
+                            
+                            
+                        </h:column>
+                        <f:facet name="footer">
+                        </f:facet>
+                    </h:dataTable>
+                </h:form>
+
+                <h:link value="Add..." outcome="workers-add"/>
+
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

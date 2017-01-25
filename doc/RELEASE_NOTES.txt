@@ -1,0 +1,680 @@
+SignServer 4.1.0
+----------------
+
+Notice:
+ - If you are customizing the SignServer public web to be embedded in a frame, 
+   note that SignServer now uses the X-FRAME-OPTIONS HTTP header, preventing
+   web GUIs from being framed in modern browsers.
+
+
+SignServer 4.0.1
+----------------
+
+New features:
+    - Support for RFC 3161 timestamps in the Authenticode signer
+    - Ability to download integration CLI in the same way as the Admin GUI
+
+Improvements:
+    - Performance improvements
+    - Additional PKCS#11 library definitions
+    - Make inclusion of IssuerSerial in SigningCertificate in Time-stamp tokens
+      optional
+    - Security hardening
+
+Bug fixes:
+    - A security issue
+    - ClassCastException trying to test key from Admin GUI running against
+      local SignServer instance
+    - EchoWorker not working
+    - Web service interface not working from client CLI distribution
+    - Incorrect documentation for DispatchedAuthorizer
+    - Fixes in SQL create scripts
+    - Wrong icon for crypto workers in admin GUI
+
+
+SignServer 4.0.0
+----------------
+
+Major new features and improvements:
+    - Support for large files (Enterprise Edition)
+    - Major internal library updates such as CESeCore 6.4 and BouncyCastle 1.53
+    - Build system changed from Ant to Maven
+    - Many internal API improvements    
+    - Support for RFC 5816 time-stamps
+    - Initial Payara 4.1 support
+
+Bug fixes:
+    - Bug in BouncyCastle related to extensions in time-stamps
+    - ClientWS interface did not handle X-Forwarded-For header
+    - Fixed spelling typos
+    - Fixed unit tests not running automatically
+    - Fixed stylesheet on public web pages
+
+Notice:
+ - Database changes were introduced. See UPGRADE.txt for details.
+ - The way to specify a worker's implementation class name in properties form
+   has changed. Previously it was specified as:
+   GLOB.WORKER4711.CLASSPATH=org.signserver.module.pdfsigner.PDFSigner
+   But now it should be specified as a worker property:
+   WORKER4711.IMPLEMENTATION_CLASS=org.signserver.module.pdfsigner.PDFSigner
+   Exported configurations might have to be adapted.
+   SignServer will try to upgrade existing configurations during startup.
+ - Each worker configuration should now contain a worker property TYPE,
+   specifying the type of worker such as UNKNOWN, PROCESSABLE, TIMED_SERVICE,
+   SPECIAL or CRYPTO_WORKER.
+   Existing workers will get this worker property populated during the startup.
+   See UPGRADE.txt.
+ - Previously deprecated crypto token implementations has been removed: 
+   SoftCryptoToken, HardCodedCryptoToken, OldPKCS11CryptoToken, and
+   PrimeCardHSMCryptoToken.
+   For SoftCryptoToken and HardCodedCryptoToken, used for demonstration purposes,
+   use KeystoreCryptoToken with the supplied sample configuration.
+   For OldPKCS11CryptoToken, configurations should be upgraded to use
+   PKCS11CryptoToken.
+ - The TimeStampSigner now generates RFC 5816-compliant time stamps with the
+   ESSCertIDv2 attribute. To get the old behavior, specify SHA1 as the certificate
+   digest algorithm, using the new CERTIFICATE_DIGEST_ALGORITHM worker property.
+ - For the TimeStampSigner the default behavior is now to always require the
+   ACCEPTEDPOLICIES property to be set to a list of accepted requested policies
+   (or empty to disallow requesting a policy). For backwards-compatibility
+   the new ACCEPTANYPOLICY property can be set to the value "true".
+ - The old deprecated scripts in the bin folder has been removed. Please, use
+   the replacement scripts that has been available since long before:
+   admingui.sh   => signserver-gui
+   client.sh     => signclient
+   signserver.sh => signserver
+
+See ChangeLog.txt for the full list of changes.
+
+
+SignServer 3.7.4
+----------------
+
+New feature:
+ - Support for qcStatements extension for Qualified Electronic Time-stamps
+
+Improvement:
+ - More reliable calculation of free memory in Health Check
+
+Bug fixes:
+ - Fixed issue with PostgreSQL
+ - Fixed archive querying when running the GUI locally
+ - Fixed possible deadlock when running XML validator under high load
+ - A few documentation and sample configuration fixes
+
+
+SignServer 3.7.3
+----------------
+
+Notice:
+ - The renewsigner admin CLI command will no longer prompt for an authcode when
+   the -authcode CLI argument is omitted, use the new -authprompt option to get
+   an interactive prompt. When the authcode is not given (or prompted for), the
+   command will not automatically (re)activate the token.
+
+See ChangeLog.txt for the full list of changes.
+
+
+SignServer 3.7.2
+----------------
+
+Bug fixes:
+ - Performance: Cache key option now improves performance with network HSM
+ - Performance: The response time is improved on some systems
+
+See ChangeLog.txt for the full list of changes.
+
+
+SignServer 3.7.1
+----------------
+
+New features:
+    - Java code signing support (including Android).
+    - Support for key generation with custom RSA public exponent.
+
+Improvements:
+    - Support for large files in Client CLI.
+    - Minor performance improvements.
+    - Improved output from Client CLI.
+    - MRTD signing interface improvements (ePassport).
+    - Administration GUI improvements.
+    - Improved language in the manuals.
+
+Bug fixes:
+    - Security issue in Commons Collections library.
+    - Regression: Renewing keys for multiple workers at once did not fully work
+      in the Administration GUI.
+    - Bin folder can not be put in the PATH environment variable.
+    - Username/password not accepted if client certificate presented.
+    - The FirstActiveDispatcher logs using the dispatchees fields.
+    - 24 other bug fixes.
+
+Notice:
+ - The Commons Collections library has been updated to version 3.2.2.
+   This fixes a potential security vulnerability in earlier versions.
+   See also the relevant "Fix Commons Collections Security issue in JBoss 7
+   and earlier" and "Fix Security issues in JBoss EAP" sections of the
+   installation guide to make sure the issue is also addressed in the
+   application server.
+
+See ChangeLog.txt for the full list of changes.
+
+
+SignServer 3.7.0
+----------------
+
+New features:
+ - Indivual keys. Key aliases in crypto tokens can be selected by workers at
+   run-time based on the incoming request using the new AliasSelector interface.
+   An implementation selecting aliases based on the authenticated user of the
+   request is included.
+
+Improvements:
+
+Bug fixes:
+ - Crypto token operations in the administration GUI no requires clicking
+   outside of the last edited input field to be able to performe the action
+   (i.e. when generating keys).
+
+Notice:
+ - The SignServer build/deployment configuration file has been renamed from
+   signserver_build.properties to signserver_deploy.properties. When upgrading
+   from an earlier version the existing configuration file should be renamed
+   accordingly. The Ant script will complain if a file with the old name is
+   found.
+ - The XML Security library has been updated to version 1.5.8 and its 
+   dependency to version 2.7.2.
+   This fixes a potential security vulnerability in earlier versions.
+   See: http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0107
+   See also the various "Fix XML Security library issue" sections in the
+   Install Guide for the extra steps needed when using JBoss 5, 7 and EAP 
+   respectively.
+ - The new KeystoreInConfigCryptoToken is not supported under GlassFish 2.
+ - HardCodedCryptoToken is no longer supported for most use cases. Previously,
+   the token could have been configured in Certificate or Document validators
+   as those required a token to function. Since long this has not been
+   required and if any of your validators has this token configured it should
+   be removed or they might give an error.
+ - SoftCryptoToken is no longer supported. The token was mainly used for quick
+   demo setups but does not support the API in 3.7. Use KeystoreCryptoToken or
+   KeystoreInConfigCryptoToken instead.
+ - The KeystoreCryptoToken will no longer use the first available key when
+   signing if DEFAULTKEY has not been set. Please configure your
+   KeystoreCryptoTokens to have a DEFAULTKEY property set.
+   Having a defined DEFAULTKEY is not needed if using runtime-decided keys
+   (using the AliasSelector interfaces).
+ - The old way of specifying PKCS#11 libraries by referencing the path to the
+   dynamic library as a worker property for a crypto worker has been
+   deprecated in favor of using named library definitions.
+   To continue using the old way, you need to make sure there is a defined
+   named library using the same path as manually specified by the worker.
+   If the library is not among the pre-defined libraries, it is possible to
+   add new definitions in the deploy properties.
+   For security reasons, it is also possible to disable any of the pre-defined
+   library definitions.
+
+See ChangeLog.txt for the full list of changes.
+
+
+SignServer 3.6.3
+----------------
+
+New Features and Improvements:
+ - Authenticode signer for portable executables (enterprise edition only).
+ - CSCA Master List Signer (enterprise edition only).
+ - Signer that produces plain signatures.
+ - Configurable maximum upload limit.
+
+Bug fixes:
+ - Key test results now displays correctly in audit log.
+ - Database tables now only listed once during deployment.
+ - Soft keys are now also removed directly from memory.
+ - JBoss config folder directory corrected in installation instructions.
+ - Dispatchers status page now lists configuration errors.
+
+See ChangeLog.txt for the full list of changes.
+
+
+SignServer 3.6.2
+----------------
+
+Bug fixes:
+ - Security issue in XML workers
+ - Regression: Menu command for activating workers not working properly in GUI
+
+Improvements:
+ - Honouring rate limiting messages in TimeMonitor
+ - Updated list of 3rd party dependencies and licenses
+
+See ChangeLog.txt for the full list of changes.
+
+
+SignServer 3.6.1
+----------------
+
+New feature:
+ - Added detached signature option to CMSSigner (contributed by
+   Pablo Ruiz García) 
+
+Improvements:
+ - Better documentation about how to specify issuer DN for clients and
+   webservice administrators
+ - Issued timestamping certificates for sample soft keystores
+
+Bug fixes:
+ - Fixed KeyStoreCryptoToken to initialize key usage counter when no password
+   is specified in configuration
+ - Fixed a regression when ACCEPTEDEXTENSIONS was empty
+ - Fixed EJB CLI/GUI access with JBoss AS 7 in Windows
+ - Fixed an issue where timestamp responses where double base64-encoded in
+   the log
+ - Timestamp and MS authenticode timestamp signer will now check that there
+   is only one extended key usage (timeStamping) set at configuration time
+   instead of failing just at runtime
+ - Serial numbers for administrators and clients can be entered with leading
+   zeros and in either case for hexadecimal letters
+ - Fixed an issue where installed certificate does not override certificate
+   in keystore
+ - Fixed adding authorized WS client in GUI from certificate file
+ - Fixed an issue where issuer DN contains characters that needs escaping  
+
+See ChangeLog.txt for the full list of changes.
+
+
+SignServer 3.6.0
+----------------
+
+New features and improvements:
+ - Independent worker and crypto token configuration
+ - Querying of database archive from WS and GUI
+ - Support for specifying HSM slot by label
+ - HSM keep alive service
+ - Underlying CESeCore library upgraded
+ - Separation between community and enterprise editions
+ - New application: SignServer TimeMonitor (enterprise edition only)
+
+Bug fixes:
+ - Fixed an error when querying the audit log without any conditions
+ - Removed a duplicated invocation in the Admin GUI
+
+See ChangeLog.txt for the full list of changes.
+
+
+SignServer 3.5.2
+----------------
+
+New features and improvements:
+ - Support for SHA-2 hash algorithms in PDFSigner
+ - Support for using the worker servlet when running the stress test tool
+ - Checksums using SHA256 are now available for the releases
+ - System tests now set up trust stores in case HTTPS is used
+ - System tests are now included in the binary distribution
+ - Apache Santuario (XML Security) library has been updated to version 1.5.7
+
+Bug fixes:
+    - An XML signer performance regression has been fixed by a dependency update
+    - PDF and XAdES signers caused deadlocks under high load when using a local TSA
+    - Audit log errors are now displayed in the Admin GUI
+    - An environment variable is now honored in the signserver-db script again
+    - Ant target for copying modules was not working for custom sub modules
+    - Added note about AdminGUI login issues with smartcard if the path to DLL
+      contains parenthesis
+
+Notice:
+ - The XML Security library has been updated to version 1.5.7.
+   This fixes security vulnerability in earlier versions as well as a
+   performance issue.
+   See: http://santuario.apache.org/secadv.data/cve-2013-4517.txt.asc
+   See also the "Fix XML Security library issue" sections in the Install Guide
+   for the extra steps needed when using JBoss 5 and 7 respectively.
+
+
+SignServer 3.5.1
+----------------
+
+New features and improvements:
+ - Support for passing request meta data
+ - Support for configuring number of certificates to include in signature
+ - API for billing/accounting
+ - Command to print time-stamp requests and responses
+ - Improved error reporting for crypto tokens and RenewalWorker
+ - Improved ability to have custom modules
+ - Updated sample PKCS#11 attributes to not store the public key
+ - Documentation for MRTDSODSigner
+ - Made all Dispatchers work together with DispatchedAuthorizer
+ - Added test configuration files and performance CLI to binary distribution
+ - Improved system test configuration options
+ - Always display connect dialog when starting the AdminGUI
+ - Added getproperty command to AdminCLI
+ - Support for setting PKCS#11 attributes without referencing a file
+ - Support for generating keys for JKS soft crypto tokens
+
+Bug fixes:
+ - Fixed AdminGUI smart card login failure on second attempt
+ - Implemented workaround for smart card login error when multiple readers are
+   available for which some does not have tokens present
+ - Fixed a deployment issue with Clover
+ - Fixed proper exist codes from Ant wrapper script
+ - Fixed issue in AdminGUI when adding workers in a specific way
+ - Fixed a possible networking issue with the time-stamp client
+ - Corrected an error message in RenewalWorker
+ - Fixed an issue when running client CLI over ClientWS with debug enabled
+ - Fixed main class attribute in SignServer-Test-Performance.jar
+ - Fixed an issue with a button in AdminGUI not being initially disabled
+ - Fixed arguments parsing in the renewsigner command and added missing
+   authcode argument
+
+
+SignServer 3.5.0
+----------------
+
+New features and improvements:
+ - Support for JBoss AS 7.1, JBoss EAP 6.1 and GlassFish 3.1.
+ - Support for MariaDB.
+ - Support for JDK 7.
+ - All worker configuration can now be done from the Admin GUI.
+ - Document signer for XAdES-BES and XAdES-T contributed by Luis Maia.
+ - Document validator for XAdES-BES and XAdES-T.
+ - Support for different signature algorithms in XML signers.
+ - Various AdminGUI/remote administration improvements.
+
+Bug fixes:
+ - Empty certificate chain in setproperties call gave error.
+
+Notice:
+ - The XML Security library has been updated to version 1.5.5. This version is 
+   not compatible with the version bundled with JBoss 5. For the XML support to 
+   work when running on JBoss 5 the XML Security library and its dependencies 
+   should be put in JBOSS_HOME/lib/endorsed. To help with that an Ant target 
+   can be run:
+   $ bin/ant j2ee:copy-xmlsec
+ - Support for the group key framework has been discontinued.
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel).
+
+
+SignServer 3.4.3
+----------------
+
+Bug fixes:
+ - Regression introduced in 3.4.2: test signatures were not performed as part
+   of the getstatus command or from health check
+ - Security issue in bundled library
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel).
+
+
+SignServer 3.4.2
+----------------
+
+New features and improvements:
+ - Uses PKCS11CryptoToken from CESeCore
+ - Support for starting audit log verification from a specified sequence number
+ - Option to archive all X-Forwarded-For addresses
+ - Option to include the ordering field in time-stamp tokens even if it has value false
+ - Option to not include the signingTime CMS attribute in time-stamp signer
+ - Option to cache PKCS#11 key reference to increase performance
+ - Includes IssuerSerial in the SigningCertificate attribute in time-stamp signer
+
+Bug fixes:
+ - HSM auto activation was not working when signed audit log was used
+ - Key generation was not working with slotListIndex 
+ - ClientCLI over web services was not working unless includemodulesinbuild specified
+ 
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel).
+
+
+SignServer 3.4.1
+----------------
+
+New features and improvements:
+ - Added support for IPv6 and multiple proxies in ListBasedAddressAuthorizer.
+ - Support for specifying the signature algorithm in CMS signer.
+ - Support for the signerCertificate attribute in the MS Authenticode time stamp signer.
+ - Support for generating CSR with EDSA explicit parameters in the admin GUI and the RenewalWorker.
+ - Log worker name in the worker log.
+ - Easy import of issuer and serial number from certificate in admin GUI, when adding administrator rules.
+ - Added an option to set the correct TSA name from the subject DN automatically for the time stamp signer.
+ - All workers report themselves as offline when misconfigured.
+ - Added health check rate limiter.
+ - Added database setup scripts for PostgreSQL.
+
+Bug fixes:
+ - ContentInfo contained a double encoded octet string in the MS Authenticode time stamp signer.
+ - Unauthorized health check queries incorrectly logged.
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel).
+
+
+SignServer 3.4.0
+----------------
+
+This is a major release - in total 27 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
+
+Major changes:
+ - Secure logging to database using CESeCore.
+ - Support for querying audit log from CLI, GUI and web services.
+ - Configurable which Status Repository updates to log.
+ - Access group for auditors.
+ - Database CLI for verifying audit log.
+ - Support for PostgreSQL.
+
+Bug fixes:
+ - Fixed a couple of NPE bugs.
+ - Fixed logging in over webservices using a JKS keystore in the Admin GUI.
+ - Fixed some randomly failing unit tests.
+ - Other minor bugfixes.
+
+Notice:
+ - Database changes were introduced. See UPGRADE.txt for details.
+ - The category for the system logger has changed from org.signserver.server.log.ISystemLogger to org.signserver.server.log.SignServerLog4jDevice.
+
+
+SignServer 3.3.0
+----------------
+
+This is a major release - in total 57 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
+
+Major changes:
+ - New client web services API 
+ - MS Authenticode time-stamp signer
+ - Support for archiving of time-stamp requests
+ - Logging of all changes to service components
+ - Stress test tool for measuring performance
+ - Dropped support for JBoss 4.2.x.
+ - Dropped support for cluster class loader
+ - Dropped support for WSRA
+ - Upgrade of internal cryptographic library
+ - Many more minor improvements
+
+Bug fixes:
+ - Fixed the Renewal worker which required a trust store password even when a 
+   trust store was not used
+ - Fixed an NPE when trying to activate a worker of type Dispatcher
+ - Fixed archiving that could not be done twice for the same document
+ - Fixed printing of server version from CLI
+ - Fixed system tests that could not be compiled after opening the project with 
+   NetBeans IDE 7.2
+ - Fixed StatusPropertiesWorker so that it no longer requires a cryptotoken to 
+   be configured
+ - Fixed Address Authorizers to return HTTP 403 (forbidden) and not HTTP 401 
+   (unauthorized) as before
+
+Notice:
+ - A database change were introduced. See UPGRADE.txt for details.
+ - A dependency where upgraded. See UPGRADE.txt for details.
+ - Apache Ant 1.8.0 or later is now required to build SignServer.
+ - The property "custom.commandfactory" is no longer supported. See the manual 
+   for how to add custom Admin or Client CLI commands.
+ - The Admin CLI no longer supports the "-host" argument and ignores it if 
+   present.
+ - The default archiver called OldDatabaseArchiver has changed the format of
+   the data part of the XML serialized ArchiveData from an byte array to a 
+   base64 encoded String. The change is transparent for Java clients using
+   SignServer-Common.jar for parsing the ArchiveData but other clients might 
+   need to be updated.
+ - As an alternative to the OldDatabaseArchiver a new archiver called 
+   Base64DatabaseArchiver can also be used.
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel).
+
+
+SignServer 3.2.4
+----------------
+
+New features and improvements:
+ - Installation script contributed by Antoine Louiset
+ - Add test cases for TimeStampSigner with other key algorithms than RSA
+ - Improved feature list at signserver.org
+
+Bug fixes:
+ - Using worker id does not work in Client CLI
+ - JBoss 5 throws NPE on shutdown of SignServer
+ - Renewal worker does not use the requested DN in certificate request
+ - StatusPropertiesWorker requires a cryptotoken to be configured
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel).
+
+
+SignServer 3.2.3
+----------------
+
+Major new features and improvements:
+ - Support for SignServer without database
+ - Configurable to disable the key usage counter
+ - Signer certificate check in Health check for all Signers
+ - Check that the timestamp signer certificate is included in the certificate chain
+ - Health check response of TimeStampSigner now considers status of time source
+ - Down-for-maintenance support in Health check
+ - Support for supplying filename as request metadata
+
+Bug fixes:
+ - Client CLI only supported 10 arguments on Windows
+ - Null value was inserted when removing last wsadmin on Oracle
+ - PDF Signature could not be larger than 15000 bytes
+ - Sample configuration for renewal worker not functional
+ - Various documentation updates
+
+Notice:
+ - Same internal API changes has been done as part of DSS-528. If you have 
+   custom code some changes might be required.
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel).
+
+
+SignServer 3.2.2
+----------------
+
+Major new features and improvements:
+ - Support for denying timestamp requests unless the time source is considered
+   in sync
+ - Support for dispatching timestamp requests to different timestamp 
+   units/signers
+ - Support for accessing workers using the /worker/* URL pattern gives easier 
+   filtering with a proxy
+ - Signer's status report can now be offered by a worker and not just a timed 
+   service
+ - The log field PROCESS_SUCCESS can now have the value "false" if a request 
+   failed
+ - Hostname displayed in title bar of AdminGUI simplifies when managing multiple 
+   servers
+
+Bug fixes:
+ - Build failure on W7 X64
+ - Sample code using web services should use HTTPS
+ - URL for documentation only working with JBoss 4 
+
+Notice:
+ - Support for the cluster classloader has been deprecated and support for it 
+   will be dropped in a future release.
+ - The status property "INSYNC" is now called "TIMESOURCE0_INSYNC". Applications 
+   relaying on the name of this property should be updated.
+ - The time stamp signer will now log PROCESS_SUCCESS with the value false
+   in case the response has a status other than GRANTED.
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel).
+
+
+SignServer 3.2.1
+----------------
+
+Major new features and improvements:
+
+ - Improve servlet error handling
+ - Deploy documentation with application
+ - Improved API for archiving
+ - Support for signing PDFs with document restrictions
+ - Support for PDF permissions enforcement
+ - Support for modifying PDF permissions
+ - Support for setting a PDF permissions password
+ - Refuse to certify PDFs already certified and refuse to sign when signing is 
+   not allowed
+
+Bug fixes:
+ - Remote EJB worker interface could not be used with ECC with explicit parameters
+ - Warnings printed on STDERR
+ - Web service interface did not log XFORWARDEDFOR headers
+ - Typo in sample configuration for PDFSigner
+ - Setting healthcheck properties had no effect
+ - CRL download should close streams correctly and allow for caching
+ - Supplied username and password ignored in SigningAndValidationWS
+ - Unit tests failed in certain situations
+ - Ant target for testing individual tests did not work
+ - Switching application server type did not update jndi.properties    
+ - JavaDoc failed to build
+
+
+Notice:
+ - In signserver_build.properties the property "useclusterclassloader" now 
+   defaults to false. To still use the deprecated clusterclassloader this 
+   needs to be set explicitly to true.
+ - In signserver_build.properties the property "includemodulesinbuild" now 
+   defaults to true. To not have all modules built in this needs to be set to 
+   explicitly to false.
+ - The fix of DSS-371 introduced a change in the EJB interface. Applications 
+   using that interface should run version >=3.2.1 on both client and server 
+   side.
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel).
+
+
+SignServer 3.2.0
+----------------
+
+This is a major release - in total 49 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
+
+Major new features and improvements:
+ - Administration Web Service (WS) interface
+ - Administration GUI desktop application
+ - Client command line interface (CLI)
+ - Support for GlassFish Server 2.1.1
+ - Support for JBoss Application Server 5.1.0
+ - Support for Oracle Database
+ - Semi-automatic key generation and certificate renewal from EJBCA
+ - Improved audit and transaction logging
+ - Improved project structure dividing the modules in sub-projects
+ - Front page listing all demo web pages
+
+Known Issues:
+ - Web services no longer work on JBoss 4 if HTTPS is not used as JBoss 4 rewrites the end point URL in the WSDL file to always start with "https://" (since DSS-327).
+
+Read the full changelog for details (https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel).
+
+
+SignServer 3.1.5
+----------------
+
+This is just a minor maintenance release preparing for the upcoming 3.2 release - in total 7 features, options, bugs and stabilizations have been fixed or added. The most noteworthy changes can be seen below.
+
+New features and improvements:
+ - Support for HTTPS in the SigningAndValidation API
+ - Harden the PDF Signer against PDF signature collisions
+ - Function in the build script for create source-only release archives
+
+Bug fixes:
+ - Problem in a unit test for certain dates
+ - NPE in TimeStampSigner if certificate is missing
+
+Read the full changelog for details 
+(https://jira.primekey.se/browse/DSS?report=com.atlassian.jira.plugin.system.project:changelog-panel).
+

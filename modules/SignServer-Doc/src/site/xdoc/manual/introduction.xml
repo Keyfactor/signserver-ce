@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id$ -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+    <properties>
+        <title>SignServer Manual</title>
+    </properties>
+
+    <body title="Introduction">
+        
+        <h1>Introduction</h1>
+        
+        <macro name="toc">
+            <param name="section" value="0"/>
+            <param name="fromDepth" value="0"/>
+            <param name="toDepth" value="4"/>
+        </macro>
+
+            <section name="Introduction/scope">
+                <p>
+The SignServer is an application framework performing cryptographic operations
+for other applications. It's intended to be used in environments where keys are
+supposed to be protected in hardware but it isn't possible to connect such
+hardware to existing enterprise applications or where the operations are
+considered extra sensitive so the hardware have to protected more carefully.
+Another usage is to provide a simplified method to provide signatures in
+different application managed from one location in the company.
+                </p>
+                <p>
+The SignServer have been designed for high-availability and can be clustered for maximum
+reliability.
+                </p>
+                <p>
+SignServer comes with a RFC 3161/5816 compliant Time-Stamp signer serving requests through
+HTTP or client-authenticated HTTPS. A MRTD (Machine Readable Travel Document, i.e. electronic
+passport) signer. A PDF signer that adds a signature automatically to an uploaded PDF document,
+ODF signer that adds a signature automatically to uploaded ODF document, OOXML Signer that
+adds signature automatically to an uploaded OOXML document, and a validation service used to
+lookup the validation of a given certificate.
+                </p>
+                <p>
+                    <a href="../images/architecture.png"><img src="../images/architecture.png" align="middle" border="0" width="641" height="305" alt="architecture"/></a><br/>
+                    Drawing 1: Overview of a possible set up of a highly available SignServer solution
+                </p>
+            </section>
+
+            <section name="Major changes from previous versions">
+                <subsection name="Changes between version 3.7 and 4.0">
+                    <ul>
+                        <li>Major internal library updates such as CESeCore 6.4 and BouncyCastle 1.53</li>
+                        <li>Build system changed from Ant to Maven. Note: Only for building/compiling. Deployment still uses Ant and does not require Maven.</li>
+                        <li>Support for large files (Enterprise Edition)</li>
+                        <li>Support for RFC 5816 time-stamps</li>
+                        <li>Many internal API improvements</li>
+                        <li>Initial Payara 4.1 support</li>
+                        <li>Dropped support for Java 6</li>
+                        <li>Dropped support for JBoss 5, JBoss EAP 5 and GlassFish V2</li>
+                        <li>Many more major changes and bug fixes. See 
+                            ChangeLog.txt and RELASE_NOTES.txt for details.</li>
+                    </ul>
+                </subsection>
+                <subsection name="Changes between version 3.6 and 3.7">
+                    <ul>
+                        <li>Individual keys and certificates support</li>
+                        <li>PKCS#11 libraries used by crypto tokens must be defined at deploy-time</li>
+                        <li>Initial support for building using Maven</li>
+                    </ul>
+                </subsection>
+                <subsection name="Changes between version 3.5 and 3.6">
+                    <ul>
+                        <li>Underlaying CESeCore library upgraded to version 6.1</li>
+                        <li>Separation between community and enterprise editions</li>
+                        <li>Separate worker and crypto tokens</li>
+                        <li>New application: SignServer TimeMonitor (enterprise edition)</li>
+                        <li>Querying of database archive from WS and GUI</li>
+                        <li>HSM keep alive service</li>
+                    </ul>
+                </subsection>
+                <subsection name="Changes between version 3.4 and 3.5">
+                    <ul>
+                        <li>Support for JBoss AS 7.1, JBoss EAP 6.1 and GlassFish 3.1</li>
+                        <li>Support for MariaDB</li>
+                        <li>Support for JDK 7</li>
+                        <li>All worker configuration can now be done from the Admin GUI</li>
+                        <li>Document signer and validator for XAdES-BES and XAdES-T</li>
+                        <li>Support for different signature algorithms in XML signers</li>
+                        <li>Various AdminGUI/remote administration improvements</li>
+                        <li>Support for the group key framework has been discontinued</li>
+                    </ul>
+                </subsection>
+                <subsection name="Changes between version 3.3 and 3.4">
+                    <ul>
+<!-- New major features -->
+                        <li>Secure logging to database from CESeCore</li>
+                        <li>Query audit log from CLI, GUI or over web services</li>
+                        <li>See ChangeLog.txt and RELASE_NOTES.txt for details.</li>
+                    </ul>
+                </subsection>
+                <subsection name="Changes between version 3.2 and 3.3">
+                    <ul>
+<!-- New major features -->
+                        <li>New client web services API</li>
+                        <li>MS Authenticode time-stamp signer</li>
+                        <li>Support for archiving of time-stamp requests</li>
+                        <li>Logging of all changes to service components</li>
+                        <li>Stress test tool for measuring performance</li>
+                        <li>Dropped support for JBoss 4.2.x.</li>
+                        <li>Dropped support for cluster class loader</li>
+                        <li>Dropped support for WSRA</li>
+                        <li>Upgrade of cryptographic library</li>
+                        <li>Many more minor changes and bug fixes. See 
+                            ChangeLog.txt and RELASE_NOTES.txt for details.</li>
+                    </ul>
+                </subsection>
+                <subsection name="Changes between version 3.1 and 3.2">
+                    <ul>
+<!-- New major features -->
+                        <li>
+A new administration web service (WS) for remote administration of SignServer.
+                        </li>
+
+                        <li>
+A new administration GUI desktop application for managing workers. Supports
+key generation and both local and remote administration.
+                        </li>
+
+                        <li>
+A new client command line interface (CLI) for requesting signing and validation.
+                        </li>
+
+<!-- New support -->
+                        <li>
+Support for GlassFish Server 2.1.1.
+                        </li>
+                        <li>
+Support for JBoss Application Server 5.1.
+                        </li>
+
+                        <li>
+Support for Oracle Database.
+                        </li>
+
+<!-- New workers -->
+                        <li>
+Worker renewing signers by generating new keys and sending certificate requests
+to EJBCA.
+                        </li>
+
+<!-- Improvements -->
+                        <li>
+Better audit and transaction logging.
+                        </li>
+                        <li>
+New build scripts and project structure with the goal of decoupling the different
+SignServer modules and sub-projects and simplifying future development.
+                        </li>
+                        <li>
+Front page listing all demo web pages.
+                        </li>
+
+<!-- Other -->
+                        <li>
+The bundled SMTP server and MailSigner build of SignServer has been removed.
+                        </li>
+
+                    </ul>
+                </subsection>
+                <subsection name="Changes between version 3.0 and 3.1">
+                    <ul>
+                        <li>
+A new Cluster Class Loader, simplifying the management of customized workers in a
+cluster. All the resource data including the classes themselves are stored in database and
+accessible from all nodes simultaneously. It is also possible to run multiple versions of the
+same worker in the same SignServer cluster, this is useful when migrating a worker to new
+code since both the old and new worker can be run at the same time.
+                        </li>
+                        <li>
+PDF Signer, Time-Stamp Authority and MRTD and their specific libraries have the
+possibility to build into separate module archives (MAR files) that have to be uploaded to
+the SignServer installation before usage, if the cluster classloader is enabled (default).
+                        </li>
+                        <li>
+Installation packages for Linux/Windows of both SignServer and MailSigner using
+generation software from Bitrock.
+                        </li>
+                        <li>
+New extended module for signing ePassports: MRTD-SOD.
+                        </li>
+                        <li>
+New modules for signing and validating XML documents.
+                        </li>
+                        <li>
+A new ODF Signer module that adds signature to ODF documents, such as : odt,ods,odt
+(tested with OpenOffice.org 3.1.0). Simple web page is added where ODF document can be
+uploaded for signing, and resulted signed document downloaded.
+                        </li>
+                        <li>
+A new OOXML Signer Module that adds signature to Office Open XML documents, such as
+docx,xlsx,pptx (tested with Microsoft Office 2007).Simple web page is added where open
+office xml document can be uploaded for signing, and resulted signed document
+downloaded.
+                        </li>
+                        <li>
+Validators for several document types as well.
+                        </li>
+                        <li>
+Java 5 is no longer supported.
+                        </li>
+                        <li>
+For minor changes see the change log at https://jira.primekey.se
+                        </li>
+                </ul>
+                </subsection>
+                <subsection name="Changes between version 2 and 3">
+                    <ul>
+                        <li>
+Complete refactorisation of J2EE from EJB2 to EJB3 to simplify further development.
+                        </li>
+                        <li>
+Renamed component "Service" to "TimedService" since 3.0 supports other services.
+                        </li>
+                        <li>
+A "TimedService" can now be configured with a 'cron-like' settings to have services
+executed in other than just periodical intervals.
+                        </li>
+                        <li>
+A Validation Service API used to validate certificate from different issuers. The Validation
+Service API have it's own easy to use Web Service used to integrate with other platforms.
+A Group Key Service API used to generate and manage group keys, symmetric or
+asymmetric.
+                        </li>
+                        <li>
+Possibility to have customized authorization of requests, not just the built in client certificate
+authorization list.
+                        </li>
+                        <li>
+The name SignToken is changed to CryptoToken and introduced a new concept of
+ExtendedCryptoToken that supports symmetric operations.
+                        </li>
+                        <li>
+The RMI-SSL interface have been removed and replaced with a JAX-WS interface with a
+simple client framework supporting different load-balance or high availability policies.
+                        </li>
+                        <li>
+All request data have changed from serialization to externalization to be easier to translate to
+other platforms.
+                        </li>
+                        <li>
+A completely new MailSigner API based upon the JAMES SMTP server to perform
+automated cryptographic operations on e-mails very similar to the plug-ins for the
+SignServer.
+                        </li>
+                        <li>
+Java 1.4 is no longer supported.
+                        </li>
+                        <li>
+A lot of new JUnit tests in the test suite.
+                        </li>
+                        <li>
+A PDF Signer that can add a signature to a PDF document through a simple HTML
+interface.
+                        </li>
+                        <li>
+PKCS11 Crypto Token to connect to different PKCS11 implementations.
+                        </li>
+                    </ul>
+                </subsection>
+                <subsection name="Changes between version 1 and 2">
+                    <ul>
+                        <li>
+  signserver_server.property file have been removed and replaced with a global configuration
+  store.
+                        </li>
+                        <li>
+  It is now possible to dynamically add and remove available signers
+                        </li>
+                        <li>
+  A new type of component, "Service" that runs on a timely basis, used to perform
+  maintenance or report generation.
+                        </li>
+                        <li>
+  Improved cluster deployment functionality.
+                        </li>
+                        <li>
+  New CLI tools to batch configure the SignServer, and to backup a current configuration.
+                        </li>
+                        <li>
+  This makes it possible to set-up a configuration in test environment, dump the configuration
+  and configure the same in production.
+                        </li>
+                    </ul>
+                </subsection>
+            </section>
+
+            <section name="Terms Used in This Document">
+                <table>
+                    <tr><th>Term</th><th>Explanation</th>
+                    </tr><tr><td>Signer</td><td>A Processable service performing signatures upon requests. This could be a ready made signer or a custom developed one.</td>
+                    </tr><tr><td>Crypto Token (former Sign Token)</td><td>A Crypto Token is a name for the entity containing the private key and is responsible for its cryptographic operations. Each worker can contain a crypto token or reference a crypto token from an other worker.</td>
+                    </tr><tr><td>Crypto Worker</td><td>Is a worker not performing any operations on its own and instead only hosts a Crypto Token that can be referenced by other workers.</td>
+                    </tr><tr><td>Extended Crypto Token</td><td>An enhanced Crypto Token with support for symmetric key operations.</td>
+                    </tr><tr><td>PKCS11CryptoToken</td><td>A Crypto Token able to communicate with Hardware Security Modules through the standard PKCS11 interface.</td>
+                    </tr><tr><td>TimedService (former Service)</td><td>A TimedService is a task that is run on a timely basis, performing maintenance tasks like changing active key or generate a report.</td>
+                    </tr><tr><td>Worker</td><td>A common name for Processable (Signer or other type of service) and TimedService</td>
+                    </tr><tr><td>Processable</td><td>A type of worker that is used to process requests, i.e. not a TimedService.</td>
+                    </tr><tr><td>Worker Configuration</td><td>Each Worker can be configured with properties specific for that worker. There are two sets of worker configuration one "Active" that is used by the signer and one "current" which is the one configured by the administrator. The current configuration isn't used in production until the administrator issues the reload command. This makes it possible for the administrator to configure multiple properties and double-check them before they are actually used.</td>
+                    </tr><tr><td>Global Configuration Store</td><td>Is a dynamic store used to define available Workers and their Crypto Tokens. But other data that needs to be read globally could be set there as well. The global configuration properties are activated immediately. There are two different scopes for the store data, Global Scope and Node Scope.</td>
+                    </tr><tr><td>Global Scope</td><td>Data stored in the global configuration that can be read by all nodes in the cluster.</td>
+                    </tr><tr><td>Node Scope</td><td>Data that is node specific and can only be read within the same node.</td>
+                    </tr><tr><td>Worker Id</td><td>Unique identifier of a worker, an integer larger than 0</td>
+                    </tr><tr><td>Worker Name</td><td>A name used as a human readable synonym for a Worker Id</td>
+                    </tr><tr><td>Validation Service </td><td>A Processable that checks if a certificate is valid or not. Have a Default Validation Service implementation that should work in most cases.<br/>A Validation Service should have one or more Validators configured.</td>
+                    </tr><tr><td>Certificate Validator (former Validator)</td><td>A Certificate Validator is responsible for checking the status of one or more issuer's certificates. This could be as an OCSP client or a CRL checker or just looking up the status in a database.</td>
+                    </tr><tr><td>Document Validator</td><td>A Document Validator is validating a signed document by checking its signature and corresponding certificate(s) and returns the validation result.</td>
+                    </tr><tr><td>Authorizer</td><td>An interface that enables developers to integrate the authorization parts with existing authorization systems of who is authorized to perform requests to a Processable.</td>
+                    </tr><tr><td>Time Stamp Signer</td><td>A Signer that can be used to set up a Timestamp Authority according to RFC 3161. </td>
+                    </tr><tr><td>MRTD Signer</td><td>A Signer that performs signatures of MRTD (Machine Readable Travel Documents, i.e. Electronic Passports) blobs.</td>
+                    </tr><tr><td>MRTD SOD Signer</td><td>A Signer that creates the complete security object (SOd) for a MRTD (Machine Readable Travel Document, i.e. Electronic Passports) by signing the data groups.</td>
+                    </tr><tr><td>PDF Signer</td><td>A Signer that attaches an electronic signature signature to a PDF document.</td>
+                    </tr><tr><td>XML Signer</td><td>A Signer that puts in an enveloped signature in XML documents (XMLDSig)</td>
+                    </tr><tr><td>XML Validator</td><td>A Document Validator that validates signed XML documents (XMLDSig)</td>
+                    </tr><tr><td>XAdES Signer</td><td>A Signer signing XML documents using XAdES</td>
+                    </tr><tr><td>ODF Signer</td><td>A Signer that attaches an electronic signature to an ODF document. ODF Signer is tested with documents produced by <a href="http://www.openoffice.org">OpenOffice.org v 3.1.0</a></td>
+                    </tr><tr><td>ODF (Open Document Format) Document</td><td>XML-based file format for representing electronic documents such as spreadsheets, charts, presentations and word processing documents. <a href="http://en.wikipedia.org/wiki/OpenDocument">more...</a></td>
+                    </tr><tr><td>OOXML (Office Open XML) Document</td><td>XML-based file format  for representing spreadsheets, charts, presentations and word processing documents. <a href="http://en.wikipedia.org/wiki/Office_Open_XML">more...</a></td>
+                    </tr><tr><td>OOXML Signer</td><td>A Signer that attaches an electronic signature to an OOXML document.</td>
+                    </tr>
+                    <tr>
+                        <td>Archiver</td>
+                        <td>
+Implementation handling archiving of a worker's response and/or request by storing it in a database or similar.
+                        </td>
+                    </tr>
+                </table>
+            </section>
+
+            <section name="Overall Architecture">
+                    <p>
+The SignServer is a framework designed to perform different kind of cryptographic operations for different applications.
+                    </p>
+                    <p>
+Since the 3.0 version there are three kind of processable services. Signers (used to sign or in other way  process requested data). Validation Services used to verify the validity of a certificate against a set of backed issuers. The validation service can be used to simply the integration of PKIs into existing applications. In addition to processable services there also exists another concept called Timed Service (called just 'service' in 2.0 edition) which are plug-ins run at defined intervals performing maintenance or reporting routines.
+                    </p>
+                    <p>
+The main way of communicating with the SignServer is through HTTP (web server) interface. There is also a web services (SOAP WS) interface available but that uses a special binary format for encoding the requests and responses.
+                    </p>
+                    <p>
+The base component is called Worker which is assigned an ID, optionally a name and a configuration. A sub component is a Processable which receives and processes requests. A Processable (optionally) have access to a cryptographic token (CryptoToken) in charge of managing the keys of a Processable. A CryptoToken can be either software or hardware based.
+                    </p>
+                    <p>
+The application is administrated through a command-line interface, where the properties and access control can be configured.
+                    </p>
+                    <p>
+One SignServer can have multiple services for different purposes.
+                    </p>
+            </section>
+    </body>
+</document>
+

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="gen.ws.protocol.signserver.org" xmlns:tns="gen.ws.protocol.signserver.org" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="CryptoTokenOfflineException" type="tns:CryptoTokenOfflineException"/>
+
+  <xs:element name="IllegalRequestException" type="tns:IllegalRequestException"/>
+
+  <xs:element name="InvalidWorkerIdException" type="tns:InvalidWorkerIdException"/>
+
+  <xs:element name="SignServerException" type="tns:SignServerException"/>
+
+  <xs:element name="getStatus" type="tns:getStatus"/>
+
+  <xs:element name="getStatusResponse" type="tns:getStatusResponse"/>
+
+  <xs:element name="process" type="tns:process"/>
+
+  <xs:element name="processResponse" type="tns:processResponse"/>
+
+  <xs:complexType name="getStatus">
+    <xs:sequence>
+      <xs:element name="arg0" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getStatusResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:workerStatusWS" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="workerStatusWS">
+    <xs:sequence>
+      <xs:element name="errormessage" type="xs:string" minOccurs="0"/>
+      <xs:element name="overallStatus" type="xs:string" minOccurs="0"/>
+      <xs:element name="workerName" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InvalidWorkerIdException">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="process">
+    <xs:sequence>
+      <xs:element name="arg0" type="xs:string" minOccurs="0"/>
+      <xs:element name="arg1" type="tns:processRequestWS" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="processRequestWS">
+    <xs:sequence>
+      <xs:element name="requestDataBase64" type="xs:string" minOccurs="0"/>
+      <xs:element name="requestMetadata">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="key" minOccurs="0" type="xs:string"/>
+                  <xs:element name="value" minOccurs="0" type="xs:string"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="processResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:processResponseWS" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="processResponseWS">
+    <xs:sequence>
+      <xs:element name="requestID" type="xs:int"/>
+      <xs:element name="responseDataBase64" type="xs:string" minOccurs="0"/>
+      <xs:element name="workerCertificate" type="tns:certificate" minOccurs="0"/>
+      <xs:element name="workerCertificateChain" type="tns:certificate" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="certificate">
+    <xs:sequence>
+      <xs:element name="certType" type="xs:string" minOccurs="0"/>
+      <xs:element name="certificateBase64" type="xs:string" minOccurs="0"/>
+      <xs:element name="provider" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="IllegalRequestException">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CryptoTokenOfflineException">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SignServerException">
+    <xs:sequence>
+      <xs:element name="message" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+

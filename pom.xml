@@ -1,0 +1,243 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.signserver</groupId>
+    <artifactId>SignServer</artifactId>
+    <version>4.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>SignServer</name>
+    <properties>
+        <!-- fixedTime / dist.fixedTime is used for deterministic builds. -->
+        <fixedTime/>
+        <dist.fixedTime>${fixedTime}</dist.fixedTime>
+
+        <!-- BouncyCastle artifacts name, so we can easily switch to the debug ones -->
+        <bouncycastle.bcpkix.artifact>bcpkix-jdk15on</bouncycastle.bcpkix.artifact>
+        <bouncycastle.bcprov.artifact>bcprov-jdk15on</bouncycastle.bcprov.artifact>
+    </properties>
+
+    <profiles>
+        <!-- Default profile. -->
+        <profile>
+            <id>profile-default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>modules</module>
+            </modules>
+        </profile>
+        
+        <!-- Empty profile without modules. This profile should be used together with the antrun:run goal in order to run the ant deploy target -->
+        <profile>
+            <id>profile-empty</id>
+            <modules/>
+        </profile>
+    </profiles>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <artifactId>${bouncycastle.bcpkix.artifact}</artifactId>
+                <groupId>org.bouncycastle</groupId>
+                <version>1.54</version>
+            </dependency>
+            <dependency>
+                <artifactId>${bouncycastle.bcprov.artifact}</artifactId>
+                <groupId>org.bouncycastle</groupId>
+                <type>jar</type>
+                <version>1.54</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.17</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>1.4</version> <!-- Old but latest 1.x -->
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.6</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>1.10</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>3.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.1.1</version> <!-- Old but latest 1.x -->
+            </dependency>
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>1.3.1</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-cli</groupId>
+                <artifactId>commons-cli</artifactId>
+                <version>1.3.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
+                <scope>test</scope>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.santuario</groupId>
+                <artifactId>xmlsec</artifactId>
+                <version>1.5.8</version> <!-- Old but latest 1.5.x -->
+            </dependency>
+            <dependency>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>2.9.1</version> <!-- Old but latest 2.9.x, matching xmlsec 1.5.8 -->
+            </dependency>
+            <dependency>
+                <groupId>xalan</groupId>
+                <artifactId>xalan</artifactId>
+                <version>2.7.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>javaee-api</artifactId>
+                <version>6.0-6</version>
+                <scope>provided</scope>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.ejbca.cesecore</groupId>
+                <artifactId>cesecore-entity</artifactId>
+                <version>6.4.1</version>
+            </dependency>
+            <dependency>
+                <artifactId>cesecore-common</artifactId>
+                <groupId>org.ejbca.cesecore</groupId>
+                <type>jar</type>
+                <version>6.4.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ejbca.cesecore</groupId>
+                <artifactId>cesecore-interfaces</artifactId>
+                <version>6.4.1</version>
+            </dependency>
+            <dependency>
+                <artifactId>cert-cvc</artifactId>
+                <groupId>org.ejbca.cvc</groupId>
+                <type>jar</type>
+                <version>1.4.3</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.signserver.jsign</groupId>
+                <artifactId>jsign</artifactId>
+                <version>1.3-signserver4.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.signserver.xades4j</groupId>
+                <artifactId>xades4j</artifactId>
+                <version>1.3.2-signserver4</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.signserver.deploytools</groupId>
+                    <artifactId>DeployTools-Maven</artifactId>
+                    <version>2.0.2</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.5.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-ejb-plugin</artifactId>
+                    <version>2.5.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.18.1</version> <!-- 2.19.1 not showing test results GUI in IDE due to https://netbeans.org/bugzilla/show_bug.cgi?id=256211 (?) -->
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.10.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>properties-maven-plugin</artifactId>
+                    <version>1.0.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.10</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.10</version>
+                </plugin>
+                
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.jvnet.jax-ws-commons</groupId>
+                    <artifactId>jaxws-maven-plugin</artifactId>
+                    <version>2.3</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <!-- Run ant deploy from Maven (or the IDE) using: mvn -Pprofile-empty antrun:run. -->
+            <!-- Note: This requers a profile without sub modules otherwise the Ant target is run in each sub module. -->
+            <!-- Note: This is mapped to Run Project in NetBeans IDE (nbactions.xml). -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <configuration>
+                    <target>
+                        <ant target="deploy"/>
+                    </target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
+</project>

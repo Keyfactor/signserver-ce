@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+    <head>
+        <!--
+
+  @(#)package.html	1.60 98/01/27
+
+ /************************************************************************
+ *
+  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER
+
+  Copyright 2008 Sun Microsystems, Inc. All rights reserved.
+
+  Use is subject to license terms.
+
+  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License. You may obtain a copy
+  of the License at http://www.apache.org/licenses/LICENSE-2.0. You can also
+  obtain a copy of the License at http://odftoolkit.org/docs/license.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+ ************************************************************************/
+
+-->
+    </head>
+    <body bgcolor="white">
+        <!--
+        ##### THIS IS THE TEMPLATE FOR THE PACKAGE DOC COMMENTS. #####
+        ##### TYPE YOUR PACKAGE COMMENTS HERE.  BEGIN WITH A     #####
+        ##### ONE-SENTENCE SUMMARY STARTING WITH A VERB LIKE:    #####
+        -->
+        
+        
+        Provide classes to operate the content and style of the selected text content. (Incubator Status)
+        
+        Abstract class Navigation represent the navigate action on the specified document, and user can iterate all the results of this navigation operation. Abstract class Selection describes one result of navigation.
+        
+        <p>
+        The instance of derived navigation class will give the match condition so that user can get the corresponding derived Selection class instance. e.g. TextNavigation class is used to search the specified text content in the document. and TextStyleNavigation class can select the text which match the specified style.
+        <p>
+        extSelection class which inheriates Selection represents a snippet text of the paragraph/heading/header/footer, it can be represent by the belonged element and the text index of this element. User can get delete this result, or replace this text with other content, add href link for this selections, append the italic style for it and paste this selection at the front of or the end of other selction.
+        <p>
+       
+        <!-- Put @see and @since tags down here. -->
+        
+    </body>
+</html>

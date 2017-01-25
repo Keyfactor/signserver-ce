@@ -1,0 +1,604 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER
+
+  Copyright 2008 Sun Microsystems, Inc. All rights reserved.
+  Copyright 2009 IBM. All rights reserved.
+
+  Use is subject to license terms.
+
+  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License. You may obtain a copy
+  of the License at http://www.apache.org/licenses/LICENSE-2.0. You can also
+  obtain a copy of the License at http://odftoolkit.org/docs/license.txt
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<config>
+    <elements>
+        <element name="chart:axis" family="chart:chart"/>
+        <element name="chart:chart" family="chart:chart"/>
+        <element name="chart:data-point" family="chart:chart"/>
+        <element name="chart:error-indicator" family="chart:chart"/>
+        <element name="chart:floor" family="chart:chart"/>
+        <element name="chart:footer" family="chart:chart"/>
+        <element name="chart:grid" family="chart:chart"/>
+        <element name="chart:legend" family="chart:chart"/>
+        <element name="chart:mean-value" family="chart:chart"/>
+        <element name="chart:plot-area" family="chart:chart"/>
+        <element name="chart:regression-curve" family="chart:chart"/>
+        <element name="chart:series" family="chart:chart"/>
+        <element name="chart:stock-gain-marker" family="chart:chart"/>
+        <element name="chart:stock-loss-marker" family="chart:chart"/>
+        <element name="chart:stock-range-line" family="chart:chart"/>
+        <element name="chart:subtitle" family="chart:chart"/>
+        <element name="chart:title" family="chart:chart"/>
+        <element name="chart:wall" family="chart:chart"/>
+        <element name="draw:page" family="draw:drawing-page"/>
+        <element name="presentation:notes" family="draw:drawing-page"/>
+        <element name="dr3d:cube" family="draw:graphic,presentation:presentation"/>
+        <element name="dr3d:extrude" family="draw:graphic,presentation:presentation"/>
+        <element name="dr3d:rotate" family="draw:graphic,presentation:presentation"/>
+        <element name="dr3d:scene" family="draw:graphic,presentation:presentation"/>
+        <element name="dr3d:sphere" family="draw:graphic,presentation:presentation"/>
+        <element name="draw:a" rename="draw:hyperlink"/>
+        <element name="draw:caption" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="draw:circle" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="draw:connector" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="draw:control" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="draw:custom-shape" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="draw:ellipse" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="draw:frame" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="draw:g" rename="draw:group" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="draw:line" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="draw:measure" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="draw:page-thumbnail" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="draw:path" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="draw:polygon" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="draw:polyline" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="draw:rect" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="draw:regular-polygon" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="office:annotation" base="draw:shape" family="draw:graphic,presentation:presentation"/>
+        <element name="text:alphabetical-index-entry-template" family="text:paragraph"/>
+        <element name="text:bibliography-entry-template" family="text:paragraph"/>
+        <element name="text:h" rename="text:heading" base="text:paragraph" family="text:paragraph"/>
+        <element name="text:illustration-index-entry-template" family="text:paragraph"/>
+        <element name="text:index-source-style" family="text:paragraph"/>
+        <element name="text:index-title-template" family="text:paragraph"/>
+        <element name="text:object-index-entry-template" family="text:paragraph"/>
+        <element name="text:p" rename="text:paragraph" base="text:paragraph" family="text:paragraph"/>
+        <element name="text:table-index-entry-template" family="text:paragraph"/>
+        <element name="text:table-of-content-entry-template" family="text:paragraph"/>
+        <element name="text:user-index-entry-template" family="text:paragraph"/>
+        <element name="text:ruby" family="text:ruby"/>
+        <element name="text:ruby-text" family="text:ruby"/>
+        <element name="text:alphabetical-index" family="text:section"/>
+        <element name="text:bibliography" family="text:section"/>
+        <element name="text:illustration-index" family="text:section"/>
+        <element name="text:index-title" family="text:section"/>
+        <element name="text:object-index" family="text:section"/>
+        <element name="text:section" family="text:section"/>
+        <element name="text:s" rename="text:space"/>
+        <element name="text:table-index" family="text:section"/>
+        <element name="text:table-of-content" family="text:section"/>
+        <element name="text:user-index" family="text:section"/>
+        <element name="table:table" family="table:table"/>
+        <element name="table:covered-table-cell" base="table:table-cell" family="table:table-cell"/>
+        <element name="table:table-cell" base="table:table-cell" family="table:table-cell"/>
+        <element name="table:table-column" family="table:table-column"/>
+        <element name="table:table-row" family="table:table-row"/>
+        <element name="text:a" rename="text:hyperlink" family="text:text"/>
+        <element name="text:index-entry-bibliography" family="text:text"/>
+        <element name="text:index-entry-chapter" family="text:text"/>
+        <element name="text:index-entry-link-end" family="text:text"/>
+        <element name="text:index-entry-link-start" family="text:text"/>
+        <element name="text:index-entry-page-number" family="text:text"/>
+        <element name="text:index-entry-span" family="text:text"/>
+        <element name="text:index-entry-tab-stop" family="text:text"/>
+        <element name="text:index-entry-text" family="text:text"/>
+        <element name="text:span" family="text:text"/>
+        <element name="style:handout-master" family="draw:drawing-page"/>
+        <element name="style:master-page" family="draw:drawing-page"/>
+        <element name="table:body" family="table:table-cell"/>
+        <element name="table:even-columns" family="table:table-cell"/>
+        <element name="table:even-rows" family="table:table-cell"/>
+        <element name="table:first-column" family="table:table-cell"/>
+        <element name="table:first-row" family="table:table-cell"/>
+        <element name="table:last-column" family="table:table-cell"/>
+        <element name="table:last-row" family="table:table-cell"/>
+        <element name="table:odd-columns" family="table:table-cell"/>
+        <element name="table:odd-rows" family="table:table-cell"/>
+        <element name="style:drop-cap" family="text:text"/>
+        <element name="text:linenumbering-configuration" family="text:text"/>
+
+        <element name="text:list-level-style" base="style"/>
+        <element name="text:list-level-style-number" base="text:list-level-style"/>
+        <element name="text:list-level-style-bullet" base="text:list-level-style"/>
+        <element name="text:list-level-style-image" base="text:list-level-style"/>
+
+        <element name="text:numbered-paragraph" family="text:list"/>
+        <element name="office:styles" base="container"/>
+        <element name="office:automatic-styles" base="container"/>
+        <element name="office:master-styles" base="container"/>
+        <element name="office:presentation" base="container"/>
+
+        <element name="style:style" base="style"/>
+        <element name="style:default-style" base="style"/>
+        <element name="style:page-layout" base="style"/>
+        <element name="text:outline-level-style" base="style"/>
+        <element name="text:list-style" base="style"/>
+
+        <element name="style:chart-properties" base="styleproperties"/>
+        <element name="style:drawing-page-properties" base="styleproperties"/>
+        <element name="style:graphic-properties" base="styleproperties"/>
+        <element name="style:list-level-properties" base="styleproperties"/>
+        <element name="style:paragraph-properties" base="styleproperties"/>
+        <element name="style:ruby-properties" base="styleproperties"/>
+        <element name="style:section-properties" base="styleproperties"/>
+        <element name="style:page-layout-properties" base="styleproperties"/>
+        <element name="style:header-footer-properties" base="styleproperties"/>
+        <element name="style:text-properties" base="styleproperties"/>
+        <element name="style:table-properties" base="styleproperties"/>
+        <element name="style:table-column-properties" base="styleproperties"/>
+        <element name="style:table-row-properties" base="styleproperties"/>
+        <element name="style:table-cell-properties" base="styleproperties"/>
+    </elements>
+    <data-types>
+        <data name="anyURI" value-type="java.net.URI" conversion-type="org.odftoolkit.odfdom.type.AnyURI"/>
+        <data name="boolean" value-type="Boolean" conversion-type="Boolean"/>
+        <data name="base64Binary" value-type="String" conversion-type="org.odftoolkit.odfdom.type.Base64Binary"/>
+        <data name="cellAddress" value-type="String" conversion-type="org.odftoolkit.odfdom.type.CellAddress"/>
+        <data name="cellRangeAddress" value-type="String" conversion-type="org.odftoolkit.odfdom.type.CellRangeAddress"/>
+        <data name="cellRangeAddressList" value-type="String" conversion-type="org.odftoolkit.odfdom.type.CellRangeAddressList"/>
+        <data name="clipShape" value-type="String" conversion-type="org.odftoolkit.odfdom.type.ClipShape"/>
+        <data name="color" value-type="String" conversion-type="org.odftoolkit.odfdom.type.Color"/>
+        <data name="coordinate" value-type="String" conversion-type="org.odftoolkit.odfdom.type.Coordinate"/>
+        <data name="countryCode" value-type="String" conversion-type="org.odftoolkit.odfdom.type.CountryCode"/>
+        <data name="CURIE" value-type="String" conversion-type="org.odftoolkit.odfdom.type.CURIE"/>
+        <data name="CURIEs" value-type="String" conversion-type="org.odftoolkit.odfdom.type.CURIEs"/>
+        <data name="date" value-type="javax.xml.datatype.XMLGregorianCalendar" conversion-type="org.odftoolkit.odfdom.type.Date"/>
+        <data name="dateOrDateTime" value-type="javax.xml.datatype.XMLGregorianCalendar" conversion-type="org.odftoolkit.odfdom.type.DateOrDateTime"/>
+        <data name="dateTime" value-type="javax.xml.datatype.XMLGregorianCalendar" conversion-type="org.odftoolkit.odfdom.type.DateTime"/>
+        <data name="distance" value-type="String" conversion-type="org.odftoolkit.odfdom.type.Distance"/>
+        <data name="duration" value-type="javax.xml.datatype.Duration" conversion-type="org.odftoolkit.odfdom.type.DurationType"/>
+        <data name="double" value-type="Double" conversion-type="Double"/>
+        <!--data name="extrusionOrigin" value-type="String" conversion-type="org.odftoolkit.odfdom.attribute.ExtrusionOrigin"/-->
+        <data name="formula" value-type="String" conversion-type="org.odftoolkit.odfdom.type.Formula"/>
+        <data name="ID" value-type="String" conversion-type="org.odftoolkit.odfdom.type.ID"/>
+        <data name="IDREF" value-type="String" conversion-type="org.odftoolkit.odfdom.type.IDREF"/>
+        <data name="IDREFS" value-type="String" conversion-type="org.odftoolkit.odfdom.type.IDREFS"/>
+        <data name="integer" value-type="Integer" conversion-type="Integer"/>
+        <data name="language" value-type="String" conversion-type="org.odftoolkit.odfdom.type.Language"/>
+        <data name="languageCode" value-type="String" conversion-type="org.odftoolkit.odfdom.type.LanguageCode"/>
+        <data name="length" value-type="String" conversion-type="org.odftoolkit.odfdom.type.Length"/>
+        <data name="namespacedToken" value-type="String" conversion-type="org.odftoolkit.odfdom.type.NamespacedToken"/>
+        <data name="NCName" value-type="String" conversion-type="org.odftoolkit.odfdom.type.NCName"/>
+        <data name="nonNegativeDecimal" value-type="Double" conversion-type="org.odftoolkit.odfdom.type.NonNegativeDecimal"/>
+        <data name="nonNegativeInteger" value-type="Integer" conversion-type="org.odftoolkit.odfdom.type.NonNegativeInteger"/>
+        <data name="nonNegativeLength" value-type="String" conversion-type="org.odftoolkit.odfdom.type.NonNegativeLength"/>
+        <data name="nonNegativePixelLength" value-type="String" conversion-type="org.odftoolkit.odfdom.type.NonNegativePixelLength"/>
+        <data name="percent" value-type="String" conversion-type="org.odftoolkit.odfdom.type.Percent"/>
+        <data name="point3D" value-type="String" conversion-type="org.odftoolkit.odfdom.type.Point3D"/>
+        <data name="points" value-type="String" conversion-type="org.odftoolkit.odfdom.type.Points"/>
+        <data name="positiveInteger" value-type="Integer" conversion-type="org.odftoolkit.odfdom.type.PositiveInteger"/>
+        <data name="positiveLength" value-type="String" conversion-type="org.odftoolkit.odfdom.type.PositiveLength"/>
+        <!--data name="presentation-classes" value-type="String" conversion-type="org.odftoolkit.odfdom.attribute.PresentationClasses"/-->
+        <data name="relativeLength" value-type="String" conversion-type="org.odftoolkit.odfdom.type.RelativeLength"/>
+        <data name="SafeCURIE" value-type="String" conversion-type="org.odftoolkit.odfdom.type.SafeCURIE"/>
+        <data name="scriptCode" value-type="String" conversion-type="org.odftoolkit.odfdom.type.ScriptCode"/>
+        <data name="signedZeroToHundredPercent" value-type="String" conversion-type="org.odftoolkit.odfdom.type.SignedZeroToHundredPercent"/>
+        <data name="string" value-type="String" conversion-type="String"/>
+        <data name="styleName" value-type="String" conversion-type="org.odftoolkit.odfdom.type.StyleName"/>
+        <data name="styleNameRef" value-type="String" conversion-type="org.odftoolkit.odfdom.type.StyleNameRef"/>
+        <data name="styleNameRefs" value-type="String" conversion-type="org.odftoolkit.odfdom.type.StyleNameRefs"/>
+        <data name="targetFrameName" value-type="String" conversion-type="org.odftoolkit.odfdom.type.TargetFrameName"/>
+        <!--data name="targetFrameName" value-type="enum" conversion-type="office:target-frame-name"/-->
+        <data name="textEncoding" value-type="String" conversion-type="org.odftoolkit.odfdom.type.TextEncoding"/>
+        <data name="time" value-type="javax.xml.datatype.XMLGregorianCalendar" conversion-type="org.odftoolkit.odfdom.type.Time"/>
+        <data name="timeOrDateTime" value-type="javax.xml.datatype.XMLGregorianCalendar" conversion-type="org.odftoolkit.odfdom.type.TimeOrDateTime"/>
+        <data name="URIorSafeCURIE" value-type="String" conversion-type="org.odftoolkit.odfdom.type.URIorSafeCURIE"/>
+        <data name="valueType" value-type="String" conversion-type="org.odftoolkit.odfdom.type.ValueType"/>
+        <data name="vector3D" value-type="String" conversion-type="org.odftoolkit.odfdom.type.Vector3D"/>
+        <data name="zeroToHundredPercent" value-type="String" conversion-type="org.odftoolkit.odfdom.type.ZeroToHundredPercent"/>
+        <data name="zeroToOneDecimal" value-type="Double" conversion-type="org.odftoolkit.odfdom.type.ZeroToOneDecimal"/>
+        <!--data name="rowOrCol" value-type="enum" conversion-type="table:row-or-column"/-->
+        <data name="stylefamily" value-type="org.odftoolkit.odfdom.dom.style.OdfStyleFamily" conversion-type="org.odftoolkit.odfdom.dom.style.OdfStyleFamily"/>
+        
+        
+    </data-types>
+    <attributes>        
+       
+        <!--attribute name="dr3d:shadow" rename="dr3d:shadow3d"/>
+        <attribute name="draw:shadow" rename="draw:shadow-draw"/-->
+
+      <!-- set the default value of attribute  -->
+      <attribute name="anim:color-interpolation" defaultValue="rgb"/>
+      <attribute name="anim:color-interpolation-direction" defaultValue="clockwise"/>
+      <attribute name="chart:automatic-content" defaultValue="true"/>
+      <attribute name="chart:class" defaultValue="major" element="chart:grid"/>
+      <attribute name="chart:data-source-has-labels" defaultValue="none"/>
+      <attribute name="chart:display-equation" defaultValue="true"/>
+      <attribute name="chart:display-r-square" defaultValue="false"/>
+      <attribute name="db:append-table-alias-name" defaultValue="true"/>
+      <attribute name="db:apply-command" defaultValue="false"/>
+      <attribute name="db:boolean-comparison-mode" defaultValue="equal-integer"/>
+      <attribute name="db:decimal" defaultValue="."/>
+      <attribute name="db:delete-rule" defaultValue="no-action"/>
+      <attribute name="db:enable-sql92-check" defaultValue="false"/>
+      <attribute name="db:encoding" defaultValue="utf-8"/>
+      <attribute name="db:escape-processing" defaultValue="true"/>
+      <attribute name="db:field" defaultValue=";"/>
+      <attribute name="db:ignore-driver-privileges" defaultValue="true"/>
+      <attribute name="db:is-first-row-header-line" defaultValue="true"/>
+      <attribute name="db:is-password-required" defaultValue="false"/>
+      <attribute name="db:is-table-name-length-limited" defaultValue="true"/>
+      <attribute name="db:parameter-name-substitution" defaultValue="true"/>
+      <attribute name="db:show-deleted" defaultValue="false"/>
+      <attribute name="db:string" defaultValue="&#34;"/>
+      <attribute name="db:suppress-version-columns" defaultValue="true"/>
+      <attribute name="db:thousand" defaultValue=","/>
+      <attribute name="db:update-rule" defaultValue="no-action"/>
+      <attribute name="db:use-catalog" defaultValue="false"/>
+      <attribute name="db:visible" defaultValue="true"/>
+      <attribute name="dr3d:projection" defaultValue="parallel" element="draw:enhanced-geometry"/>
+      <attribute name="dr3d:shade-mode" defaultValue="flat" element="draw:enhanced-geometry"/>
+      <attribute name="draw:concentric-gradient-fill-allowed" defaultValue="false"/>
+      <attribute name="draw:display" defaultValue="always"/>
+      <attribute name="draw:extrusion" defaultValue="false"/>
+      <attribute name="draw:extrusion-allowed" defaultValue="false"/>
+      <attribute name="draw:extrusion-brightness" defaultValue="33%"/>
+      <attribute name="draw:extrusion-color" defaultValue="false"/>
+      <attribute name="draw:extrusion-depth" defaultValue="36pt 0"/>
+      <attribute name="draw:extrusion-diffusion" defaultValue="0%"/>
+      <attribute name="draw:extrusion-first-light-direction" defaultValue="(5 0 1)"/>
+      <attribute name="draw:extrusion-first-light-harsh" defaultValue="true"/>
+      <attribute name="draw:extrusion-first-light-level" defaultValue="66%"/>
+      <attribute name="draw:extrusion-light-face" defaultValue="true"/>
+      <attribute name="draw:extrusion-metal" defaultValue="false"/>
+      <attribute name="draw:extrusion-number-of-line-segments" defaultValue="30"/>
+      <attribute name="draw:extrusion-origin" defaultValue="0.5 -0.5"/>
+      <attribute name="draw:extrusion-rotation-angle" defaultValue="0 0"/>
+      <attribute name="draw:extrusion-second-light-direction" defaultValue="(-5 0 1)"/>
+      <attribute name="draw:extrusion-second-light-harsh" defaultValue="true"/>
+      <attribute name="draw:extrusion-second-light-level" defaultValue="66%"/>
+      <attribute name="draw:extrusion-shininess" defaultValue="50%"/>
+      <attribute name="draw:extrusion-skew" defaultValue="50 45"/>
+      <attribute name="draw:extrusion-specularity" defaultValue="0%"/>
+      <attribute name="draw:extrusion-viewpoint" defaultValue="3.5cm -3.5cm 25cm"/>
+      <attribute name="draw:glue-point-type" defaultValue="none"/>
+      <attribute name="draw:handle-mirror-horizontal" defaultValue="false"/>
+      <attribute name="draw:handle-mirror-vertical" defaultValue="false"/>
+      <attribute name="draw:handle-switched" defaultValue="false"/>
+      <attribute name="draw:kind" defaultValue="full"/>
+      <attribute name="draw:mirror-horizontal" defaultValue="false"/>
+      <attribute name="draw:mirror-vertical" defaultValue="false"/>
+      <attribute name="draw:may-script" defaultValue="false"/>
+      <attribute name="draw:path-stretchpoint-x" defaultValue="0"/>
+      <attribute name="draw:path-stretchpoint-y" defaultValue="0"/>
+      <attribute name="draw:protected" defaultValue="false"/>
+      <attribute name="draw:text-path" defaultValue="false"/>
+      <attribute name="draw:text-path-allowed" defaultValue="false"/>
+      <attribute name="draw:text-path-mode" defaultValue="normal"/>
+      <attribute name="draw:text-path-same-letter-heights" defaultValue="false"/>
+      <attribute name="draw:text-path-scale" defaultValue="path"/>
+      <attribute name="draw:text-rotate-angle" defaultValue="0"/>
+      <attribute name="General" defaultValue="standard" element="draw:connector"/>
+      <attribute name="General" defaultValue="non-primitive" element="draw:enhanced-geometry"/>
+      <attribute name="fo:end-indent" defaultValue="0cm"/>
+      <attribute name="fo:space-after" defaultValue="0cm"/>
+      <attribute name="fo:space-before" defaultValue="0cm"/>
+      <attribute name="fo:start-indent" defaultValue="0cm"/>
+      <attribute name="form:allow-deletes" defaultValue="true"/>
+      <attribute name="form:allow-inserts" defaultValue="true"/>
+      <attribute name="form:allow-updates" defaultValue="true"/>
+      <attribute name="form:apply-design-mode" defaultValue="true"/>
+      <attribute name="form:apply-filter" defaultValue="false"/>
+      <attribute name="form:automatic-focus" defaultValue="false"/>
+      <attribute name="form:button-type" defaultValue="push"/>
+      <attribute name="form:command-type" defaultValue="command"/>
+      <attribute name="form:convert-empty-to-null" defaultValue="false"/>
+      <attribute name="form:current-selected" defaultValue="false"/>
+      <attribute name="form:default-button" defaultValue="false"/>
+      <attribute name="form:delay-for-repeat" defaultValue="PT0.050S"/>
+      <attribute name="form:disabled" defaultValue="false"/>
+      <attribute name="form:dropdown" defaultValue="false"/>
+      <attribute name="form:echo-char" defaultValue="*"/>
+      <attribute name="form:enctype" defaultValue="application/x-www-form-urlencoded"/>
+      <attribute name="form:escape-processing" defaultValue="true"/>
+      <attribute name="form:ignore-result" defaultValue="false"/>
+      <attribute name="form:image-align" defaultValue="center"/>
+      <attribute name="form:image-position" defaultValue="center"/>
+      <attribute name="form:is-tristate" defaultValue="false"/>
+      <attribute name="form:method" defaultValue="get"/>
+      <attribute name="form:multi-line" defaultValue="false"/>
+      <attribute name="form:multiple" defaultValue="false"/>
+      <attribute name="form:printable" defaultValue="true"/>
+      <attribute name="form:readonly" defaultValue="false"/>
+      <attribute name="form:selected" defaultValue="false"/>
+      <attribute name="form:spin-button" defaultValue="false"/>
+      <attribute name="form:state" defaultValue="unchecked"/>
+      <attribute name="form:step-size" defaultValue="1"/>
+      <attribute name="form:tab-index" defaultValue="0"/>
+      <attribute name="form:tab-stop" defaultValue="true"/>
+      <attribute name="form:toggle" defaultValue="false"/>
+      <attribute name="form:validation" defaultValue="false"/>
+      <attribute name="number:automatic-order" defaultValue="false"/>
+      <attribute name="General" defaultValue="0" element="number:seconds"/>
+      <attribute name="number:display-factor" defaultValue="1"/>
+      <attribute name="number:format-source" defaultValue="fixed"/>
+      <attribute name="number:grouping" defaultValue="false"/>
+      <attribute name="number:textual" defaultValue="false"/>
+      <attribute name="number:transliteration-format" defaultValue="1"/>
+      <attribute name="number:transliteration-style" defaultValue="short"/>
+      <attribute name="number:truncate-on-overflow" defaultValue="true"/>
+      <attribute name="office:automatic-update" defaultValue="true"/>
+      <attribute name="office:conversion-mode" defaultValue="into-default-style-data-style"/>
+      <attribute name="office:server-map" defaultValue="false"/>
+      <attribute name="office:target-frame" defaultValue="_blank"/>
+      <attribute name="presentation:animations" defaultValue="enabled"/>
+      <attribute name="presentation:direction" defaultValue="none"/>
+      <attribute name="presentation:endless" defaultValue="false"/>
+      <attribute name="presentation:effect" defaultValue="none"/>
+      <attribute name="presentation:force-manual" defaultValue="false"/>
+      <attribute name="presentation:full-screen" defaultValue="true"/>
+      <attribute name="presentation:mouse-as-pen" defaultValue="false"/>
+      <attribute name="presentation:mouse-visible" defaultValue="true"/>
+      <attribute name="presentation:node-type" defaultValue="default"/>
+      <attribute name="presentation:preset-class" defaultValue="custom"/>
+      <attribute name="presentation:show-end-of-presentation-slide" defaultValue="true"/>
+      <attribute name="presentation:show-logo" defaultValue="false"/>
+      <attribute name="presentation:speed" defaultValue="medium"/>
+      <attribute name="presentation:start-scale" defaultValue="100%"/>
+      <attribute name="presentation:start-with-navigator" defaultValue="false"/>
+      <attribute name="presentation:stay-on-top" defaultValue="false"/>
+      <attribute name="presentation:transition-on-click" defaultValue="enabled"/>
+      <attribute name="smil:accelerate" defaultValue="0.0"/>
+      <attribute name="smil:autoReverse" defaultValue="false"/>
+      <attribute name="smil:calcMode" defaultValue="discrete" element="anim:animate"/>
+      <attribute name="smil:calcMode" defaultValue="discrete" element="anim:animateColor"/>
+      <attribute name="smil:calcMode" defaultValue="paced" element="anim:animateMotion"/>
+      <attribute name="smil:decelerate" defaultValue="0.0"/>
+      <attribute name="smil:direction" defaultValue="forward" element="anim:transitionFilter"/>
+      <attribute name="smil:mode" defaultValue="in"/>
+      <attribute name="smil:restart" defaultValue="default"/>
+      <attribute name="smil:restartDefault" defaultValue="inherit"/>
+      <attribute name="style:adjustment" defaultValue="left"/>
+      <attribute name="style:auto-update" defaultValue="false"/>
+      <attribute name="style:color" defaultValue="#000000" element="style:column-sep"/>
+      <attribute name="style:display" defaultValue="true"/>
+      <attribute name="style:distance" defaultValue="0cm"/>
+      <attribute name="style:height" defaultValue="100%"/>
+      <attribute name="style:leader-text" defaultValue=" "/>
+      <attribute name="style:length" defaultValue="1"/>
+      <attribute name="style:lines" defaultValue="1"/>
+      <attribute name="style:page-usage" defaultValue="all"/>
+      <attribute name="style:position" defaultValue="center" element="style:background-image"/>
+      <attribute name="style:repeat" defaultValue="repeat" element="style:background-image"/>
+      <attribute name="style:style" defaultValue="solid"/>
+      <attribute name="style:type" defaultValue="left" element="style:tab-stop"/>
+      <attribute name="svg:cx" defaultValue="50%" element="svg:radialGradient"/>
+      <attribute name="svg:cy" defaultValue="50%" element="svg:radialGradient"/>
+      <attribute name="svg:gradientUnits" defaultValue="objectBoundingBox"/>
+      <attribute name="svg:r" defaultValue="50%" element="svg:radialGradient"/>
+      <attribute name="svg:spreadMethod" defaultValue="pad"/>
+      <attribute name="svg:x1" defaultValue="0%" element="svg:linearGradient"/>
+      <attribute name="svg:x2" defaultValue="100%" element="svg:linearGradient"/>
+      <attribute name="svg:y1" defaultValue="0%" element="svg:linearGradient"/>
+      <attribute name="svg:y2" defaultValue="100%" element="svg:linearGradient"/>
+      <attribute name="table:acceptance-state" defaultValue="pending"/>
+      <attribute name="table:allow-empty-cell" defaultValue="true"/>
+      <attribute name="table:automatic-find-labels" defaultValue="true"/>
+      <attribute name="table:bind-styles-to-content" defaultValue="true"/>
+      <attribute name="table:case-sensitive" defaultValue="true" element="table:calculation-settings"/>
+      <attribute name="table:case-sensitive" defaultValue="false" element="table:filter-condition"/>
+      <attribute name="table:case-sensitive" defaultValue="false" element="table:sort"/>
+      <attribute name="table:case-sensitive" defaultValue="false" element="table:subtotal-rules"/>
+      <attribute name="table:condition-source" defaultValue="self"/>
+      <attribute name="table:contains-error" defaultValue="false"/>
+      <attribute name="table:contains-header" defaultValue="true"/>
+      <attribute name="table:copy-back" defaultValue="true"/>
+      <attribute name="table:copy-formulas" defaultValue="true"/>
+      <attribute name="table:copy-styles" defaultValue="true"/>
+      <attribute name="table:count" defaultValue="1"/>
+      <attribute name="General" defaultValue="automatic" element="table:sort-by"/>
+      <attribute name="General" defaultValue="automatic" element="table:sort-groups"/>
+      <attribute name="General" defaultValue="text" element="table:filter-condition"/>
+      <attribute name="table:date-value" defaultValue="1899-12-30"/>
+      <attribute name="table:display" defaultValue="true" element="table:table-column-group"/>
+      <attribute name="table:display" defaultValue="true" element="table:table-row-group"/>
+      <attribute name="table:display" defaultValue="false" element="table:error-message"/>
+      <attribute name="table:display" defaultValue="false" element="table:help-message"/>
+      <attribute name="table:display-border" defaultValue="true"/>
+      <attribute name="table:display-duplicates" defaultValue="true"/>
+      <attribute name="table:display-filter-buttons" defaultValue="false"/>
+      <attribute name="table:display-list" defaultValue="unsorted"/>
+      <attribute name="table:drill-down-on-double-click" defaultValue="true"/>
+      <attribute name="table:embedded-number-behavior" defaultValue="alpha-numeric"/>
+      <attribute name="table:execute" defaultValue="true"/>
+      <attribute name="table:grand-total" defaultValue="both"/>
+      <attribute name="table:has-persistent-data" defaultValue="true"/>
+      <attribute name="table:identify-categories" defaultValue="false"/>
+      <attribute name="table:ignore-empty-rows" defaultValue="false"/>
+      <attribute name="table:is-data-layout-field" defaultValue="false"/>
+      <attribute name="table:is-selection" defaultValue="false"/>
+      <attribute name="table:is-sub-table" defaultValue="false"/>
+      <attribute name="table:link-to-source-data" defaultValue="false"/>
+      <attribute name="table:matrix-covered" defaultValue="false"/>
+      <attribute name="table:maximum-difference" defaultValue="0.001"/>
+      <attribute name="table:message-type" defaultValue="stop"/>
+      <attribute name="table:mode" defaultValue="copy-all"/>
+      <attribute name="table:null-year" defaultValue="1930"/>
+      <attribute name="General" defaultValue="1"/>
+      <attribute name="table:number-columns-spanned" defaultValue="1"/>
+      <attribute name="table:number-columns-repeated" defaultValue="1" element="table:table-cell"/>
+      <attribute name="table:number-rows-repeated" defaultValue="1"/>
+      <attribute name="table:number-rows-spanned" defaultValue="1"/>
+      <attribute name="table:on-update-keep-size" defaultValue="true"/>
+      <attribute name="table:on-update-keep-styles" defaultValue="false"/>
+      <attribute name="table:order" defaultValue="ascending" element="table:sort-by"/>
+      <attribute name="table:order" defaultValue="ascending" element="table:sort-groups"/>
+      <attribute name="General" defaultValue="row" element="table:database-range"/>
+      <attribute name="table:page-breaks-on-group-change" defaultValue="false"/>
+      <attribute name="table:parse-sql-statement" defaultValue="false"/>
+      <attribute name="table:print" defaultValue="true"/>
+      <attribute name="table:protect" defaultValue="false"/>
+      <attribute name="General" defaultValue="false"/>
+      <attribute name="General" defaultValue="false"/>
+      <attribute name="General" defaultValue="false"/>
+      <attribute name="table:protection-key-digest-algorithm" defaultValue="http://www.w3.org/2000/09/xmldsig#sha1"/>
+      <attribute name="table:range-usable-as" defaultValue="none"/>
+      <attribute name="table:search-criteria-must-apply-to-whole-cell" defaultValue="true"/>
+      <attribute name="table:show-filter-button" defaultValue="true"/>
+      <attribute name="table:status" defaultValue="disable"/>
+      <attribute name="table:steps" defaultValue="100"/>
+      <attribute name="table:structure-protected" defaultValue="false"/>
+      <attribute name="table:track-changes" defaultValue="false"/>
+      <attribute name="table:use-banding-columns-styles" defaultValue="false"/>
+      <attribute name="table:use-banding-rows-styles" defaultValue="false"/>
+      <attribute name="table:use-first-column-styles" defaultValue="false"/>
+      <attribute name="table:use-first-row-styles" defaultValue="false"/>
+      <attribute name="table:use-last-column-styles" defaultValue="false"/>
+      <attribute name="table:use-last-row-styles" defaultValue="false"/>
+      <attribute name="table:use-labels" defaultValue="none"/>
+      <attribute name="table:use-regular-expressions" defaultValue="true"/>
+      <attribute name="table:use-wildcards" defaultValue="false"/>
+      <attribute name="table:used-hierarchy" defaultValue="-1"/>
+      <attribute name="table:value-type" defaultValue="date"/>
+      <attribute name="table:visibility" defaultValue="visible"/>
+      <attribute name="text:alphabetical-separators" defaultValue="false"/>
+      <attribute name="text:capitalize-entries" defaultValue="false"/>
+      <attribute name="text:combine-entries" defaultValue="true"/>
+      <attribute name="text:combine-entries-with-dash" defaultValue="false"/>
+      <attribute name="text:combine-entries-with-pp" defaultValue="true"/>
+      <attribute name="text:comma-separated" defaultValue="false"/>
+      <attribute name="text:consecutive-numbering" defaultValue="false"/>
+      <attribute name="text:copy-outline-levels" defaultValue="false"/>
+      <attribute name="text:count-empty-lines" defaultValue="true"/>
+      <attribute name="text:count-in-text-boxes" defaultValue="false"/>
+      <attribute name="General" defaultValue="number" element="text:index-entry-chapter"/>
+      <attribute name="text:display-levels" defaultValue="1"/>
+      <attribute name="text:global" defaultValue="false"/>
+      <attribute name="text:index-scope" defaultValue="document" element="text:alphabetical-index-source"/>
+      <attribute name="text:index-scope" defaultValue="document" element="text:illustration-index-source"/>
+      <attribute name="text:index-scope" defaultValue="document" element="text:object-index-source"/>
+      <attribute name="text:index-scope" defaultValue="document" element="text:table-index-source"/>
+      <attribute name="text:index-scope" defaultValue="document" element="text:user-index-source"/>
+      <attribute name="text:ignore-case" defaultValue="false"/>
+      <attribute name="text:is-list-header" defaultValue="false"/>
+      <attribute name="text:level" defaultValue="1" element="text:numbered-paragraph"/>
+      <attribute name="text:main-entry" defaultValue="false"/>
+      <attribute name="text:number-lines" defaultValue="true" element="text:linenumbering-configuration"/>
+      <attribute name="text:number-position" defaultValue="left"/>
+      <attribute name="text:numbered-entries" defaultValue="false"/>
+      <attribute name="table:precision-as-shown" defaultValue="false"/>
+      <attribute name="text:protection-key-digest-algorithm" defaultValue="http://www.w3.org/2000/09/xmldsig#sha1"/>
+      <attribute name="text:relative-tab-stop-position" defaultValue="true" element="text:alphabetical-index-source"/>
+      <attribute name="text:relative-tab-stop-position" defaultValue="true" element="text:illustration-index-source"/>
+      <attribute name="text:relative-tab-stop-position" defaultValue="true" element="text:object-index-source"/>
+      <attribute name="text:relative-tab-stop-position" defaultValue="true" element="text:table-index-source"/>
+      <attribute name="text:relative-tab-stop-position" defaultValue="true" element="text:user-index-source"/>
+      <attribute name="text:restart-numbering" defaultValue="false"/>
+      <attribute name="text:restart-on-page" defaultValue="false"/>
+      <attribute name="text:sort-ascending" defaultValue="true"/>
+      <attribute name="text:sort-by-position" defaultValue="true"/>
+      <attribute name="text:start-value" defaultValue="1" element="text:list-level-style-number"/>
+      <attribute name="text:start-value" defaultValue="1" element="text:notes-configuration"/>
+      <attribute name="text:start-value" defaultValue="1" element="text:outline-level-style"/>
+      <attribute name="text:track-changes" defaultValue="true"/>
+      <attribute name="text:use-caption" defaultValue="true"/>
+      <attribute name="text:use-chart-objects" defaultValue="false"/>
+      <attribute name="text:use-draw-objects" defaultValue="false"/>
+      <attribute name="text:use-floating-frames" defaultValue="false"/>
+      <attribute name="text:use-graphics" defaultValue="false"/>
+      <attribute name="text:use-index-marks" defaultValue="false" element="text:user-index-source"/>
+      <attribute name="text:use-index-source-styles" defaultValue="false" element="text:user-index-source"/>
+      <attribute name="text:use-keys-as-entries" defaultValue="false"/>
+      <attribute name="text:use-math-objects" defaultValue="false"/>
+      <attribute name="text:use-objects" defaultValue="false"/>
+      <attribute name="text:use-other-objects" defaultValue="false"/>
+      <attribute name="text:use-outline-level" defaultValue="true"/>
+      <attribute name="text:use-soft-page-breaks" defaultValue="false"/>
+      <attribute name="text:use-spreadsheet-objects" defaultValue="false"/>
+      <attribute name="text:use-tables" defaultValue="false"/>
+      <attribute name="xlink:actuate" defaultValue="onRequest" element="db:connection-resource"/>
+      <attribute name="xlink:actuate" defaultValue="onRequest" element="db:java-classpath"/>
+      <attribute name="xlink:actuate" defaultValue="onRequest" element="draw:a"/>
+      <attribute name="xlink:actuate" defaultValue="onRequest" element="form:form"/>
+      <attribute name="xlink:actuate" defaultValue="onRequest" element="meta:template"/>
+      <attribute name="xlink:actuate" defaultValue="onRequest" element="presentation:event-listener"/>
+      <attribute name="xlink:actuate" defaultValue="onRequest" element="presentation:sound"/>
+      <attribute name="xlink:actuate" defaultValue="onRequest" element="script:event-listener"/>
+      <attribute name="xlink:actuate" defaultValue="onRequest" element="svg:definition-src"/>
+      <attribute name="xlink:actuate" defaultValue="onRequest" element="svg:font-face-uri"/>
+      <attribute name="xlink:actuate" defaultValue="onRequest" element="table:cell-range-source"/>
+      <attribute name="xlink:actuate" defaultValue="onRequest" element="table:table-source"/>
+      <attribute name="xlink:actuate" defaultValue="onRequest" element="text:a"/>
+      <attribute name="xlink:actuate" defaultValue="onLoad" element="draw:applet"/>
+      <attribute name="xlink:actuate" defaultValue="onLoad" element="draw:fill-image"/>
+      <attribute name="xlink:actuate" defaultValue="onLoad" element="draw:floating-frame"/>
+      <attribute name="xlink:actuate" defaultValue="onLoad" element="draw:image"/>
+      <attribute name="xlink:actuate" defaultValue="onLoad" element="draw:object"/>
+      <attribute name="xlink:actuate" defaultValue="onLoad" element="draw:object-ole"/>
+      <attribute name="xlink:actuate" defaultValue="onLoad" element="draw:plugin"/>
+      <attribute name="xlink:actuate" defaultValue="onLoad" element="meta:auto-reload"/>
+      <attribute name="xlink:actuate" defaultValue="onLoad" element="style:background-image"/>
+      <attribute name="xlink:actuate" defaultValue="onLoad" element="text:list-level-style-image"/>
+      <attribute name="xlink:show" defaultValue="replace" element="meta:auto-reload"/>
+      <attribute name="xlink:show" defaultValue="embed" element="draw:applet"/>
+      <attribute name="xlink:show" defaultValue="embed" element="draw:fill-image"/>
+      <attribute name="xlink:show" defaultValue="embed" element="draw:floating-frame"/>
+      <attribute name="xlink:show" defaultValue="embed" element="draw:image"/>
+      <attribute name="xlink:show" defaultValue="embed" element="draw:object"/>
+      <attribute name="xlink:show" defaultValue="embed" element="draw:object-ole"/>
+      <attribute name="xlink:show" defaultValue="embed" element="draw:plugin"/>
+      <attribute name="xlink:show" defaultValue="embed" element="presentation:event-listener"/>
+      <attribute name="xlink:show" defaultValue="embed" element="style:background-image"/>
+      <attribute name="xlink:show" defaultValue="embed" element="text:list-level-style-image"/>
+      <attribute name="xlink:show" defaultValue="embed" element="text:section-source"/>
+      <attribute name="xlink:show" defaultValue="none" element="db:connection-resource"/>
+      <attribute name="xlink:show" defaultValue="none" element="db:java-classpath"/>
+      <attribute name="xlink:type" defaultValue="simple" element="db:connection-resource"/>
+      <attribute name="xlink:type" defaultValue="simple" element="db:file-based-database"/>
+      <attribute name="xlink:type" defaultValue="simple" element="db:java-classpath"/>
+      <attribute name="xlink:type" defaultValue="simple" element="draw:a"/>
+      <attribute name="xlink:type" defaultValue="simple" element="draw:applet"/>
+      <attribute name="xlink:type" defaultValue="simple" element="draw:area-circle"/>
+      <attribute name="xlink:type" defaultValue="simple" element="draw:area-polygon"/>
+      <attribute name="xlink:type" defaultValue="simple" element="draw:area-rectangle"/>
+      <attribute name="xlink:type" defaultValue="simple" element="draw:fill-image"/>
+      <attribute name="xlink:type" defaultValue="simple" element="draw:floating-frame"/>
+      <attribute name="xlink:type" defaultValue="simple" element="draw:image"/>
+      <attribute name="xlink:type" defaultValue="simple" element="draw:object"/>
+      <attribute name="xlink:type" defaultValue="simple" element="draw:object-ole"/>
+      <attribute name="xlink:type" defaultValue="simple" element="draw:plugin"/>
+      <attribute name="xlink:type" defaultValue="simple" element="form:form"/>
+      <attribute name="xlink:type" defaultValue="simple" element="meta:auto-reload"/>
+      <attribute name="xlink:type" defaultValue="simple" element="meta:template"/>
+      <attribute name="xlink:type" defaultValue="simple" element="presentation:event-listener"/>
+      <attribute name="xlink:type" defaultValue="simple" element="presentation:sound"/>
+      <attribute name="xlink:type" defaultValue="simple" element="script:event-listener"/>
+      <attribute name="xlink:type" defaultValue="simple" element="style:background-image"/>
+      <attribute name="xlink:type" defaultValue="simple" element="svg:definition-src"/>
+      <attribute name="xlink:type" defaultValue="simple" element="svg:font-face-uri"/>
+      <attribute name="xlink:type" defaultValue="simple" element="table:cell-range-source"/>
+      <attribute name="xlink:type" defaultValue="simple" element="table:table-source"/>
+      <attribute name="xlink:type" defaultValue="simple" element="text:a"/>
+      <attribute name="xlink:type" defaultValue="simple" element="text:alphabetical-index-auto-mark-file"/>
+      <attribute name="xlink:type" defaultValue="simple" element="text:list-level-style-image"/>
+      <attribute name="xlink:type" defaultValue="simple" element="text:script"/>
+      <attribute name="xlink:type" defaultValue="simple" element="text:section-source"/>
+      <attribute name="chart:auto-position" defaultValue="false"/>
+      <attribute name="chart:auto-size" defaultValue="false"/>
+      <attribute name="chart:data-label-number" defaultValue="none"/>
+      <attribute name="chart:error-category" defaultValue="none"/>
+      <attribute name="chart:visible" defaultValue="true"/>
+      <attribute name="style:vertical-align" defaultValue="top" element="style:column-sep"/>
+    </attributes>
+</config>

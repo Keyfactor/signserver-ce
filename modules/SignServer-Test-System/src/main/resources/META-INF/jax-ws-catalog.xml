@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-System/test/SignServerWSService.wsdl" uri="wsdl/SignServerWSService.wsdl"/>
+    <system systemId="file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-System/test/SignServerWSService_schema1.xsd" uri="wsdl/SignServerWSService_schema1.xsd"/>
+    <system systemId="file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-System/test/ValidationWSService.wsdl" uri="wsdl/ValidationWSService.wsdl"/>
+    <system systemId="file:/home/markus/VersionControlled/signserver/trunk-oracle1/signserver/modules/SignServer-Test-System/test/ValidationWSService_schema1.xsd" uri="wsdl/ValidationWSService_schema1.xsd"/>
+</catalog>

@@ -1,0 +1,35 @@
+# ------------ Audit log configuration ---------------------
+# I you want to use integrity protection of the audit log (in the IntegrityProtectedDevice) you
+# must also configure integrity protection in conf/databaseprotection.properties
+# 
+
+#### Secure audit log configuration.
+
+# Nodeid used for integrity protected audit log. If not set the hostname of local host is used.
+# Default: not set
+#cluster.nodeid=
+
+# All security log events are written to all enabled/configured devices.
+# The following AuditLogDevice implementations are available:
+#securityeventsaudit.implementation.X=org.signserver.server.log.SignServerLog4jDevice
+#securityeventsaudit.implementation.X=org.cesecore.audit.impl.log4j.Log4jDevice
+#securityeventsaudit.implementation.X=org.cesecore.audit.impl.integrityprotected.IntegrityProtectedDevice
+
+# Each device can have a different exporter.
+# The following AuditExporter implementations are available:
+#securityeventsaudit.exporter.X=org.cesecore.audit.impl.AuditExporterDummy (default)
+#securityeventsaudit.exporter.X=org.cesecore.audit.impl.AuditExportCsv
+#securityeventsaudit.exporter.X=org.cesecore.audit.impl.AuditExporterXml
+#securityeventsaudit.exporter.X=org.cesecore.audit.impl.AuditExporterJson
+
+# Example configuration of SignServerLog4jDevice
+securityeventsaudit.implementation.0=org.signserver.server.log.SignServerLog4jDevice
+
+# Example configuration of IntegrityProtectedDevice that logs to the database
+# With XML export to /tmp/ (default export dir)
+# On windows a path would be for example 'C:/Temp/'
+securityeventsaudit.implementation.1=org.cesecore.audit.impl.integrityprotected.IntegrityProtectedDevice
+securityeventsaudit.exporter.1=org.cesecore.audit.impl.AuditExporterXml
+#securityeventsaudit.deviceproperty.1.export.dir=/tmp/
+#securityeventsaudit.deviceproperty.1.export.fetchsize=1000
+#securityeventsaudit.deviceproperty.1.validate.fetchsize=1000

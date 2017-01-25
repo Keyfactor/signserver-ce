@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <filter>
+        <filter-name>ClickjackFilterDeny</filter-name>
+        <filter-class>org.signserver.web.common.owasp.filters.ClickjackFilter</filter-class>
+        <init-param>
+            <param-name>mode</param-name>
+            <param-value>DENY</param-value>
+        </init-param>
+    </filter>
+    <filter>
+        <filter-name>ContentSecurityPolicyFilter</filter-name>
+        <filter-class>org.signserver.web.common.owasp.filters.ContentSecurityPolicyFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>NoCacheFilter</filter-name>
+        <filter-class>org.signserver.web.common.filters.NoCacheFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>ClickjackFilterDeny</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ContentSecurityPolicyFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>NoCacheFilter</filter-name>
+        <url-pattern>*.xhtml</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.xhtml</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+        </cookie-config>
+    </session-config>
+    <welcome-file-list>
+        <welcome-file>index.xhtml</welcome-file>
+    </welcome-file-list>
+    <!-- Special page for authorization denied -->
+    <error-page>
+        <exception-type>org.signserver.signserver.admin.web.ejb.AdminNotAuthorizedException</exception-type>
+        <location>/error-auth.xhtml</location>
+    </error-page>
+    <error-page>
+        <exception-type>org.signserver.signserver.admin.web.ejb.NotLoggedInException</exception-type>
+        <location>/error-notloggedin.xhtml</location>
+    </error-page>
+    <!-- Special page when trying to view an non-existing worker -->
+    <error-page>
+        <exception-type>org.signserver.common.NoSuchWorkerException</exception-type>
+        <location>/worker-nonexisting.xhtml</location>
+    </error-page>
+    <!-- Special page for 404 -->
+    <error-page>
+        <exception-type>com.sun.faces.context.FacesFileNotFoundException</exception-type>
+        <location>/error-404.xhtml</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error-404.xhtml</location>
+    </error-page>
+    <!-- Global error page for all other errors -->
+    <error-page>
+        <location>/error.xhtml</location>
+    </error-page>
+    <!-- Tomahawk filter for file uploads. Should be replaced by h:inputFile pattern when we can use JSF2.2. -->
+    <!-- <filter>
+        <filter-name>extensionsFilter</filter-name>
+        <filter-class>org.apache.myfaces.webapp.filter.ExtensionsFilter</filter-class>
+        <init-param>
+            <description>Maximum size of uploads</description>
+            <param-name>uploadMaxFileSize</param-name>
+            <param-value>500k</param-value>
+        </init-param>
+        <init-param>
+            <description>Maximum size of uploads before using disk</description>
+            <param-name>uploadThresholdSize</param-name>
+            <param-value>500k</param-value>
+        </init-param>
+    </filter> -->
+</web-app>

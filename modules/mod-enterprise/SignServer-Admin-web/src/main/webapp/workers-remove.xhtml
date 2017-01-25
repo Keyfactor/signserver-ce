@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <f:metadata>
+        <f:viewParam name="workers" value="#{removeBulkBean.workerIds}"/>
+        <f:viewParam name="previous" value="#{removeBulkBean.previous}"/>
+    </f:metadata>
+    
+    <body>
+
+        <ui:composition template="./template.xhtml">
+
+            <ui:define name="title">
+                <h:outputText value="Workers - Remove #{removeBulkBean.myWorkers.size()} workers..."/>
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <h1><h:link outcome="workers">Workers</h:link> &gt; Remove...</h1>
+
+                <h:messages class="errorMessage" globalOnly="true"/>
+
+                <h:form>
+                    <h:panelGroup rendered="#{empty removeBulkBean.workers}">
+                        <p>
+                            (No workers selected)
+                        </p>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{!empty removeBulkBean.workers}">
+                        <h:dataTable id="table1" value="#{removeBulkBean.myWorkers}" var="item">
+                            <f:facet name="header">
+                                <h:outputText value="Workers to renew" />
+                            </f:facet>
+                            <h:column>
+                                <f:facet name="header">
+                                    <!-- TODO: Mark all link -->
+                                </f:facet>
+                                <h:selectBooleanCheckbox value="#{removeBulkBean.selectedIds[item.id]}" disabled="#{!item.existing}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Id" />
+                                </f:facet>
+                                <h:outputText value="#{item.id}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Signer" />
+                                </f:facet>
+                                <h:outputText value="#{item.name} (removed)" rendered="#{item.removed}"/>
+                                <h:link outcome="worker" value="#{item.name}" rendered="#{!item.removed}" disabled="#{!item.existing}">
+                                    <f:param name="id" value="#{item.id}"/>
+                                </h:link>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <!-- Error -->
+                                </f:facet>
+                                <span class="errorMessage"><h:outputText value="#{item.error}"/></span> 
+                                <span class="successMessage"><h:outputText value="#{item.success}"/></span>
+                            </h:column>
+                            <f:facet name="footer">
+                            </f:facet>
+                        </h:dataTable>
+
+
+                        <h:panelGrid columns="2">
+                            <f:facet name="footer">
+                                <h:commandButton value="Remove" action="#{removeBulkBean.removeAction()}"/>
+                            </f:facet>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </h:form>
+                
+                <h:link value="Cancel" outcome="#{removeBulkBean.backLink}"></h:link>
+                
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

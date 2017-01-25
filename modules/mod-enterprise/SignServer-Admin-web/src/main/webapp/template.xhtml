@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="shortcut icon" type="image/png" href="#{resource['images/favicon.png']}"/>
+        <h:outputStylesheet name="./css/default.css"/>
+        <h:outputStylesheet name="./css/cssLayout.css"/>
+        <title><ui:insert name="title">Title</ui:insert> - SignServer Admin Web</title>
+        <h:outputScript name="./js/ejbca-common.js"/>
+    </h:head>
+
+    <h:body>
+        
+        <div id="top">
+            <div id="top-left"><h:outputLink value="/signserver/"><h:graphicImage library="images" name="logo.png" height="50"/></h:outputLink></div>
+            <div id="top-right">
+                <h:outputLink value="/signserver/doc/" class="topOutsideLink">Documentation</h:outputLink>
+            </div>
+            <div id="top-mid">
+                Administration Web
+            </div>
+            <p id="top-user">
+                 Logged in as: <h:outputText value="#{authenticationBean.userDisplayName}"/>
+            </p>
+            <div class="clearBoth"></div>
+            
+            <div id="top-menu">
+                <h:link outcome="index">Home</h:link> | 
+                <h:link outcome="workers">Workers</h:link> | 
+                <h:link outcome="global-configuration">Global Configuration</h:link> | 
+                <h:link outcome="administrators">Administrators</h:link> | 
+                <h:link outcome="auditlog">Audit Log</h:link> | 
+                <h:link outcome="archive">Archive</h:link>
+                <ui:insert name="top">Top</ui:insert>
+            </div>
+        </div>
+        <div>
+            <div id="content" class="full_content">
+                <ui:insert name="content">Content</ui:insert>
+            </div>
+        </div>
+        <div id="bottom">
+            <ui:insert name="bottom">Bottom</ui:insert>
+            
+            <p class="bottomText">
+                <h:outputText value="#{adminWebBean.version}"/> - 
+                <h:outputText value="#{adminWebBean.copyright}"/> -
+                <h:outputText value="#{adminWebBean.currentTime}"/>
+            </p>
+        </div>
+
+    </h:body>
+
+</html>

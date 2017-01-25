@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.signserver</groupId>
+        <artifactId>SignServer-Modules</artifactId>
+        <version>4.1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>SignServer-Enterprise-Modules</artifactId>
+    <name>SignServer Enterprise</name>
+    <packaging>pom</packaging>
+    <modules>
+        <module>SignServer-Admin-web</module>
+        <module>SignServer-DatabaseCLI</module>
+        <module>SignServer-Test-DatabaseCLI</module>
+        <module>SignServer-TimeMonitor-Common</module>
+        <module>SignServer-TimeMonitor</module>
+        <module>SignServer-Module-TimeMonitorManager</module>
+        <module>SignServer-Module-MasterList</module>
+        <module>SignServer-Module-MSAuthCode</module>
+        <module>SignServer-Module-Sample</module>
+        <module>SignServer-Module-JArchive</module>
+	<module>SignServer-Module-TSA-Enterprise</module>
+        <module>SignServer-Test-Enterprise</module>
+        <module>SignServer-Server-Enterprise</module>
+    </modules>
+</project>

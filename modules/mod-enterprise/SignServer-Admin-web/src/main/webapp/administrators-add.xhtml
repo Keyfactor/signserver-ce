@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <body>
+
+        <ui:composition template="./template.xhtml">
+
+            <ui:define name="title">
+                Authorized Administrators - Add
+            </ui:define>
+
+            <ui:define name="top">
+
+            </ui:define>
+
+            <ui:define name="content">
+                <h1><h:link outcome="administrators">Authorized Administrators</h:link> &gt; Add</h1>
+
+                <h:form id="form">
+                    <h:panelGroup id="main" rendered="#{!administratorsBean.fromCertificate}">
+
+                        <h:panelGrid columns="4">
+                            <h:outputLabel for="certSN">Certificate serial number:</h:outputLabel>
+                            <h:inputText id="certSN" value="#{administratorsBean.certSN}" size="16" requiredMessage="*">
+                                <f:validator validatorId="optionallyRequiredValidator"/>
+                                <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
+                            </h:inputText>
+                            <h:message for="certSN" class="errorMessage"/>
+                            <h:commandButton value="..." action="#{administratorsBean.browseAction()}"/>
+
+                            <h:outputLabel for="issuerDN">Issuer DN:</h:outputLabel>
+                            <h:inputText id="issuerDN" value="#{administratorsBean.issuerDN}" size="40" requiredMessage="*">
+                                <f:validator validatorId="optionallyRequiredValidator"/>
+                                <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
+                            </h:inputText>
+                            <h:message for="issuerDN" class="errorMessage"/>
+                            <h:commandButton value="Load current" action="#{administratorsBean.loadCurrentAction()}"/>
+
+                            <h:outputText value="Roles:"/>
+                            <h:panelGroup>
+                                <h:selectBooleanCheckbox id="roleAdmin" value="#{administratorsBean.roleAdmin}"/> <h:outputLabel for="roleAdmin" value="Admin" />
+                                <h:selectBooleanCheckbox id="roleAuditor" value="#{administratorsBean.roleAuditor}"/> <h:outputLabel for="roleAuditor" value="Auditor" />
+                                <h:selectBooleanCheckbox id="roleArchiveAuditor" value="#{administratorsBean.roleArchiveAuditor}"/> <h:outputLabel for="roleArchiveAuditor" value="Archive Auditor" />
+                            </h:panelGroup>
+                        </h:panelGrid>
+                        <h:commandButton value="Add" action="#{administratorsBean.addSubmitAction()}" binding="#{components.buttonSubmit}"/>
+                        <h:link value="Cancel" outcome="administrators"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="fromCert"  rendered="#{administratorsBean.fromCertificate}">
+                        <ui:remove>
+                            <!-- Pure JavaScript file upload, since non-JS fallback of pasting upload exists -->
+                        </ui:remove>
+                        <h:outputLabel for="cert">Load from certificate file:</h:outputLabel><br/>
+                        <h:inputTextarea id="cert" value="#{administratorsBean.cert}" cols="50" rows="10"/>
+                        <p id="certFileInputContainer" class="fileInputContainer"></p>
+                        <script>
+                            ejbca.ra.createFileUploadInput("certNewFileInput", "certFileInputContainer", function(uploadedText) {
+                                document.getElementById("form:cert").value = uploadedText;
+                                //document.getElementById("keyPairForm:uploadCsrButton").click();
+                            });
+                        </script>
+                        <br/>
+
+                        <p>
+                            <h:outputText value="#{administratorsBean.loadErrorMessage}" class="errorMessage"/>
+                        </p>
+
+                        <h:commandButton value="Load" action="#{administratorsBean.loadAction()}"/> <h:commandButton value="Cancel" action="#{administratorsBean.cancelBrowseAction()}"/>
+                    </h:panelGroup>
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

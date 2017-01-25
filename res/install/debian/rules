@@ -1,0 +1,146 @@
+#!/usr/bin/make -f
+# Based on http://pkg-java.alioth.debian.org/docs/tutorial.html
+
+export DH_VERBOSE=1
+export JAVA_HOME=/usr/lib/jvm/default-java
+export APPSRV_HOME=${CURDIR}/debian/temp/appserver
+
+build: build-stamp
+build-stamp:
+	dh_testdir
+#	Mock appserver
+	mkdir -pv ${APPSRV_HOME}/lib
+	rm -f ${APPSRV_HOME}/lib/appserv-rt.jar
+	ln -s /usr/share/java/glassfish-appserv-rt.jar ${APPSRV_HOME}/lib/appserv-rt.jar
+
+# 	Clover
+	echo "<antlib/>" > cloverlib.xml
+	mkdir lib/ext
+	mkdir lib/ext/no-clover
+	jar cf lib/ext/no-clover/clover.jar cloverlib.xml
+	
+#	mkdir -p ${APPSRV_HOME}/client
+
+#	Configuration
+	echo "includemodulesinbuild=false" > conf/signserver_build.properties
+	echo "module.log4j.enabled=true" >> conf/signserver_build.properties
+
+#	Disable modules with unsatisfied dependencies
+	echo "module.odfsigner.enabled=false" >> conf/signserver_build.properties
+	echo "module.ooxmlsigner.enabled=false" >> conf/signserver_build.properties
+
+	echo "signserverclientws.enabled=true" >> conf/signserver_build.properties
+	echo "module.renewal.enabled=true" >> conf/signserver_build.properties
+
+#	Patch AdminGUI to use the GTK look and feel (DSS-319)
+	sed -i 's/Application.lookAndFeel.*=.*/Application.lookAndFeel = com.sun.java.swing.plaf.gtk.GTKLookAndFeel/g' modules/SignServer-AdminGUI/src/org/signserver/admin/gui/resources/SignServerAdminGUIApplication.properties
+
+#	Update paths to work with unprivileged user
+	sed -i 's/tmp=.*/tmp=\/tmp\/signserver-$${user.name}/g' res/signserver-project.properties
+	sed -i 's/ear.dist.file=.*/ear.dist.file=$${tmp}\/dist\/signserver.ear/g' res/signserver-project.properties
+
+#   Build
+
+	ant -q -DmappingsFile=debian/precise-jars.properties debian-pkgdist
+
+	touch $@
+
+clean:
+	dh_testdir
+	dh_testroot
+#	Mock appserver
+	mkdir -pv ${APPSRV_HOME}/lib
+	rm -f ${APPSRV_HOME}/lib/appserv-rt.jar
+#	ln -s /usr/share/java/glassfish-appserv-rt.jar ${APPSRV_HOME}/lib/appserv-rt.jar
+#	Clean
+	ant -q clean
+	rm lib/ext/ -rf
+#	rm ${APPSRV_HOME} -rf
+	rm -f build-stamp
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_prep 
+	dh_installdirs
+
+#	Install libsignserver3.3-common
+	mkdir -p debian/libsignserver3.3-common/
+	cp -rv dist-debian/libsignserver-common/*  debian/libsignserver3.3-common/
+
+#	Install libsignserver3.3-modules
+	mkdir -p debian/libsignserver3.3-modules/
+	cp -r dist-debian/libsignserver-modules/* debian/libsignserver3.3-modules/
+
+#	Install signserver3.3-admingui
+	mkdir -p debian/signserver3.3-admingui/bin
+	cp -r dist-debian/signserver-admingui/* debian/signserver3.3-admingui/
+	mkdir -p debian/signserver3.3-admingui/usr/share/icons
+	cp modules/SignServer-AdminGUI/src/org/signserver/admin/gui/resources/cogwheel_gear_zahnrad_6.png debian/signserver3.3-admingui/usr/share/icons/signserver-admingui.png
+	mkdir -p debian/signserver3.3-admingui/usr/share/applications
+	cp debian/signserver-admingui-local.desktop debian/signserver3.3-admingui/usr/share/applications/
+	cp debian/signserver-admingui-ws.desktop debian/signserver3.3-admingui/usr/share/applications/
+	mkdir debian/signserver3.3-admingui/usr/bin
+
+	chmod +x debian/signserver3.3-admingui/usr/share/signserver3.3/bin/signserver-gui
+	ln -sf /usr/share/signserver3.3/bin/signserver-gui debian/signserver3.3-admingui/usr/bin/
+
+#	Install signserver3.3-client
+	mkdir -p debian/signserver3.3-client/usr/bin/
+	cp -r dist-debian/signserver-client/* debian/signserver3.3-client/
+	chmod +x debian/signserver3.3-client/usr/share/signserver3.3/bin/signclient
+	ln -sf /usr/share/signserver3.3/bin/signclient debian/signserver3.3-client/usr/bin/
+
+#	Install signserver3.3-server
+	mkdir -p debian/signserver3.3-server/usr/bin
+	cp -rv dist-debian/signserver-server/* debian/signserver3.3-server/
+	chmod +x debian/signserver3.3-server/usr/share/signserver3.3/bin/signserver
+	ln -sf /usr/share/signserver3.3/bin/signserver debian/signserver3.3-server/usr/bin/
+
+	chmod +x debian/signserver3.3-server/usr/share/signserver3.3/bin/ant
+	ln -sf /usr/share/signserver3.3/bin/ant debian/signserver3.3-server/usr/bin/signant
+
+	chmod +x debian/signserver3.3-server/usr/share/signserver3.3/bin/signserver
+	chmod +x debian/signserver3.3-server/usr/share/signserver3.3/bin/ant
+
+#	Install signserver3.3-doc
+	mkdir -p debian/signserver3.3-doc
+	cp -rv dist-debian/signserver-doc/* debian/signserver3.3-doc/
+
+
+binary-arch: build install
+#	Java packages are arch: all, nothing to do here
+
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs
+	dh_installdocs
+	dh_installexamples
+	dh_install --list-missing --sourcedir=debian/ejbca-util-signserver
+#       dh_installmenu
+#       dh_installdebconf
+#       dh_installlogrotate
+#       dh_installemacsen
+#       dh_installpam
+#       dh_installmime
+#       dh_python
+#       dh_installinit
+#       dh_installcron
+#       dh_installinfo
+	dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+#       dh_perl
+#       dh_makeshlibs
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install

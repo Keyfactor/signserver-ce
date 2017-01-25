@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <body>
+
+        <ui:composition template="./template.xhtml">
+
+            <ui:define name="title">
+                <h:panelGroup rendered="#{(!administratorsBean.edit and !administratorsBean.remove)}">
+                    Authorized Administrators
+                </h:panelGroup>
+                <h:panelGroup rendered="#{administratorsBean.edit}">
+                    Authorized Administrators - Edit
+                </h:panelGroup>
+                <h:panelGroup rendered="#{administratorsBean.remove}">
+                    Authorized Administrators - Remove
+                </h:panelGroup>
+            </ui:define>
+
+            <ui:define name="top">
+
+            </ui:define>
+
+            <ui:define name="content">
+                <h:panelGroup rendered="#{(!administratorsBean.edit and !administratorsBean.remove)}">
+                    <h1>Authorized Administrators</h1>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{administratorsBean.edit}">
+                    <h1><h:link value="Authorized Administrators" outcome="administrators"/> &gt; Edit</h1>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{administratorsBean.remove}">
+                    <h1><h:link value="Authorized Administrators" outcome="administrators"/> &gt; Remove</h1>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{(!administratorsBean.edit and !administratorsBean.remove)}">
+                    <h:form>
+                        <h:dataTable id="table1" value="#{administratorsBean.config}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Certificate serial number" />
+                                </f:facet>
+                                <h:outputText value="#{item.hexSerialNumber}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Issuer DN" />
+                                </f:facet>
+                                <h:outputText value="#{item.client.issuerDN}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Roles" />
+                                </f:facet>
+                                <h:outputText value="#{item.roles}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Actions"/>
+                                </f:facet>
+                                <h:commandButton value="Edit" action="#{administratorsBean.editAction(item)}"/> |
+                                <h:commandButton value="Remove" action="#{administratorsBean.removeAction(item)}"/>
+                            </h:column>
+                            <f:facet name="footer">
+                            </f:facet>
+                        </h:dataTable>
+
+                        <p>
+                            <h:link value="Add..." outcome="administrators-add"/>
+                        </p>
+
+                        <h:panelGrid columns="2" class="notable" headerClass="notable" columnClasses="notable, notable">
+                            <f:facet name="header">
+                                <h:outputText value="Allow any administrator with a valid certificate (will override administrators added in the list above)"/>
+                            </f:facet>
+
+                            <h:outputText value="Current setting:"/>
+                            <h:outputText value="Allow any" rendered="#{administratorsBean.allowAny}"/>
+                            <h:outputText value="Only listed" rendered="#{!administratorsBean.allowAny}"/>
+
+                            <h:commandButton value="Switch to 'Allow any'" rendered="#{!administratorsBean.allowAny}" action="administrators-allowany"/>
+                            <h:commandButton value="Switch to 'Only listed'" rendered="#{administratorsBean.allowAny}" action="administrators-allowonlylisted"/>
+                        </h:panelGrid>
+                    </h:form>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{administratorsBean.edit}">
+                    <h:form id="form">
+                        <h:inputHidden id="oldCertSN" value="#{administratorsBean.oldCertSN}"/>
+                        <h:inputHidden id="oldIssuerDN" value="#{administratorsBean.oldIssuerDN}"/>
+
+                        <h:panelGroup id="main" rendered="#{!administratorsBean.fromCertificate}">
+
+                            <h:panelGrid columns="4">
+                                <h:outputLabel for="certSN">Certificate serial number:</h:outputLabel>
+                                <h:inputText id="certSN" value="#{administratorsBean.certSN}" size="16" requiredMessage="*">
+                                    <f:validator validatorId="optionallyRequiredValidator"/>
+                                    <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
+                                </h:inputText>
+                                <h:message for="certSN" class="errorMessage"/>
+                                <h:commandButton value="..." action="#{administratorsBean.browseAction()}"/>
+
+                                <h:outputLabel for="issuerDN">Issuer DN:</h:outputLabel>
+                                <h:inputText id="issuerDN" value="#{administratorsBean.issuerDN}" size="40" requiredMessage="*">
+                                    <f:validator validatorId="optionallyRequiredValidator"/>
+                                    <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
+                                </h:inputText>
+                                <h:message for="issuerDN" class="errorMessage"/>
+                                <h:commandButton value="Load current" action="#{administratorsBean.loadCurrentAction()}"/>
+
+                                <h:outputText value="Roles:"/>
+                                <h:panelGroup>
+                                    <h:selectBooleanCheckbox id="roleAdmin" value="#{administratorsBean.roleAdmin}"/> <h:outputLabel for="roleAdmin" value="Admin" />
+                                    <h:selectBooleanCheckbox id="roleAuditor" value="#{administratorsBean.roleAuditor}"/> <h:outputLabel for="roleAuditor" value="Auditor" />
+                                    <h:selectBooleanCheckbox id="roleArchiveAuditor" value="#{administratorsBean.roleArchiveAuditor}"/> <h:outputLabel for="roleArchiveAuditor" value="Archive Auditor" />
+                                </h:panelGroup>
+                            </h:panelGrid>
+                            <h:commandButton id="buttonSubmit" binding="#{components.buttonSubmit}" value="Submit" action="#{administratorsBean.editSubmitAction()}"/>
+                            <h:link value="Cancel" outcome="administrators"/>
+                        </h:panelGroup>
+
+                        <h:panelGroup id="fromCert"  rendered="#{administratorsBean.fromCertificate}">
+                            <ui:remove>
+                                <!-- Pure JavaScript file upload, since non-JS fallback of pasting upload exists -->
+                            </ui:remove>
+                            <h:outputLabel for="cert">Load from certificate file:</h:outputLabel><br/>
+                            <h:inputTextarea id="cert" value="#{administratorsBean.cert}" cols="50" rows="10"/>
+                            <p id="certFileInputContainer" class="fileInputContainer"></p>
+                            <script>
+                                ejbca.ra.createFileUploadInput("certNewFileInput", "certFileInputContainer", function(uploadedText) {
+                                    document.getElementById("form:cert").value = uploadedText;
+                                    //document.getElementById("keyPairForm:uploadCsrButton").click();
+                                });
+                            </script>
+                            <br/>
+
+                            <p>
+                                <h:outputText value="#{administratorsBean.loadErrorMessage}" class="errorMessage"/>
+                            </p>
+
+                            <h:commandButton value="Load" action="#{administratorsBean.loadAction()}"/> <h:commandButton value="Cancel" action="#{administratorsBean.cancelBrowseAction()}"/>
+                        </h:panelGroup>
+                    </h:form>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{administratorsBean.remove}">
+                    <h:form>
+                        <h2>Are you sure you want to remove the administrator?</h2>
+
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Certificate serial number:"/>
+                            <h:outputText value="#{administratorsBean.certSN}"/>
+
+                            <h:outputText value="Issuer DN:"/>
+                            <h:outputText value="#{administratorsBean.issuerDN}"/>
+
+                            <h:outputText value="Roles:"/>
+                            <h:panelGroup>
+                                <h:selectBooleanCheckbox id="roleAdmin" value="#{administratorsBean.roleAdmin}" disabled="#{true}"/> <h:outputLabel for="roleAdmin" value="Admin" />
+                                <h:selectBooleanCheckbox id="roleAuditor" value="#{administratorsBean.roleAuditor}" disabled="#{true}"/> <h:outputLabel for="roleAuditor" value="Auditor" />
+                                <h:selectBooleanCheckbox id="roleArchiveAuditor" value="#{administratorsBean.roleArchiveAuditor}" disabled="#{true}"/> <h:outputLabel for="roleArchiveAuditor" value="Archive Auditor" />
+                            </h:panelGroup>
+                        </h:panelGrid>
+                        <h:commandButton value="Remove" action="#{administratorsBean.removeSubmitAction()}"/>
+                        <h:link value="Cancel" outcome="administrators"/>
+
+                    </h:form>
+                </h:panelGroup>
+
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

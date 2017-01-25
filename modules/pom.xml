@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.signserver</groupId>
+        <artifactId>SignServer</artifactId>
+        <version>4.1.0-SNAPSHOT</version>
+    </parent>
+    <groupId>org.signserver</groupId>
+    <artifactId>SignServer-Modules</artifactId>
+    <version>4.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>SignServer Modules</name>
+    <properties>
+        <!-- fixedTime / dist.fixedTime is used for deterministic builds. -->
+        <fixedTime/>
+        <dist.fixedTime>${fixedTime}</dist.fixedTime>
+        <primekey.customer>primekey</primekey.customer>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>profile-ee</id>
+            <activation>
+                <file>
+                    <exists>mod-enterprise</exists>
+                </file>
+            </activation>
+            <modules>
+                <module>mod-enterprise</module>
+            </modules>
+        </profile>
+    </profiles>
+
+    <modules>
+        <!-- Core -->
+        <module>SignServer-Common</module>
+        <module>SignServer-Server</module>
+        <module>SignServer-Entities</module>
+        <module>SignServer-ejb-interfaces</module>
+        <module>SignServer-ejb</module>
+        <module>CESeCore-jars</module>
+        
+        <!-- Interfaces -->
+        <module>SignServer-Web-Common</module>
+        <module>SignServer-war</module>
+        <module>SignServer-war-Healthcheck</module>
+        <module>SignServer-AdminCLI</module>
+        <module>SignServer-AdminGUI</module>
+        
+        <module>SignServer-ejb-AdminWS</module>
+        <module>SignServer-ejb-SignServerWS</module>
+        <module>SignServer-ejb-ValidationWS</module>
+        <module>SignServer-ejb-ClientWS</module>
+        
+        <module>SignServer-CLI-Common</module>
+        <module>SignServer-Client-CLI</module>
+        <module>SignServer-Client-ClientWS</module>
+        <module>SignServer-Client-SignServerWS</module>
+        <module>SignServer-Client-SigningAndValidationAPI</module>
+        <module>SignServer-Client-ValidationCLI</module>
+
+        <!-- Dependencies -->
+        <module>SignServer-Lib-iText</module>
+        <module>SignServer-Lib-OpenXML4J</module>
+        <module>SignServer-Lib-ODFDOM</module>
+        
+        <!-- Modules -->
+        <module>SignServer-Module-Log4j</module>
+        <module>SignServer-Module-CMSSigner</module>
+        <module>SignServer-Module-MRTDSigner</module>
+        <module>SignServer-Module-MRTDSODSigner</module>
+        <module>SignServer-Module-ODFSigner</module>
+        <module>SignServer-Module-OOXMLSigner</module>
+        <module>SignServer-Module-PDFSigner</module>
+        <module>SignServer-Module-Renewal-interface</module>
+        <module>SignServer-Module-Renewal</module>
+        <module>SignServer-Module-SignerStatusReport</module>
+        <module>SignServer-Module-StatusProperties</module>
+        <module>SignServer-Module-TSA</module>
+        <module>SignServer-Module-XMLValidator</module>
+        <module>SignServer-Module-XMLSigner</module>
+        <module>SignServer-Module-XAdES</module>
+        
+        <!-- System test and test tools -->        
+        <module>SignServer-Test-Utils</module>
+        <module>SignServer-Test-P11</module>
+        <module>SignServer-Test-Renewal</module>
+        <module>SignServer-Test-SignServerWS</module>
+        <module>SignServer-Test-ValidationWS</module>
+        <module>SignServer-Test-AdminWS</module>
+        <module>SignServer-Test-System</module>
+        <module>SignServer-Test-Random</module>
+        <module>SignServer-Test-Performance</module>
+        
+        <!-- Documentation -->
+        <module>SignServer-Doc</module>
+        <module>SignServer-Doc-web</module>
+    </modules>
+    <dependencies>
+        <dependency>
+            <artifactId>${bouncycastle.bcpkix.artifact}</artifactId>
+            <groupId>org.bouncycastle</groupId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <artifactId>${bouncycastle.bcprov.artifact}</artifactId>
+            <groupId>org.bouncycastle</groupId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.openejb</groupId>
+            <artifactId>javaee-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <additionalClasspathElements>
+                        <!-- Include res/cesecore for defaultvalues.properties. -->
+                        <additionalClasspathElement>res/deploytools/cesecore/</additionalClasspathElement>
+                        <additionalClasspathElement>../res/deploytools/cesecore/</additionalClasspathElement>
+                        <additionalClasspathElement>../../res/deploytools/cesecore/</additionalClasspathElement>
+                        <additionalClasspathElement>../../../res/deploytools/cesecore/</additionalClasspathElement>
+                        <additionalClasspathElement>../../../../res/deploytools/cesecore/</additionalClasspathElement>
+                    </additionalClasspathElements>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.signserver.deploytools</groupId>
+                <artifactId>DeployTools-Maven</artifactId>
+                <executions>
+                    <execution>
+                        <id>module-desc</id>
+                        <goals>
+                            <goal>create-module-descriptor</goal>
+                        </goals>
+                        <configuration/>
+                    </execution>
+                    <execution>
+                        <id>dist-module</id>
+                        <goals>
+                            <goal>dist-module</goal>
+                        </goals>
+                        <configuration/>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Test Code Coverage -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.6.201602180812</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!--
+        PrimeKey Internal/Customer Repository Mirror.
+        Edit ~/.m2/settings.xml to enable by setting the primekey.customer
+        property as well as provide username and password.
+        See doc/sample-maven-settings.xml.
+    -->
+    <!-- <repositories>
+        <repository>
+            <id>primekey-mirror-test</id> - TODO Change id, name and url when the production server is available -
+            <name>PrimeKey Repository Mirror (Test Environment)</name>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <url>https://binrepo-mirror-test.se.lab.primekey/${primekey.customer}/repomirror</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>primekey-mirror-test</id>
+            <name>PrimeKey Repository Mirror (Test Environment)</name>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <url>https://binrepo-mirror-test.se.lab.primekey/${primekey.customer}/repomirror</url>
+        </pluginRepository>
+    </pluginRepositories> -->
+
+</project>

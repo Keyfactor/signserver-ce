@@ -1,0 +1,828 @@
+<?xml version="1.0"?>
+<!-- $Id$ -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+    <properties>
+        <title>SignServer Manual</title>
+    </properties>
+
+    <body title="Installation Guide">
+        
+        <h1>Installation Guide</h1>
+        
+        <macro name="toc">
+            <param name="section" value="0"/>
+            <param name="fromDepth" value="0"/>
+            <param name="toDepth" value="4"/>
+        </macro>
+
+
+            <section name="Server installation">
+                
+                <div class="frame note">
+                        <div class="label">Note</div>
+                        <div class="content">Make sure you are reading the version of the manual corresponding to the
+software version you are about to install. The version of the manual is written
+in the top of this page. See doc/README.txt within the release package for
+information about how to build this manual for your version.</div>
+                </div>
+                
+                <subsection name="1. Check prerequisites">
+                    <p>
+Make sure all required softwares are installed:
+                    </p>
+                    <ul>
+                        <li>Java: OpenJDK 7, Oracle JDK 7* or OpenJDK 8**</li>
+                        <li>Application server: JBoss AS 7.1.1, JBoss EAP 6.x, GlassFish Server Open Source Edition 3.1.2, WildFly 9 or Payara Server 4.1.1.162***</li>
+                        <li>Database: MySQL or MariaDB 5.5, PostgreSQL 9.x, Oracle Database 10/11g or without****</li>
+                        <li>Deployment tool: Apache Ant 1.8.0 or later</li>
+                        <li>Build tool (optional*****): Apache Maven 3</li>
+                    </ul>
+                    <p>
+* When using Oracle JDK you must install the 'Unlimited Strength Jurisdiction Policy Files' for JDK for the parts of SignServer that  makes use of strong crypto to work. The policy files can be found at the same place as the JDK download at Oracle. Further information on this can be found in the Oracle documentation on the JCE. <br/>
+** If supported by the application server.<br/>
+*** Experimental support for Payara. Currently uses EclipseLink instead of Hibernate.<br/>
+**** See <a href="misc.html#SignServer without Database">SignServer without Database</a><br/>
+***** Only required when building the software from source
+                    </p>
+                </subsection>
+
+                <subsection name="2. Unpack SignServer">
+                    <p>
+Download and unzip the
+<a href="https://sourceforge.net/projects/signserver/files/signserver/">latest
+SignServer Community Edition release</a> archive from SourceForge.
+                    </p>
+                    <p>
+Note that SignServer is available in different distributions:
+                    </p>
+                    <ul>
+                        <li><b>signserver-4.x.y-bin.zip</b>:<br/>
+                        The binary distribution (recommended)</li>
+                        <li><b>signserver-4.x.y.zip:</b><br/>
+                        The mixed distribution. Contains the sources as well as all required libraries. This requires you to build SignServer before deploying.</li>
+                        <li><b>signserver-4.x.y-src.tar.gz:</b><br/>
+                        The source-only tarball distribution. This one can not be deployed without first gathering all the dependencies and then building it. If you choose this one you are on your own.</li>
+                    </ul>
+
+                    <p>
+Make sure to compare the checksums as provided on <a href="https://www.signserver.org/download.html">https://signserver.org/download.html</a> or from a by PrimeKey provided download site.
+                    </p>                    
+                    <source>
+sha256sum signserver-4.x.y-bin.zip
+unzip signserver-4.x.y-bin.zip</source>
+                    
+                    <p>
+Alternatively, you can checkout the latest unstable version from version the Subversion (SVN)
+<a href="https://svn.cesecore.eu/svn/signserver/trunk/">repository</a>.
+Note that as with the mixed distribution this one needs to be built before deploying.
+                    </p>
+                </subsection>
+                
+                <subsection name="3. Build SignServer">
+                    <p>
+Skip this step if you downloaded the binary distribution (recommended).
+                    </p>
+                    <p>
+If you instead downloaded the mixed disribution or checked out from SVN and want to build SignServer your self before copying it to the target server then you need to peform the following steps on your build machine.
+                    </p>
+                    <p>
+Note: Before running any of the Maven (mvn) commands you must make sure you have a secure Maven installation that does not contact the Central repository over insecure HTTP.
+You should make sure that the URL for the Central repository is specified with HTTTPS (and/or to use an internal repository).<br/>
+See sample-maven-settings-community.xml for an example on how one can override the default Maven settings in ~/.m2/settings.xml.
+                    </p>
+                    <source>mvn help:effective-settings</source>
+                    
+                    <p>
+Then to build the sources run:
+                    </p>
+                    <source>mvn install -DskipTests</source>
+                </subsection>
+
+                <subsection name="4. Set environment variables">
+                    <h4>APPSRV_HOME</h4>
+                        <p>
+Set APPSRV_HOME to point to your application server installation (<code>/opt/jboss</code> could be a symbolic link).
+                        </p>
+                        <source>export APPSRV_HOME=/opt/jboss</source>
+                        
+                        <p>
+This variable is used when deploying to the application server and could for instance be set in your .bashrc or similar file or provided everytime the deploy command is executed.
+                        </p>
+
+                    <h4>SIGNSERVER_NODEID</h4>
+                        <p>
+Set SIGNSERVER_NODEID to an unique ID for the server.
+                        </p>
+                        <source>export SIGNSERVER_NODEID=node1</source>
+                        
+                        <p>
+This variable should be available to the application server so it might have to be set in /etc/environment or similar. It is normally not required to have it set but without it there will be warnings printed in the log.
+                        </p>
+
+                </subsection>
+
+                <subsection name="5. Setup database">
+                    <p>
+Skip this section and instead follow the instructions in 
+<a href="misc.html#SignServer without Database">SignServer without Database</a> if
+you decide to run SignServer without a database management system.
+                    </p>
+                    <p>
+If you are using a database you will need to get a JDBC driver from the database
+vendor.
+                    </p>
+                    <h4>Database account</h4>
+                    <p>
+Create a database and database user for SignServer. Please, refer to the database vendor's documentation for how to do that.
+                    </p>
+                    
+                    <h4>Table creation and indexes</h4>
+                    <p>
+The application server will try to create tables during startup of SignServer but if the database user does not have table create permissions the tables must be created manually.
+See <code>doc/sql-scripts/create-tables-signserver-*.sql</code> for the database schemas for different databases.
+                    </p>
+                    <p>
+In order to improve performance the appropriate database indices should also be applied. This is extra important for the AuditRecordData table which otherwise will make SignServer slower and slower to start. See <code>doc/sql-scripts/create-index-signserver.sql</code>.
+                    </p>
+                    <h4>MariaDB binlog format configuration</h4>
+                        <p>
+For MariaDB you will have to set binlog_format to "row", for instance in /etc/mysql/my.cnf:
+                        </p>
+                        <source>binlog_format=row</source>
+
+                    <h4>Configure database driver for GlassFish/Payara</h4>
+                        <p>
+Copy the driver for your database to the application server lib folder.
+                        </p>    
+
+                    <h4>Configure database driver for JBoss AS 7, JBoss EAP 6 or WildFly</h4>
+<p>
+In JBoss 7/EAP6/WildFly it is not enough to just drop the JAR archive with a database JDBC driver into the deployments directory. Instead you will have to perform the following steps (for MySQL or MariaDB):
+</p>
+<ol>
+<li>Create the necessary directories (relative to JBoss 7 base directory):
+<br/>
+On JBoss 7.1.1 or EAP 6.0:
+<pre>
+mkdir -p modules/com/mysql/main/
+</pre>
+On JBoss 7.2 or EAP 6.1:
+<pre>
+mkdir -p modules/system/layers/base/com/mysql/main/
+</pre>
+Or for MariaDB, mariadb-java-client-1.1.2.jar:
+<pre>
+mkdir -p modules/org/mariadb/main/
+</pre>
+On JBoss 7.2, EAP 6.1 (or later) or WildFly:
+<pre>
+mkdir -p modules/system/layers/base/org/mariadb/main/
+</pre>
+</li>
+<li>Place the mysql.jar or mariadb.jar file in the directory you just created.</li>
+<li>Create, in the created directory, the JDBC module configuration file module.xml with the following contents (replace mysql.jar with the full name of your jar file for example mysql-connector-java-5.1.18-bin.jar):
+<pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;module xmlns=&quot;urn:jboss:module:1.0&quot; name=&quot;com.mysql&quot;&gt;
+  &lt;resources&gt;
+    &lt;resource-root path=&quot;mysql.jar&quot;/&gt;
+  &lt;/resources&gt;
+  &lt;dependencies&gt;
+    &lt;module name=&quot;javax.api&quot;/&gt;
+    &lt;module name=&quot;javax.transaction.api&quot;/&gt;
+  &lt;/dependencies&gt;
+&lt;/module&gt;
+<!-- This is the original of above XML text.
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="urn:jboss:module:1.0" name="com.mysql">
+  <resources>
+    <resource-root path="mysql.jar"/>
+  </resources>
+  <dependencies>
+    <module name="javax.api"/>
+    <module name="javax.transaction.api"/>
+  </dependencies>
+</module>
+--></pre>
+Or for MariaDB, mariadb-java-client-1.1.2.jar:
+<pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;module xmlns=&quot;urn:jboss:module:1.0&quot; name=&quot;org.mariadb&quot;&gt;
+  &lt;resources&gt;
+    &lt;resource-root path=&quot;mariadb-java-client-1.1.2.jar&quot;/&gt;
+  &lt;/resources&gt;
+  &lt;dependencies&gt;
+    &lt;module name=&quot;javax.api&quot;/&gt;
+    &lt;module name=&quot;javax.transaction.api&quot;/&gt;
+  &lt;/dependencies&gt;
+&lt;/module&gt;
+</pre>
+
+</li>
+<li>Register the driver by running the following two commands in the JBoss 7 CLI administration tool:
+<pre>
+/subsystem=datasources/jdbc-driver=com.mysql.jdbc.Driver:add(driver-name=com.mysql.jdbc.Driver,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.jdbc.jdbc.jdbc2.optional.MysqlXADataSource)
+:reload
+</pre>
+Or for MariaDB, mariadb-java-client-1.1.2.jar:
+<pre>
+/subsystem=datasources/jdbc-driver=org.mariadb.jdbc.Driver:add(driver-name=org.mariadb.jdbc.Driver,driver-module-name=org.mariadb,driver-xa-datasource-class-name=org.mariadb.jdbc.MySQLDataSource)
+:reload
+</pre>
+</li>
+</ol>
+
+<p>For PostgreSQL you would use the following values instead:</p>
+<pre>
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;module xmlns=&quot;urn:jboss:module:1.0&quot; name=&quot;org.postgresql&quot;&gt;
+  &lt;resources&gt;
+    &lt;resource-root path=&quot;postgresql-9.1-903.jdbc4.jar&quot;/&gt;
+  &lt;/resources&gt;
+  &lt;dependencies&gt;
+    &lt;module name=&quot;javax.api&quot;/&gt;
+    &lt;module name=&quot;javax.transaction.api&quot;/&gt;
+  &lt;/dependencies&gt;
+&lt;/module&gt;
+</pre>
+<pre>
+/subsystem=datasources/jdbc-driver=org.postgresql.Driver:add(driver-name=org.postgresql.Driver,driver-module-name=org.postgresql,driver-xa-datasource-class-name=org.postgresql.xa.PGXADataSource)
+:reload
+</pre>
+    
+                <h4>Configure data source for GlassFish/Payara</h4>
+                    <p>
+For GlassFish/Payara also configure a connection pool and JNDI resource:
+                    </p>
+                    <ol>
+                        <li>Go to the Admin Console: http://localhost:4848</li>
+                        <li>Click on Resources -&gt; JDBC -&gt; Connection Pools</li>
+                        <li>Add a new Pool. For instance: Name: MySQLPool</li>
+                        <li>
+                            Fill in:<br/>
+                            databaseName: signserver<br/>
+                            password: signserver<br/>
+                            portNumber 3306<br/>
+                            serverName: localhost<br/>
+                            user: signserver
+                        </li>
+                        <li>Click Ping to test</li>
+                        <li>Click on Resources -&gt; JDBC -&gt; JDBC Resources</li>
+                        <li>
+                             Add new:<br/>
+                             JNDI Name: jdbc/SignServerDS<br/>
+                             Pool Name: MySQLPool
+                         </li>
+                    </ol>
+
+                    
+                    <h4>Configure data source for JBoss AS 7.1</h4>
+                        <p>
+The examples are for installing a MariaDB datasource using the jboss-cli with the driver installed as described above. </p>
+<p>A normal datasource (Note: no --enabled=true for JBoss AS 7.1):</p>
+<!-- TODO: Add example for MySQL -->
+<source>data-source add --name=signserverds --driver-name="org.mariadb.jdbc.Driver" --connection-url="jdbc:mysql://127.0.0.1:3306/signserver" --jndi-name="java:/SignServerDS" --use-ccm=true --driver-class="org.mariadb.jdbc.Driver" --user-name="signserver" --password="signserver" --validate-on-match=true --background-validation=false --prepared-statements-cache-size=50 --share-prepared-statements=true --min-pool-size=5 --max-pool-size=150 --pool-prefill=true --transaction-isolation=TRANSACTION_READ_COMMITTED --check-valid-connection-sql="select 1;"</source>
+                        <p>
+Then restart the application server.
+                        </p>
+
+                    
+                    <h4>Configure data source for JBoss EAP 6 or WildFly</h4>
+                        <p>
+The examples are for installing a MariaDB datasource using the jboss-cli with the driver installed as described above. </p>
+<p>A normal datasource (Note: --enabled=true for JBoss EAP 6.x):</p>
+<!-- TODO: Add example for MySQL -->
+<source>data-source add --name=signserverds --driver-name="org.mariadb.jdbc.Driver" --connection-url="jdbc:mysql://127.0.0.1:3306/signserver" --jndi-name="java:/SignServerDS" --use-ccm=true --driver-class="org.mariadb.jdbc.Driver" --user-name="signserver" --password="signserver" --validate-on-match=true --background-validation=false --prepared-statements-cache-size=50 --share-prepared-statements=true --min-pool-size=5 --max-pool-size=150 --pool-prefill=true --transaction-isolation=TRANSACTION_READ_COMMITTED --check-valid-connection-sql="select 1;" --enabled=true</source>
+                        <p>
+Then restart the application server.
+                        </p>
+
+                    
+                </subsection>
+
+                <subsection name="6. Configure web server keystores">
+                    <h4>GlassFish/Payara SSL configuration</h4>
+                        <p>
+For GlassFish/Payara enable client authentication for http-listener-2 and manually
+update the keystores with the right certificates.
+                        </p>
+
+                    <h4>JBoss 7/EAP 6 SSL configuration</h4>
+                        <p>
+Copy the keystore file as JBOSS7_HOME/standalone/configuration/keystore/keystore.jks and the trust store as
+                          JBOSS7_HOME/standalone/configuration/keystore/truststore.jks.
+                        </p>
+                        <p>
+Configure interfaces using the approproate bind address (i.e. 0.0.0.0 or 127.0.0.1).
+                        </p>
+                        <source>/interfaces=/interface=http:add(inet-address="0.0.0.0")
+/interfaces=/interface=httpspub:add(inet-address="0.0.0.0")
+/interfaces=/interface=httpspriv:add(inet-address="0.0.0.0")</source>
+                        <p>
+Set-up the private port which requires client certificate. 
+Use appropriate values for key-alias (hostname), password (keystore password), ca-certificate-password (truststore password),
+and supported protocols.
+                        </p>
+                        <source>
+/socket-binding-group=standard-sockets/socket-binding=httpspriv:add(port="8443",interface="httpspriv")
+/subsystem=web/connector=httpspriv:add(protocol=HTTP/1.1, scheme=https, socket-binding=httpspriv, secure=true)
+/subsystem=web/connector=httpspriv/ssl=configuration:add(key-alias="localhost")
+/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=password, value="serverpwd")
+/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=certificate-key-file, value="${jboss.server.config.dir}/keystore/keystore.jks")
+/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=verify-client, value=true)
+/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=ca-certificate-password, value="changeit")
+/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=ca-certificate-file, value="${jboss.server.config.dir}/keystore/truststore.jks")
+/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=protocol,value="TLSv1,TLSv1.1,TLSv1.2")</source>
+                        <p>
+Set-up the public SSL port which doesn't require the client certificate.
+Use appropriate values for key-alias (hostname), password (keystore password),
+and supported protocols.
+                        </p>
+                        <source>
+/socket-binding-group=standard-sockets/socket-binding=httpspub:add(port="8442",interface="httpspub")
+/subsystem=web/connector=httpspub:add(protocol=HTTP/1.1, scheme=https, socket-binding=httpspub, secure=true)
+/subsystem=web/connector=httpspub/ssl=configuration:add(key-alias="localhost")
+/subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=password, value="serverpwd")
+/subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=certificate-key-file, value="${jboss.server.config.dir}/keystore/keystore.jks")
+/subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=protocol,value="TLSv1,TLSv1.1,TLSv1.2")</source>
+                        <p>
+If the server is not so fast, we have to wait a little before we can reload, otherwise it will be bad
+                        </p>
+                        <source>:reload</source>
+
+
+                <h4>WildFly 9 SSL configuration</h4>
+                        <p>
+Copy the keystore file as WILDFLY_HOME/standalone/configuration/keystore/keystore.jks and the trust store as
+                          WILDFLY_HOME/standalone/configuration/keystore/truststore.jks.
+                        </p>
+                        <p>
+Configure interfaces using the approproate bind address (i.e. 0.0.0.0 or 127.0.0.1).
+                        </p>
+                        <source>
+/interface=http:add(inet-address="0.0.0.0")
+/interface=httpspub:add(inet-address="0.0.0.0")
+/interface=httpspriv:add(inet-address="0.0.0.0")</source>
+
+                        <p>
+NOTE:<br/>
+By default, WildFly imposes a limit of 10 MB on HTTP post size. To enable signing larger files an larger limit may be set on the HTTP/HTTPS listeners.<br/>
+Replace the value of the max-post-size parameters in the commands below with an appropriate value if needed for signing larger files.
+                        </p>
+
+                        <p>
+Secure the CLI by removing the http-remoting-connector from using the http port and instead use a separate port 4447.
+                        </p>
+                        <source>
+/subsystem=remoting/http-connector=http-remoting-connector:remove
+/subsystem=remoting/http-connector=http-remoting-connector:add(connector-ref="remoting",security-realm="ApplicationRealm")
+/socket-binding-group=standard-sockets/socket-binding=remoting:add(port="4447")
+/subsystem=undertow/server=default-server/http-listener=remoting:add(socket-binding=remoting, max-post-size="10485760")
+:reload</source>
+
+                        <p>
+Set-up the private port which requires client certificate. 
+Use appropriate values for key-alias (hostname), password (keystore password), ca-certificate-password (truststore password),
+and supported protocols.
+                        </p>
+                        <source>
+/socket-binding-group=standard-sockets/socket-binding=httpspriv:add(port="8443",interface="httpspriv")
+/core-service=management/security-realm=SSLRealm:add()
+/core-service=management/security-realm=SSLRealm/server-identity=ssl:add(keystore-path="keystore/keystore.jks", keystore-relative-to="jboss.server.config.dir", keystore-password="serverpwd", alias="localhost")
+/core-service=management/security-realm=SSLRealm/authentication=truststore:add(keystore-path="keystore/truststore.jks", keystore-relative-to="jboss.server.config.dir", keystore-password="changeit")
+/subsystem=undertow/server=default-server/https-listener=httpspriv:add(socket-binding="httpspriv", security-realm="SSLRealm", verify-client=REQUIRED, max-post-size="10485760")</source>
+                        <p>
+Set-up the public SSL port which doesn't require the client certificate.
+                        </p>
+                        <source>
+/socket-binding-group=standard-sockets/socket-binding=httpspub:add(port="8442",interface="httpspub")
+/subsystem=undertow/server=default-server/https-listener=httpspub:add(socket-binding="httpspub", security-realm="SSLRealm", max-post-size="10485760")</source>
+                        <source>reload</source>
+
+                </subsection>
+
+                <subsection name="7. Configure application server">
+                    <h4>Fix web service problem in JBoss AS 7/EAP 6/WildFly</h4>
+                        <p>
+Configure WSDL web-host rewriting to use the request host. Needed for webservices to work correctly when requiring client certificate.
+                        </p>
+                        <source>
+/subsystem=webservices:write-attribute(name=wsdl-host, value=jbossws.undefined.host)
+/subsystem=webservices:write-attribute(name=modify-wsdl-address, value=true)</source>
+                        <p>
+If the server is not so fast, we have to wait a little before we can reload, otherwise it will be bad
+                        </p>
+                        <source>:reload</source>
+
+                    <h4>JBoss 7 and Oracle JDK BouncyCastle issues</h4>
+                        <p>
+When using Oracle JDK and JBoss 7 you need to install BC jars as a module in JBoss 7. See <a href="https://issues.jboss.org/browse/JBAS-7882">JBAS-7882</a>.
+                        </p>
+                        <p>
+How to install modules are described in <a href="https://docs.jboss.org/author/display/MODULES/Defining+a+module">docs.jboss.org/author/display/MODULES/Defining+a+module</a>.
+                        </p>
+
+                    <h4>Fix XML Security library issue 1 in JBoss 7</h4>
+                                                <p>
+        JBoss 7 bundles version 1.5.1 of the XML Security library. The library bundled with SignServer is not
+        properly overriding the JBoss-bundled version.
+        To work around this issue copy the JAR file from SignServer into JBoss' modules directory and modifiy the descriptor to use the new version.
+                                                </p>
+                                                <p>
+        On Linux/Unix systems the following command can be used:
+                                                </p>
+                                                <source>cp lib/ext/xmlsec-1.5.8.jar $APPSRV_HOME/modules/org/apache/santuario/xmlsec/main/</source>
+                                                <p>
+        On Windows systems the following command can be used:
+                                                </p>
+                                                <source>copy lib&#92;ext&#92;xmlsec-1.5.8.jar %APPSRV_HOME%&#92;modules&#92;org&#92;apache&#92;santuario&#92;xmlsec&#92;main&#92;</source>
+                                                <p>
+        Edit $APPSRV_HOME/modules/org/apache/santuario/xmlsec/main/module.xml to use the correct version:
+                                                </p>
+                                                <source>&lt;resource-root path="xmlsec-1.5.8.jar"/&gt;</source>
+
+                    <h4>Fix XML Security library issue 2 in JBoss 7</h4>
+                                                <p>
+        JBoss 7 bundles version 2.7.1 of the Xalan library. The library bundled with SignServer is not
+        properly overriding the JBoss-bundled version.
+        To work around this issue copy the JAR files from SignServer into JBoss' modules directory and modifiy the descriptor to use the new version.
+                                                </p>
+                                                <p>
+        On Linux/Unix systems the following command can be used:
+                                                </p>
+                                                <source>cp lib/ext/xalan-2.7.2.jar lib/ext/serializer-2.7.2.jar $APPSRV_HOME/modules/org/apache/xalan/main/</source>
+                                                <p>
+        On Windows systems the following command can be used:
+                                                </p>
+                                                <source>
+copy lib&#92;ext&#92;xalan-2.7.2.jar %APPSRV_HOME%&#92;modules&#92;org&#92;apache&#92;xalan&#92;main&#92;
+copy lib&#92;ext&#92;serializer-2.7.2.jar %APPSRV_HOME%&#92;modules&#92;org&#92;apache&#92;xalan&#92;main&#92;</source>
+                                                <p>
+        Edit $APPSRV_HOME/modules/org/apache/xalan/main/module.xml to use the correct versions:
+                                                </p>
+                                                <source>
+&lt;resource-root path="serializer-2.7.2.jar"/&gt;
+&lt;resource-root path="xalan-2.7.2.jar"/&gt;</source>
+
+                    <h4>Commons Collections Security issue in JBoss 7 and earlier</h4>
+                        <p>
+JBoss 7 bundles version 3.2.1 of Commons Collections which has potential security issues. SignServer uses version 3.2.2. Perform similar changes as in the previous section to have JBoss use the 3.2.2 version instead.
+                        </p>
+
+                    <h4>Fix Security issues in JBoss EAP</h4>
+                        <p>
+Make sure to apply the relevant security patches from Red Hat. Pay special attention to the above mentioned XML Security and Commons Collections libraries etc.
+                        </p>
+
+                    <h4>Install Hibernate in GlassFish 3</h4>
+                        <p>
+If you are using GlassFish 3 and run with a database you will have to install Hibernate. 
+Run pkg install in the GlassFish folder:
+                        </p>
+                        <source>./bin/pkg install hibernate</source>
+                </subsection>
+
+
+                <subsection name="8. Configure deployment">
+                    <p>
+Copy conf/signserver_deploy.properties.sample to conf/signserver_deploy.properties and open
+it for editing in your favorite text editor.
+                    </p>
+                    <source>cp conf/signserver_deploy.properties.sample conf/signserver_deploy.properties</source>    
+                        
+                    <h4>Database configuration</h4>
+                        <p>
+Select database management system
+                        </p>
+                        <source>database.name=mysql</source>
+
+                    <p>
+See <a href="misc.html#Signed%20log">Signed log</a> for how to configure for signed audit logs in the database.
+                    </p>
+                </subsection>
+
+                <subsection name="9. Deploy SignServer">
+                    <p>
+Run "bin/ant deploy" to build the configuration and deploy it to the selected application
+server.
+                    </p>
+                    <source>bin/ant deploy</source>
+                    <p>
+Start the application server and verify that SignServer was deployed.
+                    </p>
+                </subsection>
+
+                <subsection name="9. Accessing SignServer">
+                    <p>
+After startup a few different user interfaces are available.	
+                    </p>
+                    <h4>Command Line Interface</h4>
+                    <source>
+bin/signserver getstatus brief all
+Current version of server is : SignServer EE 4.0.0</source>
+
+                    <h4>Graphical User Interface</h4>
+                    <source>bin/signserver-gui</source>
+
+                    <h4>Web Interface</h4>
+                    <p>
+Point your web browser to <a href="http://localhost:8080/signserver">http://localhost:8080/signserver</a> for demo web pages and local documentation.
+                    </p>
+                </subsection>
+            </section>
+
+            <section name="Signer setup">
+                <p>
+After server installation the different signers can be setup using the
+SignServer CLI.
+                </p>
+                <subsection name="Loading signers">
+                    <p>
+Signers (and other workers) can be loaded by setting properties using "setproperty" or "setproperties" etc.
+                    </p>
+                    <h4>setproperties</h4>
+                        <p>
+The "setproperties" command loads all the properties from a property file that
+can define one or many signers. The code for the signers needs to be deployed
+to the application server together with SignServer either by setting
+includemodulesinbuild=true to include all modules or by setting individual
+module.MODULENAME.enabled=true properties in signserver_deploy.properties.
+                        </p>
+                        <source>bin/signserver setproperties doc/sample-configs/CONFIGURATION.PROPERTIES</source>
+
+                    <p>
+After adding or changing a property for a worker (by
+any of the "setproperty" or "setproperties" commands) the configuration needs be
+applied by issuing the reload command with the ID of the worker.
+                    </p>
+                    <source>bin/signserver reload 4711</source>
+                </subsection>
+
+                <subsection name="Quick start demo setup">
+                    <p>
+This is a quick start guide to quickly get you setup with a crypto token and a set of workers/signers for testing and demonstration purposes.
+                    </p>
+                    <h4>Setup a sample crypto token</h4>
+<p>Set up a crypto token called CryptoTokenP12 which uses a keystore-based token:</p>
+<source>$ bin/signserver setproperties doc/sample-configs/keystore-crypto.properties</source>
+                        <p>
+Activate the configuration using the assigned worker ID that was printed (for instance 1):
+                        </p>
+<source>$ bin/signserver reload 1</source>
+
+                    <h4>Add sample workers</h4>
+                        <p>
+Workers can then be set up using the setproperties followed by the reload command. Sample configurations
+are available in doc/sample-configs which by default uses the sample crypto token:
+                        </p>
+<source>$ bin/signserver setproperties doc/sample-configs/CONFIGURATION.properties</source>
+                        <p>
+Activate the configuration using the assigned worker ID that was printed (for instance 2):
+                        </p>
+<source>$ bin/signserver reload 2</source>
+<p>See the following section for some example for specific workers.</p>
+
+
+                </subsection>
+
+                <subsection name="Quick start demo Timestamp signer">
+                    <p>
+This is a quick start guide to quickly get you setup with a demo Time Stamp service (TSA according to RFC3161). It will let you quickly get a feeling how the structure of the SignServer works, so you can move on to more advanced features described in the manual.
+                    </p>
+
+                    <ol>
+                        <li>
+Make sure the tsa module is built in by setting module.tsa.enabled=true and
+module.tsa.include=true in signserver_deploy.properties before building and
+deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
+modules built in.
+                        </li>
+                        <li>
+Setup the keystore crypto token (if not already done) and activate it with its ID:<br/>
+<source>$ bin/signserver setproperties doc/sample-configs/keystore-crypto.properties</source><br/>
+Update the crypto token's KEYSTOREPATH property to point to a PKCS#12 keystore containing keys and<br/>
+certificate suitable for timestamp signing (the sample keystore in res/test/dss10/dss10_tssigner1.p12 can be used).<br/>
+Update the keystore password and set the crypto token's default key.<br/>
+<source>$ bin/signserver setproperty 1 KEYSTOREPATH $SIGNSERVER_HOME/res/test/dss10/dss10_tssigner1.p12
+$ bin/signserver setproperty 1 KEYSTOREPASSWORD foo123
+$ bin/signserver setproperty 1 DEFAULTKEY &quot;TS Signer 1&quot;
+$ bin/signserver reload 1</source>
+                        </li>
+                        <li>
+Load the Timestamp demo configuration and notice the generated worker ID (in this
+example 2):<br/>
+<source>$ bin/signserver setproperties doc/sample-configs/timestamp.properties</source>
+                        </li>
+                        <li>
+Activate the configuration with:<br/>
+<source>$ bin/signserver reload 2</source>
+                        </li>
+                        <li>
+You can check the status and configuration with:<br/>
+<source>$ bin/signserver getstatus complete all</source>
+                        </li>
+                        <li>
+Run the test client to see that everything is up:<br/>
+<source>$ bin/signclient timestamp http://localhost:8080/signserver/process?workerName=TimeStampSigner</source>
+<br/>The message "TimeStampRequest validated" should appear once a second. Also
+check JBOSS_HOME/server/default/log/server.log or
+GLASSFISH_HOME/domains/domain1/logs/server.log that successful messages appear.
+                        </li>
+                    </ol>
+                </subsection>
+
+                <subsection name="Quick start demo PDF signer">
+                    <p>
+To install the PDF signer you can issue the following commands (either instead of the TSA or in addition to the TSA).
+                    </p>
+                    <ol>
+                        <li>
+Make sure the pdfsigner module is built in by setting module.pdfsigner.enabled=true and
+module.pdfsigner.include=true in signserver_deploy.properties before building and
+deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
+modules built in.
+                        </li>
+                        <li>
+Setup the keystore crypto token (if not already done) and activate it with its ID:<br/>
+<source>$ bin/signserver setproperties doc/sample-configs/keystore-crypto.properties</source><br/>
+Update the crypto token's KEYSTOREPATH property to point to a PKCS#12 keystore containing keys and<br/>
+certificate suitable for document signing (the sample keystore in res/test/dss10/dss10_signer1.p12 can be used).<br/>
+Update the keystore password and set the crypto token's default key.<br/>
+<source>$ bin/signserver setproperty 1 KEYSTOREPATH $SIGNSERVER_HOME/res/test/dss10/dss10_signer1.p12
+$ bin/signserver setproperty 1 KEYSTOREPASSWORD foo123
+$ bin/signserver setproperty 1 DEFAULTKEY &quot;Signer 1&quot;
+$ bin/signserver reload 1</source>
+                        </li>
+                        <li>
+Load the PDF signer demo configuration and notice the generated worker ID (in this
+example 3):<br/>
+<source>$ bin/signserver setproperties doc/sample-configs/pdfsigner.properties</source>
+                        </li>
+                        <li>
+Activate the configuration with:<br/>
+<source>$ bin/signserver reload 3</source>
+                        </li>
+                        <li>
+You can check the status and configuration with:<br/>
+<source>$ bin/signserver getstatus complete all</source>
+                        </li>
+</ol>
+<p>
+You can now access the URL <a href="http://localhost:8080/signserver/demo/pdfsign.jsp">http://localhost:8080/signserver/demo/pdfsign.jsp</a> with your web browser to get PDF documents signed.
+</p>
+                </subsection>
+
+                <subsection name="Quick start demo XML validator">
+                    <p>
+An XML validator validates the signature of an XML document. It uses a
+certificate validation service worker for validating the certificate so
+that worker has to be configured first.
+                    </p>
+                    <p>
+To install a certificate validation service worker issue the following commands:
+                    </p>
+                    <ol>
+                        <li>
+Load the configuration and notice the worker ID (in this example: 6):<br/>
+<source>$ bin/signserver setproperties doc/sample-configs/validator_dummy.properties</source>
+                        </li>
+                        <li>
+Activate the configuration with:<br/>
+<source>$ bin/signserver reload 6</source>
+                        </li>
+                        <li>
+The status of the Worker can now be viewed with:<br/>
+<source>$ bin/signserver getstatus complete CertValidationWorker</source>
+                        </li>
+                    </ol>
+                    <p>
+Then to install the XML validator you can issue the following commands:
+                    </p>
+                    <ol>
+                        <li>
+Make sure the xmlvalidator module is built in by setting module.xmlvalidator.enabled=true and
+module.xmlvalidator.include=true in signserver_deploy.properties before building and
+deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
+modules built in.
+                        </li>
+                        <li>
+Load the XML validator demo configuration and notice the generated worker ID (in this
+example 7):
+$ bin/signserver setproperties doc/sample-configs/xmlvalidator.properties
+                        </li>
+                    <li>
+Verify the configuration with (notice that VALIDATIONSERVICEWORKER is set to "CertValidationWorker"):<br/>
+<source>$ bin/signserver getconfig 7</source>
+                    </li>
+                    <li>
+Activate the configuration with:<br/>
+<source>$ bin/signserver reload 7</source>
+                    </li>
+                    <li>
+The status of the Validator can now be viewed with:<br/>
+<source>$ bin/signserver getstatus complete DemoXMLValidator</source>
+                    </li>
+                    </ol>
+                    <p>
+Now <a href="integration.html">the SignServer APIs</a> can be used to request XML documents to be validated by the DemoXMLValidator worker.
+                    </p>
+                </subsection>
+
+                <subsection name="Quick start demo MRTD SOD signer">
+                    <p>
+The MRTD SOD signer takes as input data group hashes and creates a signed SO(d). This means that the signserver will function
+as a Document Signer for ePassports.</p>
+                    <p>
+To install the MRTD SOD signer you can issue the following commands:
+                    </p>
+                    <ol>
+                        <li>
+Make sure the mrtdsodsigner module is built in by setting module.mrtdsodsigner.enabled=true and
+module.mrtdsodsigner.include=true in signserver_deploy.properties before building and
+deploying SignServer. Alternativly, set includemodulesinbuild=true to have all
+modules built in.
+                        </li>
+                        <li>
+Setup the soft crypto token (if not already done) and activate it with its ID:<br/>
+<source>$ bin/signserver setproperties doc/sample-configs/keystore-crypto.properties
+$ bin/signserver reload 1</source>
+                        </li>
+                        <li>
+Load the MRTD SOD signer demo configuration and notice the generated worker ID (in this
+example 8):<br/>
+<source>$ bin/signserver setproperties doc/sample-configs/mrtdsodsigner.properties</source>
+                        </li>
+                        <li>
+Activate the configuration with:<br/>
+<source>$ bin/signserver reload 8</source>
+                        </li>
+                        <li>
+The status of the signer can now be viewed with:<br/>
+<source>$ bin/signserver getstatus complete mrtdsodsigner</source>
+                        </li>
+                    </ol>
+                    <p>
+Now <a href="integration.html">the SignServer APIs</a> can be used to send MRTD SOD sign requests the MRTDSODSigner.
+<br/>
+Also you can use the HTML page <a href="http://localhost:8080/signserver/demo/mrtdsodsign.jsp">http://localhost:8080/signserver/demo/mrtdsodsign.jsp</a> to enter requests and get the SOd back.
+This HTML form also functions as a sample to show how you can make HTTP requests from the personalisation system to the Document Signer.
+                    </p>
+                    <h4>Production configuration with HSM</h4>
+                        <p>
+To install a production signer using an HSM instead of the CryptoTokenP12, make 
+a copy of doc/sample-configs/pkcs11-crypto.properties and configure
+the necessary properties for the HSM and apply that file using setproperties and
+reload with its worker ID.<br/>
+(note after changing properties in the file it needs to be loaded again
+with setproperties)
+                        </p>
+                        <p>
+Now when configuring a worker make sure to have the worker property CRYPTOTOKEN=CryptoTokenP11.
+                        </p>
+                        <p>
+Before starting with an HSM installation you should read the about the
+    <a href="plugins.html#PKCS11CryptoToken">PKCS11CryptoToken</a> in the plugins
+section of the manual.
+                        </p>
+<source>
+bin/signserver setproperties doc/sample-configs/pkcs11-crypto.properties
+bin/signserver reload 9
+bin/signserver setproperties doc/sample-configs/mrtdsodsigner.properties
+bin/signserver setproperty 10 CRYPTOTOKEN CryptoTokenP11
+bin/signserver reload 10
+bin/signserver activatecryptotoken 9 tokenpin
+bin/signserver generatecertreq 9 "C=SE,CN=MRTD SOD Signer" SHA256WithRSA mrtdsodsigner.req
+</source>
+                        <p>
+Where 9 is the workerId that you got when running the 'setproperties' command for the pkcs11 crypto token.<br/>
+Tokenpin is the password for the HSM slot configured in the properties file.<br/>
+This will create a certificate request that you can get signed by your CA. When you have received the response you can import it and the CA certficate.
+If you have the returned signer certificate as cert.pem and the CA certificate as cacert.pem, then:
+                        </p>
+<source>
+cat cert.pem cacert.pem &gt; certchain.pem
+bin/signserver uploadsignercertificate 10 glob cert.pem
+bin/signserver uploadsignercertificatechain 10 glob certchain.pem
+bin/signserver reload 9
+</source>
+                        <p>
+Hint: you can use EJBCA to create keys on a PKCS#11 HSM using clientToolBox.<br/>
+ejbcaClientToolBox.sh PKCS11HSMKeyTool generate /opt/ETcpsdk/lib/linux-x86_64/libcryptoki.so 2048 DSSignKey 5
+                        </p>
+
+            </subsection>
+
+            </section>
+              
+            <section name="Upgrade">
+                <p>
+See SIGNSERVER_HOME/doc/RELEASE_NOTES.txt and UPGRADE.txt for information about upgrading from an earlier version of SignServer. 
+                </p>
+            </section>
+
+    </body>
+</document>
+

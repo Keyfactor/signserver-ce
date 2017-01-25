@@ -1,0 +1,12 @@
+<project name="noappserver" basedir=".." default="j2ee:deploy">
+
+    <property name="datasource.jndi-name-prefix" value="java:/"/>
+    <property name="appserver.client.jars" value=""/>
+
+    <target name="j2ee:check"/>
+
+    <target name="j2ee:deploy">
+        <echo>Deployment not supported</echo>
+    </target>
+
+</project>

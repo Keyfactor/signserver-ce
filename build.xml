@@ -1,0 +1,1020 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ======================================================================= -->
+<!--                                                                         -->
+<!--  SignServer: The OpenSource Automated Signing Server                    -->
+<!--                                                                         -->
+<!--  This software is free software; you can redistribute it and/or         -->
+<!--  modify it under the terms of the GNU Lesser General Public             -->
+<!--  License as published by the Free Software Foundation; either           -->
+<!--  version 2.1 of the License, or any later version.                      -->
+<!--                                                                         -->
+<!--  See terms of license at gnu.org.                                       -->
+<!--                                                                         -->
+<!-- ======================================================================= -->
+<!-- Version: $Id$ -->
+<project name="signserver" default="usage" basedir=".">
+    <description>SignServer targets.</description>
+    <property name="deploytools.version" value="2.0.2"/>
+    <import file="res/deploytools/build-impl.xml"/>
+
+    <!-- SignServer has some extra application server features -->
+    <property name="dss-appserver-impl.file" value="${basedir}/res/deploytools/appserver/${appserver.type}.xml"/>
+    <property name="dss-noappserver-impl.file" value="${basedir}/res/deploytools/appserver/noappserver.xml"/>
+    <import file="${dss-appserver-impl.file}" optional="true"/>
+    <import file="${dss-noappserver-impl.file}" optional="true"/>
+
+    <!-- Used by some SignServer-specific parts. -->
+    <property name="platform.project.dir" location="."/>
+
+    <!-- TODO: Below should be contributed back to DeployTools -->
+    <!-- Replace back slashes with forward slashes for post-processed pathsde
+to work on Windows. -->
+    <property name="base" location="."/>
+    <loadresource property="basepath">
+        <propertyresource name="base"/>
+        <filterchain>
+          <tokenfilter>
+            <filetokenizer/>
+            <replacestring from="\" to="/"/>
+          </tokenfilter>
+        </filterchain>
+    </loadresource>
+    <echo level="verbose">basepath: ${basepath}</echo>
+
+    <available file="${conf}/${app.name}_build.properties" property="legacy-build-properties1.available" value="true"/>
+    <available file="${app.name}_build.properties" property="legacy-build-properties2.available" value="true"/>
+    <fail if="legacy-build-properties1.available" message="Legacy signserver_build.properties detected. From 3.7 the file should be called signserver_deploy.properties"/>
+    <fail if="legacy-build-properties2.available" message="Legacy signserver_build.properties detected. From 3.7 the file should be called signserver_deploy.properties"/>
+
+    <!-- Project properties such as folder names and locations. Can be overriden 
+        by creating a file called signserver-project-custom.properties. -->
+    <property file="res/signserver-project-custom.properties"/>
+    <property file="res/signserver-project.properties"/>
+
+    <!--
+    A little special something to handle backward compatibility with people
+    using JBOSS_HOME. They can switch to APPSRV_HOME now, and both will work.
+    -->
+    <condition property="jboss.home" value="${env.JBOSS_HOME}" >
+      <equals arg1="${appserver.home}" arg2="${appserver.home}"/>
+    </condition>
+    <condition property="appserver.home" value="${env.APPSRV_HOME}" else="${jboss.home}">
+      <contains string="${jboss.home}" substring="JBOSS_HOME"/>
+    </condition>
+    <property name="j2ee.server.home" value="${appserver.home}"/>
+
+    <!-- Lastly import the default properties -->
+    <property file="${res}/default_build.properties"/>
+    
+    <condition property="j2ee.web-nohttps.condition">
+        <istrue value="${j2ee.web-nohttps}"/>
+    </condition>
+    
+    <import file="${custom.build.xml}" optional="true"/>
+
+    <!-- Properties with paths to all module projects -->
+    <property file="${res}/modules-project.properties"/>
+    
+    <condition property="web.admingui.dist.conditionenabled">
+        <istrue value="${web.admingui.dist.enabled}"/>
+    </condition>
+    
+    <condition property="web.clientcli.dist.conditionenabled">
+        <istrue value="${web.clientcli.dist.enabled}"/>
+    </condition>
+    
+    <!-- Check if Admin Web is both enabled and available as a module. -->
+    <condition property="adminweb.enabled.available" value="true">
+        <and>
+            <or>
+                <istrue value="${adminweb.enabled}"/>
+                <istrue value="${includemodulesinbuild}"/>
+            </or>
+            <available file="mods-available/30_adminweb.properties"/>
+        </and>
+    </condition>
+
+    <import file="${modules}/compile.xml" optional="true"/>
+    
+    
+    <!--
+        There exist several targets which are by default empty and which can be
+        used for execution of your tasks. These targets are usually executed
+        before and after some main targets. They are:
+
+          -pre-init:                 called before initialization
+          -post-init:                called after initialization
+          -pre-configure-ear:        called before configuring the EAR
+          -pre-build-ear:            called before zipping the final EAR
+          -post-configure-ear:       called after configuring the EAR
+          -pre-deploy-ear:           called before deploying the EAR
+          -post-deploy-ear:          called after deploying the EAR
+        -->
+
+    <!-- Any project-specific targets goes here -->
+    
+    
+    
+    
+    <!-- =================================================================== -->
+    <!-- Help targets                                                        -->
+    <!-- =================================================================== -->
+    
+    <target name="help" depends="usage"/>
+    <target name="usage" description="Displays usage examples for this Ant script">
+        <echo>
+Usage examples for the SignServer Ant script
+
+
+bin/ant -p                  Prints the main Ant targets supported by this 
+                            script.
+bin/ant usage               Prints this text with sample usages.
+bin/ant clean               Cleans temporary files, the final EAR file and if 
+                            this is a source distribution the built JARs
+                            directly in the lib folder.
+bin/ant display-properties  Prints the properties that will be used to build and
+                            to configure the EAR file.
+bin/ant configure-ear       Puts together the final configured EAR file.
+bin/ant deploy              Configures the EAR file and then deploys it to
+                            the application server.
+bin/ant systemtest:jars     Run all available systemtest JARs.
+            
+Note:
+For the binary distribution this commands can be used directly. In other
+cases SignServer needs to be built first. See doc/README.txt and the
+Installation Guide for details.
+        </echo>
+    </target>
+
+
+    <!-- =================================================================== -->
+    <!-- Main Clean                                                          -->
+    <!-- =================================================================== -->
+
+    <target name="clean">
+        <echo>Cleaning tmp</echo>
+        <delete dir="${tmp}"/>
+        <!-- Clean everything if this is a source distribution -->
+        <subant target="clean-build" inheritall="true" failonerror="true">
+            <fileset dir="${base}" includes="modules/compile.xml"/>
+        </subant>
+    </target>
+
+    
+    <!-- =================================================================== -->
+    <!-- Configuring                                                         -->
+    <!-- =================================================================== -->
+
+    <!-- We also create an AdminGUI dist. -->
+    <target name="-post-configure-ear"
+            depends="-create-admingui-dist,-create-clientcli-dist,-create-sample-configs-dist"/>
+
+    <!-- Allow the old name for configure-ear to still be working. -->
+    <target name="compose-ear" depends="configure-ear"/>
+    <!-- Filter out things we don't want from CESeCore. This is project specifc. -->
+    <target name="-pre-build-ear" depends="-init-filters,-init-filter-jars-db,-init-filter-jars-nodb">
+        <echo/>
+        <echo message="Filtering jars..."/>
+
+        <!-- cesecore-ejb.jar -->
+        <property name="cesecore-ejb.jar" value="cesecore-ejb-6.4.1.jar"/>
+        <move todir="${tmp}" file="${app.ear.dir}/${cesecore-ejb.jar}"/>
+        <jar destfile="${app.ear.dir}/${cesecore-ejb.jar}">
+            <zipfileset src="${tmp}/${cesecore-ejb.jar}" excludes="${cesecore-ejb-excludes}"/>
+        </jar>
+
+        <!-- cesecore-entities.jar -->
+        <property name="cesecore-entities.jar" value="cesecore-entity-6.4.1.jar"/>
+        <move todir="${tmp}" file="${app.ear.dir}/lib/${cesecore-entities.jar}"/>
+        <jar destfile="${app.ear.dir}/lib/${cesecore-entities.jar}">
+            <zipfileset src="${tmp}/${cesecore-entities.jar}" excludes="${cesecore.entities.excludes}"/>
+        </jar>
+
+        <!-- signserver-ejb.jar -->
+        <property name="signserver-ejb.jar" value="SignServer-ejb.jar"/>
+        <move todir="${tmp}" file="${app.ear.dir}/${signserver-ejb.jar}"/>
+        <jar destfile="${app.ear.dir}/${signserver-ejb.jar}">
+            <zipfileset src="${tmp}/${signserver-ejb.jar}" excludes="${signserver-ejb-excludes}"/>
+        </jar>
+    </target>
+    <target name="-init-filter-jars-db" unless="noDB">
+        <property name="cesecore-ejb-excludes" value="${cesecore.ejb.withdb.excludes}"/>
+        <property name="signserver-ejb-excludes" value="${signserver.ejb.withdb.excludes}"/>
+    </target>
+    <target name="-init-filter-jars-nodb" if="noDB">
+        <property name="cesecore-ejb-excludes" value="${cesecore.ejb.nodb.excludes}"/>
+        <property name="signserver-ejb-excludes" value="${signserver.ejb.nodb.excludes}"/>
+    </target>
+    <target name="-init-filters"></target>
+
+    <!-- We support the old name for deploy-ear. -->
+    <target name="deploy" depends="deploy-ear" description="Deploys SignServer"/>
+
+
+    <!-- Target for creating a binary distribution for arbitrary jars and their dependencies. -->
+    <target name="dist">
+        <fail unless="dist.jars" message="Usage: bin/ant dist -Ddist.jars=JARNAME -Ddist.includes=OTHERFILES"/>
+        
+        <loadresource property="classpath">
+            <zipentry zipfile="lib/${dist.jars}" name="META-INF/MANIFEST.MF"/>
+            <filterchain>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <containsregex pattern="^Class-Path: (.+)$" flags="i"/>
+                    <replaceregex pattern="^Class-Path: (.+)$" replace="\1" flags="i"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="(\r?\n)+" replace="" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="( )+" replace="," flags="g"/>
+                </tokenfilter>
+            </filterchain>
+        </loadresource>
+        <echo level="verbose">Class-path from MANIFEST-MF: ${classpath}</echo>
+        
+        <property name="dist.dir" location="${tmp}/dist"/>
+        <echo>Copying distribution to ${dist.dir}</echo>
+        <mkdir dir="${dist.dir}"/>
+        
+        <mkdir dir="${dist.dir}/lib"/>
+        <copy todir="${dist.dir}" overwrite="true">
+            <fileset dir="." includes="_NON_EXISTING,${dist.includes}" excludes="_NON_EXISTING,${dist.excludes.extra}"/>
+        </copy>
+        <chmod perm="a+x">
+            <fileset dir="${dist.dir}/bin/" includes="*"/>
+        </chmod>
+        <copy todir="${dist.dir}/lib">
+            <fileset dir="lib" includes="_NON_EXISTING,${dist.jars}"/>
+            <fileset dir="lib" includes="_NON_EXISTING,${classpath}"/>
+        </copy>
+        
+    </target>
+    
+    <target name="dist:zip" description="Create a zip file from the dist output">
+        <fail unless="dist.zipdest" message="Usage: bin/ant dist:zip -Ddist.zipdest=tmp/admingui-bin.zip -Ddist.zipprefix=admingui"/>
+        <fail unless="dist.zipprefix" message="Usage: bin/ant dist:zip -Ddist.zipdest=tmp/admingui-bin.zip -Ddist.zipprefix=admingui"/>
+        <property name="dist.zipsrc" location="${tmp}/dist"/>
+
+        <delete file="${dist.zipdest}" failonerror="false"/>
+        <zip destfile="${dist.zipdest}">
+            <zipfileset dir="${dist.zipsrc}" prefix="${dist.zipprefix}" filemode="600" dirmode="700" excludes="bin/*"/>
+            <zipfileset dir="${dist.zipsrc}" prefix="${dist.zipprefix}" filemode="700" dirmode="700" includes="bin/*"/>
+        </zip>
+        <echo>Wrote ${dist.zipdest}</echo>
+    </target>
+
+    <target name="dist:admingui">
+        <available file="${basedir}/lib/SignServer-AdminGUI.jar" property="admingui.jar" value="SignServer-AdminGUI.jar"/>
+        <available file="${basedir}/lib/SignServer-AdminGUI-${app.version.number}.jar" property="admingui.jar" value="SignServer-AdminGUI-${app.version.number}.jar"/>
+        <fail unless="admingui.jar" message="Must build SignServer-AdmingGUI first"/>
+        <antcall target="dist">
+            <param name="dist.jars" value="${admingui.jar}"/>
+            <param name="dist.includes" value="
+                bin/signserver-gui,
+                bin/signserver-gui.cmd,
+                conf/admingui_default.properties,
+                conf/log4j.properties,
+                res/admingui-splash.png,
+                doc/sample-configs/*.properties,
+                ${dist.includes.extra}
+                "/>
+        </antcall>
+    </target>
+    <target name="dist:admingui-zip" description="Create a binary ZIP distribution of the Admin GUI">
+        <delete dir="${tmp}/dist"/> <!-- Only include the admingui in the zip file -->
+        <antcall target="dist:admingui"/>
+        <antcall target="dist:zip">
+            <param name="dist.zipdest" value="${web.admingui.dist.file}"/>
+            <param name="dist.zipprefix" value="signserver"/>
+        </antcall>
+    </target>
+
+    <target name="-create-admingui-dist" if="web.admingui.dist.conditionenabled">
+        <delete dir="${tmp}/dist"/> <!-- Only include the admingui in the zip file -->
+        <antcall target="dist:admingui"/>
+        <antcall target="dist:zip">
+            <param name="dist.zipdest" value="${web.admingui.dist.file}"/>
+            <param name="dist.zipprefix" value="signserver"/>
+        </antcall>
+    </target>
+    
+    <target name="dist:clientcli">
+        <available file="${basedir}/lib/SignServer-Client-CLI.jar" property="clientcli.jar" value="SignServer-Client-CLI.jar"/>
+        <available file="${basedir}/lib/SignServer-Client-CLI-${app.version.number}.jar" property="clientcli.jar" value="SignServer-Client-CLI-${app.version.number}.jar"/>
+        <fail unless="clientcli.jar" message="Must build SignServer-Client-CLI first"/>
+        <antcall target="dist">
+            <param name="dist.jars" value="${clientcli.jar}"/>
+            <param name="dist.includes" value="
+                bin/signclient,
+                bin/signclient.cmd,
+                conf/log4j.properties,
+                doc/lgpl-2.1.txt,
+                res/deploytools/cesecore/defaultvalues.properties,
+                ${dist.includes.extra}
+                "/>
+        </antcall>
+    </target>
+    <target name="dist:clientcli-zip" description="Create a binary ZIP distribution of the Client CLI">
+        <delete dir="${tmp}/dist"/> <!-- Only include the clientcli in the zip file -->
+        <antcall target="dist:clientcli"/>
+        <antcall target="dist:zip">
+            <param name="dist.zipdest" value="${basedir}/tmp/SignServer-ClientCLI-${app.version.number}-bin.zip"/>
+            <param name="dist.zipprefix" value="signserver"/>
+        </antcall>
+    </target>
+    
+    <target name="-create-clientcli-dist" if="web.clientcli.dist.conditionenabled">
+        <delete dir="${tmp}/dist"/> <!-- Only include the client CLI in the zip file -->
+        <antcall target="dist:clientcli"/>
+        <antcall target="dist:zip">
+            <param name="dist.zipdest" value="${web.clientcli.dist.file}"/>
+            <param name="dist.zipprefix" value="signserver"/>
+        </antcall>
+    </target>
+    
+    <target name="dist:sampleconfigs-jar" depends="-create-sample-configs-dist"/>
+    <target name="-create-sample-configs-dist">
+        <delete dir="${tmp}/dist"/> <!-- Only include the client CLI in the zip file -->
+        <antcall target="dist:sampleconfigs"/>
+        <antcall target="dist:zip">
+            <param name="dist.zipdest" value="${basedir}/lib/SignServer-SampleConfigs.jar"/>
+            <param name="dist.zipprefix" value=""/>
+        </antcall>
+    </target>
+    <target name="dist:sampleconfigs">
+        <antcall target="-dist-no-jar">
+            <param name="dist.includes" value="
+                doc/sample-configs/*.properties,
+                ${dist.sampleconfigs.includes.extra}
+                "/>
+            <param name="dist.excludes.extra" value="${dist.sampleconfigs.excludes.extra}"/>
+        </antcall>
+    </target>
+    
+    <target name="-dist-no-jar">
+        <property name="dist.dir" location="${tmp}/dist"/>
+        <echo>Copying distribution to ${dist.dir}</echo>
+        <mkdir dir="${dist.dir}"/>
+        
+        <mkdir dir="${dist.dir}/sampleconfigs"/>
+        <copy todir="${dist.dir}/sampleconfigs" overwrite="true" flatten="true">
+            <fileset dir="." includes="_NON_EXISTING,${dist.includes}" excludes="_NON_EXISTING,${dist.excludes.extra}"/>
+        </copy>
+        
+        <fileset id="dist.contents" dir="${dist.dir}/sampleconfigs" includes="*"/> 
+        <property name="prop.dist.contents" refid="dist.contents"/>
+        
+        <echo level="debug">Sample config files: ${prop.dist.contents}</echo>
+        
+        <echo file="${dist.dir}/sampleconfigs.properties" append="false" encoding="latin1">
+sampleconfigs.files=${prop.dist.contents}
+        </echo>
+
+    </target>
+
+    <!-- =================================================================== -->
+    <!-- Main targets                                                        -->
+    <!-- =================================================================== -->
+    
+    <target name="init" depends="-init-edition">
+        <!-- Create the time stamp -->
+        <tstamp/>
+    </target>
+    
+    <target name="build">
+        <echo level="warn">
+Please see doc/README.txt and the Installation Guide for how to build SignServer
+or use the pre-built binary distribution instead.            
+
+After reading the documentation SignServer can be built with:
+mvn install
+        </echo>
+        <fail message="Use Maven for building SignServer"/>
+    </target>
+
+
+    <!-- =================================================================== -->
+    <!-- Release part                                                        -->
+    <!-- =================================================================== -->
+
+    <target name="-warn-build">
+        <echo>
+
+        Make sure SignServer is built using 'mvn clean install' before running this target!
+            
+        </echo>
+    </target>
+
+
+    <target name="-init-release-patternsets">
+        <!-- All files for source release except scripts -->
+        <patternset id="source.normalfiles">
+            <include name="**/**" />
+            
+            <exclude name="bin/ant"/>
+	    <exclude name="bin/randomtest"/>
+            <exclude name="bin/setstatusinsync.sh"/>
+            <exclude name="bin/signclient"/>
+            <exclude name="bin/signserver"/>
+	    <exclude name="bin/signserver-db"/>
+            <exclude name="bin/signserver-gui"/>
+	    <exclude name="bin/stresstest"/>
+            <exclude name="bin/timemonitor-in-background.sh"/>
+            
+            <exclude name="**/CVS/**" />
+            <exclude name="signserver_deploy.properties" />
+            <exclude name="conf/signserver_deploy.properties" />
+            <exclude name="tmp/**" />
+            <exclude name="p12/**" />
+            <exclude name="mods-available/**" />
+            <exclude name="**/dist/**" />
+            <exclude name="**/build/**" />
+            <exclude name="SignServer-AdminGUI/lib/**" />
+            <exclude name="out/**" />
+            <exclude name="eclipseBuild/**" />
+            <exclude name="**/*.class" />
+            <exclude name="**/.cvsignore" />
+            <exclude name="**/nbproject/private/**" />
+            <exclude name="lib/**/*.jar" />
+            <exclude name="lib/**/*.zip" />
+            <exclude name="**/target/**" />
+            
+            <!-- Exclude libraries moved to lib/ext during build -->
+            <exclude name="lib/ext/cesecore-ce/**"/>
+            <exclude name="modules/mod-enterprise/lib/**"/>
+        </patternset>
+        
+        <!-- All scripts for source release -->
+        <patternset id="source.executablefiles">
+            <include name="bin/ant"/>
+	    <include name="bin/randomtest"/>
+            <include name="bin/setstatusinsync.sh"/>
+            <include name="bin/signclient"/>
+            <include name="bin/signserver"/>
+	    <include name="bin/signserver-db"/>
+            <include name="bin/signserver-gui"/>
+	    <include name="bin/stresstest"/>
+            <include name="bin/timemonitor-in-background.sh"/>
+        </patternset>
+        
+        <!-- All files for binary release except scripts -->
+        <patternset id="binary.normalfiles">
+            <include name="**/**" />
+            
+            <exclude name="bin/ant"/>
+	    <exclude name="bin/randomtest"/>
+            <exclude name="bin/setstatusinsync.sh"/>
+            <exclude name="bin/signclient"/>
+            <exclude name="bin/signserver"/>
+	    <exclude name="bin/signserver-db"/>
+            <exclude name="bin/signserver-gui"/>
+	    <exclude name="bin/stresstest"/>
+            <exclude name="bin/timemonitor-in-background.sh"/>
+
+            <exclude name="signserver_deploy.properties" />
+            <exclude name="conf/signserver_deploy.properties" />
+            <exclude name="conf/admingui.properties" />
+            <exclude name="modules/**" />
+            <exclude name="p12/**" />
+            <exclude name="tmp/**" />
+            <exclude name=".eclipse/**" />
+            <exclude name=".settings/**" />
+            <exclude name=".classpath" />
+            <exclude name=".project" />
+            <exclude name="**/.svn/**" />
+            <exclude name="**/target/**" />
+
+            <exclude name="res/install/**" />
+
+            <!-- TODO: The following should be moved anyway -->
+            <exclude name="bin/junit/**"/>
+            <exclude name="bin/classes/**"/>
+            
+            <!-- Exclude libraries moved to lib/ext during build -->
+            <exclude name="lib/ext/cesecore-ce/**"/>
+            <exclude name="modules/mod-enterprise/lib/**"/>
+        </patternset>
+        
+        <!-- All scripts for binary release -->
+        <patternset id="binary.executablefiles">
+            <include name="bin/ant"/>
+	    <include name="bin/randomtest"/>
+            <include name="bin/setstatusinsync.sh"/>
+            <include name="bin/signclient"/>
+            <include name="bin/signserver"/>
+	    <include name="bin/signserver-db"/>
+            <include name="bin/signserver-gui"/>
+	    <include name="bin/stresstest"/>
+            <include name="bin/timemonitor-in-background.sh"/>
+        </patternset>
+        
+        <!-- All files for mixed release except scripts -->
+        <patternset id="mixed.normalfiles">
+            <include name="**/**" />
+            
+            <!-- Executable files -->
+            <exclude name="bin/ant"/>
+	    <exclude name="bin/randomtest"/>
+            <exclude name="bin/setstatusinsync.sh"/>
+            <exclude name="bin/signclient"/>
+            <exclude name="bin/signserver"/>
+	    <exclude name="bin/signserver-db"/>
+            <exclude name="bin/signserver-gui"/>
+	    <exclude name="bin/stresstest"/>
+            <exclude name="bin/timemonitor-in-background.sh"/>
+
+            <exclude name="doc/lgpl-**" />
+            <exclude name="**/CVS/**" />
+            <exclude name="signserver_deploy.properties" />
+            <exclude name="conf/signserver_deploy.properties" />
+            <exclude name="tmp/**" />
+            <exclude name="p12/**" />
+            <exclude name="dist/**" />
+            <exclude name="lib/*.*ar" />
+            <exclude name="out/**" />
+            <exclude name="eclipseBuild/**" />
+            <exclude name="**/*.class" />
+            <exclude name=".classpath" />
+            <exclude name=".project" />
+            <exclude name=".eclipse/**" />
+            <exclude name=".settings/**" />
+            <exclude name="**/.cvsignore" />
+            <exclude name="**/*.sh" />
+            <exclude name="**/nbproject/private/**" />
+            <exclude name="**/target/**" />
+            
+            <!-- Exclude libraries moved to lib/ext during build -->
+            <exclude name="lib/ext/cesecore-ce/**"/>
+            <exclude name="modules/mod-enterprise/lib/**"/>
+        </patternset>
+        
+        <!-- All scripts for source release -->
+        <patternset id="mixed.executablefiles">
+            <patternset refid="source.executablefiles"/>
+        </patternset>
+    </target>
+
+    <target name="release" depends="-warn-build, -check-built, release:binary-zip, release:zip, release:source-tarball" description="Create all 3 SignServer release artifacts"/>
+
+    <!-- Deprecated: New target called release:zip -->
+    <target name="ziprelease" depends="release:zip"/>
+
+    <target name="release:zip" description="Make a zip file for SignServer release" >
+        <property name="signserver.zipversion" value="${app.version.number}"/>
+        <!-- <input message="Version tag for zipfile (ex 3_1_0):" addproperty="signserver.zipversion" /> -->
+        <antcall target="-release:zip-lgpl21"/>
+    </target>
+
+    <target name="release:source-zip" description="Make a source zip files for SignServer release" >
+        <property name="signserver.zipversion" value="${app.version.number}"/>
+        <!-- <input message="Version tag for zipfile (ex 3_1_0):" addproperty="signserver.zipversion" /> -->
+        <antcall target="-release:source-zip-lgpl21"/>
+    </target>
+
+    <target name="release:source-tarball" description="Make a source tarball for SignServer release">
+        <property name="signserver.zipversion" value="${app.version.number}"/>
+        <antcall target="-release:source-tarball-lgpl21"/>
+    </target>
+
+    <target name="-release:zip-lgpl21" depends="init,clean,-init-release-patternsets">
+        <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
+        <property name="zip.dest.file" location="../signserver-${app.edition.lc}-${signserver.zipversion}.zip"/>
+        <zip destfile="${zip.dest.file}">
+            <zipfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="600" dirmode="700">
+                <patternset refid="mixed.normalfiles"/>
+            </zipfileset>
+            <zipfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="700" dirmode="700">
+                <patternset refid="mixed.executablefiles"/>
+            </zipfileset>
+        </zip>
+        <delete file="LICENSE"/>
+        <checksum file="${zip.dest.file}" algorithm="SHA1" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${zip.dest.file}" algorithm="SHA1" property="zip.dest.file.sha1"/>
+        <checksum file="${zip.dest.file}" algorithm="SHA-256" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${zip.dest.file}" algorithm="SHA-256" property="zip.dest.file.sha256"/>
+        <echo>
+File:             ${zip.dest.file}
+SHA1 checksum:    ${zip.dest.file.sha1}
+SHA-256 checksum: ${zip.dest.file.sha256}
+        </echo>
+    </target>
+
+    <target name="-release:source-zip-lgpl21" depends="init,clean,-init-release-patternsets">
+        <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
+        <property name="zip.src.dest.file" location="../signserver-${app.edition.lc}-${signserver.zipversion}-src.zip"/>
+        <zip destfile="${zip.src.dest.file}">
+            <zipfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}-src" filemode="600" dirmode="700">
+                <patternset refid="source.normalfiles"/>
+            </zipfileset>
+            <zipfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}-src" filemode="700" dirmode="700">
+                <patternset refid="source.executablefiles"/>
+            </zipfileset>
+        </zip>
+        <delete file="LICENSE"/>
+        <checksum file="${zip.src.dest.file}" algorithm="SHA1" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${zip.src.dest.file}" algorithm="SHA1" property="zip.src.dest.file.sha1"/>
+        <checksum file="${zip.src.dest.file}" algorithm="SHA-256" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${zip.src.dest.file}" algorithm="SHA-256" property="zip.src.dest.file.sha256"/>
+        <echo>
+File:             ${zip.src.dest.file}
+SHA1 checksum:    ${zip.src.dest.file.sha1}
+SHA-256 checksum: ${zip.src.dest.file.sha256}
+        </echo>
+    </target>
+
+    <target name="-release:source-tarball-lgpl21" depends="init,clean,-init-release-patternsets">
+        <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
+        <property name="tgz.src.tar.file" value="../signserver-${app.edition.lc}-${signserver.zipversion}-src.tar" />
+        <property name="tgz.src.tar.gz" location="${tgz.src.tar.file}.gz" />
+        <tar tarfile="${tgz.src.tar.file}" basedir="." longfile="gnu">
+            <exclude name="**/**"/>
+            <tarfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="600" dirmode="700">
+                <patternset refid="source.normalfiles"/>
+            </tarfileset>
+            <tarfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="700" dirmode="700">
+                <patternset refid="source.executablefiles"/>
+            </tarfileset>
+        </tar>
+        <gzip destfile="${tgz.src.tar.gz}" src="${tgz.src.tar.file}"/>
+        <delete file="${tgz.src.tar.file}"/>
+        <delete file="LICENSE"/>
+        <checksum file="${tgz.src.tar.gz}" algorithm="SHA1" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${tgz.src.tar.gz}" algorithm="SHA1" property="tgz.src.tar.gz.sha1"/>
+        <checksum file="${tgz.src.tar.gz}" algorithm="SHA-256" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${tgz.src.tar.gz}" algorithm="SHA-256" property="tgz.src.tar.gz.sha256"/>
+        <echo>
+File:             ${tgz.src.tar.gz}
+SHA1 checksum:    ${tgz.src.tar.gz.sha1}
+SHA-256 checksum: ${tgz.src.tar.gz.sha256}
+        </echo>
+    </target>
+
+    <target name="release:binary-tarball" depends="init,-warn-build,-init-release-patternsets" description="Make a binary tarball for SignServer release">
+        <property name="signserver.zipversion" value="${app.version.number}"/>
+        <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
+        <property name="tgz.bin.tar" value="../signserver-${app.edition.lc}-${signserver.zipversion}-bin.tar" />
+        <property name="tgz.bin.tar.gz" location="${tgz.bin.tar}.gz" />
+        <tar tarfile="${tgz.bin.tar}" basedir="." longfile="gnu">
+            <exclude name="**/**"/>
+            <tarfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="600" dirmode="700">
+                <patternset refid="binary.normalfiles"/>
+            </tarfileset>
+            <tarfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="700" dirmode="700">
+                <patternset refid="binary.executablefiles"/>
+            </tarfileset>
+        </tar>
+        <gzip destfile="${tgz.bin.tar.gz}" src="${tgz.bin.tar}"/>
+        <delete file="${tgz.bin.tar}"/>
+        <delete file="LICENSE"/>
+        <checksum file="${tgz.bin.tar.gz}" algorithm="SHA1" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${tgz.bin.tar.gz}" algorithm="SHA1" property="tgz.bin.tar.gz.sha1"/>
+        <checksum file="${tgz.bin.tar.gz}" algorithm="SHA-256" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${tgz.bin.tar.gz}" algorithm="SHA-256" property="tgz.bin.tar.gz.sha256"/>
+        <echo>
+File:             ${tgz.bin.tar.gz}
+SHA1 checksum:    ${tgz.bin.tar.gz.sha1}
+SHA-256 checksum: ${tgz.bin.tar.gz.sha1}
+        </echo>
+    </target>
+    
+    <target name="release:binary-zip" depends="init,-warn-build,-init-release-patternsets" description="Make a binary zip for SignServer release">
+        <property name="signserver.zipversion" value="${app.version.number}"/>
+        <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
+        <property name="zip.bin" location="../signserver-${app.edition.lc}-${signserver.zipversion}-bin.zip"/>
+        <zip destfile="${zip.bin}">
+            <exclude name="**/**"/>
+            <zipfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="600" dirmode="700">
+                <patternset refid="binary.normalfiles"/>
+            </zipfileset>
+            <zipfileset dir="." prefix="signserver-${app.edition.lc}-${signserver.zipversion}" filemode="700" dirmode="700">
+                <patternset refid="binary.executablefiles"/>
+            </zipfileset>
+        </zip>
+        <delete file="LICENSE"/>
+        <checksum file="${zip.bin}" algorithm="SHA1" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${zip.bin}" algorithm="SHA1" property="zip.bin.sha1"/>
+        <checksum file="${zip.bin}" algorithm="SHA-256" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${zip.bin}" algorithm="SHA-256" property="zip.bin.sha256"/>
+        <echo>
+File:             ${zip.bin}
+SHA1 checksum:    ${zip.bin.sha1}
+SHA-256 checksum: ${zip.bin.sha256}
+        </echo>
+    </target>
+
+
+    <!-- =================================================================== -->
+    <!-- Debian packaging                                                    -->
+    <!-- =================================================================== -->
+    <target name="debian-pkgdist" depends="clean, unix-create-jar-symlinks, -warn-build" 
+        description="Put together files to be included in Debian (or other) packages">
+        <property name="pkg.basename" value="signserver3.3"/>
+        <property name="pkg.version" value="3.3"/>
+        <property name="prefix" value="usr/share"/>
+        
+        <delete dir="${debian.pkgdist.destdir}"/>
+        
+        <!-- libsignserver-common -->
+        <mkdir dir="${debian.pkgdist.destdir}/libsignserver-common/${prefix}/${pkg.basename}"/>
+        <copy todir="${debian.pkgdist.destdir}/libsignserver-common/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
+                <include name="SignServer-Common.jar"/>
+                <include name="SignServer-ejb-interfaces.jar"/>
+                <include name="SignServer-Module-Renewal-interface.jar"/>
+            </fileset>
+        </copy>
+        <mkdir dir="${debian.pkgdist.destdir}/libsignserver-common/usr/share/java"/>
+        <symlink resource="../${pkg.basename}/lib/SignServer-Common.jar" 
+            link="${debian.pkgdist.destdir}/libsignserver-common/usr/share/java/signserver-common-${pkg.version}.jar"/>
+        <symlink resource="../${pkg.basename}/lib/SignServer-ejb-interfaces.jar" 
+            link="${debian.pkgdist.destdir}/libsignserver-common/usr/share/java/signserver-ejb-interfaces-${pkg.version}.jar"/>
+        <copy todir="${debian.pkgdist.destdir}/libsignserver-common/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
+                <include name="nblibraries.properties"/>
+                <include name="readme.txt"/>
+                
+                <!-- Bouncycastle (all) -->
+                <include name="ext/bc*.jar"/>
+                
+                <!-- EJB/Servlet (cli, gui) -->
+                <include name="ext/ext/jboss*.jar"/>
+                
+                <!-- CLI (both client and admin) -->
+                <include name="ext/commons-cli-1.3.1.jar"/>
+                
+                <!-- Common (all) -->
+                <include name="ext/cert-cvc.jar"/>
+                <include name="ext/commons-collections-3.2.2.jar"/>
+                <include name="ext/commons-io-1.4.jar"/>
+                <include name="ext/commons-lang-2.6.jar"/>
+                <include name="ext/commons-logging-1.1.1.jar"/>
+                <include name="ext/commons-configuration.jar"/>
+                <include name="ext/ejbca-util.jar"/>
+                <include name="ext/log4j-1.2.14.jar"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/libsignserver-common/${prefix}/${pkg.basename}/conf">
+            <fileset dir="${base}/conf">
+                <include name="jboss/*"/>
+                <include name="glassfish/*"/>
+                <include name="log4j.properties"/>
+            </fileset>
+        </copy>
+        <symlinklibs action="replace" dir="${debian.pkgdist.destdir}/libsignserver-common/${prefix}/${pkg.basename}/lib" mappingsFile="${mappingsFile}"/>
+        
+        <!-- signserver-server -->
+        <mkdir dir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}"/>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/bin">
+            <fileset dir="${base}/bin">
+                <include name="signserver"/>
+                <include name="ant"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/conf">
+            <fileset dir="${base}/conf">
+                <include name="signserver_deploy.properties.sample"/>
+                <include name="signserver_cli.properties"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
+                <exclude name="ext/*"/>
+                <exclude name="ext/**"/>
+                <exclude name="ext/**/*"/>
+                <exclude name="readme.txt"/>
+                <exclude name="nblibraries.properties"/>
+                <exclude name="SignServer-Common.jar"/>     <!-- libsignserver-common -->
+                <exclude name="SignServer-ejb-interfaces.jar"/>      <!-- libsignserver-common -->
+                <exclude name="SignServer-AdminGUI.jar"/> <!-- signserver-admingui -->
+                <exclude name="SignServer-Client-CLI.jar"/> <!-- signserver-client -->
+                <exclude name="SignServer-Client-SignServerWS.jar"/> <!-- signserver-client -->
+                <exclude name="SignServer-Client-SigningAndValidationAPI.jar"/> <!-- signserver-client -->
+                <exclude name="SignServer-Module*.jar"/> <!-- libsignserver-modules -->
+                <exclude name="SignServer-war-Doc.war"/> <!-- signserver-doc -->
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/doc">
+            <fileset dir="${base}/doc">
+                <exclude name="htdocs/**"/> <!-- signserver-doc -->
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/lib/ext">
+            <fileset dir="${base}/lib/ext">
+               
+                <!-- EJB -->
+                <include name="hibernate/**"/>
+                
+                <!-- Quartz -->
+                <include name="quartz/**"/>
+                
+                <!-- File uploads -->
+                <include name="commons-fileupload-1.3.1.jar"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/mods-available">
+            <fileset dir="${base}/mods-available">
+                <exclude name="40_*"/> <!-- libsignserver-modules -->
+                <exclude name="30_webdoc.properties"/> <!-- signserver-doc -->
+            </fileset>
+        </copy>
+        <mkdir dir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/p12"/>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/res">
+            <fileset dir="${base}/res">
+                <exclude name="install/**"/>
+                <exclude name="test/**"/>
+                <exclude name="admingui-splash.png"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}">
+            <fileset dir="${base}">
+                <include name="build.xml"/>
+                <include name="ChangeLog.txt"/>
+                <include name="README"/>
+            </fileset>
+        </copy>
+        <symlinklibs action="replace" dir="${debian.pkgdist.destdir}/signserver-server/${prefix}/${pkg.basename}/lib" mappingsFile="${mappingsFile}"/>
+        
+        <!-- signserver-admingui -->
+        <mkdir dir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}"/>
+        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/bin">
+            <fileset dir="${base}/bin">
+                <include name="signserver-gui"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/res">
+            <fileset dir="${base}/res">
+                <include name="admingui-splash.png"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/conf">
+            <fileset dir="${base}/conf">
+                <include name="admingui_default.properties"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/lib/ext">
+            <fileset dir="${base}/lib/ext">
+                <include name="swing-app-framework/**"/>
+                <include name="beans-binding/**"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
+                <include name="SignServer-AdminGUI.jar"/>
+            </fileset>
+        </copy>
+        <symlinklibs action="replace" dir="${debian.pkgdist.destdir}/signserver-admingui/${prefix}/${pkg.basename}/lib" mappingsFile="${mappingsFile}"/>
+        
+        <!-- signserver-client -->
+        <mkdir dir="${debian.pkgdist.destdir}/signserver-client/${prefix}/${pkg.basename}"/>
+        <copy todir="${debian.pkgdist.destdir}/signserver-client/${prefix}/${pkg.basename}/bin">
+            <fileset dir="${base}/bin">
+                <include name="signclient"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-client/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
+                <include name="SignServer-Client-CLI.jar"/>
+                <include name="SignServer-Client-SignServerWS.jar"/>
+                <include name="SignServer-Client-SigningAndValidationAPI.jar"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-client/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
+                <!-- TODO -->
+                <exclude name="**"/>
+            </fileset>
+        </copy>
+        <symlinklibs action="replace" dir="${debian.pkgdist.destdir}/signserver-client/${prefix}/${pkg.basename}/lib" mappingsFile="${mappingsFile}"/>
+        
+        <!-- libsignserver-modules -->
+        <mkdir dir="${debian.pkgdist.destdir}/libsignserver-modules/${prefix}/${pkg.basename}"/>
+        <copy todir="${debian.pkgdist.destdir}/libsignserver-modules/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
+                <exclude name="ext/**"/>
+                <include name="SignServer-Module*.jar"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/libsignserver-modules/${prefix}/${pkg.basename}/lib/ext">
+            <fileset dir="${base}/lib/ext">
+                <include name="module/pdfsigner/**"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/libsignserver-modules/${prefix}/${pkg.basename}/mods-available">
+            <fileset dir="${base}/mods-available">
+                <include name="40_*"/>
+            </fileset>
+        </copy>
+        <symlinklibs action="replace" dir="${debian.pkgdist.destdir}/libsignserver-modules/${prefix}/${pkg.basename}/lib" mappingsFile="${mappingsFile}"/>
+        
+        <!-- signserver-doc -->
+        <mkdir dir="${debian.pkgdist.destdir}/signserver-doc/${prefix}/${pkg.basename}"/>
+        <copy todir="${debian.pkgdist.destdir}/signserver-doc/${prefix}/${pkg.basename}/lib">
+            <fileset dir="${base}/lib">
+                <include name="SignServer-war-Doc.war"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-doc/${prefix}/${pkg.basename}/mods-available">
+            <fileset dir="${base}/mods-available">
+                <include name="30_webdoc.properties"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian.pkgdist.destdir}/signserver-doc/${prefix}/${pkg.basename}/doc">
+            <fileset dir="${base}/doc">
+                <include name="htdocs/**"/>
+            </fileset>
+        </copy>
+        <symlinklibs action="replace" dir="${debian.pkgdist.destdir}/signserver-doc/${prefix}/${pkg.basename}/lib" mappingsFile="${mappingsFile}"/>
+
+    </target>
+    
+    <!-- Creates symlinks to all needed jars in the lib folder as specified by the mappingsFile. -->
+    <target name="-pre-symlink">
+        <!-- Set libdir and mappingsFile as needed by the symlinklibs task -->
+        <property name="libdir" location="lib"/>
+        <property name="mappingsFile" location="res/install/debian/oneiric-jars.properties"/>
+        
+        <!-- The task needs commons-lang to function so lets symlink it manually here first. -->
+        <property file="${mappingsFile}"/>
+        <mkdir dir="lib/ext"/>
+        <symlink link="lib/ext/commons-lang-2.6.jar" resource="${ext/commons-lang-2.6.jar}"/>
+    </target>
+    <target name="unix-create-jar-symlinks" depends="-pre-symlink">
+        <taskdef name="symlinklibs" classname="org.signserver.deploytools.ant.UnixSymlinkLibsTask" classpath="lib/ext/DeployTools-${deploytools.version}.jar"/>
+        <symlinklibs action="create" dir="${libdir}" mappingsFile="${mappingsFile}"/>
+    </target>
+
+    <!-- =================================================================== -->
+    <!-- Other                                                               -->
+    <!-- =================================================================== -->
+    
+</project>

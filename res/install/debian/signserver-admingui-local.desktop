@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Categories=GNOME;GTK;System;Settings
+Name=SignServer Admin GUI (local)
+Icon=signserver-admingui
+Exec=/usr/bin/signserver-gui

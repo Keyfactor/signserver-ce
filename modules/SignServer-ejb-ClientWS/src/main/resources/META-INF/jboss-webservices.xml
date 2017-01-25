@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webservices version="1.0" 
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+             xmlns="http://www.jboss.com/xml/ns/javaee" 
+             xsi:schemalocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss_webservices_1_0.xsd">
+    <context-root>/signserver/ClientWSService</context-root>
+    
+    <port-component>
+        <ejb-name>ClientWS</ejb-name>
+        <port-component-name>ClientWSService</port-component-name>
+        <port-component-uri>ClientWS</port-component-uri>
+    </port-component>
+    
+</webservices>

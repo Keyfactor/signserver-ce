@@ -1,0 +1,52 @@
+SignServer TimeMonitor 3.6.0, 2014
+----------------------------------
+
+Beginning with SignServer 3.6, the TimeMonitor will be included in the
+SignServer (EE) releases.
+
+See the SignServer ChangeLog instead.
+
+
+SignServer TimeMonitor 1.1.5, 2013-09-19
+----------------------------------------
+
+ * Fixes TimeMonitor leaving TCP connections in state CLOSE_WAIT
+
+
+SignServer TimeMonitor 1.1.4, 2013-09-16
+----------------------------------------
+
+ * Fixes TimeMonitor leaking file descriptors
+ * Fixes HTTP error response from server flooding log
+
+
+SignServer TimeMonitor 1.1.3, 2013-09-05
+----------------------------------------
+
+ * Fixes TimeMonitor not treating stratum 0 as error
+ * Fixes Unknown leap code error flooding log 
+
+
+SignServer TimeMonitor 1.1.2, 2013-05-14
+----------------------------------------
+
+ * Added ability to set multiple NTP servers in TimeMonitor 	
+
+
+SignServer TimeMonitor 1.1.1, 2013-04-25
+----------------------------------------
+
+ * TimeMonitor now logs "back in calibration" at INFO level instead of ERROR
+
+
+SignServer TimeMonitor 1.1.0, 2013-01-04
+----------------------------------------
+
+ * Leap second support in SignServer TimeMonitor
+
+
+SignServer TimeMonitor 1.0.0, 2012-12-28
+----------------------------------------
+
+* Initial version. 
+

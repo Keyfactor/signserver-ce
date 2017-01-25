@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <f:metadata>
+        <f:viewParam name="id" value="#{workerBean.id}"/>
+        <f:viewParam name="id" value="#{workerAuthBean.id}"/>
+        <f:viewParam name="certSN" value="#{workerAuthBean.certSN}"/>
+        <f:viewParam name="issuerDN" value="#{workerAuthBean.issuerDN}"/>
+    </f:metadata>
+
+    <body>
+
+        <ui:composition template="./template.xhtml">
+
+            <ui:define name="title">
+                Worker <h:outputText value="#{workerAuthBean.worker.name}"/> - Authorization - Remove
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <h1><h:link outcome="workers">Workers</h:link> &gt; <h:link outcome="worker" value="#{workerAuthBean.worker.name}"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link> &gt; <h:link outcome="worker-configuration" value="Configuration"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link> &gt; Remove authorization...</h1>
+                <ui:include src="/worker-menu.xhtml">
+                    <ui:param name="worker" value="#{workerAuthBean.worker}"/>
+                </ui:include>
+                
+                <div id="worker_content">
+                    <h:form id="form">
+                        <h:inputHidden id="id" value="#{workerAuthBean.id}"/>
+
+                        <h2>Are you sure you want to remove the authorized client?</h2>
+
+                        <p>
+                            Certificate serial number:<br/>
+                            <span class="alertArea"><h:outputText value="#{workerAuthBean.certSN}"/></span>
+                        </p>
+
+                        <p>
+                            Issuer DN:<br/>
+                            <span class="alertArea"><h:outputText value="#{workerAuthBean.issuerDN}"/></span>
+                        </p>
+
+                        <h:commandButton value="Remove" action="#{workerAuthBean.removePropertyAction()}"/>
+                    </h:form>
+
+                    <h:link value="Cancel" outcome="worker-authorization"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
+                </div>
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

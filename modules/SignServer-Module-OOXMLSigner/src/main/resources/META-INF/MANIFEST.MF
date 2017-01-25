@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+X-Comment: 'Dependencies' field needed for JBoss AS 7.1.1
+Dependencies: org.dom4j

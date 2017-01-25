@@ -1,0 +1,210 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <f:metadata>
+        <f:viewParam name="fromIndex" value="#{auditLogBean.fromIndex}"/>
+        <f:viewParam name="maxEntries" value="#{auditLogBean.maxEntries}"/>
+        <f:event type="preRenderView" listener="#{auditLogBean.init()}"/>
+    </f:metadata>
+
+    <body>
+
+        <ui:composition template="./template.xhtml">
+
+            <ui:define name="title">
+                    Audit Log
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <h1>Audit Log</h1>
+                <h:form>
+                    
+                    <h:panelGroup>
+                        <h:dataTable value="#{auditLogBean.conditions}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
+                            <f:facet name="header">
+                                Current conditions:
+                            </f:facet>
+                            <h:column>
+                                <f:facet name="header">
+                                    Column
+                                </f:facet>
+                                <h:outputText value="#{auditLogBean.nameFromColumn[item.column]}"/>
+                                <f:facet name="footer">
+                                    <h:selectOneMenu rendered="#{auditLogBean.conditionToAdd == null}" value="#{auditLogBean.conditionColumn}"><f:selectItems value="#{auditLogBean.columns}"/></h:selectOneMenu>
+                                    <h:commandButton rendered="#{auditLogBean.conditionToAdd == null}" action="#{auditLogBean.addConditionAction()}" value="Add..."/>
+                                    <h:outputText rendered="#{auditLogBean.conditionToAdd != null}" value="#{auditLogBean.nameFromColumn[auditLogBean.conditionToAdd.column]}"></h:outputText>
+                                </f:facet>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    Condition
+                                </f:facet>
+                                <h:outputText value="#{auditLogBean.nameFromCondition(item.operator)}"/>
+                                <f:facet name="footer">
+                                    <h:selectOneMenu rendered="#{auditLogBean.conditionToAdd != null}" value="#{auditLogBean.conditionToAdd.operator}"><f:selectItems value="#{auditLogBean.definedConditions}"/></h:selectOneMenu>
+                                </f:facet>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    Value
+                                </f:facet>
+                                <h:outputText value="#{auditLogBean.nameFromValue(item.value, item.column)}"/>
+                                <f:facet name="footer">
+                                    <h:inputText rendered="#{auditLogBean.conditionToAdd != null}" value="#{auditLogBean.conditionToAdd.value}"/> 
+                                    <span class="errorMessage"><h:outputText value="#{auditLogBean.conditionToAddError}"/></span>
+                                </f:facet>
+                            </h:column>
+                            <h:column>
+                                <h:commandButton value="Remove" action="#{auditLogBean.removeConditionAction(item)}"/>
+                                <f:facet name="footer">
+                                    <h:commandButton rendered="#{auditLogBean.conditionToAdd != null}" value="Add" action="#{auditLogBean.addConditionToAddAction()}"/> <h:commandButton rendered="#{auditLogBean.conditionToAdd != null}" value="Remove" action="#{auditLogBean.removeConditionToAddAction()}"/>
+                                </f:facet>
+                            </h:column>
+                            <f:facet name="footer">
+                            </f:facet>
+                        </h:dataTable>
+                    </h:panelGroup>
+                    
+                    <h:panelGroup>
+                        <h:commandButton value="First" action="#{auditLogBean.firstAction()}" disabled="#{!auditLogBean.enableFirst}"/> 
+                        <h:commandButton value="Previous" action="#{auditLogBean.previousAction()}" disabled="#{!auditLogBean.enablePrevious}"/> 
+                        <h:commandButton value="Reload" action="#{auditLogBean.reloadAction()}"/> 
+                        <h:commandButton value="Next" action="#{auditLogBean.nextAction()}" disabled="#{!auditLogBean.enableNext}"/> 
+                        Displaying results <h:inputText value="#{auditLogBean.fromIndex}" size="3"/> to <h:outputText value="#{auditLogBean.queryingToIndex}"/>.
+                        Entries per page: <h:inputText value="#{auditLogBean.maxEntries}" size="3"/>
+
+                        <p class="errorMessage">
+                            <h:outputText value="#{auditLogBean.queryError}"/>
+                        </p>
+                    </h:panelGroup>
+                    
+                    <h:panelGroup rendered="#{auditLogBean.queryError == null}">
+                        <h:dataTable value="#{auditLogBean.entries}" var="entry" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1,dss1,dss1,dss1,dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
+                            <f:facet name="header">
+                                Search Results
+                            </f:facet>
+
+                            <h:column>
+                                <f:facet name="header">
+                                    Time
+                                </f:facet>
+                                <h:outputText value="#{entry.time}"/>
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">
+                                    Outcome
+                                </f:facet>
+                                <h:outputText value="#{entry.outcome}"/>
+                            </h:column>
+                            
+                            <h:column>
+                                <f:facet name="header">
+                                    Event
+                                </f:facet>
+                                <h:outputText value="#{entry.event}"/>
+                            </h:column>
+                            
+                            <h:column>
+                                <f:facet name="header">
+                                    Module
+                                </f:facet>
+                                <h:outputText value="#{entry.module}"/>
+                            </h:column>
+                            
+                            <h:column>
+                                <f:facet name="header">
+                                    Admin Subject
+                                </f:facet>
+                                <h:outputText value="#{entry.adminSubject}"/>
+                            </h:column>
+                            
+                            <h:column>
+                                <f:facet name="header">
+                                    Admin Serial Number
+                                </f:facet>
+                                <h:outputText value="#{entry.adminSerialNumber}"/>
+                            </h:column>
+                            
+                            <h:column>
+                                <f:facet name="header">
+                                    Admin Issuer
+                                </f:facet>
+                                <h:outputText value="#{entry.adminIssuer}"/>
+                            </h:column>
+                            
+                            <h:column>
+                                <f:facet name="header">
+                                    Worker ID
+                                </f:facet>
+                                <h:outputText value="#{entry.workerID}"/>
+                            </h:column>
+                            
+                            <h:column>
+                                <f:facet name="header">
+                                    Node
+                                </f:facet>
+                                <h:outputText value="#{entry.node}"/>
+                            </h:column>
+                            
+                            <h:column>
+                                <f:facet name="header">
+                                    Details
+                                </f:facet>
+                                <h:panelGroup>
+                                    <h:outputText value="#{entry.details}"/> 
+                                    <h:link value="View" outcome="auditlog-entry">
+                                        <f:param name="node" value="#{entry.node}"/>
+                                        <f:param name="sequenceNumber" value="#{entry.sequenceNumber}"/>
+                                    </h:link>
+                                </h:panelGroup>
+                            </h:column>
+                            
+                            <f:facet name="footer">
+                                <h:commandButton value="First" action="#{auditLogBean.firstAction()}" disabled="#{!auditLogBean.enableFirst}"/> 
+                                <h:commandButton value="Previous" action="#{auditLogBean.previousAction()}" disabled="#{!auditLogBean.enablePrevious}"/> 
+                                <h:commandButton value="Reload" action="#{auditLogBean.reloadAction()}"/> 
+                                <h:commandButton value="Next" action="#{auditLogBean.nextAction()}" disabled="#{!auditLogBean.enableNext}"/> 
+                                <h:outputText value="Displaying results #{auditLogBean.fromIndex} to #{auditLogBean.queryingToIndex}"/>
+                            </f:facet>
+                        </h:dataTable>
+                        
+                    </h:panelGroup>
+                    
+                </h:form>
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

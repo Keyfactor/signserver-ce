@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sun-ejb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD Application Server 9.0 EJB 3.0//EN" "http://www.sun.com/software/appserver/dtds/sun-ejb-jar_3_0-0.dtd">
+<sun-ejb-jar>
+  <enterprise-beans>
+    <ejb>
+      <ejb-name>AdminWS</ejb-name>
+      <webservice-endpoint>
+        <port-component-name>AdminWS</port-component-name>
+        <endpoint-address-uri>/signserver/AdminWSService/AdminWS</endpoint-address-uri>
+        <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        <service-qname>
+          <namespaceURI>http://adminws.signserver.org/</namespaceURI>
+          <localpart>AdminWSService</localpart>
+        </service-qname>
+      </webservice-endpoint>
+    </ejb>
+  </enterprise-beans>
+</sun-ejb-jar>

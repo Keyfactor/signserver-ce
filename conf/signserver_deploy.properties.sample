@@ -1,0 +1,345 @@
+#
+# $Id$
+#
+# Build configuration of SignServer. Modify at will before building and 
+# deploying.
+# 
+
+
+# ------------ Application server configuration --------------------------------
+
+# Application server home folder
+# Default: $APPSRV_HOME or $JBOSS_HOME
+#appserver.home=/opt/jboss-as-7.1.1.Final
+#appserver.home=/opt/jboss-eap-6.1
+#appserver.home=/opt/glassfish3/glassfish/
+#appserver.home=${env.APPSRV_HOME}
+
+# Application server type
+# Possible values: jboss, glassfish
+# Default <auto-detect>
+#appserver.type=jboss
+
+# GlassFish domain home folder
+# Default: ${appserver.home}/domains/domain1
+#glassfish.server.home.dir=/opt/glassfish3/glassfish/domains/domain1
+
+
+# ------------- Database configuration -----------------------------------------
+
+# jndi name of the datasource to use in deployment descriptors of ejbs.
+# default: SignServerDS
+#datasource.jndi-name=SignServerDS
+
+# The database name selected for deployment
+# Default: hsqldb
+# (use the nodb option to use a local file-based database instead of regular database, this needs further configuring of the database location).
+# For MariaDB use "mysql".
+#database.name=mysql
+#database.name=postgres
+#database.name=mssql2000
+#database.name=oracle
+#database.name=sapdb
+#database.name=sybase
+#database.name=nodb
+
+# The location of the file-based database when using the nodb database option (the example below would work for JBoss)
+# the directory needs to be present, writable by the application server and empty at first startup.
+#database.nodb.location=/opt/jboss-as-7.1.1.Final/standalone/data/nodb
+
+
+# -------------- Web Services Configuration ------------------------------------
+#
+# Set to false to disable Main WebService deployment. 
+# If set to false you must also disable the validationclient and signingandvalidationapi modules below.
+#signserverws.enabled=true
+
+# Set to true to enable the Generic WS API
+# Default true
+#genericws.enabled=true
+
+# Set to true to enable Validation WebService deployment
+# Default false
+#validationws.enabled=false
+
+# Set to true to enable Admin WebService deployment.
+# Default true
+#adminws.enabled=true
+
+# Set to true to enable Client WebService deployment.
+# Default true
+#clientws.enabled=true
+
+
+# -------------- Modules Configurations ----------------------------------------
+#
+
+# Include all modules in build. Set to true to enable all modules.
+#
+# Default: true
+#includemodulesinbuild=true
+
+
+# Include Log4j configuration in EAR (not needed for JBoss)
+# Default: false
+#module.log4j.enabled=false
+
+# Module Renewal
+# Default: false
+#module.renewal.enabled=false
+
+# Module XMLSigner
+# Default: true
+#module.xmlsigner.enabled=true
+
+# Module XMLValidator
+# Default: true
+#module.xmlvalidator.enabled=true
+
+# Module XAdES
+# Default: true
+#module.xades.enabled=true
+
+# Module CMSSigner
+# Default: true
+#module.cmssigner.enabled=true
+
+# Module ODFSigner
+# Default: true
+#module.odfsigner.enabled=true
+
+# Module OOXMLSigner
+# Default: true
+#module.ooxmlsigner.enabled=true
+
+# Module PDFSigner
+# Default: true
+#module.pdfsigner.enabled=true
+
+# Module TSA
+# Default: true
+#module.tsa.enabled=true
+
+# Module MRTDSODSigner
+# Default: true
+#module.mrtdsodsigner.enabled=true
+
+# Module MRTDSigner
+# Default: true
+#module.mrtdsigner.enabled=true
+
+# Module StatusProperties
+# Default: false
+#module.statusproperties.enabled=false
+
+# Module SignerStatusReport
+# Default: false
+#module.signerstatusreport.enabled=false
+
+
+# -------------- Client Configurations -----------------------------------------
+#
+# Set to true to enable build of the TimeStampClient
+#
+# Default: true
+#timestampclient.enabled=true
+
+# Set to true to enable build of the validation client.
+# For this to build must also signserverws.enabled be set
+# to true.
+#
+# Default: true
+#validationclient.enabled=true
+
+# Set to true to enable the PDF performance test client
+# Default: false
+#pdfperformancetest.enabled=false
+
+# Set to true to enable build of the SigningAndValidationAPI.
+# For this to build must also signserverws.enabled be set
+# to true.
+#
+# Default: true
+#signingandvalidationapi.enabled=true
+
+# Set to enable build of the AdminGUI
+# Default: true
+#admingui.enabled=true
+
+# Set to enable deployment of the AdminWeb
+# Default: true
+#adminweb.enabled=true
+
+# Set to enable build of the ClientCLI
+# Default: true
+#clientcli.enabled=true
+
+# Set to enable build of the Database CLI (Enterprise Edition only)
+# Default: true
+#databasecli.enabled=true
+
+# Set to enable build of the TimeMonitor (Enterprise Edition only)
+# Default: false
+#timemonitor.enabled=false
+
+# Set to enable build of the TimeMonitorManager (Enterprise Edition only)
+# Default: false
+#module.timemonitormanager.enabled=false
+
+# Set to enable build of the ExtendedTimeStampSigner (Enterprise Edition only)
+# Default: false
+#module.tsa-enterprise.enabled=false
+
+
+# -------------- Web Deployment Configuration -----------------------------------
+
+# The private port exposed externally, i.e. if you run an Apache proxy in front of JBoss
+# the port may be 443 instead.
+# Default: 8443
+#httpserver.external.privhttps=8443
+#httpserver.external.privhttps=443
+
+# Deploy the documentation.
+#
+# Default: true
+#webdoc.enabled=true
+
+# Offer the AdminGUI binary dist for download from the public web
+# Note: If enabled the following configuration files will also be part of the 
+# download:
+# - conf/admingui_default.properties
+# - conf/log4.properties
+# - doc/sample-configs/*.properties
+#
+# The ZIP file is created as part of the compose-ear (deploy) Ant target.
+#
+# Default: false
+#web.admingui.dist.enabled=false
+
+# Path to the AdminGUI binary dist file
+# Default: ${basedir}/lib/signserver-admingui.zip
+#web.admingui.dist.file=${basedir}/lib/signserver-admingui.zip
+#web.admingui.dist.file=/tmp/signserver-admingui.zip
+
+# Offer the ClientCLI binary dist for download from the public web
+# Note: If enabled the following configuration files will also be part of the 
+# download:
+# - conf/log4.properties
+#
+# The ZIP file is created as part of the compose-ear (deploy) Ant target.
+#
+# Default: false
+#web.clientcli.dist.enabled=false
+
+# Path to the ClientCLI binary dist file
+# Default: ${basedir}/lib/signserver-clientcli.zip
+#web.admingui.dist.file=${basedir}/lib/signserver-clientcli.zip
+#web.admingui.dist.file=/tmp/signserver-clientcli.zip
+
+# -------------- Status And Health Check Configuration -------------------------
+#
+# Parameters configuring how health check and status should be
+# configured.
+# Sample url: http://localhost:8080/signserver/healthcheck/signserverhealth
+#
+# Setting specifying which remote IPs that may call this healthcheck servlet. Use ';' for between multiple IPs.
+# If the setting contains the keyword ANY, access is granted from any IP address.
+# Default : 127.0.0.1;::1;0:0:0:0:0:0:0:1
+#healthcheck.authorizedips=127.0.0.1;::1;0:0:0:0:0:0:0:1
+
+# Parameter to set the number of Mega Bytes of memory that must be free before removing     
+# the node out of the cluster.
+# Default : 1
+#healthcheck.minimumfreememory=1
+
+# Parameter indicating the string that should be used to do 
+# a minimal check that the database is working. May differ between databases.
+# Default : Select count(*) from signerconfigdata
+#healthcheck.checkdbstring=Select count(*) from signerconfigdata
+
+# Parameter to specify location of file containing information about maintenance
+# Use this file to specify weather to include node in healthcheck or report as down for maintenance, 
+# which will return an error message in the format "MAINT: <property name>",
+# where <property name> is the property name specified below.
+# Default: empty (not used)
+#healthcheck.maintenancefile=maintenance.properties
+
+# Parameter to configure name of maintenance property, default = DOWN_FOR_MAINTENANCE
+# The healthcheck.maintenancefile should contain a single line like this:
+# DOWN_FOR_MAINTENANCE=true
+# Where the node will be down for maintenance if the property is true, and not down for maintenance if the property is false.
+# Default: DOWN_FOR_MAINTENANCE
+#healthcheck.maintenancepropertyname=DOWN_FOR_MAINTENANCE
+
+# Parameter to configure a custom error message
+# When this is not set (the default), details describing the errors will be
+# included in the error page
+#healthcheck.customerrormessage=NOTOK
+
+# Parameter to configure whether health check errors should be reported as
+# HTTP response code 500 (internal server error) with an error page, or as
+# HTTP response code 200 (OK) with a plain text body
+# Default: true (send error), set to false to get the plain text behavior
+#healthcheck.sendservererror=false
+
+# ------------- Status Repository Configuration --------------------------------
+
+# Status Repository Audit Logging
+#
+# The following options are possible:
+#   ALL (default):  All updates are logged (even if the value did not change).
+#   CHANGES:        Only updates where the value is changed are logged.
+#   NONE:           No updates are logged.
+#statusrepository.log=ALL
+
+
+# ------------- PKCS11 library definitions -------------------------------------
+#
+# PKCS11 library definitions, each library is defined by a "friendly" name (the one
+# used for the SHAREDLIBRARYNAME property of a crypto worker) and a libray path.
+# Only library paths that actually exists on the file system is added to the list.
+# The valid indexes is from 0 to 255.
+# For security reasons it is possible to disable the built-in definitions by
+# removing the # sign in front of a definition and set the file parameter to
+# an empty string.
+
+#cryptotoken.p11.lib.10.name=SafeNet ProtectServer Gold Emulator
+#cryptotoken.p11.lib.10.file=/opt/ETcpsdk/lib/linux-x86_64/libctsw.so
+#cryptotoken.p11.lib.11.name=SafeNet ProtectServer Gold
+#cryptotoken.p11.lib.11.file=/opt/ETcpsdk/lib/linux-x86_64/libcryptoki.so
+#cryptotoken.p11.lib.20.name=SafeNet Luna SA
+#cryptotoken.p11.lib.20.file=/usr/lunasa/lib/libCryptoki2_64.so
+#cryptotoken.p11.lib.21.name=SafeNet Luna PCI
+#cryptotoken.p11.lib.21.file=/usr/lunapci/lib/libCryptoki2_64.so
+#cryptotoken.p11.lib.22.name=SafeNet Luna PCI
+#cryptotoken.p11.lib.22.file=/Program Files/LunaPCI/cryptoki.dll
+#cryptotoken.p11.lib.23.name=SafeNet Luna Client
+#cryptotoken.p11.lib.23.file=/usr/safenet/lunaclient/lib/libCryptoki2_64.so
+#cryptotoken.p11.lib.30.name=Utimaco
+#cryptotoken.p11.lib.30.file=/opt/utimaco/p11/libcs2_pkcs11.so
+#cryptotoken.p11.lib.31.name=Utimaco
+#cryptotoken.p11.lib.31.file=/opt/Utimaco/Software/PKCS11/lib/Linux-x86-64/libcs2_pkcs11.so
+#cryptotoken.p11.lib.32.name=Utimaco
+#cryptotoken.p11.lib.32.file=/etc/utimaco/libcs2_pkcs11.so
+#cryptotoken.p11.lib.33.name=Utimaco
+#cryptotoken.p11.lib.33.file=C:/Program Files/Utimaco/SafeGuard CryptoServer/Lib/cs2_pkcs11.dll
+#cryptotoken.p11.lib.40.name=nCipher
+#cryptotoken.p11.lib.40.file=/opt/nfast/toolkits/pkcs11/libcknfast.so
+#cryptotoken.p11.lib.50.name=ARX CoSign
+#cryptotoken.p11.lib.50.file=C:/windows/system32/sadaptor.dll
+#cryptotoken.p11.lib.60.name=OpenSC
+#cryptotoken.p11.lib.60.file=/usr/lib/x86_64-linux-gnu/opensc-pkcs11.so
+#cryptotoken.p11.lib.61.name=OpenSC
+#cryptotoken.p11.lib.61.file=/usr/lib/i386-linux-gnu/opensc-pkcs11.so
+#cryptotoken.p11.lib.62.name=OpenSC
+#cryptotoken.p11.lib.62.file=/usr/local/lib/opensc-pkcs11.so
+#cryptotoken.p11.lib.63.name=OpenSC
+#cryptotoken.p11.lib.63.file=C:/Windows/system32/opensc-pkcs11.dll
+#cryptotoken.p11.lib.70.name=Bull TrustWay CryptoBox
+#cryptotoken.p11.lib.70.file=/usr/lib64/libcryptobox_clnt.so
+#cryptotoken.p11.lib.71.name=Bull TrustWay PCI Crypto Card
+#cryptotoken.p11.lib.71.file=/usr/lib64/libgpkcs11cc2000.so
+#cryptotoken.p11.lib.72.name=Bull TrustWay Proteccio
+#cryptotoken.p11.lib.72.file=/usr/lib64/libnethsm64.so
+#cryptotoken.p11.lib.80.name=SoftHSM
+#cryptotoken.p11.lib.80.file=/usr/local/lib/softhsm/libsofthsm2.so

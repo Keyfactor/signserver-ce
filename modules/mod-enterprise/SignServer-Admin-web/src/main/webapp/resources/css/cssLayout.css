@@ -1,0 +1,194 @@
+
+#top {
+    position: relative;
+    background-color: #036fab;
+    color: white;
+    /* padding: 5px; */
+    padding: 0px;
+    padding-bottom: 10px;
+    margin: 0px 0px 0px 0px;
+}
+
+#top-left {
+    background: white;
+    float: left;
+    padding: 10px;
+    margin-right: 10px;
+}
+
+#top-right {
+    background: white;
+    float:right;
+    padding: 10px;
+    color: black;
+}
+
+#top-mid {
+    margin: 10px;
+    font-size: x-large;
+    padding-top: 25px;
+}
+
+#top-user {
+    text-align: right;
+}
+
+#top-menu {
+    margin-left: 5px;
+}
+
+#header {
+    /*background-color: #ece3a5;*/
+    background-color: #dddddd;
+    margin: 5px;
+    padding: 10px;
+    
+}
+
+#bottom {
+    position: relative;
+    background-color: #ece3a5;
+    padding: 5px;
+    margin: 10px 0px 0px 0px;
+}
+
+#left {
+    float: left;
+    background-color: #ece3a5;
+    padding: 5px;
+    width: 150px;
+}
+
+#right {
+    float: right;
+    background-color: #ece3a5;
+    padding: 5px;
+    width: 150px;
+}
+
+.center_content {
+    position: relative;
+    background-color: #dddddd;
+    padding: 5px;
+}
+
+.left_content {
+    background-color: #dddddd;
+    padding: 5px;
+    margin-left: 170px;
+}
+
+.full_content {
+    margin: 10px;
+    
+}
+
+.right_content {
+    /*background-color: #dddddd;*/
+    padding: 5px;
+    margin: 0px 170px 0px 170px;
+}
+
+#top a:link, #top a:visited {
+  color: white;
+  font-weight : bold;
+  text-decoration: none;
+}
+
+#top a:link:hover, #top a:visited:hover  {
+  color: black;
+  font-weight : bold;
+  text-decoration : underline;
+}
+
+#top-right a:link, #top-right a:visited {
+    color: black;
+}
+
+#worker_menu {
+    background-color: #dddddd;
+    padding: 5px;
+    margin: 10px;
+}
+
+#worker_content {
+    margin: 10px;
+}
+
+table.dss1 {
+    border-collapse: collapse;
+    border: thin solid darkgray;
+    margin: 5px;
+}
+
+thead.dss1, th.dss1, tfoot.dss1 {
+    background: lightgray;
+    padding: 5px;
+}
+
+
+td.dss1 {
+    border-left: thin solid darkgray;
+    border-right: thin solid darkgray;
+}
+
+
+tr.dss1 {
+    border-top: thin solid darkgray;
+    border-bottom: thin solid darkgray;
+    background-color: white;
+}
+
+tr.dss1_odd {
+    border-top: thin solid darkgray;
+    border-bottom: thin solid darkgray;
+    background-color: #F2F5F9;
+}
+
+.notable {
+    border: none;
+    background: none;
+}
+
+.errorMessage {
+    color: red;
+}
+.successMessage {
+    color: green;
+}
+
+.fileInputContainer {
+    display: inline-block;
+}
+.fileInputTextarea {
+    line-height: 100%;
+}
+
+.alertArea {
+    background-color: yellow;
+}
+
+.topOutsideLink {
+    color: black;
+}
+.clearBoth {
+    clear: both;
+}
+
+.bottomText {
+    font-size: x-small;
+    color: gray;
+}
+
+.workerImage1 {
+    height: 1em;
+    padding-right: 0.25em;
+}
+.workerImage2 {
+    height: 1em;
+    margin-right: 0.25em;
+}
+
+.propertiesInputTextarea {
+    width: 100%;
+}

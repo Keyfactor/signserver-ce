@@ -17,7 +17,9 @@ import java.awt.Component;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Properties;
 import javax.ejb.EJBException;
@@ -1019,7 +1021,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
                         final File file = new File(filePath);
 
                         try {
-                            conf = FileUtils.readFileToString(file);
+                            conf = FileUtils.readFileToString(file, StandardCharsets.ISO_8859_1.name());
                         } catch (IOException e) {
                             return "Failed to read file: " + e.getLocalizedMessage();
                         }
@@ -1074,7 +1076,7 @@ public class AddWorkerDialog extends javax.swing.JDialog {
             // the Swing GUI from here.
             final Properties props = new Properties();
             try {
-                props.load(new ByteArrayInputStream(conf.getBytes()));
+                props.load(new StringReader(conf));
             } catch (IOException e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Error loading properties", e);

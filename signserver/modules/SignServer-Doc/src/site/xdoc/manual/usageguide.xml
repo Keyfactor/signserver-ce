@@ -1135,6 +1135,11 @@ affect the error message returned when in maintenance mode (the part of the stri
 <source>healthcheck.customerrormessage</source> - If this set to a non-empty value, the value is used for the error message
 instead of details describing the errors (thus not exposing internal details).
                     </p>
+                    <p>
+<source>healthcheck.sendservererror</source> - If this property is set to true (the default value), HTTP status 500 is returned
+with an error page containing the error message if health monitoring fails.
+If set to false a plain text result with HTTP status 200 is returned instead in this case.
+                    </p>
                 
                 <h4>Available tests and responses</h4>
                     <ul>

@@ -111,15 +111,20 @@ public class MSIUtils {
             if (entry instanceof DirectoryEntry) {
                 // .. recurse into this directory
                 DirectoryEntry dirEntry = (DirectoryEntry) entry;
-                LOG.trace("Is directory");
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Is directory");
+                }
                 traverseDirectory(fs, dirEntry, md);
             } else if (entry instanceof DocumentEntry) {
                 // entry is a document, which you can read
-                //DocumentEntry docEntry = (DocumentEntry) entry;
-                LOG.trace("Is document");
-
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Is document");
+                }
+                    
                 if ("\05DigitalSignature".equals(entry.getName())) {
-                    LOG.trace("Found Signature");
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Found Signature");
+                    }
                 } else {
                     try (
                         final DocumentInputStream stream = fs.createDocumentInputStream(entry.getName());
@@ -131,7 +136,7 @@ public class MSIUtils {
                         }
                     }
                 }
-            } else {
+            } else if (LOG.isTraceEnabled()) {
                 // currently, either an Entry is a DirectoryEntry or a DocumentEntry,
                 // but in the future, there may be other entry subinterfaces. The
                 // internal data structure certainly allows for a lot more entry types.

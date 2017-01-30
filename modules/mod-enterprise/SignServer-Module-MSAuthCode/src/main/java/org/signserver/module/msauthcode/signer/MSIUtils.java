@@ -17,6 +17,7 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -100,7 +101,7 @@ public class MSIUtils {
      * @param md Message digest to operate on
      * @throws IOException 
      */
-    public static void traverseDirectory(POIFSFileSystem fs, DirectoryEntry root, MessageDigest md) throws IOException {
+    public static void traverseDirectory(NPOIFSFileSystem fs, DirectoryEntry root, MessageDigest md) throws IOException {
         for (String name : sort(root.getEntryNames())) {
             
             Entry entry = root.getEntry(name);
@@ -120,11 +121,15 @@ public class MSIUtils {
                 if ("\05DigitalSignature".equals(entry.getName())) {
                     LOG.trace("Found Signature");
                 } else {
-                    DocumentInputStream stream = fs.createDocumentInputStream(entry.getName());
-                    byte[] content = new byte[stream.available()]; // Note: This is by the book
-                    stream.read(content);
-                    stream.close();
-                    md.update(content);
+                    try (
+                        final DocumentInputStream stream = fs.createDocumentInputStream(entry.getName());
+                        ) {
+                        final byte[] content = new byte[1024];
+                        while (stream.available() > 0) {
+                            final int len = stream.read(content);
+                            md.update(content, 0, len);
+                        }
+                    }
                 }
             } else {
                 // currently, either an Entry is a DirectoryEntry or a DocumentEntry,

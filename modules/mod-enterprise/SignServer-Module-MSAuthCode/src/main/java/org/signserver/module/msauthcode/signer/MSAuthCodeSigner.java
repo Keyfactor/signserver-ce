@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -58,7 +59,7 @@ import net.jsign.timestamp.TimestampingException;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.DEROctetString;
@@ -479,7 +480,7 @@ public class MSAuthCodeSigner extends BaseSigner {
         final WritableData responseData = sReq.getResponseData();
         
         try (
-                POIFSFileSystem fs = createFileSystem(requestData);
+                NPOIFSFileSystem fs = createFileSystem(requestData, true);
                 OutputStream out = responseData.getAsFileOutputStream();
         ) {
             final PrivateKey privateKey = cryptoInstance.getPrivateKey();
@@ -562,24 +563,26 @@ public class MSAuthCodeSigner extends BaseSigner {
                 LOG.debug("Size: " + signedbytes.length);
             }
            
-            // Add the signature file
-            fs.createDocument(new ByteArrayInputStream(signedbytes), "\05DigitalSignature");
+            try (final NPOIFSFileSystem fsOut = createFileSystem(requestData, false)) {
+                // Add the signature file
+                fsOut.createDocument(new ByteArrayInputStream(signedbytes), "\05DigitalSignature");
 
-            // Write out
-            fs.writeFilesystem(out);
-            
-            // Create the archivables (request and response)
-            final String archiveId = createArchiveId(new byte[0],
-                    (String) requestContext.get(RequestContext.TRANSACTION_ID));
-            final Collection<? extends Archivable> archivables = Arrays.asList(
-                new DefaultArchivable(Archivable.TYPE_REQUEST, REQUEST_CONTENT_TYPE,
-                                      requestData, archiveId), 
-                new DefaultArchivable(Archivable.TYPE_RESPONSE, RESPONSE_CONTENT_TYPE,
-                                      responseData.toReadableData(), archiveId));
-            
-            return new SignatureResponse(sReq.getRequestID(), responseData, cert,
-                                         archiveId, archivables,
-                                         RESPONSE_CONTENT_TYPE);
+                // Write out
+                fsOut.writeFilesystem(out);
+
+                // Create the archivables (request and response)
+                final String archiveId = createArchiveId(new byte[0],
+                        (String) requestContext.get(RequestContext.TRANSACTION_ID));
+                final Collection<? extends Archivable> archivables = Arrays.asList(
+                    new DefaultArchivable(Archivable.TYPE_REQUEST, REQUEST_CONTENT_TYPE,
+                                          requestData, archiveId), 
+                    new DefaultArchivable(Archivable.TYPE_RESPONSE, RESPONSE_CONTENT_TYPE,
+                                          responseData.toReadableData(), archiveId));
+
+                return new SignatureResponse(sReq.getRequestID(), responseData, cert,
+                                             archiveId, archivables,
+                                             RESPONSE_CONTENT_TYPE);
+            }
         } catch (OperatorCreationException | CertificateEncodingException | CMSException | NoSuchAlgorithmException ex) {
                 throw new SignServerException("Error signing", ex);
         }
@@ -637,13 +640,18 @@ public class MSAuthCodeSigner extends BaseSigner {
         return new AttributeTable(new DERSet(attributes.toArray(new ASN1Encodable[attributes.size()])));
     }
     
-    private POIFSFileSystem createFileSystem(ReadableData requestData) throws IOException {
-        final POIFSFileSystem result;
-        /* This does not work: an exception is throwed at end of file, maybe because it is openned read-only
+    private NPOIFSFileSystem createFileSystem(ReadableData requestData,
+                                              final boolean readOnly) throws IOException {
+        final NPOIFSFileSystem result;
+        /* This does not work: an exception is throwed at end of file, maybe because it is openned read-only */
         if (requestData.isFile()) {
-            result = new POIFSFileSystem(requestData.getAsFile());
-        } else*/ {
-            result = new POIFSFileSystem(requestData.getAsInputStream());
+            /*final RandomAccessFile rf =
+                    new RandomAccessFile(requestData.getAsFile(), "rw");*/
+            result = new NPOIFSFileSystem(requestData.getAsFile(), readOnly);
+        } else {
+            result = new NPOIFSFileSystem(requestData.getAsInputStream());
+            
+            
         }
         return result;
     }

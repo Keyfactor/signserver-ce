@@ -441,10 +441,11 @@ public class MSAuthCodeSigner extends BaseSigner {
                 } else {
                     sigAlg = signatureAlgorithm;
                 }
-                
+
+                IOUtils.copyLarge(in, out);
+
                 switch (fileType) {
-                    case PE:
-                        IOUtils.copyLarge(in, out);
+                    case PE:                        
                         final File outFile = responseData.getAsFile();
 
                         return signPE(outFile, certs, privKey, sigAlg,
@@ -562,13 +563,14 @@ public class MSAuthCodeSigner extends BaseSigner {
                 LOG.debug("Version: " + signedData2.getVersion());
                 LOG.debug("Size: " + signedbytes.length);
             }
-           
-            try (final NPOIFSFileSystem fsOut = createFileSystem(requestData, false)) {
+
+            try (final NPOIFSFileSystem fsOut =
+                    new NPOIFSFileSystem(responseData.getAsFile(), false)) {
                 // Add the signature file
                 fsOut.createDocument(new ByteArrayInputStream(signedbytes), "\05DigitalSignature");
 
                 // Write out
-                fsOut.writeFilesystem(out);
+                fsOut.writeFilesystem();
 
                 // Create the archivables (request and response)
                 final String archiveId = createArchiveId(new byte[0],

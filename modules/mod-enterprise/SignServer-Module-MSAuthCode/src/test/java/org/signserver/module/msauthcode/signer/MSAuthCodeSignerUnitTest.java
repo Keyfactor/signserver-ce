@@ -1968,12 +1968,6 @@ public class MSAuthCodeSignerUnitTest {
         return res;
     }
     
-    private File createFile(byte[] data) throws IOException {
-        final File result = File.createTempFile("test-file", ".signed");
-        FileUtils.writeByteArrayToFile(result, data);
-        return result;
-    }
-    
     private void assertSignedAndNotTimestampedMSI(MockedCryptoToken token,
                                                String digestAlgString,
                                                ASN1ObjectIdentifier digestAlgOID,

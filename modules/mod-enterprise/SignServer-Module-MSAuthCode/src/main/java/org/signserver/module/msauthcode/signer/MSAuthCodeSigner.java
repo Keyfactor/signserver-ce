@@ -647,8 +647,6 @@ public class MSAuthCodeSigner extends BaseSigner {
         final NPOIFSFileSystem result;
         /* This does not work: an exception is throwed at end of file, maybe because it is openned read-only */
         if (requestData.isFile()) {
-            /*final RandomAccessFile rf =
-                    new RandomAccessFile(requestData.getAsFile(), "rw");*/
             result = new NPOIFSFileSystem(requestData.getAsFile(), readOnly);
         } else {
             result = new NPOIFSFileSystem(requestData.getAsInputStream());

@@ -12,9 +12,9 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.signserver.admin.gui.adminws.gen.LogEntry;
 import org.signserver.admin.gui.adminws.gen.LogEntry.AdditionalDetails;
 
@@ -26,7 +26,7 @@ import org.signserver.admin.gui.adminws.gen.LogEntry.AdditionalDetails;
  */
 public class DisplayAuditlogEntryFrame extends javax.swing.JFrame {
     
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+    private final FastDateFormat fdf = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ssZ");
     
     private LogEntry entry;
     
@@ -92,7 +92,7 @@ public class DisplayAuditlogEntryFrame extends javax.swing.JFrame {
         final StringBuilder buff = new StringBuilder();
         
         buff.append("<html><body><table>\n");
-        buff.append("<tr><td><b>Time:</b></td><td>").append(sdf.format(new Date(entry.getTimeStamp()))).append(" (").append(entry.getTimeStamp()).append(")").append("</td></tr>\n");
+        buff.append("<tr><td><b>Time:</b></td><td>").append(fdf.format(new Date(entry.getTimeStamp()))).append(" (").append(entry.getTimeStamp()).append(")").append("</td></tr>\n");
         buff.append("<tr><td><b>Outcome:</b></td><td>").append(entry.getEventStatus()).append("</td></tr>\n");
         buff.append("<tr><td><b>Event:</b></td><td>").append(entry.getEventType()).append("</td></tr>\n");
         buff.append("<tr><td><b>Module:</b></td><td>").append(entry.getModuleType()).append("</td></tr>\n");

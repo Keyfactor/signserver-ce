@@ -13,7 +13,6 @@
 package org.signserver.admin.cli.defaultimpl.auditlog;
 
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -24,6 +23,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.dbprotection.DatabaseProtectionException;
@@ -73,7 +73,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
     
     private QueryCriteria qc;
     
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+    private final FastDateFormat fdf = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ssZ");
     
     @Override
     public String getDescription() {
@@ -158,7 +158,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
                 
                 // Render the result
                 final StringBuilder buff = new StringBuilder();
-                buff.append(sdf.format(new Date(entry.getTimeStamp()))).append(", ")
+                buff.append(fdf.format(new Date(entry.getTimeStamp()))).append(", ")
                         .append(entry.getEventTypeValue()).append(", ")
                         .append(entry.getEventStatusValue()).append(", ")
                         .append(entry.getModuleTypeValue()).append(", ")

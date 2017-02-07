@@ -36,7 +36,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
-import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIStatus;
@@ -274,8 +273,6 @@ public class TimeStampSigner extends BaseSigner {
     private static final String DEFAULT_SIGNATUREALGORITHM = "SHA1withRSA";
     private static final String DEFAULT_ORDERING = "FALSE";
     private static final String DEFAULT_CERTIFICATE_DIGEST_ALGORITHM = "SHA256";
-    
-    private final FastDateFormat fdf = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss z");
 
     private ITimeSource timeSource = null;
     private String signatureAlgorithm;

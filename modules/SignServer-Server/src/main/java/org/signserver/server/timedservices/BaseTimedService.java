@@ -13,7 +13,6 @@
 package org.signserver.server.timedservices;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.LinkedList;
@@ -21,6 +20,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import javax.persistence.EntityManager;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.quartz.CronExpression;
 import org.signserver.common.ServiceConfig;
@@ -42,7 +42,7 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
     /** Log4j instance for actual implementation class */
     private final transient Logger log = Logger.getLogger(this.getClass());
 
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+    private static final FastDateFormat FDF = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss,SSS");
 
     private final Set<ITimedService.LogType> logTypes =
             EnumSet.noneOf(ITimedService.LogType.class);
@@ -181,7 +181,7 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
             return "Service does not seem to have run since start or reload of the server.";
         }
 
-        return SDF.format(lastRun);
+        return FDF.format(lastRun);
     }
 
     @Override

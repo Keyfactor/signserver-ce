@@ -24,7 +24,6 @@ import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.quartz.CronExpression;
 import org.signserver.common.ServiceConfig;
-import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerStatusInfo;

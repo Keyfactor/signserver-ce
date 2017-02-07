@@ -21,13 +21,13 @@ import java.security.cert.CertStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import javax.persistence.EntityManager;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
@@ -60,7 +60,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
     
     private List<String> configErrors = new LinkedList<>();
 
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+    private static final FastDateFormat FDF = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss z");
     
     @Override
     public void init(int workerId, WorkerConfig config,
@@ -210,8 +210,8 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 buff.append("Subject DN:     ").append(signerCertificate.getSubjectDN().toString()).append("\n");
                 buff.append("Serial number:  ").append(signerCertificate.getSerialNumber().toString(16)).append("\n");
                 buff.append("Issuer DN:      ").append(signerCertificate.getIssuerDN().toString()).append("\n");
-                buff.append("Valid from:     ").append(SDF.format(signerCertificate.getNotBefore())).append("\n");
-                buff.append("Valid until:    ").append(SDF.format(signerCertificate.getNotAfter())).append("\n");
+                buff.append("Valid from:     ").append(FDF.format(signerCertificate.getNotBefore())).append("\n");
+                buff.append("Valid until:    ").append(FDF.format(signerCertificate.getNotAfter())).append("\n");
                 certificateValue = buff.toString();
             }
             completeEntries.add(new WorkerStatusInfo.Entry("Signer certificate", certificateValue));

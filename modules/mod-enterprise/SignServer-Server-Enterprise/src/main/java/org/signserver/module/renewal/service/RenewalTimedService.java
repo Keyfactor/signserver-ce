@@ -14,7 +14,6 @@ package org.signserver.module.renewal.service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -23,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import javax.persistence.EntityManager;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.cesecore.util.SimpleTime;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -90,7 +90,7 @@ public class RenewalTimedService extends BaseTimedService {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(RenewalTimedService.class);
     
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+    private static final FastDateFormat FDF = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss,SSS");
     
     // Worker properties
     private static final String PROPERTY_WORKERS = "WORKERS";
@@ -288,7 +288,7 @@ public class RenewalTimedService extends BaseTimedService {
             if (status.error != null) {
                 renewalValue.append("Error: ").append(status.error);
             } else {
-                renewalValue.append("Renewal after: ").append(SDF.format(status.renewalDate));
+                renewalValue.append("Renewal after: ").append(FDF.format(status.renewalDate));
                 if (status.renew) {
                     renewalValue.append(" (on next run)");
                 }

@@ -17,10 +17,10 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.lang.time.FastDateFormat;
 
 /**
  * Common base class used to report the status of a signer or service. Should
@@ -47,7 +47,7 @@ public abstract class WorkerStatus implements Serializable {
     protected WorkerConfig activeconfig = null;
     protected int workerId;
     
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+    private static final FastDateFormat FDF = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss z");
     
     private List<String> fatalErrors = new LinkedList<>();
 
@@ -127,8 +127,8 @@ public abstract class WorkerStatus implements Serializable {
         out.println(INDENT1 + INDENT2 + "Subject DN:     " + cert.getSubjectDN().toString());
         out.println(INDENT1 + INDENT2 + "Serial number:  " + cert.getSerialNumber().toString(16));
         out.println(INDENT1 + INDENT2 + "Issuer DN:      " + cert.getIssuerDN().toString());
-        out.println(INDENT1 + INDENT2 + "Valid from:     " + SDF.format(cert.getNotBefore()));
-        out.println(INDENT1 + INDENT2 + "Valid until:    " + SDF.format(cert.getNotAfter()));
+        out.println(INDENT1 + INDENT2 + "Valid from:     " + FDF.format(cert.getNotBefore()));
+        out.println(INDENT1 + INDENT2 + "Valid until:    " + FDF.format(cert.getNotAfter()));
     }
     
     /**

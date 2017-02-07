@@ -13,7 +13,6 @@
 package org.signserver.admin.cli.defaultimpl.token;
 
 import java.security.cert.CertificateException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -25,6 +24,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.dbprotection.DatabaseProtectionException;
 import org.cesecore.util.query.Elem;
@@ -73,9 +73,8 @@ public class QueryTokenEntriesCommand extends AbstractAdminCommand {
     private int limit = 0;
     private boolean verbose = false;
     private List<Elem> terms;
-    
-        
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+
+    private final FastDateFormat fdf = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ssZ");
     
     @Override
     public String getDescription() {

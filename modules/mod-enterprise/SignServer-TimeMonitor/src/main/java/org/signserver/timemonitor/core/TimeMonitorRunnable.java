@@ -17,7 +17,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -25,6 +24,7 @@ import java.util.LinkedList;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.signserver.timemonitor.common.LeapState;
 import org.signserver.timemonitor.common.ReportState;
@@ -56,7 +56,7 @@ public class TimeMonitorRunnable implements Runnable, StateHolder {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(TimeMonitorRunnable.class);
 
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+    private static final FastDateFormat SDF = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss,SSS");
 
     private volatile boolean continueRun = true;
     private volatile boolean finished;

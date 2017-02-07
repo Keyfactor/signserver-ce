@@ -15,7 +15,6 @@ package org.signserver.admin.cli.defaultimpl.archive;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -34,6 +33,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.cesecore.util.query.Criteria;
 import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.QueryCriteria;
@@ -75,7 +75,7 @@ public class QueryArchiveCommand extends AbstractCommand {
     private static final String HEADER_FIELDS = "archiveid, time, type, signerid, requestIssuerDN, requestCertSerialNumber, requestIP";
     private static final String HEADER_NAMES =  "Archive ID, Time, Type, Signer ID, Issuer DN, Certificate Serial Number, IP Address";
 
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+    private final FastDateFormat fdf = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ssZ");
     
     static {
         OPTIONS = new Options();
@@ -165,7 +165,7 @@ public class QueryArchiveCommand extends AbstractCommand {
                         entry.getRequestIP() != null ? entry.getRequestIP() : "Local EJB";
                 
                 buff.append(entry.getArchiveId()).append(", ")
-                    .append(sdf.format(entry.getTime())).append(", ")
+                    .append(fdf.format(entry.getTime())).append(", ")
                     .append(type).append(", ")
                     .append(entry.getSignerId()).append(", ")
                     .append(issuer).append(", ")

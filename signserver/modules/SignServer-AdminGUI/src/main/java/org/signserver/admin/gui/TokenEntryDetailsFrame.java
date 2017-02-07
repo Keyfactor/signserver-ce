@@ -19,7 +19,6 @@ import java.awt.event.ActionListener;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +31,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.signserver.admin.gui.adminws.gen.TokenEntry;
@@ -49,7 +49,7 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(TokenEntryDetailsFrame.class);
     
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+    private final FastDateFormat fdf = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ssZ");
     private static final String COLUMN_CERTIFICATE = "Certificate";
     private List<X509Certificate> chain;
     
@@ -91,7 +91,7 @@ public class TokenEntryDetailsFrame extends javax.swing.JFrame {
         
         final String alias = entry.getAlias();
         final String type = entry.getType();
-        final String creationDate = entry.getCreationDate() == null ? "n/a" : sdf.format(entry.getCreationDate().toGregorianCalendar().getTime());
+        final String creationDate = entry.getCreationDate() == null ? "n/a" : fdf.format(entry.getCreationDate().toGregorianCalendar().getTime());
         
         final String certSubjectDN;
         if (signerCert != null) {

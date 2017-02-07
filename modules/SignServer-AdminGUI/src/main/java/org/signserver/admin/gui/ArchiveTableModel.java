@@ -12,10 +12,10 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
+import org.apache.commons.lang.time.FastDateFormat;
 
 import org.signserver.admin.gui.adminws.gen.ArchiveEntry;
 import org.signserver.common.ArchiveMetadata;
@@ -32,7 +32,7 @@ public class ArchiveTableModel extends AbstractTableModel {
                 "Archive ID", "Time", "Type", "Signer ID", "Client Cert Serial Number", "Issuer DN", "IP Address"
             };
     
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+    private final FastDateFormat fdf = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ssZ");
     
     
     private List<ArchiveEntry> entries = Collections.emptyList();
@@ -57,7 +57,7 @@ public class ArchiveTableModel extends AbstractTableModel {
                 result = entry.getArchiveId();
                 break;
             case 1:
-                result = sdf.format(entry.getTime());
+                result = fdf.format(entry.getTime());
                 break;
             case 2:
                 result = ArchiveMetadata.getTypeName(entry.getType());

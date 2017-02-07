@@ -15,9 +15,9 @@ package org.signserver.module.timemonitormanager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.persistence.EntityManager;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericPropertiesRequest;
@@ -84,7 +84,7 @@ public class TimeMonitorManager extends BaseSigner {
 
     private TimeMonitorRuntimeConfig runConfig;
 
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+    private static final FastDateFormat FDF = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss,SSS");
 
     private LinkedList<String> configErrors;
 
@@ -277,7 +277,7 @@ public class TimeMonitorManager extends BaseSigner {
                 timeMonitorValue = "Running";
             }
 
-            lastUpdateValue = SDF.format(state.getLastUpdated());
+            lastUpdateValue = FDF.format(state.getLastUpdated());
             timeStateValue = state.getTimeState().name();
             reportStateValue = state.getReportState().name();
             leapStateValue = state.getLeapState().name();
@@ -296,7 +296,7 @@ public class TimeMonitorManager extends BaseSigner {
 
         if (stateEntry != null) {
             briefEntries.add(new WorkerStatusInfo.Entry("Last update", lastUpdateValue));
-            briefEntries.add(new WorkerStatusInfo.Entry("Current time", SDF.format(now)));
+            briefEntries.add(new WorkerStatusInfo.Entry("Current time", FDF.format(now)));
             if (stateEntry.getExpirationTime() >= now.getTime()) {
                 briefEntries.add(new WorkerStatusInfo.Entry("Time state", timeStateValue));
                 briefEntries.add(new WorkerStatusInfo.Entry("Report state", reportStateValue));
@@ -325,7 +325,7 @@ public class TimeMonitorManager extends BaseSigner {
             if (insyncEntry.getExpirationTime() < now.getTime()) {
                 repo.append(", expired ");
                 if (insyncEntry.getExpirationTime() > 0) {
-                    repo.append(SDF.format(insyncEntry.getExpirationTime()));
+                    repo.append(FDF.format(insyncEntry.getExpirationTime()));
                 }
             }
             repo.append("\n");
@@ -336,7 +336,7 @@ public class TimeMonitorManager extends BaseSigner {
         } else {
             repo.append(leapEntry.getValue());
             if (leapEntry.getExpirationTime() < now.getTime()) {
-                repo.append(", expired ").append(SDF.format(leapEntry.getExpirationTime()));
+                repo.append(", expired ").append(FDF.format(leapEntry.getExpirationTime()));
             }
             repo.append("\n");
         }

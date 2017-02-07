@@ -27,7 +27,6 @@ import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
-import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerStatusInfo;

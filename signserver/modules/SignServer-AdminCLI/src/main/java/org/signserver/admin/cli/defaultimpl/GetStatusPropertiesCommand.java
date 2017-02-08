@@ -12,9 +12,9 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
@@ -28,7 +28,7 @@ import org.signserver.statusrepo.common.StatusEntry;
 public class GetStatusPropertiesCommand extends AbstractAdminCommand {
 
     private static final String FORMAT = "%-20s %-25s %-25s %s";
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+    private static final FastDateFormat FDF = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ssZ");
     
     @Override
     public String getDescription() {
@@ -76,7 +76,7 @@ public class GetStatusPropertiesCommand extends AbstractAdminCommand {
         if (timestamp <= 0) {
             return "-";
         } else {
-            return SDF.format(new Date(timestamp));
+            return FDF.format(new Date(timestamp));
         }
     }
 }

@@ -23,7 +23,6 @@ import java.security.cert.*;
 import java.security.cert.Certificate;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +30,7 @@ import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
@@ -1024,7 +1024,7 @@ public class PDFSigner extends BaseSigner {
 
             final String value;
             if (key.startsWith("DATE:")) {
-                final SimpleDateFormat sdf = new SimpleDateFormat(
+                final FastDateFormat sdf = FastDateFormat.getInstance(
                         key.substring("DATE:".length()).trim());
                 value = sdf.format(date);
             } else {

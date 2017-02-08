@@ -13,9 +13,9 @@
 package org.signserver.module.signerstatusreport;
 
 import java.security.cert.Certificate;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.signserver.common.*;
 import org.signserver.server.KeyUsageCounterHash;
@@ -40,8 +40,8 @@ public class SignerStatusReportBuilder implements ReportBuilder {
     private static final String SEPARATOR = ", ";
     
     /** Validity date time format. */
-    private final SimpleDateFormat dateFormat
-            = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+    private final FastDateFormat dateFormat =
+            FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss z");
     
     /** List of worker names. */
     private final List<String> workers;

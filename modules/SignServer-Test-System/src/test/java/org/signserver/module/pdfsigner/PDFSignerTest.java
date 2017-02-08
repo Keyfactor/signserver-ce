@@ -20,9 +20,9 @@ import java.io.*;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.CertTools;
 import org.junit.After;
@@ -320,8 +320,8 @@ public class PDFSignerTest extends ModulesTestCase {
         Map<String, String> fields = new HashMap<>();
         fields.put("WORKERID", "4311");
 
-        SimpleDateFormat sdf = new SimpleDateFormat("MMMMMMMMM");
-        String expectedMonth = sdf.format(date);
+        FastDateFormat fdf = FastDateFormat.getInstance("MMMMMMMMM");
+        String expectedMonth = fdf.format(date);
 
         String actual = PDFSigner.formatFromPattern(p1,
                 "${WORKERID}/${DATE: yyyy}/${DATE:MMMMMMMMM}", date, fields);

@@ -49,10 +49,10 @@
 
 package com.lowagie.text;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import org.apache.commons.lang.time.FastDateFormat;
 
 /**
  * A generic Document class.
@@ -620,7 +620,7 @@ public class Document implements DocListener {
     public boolean addCreationDate() {
         try {
 			/* bugfix by 'taqua' (Thomas) */
-			final SimpleDateFormat sdf = new SimpleDateFormat(
+			final FastDateFormat sdf = FastDateFormat.getInstance(
 					"EEE MMM dd HH:mm:ss zzz yyyy");
 			return add(new Meta(Element.CREATIONDATE, sdf.format(new Date())));
 		} catch (DocumentException de) {

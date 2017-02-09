@@ -27,7 +27,6 @@ import java.security.KeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -60,6 +59,7 @@ import javax.xml.crypto.dsig.keyinfo.X509Data;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -644,7 +644,7 @@ public class DocumentSignatureManager {
         Date signingTime = now.getTime();
 
         String signatureDateTimeFormatString = "yyyy-MM-dd'T'HH:mm:ss";
-        SimpleDateFormat sdf = new SimpleDateFormat(
+        FastDateFormat sdf = FastDateFormat.getInstance(
                 signatureDateTimeFormatString);
 
         String dateFriendly = sdf.format(signingTime);

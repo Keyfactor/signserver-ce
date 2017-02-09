@@ -48,6 +48,7 @@ import java.io.OutputStream;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.apache.commons.lang.time.FastDateFormat;
 
 import org.openxml4j.exceptions.InvalidFormatException;
 import org.openxml4j.exceptions.InvalidOperationException;
@@ -608,7 +609,7 @@ public class PackagePropertiesPart extends PackagePart implements
 		if (d == null || d.equals(""))
 			return "";
 		else {
-			SimpleDateFormat df = new SimpleDateFormat(
+			FastDateFormat df = FastDateFormat.getInstance(
 					"yyyy-MM-dd'T'HH:mm:ss'Z'");
 			return df.format(d.getValue());
 		}

@@ -58,7 +58,6 @@ import java.security.PrivateKey;
 import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -75,6 +74,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
+import org.apache.commons.lang.time.FastDateFormat;
 
 /**
  * This class takes care of the cryptographic options and appearances that form a signature.
@@ -402,7 +402,7 @@ public class PdfSignatureAppearance {
             if (layer2Text == null) {
                 StringBuffer buf = new StringBuffer();
                 buf.append("Digitally signed by ").append(PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("CN")).append('\n');
-                SimpleDateFormat sd = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
+                FastDateFormat sd = FastDateFormat.getInstance("yyyy.MM.dd HH:mm:ss z");
                 buf.append("Date: ").append(sd.format(signDate.getTime()));
                 if (reason != null)
                     buf.append('\n').append("Reason: ").append(reason);

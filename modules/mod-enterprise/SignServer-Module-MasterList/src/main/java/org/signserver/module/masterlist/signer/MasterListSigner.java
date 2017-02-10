@@ -131,7 +131,8 @@ public class MasterListSigner extends BaseSigner {
             crypto = acquireCryptoInstance(workerId, signRequest, requestContext);
             
             // Get certificate chain and signer certificate
-            List<Certificate> certs = crypto.getCertificateChain();
+            List<Certificate> certs = getSigningCertificateChain(crypto);
+            //List<Certificate> certs = crypto.getCertificateChain();
             if (certs == null) {
                 throw new IllegalArgumentException(
                         "Null certificate chain. This signer needs a certificate.");
@@ -144,7 +145,7 @@ public class MasterListSigner extends BaseSigner {
                             + ((X509Certificate) c).getSubjectDN());
                 }
             }
-            cert = crypto.getCertificate();
+            cert = getSigningCertificate(crypto);
             LOG.debug("SigningCert: " + ((X509Certificate) cert).getSubjectDN());
 
             // Private key

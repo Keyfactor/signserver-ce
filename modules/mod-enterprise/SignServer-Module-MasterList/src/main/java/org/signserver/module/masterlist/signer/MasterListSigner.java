@@ -132,7 +132,7 @@ public class MasterListSigner extends BaseSigner {
             
             // Get certificate chain and signer certificate
             List<Certificate> certs = getSigningCertificateChain(crypto);
-            //List<Certificate> certs = crypto.getCertificateChain();
+
             if (certs == null) {
                 throw new IllegalArgumentException(
                         "Null certificate chain. This signer needs a certificate.");

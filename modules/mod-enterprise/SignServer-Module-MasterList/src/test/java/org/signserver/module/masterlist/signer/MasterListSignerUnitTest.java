@@ -50,7 +50,6 @@ import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
-import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.CertTools;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;

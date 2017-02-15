@@ -50,6 +50,7 @@ import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
+import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.CertTools;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
@@ -81,6 +82,9 @@ public class MasterListSignerUnitTest {
     private static final Logger LOG = Logger.getLogger(MasterListSignerUnitTest.class);
 
     private static MockedCryptoToken tokenRSA;
+    private static MockedCryptoToken tokenRSANoCerts;
+    private static Certificate[] certChain;
+    private static Certificate signerCertificate;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -95,7 +99,7 @@ public class MasterListSignerUnitTest {
 
         long currentTime = System.currentTimeMillis();
 
-        final Certificate[] certChain =
+        certChain =
                 new Certificate[] {
                     // Signer
                     new JcaX509CertificateConverter().getCertificate(new CertBuilder()
@@ -116,8 +120,11 @@ public class MasterListSignerUnitTest {
                         .setIssuer(caDN)
                         .setSubject(caDN)
                         .build())};
-        final Certificate signerCertificate = certChain[0];
+        signerCertificate = certChain[0];
         tokenRSA = new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), "BC");
+        tokenRSANoCerts = new MockedCryptoToken(signerKeyPair.getPrivate(),
+                                                signerKeyPair.getPublic(), null,
+                                                null, "BC");
     }
 
     /**
@@ -135,12 +142,134 @@ public class MasterListSignerUnitTest {
         assertTrue("fatalErrors: " + instance.getFatalErrors(null).toString(), instance.getFatalErrors(null).toString().contains("INCLUDE_CERTIFICATE_LEVELS"));
     }
 
+    /**
+     * Test signing with RSA keys and the certificate chain stored in the
+     * (mocked) token.
+     * 
+     * @throws Exception 
+     */
     @Test
     public void testNormalSigning() throws Exception {
         LOG.info("testNormalSigning");
         WorkerConfig config = new WorkerConfig();
         config.setProperty("SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
         MasterListSigner instance = new MockedMasterListSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final List<Certificate> inputCertificates = createCertificates(2, true);
+
+        final byte[] data = CertTools.getPemFromCertificateChain(inputCertificates);
+
+        RequestContext requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
+        SignatureResponse res;
+        byte[] cms;
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestData(data);
+                CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
+            ) {
+            SignatureRequest request = new SignatureRequest(100, requestData, responseData);
+            res = (SignatureResponse) instance.processData(request, requestContext);
+
+            cms = responseData.toReadableData().getAsByteArray();
+        }
+        CMSSignedData signedData = new CMSSignedData(cms);
+
+        assertEquals("eContentType id-icao-cscaMasterList", ICAOObjectIdentifiers.id_icao_cscaMasterList.toString(), signedData.getSignedContentTypeOID());
+
+        assertEquals("crl field MUST NOT be populated", 0, signedData.getCRLs().getMatches(new Selector() {
+
+            @Override
+            public boolean match(Object o) {
+                return true;
+            }
+
+            @Override
+            public Object clone() {
+                return this;
+            }
+        }).size());
+
+        assertEquals("It is RECOMMENDED that States only provide 1 signerinfo within this field.", 1, signedData.getSignerInfos().size());
+        SignerInformation signerInfo = (SignerInformation) signedData.getSignerInfos().getSigners().iterator().next();
+        assertNotNull("subjectKeyIdentifier: It is RECOMMENDED that States support this field over issuerndSerialNumber", signerInfo.getSID().getSubjectKeyIdentifier());
+        assertEquals("RFC3852: If the SignerIdentifier is subjectKeyIdentifier, then the version MUST be 3.", 3, signerInfo.getVersion());
+
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        byte[] content = (byte[]) signedContent.getContent();
+
+        CscaMasterList ml = CscaMasterList.getInstance(new ASN1InputStream(content).readObject());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("ASN.1:\n" + ASN1Dump.dumpAsString(ml));
+        }
+
+        assertEquals("Number of certs in response", 2, ml.getCertStructs().length);
+
+        // Check that we got back the same certificates
+        // Notice that they are stored as a set, so might be in any order
+        final Set<Certificate> actual = new HashSet<>();
+        for (org.bouncycastle.asn1.x509.Certificate bcCert : ml.getCertStructs()) {
+            actual.add(CertTools.getCertfromByteArray(bcCert.getEncoded()));
+        }
+        assertEquals("certs", new HashSet<>(inputCertificates), actual);
+
+        assertEquals("CscaMasterListVersion", 0, ml.getVersion());
+
+        // Check certificate returned
+        final Certificate signercert = res.getSignerCertificate();
+        final X509Certificate configuredSignerCert = (X509Certificate) tokenRSA.getCertificate(ICryptoTokenV4.PURPOSE_SIGN);
+        assertNotNull("Signer certificate", signercert);
+        assertEquals("same cert returned", signercert, configuredSignerCert);
+
+        // Verify using the signer's certificate (the configured one)
+        assertTrue("Verification using signer certificate",
+                signerInfo.verify(new JcaSimpleSignerInfoVerifierBuilder().build(configuredSignerCert)));
+
+        // Check that the signer's certificate is included
+        Store certs = signedData.getCertificates();
+        Collection matches = certs.getMatches(new JcaX509CertificateHolderSelector(configuredSignerCert));
+        assertEquals("should match the configured certificate: " + matches, 1, matches.size());
+
+        // Check that the CSCA certificate is included
+        final X509Certificate configuredCACert = (X509Certificate) tokenRSA.getCertificateChain(ICryptoTokenV4.PURPOSE_SIGN).get(1);
+        matches = certs.getMatches(new JcaX509CertificateHolderSelector(configuredCACert));
+        assertEquals("should match the configured certificate: " + matches, 1, matches.size());
+
+        // Testing that the SID works
+        Collection certCollection = certs.getMatches(signerInfo.getSID());
+        assertTrue("Matched signer cert", signerInfo.getSID().match(new X509CertificateHolder(configuredSignerCert.getEncoded())));
+        X509CertificateHolder certHolder = (X509CertificateHolder) certCollection.iterator().next();
+        assertArrayEquals("same cert returned", certHolder.getEncoded(), configuredSignerCert.getEncoded());
+
+        // Check the signature algorithm
+        assertEquals("Digest algorithm", CMSAlgorithm.SHA256.toString(), signerInfo.getDigestAlgorithmID().getAlgorithm().toString());
+        assertEquals("Encryption algorithm", PKCSObjectIdentifiers.id_RSASSA_PSS.toString(), signerInfo.getEncryptionAlgOID());
+
+        Attribute signingTime = signerInfo.getSignedAttributes().get(CMSAttributes.signingTime);
+        assertNotNull("signedAttrs MUST include signing time (ref. PKCS#9)", signingTime);
+
+        // All CSCA Master Lists MUST be produced in DER format
+        final byte[] der = new ASN1InputStream(cms).readObject().getEncoded("DER");
+        assertArrayEquals("expects DER format", der, cms);
+    }
+    
+    /**
+     * Test signing with RSA keys and the certificate chain stored in the
+     * configuration of the worker.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testNormalSigningNoCertInToken() throws Exception {
+        LOG.info("testNormalSigning");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
+        config.setProperty("SIGNERCERTCHAIN",
+                new String(CertTools.getPemFromCertificateChain(Arrays.asList(certChain))));
+        config.setProperty("SIGNERCERT",
+                new String(CertTools.getPemFromCertificateChain(Arrays.asList(signerCertificate))));
+                
+        MasterListSigner instance = new MockedMasterListSigner(tokenRSANoCerts);
         instance.init(1, config, new SignServerContext(), null);
 
         final List<Certificate> inputCertificates = createCertificates(2, true);

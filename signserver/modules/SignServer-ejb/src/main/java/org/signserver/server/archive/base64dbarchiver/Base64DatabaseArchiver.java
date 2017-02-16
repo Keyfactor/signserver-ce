@@ -88,7 +88,7 @@ public class Base64DatabaseArchiver extends BaseArchiver implements Archiver {
                 Boolean.valueOf(config.getProperty(WorkerConfig.NO_REQUEST_ARCHIVING, "false").toLowerCase(Locale.ENGLISH));
         if (noRequestArchiving &&
             (archiveOfTypes == ArchiveOfTypes.REQUEST || archiveOfTypes == ArchiveOfTypes.REQUEST_AND_RESPONSE)) {
-            addFatalError("Can not specifiy " + PROPERTY_ARCHIVE_OF_TYPE + " " + archiveOfTypes + " when " +
+            addFatalError("Can not specifiy " + PROPERTY_ARCHIVE_OF_TYPE + " " + archiveOfTypes.name() + " when " +
                           WorkerConfig.NO_REQUEST_ARCHIVING + " is set to true");
         }
         

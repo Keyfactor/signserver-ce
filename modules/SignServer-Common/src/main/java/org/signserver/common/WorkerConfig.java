@@ -114,6 +114,13 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     public static final int WORKERTYPE_PROCESSABLE = 2;
     public static final int WORKERTYPE_MAILSIGNERS = 4;
     
+    /**
+     * Specifies that no archiving of request data should be done.
+     * This implies the worker don't need to retain the request data while
+     * the signing operation is in progress.
+     */
+    public static final String NO_REQUEST_ARCHIVING = "NO_REQUEST_ARCHIVING";
+    
     @SuppressWarnings("unchecked")
     public WorkerConfig() {
         data.put(PROPERTIES, new Properties());

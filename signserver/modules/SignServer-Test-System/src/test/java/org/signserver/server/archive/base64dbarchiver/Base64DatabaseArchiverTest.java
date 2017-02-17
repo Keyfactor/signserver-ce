@@ -442,7 +442,7 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
                     getWorkerSession().getStatus(new WorkerIdentifier(signerId)).getFatalErrors();
             
             assertTrue("Should contain error",
-                       fatalErrors.contains("Can not specify ARCHIVE_OF_TYPE REQUEST when NO_REQUEST_ARCHIVING is set to true"));
+                       fatalErrors.contains("Can not specifiy ARCHIVE_OF_TYPE REQUEST when NO_REQUEST_ARCHIVING is set to true"));
         } finally {
             // restore
             getWorkerSession().removeWorkerProperty(signerId, "ARCHIVER0.ARCHIVE_OF_TYPE");

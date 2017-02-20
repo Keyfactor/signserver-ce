@@ -14,7 +14,9 @@ package org.signserver.server.archive.olddbarchiver;
 
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.List;
 import java.util.Random;
+import static junit.framework.TestCase.assertTrue;
 import org.apache.log4j.Logger;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
@@ -427,6 +429,124 @@ public class OldDatabaseArchiverTest extends ArchiveTestCase {
         final String ip = archiveData.getRequestIP();
         
         assertEquals("Archiver should include direct address", "127.0.0.1", ip);
+    }
+    
+    /**
+     * Test that setting NO_REQUEST_ARCHIVING and at the same time setting
+     * .ARCHIVE_OF_TYPE=REQUEST is not allowed.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test67archiveNoRequestArchivingAndArchiveRequestNotAllowed() throws Exception {
+        final int signerId = getSignerIdDummy1();
+        
+        try {
+            getWorkerSession().setWorkerProperty(signerId,
+                                                 "ARCHIVER0.ARCHIVE_OF_TYPE",
+                                                 "REQUEST");
+            getWorkerSession().setWorkerProperty(signerId,
+                                                 "NO_REQUEST_ARCHIVING", "true");
+            getWorkerSession().reloadConfiguration(signerId);
+            final List<String> fatalErrors =
+                    getWorkerSession().getStatus(new WorkerIdentifier(signerId)).getFatalErrors();
+            
+            assertTrue("Should contain error",
+                       fatalErrors.contains("Can not specifiy ARCHIVE_OF_TYPE REQUEST when NO_REQUEST_ARCHIVING is set to true"));
+        } finally {
+            // restore
+            getWorkerSession().removeWorkerProperty(signerId, "ARCHIVER0.ARCHIVE_OF_TYPE");
+            getWorkerSession().removeWorkerProperty(signerId, "NO_REQUEST_ARCHIVING");
+            getWorkerSession().reloadConfiguration(signerId);
+        }
+    }
+    
+    /**
+     * Test that setting NO_REQUEST_ARCHIVING and at the same time setting
+     * .ARCHIVE_OF_TYPE=RESPONSE is allowed (since not archiving requests).
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test68archiveNoRequestArchivingAndArchiveResponseAllowed() throws Exception {
+        final int signerId = getSignerIdDummy1();
+        
+        try {
+            getWorkerSession().setWorkerProperty(signerId,
+                                                 "ARCHIVER0.ARCHIVE_OF_TYPE",
+                                                 "RESPONSE");
+            getWorkerSession().setWorkerProperty(signerId,
+                                                 "NO_REQUEST_ARCHIVING", "true");
+            getWorkerSession().reloadConfiguration(signerId);
+            final List<String> fatalErrors =
+                    getWorkerSession().getStatus(new WorkerIdentifier(signerId)).getFatalErrors();
+            
+            assertTrue("Should not contain errors", fatalErrors.isEmpty());
+        } finally {
+            // restore
+            getWorkerSession().removeWorkerProperty(signerId, "ARCHIVER0.ARCHIVE_OF_TYPE");
+            getWorkerSession().removeWorkerProperty(signerId, "NO_REQUEST_ARCHIVING");
+            getWorkerSession().reloadConfiguration(signerId);
+        }
+    }
+    
+    /**
+     * Test that setting NO_REQUEST_ARCHIVING and at the same time setting
+     * .ARCHIVE_OF_TYPE=REQUEST_AND_RESPONSE is not allowed.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test69archiveNoRequestArchivingAndArchiveRequestResponseNotAllowed() throws Exception {
+        final int signerId = getSignerIdDummy1();
+        
+        try {
+            getWorkerSession().setWorkerProperty(signerId,
+                                                 "ARCHIVER0.ARCHIVE_OF_TYPE",
+                                                 "REQUEST_AND_RESPONSE");
+            getWorkerSession().setWorkerProperty(signerId,
+                                                 "NO_REQUEST_ARCHIVING", "true");
+            getWorkerSession().reloadConfiguration(signerId);
+            final List<String> fatalErrors =
+                    getWorkerSession().getStatus(new WorkerIdentifier(signerId)).getFatalErrors();
+            
+            assertTrue("Should contain error",
+                       fatalErrors.contains("Can not specifiy ARCHIVE_OF_TYPE REQUEST_AND_RESPONSE when NO_REQUEST_ARCHIVING is set to true"));
+        } finally {
+            // restore
+            getWorkerSession().removeWorkerProperty(signerId, "ARCHIVER0.ARCHIVE_OF_TYPE");
+            getWorkerSession().removeWorkerProperty(signerId, "NO_REQUEST_ARCHIVING");
+            getWorkerSession().reloadConfiguration(signerId);
+        }
+    }
+    
+    /**
+     * Test that setting NO_REQUEST_ARCHIVING explicitely to false and at the same time setting
+     * .ARCHIVE_OF_TYPE=RESPONSE is allowed (since not archiving requests).
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test70archiveNoRequestArchivingFalseAndArchiveResponseAllowed() throws Exception {
+        final int signerId = getSignerIdDummy1();
+        
+        try {
+            getWorkerSession().setWorkerProperty(signerId,
+                                                 "ARCHIVER0.ARCHIVE_OF_TYPE",
+                                                 "RESPONSE");
+            getWorkerSession().setWorkerProperty(signerId,
+                                                 "NO_REQUEST_ARCHIVING", "false");
+            getWorkerSession().reloadConfiguration(signerId);
+            final List<String> fatalErrors =
+                    getWorkerSession().getStatus(new WorkerIdentifier(signerId)).getFatalErrors();
+            
+            assertTrue("Should not contain errors", fatalErrors.isEmpty());
+        } finally {
+            // restore
+            getWorkerSession().removeWorkerProperty(signerId, "ARCHIVER0.ARCHIVE_OF_TYPE");
+            getWorkerSession().removeWorkerProperty(signerId, "NO_REQUEST_ARCHIVING");
+            getWorkerSession().reloadConfiguration(signerId);
+        }
     }
     
     protected Collection<? extends Archivable> archiveTimeStamp(int signerId) throws Exception {

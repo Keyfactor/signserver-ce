@@ -1464,13 +1464,95 @@ public class MSAuthCodeSignerUnitTest {
      */
     @Test
     public void testInit_timestampFormatEmpty() throws Exception {
-        LOG.info("testInit_incorrectDigestAlg");
+        LOG.info("testInit_timestampFormatEmpty");
         WorkerConfig config = createConfig();
         config.setProperty("TIMESTAMP_FORMAT", "");
         MSAuthCodeSigner instance = new MockedMSAuthCodeSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
 
         assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
+    }
+    
+    /**
+     * Test that setting an empty value for NO_REQUEST_ARCHIVING works.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_noRequestArchivingEmpty() throws Exception {
+        LOG.info("testInit_noRequestArchivingEmpty");
+        WorkerConfig config = createConfig();
+        config.setProperty("NO_REQUEST_ARCHIVING", "");
+        MSAuthCodeSigner instance = new MockedMSAuthCodeSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
+    }
+    
+    /**
+     * Test that setting "true" for NO_REQUEST_ARCHIVING works.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_noRequestArchivingTrue() throws Exception {
+        LOG.info("testInit_noRequestArchivingTrue");
+        WorkerConfig config = createConfig();
+        config.setProperty("NO_REQUEST_ARCHIVING", "true");
+        MSAuthCodeSigner instance = new MockedMSAuthCodeSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
+    }
+    
+    /**
+     * Test that setting "false" for NO_REQUEST_ARCHIVING works.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_noRequestArchivingFalse() throws Exception {
+        LOG.info("testInit_noRequestArchivingFalse");
+        WorkerConfig config = createConfig();
+        config.setProperty("NO_REQUEST_ARCHIVING", "false");
+        MSAuthCodeSigner instance = new MockedMSAuthCodeSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
+    }
+    
+    /**
+     * Test that setting "TRUE" (upper case) for NO_REQUEST_ARCHIVING works.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_noRequestArchivingTrueUpper() throws Exception {
+        LOG.info("testInit_noRequestArchivingTrueUpper");
+        WorkerConfig config = createConfig();
+        config.setProperty("NO_REQUEST_ARCHIVING", "TRUE");
+        MSAuthCodeSigner instance = new MockedMSAuthCodeSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
+    }
+    
+    /**
+     * Test that setting "true " (invalid with extra space) for NO_REQUEST_ARCHIVING
+     * results in a configuration error.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_noRequestArchivingInvalid() throws Exception {
+        LOG.info("testInit_noRequestArchivingInvalid");
+        WorkerConfig config = createConfig();
+        config.setProperty("NO_REQUEST_ARCHIVING", "true ");
+        MSAuthCodeSigner instance = new MockedMSAuthCodeSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        assertTrue("should contain error",
+                   instance.getFatalErrors(null).contains("Incorrect value for NO_REQUEST_ARCHIVING"));
     }
     
     private void assertRequestDigestMatches(File file, String digestAlgorithm, RequestContext context) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException, UnsupportedEncodingException, IOException {

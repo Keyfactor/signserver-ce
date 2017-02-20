@@ -511,6 +511,35 @@ public class Base64DatabaseArchiverTest extends ArchiveTestCase {
     }
     
     /**
+     * Test that setting NO_REQUEST_ARCHIVING explicitely to false and at the same time setting
+     * .ARCHIVE_OF_TYPE=RESPONSE is allowed (since not archiving requests).
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test71archiveNoRequestArchivingFalseAndArchiveResponseAllowed() throws Exception {
+        final int signerId = getSignerIdDummy1();
+        
+        try {
+            getWorkerSession().setWorkerProperty(signerId,
+                                                 "ARCHIVER0.ARCHIVE_OF_TYPE",
+                                                 "RESPONSE");
+            getWorkerSession().setWorkerProperty(signerId,
+                                                 "NO_REQUEST_ARCHIVING", "false");
+            getWorkerSession().reloadConfiguration(signerId);
+            final List<String> fatalErrors =
+                    getWorkerSession().getStatus(new WorkerIdentifier(signerId)).getFatalErrors();
+            
+            assertTrue("Should not contain errors", fatalErrors.isEmpty());
+        } finally {
+            // restore
+            getWorkerSession().removeWorkerProperty(signerId, "ARCHIVER0.ARCHIVE_OF_TYPE");
+            getWorkerSession().removeWorkerProperty(signerId, "NO_REQUEST_ARCHIVING");
+            getWorkerSession().reloadConfiguration(signerId);
+        }
+    }
+    
+    /**
      * Remove the workers created etc.
      * @throws Exception in case of error
      */

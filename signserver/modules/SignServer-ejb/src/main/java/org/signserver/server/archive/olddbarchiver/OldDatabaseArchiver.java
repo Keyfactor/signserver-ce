@@ -80,6 +80,13 @@ public class OldDatabaseArchiver extends BaseArchiver implements Archiver {
             addFatalError(error);
         }
         
+        final boolean noRequestArchiving = Boolean.valueOf(config.getProperty(WorkerConfig.NO_REQUEST_ARCHIVING));
+        if (noRequestArchiving &&
+            (archiveOfTypes == ArchiveOfTypes.REQUEST || archiveOfTypes == ArchiveOfTypes.REQUEST_AND_RESPONSE)) {
+            addFatalError("Can not specifiy " + PROPERTY_ARCHIVE_OF_TYPE + " " + archiveOfTypes.name() + " when " +
+                          WorkerConfig.NO_REQUEST_ARCHIVING + " is set to true");
+        }
+
         // configuration for using the X-FORWARDED-FOR header to determine source IP
         final String propertyXForwardedFor = "ARCHIVER" + listIndex + "." + PROPERTY_USE_FORWARDED_ADDRESS;
         final String propertyMaxForwardedAddresses =

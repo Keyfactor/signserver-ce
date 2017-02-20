@@ -23,6 +23,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -169,6 +171,8 @@ public class MSAuthCodeSigner extends BaseSigner {
     private static final boolean DEFAULT_ALLOW_PROGRAM_URL_OVERRIDE = false;
     
     private static final String DEFAULT_TIMESTAMP_FORMAT = "AUTHENTICODE";
+    
+    private static final boolean DEFAULT_NO_REQUEST_ARCHIVING = false;
 
     private LinkedList<String> configErrors;
     private String signatureAlgorithm;
@@ -190,6 +194,7 @@ public class MSAuthCodeSigner extends BaseSigner {
     private String logResponseDigestAlgorithm;
     private boolean doLogRequestDigest;
     private boolean doLogResponseDigest;
+    private boolean noRequestArchiving;
     
     /**
      * Timestamp formats.
@@ -344,6 +349,17 @@ public class MSAuthCodeSigner extends BaseSigner {
         } else {
             configErrors.add("Incorrect value for " + DO_LOGRESPONSE_DIGEST);
         }
+        
+        s = config.getProperty(WorkerConfig.NO_REQUEST_ARCHIVING);
+        if (s == null || s.trim().isEmpty()) {
+            noRequestArchiving = DEFAULT_NO_REQUEST_ARCHIVING;
+        } else if ("true".equalsIgnoreCase(s)) {
+            noRequestArchiving = true;
+        } else if ("false".equalsIgnoreCase(s)) {
+            noRequestArchiving = false;
+        } else {
+            configErrors.add("Incorrect value for " + WorkerConfig.NO_REQUEST_ARCHIVING);
+        }
     }
 
     @Override
@@ -441,7 +457,13 @@ public class MSAuthCodeSigner extends BaseSigner {
                     sigAlg = signatureAlgorithm;
                 }
 
-                IOUtils.copyLarge(in, out);
+                if (noRequestArchiving) {
+                    Files.move(data.getAsFile().toPath(),
+                               responseData.getAsFile().toPath(),
+                               StandardCopyOption.REPLACE_EXISTING);
+                } else {
+                    IOUtils.copyLarge(in, out);
+                }
 
                 switch (fileType) {
                     case PE:                        

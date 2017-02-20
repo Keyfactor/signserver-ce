@@ -56,11 +56,11 @@
     </welcome-file-list>
     <!-- Special page for authorization denied -->
     <error-page>
-        <exception-type>org.signserver.signserver.admin.web.ejb.AdminNotAuthorizedException</exception-type>
+        <exception-type>org.signserver.admin.web.ejb.AdminNotAuthorizedException</exception-type>
         <location>/error-auth.xhtml</location>
     </error-page>
     <error-page>
-        <exception-type>org.signserver.signserver.admin.web.ejb.NotLoggedInException</exception-type>
+        <exception-type>org.signserver.admin.web.ejb.NotLoggedInException</exception-type>
         <location>/error-notloggedin.xhtml</location>
     </error-page>
     <!-- Special page when trying to view an non-existing worker -->

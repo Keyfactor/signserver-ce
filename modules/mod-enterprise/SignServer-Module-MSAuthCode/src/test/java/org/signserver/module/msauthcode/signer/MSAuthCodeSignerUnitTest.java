@@ -1750,7 +1750,7 @@ public class MSAuthCodeSignerUnitTest {
     @Test
     public void testNormalSigningMSINoRequestArchiving_RSA() throws Exception {
         LOG.info("testNormalSigningMSI_RSA");
-        final File tmpFile = File.createTempFile("temp", ".exe");
+        final File tmpFile = File.createTempFile("temp", ".msi");
         FileUtils.copyFile(msiFile, tmpFile);
 
         try (
@@ -1765,6 +1765,30 @@ public class MSAuthCodeSignerUnitTest {
             FileUtils.writeByteArrayToFile(new File("/tmp/test-signed.msi"), responseData.toReadableData().getAsByteArray());
             POIFSFileSystem fs = new POIFSFileSystem(responseData.toReadableData().getAsInputStream());
             assertSignedAndNotTimestampedMSI(tokenRSA, "SHA1", X509ObjectIdentifiers.id_SHA1, X509ObjectIdentifiers.id_SHA1, PKCSObjectIdentifiers.rsaEncryption, resp, fs);
+        }
+    }
+    
+    /**
+     * Test signing using an RSA key-pair. Run with NO_REQUEST_ARCHIVING.
+     * @throws Exception 
+     */
+    @Test
+    public void testNormalSigningPENoRequestArchiving_RSA() throws Exception {
+        LOG.info("testNormalSigningMSI_RSA");
+        final File tmpFile = File.createTempFile("temp", ".exe");
+        FileUtils.copyFile(executableFile, tmpFile);
+
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestDataKeepingFile(tmpFile);
+                CloseableWritableData responseData = ModulesTestCase.createResponseData(true);
+            ) {
+            SignatureResponse resp = sign(requestData, responseData, tokenRSA, new ConfigBuilder()
+                    .withProgramName("SignServer-JUnit-Test-åäö")
+                    .withProgramURL("http://www.signserver.org/junit/test.html")
+                    .withNoRequestArchiving("true")
+                    .create(), null, null, null);
+            PEFile pe = new PEFile(responseData.toReadableData().getAsFile());
+            assertSignedAndNotTimestamped(tokenRSA, X509ObjectIdentifiers.id_SHA1, X509ObjectIdentifiers.id_SHA1, PKCSObjectIdentifiers.rsaEncryption, resp, pe);
         }
     }
     

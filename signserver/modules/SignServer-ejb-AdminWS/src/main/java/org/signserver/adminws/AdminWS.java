@@ -15,7 +15,6 @@ package org.signserver.adminws;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
@@ -40,7 +39,6 @@ import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.FileUploadException;
 
@@ -86,6 +84,7 @@ import org.signserver.validationservice.common.ValidateResponse;
  * Class implementing the Admin WS interface.
  *
  * This class contains web service implementations for almost all EJB methods.
+ *
  * @author Markus Kilås
  * @version $Id$
  */
@@ -144,10 +143,10 @@ public class AdminWS {
     }
 
     /**
-     * Returns the Id of a worker given a name
+     * Get the ID of a worker given a name.
      *
      * @param workerName of the worker, cannot be null
-     * @return The Id of a named worker or 0 if no such name exists
+     * @return The ID of a named worker or 0 if no such name exists
      * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "getWorkerId")
@@ -164,10 +163,9 @@ public class AdminWS {
     }
 
     /**
-     * Returns the current status of a processalbe.
-     * Should be used with the cmd-line status command.
-     * 
-     * @param workerId of the signer
+     * Get the current status of a worker.
+     *
+     * @param workerId of the worker
      * @return a WorkerStatus class
      * @throws InvalidWorkerIdException If the worker ID is invalid
      * @throws AdminNotAuthorizedException If the admin is not authorized
@@ -201,10 +199,10 @@ public class AdminWS {
         return result;
     }
 
-
     /**
-     * Method used when a configuration have been updated. And should be
-     * called from the commandline.
+     * Reload the configuration from the database so the latest version gets
+     * used.
+     * Needs to be called after a configuration change to start use it.
      *
      * @param workerId of the worker that should be reloaded, or 0 to reload
      * reload of all available workers
@@ -220,11 +218,10 @@ public class AdminWS {
     }
 
     /**
-     * Method used to activate the signtoken of a signer.
-     * Should be called from the command line.
+     * Activate the crypto token of the worker.
      *
-     * @param signerId of the signer
-     * @param authenticationCode (PIN) used to activate the token.
+     * @param signerId ID of the worker
+     * @param authenticationCode (PIN) for logging in to the token.
      * @throws CryptoTokenOfflineException
      * @throws CryptoTokenAuthenticationFailureException
      * @throws InvalidWorkerIdException
@@ -242,11 +239,10 @@ public class AdminWS {
     }
 
     /**
-     * Method used to deactivate the signtoken of a signer.
-     * Should be called from the command line.
+     * Deactivate (logout) the crypto token of the worker.
      *
-     * @param signerId of the signer
-     * @return true if deactivation was successful
+     * @param signerId ID of the worker
+     * @return true if deactivation (logout) was successful
      * @throws CryptoTokenOfflineException
      * @throws InvalidWorkerIdException
      * @throws AdminNotAuthorizedException If the admin is not authorized
@@ -265,11 +261,11 @@ public class AdminWS {
     /**
      * Returns the current configuration of a worker.
      *
-     * Observe that this config might not be active until a reload command
-     * has been excecuted.
+     * Observe that this configuration might not be active until a reload command
+     * has been executed.
      *
-     * @param workerId
-     * @return the current (not always active) configuration
+     * @param workerId of worker
+     * @return the current (not necessarily in use) configuration
      * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "getCurrentWorkerConfig")
@@ -284,14 +280,14 @@ public class AdminWS {
     }
 
     /**
-     * Sets a parameter in a workers configuration.
+     * Set a worker property.
      *
-     * Observe that the worker isn't activated with this config until reload
-     * is performed.
+     * Observe that the worker isn't activated with this configuration until
+     * a reload is performed.
      *
-     * @param workerId
-     * @param key
-     * @param value
+     * @param workerId of worker
+     * @param key worker property name
+     * @param value worker property value
      * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "setWorkerProperty")
@@ -307,11 +303,14 @@ public class AdminWS {
     }
 
     /**
-     * Removes a given worker's property.
+     * Remove a worker property.
      *
-     * @param workerId
-     * @param key
-     * @return true if the property did exist and was removed othervise false
+     * Observe that the worker isn't activated with this configuration until
+     * a reload is performed.
+     *
+     * @param workerId of worker
+     * @param key worker property name
+     * @return true if the property did exist and was removed otherwise false
      * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "removeWorkerProperty")
@@ -326,10 +325,10 @@ public class AdminWS {
     }
 
     /**
-     * Method that returns a collection of AuthorizedClient of
-     * client certificate sn and issuerid accepted for a given signer.
+     * Get a collection of all authorized client certificate serial numbers and
+     * issuer DN:s accepted by the worker.
      *
-     * @param workerId
+     * @param workerId of worker
      * @return Sorted collection of authorized clients
      * @throws AdminNotAuthorizedException If the admin is not authorized
      */
@@ -344,10 +343,10 @@ public class AdminWS {
     }
 
     /**
-     * Method adding an authorized client to a signer.
+     * Add an authorized client to the worker.
 
-     * @param workerId
-     * @param authClient
+     * @param workerId of worker
+     * @param authClient to add
      * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "addAuthorizedClient")
@@ -362,11 +361,11 @@ public class AdminWS {
     }
 
     /**
-     * Removes an authorized client from a signer.
+     * Remove an authorized client from the worker.
      *
-     * @param workerId
-     * @param authClient
-     * @return True if the autorized client was removed
+     * @param workerId of worker
+     * @param authClient to be removed
+     * @return True if the authorized client was removed
      * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "removeAuthorizedClient")
@@ -382,15 +381,14 @@ public class AdminWS {
     }
 
     /**
-     * Method used to let a signer generate a certificate request
-     * using the signers own genCertificateRequest method.
+     * Generate a PKCS#10 certificate signing request.
      *
-     * @param signerId id of the signer
-     * @param certReqInfo information used by the signer to create the request
+     * @param signerId ID of worker
+     * @param certReqInfo information used by the worker to create the request
      * @param explicitEccParameters false should be default and will use
      * NamedCurve encoding of ECC public keys (IETF recommendation), use true
      * to include all parameters explicitly (ICAO ePassport requirement).
-     * @return Base64-encoded certificate request
+     * @return Base64 encoded certificate signing request
      * @throws CryptoTokenOfflineException 
      * @throws InvalidWorkerIdException 
      * @throws AdminNotAuthorizedException 
@@ -415,17 +413,17 @@ public class AdminWS {
     }
 
     /**
-     * Method used to let a signer generate a certificate request
-     * using the signers own genCertificateRequest method.
+     * Generate a PKCS#10 certificate signing request either for the current key
+     * or the next key.
      *
      * @param signerId id of the signer
-     * @param certReqInfo information used by the signer to create the request
+     * @param certReqInfo information used by the worker to create the request
      * @param explicitEccParameters false should be default and will use
      * NamedCurve encoding of ECC public keys (IETF recommendation), use true
      * to include all parameters explicitly (ICAO ePassport requirement).
      * @param defaultKey true if the default key should be used otherwise for
      * instance use next key.
-     * @return Base64-encoded certificate request
+     * @return Base64 encoded certificate signing request
      * @throws CryptoTokenOfflineException 
      * @throws InvalidWorkerIdException 
      * @throws AdminNotAuthorizedException 
@@ -450,6 +448,20 @@ public class AdminWS {
         return (Base64SignerCertReqData) data;
     }
 
+    /**
+     * Generate a PKCS#10 certificate signing request for the specified key
+     * alias.
+     * @param signerId ID of worker
+     * @param certReqInfo information used by the worker to create the request
+     * @param explicitEccParameters false should be default and will use
+     * NamedCurve encoding of ECC public keys (IETF recommendation), use true
+     * to include all parameters explicitly (ICAO ePassport requirement).
+     * @param keyAlias to generate the request for
+     * @return Base64 encoded certificate signing request
+     * @throws CryptoTokenOfflineException
+     * @throws InvalidWorkerIdException
+     * @throws AdminNotAuthorizedException 
+     */
     @WebMethod(operationName = "getPKCS10CertificateRequestForAlias")
     public Base64SignerCertReqData getPKCS10CertificateRequestForAlias(
             @WebParam(name = "signerId") final int signerId,
@@ -472,7 +484,7 @@ public class AdminWS {
     }
     
     /**
-     * Method returning the current signing certificate for the signer.
+     * Get the current signer certificate for the signer.
      * @param signerId Id of signer
      * @return Current signing certificate if the worker is a signer and it has
      * been configured. Otherwise null or an exception is thrown.
@@ -491,7 +503,7 @@ public class AdminWS {
     }
 
     /**
-     * Method returning the current signing certificate chain for the signer.
+     * Get the current signer certificate chain for the signer.
      * @param signerId Id of signer
      * @return Current signing certificate chain if the worker is a signer and it
      * has been configured. Otherwise null or an exception is thrown.
@@ -510,7 +522,7 @@ public class AdminWS {
     }
 
     /**
-     * Gets the last date the specified worker can do signings.
+     * Get the last date the specified worker can perform signings.
      * @param workerId Id of worker to check.
      * @return The last date or null if no last date (=unlimited).
      * @throws CryptoTokenOfflineException In case the cryptotoken is offline
@@ -528,7 +540,7 @@ public class AdminWS {
     }
 
     /**
-     * Gets the first date the specified worker can do signings.
+     * Get the first date the specified worker can perform signings.
      * @param workerId Id of worker to check.
      * @return The first date or null if no last date (=unlimited).
      * @throws CryptoTokenOfflineException In case the cryptotoken is offline
@@ -546,10 +558,10 @@ public class AdminWS {
     }
 
     /**
-     * Returns the value of the KeyUsageCounter for the given workerId. If no
-     * certificate is configured for the worker or the current key does not yet
-     * have a counter in the database -1 is returned.
-     * @param workerId
+     * Get the value of the key usage counter for the given worker.
+     * If no certificate is configured for the worker or the current key does
+     * not yet have a counter in the database, -1 is returned.
+     * @param workerId of worker
      * @return Value of the key usage counter or -1
      * @throws CryptoTokenOfflineException
      * @throws AdminNotAuthorizedException If the admin is not authorized
@@ -565,13 +577,14 @@ public class AdminWS {
     }
 
     /**
-     * Method used to remove a key from a signer.
+     * Legacy operation for removing a key.
      *
-     * @param signerId id of the signer
+     * @param signerId ID of the worker
      * @param purpose on of ICryptoTokenV4.PURPOSE_ constants
      * @return true if removal was successful.
      * @throws InvalidWorkerIdException
      * @throws AdminNotAuthorizedException If the admin is not authorized
+     * @deprecated Use removeKey instead
      */
     @WebMethod(operationName = "destroyKey")
     public boolean destroyKey(@WebParam(name = "signerId") final int signerId,
@@ -585,12 +598,12 @@ public class AdminWS {
     }
 
     /**
-     * Generate a new keypair.
-     * @param signerId Id of signer
-     * @param keyAlgorithm Key algorithm
-     * @param keySpec Key specification
+     * Generate a new key pair.
+     * @param signerId ID of worker
+     * @param keyAlgorithm Key algorithm, i.e. "RSA" or "ECDSA"
+     * @param keySpec Key specification as bit length or elliptic curve name, i.e. "3078" or "secp256r1"
      * @param alias Name of the new key
-     * @param authCode Authorization code
+     * @param authCode Authorization code of the token
      * @return Key alias of generated key
      * @throws CryptoTokenOfflineException
      * @throws InvalidWorkerIdException If the worker ID is invalid
@@ -614,11 +627,12 @@ public class AdminWS {
     }
 
     /**
-     * Tests the key identified by alias or all keys if "all" specified.
+     * Perform a test signing with the key identified by alias or all keys
+     * if alias "all" specified.
      *
-     * @param signerId Id of signer
+     * @param signerId ID of worker
      * @param alias Name of key to test or "all" to test all available
-     * @param authCode Authorization code
+     * @param authCode Authorization code of token
      * @return Collection with test results for each key
      * @throws CryptoTokenOfflineException
      * @throws InvalidWorkerIdException
@@ -654,9 +668,9 @@ public class AdminWS {
     }
     
     /** 
-     * Method used to remove a key from the crypto token used by the worker. 
+     * Remove a key pair from the crypto token used by the worker. 
      *
-     * @param signerId id of worker
+     * @param signerId ID of worker
      * @param alias key alias of key to remove
      * @return true if removal was successful.
      * @throws CryptoTokenOfflineException if crypto token was not activated or 
@@ -681,10 +695,10 @@ public class AdminWS {
     }
 
     /**
-     * Method used to upload a certificate to a signers active configuration.
+     * Set the signer certificate worker property of a worker.
      *
-     * @param signerId id of the signer
-     * @param signerCert the certificate used to sign signature requests
+     * @param signerId ID of the worker
+     * @param signerCert the certificate to set
      * @param scope one of GlobalConfiguration.SCOPE_ constants
      * @throws IllegalRequestException
      * @throws AdminNotAuthorizedException If the admin is not authorized
@@ -708,10 +722,10 @@ public class AdminWS {
     }
 
     /**
-     * Method used to upload a complete certificate chain to a configuration
+     * Set the signer certificate chain worker property of a worker.
      *
-     * @param signerId id of the signer
-     * @param signerCerts the certificate chain used to sign signature requests
+     * @param signerId ID of the worker
+     * @param signerCerts the certificate chain
      * @param scope one of GlobalConfiguration.SCOPE_ constants
      * @throws IllegalRequestException
      * @throws AdminNotAuthorizedException If the admin is not authorized
@@ -735,8 +749,8 @@ public class AdminWS {
     }
 
     /**
-     * Method setting a global configuration property. For node. prefix will the
-     * node id be appended.
+     * Set a global configuration property.
+     *
      * @param scope one of the GlobalConfiguration.SCOPE_ constants
      * @param key of the property should not have any scope prefix, never null
      * @param value the value, never null.
@@ -754,7 +768,8 @@ public class AdminWS {
     }
 
     /**
-     * Method used to remove a property from the global configuration.
+     * Remove a global configuration property.
+     *
      * @param scope one of the GlobalConfiguration.SCOPE_ constants
      * @param key of the property should start with either glob. or node.,
      * never null
@@ -772,7 +787,7 @@ public class AdminWS {
     }
 
     /**
-     * Method that returns all the global properties with Global Scope and Node
+     * Get all the global configuration properties with Global Scope and Node
      * scopes properties for this node.
      * @return A GlobalConfiguration Object, never null
      * @throws AdminNotAuthorizedException If the admin is not authorized
@@ -805,12 +820,19 @@ public class AdminWS {
     }
 
     /**
-     * Help method that returns all worker, either signers or services defined
-     * in the global configuration.
-     * @param workerType can either be GlobalConfiguration.WORKERTYPE_ALL,
-     * _SIGNERS or _SERVICES
-     * @return A List if Integers of worker Ids, never null.
-     * @throws AdminNotAuthorizedException
+     * Get all worker ID:s of workers with the specified worker type.
+     * 
+     * <ul>
+     *    <li>1 = WorkerConfig.WORKERTYPE_ALL</li>
+     *    <li>2 = WorkerType.PROCESSABLE</li>
+     *    <li>3 = WorkerType.TIMED_SERVICE</li>
+     *    <li>10 = WorkerType.SPECIAL</li>
+     *    <li>11 = WorkerType.CRYPTO_WORKER</li>
+     * </ul>
+     * 
+     * @param workerType to get the worker ID:s for
+     * @return A List if worker ID:s
+     * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "getWorkers")
     public List<Integer> getWorkers(
@@ -828,8 +850,9 @@ public class AdminWS {
     /**
      * Method that is used after a database crash to restore all cached data to
      * database.
-     * @throws ResyncException if resync was unsuccessfull
+     * @throws ResyncException if resync was unsuccessful
      * @throws AdminNotAuthorizedException If the admin is not authorized
+     * @deprecated Unclear if this is supported or not
      */
     @WebMethod(operationName = "globalResync")
     public void globalResync() throws ResyncException, AdminNotAuthorizedException {
@@ -839,8 +862,9 @@ public class AdminWS {
     }
 
     /**
-     * Method to reload all data from database.
-     * 
+     * Flushes all cached worker configurations and the global configuration so
+     * they will have to be read in from the database again.
+     *
      * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "globalReload")
@@ -851,8 +875,7 @@ public class AdminWS {
     }
 
     /**
-     * Method for requesting a collection of requests to be processed by
-     * the specified worker.
+     * Request a collection of requests to be processed by the specified worker.
      *
      * @param workerIdOrName Name or ID of the worker who should process the
      * request
@@ -868,7 +891,7 @@ public class AdminWS {
      * @see RequestAndResponseManager#parseProcessRequest(byte[])
      */
     @WebMethod(operationName = "process")
-    public java.util.Collection<byte[]> process(
+    public Collection<byte[]> process(
             @WebParam(name = "workerIdOrName") final String workerIdOrName,
             @WebParam(name = "processRequest") Collection<byte[]> requests)
             throws InvalidWorkerIdException, IllegalRequestException,
@@ -1046,11 +1069,15 @@ public class AdminWS {
     }
     
     /**
-     * Method used to import a certificate chain to a crypto token.
+     * Import a certificate chain in to a crypto token.
      * 
+     * Note that this operation stores the certificates in the token. Compare
+     * with the uploadSignerCertificate and uploadSignerCertificateChain which
+     * stores the certificates in the worker configuration.
+     *
      * @param workerId ID of (crypto)worker
      * @param certChain Certificate chain to import
-     * @param alias Alias to import into in the crypto token
+     * @param alias Alias of entry in the crypto token to store the certificate(s) for
      * @param authCode Set if the alias is protected by an individual authentication
      *                 code. If null, uses the authentication code used when activating
      *                 the token
@@ -1164,7 +1191,16 @@ public class AdminWS {
             throw new AdminNotAuthorizedException(ex.getMessage());
         }
     }
-    
+
+    /**
+     * Query the archive based on unique IDs.
+     *
+     * @param uniqueIds to query for
+     * @param includeData true if the archive data should be included in the response
+     * @return list of archive metadata optionally including the data
+     * @throws SignServerException
+     * @throws AdminNotAuthorizedException 
+     */
     @WebMethod(operationName="queryArchiveWithIds")
     public List<WSArchiveMetadata> queryArchiveWithIds(@WebParam(name="uniqueIds") List<String> uniqueIds,
             @WebParam(name="includeData") boolean includeData)
@@ -1178,7 +1214,25 @@ public class AdminWS {
             throw new AdminNotAuthorizedException(ex.getMessage());
         }
     }
-    
+
+    /**
+     * Query entries in a crypto token.
+     *
+     * @param workerId (crypto)worker ID
+     * @param startIndex Index where select will start. Set to 0 to start from the beginning.
+     * @param max maximum number of results to be returned.
+     * @param conditions List of conditions defining the subset of the list to be presented.
+     * @param orderings List of ordering conditions for ordering the result.
+     * @param includeData If 'false' only the alias and key type is included, otherwise all information available is returned
+     * @return the query search result
+     * @throws OperationUnsupportedException
+     * @throws CryptoTokenOfflineException
+     * @throws QueryException
+     * @throws InvalidWorkerIdException
+     * @throws AuthorizationDeniedException
+     * @throws SignServerException
+     * @throws AdminNotAuthorizedException 
+     */
     @WebMethod(operationName="queryTokenEntries")
     public WSTokenSearchResults queryTokenEntries(@WebParam(name="workerId") int workerId, @WebParam(name="startIndex") int startIndex, @WebParam(name="max") int max, @WebParam(name="condition") final List<QueryCondition> conditions, @WebParam(name="ordering") final List<QueryOrdering> orderings, @WebParam(name="includeData") boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException, AdminNotAuthorizedException {
         try {

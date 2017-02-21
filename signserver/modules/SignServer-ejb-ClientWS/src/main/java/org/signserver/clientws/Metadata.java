@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 
 /**
- * Representation of additional request or response metadata in a key value 
+ * Representation of additional request or response meta data in a key value 
  * pair.
  *
  * @author Markus Kilås
@@ -40,6 +40,8 @@ public class Metadata {
     }
 
     /**
+     * Get the meta data key.
+     *
      * @return Name of the key
      */
     @XmlAttribute(required=true)
@@ -55,6 +57,8 @@ public class Metadata {
     }
 
     /**
+     * Get the meta data value.
+     *
      * @return The value
      */
     @XmlValue

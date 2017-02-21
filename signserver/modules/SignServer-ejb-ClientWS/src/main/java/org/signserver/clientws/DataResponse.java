@@ -48,7 +48,9 @@ public class DataResponse {
     }
 
     /**
-     * @return The archive id
+     * Get the archive ID for the response.
+     *
+     * @return The archive ID
      */
     public String getArchiveId() {
         return archiveId;
@@ -62,6 +64,8 @@ public class DataResponse {
     }
 
     /**
+     * Get the response output (i.e. the signature).
+     *
      * @return The signed data
      */
     public byte[] getData() {
@@ -76,6 +80,8 @@ public class DataResponse {
     }
 
     /**
+     * Get the ID of the request.
+     *
      * @return The id of the request
      */
     public int getRequestId() {
@@ -90,6 +96,8 @@ public class DataResponse {
     }
 
     /**
+     * Get the signer certificate used.
+     *
      * @return The signer certificate (if any)
      */
     public byte[] getSignerCertificate() {
@@ -104,6 +112,8 @@ public class DataResponse {
     }
 
     /**
+     * Get the response metadata.
+     *
      * @return The response metadata (if any)
      */
     public List<Metadata> getMetadata() {

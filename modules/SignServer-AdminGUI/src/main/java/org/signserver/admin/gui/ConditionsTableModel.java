@@ -12,8 +12,8 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
-import org.signserver.admin.common.admingui.QueryOperator;
-import org.signserver.admin.common.admingui.QueryColumn;
+import org.signserver.admin.common.query.QueryOperator;
+import org.signserver.admin.common.query.QueryColumn;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -21,7 +21,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.cesecore.util.query.elems.RelationalOperator;
-import org.signserver.admin.common.adminws.QueryCondition;
+import org.signserver.admin.common.query.QueryCondition;
 
 /**
  * Abstract Table Model for the query conditions.

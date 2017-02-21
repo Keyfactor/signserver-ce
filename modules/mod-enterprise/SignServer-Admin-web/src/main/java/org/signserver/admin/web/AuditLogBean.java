@@ -37,13 +37,13 @@ import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.util.ValidityDate;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
-import org.signserver.admin.common.cli.AdminCLIUtils;
-import org.signserver.admin.common.cli.AuditLogFields;
-import org.signserver.admin.common.admingui.AuditlogColumn;
-import org.signserver.admin.common.admingui.OperatorsPerColumnUtil;
-import org.signserver.admin.common.admingui.QueryOperator;
-import org.signserver.admin.common.adminws.QueryCondition;
-import org.signserver.admin.common.adminws.QueryOrdering;
+import org.signserver.admin.common.query.QueryUtil;
+import org.signserver.admin.common.query.AuditLogFields;
+import org.signserver.admin.common.query.AuditLogColumn;
+import org.signserver.admin.common.query.OperatorsPerColumnUtil;
+import org.signserver.admin.common.query.QueryOperator;
+import org.signserver.admin.common.query.QueryCondition;
+import org.signserver.admin.common.query.QueryOrdering;
 import org.signserver.common.SignServerException;
 import org.signserver.admin.web.ejb.AdminNotAuthorizedException;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
@@ -86,7 +86,7 @@ public class AuditLogBean {
     private static final Map<String, String> COLUMN_FROM_NAME = new HashMap<>();
 
     static {
-        for (AuditlogColumn col : AuditlogColumn.values()) {
+        for (AuditLogColumn col : AuditLogColumn.values()) {
             String description = col.getDescription() + " (" + col.getName() + ")";
             NAME_FROM_COLUMN.put(col.getName(), description);
             COLUMN_FROM_NAME.put(description, col.name());
@@ -228,7 +228,7 @@ public class AuditLogBean {
         for (String queryString : queryStrings) {
             if (!queryString.trim().isEmpty()) {
                 try {
-                    Term t = AdminCLIUtils.parseCriteria(queryString, AuditLogFields.ALLOWED_FIELDS, AuditLogFields.NO_ARG_OPS, Collections.<String>emptySet(), AuditLogFields.LONG_FIELDS, AuditLogFields.DATE_FIELDS);
+                    Term t = QueryUtil.parseCriteria(queryString, AuditLogFields.ALLOWED_FIELDS, AuditLogFields.NO_ARG_OPS, Collections.<String>emptySet(), AuditLogFields.LONG_FIELDS, AuditLogFields.DATE_FIELDS);
                     results.add(new QueryCondition(t.getName(), t.getOperator(), t.getValue() == null ? null : String.valueOf(t.getValue())));
                 } catch (IllegalArgumentException | ParseException ex) {
                     queryError = "One or more incorrect query conditions was dropped: " + ex.getMessage();
@@ -286,7 +286,7 @@ public class AuditLogBean {
     }
 
     public String nameFromValue(String value, String column) {
-        if (column.equals(AuditlogColumn.TIMESTAMP.getName())) {
+        if (column.equals(AuditLogColumn.TIMESTAMP.getName())) {
             // prepopulate with time value
             Long timeValue = getTimeValue(value);
             value = FDF.format(timeValue) + " (" + timeValue + ")";
@@ -295,10 +295,10 @@ public class AuditLogBean {
     }
 
     public void addConditionAction() {
-        final AuditlogColumn column = AuditlogColumn.valueOf(conditionColumn);
+        final AuditLogColumn column = AuditLogColumn.valueOf(conditionColumn);
 
         final String value;
-        if (column == AuditlogColumn.TIMESTAMP) {
+        if (column == AuditLogColumn.TIMESTAMP) {
             // prepopulate with time value
             value = FDF.format(System.currentTimeMillis());
         } else {
@@ -310,7 +310,7 @@ public class AuditLogBean {
 
     public Map<String, String> getDefinedConditions() {
         Map<String, String> result = new LinkedHashMap<>();
-        QueryOperator[] operatorsForColumn = OperatorsPerColumnUtil.getOperatorsForColumn(AuditlogColumn.valueOf(conditionColumn));
+        QueryOperator[] operatorsForColumn = OperatorsPerColumnUtil.getOperatorsForColumn(AuditLogColumn.valueOf(conditionColumn));
         for (QueryOperator op : operatorsForColumn) {
             result.put(op.getDescription(), op.getOperator().name());
         }
@@ -324,9 +324,9 @@ public class AuditLogBean {
     }
 
     public void addConditionToAddAction() {
-        final AuditlogColumn column = AuditlogColumn.valueOf(conditionColumn);
+        final AuditLogColumn column = AuditLogColumn.valueOf(conditionColumn);
 
-        if (column == AuditlogColumn.TIMESTAMP) {
+        if (column == AuditLogColumn.TIMESTAMP) {
             // Convert from time to timestamp
             Long value = getTimeValue(conditionToAdd.getValue());
             if (value == null) {

@@ -73,7 +73,7 @@ import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
 import org.jdesktop.application.Task;
 import org.jdesktop.application.TaskMonitor;
-import org.signserver.admin.common.adminws.QueryCondition;
+import org.signserver.admin.common.query.QueryCondition;
 import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.ArchiveEntry;
 import org.signserver.admin.gui.adminws.gen.AuthorizationDeniedException_Exception;

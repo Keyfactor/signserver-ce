@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
-import org.signserver.admin.common.admingui.QueryColumn;
+import org.signserver.admin.common.query.QueryColumn;
 
 /**
  * Table model for the auditlog query conditions.

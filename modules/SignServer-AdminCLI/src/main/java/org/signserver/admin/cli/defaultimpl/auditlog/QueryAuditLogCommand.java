@@ -30,9 +30,9 @@ import org.cesecore.util.query.Criteria;
 import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.Term;
-import org.signserver.admin.common.cli.AdminCLIUtils;
+import org.signserver.admin.common.query.QueryUtil;
 import org.signserver.admin.cli.defaultimpl.AdminCommandHelper;
-import org.signserver.admin.common.cli.AuditLogFields;
+import org.signserver.admin.common.query.AuditLogFields;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
@@ -205,14 +205,14 @@ public class QueryAuditLogCommand extends AbstractCommand {
                 }
             }
         
-            Elem all = AdminCLIUtils.andAll(terms, 0);
+            Elem all = QueryUtil.andAll(terms, 0);
             qc.add(all);
         }
     }
     
     static Term parseCriteria(final String criteria)
             throws IllegalArgumentException, NumberFormatException, java.text.ParseException {
-        return AdminCLIUtils.parseCriteria(criteria, AuditLogFields.ALLOWED_FIELDS, AuditLogFields.NO_ARG_OPS,
+        return QueryUtil.parseCriteria(criteria, AuditLogFields.ALLOWED_FIELDS, AuditLogFields.NO_ARG_OPS,
                 Collections.<String>emptySet(), AuditLogFields.LONG_FIELDS, AuditLogFields.DATE_FIELDS);
     }
 }

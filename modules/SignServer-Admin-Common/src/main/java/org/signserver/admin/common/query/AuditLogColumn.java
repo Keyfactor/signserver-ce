@@ -10,9 +10,8 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.admin.gui;
+package org.signserver.admin.common.query;
 
-import org.signserver.admin.common.query.QueryColumn;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,8 +24,7 @@ import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
  * @author Markus Kilås
  * @version $Id$
  */
-
-public enum AuditlogColumn implements QueryColumn {
+public enum AuditLogColumn implements QueryColumn {
     
     ADDITIONAL_DETAILS(AuditRecordData.FIELD_ADDITIONAL_DETAILS, "Details", Type.TEXT),
     AUTHENTICATION_TOKEN(AuditRecordData.FIELD_AUTHENTICATION_TOKEN, "Admin Subject", Type.TEXT),
@@ -51,11 +49,11 @@ public enum AuditlogColumn implements QueryColumn {
     SEQUENCENUMBER(AuditRecordData.FIELD_SEQUENCENUMBER, "Sequence Number", Type.NUMBER),
     TIMESTAMP(AuditRecordData.FIELD_TIMESTAMP, "Time", Type.TIME);
     
-    private String name;
-    private String description;
-    private Type type;
+    private final String name;
+    private final String description;
+    private final Type type;
     
-    private AuditlogColumn(final String name, final String description,
+    private AuditLogColumn(final String name, final String description,
             final Type type) {
         this.name = name;
         this.description = description;

@@ -34,13 +34,13 @@ import org.apache.log4j.Logger;
 import org.cesecore.util.ValidityDate;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
-import org.signserver.admin.common.cli.AdminCLIUtils;
-import org.signserver.admin.common.cli.ArchiveFields;
-import org.signserver.admin.common.admingui.ArchiveColumn;
-import org.signserver.admin.common.admingui.OperatorsPerColumnUtil;
-import org.signserver.admin.common.admingui.QueryOperator;
-import org.signserver.admin.common.adminws.QueryCondition;
-import org.signserver.admin.common.adminws.QueryOrdering;
+import org.signserver.admin.common.query.QueryUtil;
+import org.signserver.admin.common.query.ArchiveFields;
+import org.signserver.admin.common.query.ArchiveColumn;
+import org.signserver.admin.common.query.OperatorsPerColumnUtil;
+import org.signserver.admin.common.query.QueryOperator;
+import org.signserver.admin.common.query.QueryCondition;
+import org.signserver.admin.common.query.QueryOrdering;
 import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.SignServerException;
 import org.signserver.admin.web.ejb.AdminNotAuthorizedException;
@@ -229,7 +229,7 @@ public class ArchiveBean {
         for (String queryString : queryStrings) {
             if (!queryString.trim().isEmpty()) {
                 try {
-                    Term t = AdminCLIUtils.parseCriteria(queryString, ArchiveFields.ALLOWED_FIELDS, ArchiveFields.NO_ARG_OPS, Collections.<String>emptySet(), ArchiveFields.INT_FIELDS, ArchiveFields.DATE_FIELDS);
+                    Term t = QueryUtil.parseCriteria(queryString, ArchiveFields.ALLOWED_FIELDS, ArchiveFields.NO_ARG_OPS, Collections.<String>emptySet(), ArchiveFields.INT_FIELDS, ArchiveFields.DATE_FIELDS);
                     results.add(new QueryCondition(t.getName(), t.getOperator(), t.getValue() == null ? null : String.valueOf(t.getValue())));
                 } catch (IllegalArgumentException | ParseException ex) {
                     queryError = "One or more incorrect query conditions was dropped: " + ex.getMessage();

@@ -31,7 +31,7 @@ import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
-import org.signserver.admin.common.cli.AdminCLIUtils;
+import org.signserver.admin.common.query.QueryUtil;
 import org.signserver.admin.cli.defaultimpl.AbstractAdminCommand;
 import org.signserver.admin.cli.defaultimpl.AdminCommandHelper;
 import org.signserver.cli.spi.CommandFailureException;
@@ -131,7 +131,7 @@ public class QueryTokenEntriesCommand extends AbstractAdminCommand {
             final QueryCriteria qc = QueryCriteria.create();
             
             if (terms != null && !terms.isEmpty()) {
-                qc.add(AdminCLIUtils.andAll(terms, 0));
+                qc.add(QueryUtil.andAll(terms, 0));
             }
 
             // Perform the query
@@ -239,7 +239,7 @@ public class QueryTokenEntriesCommand extends AbstractAdminCommand {
     
     static Term parseCriteria(final String criteria)
             throws IllegalArgumentException, NumberFormatException, java.text.ParseException {
-        return AdminCLIUtils.parseCriteria(criteria, allowedFields, noArgOps,
+        return QueryUtil.parseCriteria(criteria, allowedFields, noArgOps,
                 Collections.<String>emptySet(), longFields, dateFields);
     }
     

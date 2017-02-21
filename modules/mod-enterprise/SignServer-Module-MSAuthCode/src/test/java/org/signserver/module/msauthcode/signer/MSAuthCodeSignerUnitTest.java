@@ -1744,6 +1744,31 @@ public class MSAuthCodeSignerUnitTest {
     }
     
     /**
+     * Test signing using an RSA key-pair. Run with NO_REQUEST_ARCHIVING.
+     * @throws Exception 
+     */
+    @Test
+    public void testNormalSigningMSINoRequestArchiving_RSA() throws Exception {
+        LOG.info("testNormalSigningMSI_RSA");
+        final File tmpFile = File.createTempFile("temp", ".exe");
+        FileUtils.copyFile(msiFile, tmpFile);
+
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestDataKeepingFile(tmpFile);
+                CloseableWritableData responseData = ModulesTestCase.createResponseData(true);
+            ) {
+            SignatureResponse resp = sign(requestData, responseData, tokenRSA, new ConfigBuilder()
+                    .withProgramName("SignServer-JUnit-Test-åäö")
+                    .withProgramURL("http://www.signserver.org/junit/test.html")
+                    .withNoRequestArchiving("true")
+                    .create(), null, null, null);
+            FileUtils.writeByteArrayToFile(new File("/tmp/test-signed.msi"), responseData.toReadableData().getAsByteArray());
+            POIFSFileSystem fs = new POIFSFileSystem(responseData.toReadableData().getAsInputStream());
+            assertSignedAndNotTimestampedMSI(tokenRSA, "SHA1", X509ObjectIdentifiers.id_SHA1, X509ObjectIdentifiers.id_SHA1, PKCSObjectIdentifiers.rsaEncryption, resp, fs);
+        }
+    }
+    
+    /**
      * Test signing using a DSA key-pair.
      * @throws Exception 
      */
@@ -2005,6 +2030,11 @@ public class MSAuthCodeSignerUnitTest {
         
         public ConfigBuilder withTimestampFormat(String timestampFormat) {
             config.setProperty("TIMESTAMP_FORMAT", timestampFormat);
+            return this;
+        }
+        
+        public ConfigBuilder withNoRequestArchiving(String noRequestArchiving) {
+            config.setProperty("NO_REQUEST_ARCHIVING", noRequestArchiving);
             return this;
         }
         

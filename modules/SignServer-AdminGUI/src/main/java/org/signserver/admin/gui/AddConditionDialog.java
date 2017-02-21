@@ -12,13 +12,16 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
+import org.signserver.admin.common.admingui.QueryOperator;
+import org.signserver.admin.common.admingui.QueryColumn;
 import java.text.ParseException;
 import java.util.Date;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.cesecore.util.ValidityDate;
-import org.signserver.admin.gui.adminws.gen.RelationalOperator;
+import org.cesecore.util.query.elems.RelationalOperator;
+//import org.signserver.admin.gui.adminws.gen.RelationalOperator;
 
 /**
  * Dialog for adding query conditions.

@@ -10,46 +10,53 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.adminws;
+package org.signserver.admin.common.adminws;
+
+import org.cesecore.util.query.elems.RelationalOperator;
 
 /**
- * Representation of query ordering.
+ * Representation of an query condition.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-public class QueryOrdering {
-    
-    public enum Order {
-        ASC, DESC
-    }
-
+public class QueryCondition {
     private String column;
-    private Order order;
+    private RelationalOperator operator;
+    private String value;
 
     /** Default no-arg constructor. */
-    public QueryOrdering() {
+    public QueryCondition() {
     }
     
-    public QueryOrdering(final String column, final Order order) {
+    public QueryCondition(String column, RelationalOperator operator, String value) {
         this.column = column;
-        this.order = order;
+        this.operator = operator;
+        this.value = value;
     }
 
-    public Order getOrder() {
-        return order;
-    }
-    
     public String getColumn() {
         return column;
+    }
+
+    public RelationalOperator getOperator() {
+        return operator;
+    }
+
+    public String getValue() {
+        return value;
     }
 
     public void setColumn(String column) {
         this.column = column;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setOperator(RelationalOperator operator) {
+        this.operator = operator;
     }
 
+    public void setValue(String value) {
+        this.value = value;
+    }
+    
 }

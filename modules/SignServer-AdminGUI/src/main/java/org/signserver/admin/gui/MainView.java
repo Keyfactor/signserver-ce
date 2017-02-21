@@ -65,6 +65,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.util.CertTools;
+import org.cesecore.util.query.elems.RelationalOperator;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.FrameView;
@@ -72,6 +73,7 @@ import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
 import org.jdesktop.application.Task;
 import org.jdesktop.application.TaskMonitor;
+import org.signserver.admin.common.adminws.QueryCondition;
 import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.ArchiveEntry;
 import org.signserver.admin.gui.adminws.gen.AuthorizationDeniedException_Exception;
@@ -83,10 +85,8 @@ import org.signserver.admin.gui.adminws.gen.KeyStoreException_Exception;
 import org.signserver.admin.gui.adminws.gen.LogEntry;
 import org.signserver.admin.gui.adminws.gen.OperationUnsupportedException_Exception;
 import org.signserver.admin.gui.adminws.gen.Order;
-import org.signserver.admin.gui.adminws.gen.QueryCondition;
 import org.signserver.admin.gui.adminws.gen.QueryException_Exception;
 import org.signserver.admin.gui.adminws.gen.QueryOrdering;
-import org.signserver.admin.gui.adminws.gen.RelationalOperator;
 import org.signserver.admin.gui.adminws.gen.SignServerException_Exception;
 import org.signserver.admin.gui.adminws.gen.TokenEntry;
 import org.signserver.admin.gui.adminws.gen.TokenSearchResults;
@@ -3640,7 +3640,7 @@ private void displayLogEntryAction() {
                 final QueryOrdering order = new QueryOrdering();
                 order.setColumn(AuditRecordData.FIELD_TIMESTAMP);
                 order.setOrder(Order.DESC);
-                return SignServerAdminGUIApplication.getAdminWS().queryAuditLog(startIndex, maxEntries, conditions, Collections.singletonList(order));
+                return SignServerAdminGUIApplication.getAdminWS().queryAuditLog(startIndex, maxEntries, convert(conditions), Collections.singletonList(order));
             } catch (AdminNotAuthorizedException_Exception | SignServerException_Exception ex) {
                 exception = ex;
             } catch (Exception ex) {
@@ -3711,7 +3711,7 @@ private void displayLogEntryAction() {
                 order.setColumn(ArchiveMetadata.TIME);
                 order.setOrder(Order.DESC);
                 return SignServerAdminGUIApplication.getAdminWS()
-                        .queryArchive(startIndex, maxEntries, conditions,
+                        .queryArchive(startIndex, maxEntries, convert(conditions),
                         Collections.singletonList(order), false);
             } catch (AdminNotAuthorizedException_Exception | SignServerException_Exception ex) {
                 exception = ex;
@@ -4307,7 +4307,7 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
                 return SignServerAdminGUIApplication.getAdminWS().queryTokenEntries(
                         selectedWorker.getWorkerId(),
                         startIndex, maxEntries,
-                        Collections.<QueryCondition>emptyList(),
+                        Collections.<org.signserver.admin.gui.adminws.gen.QueryCondition>emptyList(),
                         Arrays.asList(ordering),
                         true);
             } catch (AdminNotAuthorizedException_Exception | AuthorizationDeniedException_Exception | CryptoTokenOfflineException_Exception | InvalidWorkerIdException_Exception | OperationUnsupportedException_Exception | QueryException_Exception | SignServerException_Exception ex) {
@@ -4353,6 +4353,20 @@ private Properties toProperties(WsGlobalConfiguration wsgc) {
         }
     }
 
+    private List<org.signserver.admin.gui.adminws.gen.QueryCondition> convert(ArrayList<QueryCondition> conditions) {
+        final List<org.signserver.admin.gui.adminws.gen.QueryCondition> results = new ArrayList<>(conditions.size());
+        for (QueryCondition from : conditions) {
+            org.signserver.admin.gui.adminws.gen.QueryCondition to = new org.signserver.admin.gui.adminws.gen.QueryCondition();
+            to.setColumn(from.getColumn());
+            RelationalOperator operator = from.getOperator();
+            if (operator != null) {
+                to.setOperator(org.signserver.admin.gui.adminws.gen.RelationalOperator.fromValue(operator.name()));
+            }
+            to.setValue(from.getValue());
+            results.add(to);
+        }
+        return results;
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

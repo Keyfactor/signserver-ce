@@ -14,7 +14,6 @@ package org.signserver.admin.cli.defaultimpl.auditlog;
 
 import java.sql.Date;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -30,10 +29,10 @@ import org.cesecore.dbprotection.DatabaseProtectionException;
 import org.cesecore.util.query.Criteria;
 import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.QueryCriteria;
-import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
-import org.signserver.admin.cli.AdminCLIUtils;
+import org.signserver.admin.common.cli.AdminCLIUtils;
 import org.signserver.admin.cli.defaultimpl.AdminCommandHelper;
+import org.signserver.admin.common.cli.AuditLogFields;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
@@ -49,20 +48,9 @@ import org.signserver.cli.spi.UnexpectedCommandFailureException;
 public class QueryAuditLogCommand extends AbstractCommand {
 
     private AdminCommandHelper helper = new AdminCommandHelper();
-    
-    /** Option strings */
-    public static final String QUERY = "query";
-    public static final String FROM = "from";
-    public static final String LIMIT = "limit";
-    public static final String CRITERIA = "criteria";
-    public static final String HEADER = "header";
  
     /** The command line options */
     private static final Options OPTIONS;
-    private static final Set<String> longFields;
-    private static final Set<String> dateFields;
-    private static final Set<RelationalOperator> noArgOps;
-    private static final Set<String> allowedFields;
 
     private int from = 0;
     private int limit = 0;
@@ -82,38 +70,11 @@ public class QueryAuditLogCommand extends AbstractCommand {
 
     static {
         OPTIONS = new Options();
-        OPTIONS.addOption(QUERY, false, "Query the audit log");
-        OPTIONS.addOption(CRITERIA, true, "Search criteria (can specify multiple criterias)");
-        OPTIONS.addOption(FROM, true, "Lower index in search result (0-based)");
-        OPTIONS.addOption(LIMIT, true, "Maximum number of search results");
-        OPTIONS.addOption(HEADER, false, "Print a column header");
-        
-        longFields = new HashSet<>();
-        longFields.add(AuditRecordData.FIELD_SEQUENCENUMBER);
-        
-        dateFields = new HashSet<>();
-        dateFields.add(AuditRecordData.FIELD_TIMESTAMP);
-        
-        noArgOps = new HashSet<>();
-        noArgOps.add(RelationalOperator.NULL);
-        noArgOps.add(RelationalOperator.NOTNULL);
-        
-        // allowed fields from CESeCore
-        // TODO: should maybe define this in CESeCore?
-        allowedFields = new HashSet<>();
-        allowedFields.add(AuditRecordData.FIELD_ADDITIONAL_DETAILS);
-        allowedFields.add(AuditRecordData.FIELD_AUTHENTICATION_TOKEN);
-        allowedFields.add(AuditRecordData.FIELD_CUSTOM_ID);
-        allowedFields.add(AuditRecordData.FIELD_EVENTSTATUS);
-        allowedFields.add(AuditRecordData.FIELD_EVENTTYPE);
-        allowedFields.add(AuditRecordData.FIELD_MODULE);
-        allowedFields.add(AuditRecordData.FIELD_NODEID);
-        allowedFields.add(AuditRecordData.FIELD_SEARCHABLE_DETAIL1);
-        allowedFields.add(AuditRecordData.FIELD_SEARCHABLE_DETAIL2);
-        allowedFields.add(AuditRecordData.FIELD_SERVICE);
-        allowedFields.add(AuditRecordData.FIELD_SEQUENCENUMBER);
-        allowedFields.add(AuditRecordData.FIELD_TIMESTAMP);
-        
+        OPTIONS.addOption(AuditLogFields.QUERY, false, "Query the audit log");
+        OPTIONS.addOption(AuditLogFields.CRITERIA, true, "Search criteria (can specify multiple criterias)");
+        OPTIONS.addOption(AuditLogFields.FROM, true, "Lower index in search result (0-based)");
+        OPTIONS.addOption(AuditLogFields.LIMIT, true, "Maximum number of search results");
+        OPTIONS.addOption(AuditLogFields.HEADER, false, "Print a column header");
     }
     
     @Override
@@ -193,15 +154,15 @@ public class QueryAuditLogCommand extends AbstractCommand {
     }
 
     private void parseCommandLine(CommandLine line) throws ParseException {
-        if (!line.hasOption(QUERY)) {
+        if (!line.hasOption(AuditLogFields.QUERY)) {
             // for now, we expect the -query option, might add additional command options further on
             throw new ParseException("Must specifiy the -query option");
         }
         
-        final String fromString = line.getOptionValue(FROM);
-        final String limitString = line.getOptionValue(LIMIT);
+        final String fromString = line.getOptionValue(AuditLogFields.FROM);
+        final String limitString = line.getOptionValue(AuditLogFields.LIMIT);
         
-        printHeader = line.hasOption(HEADER);
+        printHeader = line.hasOption(AuditLogFields.HEADER);
         
         if (fromString != null) {
             try {
@@ -225,7 +186,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
             throw new ParseException("Must specify a limit.");
         }
         
-        final String[] criterias = line.getOptionValues(CRITERIA);
+        final String[] criterias = line.getOptionValues(AuditLogFields.CRITERIA);
         
         final List<Elem> terms = new LinkedList<>();
         
@@ -251,7 +212,7 @@ public class QueryAuditLogCommand extends AbstractCommand {
     
     static Term parseCriteria(final String criteria)
             throws IllegalArgumentException, NumberFormatException, java.text.ParseException {
-        return AdminCLIUtils.parseCriteria(criteria, allowedFields, noArgOps,
-                Collections.<String>emptySet(), longFields, dateFields);
+        return AdminCLIUtils.parseCriteria(criteria, AuditLogFields.ALLOWED_FIELDS, AuditLogFields.NO_ARG_OPS,
+                Collections.<String>emptySet(), AuditLogFields.LONG_FIELDS, AuditLogFields.DATE_FIELDS);
     }
 }

@@ -16,12 +16,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
-import org.signserver.admin.cli.AdminCLIUtils;
+import org.signserver.admin.common.cli.AdminCLIUtils;
 import org.signserver.admin.cli.defaultimpl.AdminCommandHelper;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
@@ -39,6 +37,7 @@ import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
+import org.signserver.admin.common.cli.ArchiveFields;
 
 /**
  * Query contents of the archive.
@@ -51,20 +50,12 @@ public class QueryArchiveCommand extends AbstractCommand {
     private AdminCommandHelper helper = new AdminCommandHelper();
     
     /** Option strings */
-    public static final String FROM = "from";
-    public static final String LIMIT = "limit";
-    public static final String CRITERIA = "criteria";
-    public static final String HEADER = "header";
     public static final String REQUEST = "request";
     public static final String RESPONSE = "response";
     public static final String OUTPATH = "outpath";
     
     /** The command line options */
     private static final Options OPTIONS;
-    private static final Set<String> intFields;
-    private static final Set<String> dateFields;
-    private static final Set<RelationalOperator> noArgOps;
-    private static final Set<String> allowedFields;
     
     private int from;
     private int limit;
@@ -79,35 +70,15 @@ public class QueryArchiveCommand extends AbstractCommand {
     
     static {
         OPTIONS = new Options();
-        OPTIONS.addOption(CRITERIA, true, "Search criteria (can specify multiple criterias)");
-        OPTIONS.addOption(FROM, true, "Lower index in search result (0-based)");
-        OPTIONS.addOption(LIMIT, true, "Maximum number of search results");
-        OPTIONS.addOption(HEADER, false, "Print a column header");
+        OPTIONS.addOption(ArchiveFields.CRITERIA, true, "Search criteria (can specify multiple criterias)");
+        OPTIONS.addOption(ArchiveFields.FROM, true, "Lower index in search result (0-based)");
+        OPTIONS.addOption(ArchiveFields.LIMIT, true, "Maximum number of search results");
+        OPTIONS.addOption(ArchiveFields.HEADER, false, "Print a column header");
         OPTIONS.addOption(REQUEST, false, "Search for requests");
         OPTIONS.addOption(RESPONSE, false, "Search for responses");
         OPTIONS.addOption(OUTPATH, true, "Directory to write output to");
-    
-        intFields = new HashSet<>();
-        intFields.add(ArchiveMetadata.SIGNER_ID);
-        
-        dateFields = new HashSet<>();
-        dateFields.add(ArchiveMetadata.TIME);
-        
-        noArgOps = new HashSet<>();
-        noArgOps.add(RelationalOperator.NULL);
-        noArgOps.add(RelationalOperator.NOTNULL);
-     
-        allowedFields = new HashSet<>();
-        allowedFields.add(ArchiveMetadata.ARCHIVE_ID);
-        allowedFields.add(ArchiveMetadata.REQUEST_CERT_SERIAL_NUMBER);
-        allowedFields.add(ArchiveMetadata.REQUEST_IP);
-        allowedFields.add(ArchiveMetadata.REQUEST_ISSUER_DN);
-        allowedFields.add(ArchiveMetadata.SIGNER_ID);
-        allowedFields.add(ArchiveMetadata.TIME);
-        allowedFields.add(ArchiveMetadata.TYPE);
-        allowedFields.add(ArchiveMetadata.UNIQUE_ID);
     }
-        
+
     @Override
     public String getDescription() {
         return "Query the content of the archive";
@@ -201,10 +172,10 @@ public class QueryArchiveCommand extends AbstractCommand {
     }
     
     private void parseCommandLine(final CommandLine line) throws ParseException {
-        final String fromString = line.getOptionValue(FROM);
-        final String limitString = line.getOptionValue(LIMIT);
+        final String fromString = line.getOptionValue(ArchiveFields.FROM);
+        final String limitString = line.getOptionValue(ArchiveFields.LIMIT);
         
-        printHeader = line.hasOption(HEADER);
+        printHeader = line.hasOption(ArchiveFields.HEADER);
         
         if (fromString != null) {
             try {
@@ -244,7 +215,7 @@ public class QueryArchiveCommand extends AbstractCommand {
             }
         }
         
-        final String[] criterias = line.getOptionValues(CRITERIA);
+        final String[] criterias = line.getOptionValues(ArchiveFields.CRITERIA);
         
         final List<Elem> terms = new LinkedList<>();
         
@@ -270,7 +241,7 @@ public class QueryArchiveCommand extends AbstractCommand {
     
     static Term parseCriteria(final String criteria)
         throws IllegalArgumentException, NumberFormatException, java.text.ParseException {
-        return AdminCLIUtils.parseCriteria(criteria, allowedFields, 
-                noArgOps, intFields, Collections.<String>emptySet(), dateFields);
+        return AdminCLIUtils.parseCriteria(criteria, ArchiveFields.ALLOWED_FIELDS, 
+                ArchiveFields.NO_ARG_OPS, ArchiveFields.INT_FIELDS, Collections.<String>emptySet(), ArchiveFields.DATE_FIELDS);
     }
 }

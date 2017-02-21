@@ -37,13 +37,13 @@ import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.util.ValidityDate;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
-import org.signserver.admin.cli.AdminCLIUtils;
-import org.signserver.admin.cli.AuditLogFields;
-import org.signserver.admin.web.admingui.AuditlogColumn;
-import org.signserver.admin.web.admingui.OperatorsPerColumnUtil;
-import org.signserver.admin.web.admingui.QueryOperator;
-import org.signserver.admin.web.adminws.QueryCondition;
-import org.signserver.admin.web.adminws.QueryOrdering;
+import org.signserver.admin.common.cli.AdminCLIUtils;
+import org.signserver.admin.common.cli.AuditLogFields;
+import org.signserver.admin.common.admingui.AuditlogColumn;
+import org.signserver.admin.common.admingui.OperatorsPerColumnUtil;
+import org.signserver.admin.common.admingui.QueryOperator;
+import org.signserver.admin.common.adminws.QueryCondition;
+import org.signserver.admin.common.adminws.QueryOrdering;
 import org.signserver.common.SignServerException;
 import org.signserver.admin.web.ejb.AdminNotAuthorizedException;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
@@ -228,7 +228,7 @@ public class AuditLogBean {
         for (String queryString : queryStrings) {
             if (!queryString.trim().isEmpty()) {
                 try {
-                    Term t = AdminCLIUtils.parseCriteria(queryString, AuditLogFields.allowedFields, AuditLogFields.noArgOps, Collections.<String>emptySet(), AuditLogFields.longFields, AuditLogFields.dateFields);
+                    Term t = AdminCLIUtils.parseCriteria(queryString, AuditLogFields.ALLOWED_FIELDS, AuditLogFields.NO_ARG_OPS, Collections.<String>emptySet(), AuditLogFields.LONG_FIELDS, AuditLogFields.DATE_FIELDS);
                     results.add(new QueryCondition(t.getName(), t.getOperator(), t.getValue() == null ? null : String.valueOf(t.getValue())));
                 } catch (IllegalArgumentException | ParseException ex) {
                     queryError = "One or more incorrect query conditions was dropped: " + ex.getMessage();

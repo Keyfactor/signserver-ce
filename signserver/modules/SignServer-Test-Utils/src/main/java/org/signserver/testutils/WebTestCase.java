@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.log4j.Logger;
-import org.signserver.testutils.ModulesTestCase;
 
 /**
  * Abstract test case that can be used by test cases that wants to the HTTP 

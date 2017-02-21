@@ -128,8 +128,6 @@ public class CertificatesBulkBean extends BulkBean {
 
                 ArrayList<Certificate> signerChain = worker.getCertificates();
 
-                Certificate signerCert = signerChain.get(0);
-
                 if (signerChain.isEmpty()) {
                     final String error
                             = "Problem with certificate chain file: No certificates in file";
@@ -138,6 +136,7 @@ public class CertificatesBulkBean extends BulkBean {
                     worker.setError(error);
                 } else {
 
+                    Certificate signerCert = signerChain.get(0);
                     List<byte[]> signerChainBytes = asByteArrayList(signerChain);
 
                     if (worker.isInToken()) {

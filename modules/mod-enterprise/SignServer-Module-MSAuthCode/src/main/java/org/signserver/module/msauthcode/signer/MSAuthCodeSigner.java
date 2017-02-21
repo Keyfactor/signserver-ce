@@ -361,6 +361,33 @@ public class MSAuthCodeSigner extends BaseSigner {
             configErrors.add("Incorrect value for " + WorkerConfig.NO_REQUEST_ARCHIVING);
         }
     }
+    
+    /**
+     * Copy or move request data file to response data file, depending on the
+     * NO_REQUEST_ARCHIVING worker property.
+     * 
+     * If NO_REQUEST_ARCHIVING is true, the file is moved (by accessing request
+     * and response data as files), otherwise data is copied from the input
+     * to the output stream passed in.
+     * 
+     * @param data Request data to get request file
+     * @param responseData Response data to get response file
+     * @param in Input stream to use when copying
+     * @param out Output stream to use when copying
+     * @throws IOException 
+     */
+    private void copyOrMoveInToOut(final ReadableData data,
+                                   final WritableData responseData,
+                                   final InputStream in,
+                                   final OutputStream out) throws IOException {
+        if (noRequestArchiving) {
+            Files.move(data.getAsFile().toPath(),
+                       responseData.getAsFile().toPath(),
+                       StandardCopyOption.REPLACE_EXISTING);
+        } else {
+            IOUtils.copyLarge(in, out);
+        }
+    }
 
     @Override
     public Response processData(final Request signRequest,
@@ -457,18 +484,12 @@ public class MSAuthCodeSigner extends BaseSigner {
                     sigAlg = signatureAlgorithm;
                 }
 
-                if (noRequestArchiving) {
-                    Files.move(data.getAsFile().toPath(),
-                               responseData.getAsFile().toPath(),
-                               StandardCopyOption.REPLACE_EXISTING);
-                } else {
-                    IOUtils.copyLarge(in, out);
-                }
-
+                
                 switch (fileType) {
                     case PE:                        
                         final File outFile = responseData.getAsFile();
 
+                        copyOrMoveInToOut(data, responseData, in, out);
                         return signPE(outFile, certs, privKey, sigAlg,
                                       requestContext, logMap, sReq);
                       
@@ -503,6 +524,7 @@ public class MSAuthCodeSigner extends BaseSigner {
         
         try (
                 NPOIFSFileSystem fs = createFileSystem(requestData, true);
+                InputStream in = requestData.getAsInputStream();
                 OutputStream out = responseData.getAsFileOutputStream();
         ) {
             final PrivateKey privateKey = cryptoInstance.getPrivateKey();
@@ -585,6 +607,8 @@ public class MSAuthCodeSigner extends BaseSigner {
                 LOG.debug("Size: " + signedbytes.length);
             }
 
+            copyOrMoveInToOut(requestData, responseData, in, out);
+          
             try (final NPOIFSFileSystem fsOut =
                     new NPOIFSFileSystem(responseData.getAsFile(), false)) {
                 // Add the signature file

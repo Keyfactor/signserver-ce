@@ -34,7 +34,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
-//import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.OperationUnsupportedException;
@@ -55,19 +54,6 @@ public class CertificatesBulkBean extends BulkBean {
      */
     private static final Logger LOG = Logger.getLogger(CertificatesBulkBean.class);
 
-    /*@EJB
-    private AdminWebSessionBean workerSessionBean;
-
-    @ManagedProperty(value = "#{authenticationBean}")
-    private AuthenticationBean authBean;
-    
-    private String workerIds;
-    
-    private final Map<Integer, Boolean> selectedIds = new HashMap<>();
-    
-    private List<Worker> workers;
-    
-    private String activatePassword;*/
     private List<CertificatesWorker> myWorkers;
 
     /**
@@ -117,6 +103,7 @@ public class CertificatesBulkBean extends BulkBean {
     }
     
     public String installAction() throws AdminNotAuthorizedException {
+        // TODO: We should consider using faces message for the errors:
         //FacesMessage errorMessage = new FacesMessage("Test error");
         //errorMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
         //FacesContext.getCurrentInstance().addMessage(null, errorMessage);
@@ -276,13 +263,6 @@ public class CertificatesBulkBean extends BulkBean {
             aliasMenuValues = null;
         }
 
-        //        public UploadedFile getUploadedFile() {
-        //            return uploadedFile;
-        //        }
-        //
-        //        public void setUploadedFile(UploadedFile uploadedFile) {
-        //            this.uploadedFile = uploadedFile;
-        //        }
         public int getRowIndex() {
             return rowIndex;
         }

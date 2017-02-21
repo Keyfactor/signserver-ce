@@ -1765,6 +1765,9 @@ public class MSAuthCodeSignerUnitTest {
             FileUtils.writeByteArrayToFile(new File("/tmp/test-signed.msi"), responseData.toReadableData().getAsByteArray());
             POIFSFileSystem fs = new POIFSFileSystem(responseData.toReadableData().getAsInputStream());
             assertSignedAndNotTimestampedMSI(tokenRSA, "SHA1", X509ObjectIdentifiers.id_SHA1, X509ObjectIdentifiers.id_SHA1, PKCSObjectIdentifiers.rsaEncryption, resp, fs);
+        
+            // check that the request file was actually moved, not copied
+            assertTrue("Input file moved", !tmpFile.exists());
         }
     }
     
@@ -1789,9 +1792,12 @@ public class MSAuthCodeSignerUnitTest {
                     .create(), null, null, null);
             PEFile pe = new PEFile(responseData.toReadableData().getAsFile());
             assertSignedAndNotTimestamped(tokenRSA, X509ObjectIdentifiers.id_SHA1, X509ObjectIdentifiers.id_SHA1, PKCSObjectIdentifiers.rsaEncryption, resp, pe);
+        
+            // check that the request file was actually moved, not copied
+            assertTrue("Input file moved", !tmpFile.exists());
         }
     }
-    
+
     /**
      * Test signing using a DSA key-pair.
      * @throws Exception 

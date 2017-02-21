@@ -16,7 +16,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 
 /**
- * Representation of an LDS data group containing either data or an hash of data.
+ * Representation of an LDS data group (ePassport file) containing either
+ * data or an hash of data.
  *
  * @author Markus Kilås
  * @version $Id$
@@ -39,7 +40,9 @@ public class DataGroup {
     }
 
     /**
-     * @return Id of datagroup
+     * Get the ID of data group.
+     *
+     * @return ID of data group
      */
     @XmlAttribute(name="id", required=true)
     public int getId() {
@@ -47,6 +50,8 @@ public class DataGroup {
     }
 
     /**
+     * Get the content of the data group.
+     *
      * @return Value of datagroup
      */
     @XmlValue

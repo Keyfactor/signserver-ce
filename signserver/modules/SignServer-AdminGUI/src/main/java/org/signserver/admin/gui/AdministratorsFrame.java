@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import javax.ejb.EJBException;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -32,6 +31,8 @@ import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.log4j.Logger;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Task;
+import org.signserver.admin.common.roles.AdminEntry;
+import org.signserver.admin.common.roles.AdminsUtil;
 import org.signserver.admin.gui.adminws.gen
         .AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
@@ -60,7 +61,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
 
     private static final String ALLOWANYWSADMIN = "ALLOWANYWSADMIN";
     
-    private List<Entry> entries = Collections.emptyList();
+    private List<AdminEntry> entries = Collections.emptyList();
 
     /** Creates new form GlobalConfigurationFrame */
     public AdministratorsFrame() {
@@ -89,18 +90,25 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 final Object result;
-                if (columnIndex == 0) {
-                    result = entries.get(rowIndex).getClient().getSerialNumber().toString(16);
-                } else if (columnIndex == 1) {
-                    result = entries.get(rowIndex).getClient().getIssuerDN();
-                } else if (columnIndex == 2) {
-                    result = entries.get(rowIndex).isAdmin();
-                } else if (columnIndex == 3) {
-                    result = entries.get(rowIndex).isAuditor();
-                } else if (columnIndex == 4) {
-                    result = entries.get(rowIndex).isArchiveAuditor();
-                } else {
-                    result = null;
+                switch (columnIndex) {
+                    case 0:
+                        result = entries.get(rowIndex).getClient().getSerialNumber().toString(16);
+                        break;
+                    case 1:
+                        result = entries.get(rowIndex).getClient().getIssuerDN();
+                        break;
+                    case 2:
+                        result = entries.get(rowIndex).isAdmin();
+                        break;
+                    case 3:
+                        result = entries.get(rowIndex).isAuditor();
+                        break;
+                    case 4:
+                        result = entries.get(rowIndex).isArchiveAuditor();
+                        break;
+                    default:
+                        result = null;
+                        break;
                 }
                 return result;
             }
@@ -491,7 +499,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
 
                     if (!serialNumberInvalid && !issuerInvalid) {
                     
-                        final HashMap<ClientEntry, Entry> admins = parseAdmins();
+                        final HashMap<ClientEntry, AdminEntry> admins = parseAdmins();
                         final ClientEntry cred =
                                 new ClientEntry(new BigInteger(certSerialNo, 16),
                                                 issuerDN);
@@ -500,27 +508,27 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                             JOptionPane.showMessageDialog(this,
                                     "The administrator already existed");
                         } else {
-                            final Entry newEntry =
-                                    new Entry(cred, admin, auditor, archiveAuditor);
+                            final AdminEntry newEntry =
+                                    new AdminEntry(cred, admin, auditor, archiveAuditor);
                             admins.put(cred, newEntry);
 
                             if (admin) {
                                 SignServerAdminGUIApplication.getAdminWS()
                                     .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                     "WSADMINS",
-                                    serializeAdmins(admins));
+                                    AdminsUtil.serializeAdmins(admins));
                             }
                             if (auditor) {
                                 SignServerAdminGUIApplication.getAdminWS()
                                     .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                     "WSAUDITORS",
-                                    serializeAuditors(admins));
+                                    AdminsUtil.serializeAuditors(admins));
                             }
                             if (archiveAuditor) {
                                 SignServerAdminGUIApplication.getAdminWS()
                                     .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                     "WSARCHIVEAUDITORS",
-                                    serializeArchiveAuditors(admins));
+                                    AdminsUtil.serializeArchiveAuditors(admins));
                             }
                         }
                         break;
@@ -546,7 +554,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             final int row = adminsTable.getSelectedRow();
 
             if (row != -1) {
-                final Entry oldEntry = entries.get(row);
+                final AdminEntry oldEntry = entries.get(row);
 
                 editCertSerialNoTextField.setText(oldEntry.getClient().getSerialNumber().toString(16));
                 editCertSerialNoTextField.setEditable(true);
@@ -572,7 +580,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                         issuerInvalid = issuerDN.isEmpty();
                         
                         if (!serialNumberInvalid && !issuerInvalid) {
-                            HashMap<ClientEntry, Entry> admins = parseAdmins();
+                            HashMap<ClientEntry, AdminEntry> admins = parseAdmins();
 
                             final ClientEntry newCred =
                                     new ClientEntry(new BigInteger(certSerialNumber,
@@ -585,8 +593,8 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                             } else {
                                 admins.remove(oldEntry.getClient());
 
-                                final Entry newEntry =
-                                        new Entry(newCred,
+                                final AdminEntry newEntry =
+                                        new AdminEntry(newCred,
                                             editRoleAdministratorCheckBox.isSelected(),
                                             editRoleAuditorCheckBox.isSelected(),
                                             editRoleArchiveAuditorCheckBox.isSelected());
@@ -600,15 +608,15 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                                 SignServerAdminGUIApplication.getAdminWS()
                                     .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                     "WSADMINS",
-                                    serializeAdmins(admins));
+                                    AdminsUtil.serializeAdmins(admins));
                                 SignServerAdminGUIApplication.getAdminWS()
                                     .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                     "WSAUDITORS",
-                                    serializeAuditors(admins));
+                                    AdminsUtil.serializeAuditors(admins));
                                 SignServerAdminGUIApplication.getAdminWS()
                                     .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                     "WSARCHIVEAUDITORS",
-                                    serializeArchiveAuditors(admins));
+                                    AdminsUtil.serializeArchiveAuditors(admins));
                             }
                             break;
                         }
@@ -637,8 +645,8 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                         "Remove administrator", JOptionPane.YES_NO_CANCEL_OPTION,
                         JOptionPane.QUESTION_MESSAGE);
                 if (res == JOptionPane.YES_OPTION) {
-                    final Entry oldEntry = entries.get(row);
-                    HashMap<ClientEntry, Entry> admins = parseAdmins();
+                    final AdminEntry oldEntry = entries.get(row);
+                    HashMap<ClientEntry, AdminEntry> admins = parseAdmins();
 
                     if (!admins.containsKey(oldEntry.getClient())) {
                         JOptionPane.showMessageDialog(this,
@@ -650,19 +658,19 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                             SignServerAdminGUIApplication.getAdminWS()
                                 .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                 "WSADMINS",
-                                serializeAdmins(admins));
+                                AdminsUtil.serializeAdmins(admins));
                         }
                         if (oldEntry.isAuditor()) {
                             SignServerAdminGUIApplication.getAdminWS()
                                 .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                 "WSAUDITORS",
-                                serializeAuditors(admins));
+                                AdminsUtil.serializeAuditors(admins));
                         }
                         if (oldEntry.isArchiveAuditor()) {
                             SignServerAdminGUIApplication.getAdminWS()
                                 .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                 "WSARCHIVEAUDITORS",
-                                serializeArchiveAuditors(admins));
+                                AdminsUtil.serializeArchiveAuditors(admins));
                         }
                     }
                     refreshButton.doClick();
@@ -762,18 +770,18 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         return new ReloadGlobalConfigurationTask(org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class));
     }
 
-    private class ReloadGlobalConfigurationTask extends Task<List<Entry>, Void> {
+    private class ReloadGlobalConfigurationTask extends Task<List<AdminEntry>, Void> {
         ReloadGlobalConfigurationTask(org.jdesktop.application.Application app) {
             // Runs on the EDT.  Copy GUI state that
             // doInBackground() depends on from parameters
             // to ReloadGlobalConfigurationTask fields, here.
             super(app);
         }
-        @Override protected List<Entry> doInBackground() {
+        @Override protected List<AdminEntry> doInBackground() {
             // Your Task's code here.  This method runs
             // on a background thread, so don't reference
             // the Swing GUI from here.
-            List<Entry> result = null;
+            List<AdminEntry> result = null;
 
             try {
                result = new ArrayList<>(parseAdmins().values());
@@ -790,7 +798,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             // return your result
             return result;
         }
-        @Override protected void succeeded(List<Entry> result) {
+        @Override protected void succeeded(List<AdminEntry> result) {
             // Runs on the EDT.  Update the GUI based on
             // the result computed by doInBackground().
 
@@ -830,7 +838,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
     private javax.swing.JButton removeButton;
     // End of variables declaration//GEN-END:variables
 
-    private LinkedHashMap<ClientEntry, Entry> parseAdmins()
+    private LinkedHashMap<ClientEntry, AdminEntry> parseAdmins()
             throws AdminNotAuthorizedException_Exception {
         String admins = null;
         String auditors = null;
@@ -851,200 +859,6 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             }
         }
 
-        final LinkedHashMap<ClientEntry, Entry> entryMap =
-                new LinkedHashMap<>();
-
-        // Admins
-        if (admins != null && admins.contains(";")) {
-            for (String entryString : admins.split(";")) {
-                final String[] parts = entryString.split(",", 2);
-                try {
-                    final ClientEntry client =
-                        new ClientEntry(new BigInteger(parts[0], 16), parts[1]);
-                    Entry entry = entryMap.get(client);
-                    if (entry == null) {
-                        entry = new Entry(client);
-                        entryMap.put(client, entry);
-                    }
-                    entry.setAdmin(true);
-                } catch (NumberFormatException e) {
-                    LOG.error("Invalid serialnumber for administrator: " +
-                            parts[0]);
-                }  catch (ArrayIndexOutOfBoundsException e) {
-                    LOG.error("Invalid administrator definition: " + entryString);
-                }
-            }
-        }
-
-        // Auditors
-        if (auditors != null && auditors.contains(";")) {
-            for (String entryString : auditors.split(";")) {
-                final String[] parts = entryString.split(",", 2);
-                
-                try {
-                    final ClientEntry client =
-                        new ClientEntry(new BigInteger(parts[0], 16), parts[1]);
-                    Entry entry = entryMap.get(client);
-                    if (entry == null) {
-                        entry = new Entry(client);
-                        entryMap.put(client, entry);
-                    }
-                    entry.setAuditor(true);
-                } catch (NumberFormatException e) {
-                    LOG.error("Invalid serialnumber for administrator: " +
-                            parts[0]);
-                }  catch (ArrayIndexOutOfBoundsException e) {
-                    LOG.error("Invalid administrator definition: " + entryString);
-                }
-            }
-        }
-        
-        // Archive auditors
-        if (archiveAuditors != null && archiveAuditors.contains(";")) {
-            for (final String entryString : archiveAuditors.split(";")) {
-                final String[] parts = entryString.split(",", 2);
-                
-                try {
-                    final ClientEntry client =
-                        new ClientEntry(new BigInteger(parts[0], 16), parts[1]);
-                    Entry entry = entryMap.get(client);
-                    if (entry == null) {
-                        entry = new Entry(client);
-                        entryMap.put(client, entry);
-                    }
-                    entry.setArchiveAuditor(true);
-                } catch (NumberFormatException e) {
-                    LOG.error("Invalid serialnumber for administrator: " +
-                            parts[0]);
-                }  catch (ArrayIndexOutOfBoundsException e) {
-                    LOG.error("Invalid administrator definition: " + entryString);
-                } 
-            }
-        }
-
-        return entryMap;
-    }
-
-    private static String serializeAdmins(final Map<ClientEntry, Entry> entries) {
-        final StringBuilder buff = new StringBuilder();
-        for (Entry entry : entries.values()) {
-            if (entry.isAdmin()) {
-                buff.append(entry.getClient().getSerialNumber().toString(16));
-                buff.append(",");
-                buff.append(entry.getClient().getIssuerDN());
-                buff.append(";");
-            }
-        }
-        return buff.toString();
-    }
-
-    private static String serializeAuditors(final Map<ClientEntry, Entry> entries) {
-        final StringBuilder buff = new StringBuilder();
-        for (Entry entry : entries.values()) {
-            if (entry.isAuditor()) {
-                buff.append(entry.getClient().getSerialNumber().toString(16));
-                buff.append(",");
-                buff.append(entry.getClient().getIssuerDN());
-                buff.append(";");
-            }
-        }
-        return buff.toString();
-    }
-    
-        private static String serializeArchiveAuditors(final Map<ClientEntry, Entry> entries) {
-        final StringBuilder buff = new StringBuilder();
-        for (Entry entry : entries.values()) {
-            if (entry.isArchiveAuditor()) {
-                buff.append(entry.getClient().getSerialNumber().toString(16));
-                buff.append(",");
-                buff.append(entry.getClient().getIssuerDN());
-                buff.append(";");
-            }
-        }
-        return buff.toString();
-    }
-
-    private static class Entry {
-        
-        private final ClientEntry client;
-        private boolean admin;
-        private boolean auditor;
-        private boolean archiveAuditor;
-
-        public Entry(final ClientEntry client, final boolean admin, 
-                final boolean auditor, final boolean archiveAuditor) {
-            this.client = client;
-            this.admin = admin;
-            this.auditor = auditor;
-            this.archiveAuditor = archiveAuditor;
-        }
-
-        private Entry(final ClientEntry client) {
-            this.client = client;
-        }
-
-        public ClientEntry getClient() {
-            return client;
-        }
-
-        public boolean isAdmin() {
-            return admin;
-        }
-
-        public boolean isAuditor() {
-            return auditor;
-        }
-        
-        public boolean isArchiveAuditor() {
-            return archiveAuditor;
-        }
-
-        public void setAdmin(boolean admin) {
-            this.admin = admin;
-        }
-
-        public void setAuditor(boolean auditor) {
-            this.auditor = auditor;
-        }
-        
-        public void setArchiveAuditor(boolean archiveAuditor) {
-            this.archiveAuditor = archiveAuditor;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = 53 * hash + (this.client != null ? this.client.hashCode() : 0);
-            hash = 53 * hash + (this.admin ? 1 : 0);
-            hash = 53 * hash + (this.auditor ? 1 : 0);
-            hash = 53 * hash + (this.archiveAuditor ? 1 : 0);
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final Entry other = (Entry) obj;
-            if (this.client != other.client &&
-                    (this.client == null || !this.client.equals(other.client))) {
-                return false;
-            }
-            if (this.admin != other.admin) {
-                return false;
-            }
-            if (this.auditor != other.auditor) {
-                return false;
-            }
-            if (this.archiveAuditor != other.archiveAuditor) {
-                return false;
-            }
-            return true;
-        }
-
+        return AdminsUtil.parseAdmins(admins, auditors, archiveAuditors);
     }
 }

@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.signserver.admin.common.cli.AdminCLIUtils;
+import org.signserver.admin.common.query.QueryUtil;
 import org.signserver.admin.cli.defaultimpl.AdminCommandHelper;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
@@ -37,7 +37,7 @@ import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
-import org.signserver.admin.common.cli.ArchiveFields;
+import org.signserver.admin.common.query.ArchiveFields;
 
 /**
  * Query contents of the archive.
@@ -234,14 +234,14 @@ public class QueryArchiveCommand extends AbstractCommand {
                 }
             }
         
-            Elem all = AdminCLIUtils.andAll(terms, 0);
+            Elem all = QueryUtil.andAll(terms, 0);
             qc.add(all);
         } 
     }
     
     static Term parseCriteria(final String criteria)
         throws IllegalArgumentException, NumberFormatException, java.text.ParseException {
-        return AdminCLIUtils.parseCriteria(criteria, ArchiveFields.ALLOWED_FIELDS, 
+        return QueryUtil.parseCriteria(criteria, ArchiveFields.ALLOWED_FIELDS, 
                 ArchiveFields.NO_ARG_OPS, ArchiveFields.INT_FIELDS, Collections.<String>emptySet(), ArchiveFields.DATE_FIELDS);
     }
 }

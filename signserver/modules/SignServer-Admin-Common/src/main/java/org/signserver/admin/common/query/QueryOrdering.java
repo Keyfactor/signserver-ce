@@ -10,18 +10,46 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.admin.gui;
-
-import org.signserver.admin.common.query.ArchiveColumn;
+package org.signserver.admin.common.query;
 
 /**
- * Dialog to add archive query conditions.
- * 
- * @author Marcus Lundblad
+ * Representation of query ordering.
+ *
+ * @author Markus Kilås
  * @version $Id$
  */
-public class ArchiveAddConditionDialog extends AddConditionDialog {
-    public ArchiveAddConditionDialog(java.awt.Frame parent, boolean modal) {
-        super(ArchiveColumn.values(), parent, modal);
+public class QueryOrdering {
+    
+    public enum Order {
+        ASC, DESC
     }
+
+    private String column;
+    private Order order;
+
+    /** Default no-arg constructor. */
+    public QueryOrdering() {
+    }
+    
+    public QueryOrdering(final String column, final Order order) {
+        this.column = column;
+        this.order = order;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+    
+    public String getColumn() {
+        return column;
+    }
+
+    public void setColumn(String column) {
+        this.column = column;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
 }

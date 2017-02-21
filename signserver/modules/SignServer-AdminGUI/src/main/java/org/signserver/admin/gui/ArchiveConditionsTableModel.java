@@ -12,8 +12,8 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
-import org.signserver.admin.common.admingui.QueryColumn;
-import org.signserver.admin.common.admingui.ArchiveColumn;
+import org.signserver.admin.common.query.QueryColumn;
+import org.signserver.admin.common.query.ArchiveColumn;
 
 /**
  * Table model for archive query conditions.

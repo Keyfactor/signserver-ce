@@ -12,8 +12,6 @@
  *************************************************************************/
 package org.signserver.admin.gui;
 
-import org.signserver.admin.common.admingui.QueryOperator;
-import org.signserver.admin.common.admingui.QueryColumn;
 import java.text.ParseException;
 import java.util.Date;
 import javax.swing.DefaultComboBoxModel;
@@ -21,7 +19,9 @@ import javax.swing.JOptionPane;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.cesecore.util.ValidityDate;
 import org.cesecore.util.query.elems.RelationalOperator;
-//import org.signserver.admin.gui.adminws.gen.RelationalOperator;
+import org.signserver.admin.common.query.QueryOperator;
+import org.signserver.admin.common.query.QueryColumn;
+import org.signserver.admin.common.query.OperatorsPerColumnUtil;
 
 /**
  * Dialog for adding query conditions.
@@ -30,34 +30,7 @@ import org.cesecore.util.query.elems.RelationalOperator;
  * @version $Id$
  */
 public abstract class AddConditionDialog extends javax.swing.JDialog {
- 
-    /** Relational operators useful for text values. */
-    private static final QueryOperator[] TEXT_OPERATORS = {
-        QueryOperator.fromEnum(RelationalOperator.EQ),
-        QueryOperator.fromEnum(RelationalOperator.LIKE),
-        QueryOperator.fromEnum(RelationalOperator.NEQ),
-        QueryOperator.fromEnum(RelationalOperator.NOTNULL),
-        QueryOperator.fromEnum(RelationalOperator.NULL)
-    };
-    
-    /** Relational operators useful for fixed-type values. */
-    private static final QueryOperator[] TYPE_OPERATORS = {
-        QueryOperator.fromEnum(RelationalOperator.EQ),
-        QueryOperator.fromEnum(RelationalOperator.NEQ)
-    };
-    
-    /** Relational operators useful for number values. */
-    private static final QueryOperator[] NUMBER_OPERATORS = {
-        QueryOperator.fromEnum(RelationalOperator.EQ),
-        QueryOperator.fromEnum(RelationalOperator.NEQ),
-        QueryOperator.fromEnum(RelationalOperator.GE),
-        QueryOperator.fromEnum(RelationalOperator.GT),
-        QueryOperator.fromEnum(RelationalOperator.LE),
-        QueryOperator.fromEnum(RelationalOperator.LT),
-        QueryOperator.fromEnum(RelationalOperator.NOTNULL),
-        QueryOperator.fromEnum(RelationalOperator.NULL)
-    };
-    
+
     private static final FastDateFormat FDF = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ssZ");
     
     private boolean okPressed;
@@ -238,12 +211,12 @@ private void columnComboboxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN
     private QueryOperator[] getOperatorsForColumn(final QueryColumn column) {
         switch (column.getType()) {
             case TEXT:
-                return TEXT_OPERATORS;
+                return OperatorsPerColumnUtil.TEXT_OPERATORS;
             case NUMBER:
             case TIME:
-                return NUMBER_OPERATORS;
+                return OperatorsPerColumnUtil.NUMBER_OPERATORS;
             case TYPE:
-                return TYPE_OPERATORS;
+                return OperatorsPerColumnUtil.TYPE_OPERATORS;
             default:
                 throw new IllegalArgumentException("Unknown column type");
         }

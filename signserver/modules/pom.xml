@@ -42,6 +42,7 @@
         <module>CESeCore-jars</module>
         
         <!-- Interfaces -->
+        <module>SignServer-Admin-Common</module>
         <module>SignServer-Web-Common</module>
         <module>SignServer-war</module>
         <module>SignServer-war-Healthcheck</module>

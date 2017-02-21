@@ -1,3 +1,4 @@
+// XXX: Copied from AdminGUI
 /*************************************************************************
  *                                                                       *
  *  SignServer: The OpenSource Automated Signing Server                  *
@@ -10,9 +11,8 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.admin.gui;
+package org.signserver.admin.common.admingui;
 
-import org.signserver.admin.common.admingui.QueryColumn;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,7 +23,7 @@ import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
  * Representation of an audit log column with name and description.
  * 
  * @author Markus Kilås
- * @version $Id$
+ * @version $Id: AuditlogColumn.java 7299 2016-05-17 08:12:51Z malu9369 $
  */
 
 public enum AuditlogColumn implements QueryColumn {
@@ -51,9 +51,9 @@ public enum AuditlogColumn implements QueryColumn {
     SEQUENCENUMBER(AuditRecordData.FIELD_SEQUENCENUMBER, "Sequence Number", Type.NUMBER),
     TIMESTAMP(AuditRecordData.FIELD_TIMESTAMP, "Time", Type.TIME);
     
-    private String name;
-    private String description;
-    private Type type;
+    private final String name;
+    private final String description;
+    private final Type type;
     
     private AuditlogColumn(final String name, final String description,
             final Type type) {

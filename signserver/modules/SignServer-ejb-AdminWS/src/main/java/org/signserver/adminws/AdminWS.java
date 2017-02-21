@@ -52,6 +52,8 @@ import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.clauses.Order;
 import org.cesecore.util.query.elems.Term;
+import org.signserver.admin.common.adminws.QueryOrdering;
+import org.signserver.admin.common.adminws.QueryCondition;
 import org.signserver.common.*;
 import org.signserver.common.data.CertificateValidationRequest;
 import org.signserver.common.data.CertificateValidationResponse;

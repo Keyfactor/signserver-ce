@@ -31,7 +31,7 @@ import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
-import org.signserver.admin.cli.AdminCLIUtils;
+import org.signserver.admin.common.cli.AdminCLIUtils;
 import org.signserver.admin.cli.defaultimpl.AbstractAdminCommand;
 import org.signserver.admin.cli.defaultimpl.AdminCommandHelper;
 import org.signserver.cli.spi.CommandFailureException;

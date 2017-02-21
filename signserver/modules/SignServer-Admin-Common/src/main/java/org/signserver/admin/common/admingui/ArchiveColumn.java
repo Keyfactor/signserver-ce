@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.admin.gui;
+package org.signserver.admin.common.admingui;
 
 import java.util.Arrays;
 import java.util.Collection;

@@ -10,10 +10,10 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.admin.gui;
+package org.signserver.admin.common.admingui;
 
 import java.util.HashMap;
-import org.signserver.admin.gui.adminws.gen.RelationalOperator;
+import org.cesecore.util.query.elems.RelationalOperator;
 
 
 /**

@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.admin.cli;
+package org.signserver.admin.common.cli;
 
 import java.text.ParseException;
 import java.util.List;

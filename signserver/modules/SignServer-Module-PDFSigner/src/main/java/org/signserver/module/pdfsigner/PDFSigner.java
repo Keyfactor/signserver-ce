@@ -946,6 +946,7 @@ public class PDFSigner extends BaseSigner {
         fields.put("REMOTEIP", (String) requestContext.get(RequestContext.REMOTE_IP));
         fields.put("TRANSACTIONID", (String) requestContext.get(RequestContext.TRANSACTION_ID));
         fields.put("REQUESTID", String.valueOf(sReq.getRequestID()));
+        fields.put("CUSTOMHEADER1", (String) requestContext.get(RequestContext.X_SIGNSERVER_CUSTOM_1));
 
         Object credential = requestContext.get(RequestContext.CLIENT_CREDENTIAL);
         if (credential instanceof UsernamePasswordClientCredential) {

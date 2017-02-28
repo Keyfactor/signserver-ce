@@ -492,6 +492,13 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             context.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
         }
         
+        // Add and log the X-SignServer-Custom-1 header if available
+        final String xCustom1 = req.getHeader(RequestContext.X_SIGNSERVER_CUSTOM_1);
+        if (xCustom1 != null && !xCustom1.isEmpty()) {
+            context.put(RequestContext.X_SIGNSERVER_CUSTOM_1, xCustom1);            
+        }
+        logMap.put(IWorkerLogger.LOG_XCUSTOM1, xCustom1);
+
         // Store filename for use by archiver etc
         String strippedFileName = fileName;
         if (fileName != null) {

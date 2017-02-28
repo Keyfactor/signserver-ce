@@ -1,3 +1,11 @@
+SignServer 4.0.1+sgs1, 2017-02-28
+---------------------------------
+
+** Patch Applied
+    * DSS-1355: Add custom HTTP header to log and archive to disk pattern:
+                dss-1355-custom-header-patch1.diff
+
+
 SignServer 4.0.1, 2017-01-16
 ----------------------------
 

@@ -15,7 +15,9 @@ package org.signserver.client.cli.defaultimpl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Authenticator;
 import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.Map;
@@ -63,7 +65,19 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
                 + host + ":" + port
                 + servlet;
         final ClientWSService service;
-        
+
+        // Set the username and password. This is needed here in case the WSDL
+        // is password protected
+        if (username !=null && password != null) {
+            Authenticator.setDefault(new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(username, password.toCharArray());
+                }
+
+            });
+        }
+
         try {
             service = new ClientWSService(new URL(url), new QName("http://clientws.signserver.org/", "ClientWSService"));
         } catch (MalformedURLException ex) {

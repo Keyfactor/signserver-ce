@@ -24,7 +24,8 @@ if not exist %JAR%  (
 )
 
 rem Optional JARs
-set OPTIONAL_CLASSPATH=%SIGNSRV_HOME%\lib\SignServer-Client-ValidationCLI.jar;%EXTRA_CLASSPATH%
+for /f "tokens=*" %%a in ('dir /b /s %SIGNSRV_HOME%\lib\SignServer-Client-ValidationCLI-*.jar') do set OPTIONAL_CLASSPATH=%%a
+set OPTIONAL_CLASSPATH=%OPTIONAL_CLASSPATH%;%EXTRA_CLASSPATH%
 
 set CLASSPATH=%SIGNSRV_HOME%\conf;%SIGNSRV_HOME%\bin;%JAR%;%J2EE_CP%;%SIGNSRV_HOME%\res\deploytools\cesecore;%OPTIONAL_CLASSPATH%
 rem echo %CLASSPATH%

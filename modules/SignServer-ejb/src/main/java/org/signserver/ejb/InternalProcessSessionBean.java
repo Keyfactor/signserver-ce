@@ -146,6 +146,4 @@ public class InternalProcessSessionBean implements InternalProcessSessionLocal {
     public Response processWithTransaction(AdminInfo info, WorkerIdentifier wi, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         return process(info, wi, request, requestContext);
     }
-
-    
 }

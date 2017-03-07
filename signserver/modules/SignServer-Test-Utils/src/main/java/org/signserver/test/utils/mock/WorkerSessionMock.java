@@ -163,6 +163,13 @@ public class WorkerSessionMock implements WorkerSessionLocal,
     }
 
     @Override
+    public Response processWithTransaction(AdminInfo info, WorkerIdentifier wi, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
+
+    @Override
     public WorkerStatus getStatus(WorkerIdentifier workerId) throws
             InvalidWorkerIdException {
         throw new UnsupportedOperationException("Not supported yet.");

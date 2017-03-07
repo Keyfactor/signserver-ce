@@ -49,4 +49,9 @@ public interface ProcessSessionLocal {
             RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException;
+    
+    Response processWithTransaction(final AdminInfo info, WorkerIdentifier wi, Request request,
+            RequestContext requestContext)
+            throws IllegalRequestException, CryptoTokenOfflineException,
+            SignServerException;
 }

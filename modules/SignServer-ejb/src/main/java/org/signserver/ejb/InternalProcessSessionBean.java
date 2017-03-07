@@ -17,6 +17,8 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
@@ -40,6 +42,7 @@ import org.signserver.server.log.AdminInfo;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.server.annotations.TransactionType;
 import org.signserver.statusrepo.StatusRepositorySessionLocal;
 
 /**
@@ -51,6 +54,7 @@ import org.signserver.statusrepo.StatusRepositorySessionLocal;
  * @version $Id$
  */
 @Stateless
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class InternalProcessSessionBean implements InternalProcessSessionLocal {
 
     /** Log4j instance for this class. */
@@ -75,6 +79,7 @@ public class InternalProcessSessionBean implements InternalProcessSessionLocal {
 
     private WorkerProcessImpl processImpl;
     private final AllServicesImpl servicesImpl = new AllServicesImpl();
+    private InternalProcessSessionLocal session;
 
     @PostConstruct
     public void create() {
@@ -90,7 +95,8 @@ public class InternalProcessSessionBean implements InternalProcessSessionLocal {
             keyUsageCounterDataService = new KeyUsageCounterDataService(em);
         }
         processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, workerManagerSession, logSession);
-
+        session = ctx.getBusinessObject(InternalProcessSessionLocal.class);
+        
         // XXX The lookups will fail on GlassFish V2
         // When we no longer support GFv2 we can refactor this code
         ProcessSessionLocal processSession = null;
@@ -113,7 +119,7 @@ public class InternalProcessSessionBean implements InternalProcessSessionLocal {
                     processSession,
                     globalConfigurationSession,
                     logSession,
-                    ctx.getBusinessObject(InternalProcessSessionLocal.class), dispatcherSession, statusSession,
+                    session, dispatcherSession, statusSession,
                     keyUsageCounterDataService);
         } catch (NamingException ex) {
             if (LOG.isDebugEnabled()) {
@@ -128,7 +134,18 @@ public class InternalProcessSessionBean implements InternalProcessSessionLocal {
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);
-        return processImpl.process(adminInfo, wi, request, requestContext);
+        if (SessionUtils.needsTransaction(workerManagerSession, wi)) {
+            return session.processWithTransaction(adminInfo, wi, request, requestContext);
+        } else {
+            return processImpl.process(adminInfo, wi, request, requestContext);
+        }
     }
 
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public Response processWithTransaction(AdminInfo info, WorkerIdentifier wi, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        return process(info, wi, request, requestContext);
+    }
+
+    
 }

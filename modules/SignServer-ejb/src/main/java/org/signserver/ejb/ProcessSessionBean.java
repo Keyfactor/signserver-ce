@@ -22,6 +22,8 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import org.apache.commons.fileupload.FileUploadBase;
@@ -36,6 +38,7 @@ import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericValidationRequest;
 import org.signserver.common.GenericValidationResponse;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RemoteRequestContext;
@@ -71,6 +74,8 @@ import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.common.data.SignatureRequest;
 import org.signserver.common.data.SignatureResponse;
+import org.signserver.ejb.worker.impl.PreloadedWorkerConfig;
+import org.signserver.ejb.worker.impl.WorkerWithComponents;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.data.impl.DataFactory;
@@ -88,6 +93,7 @@ import org.signserver.validationservice.common.ValidateResponse;
  * @version $Id$
  */
 @Stateless
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionLocal {
 
     /** Log4j instance for this class. */
@@ -112,6 +118,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
     private WorkerProcessImpl processImpl;
     private final AllServicesImpl servicesImpl = new AllServicesImpl();
     private DataFactory dataFactory;
+    private ProcessSessionLocal session;
 
     @PostConstruct
     public void create() {
@@ -130,6 +137,8 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         }
         processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, workerManagerSession, logSession);
 
+        session = ctx.getBusinessObject(ProcessSessionLocal.class);
+        
         // XXX The lookups will fail on GlassFish V2
         // When we no longer support GFv2 we can refactor this code
         InternalProcessSessionLocal internalSession = null;
@@ -149,7 +158,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
             // Add all services
             servicesImpl.putAll(em,
                     ServiceLocator.getInstance().lookupLocal(WorkerSessionLocal.class),
-                    ctx.getBusinessObject(ProcessSessionLocal.class),
+                    session,
                     globalConfigurationSession,
                     logSession,
                     internalSession, dispatcherSession, statusSession,
@@ -313,6 +322,9 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         return process(new AdminInfo("Client user", null, null), wi, request, requestContext);
     }
     
+    
+    
+    
     @Override
     public Response process(final AdminInfo adminInfo, final WorkerIdentifier wi,
             final Request request, final RequestContext requestContext)
@@ -322,7 +334,29 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         if (LOG.isDebugEnabled()) {
             LOG.debug(">process: " + wi);
         }
-        return processImpl.process(adminInfo, wi, request, requestContext);
+        
+        if (SessionUtils.needsTransaction(workerManagerSession, wi)) {
+            LOG.info("needs transaction");
+            return session.processWithTransaction(adminInfo, wi, request, requestContext);
+        } else {
+            return processImpl.process(adminInfo, wi, request, requestContext);
+        }
     }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public Response processWithTransaction(final AdminInfo info,
+                                           final WorkerIdentifier wi,
+                                           final Request request,
+                                           final RequestContext requestContext)
+            throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(">process in transaction: " + wi);
+        }
+        
+        return processImpl.process(info, wi, request, requestContext);
+    }
+    
+    
 
 }

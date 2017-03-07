@@ -17,6 +17,8 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
@@ -51,6 +53,7 @@ import org.signserver.statusrepo.StatusRepositorySessionLocal;
  * @version $Id$
  */
 @Stateless
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class DispatcherProcessSessionBean implements DispatcherProcessSessionLocal {
 
     /** Log4j instance for this class. */
@@ -75,6 +78,7 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
 
     private WorkerProcessImpl processImpl;
     private final AllServicesImpl servicesImpl = new AllServicesImpl();
+    private DispatcherProcessSessionLocal session;
 
     @PostConstruct
     public void create() {
@@ -90,6 +94,7 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
             keyUsageCounterDataService = new KeyUsageCounterDataService(em);
         }
         processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, workerManagerSession, logSession);
+        session = ctx.getBusinessObject(DispatcherProcessSessionLocal.class);
         
         // XXX The lookups will fail on GlassFish V2
         // When we no longer support GFv2 we can refactor this code
@@ -113,7 +118,7 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
                     processSession,
                     globalConfigurationSession,
                     logSession,
-                    internalSession, ctx.getBusinessObject(DispatcherProcessSessionLocal.class), statusSession,
+                    internalSession, session, statusSession,
                     keyUsageCounterDataService);
         } catch (NamingException ex) {
             if (LOG.isDebugEnabled()) {
@@ -128,7 +133,18 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException {
         requestContext.setServices(servicesImpl);
-        return processImpl.process(adminInfo, wi, request, requestContext);
+        if (SessionUtils.needsTransaction(workerManagerSession, wi)) {
+            return session.processWithTransaction(adminInfo, wi, request, requestContext);
+        } else {
+            return processImpl.process(adminInfo, wi, request, requestContext);
+        }
     }
 
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public Response processWithTransaction(AdminInfo info, WorkerIdentifier wi, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        return process(info, wi, request, requestContext);
+    }
+
+    
 }

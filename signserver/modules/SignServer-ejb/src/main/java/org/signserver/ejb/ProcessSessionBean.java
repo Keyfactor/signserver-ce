@@ -353,7 +353,4 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         
         return processImpl.process(info, wi, request, requestContext);
     }
-    
-    
-
 }

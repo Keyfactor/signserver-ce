@@ -37,8 +37,8 @@ public class SessionUtils {
                                            final WorkerIdentifier wi) throws NoSuchWorkerException {
         final WorkerWithComponents worker = session.getWorkerWithComponents(wi);
         final PreloadedWorkerConfig pwc = worker.getPreloadedConfig();
-        
-        // TODO: also check archiving
-        return !pwc.isDisableKeyUsageCounter() || pwc.isKeyUsageLimitSpecified();
+
+        return !worker.getArchivers().isEmpty() ||
+               !pwc.isDisableKeyUsageCounter() || pwc.isKeyUsageLimitSpecified();
     }
 }

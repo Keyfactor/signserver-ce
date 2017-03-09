@@ -144,6 +144,6 @@ public class InternalProcessSessionBean implements InternalProcessSessionLocal {
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Response processWithTransaction(AdminInfo info, WorkerIdentifier wi, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        return process(info, wi, request, requestContext);
+        return processImpl.process(info, wi, request, requestContext);
     }
 }

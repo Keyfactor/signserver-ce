@@ -18,6 +18,7 @@ import java.util.Properties;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import org.apache.commons.lang.StringUtils;
+import org.signserver.admin.common.config.RekeyUtil;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.WorkerConfig;
@@ -69,7 +70,7 @@ public class RenewKeyBulkBean extends BulkBean {
                 final String oldAlias = config.getProperty("DEFAULTKEY");
                 final String keyAlg = config.getProperty("KEYALG");
                 final String keySpec = config.getProperty("KEYSPEC");
-                final String newAlias = oldAlias != null ? nextAliasInSequence(oldAlias) : null;
+                final String newAlias = oldAlias != null ? RekeyUtil.nextAliasInSequence(oldAlias) : null;
                 renewKeyWorkers.add(new RenewKeyWorker(id, exists, name, config.getProperties(), oldAlias, keyAlg, keySpec, newAlias));
 
                 // Select checkbox
@@ -134,34 +135,6 @@ public class RenewKeyBulkBean extends BulkBean {
         } else {
             return "";
         }
-    }
-
-    // TODO: Copied from RenewKeysDialog.java
-    static String nextAliasInSequence(final String currentAlias) {
-        String prefix = currentAlias;
-        String nextSequence = "2";
-
-        final String[] entry = currentAlias.split("[0-9]+$");
-        if (entry.length == 1) {
-            prefix = entry[0];
-            final String currentSequence
-                    = currentAlias.substring(prefix.length());
-            final int sequenceChars = currentSequence.length();
-            if (sequenceChars > 0) {
-                final long nextSequenceNumber = Long.parseLong(currentSequence) + 1;
-                final String nextSequenceNumberString
-                        = String.valueOf(nextSequenceNumber);
-                if (sequenceChars > nextSequenceNumberString.length()) {
-                    nextSequence = currentSequence.substring(0,
-                            sequenceChars - nextSequenceNumberString.length())
-                            + nextSequenceNumberString;
-                } else {
-                    nextSequence = nextSequenceNumberString;
-                }
-            }
-        }
-
-        return prefix + nextSequence;
     }
 
     public static class RenewKeyWorker extends Worker {

@@ -310,43 +310,6 @@ public class GenerateKeysDialog extends JDialog {
         jButtonGenerate.setEnabled(enable);
     }
 
-    static String nextAliasInSequence(final String currentAlias) {
-        String prefix = currentAlias;
-        String nextSequence = "2";
-
-        final String[] entry = currentAlias.split("[0-9]+$");
-        if (entry.length == 1) {
-            prefix = entry[0];
-            final String currentSequence
-                    = currentAlias.substring(prefix.length());
-            final int sequenceChars = currentSequence.length();
-            if (sequenceChars > 0) {
-                final long nextSequenceNumber = Long.parseLong(currentSequence) + 1;
-                final String nextSequenceNumberString
-                        = String.valueOf(nextSequenceNumber);
-                if (sequenceChars > nextSequenceNumberString.length()) {
-                    nextSequence = currentSequence.substring(0,
-                            sequenceChars - nextSequenceNumberString.length())
-                            + nextSequenceNumberString;
-                } else {
-                    nextSequence = nextSequenceNumberString;
-                }
-            }
-        }
-
-        return prefix + nextSequence;
-    }
-
-//    public void checkThatWorkerIsProcessable(int signerid, String hostname) {
-//    	Collection<Integer> signerIds
-//                = SignServerAdminGUIApplication.getWorkerSession().getWorkers(
-//                GlobalConfiguration.WORKERTYPE_PROCESSABLE);
-//    	if(!signerIds.contains(new Integer(signerid))){
-//    		throw new IllegalAdminCommandException("Error: given workerId doesn't seem to point to any processable worker in the system.");
-//    	}
-//
-//    }
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         dispose();
 }//GEN-LAST:event_jButton2ActionPerformed

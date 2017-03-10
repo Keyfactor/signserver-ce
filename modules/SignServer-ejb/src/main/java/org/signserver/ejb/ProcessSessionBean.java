@@ -333,7 +333,6 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         }
         
         if (SessionUtils.needsTransaction(workerManagerSession, wi)) {
-            LOG.info("needs transaction");
             return session.processWithTransaction(adminInfo, wi, request, requestContext);
         } else {
             return processImpl.process(adminInfo, wi, request, requestContext);

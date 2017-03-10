@@ -56,7 +56,7 @@
     </welcome-file-list>
     <!-- Special page for authorization denied -->
     <error-page>
-        <exception-type>org.signserver.admin.web.ejb.AdminNotAuthorizedException</exception-type>
+        <exception-type>org.signserver.admin.common.auth.AdminNotAuthorizedException</exception-type>
         <location>/error-auth.xhtml</location>
     </error-page>
     <error-page>

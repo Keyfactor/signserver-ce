@@ -37,7 +37,7 @@ import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.ProcessResponse;
 import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.WorkerConfig;
-import org.signserver.admin.web.ejb.AdminNotAuthorizedException;
+import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 
 /**
  *

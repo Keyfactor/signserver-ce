@@ -35,7 +35,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesApplier;
 import org.signserver.common.util.PropertiesConstants;
 import org.signserver.common.util.PropertiesParser;
-import org.signserver.admin.web.ejb.AdminNotAuthorizedException;
+import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 
 /**

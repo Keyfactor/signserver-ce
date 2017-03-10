@@ -33,7 +33,7 @@ import org.signserver.admin.common.roles.AdminsUtil;
 import org.signserver.common.ClientEntry;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
-import org.signserver.admin.web.ejb.AdminNotAuthorizedException;
+import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 
 /**

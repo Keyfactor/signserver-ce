@@ -27,7 +27,7 @@ import org.cesecore.util.query.elems.RelationalOperator;
 import org.signserver.admin.common.query.QueryCondition;
 import org.signserver.admin.common.query.QueryOrdering;
 import org.signserver.common.SignServerException;
-import org.signserver.admin.web.ejb.AdminNotAuthorizedException;
+import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 
 /**

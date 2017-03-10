@@ -36,7 +36,7 @@ import org.cesecore.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.WorkerConfig;
-import org.signserver.admin.web.ejb.AdminNotAuthorizedException;
+import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 
 /**

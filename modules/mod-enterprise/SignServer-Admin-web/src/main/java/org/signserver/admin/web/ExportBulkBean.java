@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesDumper;
-import org.signserver.admin.web.ejb.AdminNotAuthorizedException;
+import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 
 /**
  *

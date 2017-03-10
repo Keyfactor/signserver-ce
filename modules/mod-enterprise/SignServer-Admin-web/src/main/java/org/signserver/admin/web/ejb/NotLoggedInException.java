@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.admin.web.ejb;
 
+import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+
 /**
  *
  * @author Markus Kilås

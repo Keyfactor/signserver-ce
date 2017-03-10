@@ -31,7 +31,7 @@ import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.module.renewal.common.RenewalWorkerProperties;
-import org.signserver.admin.web.ejb.AdminNotAuthorizedException;
+import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 
 /**
  *

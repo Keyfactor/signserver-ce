@@ -1,4 +1,3 @@
-// TODO: Duplicated from adminws
 /*************************************************************************
  *                                                                       *
  *  SignServer: The OpenSource Automated Signing Server                  *
@@ -11,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.admin.web.ejb;
+package org.signserver.admin.common.auth;
 
 
 /**

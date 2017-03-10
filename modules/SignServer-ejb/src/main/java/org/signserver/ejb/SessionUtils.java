@@ -30,15 +30,18 @@ public class SessionUtils {
      * 
      * @param session
      * @param wi
-     * @return
-     * @throws NoSuchWorkerException 
+     * @return true if the request needs a transaction
      */
     public static boolean needsTransaction(final WorkerManagerSingletonBean session,
-                                           final WorkerIdentifier wi) throws NoSuchWorkerException {
-        final WorkerWithComponents worker = session.getWorkerWithComponents(wi);
-        final PreloadedWorkerConfig pwc = worker.getPreloadedConfig();
+                                           final WorkerIdentifier wi) {
+        try {
+            final WorkerWithComponents worker = session.getWorkerWithComponents(wi);
+            final PreloadedWorkerConfig pwc = worker.getPreloadedConfig();
 
-        return !worker.getArchivers().isEmpty() ||
-               !pwc.isDisableKeyUsageCounter() || pwc.isKeyUsageLimitSpecified();
+            return !worker.getArchivers().isEmpty() ||
+                   !pwc.isDisableKeyUsageCounter() || pwc.isKeyUsageLimitSpecified();
+        } catch (NoSuchWorkerException e) {
+            return false;
+        }
     }
 }

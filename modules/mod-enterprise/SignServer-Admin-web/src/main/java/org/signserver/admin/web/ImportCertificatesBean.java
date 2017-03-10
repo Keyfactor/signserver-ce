@@ -35,7 +35,6 @@ import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.OperationUnsupportedException;
-import org.signserver.common.WorkerConfig;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 
@@ -59,8 +58,6 @@ public class ImportCertificatesBean {
 
     @ManagedProperty(value = "#{authenticationBean}")
     private AuthenticationBean authBean;
-
-    private WorkerConfig workerConfig;
 
     private List<Item> items;
 

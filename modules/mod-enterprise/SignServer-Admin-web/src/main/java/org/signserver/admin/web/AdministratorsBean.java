@@ -20,8 +20,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -32,7 +30,6 @@ import org.signserver.admin.common.roles.AdminEntry;
 import org.signserver.admin.common.roles.AdminsUtil;
 import org.signserver.common.ClientEntry;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.SignServerUtil;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 

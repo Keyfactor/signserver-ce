@@ -305,7 +305,7 @@ public class AdminWebSessionBean {
         return worker.getKeyUsageCounterValue(new WorkerIdentifier(workerId));
     }
     
-    public java.util.Collection<byte[]> process(
+    public Collection<byte[]> process(
             final X509Certificate adminCertificate,
             final String workerIdOrName,
             Collection<byte[]> requests)

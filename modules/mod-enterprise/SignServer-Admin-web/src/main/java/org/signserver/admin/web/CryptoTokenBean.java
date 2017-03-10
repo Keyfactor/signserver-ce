@@ -51,8 +51,6 @@ public class CryptoTokenBean {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(CryptoTokenBean.class);
 
-    private static final FastDateFormat FDF = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss zz");
-
     //@ManagedProperty(value = "#{param.id}")
     private Integer id;
 

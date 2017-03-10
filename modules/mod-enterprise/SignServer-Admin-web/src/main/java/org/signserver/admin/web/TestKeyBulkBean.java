@@ -37,19 +37,6 @@ import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 @ViewScoped
 public class TestKeyBulkBean extends BulkBean {
 
-    /*@EJB
-    private AdminWebSessionBean workerSessionBean;
-
-    @ManagedProperty(value = "#{authenticationBean}")
-    private AuthenticationBean authBean;
-    
-    private String workerIds;
-    
-    private final Map<Integer, Boolean> selectedIds = new HashMap<>();
-    
-    private List<Worker> workers;
-    
-    private String activatePassword;*/
     private List<TestKeyWorker> myWorkers;
 
     private List<String> keysList;

@@ -140,8 +140,6 @@ public class WorkersBean {
     }
 
     public String activateStep2Action() throws AdminNotAuthorizedException {
-        System.out.println("step2");
-        System.out.println("selected workers: " + getSelectedIds());
         for (Worker worker : getSelectedWorkers()) {
             try {
                 workerSessionBean.activateSigner(authBean.getAdminCertificate(), new WorkerIdentifier(worker.getId()), activatePassword);

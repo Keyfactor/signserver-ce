@@ -42,7 +42,6 @@ import org.signserver.server.log.AdminInfo;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
-import org.signserver.server.annotations.TransactionType;
 import org.signserver.statusrepo.StatusRepositorySessionLocal;
 
 /**

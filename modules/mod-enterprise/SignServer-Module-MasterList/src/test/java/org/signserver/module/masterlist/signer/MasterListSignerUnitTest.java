@@ -55,6 +55,7 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
@@ -81,9 +82,12 @@ public class MasterListSignerUnitTest {
     private static final Logger LOG = Logger.getLogger(MasterListSignerUnitTest.class);
 
     private static MockedCryptoToken tokenRSA;
+    private static MockedCryptoToken tokenRSANoSKID;
     private static MockedCryptoToken tokenRSANoCerts;
     private static Certificate[] certChain;
     private static Certificate signerCertificate;
+    private static Certificate[] certChainNoSKID;
+    private static Certificate signerCertificateNoSKID;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -124,6 +128,29 @@ public class MasterListSignerUnitTest {
         tokenRSANoCerts = new MockedCryptoToken(signerKeyPair.getPrivate(),
                                                 signerKeyPair.getPublic(), null,
                                                 null, "BC");
+        
+        certChainNoSKID =
+                new Certificate[] {
+                    // Signer
+                    new JcaX509CertificateConverter().getCertificate(new CertBuilder()
+                        .setIssuerPrivateKey(caKeyPair.getPrivate())
+                        .setSubjectPublicKey(signerKeyPair.getPublic())
+                        .setNotBefore(new Date(currentTime - 60000))
+                        .setSignatureAlgorithm(signatureAlgorithm)
+                        .setIssuer(caDN)
+                        .setSubject(signerDN)
+                        .build()),
+
+                    // CA
+                    new JcaX509CertificateConverter().getCertificate(new CertBuilder()
+                        .setSelfSignKeyPair(signerKeyPair)
+                        .setNotBefore(new Date(currentTime - 120000))
+                        .setSignatureAlgorithm(signatureAlgorithm)
+                        .setIssuer(caDN)
+                        .setSubject(caDN)
+                        .build())};
+        signerCertificateNoSKID = certChainNoSKID[0];
+        tokenRSANoSKID = new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificateNoSKID, Arrays.asList(certChainNoSKID), "BC");
     }
 
     /**
@@ -250,6 +277,36 @@ public class MasterListSignerUnitTest {
         // All CSCA Master Lists MUST be produced in DER format
         final byte[] der = new ASN1InputStream(cms).readObject().getEncoded("DER");
         assertArrayEquals("expects DER format", der, cms);
+    }
+
+    @Test
+    public void testSigningErrorNoSKID() throws Exception {
+        LOG.info("testGetFatalErrorsNoSKID");
+        WorkerConfig config = new WorkerConfig();
+        MasterListSigner instance = new MockedMasterListSigner(tokenRSANoSKID);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        final List<Certificate> inputCertificates = createCertificates(2, true);
+
+        final byte[] data = CertTools.getPemFromCertificateChain(inputCertificates);
+
+        RequestContext requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
+        SignatureResponse res;
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestData(data);
+                CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
+            ) {
+            SignatureRequest request = new SignatureRequest(100, requestData, responseData);
+            res = (SignatureResponse) instance.processData(request, requestContext);
+            fail("Should throw SignServerException");
+        } catch (SignServerException e) {
+            assertEquals("Error message",
+                         "Subject Key Identifier is mandatory in Master List Signer Certificate",
+                         e.getMessage());
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName());
+        }
     }
     
     /**

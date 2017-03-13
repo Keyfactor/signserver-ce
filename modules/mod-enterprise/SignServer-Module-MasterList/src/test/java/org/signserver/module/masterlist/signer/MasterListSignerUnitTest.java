@@ -411,7 +411,7 @@ public class MasterListSignerUnitTest {
 
         assertEquals("It is RECOMMENDED that States only provide 1 signerinfo within this field.", 1, signedData.getSignerInfos().size());
         SignerInformation signerInfo = (SignerInformation) signedData.getSignerInfos().getSigners().iterator().next();
-        assertNotNull("subjectKeyIdentifier: It is RECOMMENDED that States support this field over issuerndSerialNumber", signerInfo.getSID().getSubjectKeyIdentifier());
+        assertNotNull("subjectKeyIdentifier: It is RECOMMENDED that States support this field over issuerAndSerialNumber", signerInfo.getSID().getSubjectKeyIdentifier());
         assertEquals("RFC3852: If the SignerIdentifier is subjectKeyIdentifier, then the version MUST be 3.", 3, signerInfo.getVersion());
 
         CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();

@@ -178,7 +178,7 @@ public class MasterListSigner extends BaseSigner {
                     sid = SubjectKeyIdentifier.fromExtensions(extensions);
                 }
                 if (sid == null) {
-                    throw new SignServerException("subjectPublicKeyInfo is mandatory in Master List Signer Certificate");
+                    throw new SignServerException("Subject Key Identifier is mandatory in Master List Signer Certificate");
                 }
 
                 generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(

@@ -43,7 +43,6 @@ ae6b6708a03a144265ac7bf1def64b18def3b6576a8a52d7a6787d9cf00aa0ec  ./ext/hibernat
 7c33583de97e42b95c530e7e4752efbdbd46a566f7708ff0e8cf490203db74e3  ./ext/hibernate-core-4.2.21.Final.jar;                  "Hibernate"
 2ad5e5d77f831c713c9466c1da267cbedfea4e173bd9501fbfeacd1e6c5caab6  ./ext/hibernate-entitymanager-4.2.21.Final.jar;         "Hibernate"
 bacfb6460317d421aa2906d9e63c293b69dc1a5dac480d0f6416df50796a4bb3  ./ext/hibernate-jpa-2.0-api-1.0.1.Final.jar;            "Hibernate"
-96d963bcc65accc8fd51daee7782079305d2a350e99247f118fe3b27989f5ef6  ./ext/jackson-all-1.7.0.jar;                            "Jackson"
 4b865de74b4ef2b1bd94bac95c8869888b2d7474d0754c1db55ae08ddb238409  ./ext/javaee-api-6.0-6.jar;                             "Apache OpenEJB"
 3fb71231afd098bb0f93f5eb97aa8291c8d0556379125e596f92ec8f944c6162  ./ext/javassist-3.18.1-GA.jar;                          "Hibernate dependencies"
 496755798224b0c8f0c4471177852f1bef296a524a2df7765ef9df5054e5ae9f  ./ext/jaxen-1.1.jar;                                    "Jaxen"

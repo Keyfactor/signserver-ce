@@ -63,6 +63,13 @@ public class RequestContext implements Serializable {
     public static final String X_FORWARDED_FOR = "X-Forwarded-For";
     
     /**
+     * Custom HTTP header that will be logged and that for instance could be
+     * used to differentiate between different types of requests or requests
+     * from different sources.
+     */
+    public static final String X_SIGNSERVER_CUSTOM_1 = "X-SignServer-Custom-1";
+    
+    /**
      * All requests called from a CLI interface should set this setting to Boolean true.
      */
     public static final String CALLED_FROM_CLI = "CALLED_FROM_CLI";

@@ -60,6 +60,9 @@ public interface IWorkerLogger {
     String LOG_REQUEST_LENGTH = "REQUEST_LENGTH";
     String LOG_FILENAME = "FILENAME";
     String LOG_XFORWARDEDFOR = "XFORWARDEDFOR";
+    
+    /** Custom value fed from an HTTP header. */
+    String LOG_XCUSTOM1 = "XCUSTOM1";
 
     /** Indicating if the purchase was granted by any configured Accounter implementations. */
     String LOG_PURCHASED = "PURCHASED";

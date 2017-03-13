@@ -263,7 +263,7 @@ public class MSAuthCodeSigner extends BaseSigner {
         final String timestampFormatString =
                 config.getProperty(TIMESTAMP_FORMAT, DEFAULT_TIMESTAMP_FORMAT);
         try {
-            if (timestampFormatString.isEmpty()) {
+            if (timestampFormatString.trim().isEmpty()) {
                 timestampFormat = TimestampFormat.AUTHENTICODE;
             } else {
                 timestampFormat =

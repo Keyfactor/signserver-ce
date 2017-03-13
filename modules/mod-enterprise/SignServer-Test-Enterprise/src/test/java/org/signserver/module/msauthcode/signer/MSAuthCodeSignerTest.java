@@ -138,6 +138,17 @@ public class MSAuthCodeSignerTest extends ModulesTestCase {
         testSigningWithInternalTSA(false);
     }
     
+    /**
+     * Test signing when specifying timestamp format with a space, should expect
+     * an Authenticode (legacy) TSA.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testSigningPEWithInternalTSAExtraSpaceInFormat() throws Exception {
+        testSigningWithInternalTSA(false, true);
+    }
+    
     @Test
     public void testSigningMSIWithInternalTSA() throws Exception {
         testSigningWithInternalTSA(true);
@@ -145,6 +156,11 @@ public class MSAuthCodeSignerTest extends ModulesTestCase {
     
     private void testSigningWithInternalTSA(final boolean msi) throws Exception {
         LOG.info("testSigningWithInternalTSA");
+        testSigningWithInternalTSA(msi, false);
+    }
+    
+    private void testSigningWithInternalTSA(final boolean msi,
+                                            final boolean extraSpaceInFormat) throws Exception {
         try {
             Date time = new Date((System.currentTimeMillis() / 1000) * 1000); // Current time with milliseconds cleared out
             addMSTimeStampSigner(TS_ID, TS_NAME, true);
@@ -153,7 +169,7 @@ public class MSAuthCodeSignerTest extends ModulesTestCase {
             workerSession.setWorkerProperty(WORKER_ID, "PROGRAM_NAME", "Any program name");
             workerSession.setWorkerProperty(WORKER_ID, "PROGRAM_URL", "http://example.com/anyprogramname.html");
             // test that setting an empty TIMESTAMP_FORMAT actually assumes AUTHENTICODE, as per spec.
-            workerSession.setWorkerProperty(WORKER_ID, "TIMESTAMP_FORMAT", "");
+            workerSession.setWorkerProperty(WORKER_ID, "TIMESTAMP_FORMAT", extraSpaceInFormat ? " ": "");
             workerSession.setWorkerProperty(TS_ID, "TIMESOURCE", FixedTimeSource.class.getName());
             workerSession.setWorkerProperty(TS_ID, "FIXEDTIME", String.valueOf(time.getTime()));
             workerSession.reloadConfiguration(TS_ID);

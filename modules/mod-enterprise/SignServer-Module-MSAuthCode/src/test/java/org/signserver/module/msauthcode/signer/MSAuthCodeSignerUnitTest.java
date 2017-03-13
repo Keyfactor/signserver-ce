@@ -1474,6 +1474,22 @@ public class MSAuthCodeSignerUnitTest {
     }
     
     /**
+     * Test that setting timestamp format to an empty value with whitespace works.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_timestampFormatEmptyWithSpace() throws Exception {
+        LOG.info("testInit_timestampFormatEmptyWithSpace");
+        WorkerConfig config = createConfig();
+        config.setProperty("TIMESTAMP_FORMAT", " ");
+        MSAuthCodeSigner instance = new MockedMSAuthCodeSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
+    }
+    
+    /**
      * Test that setting an empty value for NO_REQUEST_ARCHIVING works.
      * 
      * @throws Exception 

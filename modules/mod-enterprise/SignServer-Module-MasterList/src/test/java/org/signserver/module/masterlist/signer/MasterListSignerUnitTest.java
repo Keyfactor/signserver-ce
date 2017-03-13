@@ -279,11 +279,58 @@ public class MasterListSignerUnitTest {
         assertArrayEquals("expects DER format", der, cms);
     }
 
+    /**
+     * Test that trying to sign with a signer certificate without the
+     * Subject Key Identifier extension fails, with the cert in the token.
+     *
+     * @throws Exception 
+     */
     @Test
     public void testSigningErrorNoSKID() throws Exception {
         LOG.info("testGetFatalErrorsNoSKID");
         WorkerConfig config = new WorkerConfig();
         MasterListSigner instance = new MockedMasterListSigner(tokenRSANoSKID);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        final List<Certificate> inputCertificates = createCertificates(2, true);
+
+        final byte[] data = CertTools.getPemFromCertificateChain(inputCertificates);
+
+        RequestContext requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
+        SignatureResponse res;
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestData(data);
+                CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
+            ) {
+            SignatureRequest request = new SignatureRequest(100, requestData, responseData);
+            res = (SignatureResponse) instance.processData(request, requestContext);
+            fail("Should throw SignServerException");
+        } catch (SignServerException e) {
+            assertEquals("Error message",
+                         "Subject Key Identifier is mandatory in Master List Signer Certificate",
+                         e.getMessage());
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName());
+        }
+    }
+
+    /**
+     * Test that trying to sign with a signer certificate without the
+     * Subject Key Identifier extension fails, with the cert in the configuration.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testSigningErrorNoSKIDNoCertInToken() throws Exception {
+        LOG.info("testGetFatalErrorsNoSKID");
+        WorkerConfig config = new WorkerConfig();
+        MasterListSigner instance = new MockedMasterListSigner(tokenRSANoCerts);
+        
+        config.setProperty("SIGNERCERTCHAIN",
+                new String(CertTools.getPemFromCertificateChain(Arrays.asList(certChainNoSKID))));
+        config.setProperty("SIGNERCERT",
+                new String(CertTools.getPemFromCertificateChain(Arrays.asList(signerCertificateNoSKID))));
         instance.init(1, config, new SignServerContext(), null);
         
         final List<Certificate> inputCertificates = createCertificates(2, true);

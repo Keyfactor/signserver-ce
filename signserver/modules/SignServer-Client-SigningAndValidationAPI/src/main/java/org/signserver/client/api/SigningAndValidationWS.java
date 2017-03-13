@@ -13,7 +13,9 @@
 package org.signserver.client.api;
 
 import java.io.IOException;
+import java.net.Authenticator;
 import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -137,7 +139,19 @@ public class SigningAndValidationWS implements ISigningAndValidation {
                 + host + ":" + port
                 + servlet;
         final SignServerWSService service;
-        
+
+        // Set the username and password. This is needed here in case the WSDL
+        // is password protected
+        if (username !=null && password != null) {
+            Authenticator.setDefault(new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(username, password.toCharArray());
+                }
+
+            });
+        }
+
         try {
             service = new SignServerWSService(new URL(url),
                     new QName("gen.ws.protocol.signserver.org",

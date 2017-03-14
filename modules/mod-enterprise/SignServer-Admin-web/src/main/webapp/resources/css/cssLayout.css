@@ -1,7 +1,7 @@
 
 #top {
     position: relative;
-    background-color: #036fab;
+    /*background-color: #036fab;*/
     color: white;
     /* padding: 5px; */
     padding: 0px;
@@ -12,15 +12,32 @@
 #top-left {
     background: white;
     float: left;
-    padding: 10px;
+    padding-top: 10px;
+    padding-left: 15px;
+    padding-bottom: 15px;
     margin-right: 10px;
 }
 
 #top-right {
     background: white;
-    float:right;
-    padding: 10px;
+    float: right;
+    padding-top: 10px;
+    padding-right: 15px;
+    padding-bottom: 5px;
     color: black;
+    font-size: xx-small;
+}
+
+#top-right td {
+    padding-top: 2px;
+}
+
+.top-right-c1 {
+    font-weight: bold;
+}
+
+.top-right-c2 {
+    font-style: italic;
 }
 
 #top-mid {
@@ -29,12 +46,49 @@
     padding-top: 25px;
 }
 
-#top-user {
+/*#top-user {
     text-align: right;
-}
+}*/
 
 #top-menu {
-    margin-left: 5px;
+    margin-left: 0px;
+    background-color: #1F589F;
+    padding: 0px;
+    border-radius: 3px;
+}
+
+#top-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#top-menu li {
+    float: left;
+}
+
+#top-menu li.last {
+    float:right;
+}
+
+#top-menu li a {
+    display: block;
+    text-decoration: none;
+    padding: 10px 15px;
+}
+
+#top-menu li a:hover {
+    background-color: black;
+    background-image: url(../images/selected-menu.png)
+}
+
+li a.active {
+    background-image: url(../selected-menu.png.xhtml?ln=images);
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    background-size: 10px;
+    color: red;
 }
 
 #header {
@@ -96,9 +150,9 @@
 }
 
 #top a:link:hover, #top a:visited:hover  {
-  color: black;
+  /*color: black;*/
   font-weight : bold;
-  text-decoration : underline;
+  /*text-decoration : underline;*/
 }
 
 #top-right a:link, #top-right a:visited {

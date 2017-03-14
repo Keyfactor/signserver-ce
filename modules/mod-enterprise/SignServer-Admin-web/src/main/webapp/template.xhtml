@@ -37,23 +37,49 @@
         <div id="top">
             <div id="top-left"><h:outputLink value="/signserver/"><h:graphicImage library="images" name="logo.png" height="50"/></h:outputLink></div>
             <div id="top-right">
-                <h:outputLink value="/signserver/doc/" class="topOutsideLink">Documentation</h:outputLink>
+                <h:panelGrid columns="2">
+                    <h:outputText value="User:" class="top-right-c1"/>
+                    <h:outputText value="#{authenticationBean.userDisplayName}" class="top-right-c2"/>
+                    
+                    <h:outputText value="Node:" class="top-right-c1"/>
+                    <h:outputText value="example.com" class="top-right-c2"/>
+                    
+                    <h:outputText value="Server Time:" class="top-right-c1"/>
+                    <h:outputText value="#{adminWebBean.currentTime}" class="top-right-c2"/>
+                    
+                    <h:outputText value="Version:" class="top-right-c1"/>
+                    <h:outputText value="#{adminWebBean.version}" class="top-right-c2"/>
+                </h:panelGrid>
             </div>
-            <div id="top-mid">
+            <!-- <div id="top-mid">
                 Administration Web
-            </div>
-            <p id="top-user">
-                 Logged in as: <h:outputText value="#{authenticationBean.userDisplayName}"/>
-            </p>
+            </div> -->
             <div class="clearBoth"></div>
             
             <div id="top-menu">
-                <h:link outcome="index">Home</h:link> | 
-                <h:link outcome="workers">Workers</h:link> | 
-                <h:link outcome="global-configuration">Global Configuration</h:link> | 
-                <h:link outcome="administrators">Administrators</h:link> | 
-                <h:link outcome="auditlog">Audit Log</h:link> | 
-                <h:link outcome="archive">Archive</h:link>
+                <ul>
+                    <li>
+                        <h:link outcome="index" class="active">Home</h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="workers">Workers</h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="global-configuration">Global Configuration</h:link>
+                        </li>
+                    <li>
+                        <h:link outcome="administrators">Administrators</h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="auditlog">Audit Log</h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="archive">Archive</h:link>
+                    </li>
+                    <li class="last">
+                        <h:outputLink value="/signserver/doc/" class="topOutsideLink">Documentation</h:outputLink>
+                    </li>
+                </ul>
                 <ui:insert name="top">Top</ui:insert>
             </div>
         </div>

@@ -25,6 +25,7 @@
         <module.web.web-uri>${dist.jar}</module.web.web-uri>
         <module.web.context-root>/signserver/doc</module.web.context-root>
         <doc.dir>../../doc/htdocs</doc.dir>
+        <doc.root>../../doc</doc.root>
     </properties>
 
     <dependencies>
@@ -67,6 +68,11 @@
                     <webResources>
                         <resource>
                             <directory>${doc.dir}</directory>
+                        </resource>
+                        <resource>
+                            <directory>${doc.root}</directory>
+                            <includes>TimeMonitor-Manual.pdf</includes>
+                            <targetPath>docs</targetPath>
                         </resource>
                     </webResources>
                 </configuration>

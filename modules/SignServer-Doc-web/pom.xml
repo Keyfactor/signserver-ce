@@ -71,7 +71,7 @@
                         </resource>
                         <resource>
                             <directory>${doc.root}</directory>
-                            <includes>TimeMonitor-Manual.pdf</includes>
+                            <include>TimeMonitor-Manual.pdf</include>
                             <targetPath>docs</targetPath>
                         </resource>
                     </webResources>

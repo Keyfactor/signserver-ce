@@ -71,7 +71,7 @@ OPTIONAL_CLASSPATH=${VALIDATIONCLI_JAR}:${EXTRA_CLASSPATH}
 
 # Construct the classpath
 CP="${MAIN_JAR}"
-CP="${SLF4J_JAR}":"$CP"
+CP="${SLF4JLOG4J_JAR}":"$CP"
 CP="${SIGNSRV_HOME}/conf":"$CP"
 CP="$CP:$SIGNSRV_HOME/res/deploytools/cesecore"
 CP="$CP":${OPTIONAL_CLASSPATH}

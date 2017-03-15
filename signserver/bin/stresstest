@@ -68,6 +68,7 @@ else
 fi 
 
 MAIN_JAR=`find "${SIGNSRV_HOME}/lib" -name "SignServer-Test-Performance*.jar"`
+SLF4JLOG4J_JAR=`find "${SIGNSRV_HOME}/lib/ext" -name "slf4j-log4j12*.jar"`
 
 # Check that classes exist
 if [ ! -f "${MAIN_JAR}" ]
@@ -81,6 +82,7 @@ OPTIONAL_CLASSPATH=${EXTRA_CLASSPATH}
 
 # Construct the classpath
 CP="${MAIN_JAR}"
+CP="${SLF4JLOG4J_JAR}":"$CP"
 CP="${SIGNSRV_HOME}/conf":"$CP"
 CP="$CP":${OPTIONAL_CLASSPATH}
 

@@ -57,7 +57,6 @@ else
 fi 
 
 ADMINCLI_JAR=`find "${SIGNSRV_HOME}/lib" -name "SignServer-DatabaseCLI*.jar"`
-SLF4JLOG4J_JAR=`find "${SIGNSRV_HOME}/lib/ext" -name "slf4j-log4j12*.jar"`
 
 # Check that classes exist
 if [ ! -f ${ADMINCLI_JAR} ]
@@ -75,7 +74,6 @@ fi
 
 # Construct the classpath
 CP="${ADMINCLI_JAR}"
-CP="${SLF4JLOG4J_JAR}":"$CP"
 CP="${SIGNSRV_HOME}/conf":"$CP"
 CP="$CP:$SIGNSRV_HOME/res/deploytools/cesecore"
 CP="$CP:$SIGNSRV_HOME"

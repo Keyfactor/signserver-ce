@@ -55,6 +55,7 @@ cd4475ccb15c4409596ebc70912f182f6d971dd33158de1c06b56ec9cd01b7cf  ./ext/jsign-1.
 78134c71aa9f9cebbc96a837f12c85590a4f2b587b51831a45faafb68381b1fc  ./ext/no-clover/clover.jar;                             "SignServer"
 739b70bc472f91cbaa8e3e4ce5ec5c8354a43b0d4b16516319f3ffcd7b05920a  ./ext/quartz-2.2.2.jar;                                 "Quartz Scheduler"
 e8f5b4340d3b12a0cfa44ac2db4be4e0639e479ae847df04c4ed8b521734bb4a  ./ext/serializer-2.7.2.jar;                             "Santuario"
+3263031ada62232de8c3302035329734efc3e97c68a11fe78524a32c98a9d0a4  ./ext/slf4j-log4j12-1.7.24.jar;                         "SLF4J"
 e46c71858674db7c0a258e6dfbe6b072b37c842a2e8ddf2480f0eb8f92b6988c  ./ext/swing-worker-1.1.jar;                             "Swing Appframework"
 c0e0f4bf948904312ed8aab62cfca66d2a8b12c5682c87111087253b620a51f4  ./ext/xades4j-1.3.2-signserver4.jar;                    "XAdES4j"
 a44bd80e82cb0f4cfac0dac8575746223802514e3cec9dc75235bc0de646af14  ./ext/xalan-2.7.2.jar;                                  "Santuario"

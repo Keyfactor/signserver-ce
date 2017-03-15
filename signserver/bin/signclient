@@ -56,7 +56,6 @@ else
 fi 
 
 MAIN_JAR=`find "${SIGNSRV_HOME}/lib" -name "SignServer-Client-CLI*.jar"`
-SLF4JLOG4J_JAR=`find "${SIGNSRV_HOME}/lib/ext" -name "slf4j-log4j12*.jar"`
 
 # Check that classes exist
 if [ ! -f "${MAIN_JAR}" ]
@@ -71,7 +70,6 @@ OPTIONAL_CLASSPATH=${VALIDATIONCLI_JAR}:${EXTRA_CLASSPATH}
 
 # Construct the classpath
 CP="${MAIN_JAR}"
-CP="${SLF4JLOG4J_JAR}":"$CP"
 CP="${SIGNSRV_HOME}/conf":"$CP"
 CP="$CP:$SIGNSRV_HOME/res/deploytools/cesecore"
 CP="$CP":${OPTIONAL_CLASSPATH}

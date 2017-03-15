@@ -72,7 +72,6 @@ else
 fi 
 
 ADMINGUI_JAR=`find "${SIGNSRV_HOME}/lib" -name "SignServer-AdminGUI*.jar"`
-SLF4JLOG4J_JAR=`find "${SIGNSRV_HOME}/lib/ext" -name "slf4j-log4j12*.jar"`
 
 # Check that classes exist
 if [ ! -f "${ADMINGUI_JAR}" ]
@@ -86,7 +85,6 @@ OPTIONAL_CLASSPATH=${EXTRA_CLASSPATH}
 
 # Construct the classpath
 CP="${ADMINGUI_JAR}"
-CP="${SLF4JLOG4J_JAR}":"$CP"
 CP="${SIGNSRV_HOME}/conf":"$CP"
 CP="$CP:${OPTIONAL_CLASSPATH}"
 

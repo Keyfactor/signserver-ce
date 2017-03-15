@@ -18,13 +18,10 @@ if not exist %JAR%  (
     goto end
 )
 
-rem find SLF4J JAR
-for /f "tokens=*" %%a in ('dir /b /s %SIGNSRV_HOME%\lib\ext\slf4j-log4j12-*.jar') do set SLF4J_JAR=%%a
-
 set class_name=org.signserver.admin.gui.SignServerAdminGUIApplication
 
 rem Construct the classpath
-set MAIN_CLASSPATH=%SIGNSRV_HOME%\conf;%JAR%;%SLF4J_JAR%
+set MAIN_CLASSPATH=%SIGNSRV_HOME%\conf;%JAR%
 
 rem Application server dependencies
 if exist %APPSRV_HOME%\lib\appserv-rt.jar (

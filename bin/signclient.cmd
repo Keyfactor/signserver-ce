@@ -23,11 +23,14 @@ if not exist %JAR%  (
     goto end
 )
 
+rem find SLF4J JAR
+for /f "tokens=*" %%a in ('dir /b /s %SIGNSRV_HOME%\lib\ext\slf4j-log4j12-*.jar') do set SLF4J_JAR=%%a
+
 rem Optional JARs
 for /f "tokens=*" %%a in ('dir /b /s %SIGNSRV_HOME%\lib\SignServer-Client-ValidationCLI-*.jar') do set OPTIONAL_CLASSPATH=%%a
 set OPTIONAL_CLASSPATH=%OPTIONAL_CLASSPATH%;%EXTRA_CLASSPATH%
 
-set CLASSPATH=%SIGNSRV_HOME%\conf;%SIGNSRV_HOME%\bin;%JAR%;%J2EE_CP%;%SIGNSRV_HOME%\res\deploytools\cesecore;%OPTIONAL_CLASSPATH%
+set CLASSPATH=%SIGNSRV_HOME%\conf;%SIGNSRV_HOME%\bin;%JAR%;%J2EE_CP%;%SIGNSRV_HOME%\res\deploytools\cesecore;%OPTIONAL_CLASSPATH%;%SLF4J_JAR%
 rem echo %CLASSPATH%
 
 rem Enable Java network debug logs

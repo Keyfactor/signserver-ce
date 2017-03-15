@@ -34,6 +34,7 @@
     <body>
 
         <ui:composition template="./template.xhtml">
+            <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
                 Worker <h:outputText value="#{workerAuthBean.worker.name}"/> - Authorization - Remove

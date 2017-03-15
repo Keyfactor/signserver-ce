@@ -27,6 +27,7 @@
     <body>
 
         <ui:composition template="./template.xhtml">
+            <ui:param name="activeMenu" value="administrators"/>
 
             <ui:define name="title">
                 <h:panelGroup rendered="#{(!administratorsBean.edit and !administratorsBean.remove)}">

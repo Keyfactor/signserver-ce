@@ -80,7 +80,6 @@
 
 #top-menu li a:hover {
     background-color: black;
-    background-image: url(../images/selected-menu.png)
 }
 
 li a.active {

@@ -43,9 +43,10 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; <h:link outcome="worker" value="#{statusPropertiesBean.worker.name}"><f:param name="id" value="#{statusPropertiesBean.worker.id}"/></h:link> &gt; Status Properties</h1>
+                <!-- <h1><h:outputLink value="worker.xhtml"><h:graphicImage library="images" name="#{workerBean.worker.imageName}" title="#{workerBean.worker.imageAlt}" class="workerImage1"/> <h:outputText value="#{statusPropertiesBean.worker.name}" /> <f:param name="id" value="#{statusPropertiesBean.worker.id}"/></h:outputLink> &gt; Status Properties</h1> -->
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{statusPropertiesBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="worker-status-properties"/>
                 </ui:include>
                 
                 <div id="worker_content">

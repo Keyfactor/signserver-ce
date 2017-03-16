@@ -44,10 +44,12 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; <h:link outcome="worker" value="#{workerBean.worker.name}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; <h:link outcome="worker-cryptotoken" value="CryptoToken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; Remove Key(s)</h1>
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{workerBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="worker-cryptotoken"/>
                 </ui:include>
+
+                <h2>Remove Key(s)</h2>
 
                 <div id="worker_content">
                     <h:messages class="errorMessage" globalOnly="true"/>
@@ -55,10 +57,10 @@
 
                     <h:form>
                         <h:panelGroup rendered="#{!removeKeysBean.done}">
-                            <h2>WARNING: Will attempt to permanently remove the following key(s):</h2>
+                            <b>WARNING: Will attempt to permanently remove the following key(s):</b>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{removeKeysBean.done}">
-                            <h2>All keys removed:</h2>
+                            <b>All keys removed:</b>
                         </h:panelGroup>
 
                         <h:dataTable id="table1" value="#{removeKeysBean.items}" var="item">

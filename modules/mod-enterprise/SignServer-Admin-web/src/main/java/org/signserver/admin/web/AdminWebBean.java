@@ -14,6 +14,7 @@ package org.signserver.admin.web;
 
 import javax.faces.bean.ManagedBean;
 import org.apache.commons.lang.time.FastDateFormat;
+import org.cesecore.config.CesecoreConfiguration;
 import org.signserver.common.CompileTimeSettings;
 
 /**
@@ -36,5 +37,9 @@ public class AdminWebBean {
 
     public String getCurrentTime() {
         return FDF.format(System.currentTimeMillis());
+    }
+    
+    public String getNode() {
+        return CesecoreConfiguration.getNodeIdentifier();
     }
 }

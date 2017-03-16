@@ -191,8 +191,9 @@ public class CryptoTokenBean {
         final List<String> keys = getSelectedKeys();
         StringBuilder sb = new StringBuilder();
         if (!keys.isEmpty()) {
-            sb.append("workers-csr");
-            sb.append("?faces-redirect=true&amp;previous=cryptotoken&amp;workers=").append(StringUtils.repeat(String.valueOf(id), ",", keys.size())); // TODO: +Going back page / viewing navigation path
+            sb.append("worker-cryptotoken-csr");
+            sb.append("?faces-redirect=true&amp;id=").append(String.valueOf(id));
+            sb.append("&amp;workers=").append(StringUtils.repeat(String.valueOf(id), ",", keys.size())); // TODO: +Going back page / viewing navigation path
             sb.append("&amp;keys=").append(StringUtils.join(keys, ","));
         }
         return sb.toString();

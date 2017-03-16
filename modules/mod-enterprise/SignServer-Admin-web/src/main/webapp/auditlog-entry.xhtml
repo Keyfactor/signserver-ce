@@ -43,7 +43,7 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link value="Audit Log" outcome="auditlog"/> &gt; <h:outputText value="Entry #{auditLogEntryBean.sequenceNumber} on #{auditLogEntryBean.node}"/></h1>
+                <h1><h:outputText value="Entry #{auditLogEntryBean.sequenceNumber} on #{auditLogEntryBean.node}"/></h1>
                 <h:form>
                     
                     <p class="errorMessage">

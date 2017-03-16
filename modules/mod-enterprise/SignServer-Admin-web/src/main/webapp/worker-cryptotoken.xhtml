@@ -43,15 +43,22 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; <h:outputLink value="worker.xhtml"> <h:graphicImage library="images" name="#{workerBean.worker.imageName}" title="#{workerBean.worker.imageAlt}" class="workerImage1"/> <h:outputText value="#{workerBean.worker.name}"/><f:param name="id" value="#{workerBean.worker.id}"/></h:outputLink> &gt; CryptoToken</h1>
+                <!--<h1><h:graphicImage library="images" name="#{workerBean.worker.imageName}" title="#{workerBean.worker.imageAlt}" class="workerImage1"/> <h:outputText value="#{workerBean.worker.name}"/></h1>-->
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{workerBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="worker-cryptotoken"/>
                 </ui:include>
+                
+                <h:form id="workerMenu">
+                    <p>
+                        <h:commandButton class="buttonNeutral" value="Activate..." action="#{workerBean.bulkAction('workers-activation', 'cryptotoken')}"/> <h:commandButton class="buttonNeutral" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation', 'cryptotoken')}"/> &nbsp; 
+                    </p>
+                </h:form>
 
                 <div id="worker_content">
                     <h:form>
                         <h2>
-                            Entries in token:
+                            Entries
                         </h2>
 
                         <p class="errorMessage">
@@ -99,7 +106,11 @@
                             </f:facet>
                         </h:dataTable>
                         <p>
-                            <h:link value="Generate key..." outcome="worker-cryptotoken-generatekey"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> <h:commandButton value="Test..." action="#{cryptoTokenBean.testKeysAction()}"/> <h:commandButton value="Generate CSR..." action="#{cryptoTokenBean.generateCSRAction()}"/> <h:commandButton value="Import certificates..." action="#{cryptoTokenBean.certificatesAction()}"/> <h:commandButton value="Remove..." action="#{cryptoTokenBean.removeKeysAction()}"/>
+                            <h:link value="Generate key..." outcome="worker-cryptotoken-generatekey"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> 
+                            <h:commandButton class="buttonNeutral" value="Test..." action="#{cryptoTokenBean.testKeysAction()}"/> 
+                            <h:commandButton class="buttonNeutral" value="Generate CSR..." action="#{cryptoTokenBean.generateCSRAction()}"/> 
+                            <h:commandButton class="buttonNeutral" value="Import certificates..." action="#{cryptoTokenBean.certificatesAction()}"/> 
+                            <h:commandButton class="buttonNeutral" value="Remove..." action="#{cryptoTokenBean.removeKeysAction()}"/>
                         </p>
                     </h:form>
                 </div>

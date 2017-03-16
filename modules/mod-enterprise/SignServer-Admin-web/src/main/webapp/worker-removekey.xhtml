@@ -42,7 +42,7 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; <h:link outcome="worker" value="#{workerBean.worker.name}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; Destroy key...</h1>
+                <h1><h:link outcome="worker" value="#{workerBean.worker.name}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; Destroy key...</h1>
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{workerBean.worker}"/>
                 </ui:include>

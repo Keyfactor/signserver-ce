@@ -42,7 +42,7 @@
                     <h:outputText value="#{authenticationBean.userDisplayName}" class="top-right-c2"/>
                     
                     <h:outputText value="Node:" class="top-right-c1"/>
-                    <h:outputText value="example.com" class="top-right-c2"/>
+                    <h:outputText value="#{adminWebBean.node}" class="top-right-c2"/>
                     
                     <h:outputText value="Server Time:" class="top-right-c1"/>
                     <h:outputText value="#{adminWebBean.currentTime}" class="top-right-c2"/>
@@ -92,9 +92,7 @@
             <ui:insert name="bottom">Bottom</ui:insert>
             
             <p class="bottomText">
-                <h:outputText value="#{adminWebBean.version}"/> - 
-                <h:outputText value="#{adminWebBean.copyright}"/> -
-                <h:outputText value="#{adminWebBean.currentTime}"/>
+                <h:outputText value="#{adminWebBean.copyright}"/>
             </p>
         </div>
 

@@ -44,10 +44,12 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; <h:link outcome="worker" value="#{workerBean.worker.name}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; <h:link outcome="worker-cryptotoken" value="CryptoToken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; Token Entry <h:outputText value="#{tokenEntryBean.key}"/></h1>
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{workerBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="worker-cryptotoken"/>
                 </ui:include>
+
+                <h2>Token Entry <h:outputText value="#{tokenEntryBean.key}"/></h2>
 
                 <div id="worker_content">
                     <h:form>

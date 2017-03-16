@@ -34,7 +34,7 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Worker <h:outputText value="#{workerBean.worker.name}"/>
+                Worker <h:outputText value="#{workerBean.worker.name}"/> - Status Summary
             </ui:define>
 
             <ui:define name="top">
@@ -42,13 +42,17 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; <h:graphicImage library="images" name="#{workerBean.worker.imageName}" title="#{workerBean.worker.imageAlt}" class="workerImage2"/> <h:outputText value="#{workerBean.worker.name}"/></h1>
+                <!-- <h1><h:link outcome="worker" value="#{workerBean.worker.name}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; Status Summary</h1> -->
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{workerBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="worker"/>
                 </ui:include>
-
-                <p>&nbsp;</p>
-
+                
+                <div id="worker_content">
+                    <pre>
+                        <h:outputText value="#{workerBean.status}"/>
+                    </pre>
+                </div>
             </ui:define>
 
             <ui:define name="bottom">

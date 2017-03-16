@@ -154,9 +154,13 @@ public class WorkerBean {
     }
 
     public String bulkAction(String page) {
+        return bulkAction(page, "worker");
+    }
+    
+    public String bulkAction(String page, String previous) {
         StringBuilder sb = new StringBuilder();
         sb.append(page);
-        sb.append("?faces-redirect=true&amp;includeViewParams=true&amp;workers=").append(id).append("&amp;previous=worker");
+        sb.append("?faces-redirect=true&amp;includeViewParams=true&amp;workers=").append(id).append("&amp;previous=").append(previous);
         return sb.toString();
     }
 

@@ -28,26 +28,49 @@
         <f:viewParam name="id" value="#{workerBean.id}"/>
     </f:metadata>
 
-    <div id="worker_menu">
+    <h1><h:graphicImage library="images" name="#{workerBean.worker.imageName}" title="#{workerBean.worker.imageAlt}" class="workerImage1"/> <h:outputText value="#{workerBean.worker.name}"/></h1>
+
+    <div id="worker-menu">
+        <ul>
+            <li>
+                <h:link outcome="worker" class="#{workerActiveMenu == 'worker' ? 'active' : ''}"><f:param name="id" value="#{workerBean.id}"/>Status Summary</h:link>
+            </li>
+            <li>
+                <h:link outcome="worker-status-properties" class="#{workerActiveMenu == 'worker-status-properties' ? 'active' : ''}"><f:param name="id" value="#{workerBean.id}"/>Status Properties</h:link>
+            </li>
+            <li>
+                <h:link outcome="worker-configuration" class="#{workerActiveMenu == 'worker-configuration' ? 'active' : ''}"><f:param name="id" value="#{workerBean.id}"/>Configuration</h:link>
+                </li>
+            <li>
+                <h:link outcome="worker-authorization" class="#{workerActiveMenu == 'worker-authorization' ? 'active' : ''}"><f:param name="id" value="#{workerBean.id}"/>Authorization</h:link>
+            </li>
+            <li>
+                <h:link outcome="worker-cryptotoken" class="#{workerActiveMenu == 'worker-cryptotoken' ? 'active' : ''}"><f:param name="id" value="#{workerBean.id}"/>CryptoToken</h:link>
+            </li>
+        </ul>
+    </div>
+
+    <div id="worker-actions">
         <!-- Note: This buttons are somewhat duplicated in workers.xhtml -->
-        <h:form id="workerMenu">
+        <h:form id="workerMenuOld">
             <p>
-                <h:commandButton id="activate" value="Activate..." action="#{workerBean.bulkAction('workers-activation')}"/> <h:commandButton id="deactivate" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation')}"/> | 
-                <h:commandButton id="renewKey" value="Renew key..." action="#{workerBean.bulkAction('workers-renewkey')}"/> <h:commandButton id="testKey" value="Test key..." action="#{workerBean.bulkAction('workers-testkey')}"/> <h:commandButton id="generateCSR" value="Generate CSR..." action="#{workerBean.bulkAction('workers-csr')}"/> <h:commandButton id="installCertificates" value="Install certificates..." action="#{workerBean.bulkAction('workers-certificates')}"/> |
-                <h:commandButton id="renewSigner" value="Renew signer..." action="#{workerBean.bulkAction('workers-renew')}"/> |
-                <h:commandButton id="destroyKey" value="Destroy key..." action="#{workerBean.workerAction('worker-removekey')}"/> | 
-                <h:commandButton id="remove" value="Remove..." action="#{workerBean.bulkAction('workers-remove')}"/> |
-                <h:commandButton id="reload" value="Reload from database..." action="#{workerBean.bulkAction('workers-reload')}"/> 
-                <h:commandButton id="export" value="Export..." action="#{workerBean.bulkAction('workers-export')}"/>
+                <h:panelGroup rendered="#{workerActiveMenu == 'worker' or workerActiveMenu == 'worker-status-properties'}">
+                    <h:commandButton class="buttonNeutral" value="Activate..." action="#{workerBean.bulkAction('workers-activation')}"/> <h:commandButton class="buttonNeutral" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation')}"/> &nbsp; 
+                    <h:commandButton class="buttonNeutral" value="Renew key..." action="#{workerBean.bulkAction('workers-renewkey')}"/> <h:commandButton class="buttonNeutral" value="Test key..." action="#{workerBean.bulkAction('workers-testkey')}"/> <h:commandButton class="buttonNeutral" value="Generate CSR..." action="#{workerBean.bulkAction('workers-csr')}"/> <h:commandButton class="buttonNeutral" value="Install certificates..." action="#{workerBean.bulkAction('workers-certificates')}"/> &nbsp;
+                    <h:commandButton class="buttonNeutral" value="Renew signer..." action="#{workerBean.bulkAction('workers-renew')}"/> &nbsp;
+                    <h:commandButton class="buttonNeutral" value="Destroy key..." action="#{workerBean.workerAction('worker-removekey')}"/> &nbsp; 
+                    <h:commandButton class="buttonNeutral" value="Remove..." action="#{workerBean.bulkAction('workers-remove')}"/> &nbsp;
+                    <h:commandButton class="buttonNeutral" value="Reload from database..." action="#{workerBean.bulkAction('workers-reload')}"/> 
+                    <h:commandButton class="buttonNeutral" value="Export..." action="#{workerBean.bulkAction('workers-export')}"/>
+                </h:panelGroup>
+                
+                <h:panelGroup rendered="#{workerActiveMenu == 'worker-configuration'}">
+                    <h:commandButton class="buttonNeutral" value="Reload from database..." action="#{workerBean.bulkAction('workers-reload')}"/> 
+                    <h:commandButton class="buttonNeutral" value="Export..." action="#{workerBean.bulkAction('workers-export')}"/>
+                </h:panelGroup>
+                
             </p>
         </h:form>
-
-        <p>
-            <h:link outcome="worker-status-summary" value="Status Summary"><f:param name="id" value="#{workerBean.id}"/></h:link> | 
-            <h:link outcome="worker-status-properties" value="Status Properties"><f:param name="id" value="#{workerBean.id}"/></h:link> | 
-            <h:link outcome="worker-configuration" value="Configuration"><f:param name="id" value="#{workerBean.id}"/></h:link> |
-            <h:link outcome="worker-authorization" value="Authorization"><f:param name="id" value="#{workerBean.id}"/></h:link> |
-            <h:link outcome="worker-cryptotoken" value="CryptoToken" rendered="#{workerBean.hasCrypto}"><f:param name="id" value="#{workerBean.id}"/></h:link>
-        </p>
-    </div>
+    </div>    
+    
 </ui:composition>

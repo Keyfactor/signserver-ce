@@ -31,13 +31,13 @@
 
             <ui:define name="title">
                 <h:panelGroup rendered="#{(!administratorsBean.edit and !administratorsBean.remove)}">
-                    Authorized Administrators
+                    Administrators
                 </h:panelGroup>
                 <h:panelGroup rendered="#{administratorsBean.edit}">
-                    Authorized Administrators - Edit
+                    Edit - Administrators
                 </h:panelGroup>
                 <h:panelGroup rendered="#{administratorsBean.remove}">
-                    Authorized Administrators - Remove
+                    Remove - Administrators
                 </h:panelGroup>
             </ui:define>
 
@@ -47,13 +47,13 @@
 
             <ui:define name="content">
                 <h:panelGroup rendered="#{(!administratorsBean.edit and !administratorsBean.remove)}">
-                    <h1>Authorized Administrators</h1>
+                    <h1>Authorizations</h1>
                 </h:panelGroup>
                 <h:panelGroup rendered="#{administratorsBean.edit}">
-                    <h1><h:link value="Authorized Administrators" outcome="administrators"/> &gt; Edit</h1>
+                    <h1>Edit</h1>
                 </h:panelGroup>
                 <h:panelGroup rendered="#{administratorsBean.remove}">
-                    <h1><h:link value="Authorized Administrators" outcome="administrators"/> &gt; Remove</h1>
+                    <h1>Remove</h1>
                 </h:panelGroup>
 
                 <h:panelGroup rendered="#{(!administratorsBean.edit and !administratorsBean.remove)}">

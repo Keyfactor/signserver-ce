@@ -45,9 +45,9 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; <h:link outcome="worker" value="#{workerAuthBean.worker.name}"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link> &gt; <h:link outcome="worker-configuration" value="Configuration"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link> &gt; Remove authorization...</h1>
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{workerAuthBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="worker-authorization"/>
                 </ui:include>
                 
                 <div id="worker_content">

@@ -42,12 +42,16 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; <h:link outcome="worker" value="#{workerBean.worker.name}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; Configuration</h1>
+                <!-- <h1><h:link outcome="worker" value="#{workerBean.worker.name}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; Configuration</h1> -->
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{workerBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="worker-configuration"/>
                 </ui:include>
                 
                 <div id="worker_content">
+                    
+                    <h2>Properties</h2>
+                    
                     <h:dataTable id="table1" value="#{workerBean.config}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
                         <!--<f:facet name="header">
                             <h:outputText value="Your Shopping Cart" />

@@ -76,6 +76,8 @@
     display: block;
     text-decoration: none;
     padding: 10px 15px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
 }
 
 #top-menu li a:hover {
@@ -90,6 +92,66 @@ li a.active {
     color: red;
 }
 
+
+#worker-menu {
+    /*float: left;*/
+    /*width: 12em;*/
+    
+    margin-left: 0px;
+    background-color: gray;
+    margin-top: 10px;
+    border-radius: 3px;
+}
+
+#worker-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#worker-menu li {
+    float: left;
+}
+
+#worker-menu li.last {
+    float:right;
+}
+
+#worker-menu li a {
+    color: white;
+    display: block;
+    text-decoration: none;
+    padding: 10px 15px;
+    /*width: 12em;*/
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+#worker-menu li a:hover {
+    background-color: black;
+}
+
+.buttonNeutral {
+    background-color: #1F589F;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 10px;
+    margin: 2px;
+
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+.buttonNeutral:hover {
+    background-color: black;
+}
+
 #header {
     /*background-color: #ece3a5;*/
     background-color: #dddddd;
@@ -100,7 +162,7 @@ li a.active {
 
 #bottom {
     position: relative;
-    background-color: #ece3a5;
+    /*background-color: #ece3a5;*/
     padding: 5px;
     margin: 10px 0px 0px 0px;
 }
@@ -158,10 +220,9 @@ li a.active {
     color: black;
 }
 
-#worker_menu {
-    background-color: #dddddd;
-    padding: 5px;
-    margin: 10px;
+#worker-actions {
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 #worker_content {

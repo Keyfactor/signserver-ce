@@ -50,15 +50,17 @@
             </ui:define>
 
             <ui:define name="content">
-                <h:panelGroup rendered="#{!certificateDetailsBean.forKeyInToken}">
-                    <h1><h:link outcome="workers">Workers</h:link> &gt; <h:link outcome="worker" value="#{certificateDetailsBean.worker.name}"><f:param name="id" value="#{certificateDetailsBean.worker.id}"/></h:link> &gt; <h:link outcome="worker-status-properties" value="Status Properties"><f:param name="id" value="#{certificateDetailsBean.id}"/></h:link> &gt; Certificate Details</h1>
-                </h:panelGroup>
-                <h:panelGroup rendered="#{certificateDetailsBean.forKeyInToken}">
-                    <h1><h:link outcome="workers">Workers</h:link> &gt; <h:link outcome="worker" value="#{workerBean.worker.name}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; <h:link outcome="worker-cryptotoken" value="CryptoToken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; <h:link outcome="worker-cryptotoken-entry" value="Token Entry #{certificateDetailsBean.keyInToken}"><f:param name="id" value="#{workerBean.worker.id}"/><f:param name="key" value="#{certificateDetailsBean.keyInToken}"/></h:link> &gt; Certificate Details</h1>
-                </h:panelGroup>
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{certificateDetailsBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="#{certificateDetailsBean.forKeyInToken ? 'worker-cryptotoken' : 'worker-status-properties'}"/>
                 </ui:include>
+                
+                <h:panelGroup rendered="#{!certificateDetailsBean.forKeyInToken}">
+                    <h2>Certificate Details</h2>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{certificateDetailsBean.forKeyInToken}">
+                    <h2><h:link outcome="worker-cryptotoken-entry" value="Token Entry #{certificateDetailsBean.keyInToken}"><f:param name="id" value="#{workerBean.worker.id}"/><f:param name="key" value="#{certificateDetailsBean.keyInToken}"/></h:link> &gt; Certificate Details</h2>
+                </h:panelGroup>
                 
                 <h:form>
                     <h:panelGroup rendered="#{!certificateDetailsBean.certificateAvailable}">

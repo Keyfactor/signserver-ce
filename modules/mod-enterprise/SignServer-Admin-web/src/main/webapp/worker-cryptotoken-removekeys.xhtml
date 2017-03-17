@@ -87,11 +87,10 @@
                             <p>
                                 Are you sure you want to destroy the key(s)?
                             </p>
-                            <h:commandButton value="Cancel" action="#{removeKeysBean.cancelAction()}"/>
-                            <h:commandButton value="Yes, destroy the key(s)" action="#{removeKeysBean.destroyAction()}"/>
+                            <h:commandButton class="buttonNegative" value="Destroy key(s)" action="#{removeKeysBean.destroyAction()}"/>
                         </h:panelGroup>
 
-                        <h:commandButton value="Done" action="#{removeKeysBean.cancelAction()}" rendered="#{removeKeysBean.done}"/>
+                        <h:commandButton class="buttonFeatured" value="Done" action="#{removeKeysBean.cancelAction()}" rendered="#{removeKeysBean.done}"/>
 
                     </h:form>
 

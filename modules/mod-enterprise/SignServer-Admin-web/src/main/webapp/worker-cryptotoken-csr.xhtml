@@ -74,12 +74,6 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Id" />
-                                </f:facet>
-                                <h:outputText value="#{item.id}" />
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">
                                     <h:outputText value="Key" />
                                 </f:facet>
                                 <h:panelGroup rendered="#{item.fixedAlias}">
@@ -129,7 +123,7 @@
                                 <f:facet name="header">
                                     <h:outputText value="Result" />
                                 </f:facet>
-                                <h:commandButton id="download" value="Download" action="#{cSRBulkBean.downloadAction(item)}" rendered="#{(item.pemFile != null)}"/>
+                                <h:commandButton class="buttonFeatured" id="download" value="Download" action="#{cSRBulkBean.downloadAction(item)}" rendered="#{(item.pemFile != null)}"/>
                             </h:column>
 
                             <h:column>
@@ -156,7 +150,7 @@
 
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton value="Generate" action="#{cSRBulkBean.generateAction()}" binding="#{components.buttonSubmit}"/>
+                                <h:commandButton class="buttonFeatured" value="Generate" action="#{cSRBulkBean.generateAction()}" binding="#{components.buttonSubmit}"/>
                             </f:facet>
                         </h:panelGrid>
                     </h:panelGroup>

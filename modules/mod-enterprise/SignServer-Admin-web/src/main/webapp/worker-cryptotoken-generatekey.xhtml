@@ -75,11 +75,11 @@
                                 <span class="errorMessage"><h:outputText value="#{item.errorMessage}"/></span>
                             </h:column>
                             <h:column>
-                                <h:commandButton value="-" action="#{generateKeyBean.removeAction()}" rendered="#{item.last and not item.first}"/> 
-                                <h:commandButton value="+" action="#{generateKeyBean.addAction()}" rendered="#{item.last}"/>
+                                <h:commandButton class="buttonNeutral" value="-" action="#{generateKeyBean.removeAction()}" rendered="#{item.last and not item.first}"/> 
+                                <h:commandButton class="buttonNeutral" value="+" action="#{generateKeyBean.addAction()}" rendered="#{item.last}"/>
                             </h:column>
                         </h:dataTable>
-                        <h:commandButton value="Generate" action="#{generateKeyBean.submitAction()}"/><br/>
+                        <h:commandButton class="buttonPositive" value="Generate" action="#{generateKeyBean.submitAction()}"/><br/>
                         <h:link value="Cancel" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                     </h:form>
                 </div>

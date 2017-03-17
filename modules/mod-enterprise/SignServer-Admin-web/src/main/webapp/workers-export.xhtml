@@ -43,7 +43,7 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; Export configuration...</h1>
+                <h1>Export Configuration</h1>
 
                 <h2>Choose what workers to export:</h2>
 
@@ -51,7 +51,6 @@
                 <span class="errorMessage"><h:outputText value="#{exportBulkBean.error}"/></span>
 
                 <h:form>
-
                     <h:selectOneRadio id="exportTarget" value="#{exportBulkBean.reloadTarget}">
                         <f:selectItem itemLabel="All workers in SignServer" itemValue="#{exportBulkBean.EXPORT_ALL_WORKERS}"/>
                         <f:selectItem itemLabel="Selected workers:" itemValue="#{exportBulkBean.EXPORT_SELECTED_WORKERS}" itemDisabled="#{exportBulkBean.myWorkers.size() lt 1}"/>
@@ -97,13 +96,13 @@
                 
                     <h:panelGrid columns="2">
                         <f:facet name="footer">
-                            <h:commandButton value="Export" action="#{exportBulkBean.exportAction()}"/>
+                            <h:commandButton class="buttonFeatured" value="Export" action="#{exportBulkBean.exportAction()}"/>
                         </f:facet>
                     </h:panelGrid>
 
                 </h:form>
                 
-                <h:link value="Back" outcome="#{exportBulkBean.backLink}"></h:link>
+                <h:link value="Cancel" outcome="#{exportBulkBean.backLink}"></h:link>
                 
             </ui:define>
 

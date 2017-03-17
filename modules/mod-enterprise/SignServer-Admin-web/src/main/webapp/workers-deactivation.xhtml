@@ -43,7 +43,7 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; Deactivate...</h1>
+                <h1>Deactivate</h1>
 
                 <h:form>
                     <h:panelGroup rendered="#{empty bulkBean.workers}">
@@ -89,7 +89,7 @@
 
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton value="Deactivate" action="#{bulkBean.deactivateAction()}"/>
+                                <h:commandButton class="buttonFeatured" value="Deactivate" action="#{bulkBean.deactivateAction()}"/>
                             </f:facet>
                         </h:panelGrid>
                     </h:panelGroup>

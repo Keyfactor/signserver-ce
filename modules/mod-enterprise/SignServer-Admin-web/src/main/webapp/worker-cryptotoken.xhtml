@@ -51,7 +51,7 @@
                 
                 <h:form id="workerMenu">
                     <p>
-                        <h:commandButton class="buttonNeutral" value="Activate..." action="#{workerBean.bulkAction('workers-activation', 'cryptotoken')}"/> <h:commandButton class="buttonNeutral" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation', 'cryptotoken')}"/> &nbsp; 
+                        <h:commandButton class="buttonFeatured" value="Activate..." action="#{workerBean.bulkAction('workers-activation', 'cryptotoken')}"/> <h:commandButton class="buttonNeutral" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation', 'cryptotoken')}"/> &nbsp; 
                     </p>
                 </h:form>
 
@@ -106,11 +106,11 @@
                             </f:facet>
                         </h:dataTable>
                         <p>
-                            <h:link value="Generate key..." outcome="worker-cryptotoken-generatekey"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> 
-                            <h:commandButton class="buttonNeutral" value="Test..." action="#{cryptoTokenBean.testKeysAction()}"/> 
-                            <h:commandButton class="buttonNeutral" value="Generate CSR..." action="#{cryptoTokenBean.generateCSRAction()}"/> 
-                            <h:commandButton class="buttonNeutral" value="Import certificates..." action="#{cryptoTokenBean.certificatesAction()}"/> 
-                            <h:commandButton class="buttonNeutral" value="Remove..." action="#{cryptoTokenBean.removeKeysAction()}"/>
+                            <h:link class="linkPositive" value="Generate key..." outcome="worker-cryptotoken-generatekey"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> 
+                            <h:commandButton class="buttonFeatured" value="Test..." action="#{cryptoTokenBean.testKeysAction()}"/> 
+                            <h:commandButton class="buttonFeatured" value="Generate CSR..." action="#{cryptoTokenBean.generateCSRAction()}"/> 
+                            <h:commandButton class="buttonFeatured" value="Import certificates..." action="#{cryptoTokenBean.certificatesAction()}"/> 
+                            <h:commandButton class="buttonNegative" value="Remove..." action="#{cryptoTokenBean.removeKeysAction()}"/>
                         </p>
                     </h:form>
                 </div>

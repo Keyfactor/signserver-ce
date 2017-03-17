@@ -55,20 +55,14 @@
         <h:form id="workerMenuOld">
             <p>
                 <h:panelGroup rendered="#{workerActiveMenu == 'worker' or workerActiveMenu == 'worker-status-properties'}">
-                    <h:commandButton class="buttonNeutral" value="Activate..." action="#{workerBean.bulkAction('workers-activation')}"/> <h:commandButton class="buttonNeutral" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation')}"/> &nbsp; 
-                    <h:commandButton class="buttonNeutral" value="Renew key..." action="#{workerBean.bulkAction('workers-renewkey')}"/> <h:commandButton class="buttonNeutral" value="Test key..." action="#{workerBean.bulkAction('workers-testkey')}"/> <h:commandButton class="buttonNeutral" value="Generate CSR..." action="#{workerBean.bulkAction('workers-csr')}"/> <h:commandButton class="buttonNeutral" value="Install certificates..." action="#{workerBean.bulkAction('workers-certificates')}"/> &nbsp;
+                    <h:commandButton class="buttonFeatured" value="Activate..." action="#{workerBean.bulkAction('workers-activation')}"/> <h:commandButton class="buttonNeutral" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation')}"/> &nbsp; 
+                    <h:commandButton class="buttonFeatured" value="Renew key..." action="#{workerBean.bulkAction('workers-renewkey')}"/> <h:commandButton class="buttonFeatured" value="Test key..." action="#{workerBean.bulkAction('workers-testkey')}"/> <h:commandButton class="buttonFeatured" value="Generate CSR..." action="#{workerBean.bulkAction('workers-csr')}"/> <h:commandButton class="buttonFeatured" value="Install certificates..." action="#{workerBean.bulkAction('workers-certificates')}"/> &nbsp;
                     <h:commandButton class="buttonNeutral" value="Renew signer..." action="#{workerBean.bulkAction('workers-renew')}"/> &nbsp;
-                    <h:commandButton class="buttonNeutral" value="Destroy key..." action="#{workerBean.workerAction('worker-removekey')}"/> &nbsp; 
-                    <h:commandButton class="buttonNeutral" value="Remove..." action="#{workerBean.bulkAction('workers-remove')}"/> &nbsp;
+                    <h:commandButton class="buttonNegative" value="Destroy key..." action="#{workerBean.workerAction('worker-removekey')}"/> &nbsp; 
+                    <h:commandButton class="buttonNegative" value="Remove..." action="#{workerBean.bulkAction('workers-remove')}"/> &nbsp;
                     <h:commandButton class="buttonNeutral" value="Reload from database..." action="#{workerBean.bulkAction('workers-reload')}"/> 
                     <h:commandButton class="buttonNeutral" value="Export..." action="#{workerBean.bulkAction('workers-export')}"/>
                 </h:panelGroup>
-                
-                <h:panelGroup rendered="#{workerActiveMenu == 'worker-configuration'}">
-                    <h:commandButton class="buttonNeutral" value="Reload from database..." action="#{workerBean.bulkAction('workers-reload')}"/> 
-                    <h:commandButton class="buttonNeutral" value="Export..." action="#{workerBean.bulkAction('workers-export')}"/>
-                </h:panelGroup>
-                
             </p>
         </h:form>
     </div>    

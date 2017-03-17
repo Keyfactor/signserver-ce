@@ -25,7 +25,7 @@ h2 {
 a:link, a:visited {
   color: #045491;
   font-weight : bold;
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 a:link:hover, a:visited:hover  {

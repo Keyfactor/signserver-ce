@@ -43,13 +43,13 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="worker" value="#{workerBean.worker.name}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; <h:link outcome="worker-configuration" value="Configuration"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; Add worker property...</h1>
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{workerBean.worker}"/>
                     <ui:param name="workerActiveMenu" value="worker-configuration"/>
                 </ui:include>
                 
                 <div id="worker_content">
+                    <h2>Edit Property</h2>
                     <h:form id="form">
                         <h:inputHidden id="id" value="#{workerBean.id}"/>
                         <h:inputHidden id="oldProperty" value="#{workerBean.oldProperty}"/>
@@ -63,7 +63,7 @@
                             <h:inputTextarea id="value" value="#{workerBean.propertyValue}" cols="70" rows="10"/>
                             <h:message for="value" class="errorMessage"/>
                         </h:panelGrid>
-                        <h:commandButton value="Submit" action="#{workerBean.editPropertyAction()}"/>
+                        <h:commandButton class="buttonFeatured" value="Submit" action="#{workerBean.editPropertyAction()}"/>
                     </h:form>
 
                     <h:link value="Cancel" outcome="worker-configuration"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>

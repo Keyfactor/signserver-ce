@@ -50,7 +50,7 @@
                                 <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                             </h:inputText>
                             <h:message for="certSN" class="errorMessage"/>
-                            <h:commandButton value="..." action="#{administratorsBean.browseAction()}"/>
+                            <h:commandButton class="buttonNeutral" value="..." action="#{administratorsBean.browseAction()}"/>
 
                             <h:outputLabel for="issuerDN">Issuer DN:</h:outputLabel>
                             <h:inputText id="issuerDN" value="#{administratorsBean.issuerDN}" size="40" requiredMessage="*">
@@ -58,7 +58,7 @@
                                 <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                             </h:inputText>
                             <h:message for="issuerDN" class="errorMessage"/>
-                            <h:commandButton value="Load current" action="#{administratorsBean.loadCurrentAction()}"/>
+                            <h:commandButton class="buttonNeutral" value="Load current" action="#{administratorsBean.loadCurrentAction()}"/>
 
                             <h:outputText value="Roles:"/>
                             <h:panelGroup>
@@ -67,7 +67,7 @@
                                 <h:selectBooleanCheckbox id="roleArchiveAuditor" value="#{administratorsBean.roleArchiveAuditor}"/> <h:outputLabel for="roleArchiveAuditor" value="Archive Auditor" />
                             </h:panelGroup>
                         </h:panelGrid>
-                        <h:commandButton value="Add" action="#{administratorsBean.addSubmitAction()}" binding="#{components.buttonSubmit}"/>
+                        <h:commandButton class="buttonPositive" value="Add" action="#{administratorsBean.addSubmitAction()}" binding="#{components.buttonSubmit}"/>
                         <h:link value="Cancel" outcome="administrators"/>
                     </h:panelGroup>
 
@@ -90,7 +90,7 @@
                             <h:outputText value="#{administratorsBean.loadErrorMessage}" class="errorMessage"/>
                         </p>
 
-                        <h:commandButton value="Load" action="#{administratorsBean.loadAction()}"/> <h:commandButton value="Cancel" action="#{administratorsBean.cancelBrowseAction()}"/>
+                        <h:commandButton class="buttonNeutral" value="Load" action="#{administratorsBean.loadAction()}"/> <h:commandButton class="buttonNeutral" value="Cancel" action="#{administratorsBean.cancelBrowseAction()}"/>
                     </h:panelGroup>
                 </h:form>
 

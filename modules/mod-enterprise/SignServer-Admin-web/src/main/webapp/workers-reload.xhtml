@@ -43,11 +43,11 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; Reload from database...</h1>
+                <h1>Reload from Database</h1>
 
                 <p>
                     <b>Note:</b><br/>
-                    Reloading from database is only needed if the configuration in the database has been changed from an other node in a set up with a shared database.
+                    Reloading from database is normally only needed if the configuration in the database has been changed from an other node in a set up with a shared database.
                 </p>
                 
                 <h2>What do you want to reload?</h2>
@@ -96,7 +96,7 @@
                 
                     <h:panelGrid columns="2">
                         <f:facet name="footer">
-                            <h:commandButton value="Reload" action="#{reloadBulkBean.reloadAction()}"/>
+                            <h:commandButton class="buttonFeatured" value="Reload" action="#{reloadBulkBean.reloadAction()}"/>
                         </f:facet>
                     </h:panelGrid>
                     

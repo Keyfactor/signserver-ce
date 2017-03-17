@@ -43,7 +43,7 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; Activate...</h1>
+                <h1>Activate</h1>
 
                 <h:form>                    
                     <h:panelGroup rendered="#{empty bulkBean.workers}">
@@ -91,7 +91,7 @@
                             <h:outputLabel for="password">Authentication code:</h:outputLabel> 
                             <h:inputSecret id="password" value="#{bulkBean.activatePassword}"/>
                             <f:facet name="footer">
-                                <h:commandButton value="Activate" action="#{bulkBean.activateAction()}"/>
+                                <h:commandButton class="buttonFeatured" value="Activate" action="#{bulkBean.activateAction()}"/>
                             </f:facet>
                         </h:panelGrid>
 

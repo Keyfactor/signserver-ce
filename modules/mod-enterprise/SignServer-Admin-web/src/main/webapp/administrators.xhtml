@@ -81,15 +81,15 @@
                                 <f:facet name="header">
                                     <h:outputText value="Actions"/>
                                 </f:facet>
-                                <h:commandButton value="Edit" action="#{administratorsBean.editAction(item)}"/> |
-                                <h:commandButton value="Remove" action="#{administratorsBean.removeAction(item)}"/>
+                                <h:commandButton class="buttonNeutral" value="Edit" action="#{administratorsBean.editAction(item)}"/> |
+                                <h:commandButton class="buttonNegative" value="Remove" action="#{administratorsBean.removeAction(item)}"/>
                             </h:column>
                             <f:facet name="footer">
                             </f:facet>
                         </h:dataTable>
 
                         <p>
-                            <h:link value="Add..." outcome="administrators-add"/>
+                            <h:link class="linkPositive" value="Add..." outcome="administrators-add"/>
                         </p>
 
                         <h:panelGrid columns="2" class="notable" headerClass="notable" columnClasses="notable, notable">
@@ -101,8 +101,8 @@
                             <h:outputText value="Allow any" rendered="#{administratorsBean.allowAny}"/>
                             <h:outputText value="Only listed" rendered="#{!administratorsBean.allowAny}"/>
 
-                            <h:commandButton value="Switch to 'Allow any'" rendered="#{!administratorsBean.allowAny}" action="administrators-allowany"/>
-                            <h:commandButton value="Switch to 'Only listed'" rendered="#{administratorsBean.allowAny}" action="administrators-allowonlylisted"/>
+                            <h:commandButton class="buttonNeutral" value="Switch to 'Allow any'" rendered="#{!administratorsBean.allowAny}" action="administrators-allowany"/>
+                            <h:commandButton class="buttonNeutral" value="Switch to 'Only listed'" rendered="#{administratorsBean.allowAny}" action="administrators-allowonlylisted"/>
                         </h:panelGrid>
                     </h:form>
                 </h:panelGroup>
@@ -121,7 +121,7 @@
                                     <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                                 </h:inputText>
                                 <h:message for="certSN" class="errorMessage"/>
-                                <h:commandButton value="..." action="#{administratorsBean.browseAction()}"/>
+                                <h:commandButton class="buttonNeutral" value="..." action="#{administratorsBean.browseAction()}"/>
 
                                 <h:outputLabel for="issuerDN">Issuer DN:</h:outputLabel>
                                 <h:inputText id="issuerDN" value="#{administratorsBean.issuerDN}" size="40" requiredMessage="*">
@@ -129,7 +129,7 @@
                                     <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                                 </h:inputText>
                                 <h:message for="issuerDN" class="errorMessage"/>
-                                <h:commandButton value="Load current" action="#{administratorsBean.loadCurrentAction()}"/>
+                                <h:commandButton class="buttonNeutral" value="Load current" action="#{administratorsBean.loadCurrentAction()}"/>
 
                                 <h:outputText value="Roles:"/>
                                 <h:panelGroup>
@@ -138,7 +138,7 @@
                                     <h:selectBooleanCheckbox id="roleArchiveAuditor" value="#{administratorsBean.roleArchiveAuditor}"/> <h:outputLabel for="roleArchiveAuditor" value="Archive Auditor" />
                                 </h:panelGroup>
                             </h:panelGrid>
-                            <h:commandButton id="buttonSubmit" binding="#{components.buttonSubmit}" value="Submit" action="#{administratorsBean.editSubmitAction()}"/>
+                            <h:commandButton class="buttonFeatured" id="buttonSubmit" binding="#{components.buttonSubmit}" value="Submit" action="#{administratorsBean.editSubmitAction()}"/>
                             <h:link value="Cancel" outcome="administrators"/>
                         </h:panelGroup>
 
@@ -161,7 +161,7 @@
                                 <h:outputText value="#{administratorsBean.loadErrorMessage}" class="errorMessage"/>
                             </p>
 
-                            <h:commandButton value="Load" action="#{administratorsBean.loadAction()}"/> <h:commandButton value="Cancel" action="#{administratorsBean.cancelBrowseAction()}"/>
+                            <h:commandButton class="buttonFeatured" value="Load" action="#{administratorsBean.loadAction()}"/> <h:commandButton class="buttonNeutral" value="Cancel" action="#{administratorsBean.cancelBrowseAction()}"/>
                         </h:panelGroup>
                     </h:form>
                 </h:panelGroup>
@@ -184,7 +184,7 @@
                                 <h:selectBooleanCheckbox id="roleArchiveAuditor" value="#{administratorsBean.roleArchiveAuditor}" disabled="#{true}"/> <h:outputLabel for="roleArchiveAuditor" value="Archive Auditor" />
                             </h:panelGroup>
                         </h:panelGrid>
-                        <h:commandButton value="Remove" action="#{administratorsBean.removeSubmitAction()}"/>
+                        <h:commandButton class="buttonNegative" value="Remove" action="#{administratorsBean.removeSubmitAction()}"/>
                         <h:link value="Cancel" outcome="administrators"/>
 
                     </h:form>

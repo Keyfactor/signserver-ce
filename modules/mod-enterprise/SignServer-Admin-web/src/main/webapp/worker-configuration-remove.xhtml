@@ -43,23 +43,24 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="worker" value="#{workerBean.worker.name}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; <h:link outcome="worker-configuration" value="Configuration"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; Remove worker property...</h1>
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{workerBean.worker}"/>
                     <ui:param name="workerActiveMenu" value="worker-configuration"/>
                 </ui:include>
                 
                 <div id="worker_content">
+                    <h2>Remove Property</h2>
+
                     <h:form id="form">
                         <h:inputHidden id="id" value="#{workerBean.id}"/>
 
-                        <h2>Are you sure you want to remove the worker property?</h2>
+                        <b>Are you sure you want to remove the worker property?</b>
 
                         <p>
                             Property: <span class="alertArea"><h:outputText value="#{workerBean.property}"/></span>
                         </p>
 
-                        <h:commandButton value="Remove" action="#{workerBean.removePropertyAction()}"/>
+                        <h:commandButton class="buttonNegative" value="Remove" action="#{workerBean.removePropertyAction()}"/>
                     </h:form>
 
                     <h:link value="Cancel" outcome="worker-configuration"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>

@@ -63,7 +63,7 @@
                                     <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                                 </h:inputText>
                                 <h:message for="certSN" class="errorMessage"/>
-                                <h:commandButton value="..." action="#{workerAuthBean.browseAction()}"/>
+                                <h:commandButton class="buttonNeutral" value="..." action="#{workerAuthBean.browseAction()}"/>
 
                                 <h:outputLabel for="issuerDN">Issuer DN:</h:outputLabel>
                                 <h:inputText id="issuerDN" value="#{workerAuthBean.issuerDN}" size="40" requiredMessage="*">
@@ -71,9 +71,9 @@
                                     <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                                 </h:inputText>
                                 <h:message for="issuerDN" class="errorMessage"/>                                
-                                <h:commandButton value="Load current" action="#{workerAuthBean.loadCurrentAction()}"/>
+                                <h:commandButton class="buttonNeutral" value="Load current" action="#{workerAuthBean.loadCurrentAction()}"/>
                             </h:panelGrid>
-                            <h:commandButton value="Submit" action="#{workerAuthBean.addAction()}" binding="#{components.buttonSubmit}"/>
+                            <h:commandButton class="buttonPositive" value="Submit" action="#{workerAuthBean.addAction()}" binding="#{components.buttonSubmit}"/>
                             <h:link value="Cancel" outcome="worker-authorization"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
                         </h:panelGroup>
 
@@ -96,7 +96,7 @@
                                 <h:outputText value="#{workerAuthBean.loadErrorMessage}" class="errorMessage"/>
                             </p>
 
-                            <h:commandButton value="Load" action="#{workerAuthBean.loadAction()}"/> <h:commandButton value="Cancel" action="#{workerAuthBean.cancelBrowseAction()}"/>
+                            <h:commandButton class="buttonFeatured" value="Load" action="#{workerAuthBean.loadAction()}"/> <h:commandButton class="buttonNeutral" value="Cancel" action="#{workerAuthBean.cancelBrowseAction()}"/>
                         </h:panelGroup>
 
                     </h:form>

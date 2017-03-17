@@ -60,7 +60,7 @@
                         <h:link value="Edit" outcome="global-configuration-edit">
                             <f:param name="property" value="#{item.key}"/>
                         </h:link> |
-                        <h:link value="Remove" outcome="global-configuration-remove">
+                        <h:link class="linkNegative" value="Remove" outcome="global-configuration-remove">
                             <f:param name="property" value="#{item.key}"/>
                         </h:link>
                     </h:column>
@@ -68,7 +68,7 @@
                     </f:facet>
                 </h:dataTable>
                 
-                <h:link value="Add..." outcome="global-configuration-add"/>
+                <h:link class="linkPositive" value="Add..." outcome="global-configuration-add"/>
                 
             </ui:define>
 

@@ -44,11 +44,10 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; Generate CSR...</h1>
+                <h1>Generate CSR</h1>
 
                 <h:messages class="errorMessage" globalOnly="true"/>
-               
-                
+
                 <h:form id="csrForm">
                     <h:panelGroup rendered="#{empty cSRBulkBean.workers}">
                         <p>
@@ -101,8 +100,8 @@
                                 </h:panelGroup>
                             </h:column>
                             <h:column>
-                                <h:commandButton id="otherAdd" value="&gt;" action="#{item.setShowOther(true)}" rendered="#{!item.showOther and !item.fixedAlias}" disabled="#{!item.existing}"/>
-                                <h:commandButton id="otherRemove" value="&lt;" action="#{item.setShowOther(false)}" rendered="#{item.showOther and !item.fixedAlias}" disabled="#{!item.existing}"/>
+                                <h:commandButton class="buttonNeutral" id="otherAdd" value="&gt;" action="#{item.setShowOther(true)}" rendered="#{!item.showOther and !item.fixedAlias}" disabled="#{!item.existing}"/>
+                                <h:commandButton class="buttonNeutral" id="otherRemove" value="&lt;" action="#{item.setShowOther(false)}" rendered="#{item.showOther and !item.fixedAlias}" disabled="#{!item.existing}"/>
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
@@ -131,7 +130,7 @@
                                 <f:facet name="header">
                                     <h:outputText value="Result" />
                                 </f:facet>
-                                <h:commandButton id="download" value="Download" action="#{cSRBulkBean.downloadAction(item)}" rendered="#{(item.pemFile != null)}"/>
+                                <h:commandButton class="buttonFeatured" id="download" value="Download" action="#{cSRBulkBean.downloadAction(item)}" rendered="#{(item.pemFile != null)}"/>
                             </h:column>
 
                             <h:column>
@@ -158,13 +157,13 @@
 
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton value="Generate" action="#{cSRBulkBean.generateAction()}" binding="#{components.buttonSubmit}"/>
+                                <h:commandButton class="buttonFeatured" value="Generate" action="#{cSRBulkBean.generateAction()}" binding="#{components.buttonSubmit}"/>
                             </f:facet>
                         </h:panelGrid>
                     </h:panelGroup>
                 </h:form>
 
-                <h:link value="Back" outcome="#{cSRBulkBean.backLink}"></h:link>
+                <h:link value="Cancel" outcome="#{cSRBulkBean.backLink}"></h:link>
                 
             </ui:define>
 

@@ -77,7 +77,7 @@
                                 <f:param name="certSN" value="#{item.certSN}"/>
                                 <f:param name="issuerDN" value="#{item.issuerDN}"/>
                             </h:link> |
-                            <h:link value="Remove" outcome="worker-authorization-remove">
+                            <h:link class="linkNegative" value="Remove" outcome="worker-authorization-remove">
                                 <f:param name="id" value="#{workerAuthBean.worker.id}"/>
                                 <f:param name="certSN" value="#{item.certSN}"/>
                                 <f:param name="issuerDN" value="#{item.issuerDN}"/>
@@ -87,7 +87,7 @@
                         </f:facet>
                     </h:dataTable>
 
-                    <h:link value="Add..." outcome="worker-authorization-add"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
+                    <h:link class="linkPositive" value="Add..." outcome="worker-authorization-add"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
                 </div>
                 
             </ui:define>

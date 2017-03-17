@@ -43,11 +43,10 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; Test keys...</h1>
+                <h1>Test Keys</h1>
 
                 <h:messages class="errorMessage" globalOnly="true"/>
-               
-                
+
                 <h:form>
                     <h:panelGroup rendered="#{empty testKeyBulkBean.workers}">
                         <p>
@@ -104,7 +103,7 @@
 
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton value="Test" action="#{testKeyBulkBean.testKeyAction()}" binding="#{components.buttonSubmit}"/>
+                                <h:commandButton class="buttonFeatured" value="Test" action="#{testKeyBulkBean.testKeyAction()}" binding="#{components.buttonSubmit}"/>
                             </f:facet>
                         </h:panelGrid>
                     </h:panelGroup>

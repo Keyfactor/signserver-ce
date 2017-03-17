@@ -47,7 +47,15 @@
                     <ui:param name="worker" value="#{workerBean.worker}"/>
                     <ui:param name="workerActiveMenu" value="worker-configuration"/>
                 </ui:include>
-                
+                <div id="worker-actions">
+                    <h:form>
+                        <p>
+                            <h:commandButton class="buttonNeutral" value="Reload from database..." action="#{workerBean.bulkAction('workers-reload')}"/> 
+                            <h:commandButton class="buttonNeutral" value="Export..." action="#{workerBean.bulkAction('workers-export')}"/>
+                        </p>
+                    </h:form>
+                </div>   
+
                 <div id="worker_content">
                     
                     <h2>Properties</h2>
@@ -76,7 +84,7 @@
                                 <f:param name="id" value="#{workerBean.worker.id}"/>
                                 <f:param name="property" value="#{item.key}"/>
                             </h:link> |
-                            <h:link value="Remove" outcome="worker-configuration-remove">
+                            <h:link class="linkNegative" value="Remove" outcome="worker-configuration-remove">
                                 <f:param name="id" value="#{workerBean.worker.id}"/>
                                 <f:param name="property" value="#{item.key}"/>
                             </h:link>
@@ -85,7 +93,7 @@
                         </f:facet>
                     </h:dataTable>
 
-                    <h:link value="Add..." outcome="worker-configuration-add"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                    <h:link class="linkPositive" value="Add..." outcome="worker-configuration-add"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                 </div>
             </ui:define>
 

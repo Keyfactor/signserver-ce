@@ -42,16 +42,16 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; Add worker/Load configuration</h1>
+                <h1>Add worker/Load configuration</h1>
                 
                 <h:panelGroup rendered="#{addWorkerBean.step0}">
                     <h:form>
                         <h2>Choose method:</h2>
                         
                         <p>
-                            <h:commandButton id="fromTemplateButton" action="#{addWorkerBean.fromTemplateAction()}" value="From template"/>, 
-                            <h:commandButton id="fromFileButton" action="#{addWorkerBean.fromFileAction()}" value="From file"/> or 
-                            <h:commandButton value="By properties" action="#{addWorkerBean.fromPropertiesAction()}"/>
+                            <h:commandButton class="buttonFeatured" id="fromTemplateButton" action="#{addWorkerBean.fromTemplateAction()}" value="From template"/>, 
+                            <h:commandButton class="buttonFeatured" id="fromFileButton" action="#{addWorkerBean.fromFileAction()}" value="From file"/> or 
+                            <h:commandButton class="buttonFeatured" value="By properties" action="#{addWorkerBean.fromPropertiesAction()}"/>
                         </p>
                         <p>&nbsp;</p>
                     </h:form>
@@ -118,12 +118,12 @@
                                     <f:facet name="header">
                                         <h:outputText value="Actions"/>
                                     </f:facet>
-                                    <h:commandButton value="Edit" action="#{addWorkerBean.startEditPropertyAction(item.key)}"/> |
-                                    <h:commandButton value="Remove" action="#{addWorkerBean.removePropertyAction(item.key)}"/>
+                                    <h:commandButton class="buttonNeutral" value="Edit" action="#{addWorkerBean.startEditPropertyAction(item.key)}"/> |
+                                    <h:commandButton class="buttonNeutral" value="Remove" action="#{addWorkerBean.removePropertyAction(item.key)}"/>
                                 </h:column>
                                 <f:facet name="footer">
 
-                                        <h:commandButton value="Add..." action="#{addWorkerBean.startAddPropertyAction()}"/>
+                                        <h:commandButton class="buttonNeutral" value="Add..." action="#{addWorkerBean.startAddPropertyAction()}"/>
 
                                 </f:facet>
                             </h:dataTable>
@@ -140,15 +140,15 @@
                                 <h:outputLabel for="propertyValue" value="Value:"/>
                                 <h:inputTextarea id="propertyValue" value="#{addWorkerBean.propertyValue}"/>
 
-                                <h:commandButton value="Add" action="#{addWorkerBean.addPropertyAction()}" rendered="#{addWorkerBean.propertyAdding}" binding="#{components.buttonAdd}"/>
-                                <h:commandButton value="Edit" action="#{addWorkerBean.editPropertyAction()}" rendered="#{addWorkerBean.propertyEditing}" binding="#{components.buttonEdit}"/>
-                                <h:commandButton value="Cancel" action="#{addWorkerBean.cancelPropertyAction()}"/>
+                                <h:commandButton class="buttonNeutral" value="Add" action="#{addWorkerBean.addPropertyAction()}" rendered="#{addWorkerBean.propertyAdding}" binding="#{components.buttonAdd}"/>
+                                <h:commandButton class="buttonNeutral" value="Edit" action="#{addWorkerBean.editPropertyAction()}" rendered="#{addWorkerBean.propertyEditing}" binding="#{components.buttonEdit}"/>
+                                <h:commandButton class="buttonNeutral" value="Cancel" action="#{addWorkerBean.cancelPropertyAction()}"/>
                             </h:panelGroup>
 
                         </h:panelGrid>
 
-                        <h:commandButton value="Back" action="#{addWorkerBean.backToFirstAction()}"/> 
-                        <h:commandButton value="Next" action="#{addWorkerBean.nextAction()}" binding="#{components.buttonNext}"/>
+                        <h:commandButton class="buttonNeutral" value="Back" action="#{addWorkerBean.backToFirstAction()}"/> 
+                        <h:commandButton class="buttonFeatured" value="Next" action="#{addWorkerBean.nextAction()}" binding="#{components.buttonNext}"/>
                     </h:form>
                 </h:panelGroup>
                 <h:panelGroup id="step2" rendered="#{addWorkerBean.step2}">
@@ -177,10 +177,10 @@
                             <h:outputText value="#{addWorkerBean.errorMessage}"/>
                         </p>
                         
-                        <h:commandButton value="Reset" action="#{addWorkerBean.resetAction()}" rendered="#{!addWorkerBean.methodFile}"/>
+                        <h:commandButton class="buttonNeutral" value="Reset" action="#{addWorkerBean.resetAction()}" rendered="#{!addWorkerBean.methodFile}"/>
                         
                         <p>&nbsp;</p>
-                        <h:commandButton value="Back" action="#{addWorkerBean.backAction()}"/> <h:commandButton value="Apply" action="#{addWorkerBean.applyAction()}"/>
+                        <h:commandButton class="buttonNeutral" value="Back" action="#{addWorkerBean.backAction()}"/> <h:commandButton class="buttonFeatured" value="Apply" action="#{addWorkerBean.applyAction()}"/>
                     </h:form>
                 </h:panelGroup>
                 
@@ -193,7 +193,7 @@
                         </h:selectOneMenu>
                         
                         <p>&nbsp;</p>
-                        <h:commandButton value="Back" action="#{addWorkerBean.backAction()}"/> <h:commandButton value="Next" action="#{addWorkerBean.nextAction()}"/>
+                        <h:commandButton class="buttonNeutral" value="Back" action="#{addWorkerBean.backAction()}"/> <h:commandButton class="buttonFeatured" value="Next" action="#{addWorkerBean.nextAction()}"/>
                     </h:form>
                 </h:panelGroup>
                 

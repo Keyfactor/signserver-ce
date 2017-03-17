@@ -43,11 +43,10 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; Renew signer...</h1>
+                <h1>Renew Signer</h1>
 
                 <h:messages class="errorMessage" globalOnly="true"/>
-               
-                
+
                 <h:form>
                     <h:panelGroup rendered="#{empty renewSignerBulkBean.workers}">
                         <p>
@@ -114,7 +113,7 @@
 
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton value="Renew" action="#{renewSignerBulkBean.renewSignerAction()}"/>
+                                <h:commandButton class="buttonFeatured" value="Renew" action="#{renewSignerBulkBean.renewSignerAction()}"/>
                             </f:facet>
                         </h:panelGrid>
                     </h:panelGroup>

@@ -43,7 +43,7 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="workers">Workers</h:link> &gt; Remove...</h1>
+                <h1>Remove</h1>
 
                 <h:messages class="errorMessage" globalOnly="true"/>
 
@@ -56,7 +56,7 @@
                     <h:panelGroup rendered="#{!empty removeBulkBean.workers}">
                         <h:dataTable id="table1" value="#{removeBulkBean.myWorkers}" var="item">
                             <f:facet name="header">
-                                <h:outputText value="Workers to renew" />
+                                <h:outputText value="Workers to remove" />
                             </f:facet>
                             <h:column>
                                 <f:facet name="header">
@@ -93,7 +93,7 @@
 
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton value="Remove" action="#{removeBulkBean.removeAction()}"/>
+                                <h:commandButton class="buttonNegative" value="Remove" action="#{removeBulkBean.removeAction()}"/>
                             </f:facet>
                         </h:panelGrid>
                     </h:panelGroup>

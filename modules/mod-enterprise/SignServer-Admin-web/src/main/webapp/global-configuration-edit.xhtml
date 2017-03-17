@@ -56,7 +56,7 @@
                         <h:inputTextarea id="value" value="#{globalConfigurationBean.propertyValue}" cols="70" rows="10"/>
                         <h:message for="value" class="errorMessage"/>
                     </h:panelGrid>
-                    <h:commandButton value="Submit" action="#{globalConfigurationBean.editPropertyAction()}"/>
+                    <h:commandButton class="buttonFeatured" value="Submit" action="#{globalConfigurationBean.editPropertyAction()}"/>
                 </h:form>
                 
                 <h:link value="Cancel" outcome="global-configuration"/>

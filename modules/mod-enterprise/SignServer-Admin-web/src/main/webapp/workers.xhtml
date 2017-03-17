@@ -48,11 +48,11 @@
                     
                     <!-- Note: This buttons are somewhat duplicated in worker-menu.xhtml -->
                     <p>
-                        <h:commandButton id="activate" value="Activate..." action="#{workersBean.bulkAction('workers-activation')}"/> <h:commandButton id="deactivate" value="Deactivate..." action="#{workersBean.bulkAction('workers-deactivation')}"/> | 
-                        <h:commandButton id="genkey" value="Renew key..." action="#{workersBean.bulkAction('workers-renewkey')}"/> <h:commandButton id="test" value="Test key..." action="#{workersBean.bulkAction('workers-testkey')}"/> <h:commandButton id="csr" value="Generate CSR..." action="#{workersBean.bulkAction('workers-csr')}"/> <h:commandButton id="install" value="Install certificates..." action="#{workersBean.bulkAction('workers-certificates')}"/> |
-                        <h:commandButton id="renewsigner" value="Renew signer..." action="#{workersBean.bulkAction('workers-renew')}"/> | 
-                        <h:commandButton id="remove" value="Remove..." action="#{workersBean.bulkAction('workers-remove')}"/> | 
-                        <h:commandButton id="reload" value="Reload from database..." action="#{workersBean.bulkAction('workers-reload')}"/> <h:commandButton id="export" value="Export..." action="#{workersBean.bulkAction('workers-export')}"/>
+                        <h:commandButton class="buttonFeatured" id="activate" value="Activate..." action="#{workersBean.bulkAction('workers-activation')}"/> <h:commandButton class="buttonNeutral" id="deactivate" value="Deactivate..." action="#{workersBean.bulkAction('workers-deactivation')}"/> &nbsp; 
+                        <h:commandButton class="buttonFeatured" id="genkey" value="Renew key..." action="#{workersBean.bulkAction('workers-renewkey')}"/> <h:commandButton class="buttonFeatured" id="test" value="Test key..." action="#{workersBean.bulkAction('workers-testkey')}"/> <h:commandButton class="buttonFeatured" id="csr" value="Generate CSR..." action="#{workersBean.bulkAction('workers-csr')}"/> <h:commandButton class="buttonFeatured" id="install" value="Install certificates..." action="#{workersBean.bulkAction('workers-certificates')}"/> &nbsp;
+                        <h:commandButton class="buttonNeutral" id="renewsigner" value="Renew signer..." action="#{workersBean.bulkAction('workers-renew')}"/> &nbsp; 
+                        <h:commandButton class="buttonNegative" id="remove" value="Remove..." action="#{workersBean.bulkAction('workers-remove')}"/> &nbsp; 
+                        <h:commandButton class="buttonNeutral" id="reload" value="Reload from database..." action="#{workersBean.bulkAction('workers-reload')}"/> <h:commandButton class="buttonNeutral" id="export" value="Export..." action="#{workersBean.bulkAction('workers-export')}"/>
                     </p>
                     
                     <h:dataTable id="table1" value="#{workersBean.workers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1" rowClasses="dss1,dss1_odd">
@@ -89,7 +89,7 @@
                     </h:dataTable>
                 </h:form>
 
-                <h:link value="Add..." outcome="workers-add"/>
+                <h:link class="linkPositive" value="Add..." outcome="workers-add"/>
 
             </ui:define>
 

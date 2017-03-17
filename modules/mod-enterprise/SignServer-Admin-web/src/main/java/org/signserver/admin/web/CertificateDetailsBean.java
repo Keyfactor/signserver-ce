@@ -73,6 +73,9 @@ public class CertificateDetailsBean {
 
     private static final String CONTENT_TYPE = "application/pkix-cert";
     private static final String FILE_SUFFIX = ".pem";
+    
+    public static final String PANE_GENERAL = "general";
+    public static final String PANE_DETAILS = "details";
 
     //@ManagedProperty(value = "#{param.id}")
     private Integer id;
@@ -167,6 +170,22 @@ public class CertificateDetailsBean {
 
     public boolean isForKeyInToken() {
         return keyInToken != null && !keyInToken.isEmpty();
+    }
+
+    public String getPane() {
+        return generalPanel ? PANE_GENERAL : PANE_DETAILS;
+    }
+
+    public void setPane(String pane) {
+        generalPanel = !pane.equals(PANE_DETAILS);
+    }
+
+    public String getPANE_GENERAL() {
+        return PANE_GENERAL;
+    }
+
+    public String getPANE_DETAILS() {
+        return PANE_DETAILS;
     }
 
     public void detailsPanelAction() {

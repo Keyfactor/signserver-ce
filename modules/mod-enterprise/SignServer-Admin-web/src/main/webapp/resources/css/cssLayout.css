@@ -93,24 +93,25 @@ li a.active {
 }
 
 
-#worker-menu {
+#worker-menu, #cert-menu {
     /*float: left;*/
     /*width: 12em;*/
     
     margin-left: 0px;
     background-color: gray;
     margin-top: 10px;
+    margin-bottom: 10px;
     border-radius: 3px;
 }
 
-#worker-menu ul {
+#worker-menu ul, #cert-menu ul {
     list-style: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
 }
 
-#worker-menu li {
+#worker-menu li, #cert-menu li {
     float: left;
 }
 
@@ -118,7 +119,7 @@ li a.active {
     float:right;
 }
 
-#worker-menu li a {
+#worker-menu li a, #cert-menu li a {
     color: white;
     display: block;
     text-decoration: none;
@@ -128,7 +129,7 @@ li a.active {
     transition-duration: 0.4s;
 }
 
-#worker-menu li a:hover {
+#worker-menu li a:hover, #cert-menu li a:hover {
     background-color: black;
 }
 
@@ -170,6 +171,13 @@ input[type="file"]:hover {
 .buttonNeutral:hover {
     background-color: black;
     color: white;
+}
+.buttonNeutral:disabled, .buttonNeutral:disabled:hover,
+.buttonFeatured:disabled, .buttonFeatured:disabled:hover,
+.buttonNegative:disabled, .buttonNegative:disabled:hover,
+.buttonPositive:disabled, .buttonPositive:disabled:hover {
+    background-color: whitesmoke;
+    color: gray;
 }
 
 .buttonFeatured {

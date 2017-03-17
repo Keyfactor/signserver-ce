@@ -65,16 +65,17 @@
                             <h:outputText value="#{cryptoTokenBean.queryError}"/>
                         </p>
 
+                        <p>
+                            <h:commandButton class="buttonNeutral" value="First" action="#{cryptoTokenBean.firstAction()}" disabled="#{!cryptoTokenBean.enableFirst}"/> 
+                            <h:commandButton class="buttonNeutral" value="Previous" action="#{cryptoTokenBean.previousAction()}" disabled="#{!cryptoTokenBean.enablePrevious}"/> 
+                            <h:commandButton class="buttonNeutral" value="Reload" action="#{cryptoTokenBean.reloadAction()}"/> 
+                            <h:commandButton class="buttonNeutral" value="Next" action="#{cryptoTokenBean.nextAction()}" disabled="#{!cryptoTokenBean.enableNext}"/> 
+                            <h:inputText value="#{cryptoTokenBean.fromIndex}" size="3"/> to <h:outputText value="#{cryptoTokenBean.queryingToIndex}"/>
+                            Per page: <h:inputText value="#{cryptoTokenBean.maxEntries}" size="3"/>
+                        </p>
                         <h:dataTable id="dsstable1" value="#{cryptoTokenBean.entries}" var="entry" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
-                            <f:facet name="header">
-                                <p>
-                                    <h:commandButton value="First" action="#{cryptoTokenBean.firstAction()}" disabled="#{!cryptoTokenBean.enableFirst}"/> 
-                                    <h:commandButton value="Previous" action="#{cryptoTokenBean.previousAction()}" disabled="#{!cryptoTokenBean.enablePrevious}"/> 
-                                    <h:commandButton value="Reload" action="#{cryptoTokenBean.reloadAction()}"/> 
-                                    <h:commandButton value="Next" action="#{cryptoTokenBean.nextAction()}" disabled="#{!cryptoTokenBean.enableNext}"/> 
-                                    <h:inputText value="#{cryptoTokenBean.fromIndex}" size="3"/> to <h:outputText value="#{cryptoTokenBean.queryingToIndex}"/>
-                                    Per page: <h:inputText value="#{cryptoTokenBean.maxEntries}" size="3"/>
-                                </p>
+                            <f:facet name="header" class="cryptotoken-nav">
+                                
                             </f:facet>
 
                             <h:column>

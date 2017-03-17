@@ -59,7 +59,7 @@
                                 <h:outputText value="#{auditLogBean.nameFromColumn[item.column]}"/>
                                 <f:facet name="footer">
                                     <h:selectOneMenu rendered="#{auditLogBean.conditionToAdd == null}" value="#{auditLogBean.conditionColumn}"><f:selectItems value="#{auditLogBean.columns}"/></h:selectOneMenu>
-                                    <h:commandButton rendered="#{auditLogBean.conditionToAdd == null}" action="#{auditLogBean.addConditionAction()}" value="Add..."/>
+                                    <h:commandButton class="buttonNeutral" rendered="#{auditLogBean.conditionToAdd == null}" action="#{auditLogBean.addConditionAction()}" value="Add..."/>
                                     <h:outputText rendered="#{auditLogBean.conditionToAdd != null}" value="#{auditLogBean.nameFromColumn[auditLogBean.conditionToAdd.column]}"></h:outputText>
                                 </f:facet>
                             </h:column>
@@ -83,9 +83,9 @@
                                 </f:facet>
                             </h:column>
                             <h:column>
-                                <h:commandButton value="Remove" action="#{auditLogBean.removeConditionAction(item)}"/>
+                                <h:commandButton class="buttonNeutral" value="Remove" action="#{auditLogBean.removeConditionAction(item)}"/>
                                 <f:facet name="footer">
-                                    <h:commandButton rendered="#{auditLogBean.conditionToAdd != null}" value="Add" action="#{auditLogBean.addConditionToAddAction()}"/> <h:commandButton rendered="#{auditLogBean.conditionToAdd != null}" value="Remove" action="#{auditLogBean.removeConditionToAddAction()}"/>
+                                    <h:commandButton class="buttonNeutral" rendered="#{auditLogBean.conditionToAdd != null}" value="Add" action="#{auditLogBean.addConditionToAddAction()}"/> <h:commandButton class="buttonNeutral" rendered="#{auditLogBean.conditionToAdd != null}" value="Remove" action="#{auditLogBean.removeConditionToAddAction()}"/>
                                 </f:facet>
                             </h:column>
                             <f:facet name="footer">
@@ -94,10 +94,10 @@
                     </h:panelGroup>
                     
                     <h:panelGroup>
-                        <h:commandButton value="First" action="#{auditLogBean.firstAction()}" disabled="#{!auditLogBean.enableFirst}"/> 
-                        <h:commandButton value="Previous" action="#{auditLogBean.previousAction()}" disabled="#{!auditLogBean.enablePrevious}"/> 
-                        <h:commandButton value="Reload" action="#{auditLogBean.reloadAction()}"/> 
-                        <h:commandButton value="Next" action="#{auditLogBean.nextAction()}" disabled="#{!auditLogBean.enableNext}"/> 
+                        <h:commandButton class="buttonNeutral" value="First" action="#{auditLogBean.firstAction()}" disabled="#{!auditLogBean.enableFirst}"/> 
+                        <h:commandButton class="buttonNeutral" value="Previous" action="#{auditLogBean.previousAction()}" disabled="#{!auditLogBean.enablePrevious}"/> 
+                        <h:commandButton class="buttonFeatured" value="Reload" action="#{auditLogBean.reloadAction()}"/> 
+                        <h:commandButton class="buttonNeutral" value="Next" action="#{auditLogBean.nextAction()}" disabled="#{!auditLogBean.enableNext}"/> 
                         Displaying results <h:inputText value="#{auditLogBean.fromIndex}" size="3"/> to <h:outputText value="#{auditLogBean.queryingToIndex}"/>.
                         Entries per page: <h:inputText value="#{auditLogBean.maxEntries}" size="3"/>
 
@@ -189,10 +189,10 @@
                             </h:column>
                             
                             <f:facet name="footer">
-                                <h:commandButton value="First" action="#{auditLogBean.firstAction()}" disabled="#{!auditLogBean.enableFirst}"/> 
-                                <h:commandButton value="Previous" action="#{auditLogBean.previousAction()}" disabled="#{!auditLogBean.enablePrevious}"/> 
-                                <h:commandButton value="Reload" action="#{auditLogBean.reloadAction()}"/> 
-                                <h:commandButton value="Next" action="#{auditLogBean.nextAction()}" disabled="#{!auditLogBean.enableNext}"/> 
+                                <h:commandButton class="buttonNeutral" value="First" action="#{auditLogBean.firstAction()}" disabled="#{!auditLogBean.enableFirst}"/> 
+                                <h:commandButton class="buttonNeutral" value="Previous" action="#{auditLogBean.previousAction()}" disabled="#{!auditLogBean.enablePrevious}"/> 
+                                <h:commandButton class="buttonFeatured" value="Reload" action="#{auditLogBean.reloadAction()}"/> 
+                                <h:commandButton class="buttonNeutral" value="Next" action="#{auditLogBean.nextAction()}" disabled="#{!auditLogBean.enableNext}"/> 
                                 <h:outputText value="Displaying results #{auditLogBean.fromIndex} to #{auditLogBean.queryingToIndex}"/>
                             </f:facet>
                         </h:dataTable>

@@ -115,9 +115,9 @@ public class StatusPropertiesBean {
                 LOG.error("Error getting status for worker " + id, ex);
             }
 
-            statuses.add(new StatusProperty("ID", id, false));
-            statuses.add(new StatusProperty("Name", getWorker().getName(), false));
-            statuses.add(new StatusProperty("Token status", tokenStatus, false));
+            statuses.add(new StatusProperty("ID", id, false, null));
+            statuses.add(new StatusProperty("Name", getWorker().getName(), false, null));
+            statuses.add(new StatusProperty("Token status", tokenStatus, false, null));
 
             try {
                 Collection<? extends Certificate> certificateChain;
@@ -131,10 +131,10 @@ public class StatusPropertiesBean {
                     LOG.error("Error getting signer certificate chain", ex);
                     certificateChain = Collections.emptyList();
                 }
-                statuses.add(new StatusProperty("Validity not before:", notBefore, false));
-                statuses.add(new StatusProperty("Validity not after:", notAfter, false));
-                statuses.add(new StatusProperty(SIGNER_CERTIFICATE, certificate, certificate != null));
-                statuses.add(new StatusProperty(CERTIFICATE_CHAIN, certificateChain, certificate != null && !certificateChain.isEmpty()));
+                statuses.add(new StatusProperty("Validity not before:", notBefore, false, null));
+                statuses.add(new StatusProperty("Validity not after:", notAfter, false, null));
+                statuses.add(new StatusProperty(SIGNER_CERTIFICATE, certificate, certificate != null, "certificate-details?worker=" + id));
+                statuses.add(new StatusProperty(CERTIFICATE_CHAIN, certificateChain, certificate != null && !certificateChain.isEmpty(), "certificate-details?worker=" + id + "&amp;chain=true"));
             } catch (CryptoTokenOfflineException ex) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("offline: " + id);
@@ -168,36 +168,20 @@ public class StatusPropertiesBean {
         return sb.toString();
     }
 
-    public String detailsAction(StatusProperty property) {
-        final String outcome;
-        if (property.getKey() == null) {
-            outcome = null;
-        } else switch (property.getKey()) {
-            case SIGNER_CERTIFICATE:
-                outcome = "certificate-details?faces-redirect=true&amp;worker=" + id;
-                break;
-            case CERTIFICATE_CHAIN:
-                outcome = "certificate-details?faces-redirect=true&amp;worker=" + id + "&amp;chain=true";
-                break;
-            default:
-                outcome = null;
-                break;
-        }
-        return outcome;
-    }
-
     public static class StatusProperty {
 
         private final String key;
         private final Object value;
         private final boolean hasDetails;
         private final String description;
+        private final String detailsOutcome;
 
-        public StatusProperty(String key, Object value, boolean hasDetails) {
+        public StatusProperty(String key, Object value, boolean hasDetails, String detailsOutcome) {
             this.key = key;
             this.value = value;
             this.hasDetails = hasDetails;
             this.description = parse(value);
+            this.detailsOutcome = detailsOutcome;
         }
 
         public String getKey() {
@@ -214,6 +198,10 @@ public class StatusPropertiesBean {
 
         public String getDescription() {
             return description;
+        }
+
+        public String getDetailsOutcome() {
+            return detailsOutcome;
         }
 
         private String parse(Object value) {

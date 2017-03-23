@@ -44,14 +44,10 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1>Query Log</h1>
+                <h1>Current Conditions</h1>
                 <h:form>
-                    
                     <h:panelGroup>
                         <h:dataTable value="#{auditLogBean.conditions}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
-                            <f:facet name="header">
-                                Current conditions:
-                            </f:facet>
                             <h:column>
                                 <f:facet name="header">
                                     Column
@@ -92,7 +88,10 @@
                             </f:facet>
                         </h:dataTable>
                     </h:panelGroup>
+
+                    <p>&nbsp;</p>
                     
+                    <h1>Search Results</h1>                    
                     <h:panelGroup>
                         <h:commandButton class="buttonNeutral" value="First" action="#{auditLogBean.firstAction()}" disabled="#{!auditLogBean.enableFirst}"/> 
                         <h:commandButton class="buttonNeutral" value="Previous" action="#{auditLogBean.previousAction()}" disabled="#{!auditLogBean.enablePrevious}"/> 
@@ -105,13 +104,9 @@
                             <h:outputText value="#{auditLogBean.queryError}"/>
                         </p>
                     </h:panelGroup>
-                    
+
                     <h:panelGroup rendered="#{auditLogBean.queryError == null}">
                         <h:dataTable value="#{auditLogBean.entries}" var="entry" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1,dss1,dss1,dss1,dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
-                            <f:facet name="header">
-                                Search Results
-                            </f:facet>
-
                             <h:column>
                                 <f:facet name="header">
                                     Time

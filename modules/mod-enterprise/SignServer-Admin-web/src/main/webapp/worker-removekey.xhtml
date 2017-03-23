@@ -42,18 +42,22 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link outcome="worker" value="#{workerBean.worker.name}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; Destroy key...</h1>
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{workerBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="worker"/>
                 </ui:include>
+                
+                <h2>Destroy Key</h2>
                 
                 <div id="worker_content">
                     <h:form>
                         <h:panelGroup rendered="#{workerBean.destroyKeyStep == 0}">
-                            <h2>Enter key alias for the key to remove:</h2>
+                            <p>
+                                Enter key alias for the key to remove:
+                            </p>
 
                             <h:inputText id="destroyKeyAlias" value="#{workerBean.destroyKeyAlias}" required="true" requiredMessage="Name of key to delete"/> <span class="errorMessage"><h:message for="destroyKeyAlias"/></span><br/>
-                            <h:commandButton value="Destroy key" action="#{workerBean.destroyKeyStep1Action()}"/>
+                            <h:commandButton class="buttonNegative" value="Destroy key" action="#{workerBean.destroyKeyStep1Action()}"/>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{workerBean.destroyKeyStep == 1}">
                             <h2>WARNING: Will attempt to permanently remove the following key:</h2>

@@ -52,7 +52,7 @@
         </cookie-config>
     </session-config>
     <welcome-file-list>
-        <welcome-file>index.xhtml</welcome-file>
+        <welcome-file>workers.xhtml</welcome-file>
     </welcome-file-list>
     <!-- Special page for authorization denied -->
     <error-page>

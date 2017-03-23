@@ -52,10 +52,8 @@
                         Property: <span class="alertArea"><h:outputText value="#{globalConfigurationBean.property}"/></span>
                     </p>
 
-                    <h:commandButton class="buttonNegative" value="Remove" action="#{globalConfigurationBean.removePropertyAction()}"/>
+                    <h:commandButton class="buttonNegative" value="Remove" action="#{globalConfigurationBean.removePropertyAction()}"/> <h:link value="Cancel" outcome="global-configuration"/>
                 </h:form>
-                
-                <h:link value="Cancel" outcome="global-configuration"/>
                 
             </ui:define>
 

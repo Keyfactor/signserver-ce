@@ -45,11 +45,9 @@
                         All administrators with a valid certificate will be allowed even if they are not listed.
                     </p>
 
-                    <h:commandButton class="buttonNegative" value="Apply" action="#{administratorsBean.allowAnyAction(true)}"/>
+                    <h:commandButton class="buttonNegative" value="Apply" action="#{administratorsBean.allowAnyAction(true)}"/> <h:link value="Cancel" outcome="administrators"/>
 
                 </h:form>
-
-                <h:link value="Cancel" outcome="administrators"/>
 
             </ui:define>
 

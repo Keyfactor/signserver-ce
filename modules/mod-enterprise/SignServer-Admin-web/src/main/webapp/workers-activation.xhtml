@@ -50,6 +50,7 @@
                         <p>
                             (No workers selected)
                         </p>
+                        <h:link value="Cancel" outcome="#{bulkBean.backLink}"></h:link>
                     </h:panelGroup>
                     <h:panelGroup rendered="#{!empty bulkBean.workers}">
                         <h:dataTable id="table1" value="#{bulkBean.workers}" var="item">
@@ -91,15 +92,13 @@
                             <h:outputLabel for="password">Authentication code:</h:outputLabel> 
                             <h:inputSecret id="password" value="#{bulkBean.activatePassword}"/>
                             <f:facet name="footer">
-                                <h:commandButton class="buttonFeatured" value="Activate" action="#{bulkBean.activateAction()}"/>
+                                <h:commandButton class="buttonFeatured" value="Activate" action="#{bulkBean.activateAction()}"/> <h:link value="Cancel" outcome="#{bulkBean.backLink}"></h:link>
                             </f:facet>
                         </h:panelGrid>
 
                     </h:panelGroup>
                         
                 </h:form>
-                
-                <h:link value="Cancel" outcome="#{bulkBean.backLink}"></h:link>
                 
             </ui:define>
 

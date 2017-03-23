@@ -96,14 +96,12 @@
                 
                     <h:panelGrid columns="2">
                         <f:facet name="footer">
-                            <h:commandButton class="buttonFeatured" value="Export" action="#{exportBulkBean.exportAction()}"/>
+                            <h:commandButton class="buttonFeatured" value="Export" action="#{exportBulkBean.exportAction()}"/> <h:link value="Cancel" outcome="#{exportBulkBean.backLink}"></h:link>
                         </f:facet>
                     </h:panelGrid>
 
                 </h:form>
-                
-                <h:link value="Cancel" outcome="#{exportBulkBean.backLink}"></h:link>
-                
+
             </ui:define>
 
             <ui:define name="bottom">

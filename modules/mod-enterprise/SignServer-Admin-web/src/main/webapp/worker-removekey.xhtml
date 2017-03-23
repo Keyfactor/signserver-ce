@@ -57,7 +57,7 @@
                             </p>
 
                             <h:inputText id="destroyKeyAlias" value="#{workerBean.destroyKeyAlias}" required="true" requiredMessage="Name of key to delete"/> <span class="errorMessage"><h:message for="destroyKeyAlias"/></span><br/>
-                            <h:commandButton class="buttonNegative" value="Destroy key" action="#{workerBean.destroyKeyStep1Action()}"/>
+                            <h:commandButton class="buttonNegative" value="Destroy key" action="#{workerBean.destroyKeyStep1Action()}"/> <h:link value="Cancel" outcome="worker"><f:param name="id" value="#{workerBean.id}"/></h:link>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{workerBean.destroyKeyStep == 1}">
                             <h2>WARNING: Will attempt to permanently remove the following key:</h2>
@@ -70,8 +70,7 @@
                             <p>
                                 Are you sure you want to destroy the key?
                             </p>
-                            <h:commandButton value="Cancel" action="#{workerBean.destroyKeyCancelAction()}"/>
-                            <h:commandButton value="Yes, destroy the key" action="#{workerBean.destroyKeyStep2Action()}"/>
+                            <h:commandButton class="buttonNegative" value="Destroy key" action="#{workerBean.destroyKeyStep2Action()}"/> <h:link value="Cancel" outcome="worker"><f:param name="id" value="#{workerBean.id}"/></h:link>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{workerBean.destroyKeyStep == 2}">
                             <p>
@@ -81,11 +80,9 @@
                             </p>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{(workerBean.destroyKeyStep == 2 and !workerBean.destroyKeySuccess)}">
-                            <h:commandButton value="Back" action="#{workerBean.destroyKeyCancelAction()}"/>
+                            <h:commandButton class="buttonFeatured" value="Back" action="#{workerBean.destroyKeyCancelAction()}"/>
                         </h:panelGroup>
                     </h:form>
-
-                    <h:link value="Cancel" outcome="worker"><f:param name="id" value="#{workerBean.id}"/></h:link>
                 </div>
 
             </ui:define>

@@ -52,6 +52,7 @@
                         <p>
                             (No workers selected)
                         </p>
+                        <h:link value="Cancel" outcome="#{testKeyBulkBean.backLink}"></h:link>
                     </h:panelGroup>
                     <h:panelGroup rendered="#{!empty testKeyBulkBean.workers}">
                         <h:dataTable id="table1" value="#{testKeyBulkBean.testKeyWorkers}" var="item">
@@ -103,14 +104,12 @@
 
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton class="buttonFeatured" value="Test" action="#{testKeyBulkBean.testKeyAction()}" binding="#{components.buttonSubmit}"/>
+                                <h:commandButton class="buttonFeatured" value="Test" action="#{testKeyBulkBean.testKeyAction()}" binding="#{components.buttonSubmit}"/> <h:link value="Cancel" outcome="#{testKeyBulkBean.backLink}"></h:link>
                             </f:facet>
                         </h:panelGrid>
                     </h:panelGroup>
                 </h:form>
-                
-                <h:link value="Cancel" outcome="#{testKeyBulkBean.backLink}"></h:link>
-                
+
             </ui:define>
 
             <ui:define name="bottom">

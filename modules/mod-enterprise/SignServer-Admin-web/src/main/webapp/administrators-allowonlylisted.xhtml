@@ -46,11 +46,9 @@
                         First make sure that you are listed as an administrator otherwise you will be logged out without the ability to login except from command line interface.
                     </p>
 
-                    <h:commandButton class="buttonNegative" value="Apply" action="#{administratorsBean.allowAnyAction(false)}"/>
+                    <h:commandButton class="buttonNegative" value="Apply" action="#{administratorsBean.allowAnyAction(false)}"/> <h:link value="Cancel" outcome="administrators"/>
 
                 </h:form>
-
-                <h:link value="Cancel" outcome="administrators"/>
 
             </ui:define>
 

@@ -52,6 +52,7 @@
                         <p>
                             (No workers selected)
                         </p>
+                        <h:link value="Cancel" outcome="#{renewKeyBulkBean.backLink}"></h:link>
                     </h:panelGroup>
                     <h:panelGroup rendered="#{!empty renewKeyBulkBean.workers}">
                         <h:dataTable id="table1" value="#{renewKeyBulkBean.renewKeyWorkers}" var="item">
@@ -131,14 +132,12 @@
 
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton class="buttonFeatured" value="Generate" action="#{renewKeyBulkBean.renewKeyAction()}" binding="#{components.buttonSubmit}"/>
+                                <h:commandButton class="buttonFeatured" value="Generate" action="#{renewKeyBulkBean.renewKeyAction()}" binding="#{components.buttonSubmit}"/> <h:link value="Cancel" outcome="#{renewKeyBulkBean.backLink}"></h:link>
                             </f:facet>
                         </h:panelGrid>
                     </h:panelGroup>
                 </h:form>
-                
-                <h:link value="Cancel" outcome="#{renewKeyBulkBean.backLink}"></h:link>
-                
+
             </ui:define>
 
             <ui:define name="bottom">

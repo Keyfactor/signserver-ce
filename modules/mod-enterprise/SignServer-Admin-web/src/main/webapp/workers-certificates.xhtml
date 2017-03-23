@@ -52,6 +52,7 @@
                         <p>
                             (No workers selected)
                         </p>
+                        <h:link value="Cancel" outcome="#{certificatesBulkBean.backLink}"></h:link>
                     </h:panelGroup>
                     <h:panelGroup rendered="#{!empty certificatesBulkBean.workers}">
                         <script>
@@ -158,14 +159,12 @@
 
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton class="buttonFeatured" value="Install" action="#{certificatesBulkBean.installAction()}"/>
+                                <h:commandButton class="buttonFeatured" value="Install" action="#{certificatesBulkBean.installAction()}"/> <h:link value="Cancel" outcome="#{certificatesBulkBean.backLink}"></h:link>
                             </f:facet>
                         </h:panelGrid>
                     </h:panelGroup>
                 </h:form>
-                
-                <h:link value="Cancel" outcome="#{certificatesBulkBean.backLink}"></h:link>
-                
+
             </ui:define>
 
             <ui:define name="bottom">

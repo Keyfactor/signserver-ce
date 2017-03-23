@@ -50,6 +50,7 @@
                         <p>
                             (No workers selected)
                         </p>
+                        <h:link value="Cancel" outcome="#{bulkBean.backLink}"></h:link>
                     </h:panelGroup>
                     <h:panelGroup rendered="#{!empty bulkBean.workers}">
                         <h:dataTable id="table1" value="#{bulkBean.workers}" var="item">
@@ -89,14 +90,12 @@
 
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton class="buttonFeatured" value="Deactivate" action="#{bulkBean.deactivateAction()}"/>
+                                <h:commandButton class="buttonFeatured" value="Deactivate" action="#{bulkBean.deactivateAction()}"/> <h:link value="Cancel" outcome="#{bulkBean.backLink}"></h:link>
                             </f:facet>
                         </h:panelGrid>
                     </h:panelGroup>
                 </h:form>
-                
-                <h:link value="Cancel" outcome="#{bulkBean.backLink}"></h:link>
-                
+
             </ui:define>
 
             <ui:define name="bottom">

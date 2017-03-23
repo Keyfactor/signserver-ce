@@ -96,13 +96,11 @@
                 
                     <h:panelGrid columns="2">
                         <f:facet name="footer">
-                            <h:commandButton class="buttonFeatured" value="Reload" action="#{reloadBulkBean.reloadAction()}"/>
+                            <h:commandButton class="buttonFeatured" value="Reload" action="#{reloadBulkBean.reloadAction()}"/> <h:link value="Cancel" outcome="#{reloadBulkBean.backLink}"></h:link>
                         </f:facet>
                     </h:panelGrid>
                     
                 </h:form>
-                
-                <h:link value="Cancel" outcome="#{reloadBulkBean.backLink}"></h:link>
                 
             </ui:define>
 

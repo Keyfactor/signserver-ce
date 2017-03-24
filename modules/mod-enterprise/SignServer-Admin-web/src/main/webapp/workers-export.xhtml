@@ -61,7 +61,7 @@
                     <h:outputLabel value="Include all non-worker related global configuration" for="exportNonWorkerGlobalConfig"/>
                     
                     
-                    <h:dataTable id="table1" value="#{exportBulkBean.myWorkers}" var="item" rendered="#{exportBulkBean.myWorkers.size() gt 0}">
+                    <h:dataTable id="table1" value="#{exportBulkBean.myWorkers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd" rendered="#{exportBulkBean.myWorkers.size() gt 0}">
                         <h:column>
                             <f:facet name="header">
                                 <!-- TODO: Mark all link -->
@@ -70,7 +70,7 @@
                         </h:column>
                         <h:column>
                             <f:facet name="header">
-                                <h:outputText value="Id" />
+                                <h:outputText value="ID" />
                             </f:facet>
                             <h:outputText value="#{item.id}" />
                         </h:column>

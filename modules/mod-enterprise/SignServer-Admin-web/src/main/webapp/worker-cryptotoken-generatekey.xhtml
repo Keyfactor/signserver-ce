@@ -47,12 +47,13 @@
                     <ui:param name="worker" value="#{workerBean.worker}"/>
                     <ui:param name="workerActiveMenu" value="worker-cryptotoken"/>
                 </ui:include>
-                
-                <h2>Generate Key</h2>
 
                 <div id="worker_content">
+
+                    <h2>Generate Key</h2>
+                    
                     <h:form>
-                        <h:dataTable value="#{generateKeyBean.items}" var="item">
+                        <h:dataTable value="#{generateKeyBean.items}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
                             <h:column>
                                 <f:facet name="header">
                                     <h:outputText value="New key alias"/>
@@ -79,8 +80,7 @@
                                 <h:commandButton class="buttonNeutral" value="+" action="#{generateKeyBean.addAction()}" rendered="#{item.last}"/>
                             </h:column>
                         </h:dataTable>
-                        <h:commandButton class="buttonPositive" value="Generate" action="#{generateKeyBean.submitAction()}"/><br/>
-                        <h:link value="Cancel" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                        <h:commandButton class="buttonPositive" value="Generate" action="#{generateKeyBean.submitAction()}"/> <h:link value="Cancel" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                     </h:form>
                 </div>
 

@@ -87,14 +87,12 @@
                             <p>
                                 Are you sure you want to destroy the key(s)?
                             </p>
-                            <h:commandButton class="buttonNegative" value="Destroy key(s)" action="#{removeKeysBean.destroyAction()}"/>
+                            <h:commandButton class="buttonNegative" value="Destroy key(s)" action="#{removeKeysBean.destroyAction()}"/> <h:link value="Cancel" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                         </h:panelGroup>
-
-                        <h:commandButton class="buttonFeatured" value="Done" action="#{removeKeysBean.cancelAction()}" rendered="#{removeKeysBean.done}"/>
-
+                        <h:panelGroup rendered="#{removeKeysBean.done}">
+                            <h:commandButton class="buttonFeatured" value="Done" action="#{removeKeysBean.cancelAction()}"/> <h:link value="Cancel" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                        </h:panelGroup>
                     </h:form>
-
-                    <h:link value="Cancel" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                 </div>
             </ui:define>
 

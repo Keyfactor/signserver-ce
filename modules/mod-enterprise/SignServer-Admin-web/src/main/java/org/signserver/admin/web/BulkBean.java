@@ -207,6 +207,8 @@ public class BulkBean {
     public String getBackLink() {
         if ("worker".equals(previous)) {
             return "worker?id=" + getWorkerIdsList().get(0);
+        } else if ("worker-configuration".equals(previous)) {
+            return "worker-configuration?id=" + getWorkerIdsList().get(0);
         } else if ("cryptotoken".equals(previous)) {
             return "worker-cryptotoken?id=" + getWorkerIdsList().get(0);
         } else {

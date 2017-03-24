@@ -55,10 +55,7 @@
                         <h:link value="Cancel" outcome="#{renewKeyBulkBean.backLink}"></h:link>
                     </h:panelGroup>
                     <h:panelGroup rendered="#{!empty renewKeyBulkBean.workers}">
-                        <h:dataTable id="table1" value="#{renewKeyBulkBean.renewKeyWorkers}" var="item">
-                            <f:facet name="header">
-                                <h:outputText value="Workers to renew keys for" />
-                            </f:facet>
+                        <h:dataTable id="table1" value="#{renewKeyBulkBean.renewKeyWorkers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
                             <h:column>
                                 <f:facet name="header">
                                     <!-- TODO: Mark all link -->
@@ -67,7 +64,7 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Id" />
+                                    <h:outputText value="ID" />
                                 </f:facet>
                                 <h:outputText value="#{item.id}" />
                             </h:column>

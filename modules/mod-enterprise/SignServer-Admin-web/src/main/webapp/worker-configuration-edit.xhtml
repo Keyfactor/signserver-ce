@@ -63,10 +63,8 @@
                             <h:inputTextarea id="value" value="#{workerBean.propertyValue}" cols="70" rows="10"/>
                             <h:message for="value" class="errorMessage"/>
                         </h:panelGrid>
-                        <h:commandButton class="buttonFeatured" value="Submit" action="#{workerBean.editPropertyAction()}"/>
+                        <h:commandButton class="buttonFeatured" value="Submit" action="#{workerBean.editPropertyAction()}"/> <h:link value="Cancel" outcome="worker-configuration"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                     </h:form>
-
-                    <h:link value="Cancel" outcome="worker-configuration"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                 </div>
                 
             </ui:define>

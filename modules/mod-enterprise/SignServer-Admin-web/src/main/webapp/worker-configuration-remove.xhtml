@@ -60,10 +60,8 @@
                             Property: <span class="alertArea"><h:outputText value="#{workerBean.property}"/></span>
                         </p>
 
-                        <h:commandButton class="buttonNegative" value="Remove" action="#{workerBean.removePropertyAction()}"/>
+                        <h:commandButton class="buttonNegative" value="Remove" action="#{workerBean.removePropertyAction()}"/> <h:link value="Cancel" outcome="worker-configuration"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                     </h:form>
-
-                    <h:link value="Cancel" outcome="worker-configuration"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                 </div>
             </ui:define>
 

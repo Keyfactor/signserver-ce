@@ -42,7 +42,6 @@
             </ui:define>
 
             <ui:define name="content">
-                <!-- <h1><h:link outcome="worker" value="#{workerBean.worker.name}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; Configuration</h1> -->
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{workerBean.worker}"/>
                     <ui:param name="workerActiveMenu" value="worker-configuration"/>
@@ -50,8 +49,8 @@
                 <div id="worker-actions">
                     <h:form>
                         <p>
-                            <h:commandButton class="buttonNeutral" value="Reload from database..." action="#{workerBean.bulkAction('workers-reload')}"/> 
-                            <h:commandButton class="buttonNeutral" value="Export..." action="#{workerBean.bulkAction('workers-export')}"/>
+                            <h:commandButton class="buttonNeutral" value="Reload from database..." action="#{workerBean.bulkAction('workers-reload', 'worker-configuration')}"/> 
+                            <h:commandButton class="buttonNeutral" value="Export..." action="#{workerBean.bulkAction('workers-export', 'worker-configuration')}"/>
                         </p>
                     </h:form>
                 </div>   

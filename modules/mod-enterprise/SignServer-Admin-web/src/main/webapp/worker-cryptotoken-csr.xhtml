@@ -62,10 +62,7 @@
                         </p>
                     </h:panelGroup>
                     <h:panelGroup rendered="#{!empty cSRBulkBean.workers}">
-                        <h:dataTable id="table1" value="#{cSRBulkBean.CSRWorkers}" var="item">
-                            <!-- <f:facet name="header">
-                                <h:outputText value="Workers to renew keys for" />
-                            </f:facet> -->
+                        <h:dataTable id="table1" value="#{cSRBulkBean.CSRWorkers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
                             <h:column>
                                 <f:facet name="header">
                                     <!-- TODO: Mark all link -->
@@ -147,16 +144,13 @@
                             <f:selectItems value="#{cSRBulkBean.availableWorkersMenu}"/>
                         </h:selectOneMenu>
 
-
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton class="buttonFeatured" value="Generate" action="#{cSRBulkBean.generateAction()}" binding="#{components.buttonSubmit}"/>
+                                <h:commandButton class="buttonFeatured" value="Generate" action="#{cSRBulkBean.generateAction()}" binding="#{components.buttonSubmit}"/> <h:link value="Cancel" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                             </f:facet>
                         </h:panelGrid>
                     </h:panelGroup>
                 </h:form>
-
-                <h:link value="Cancel" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                 
             </ui:define>
 

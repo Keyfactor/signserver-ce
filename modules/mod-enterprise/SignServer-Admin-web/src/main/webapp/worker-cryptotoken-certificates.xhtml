@@ -49,9 +49,10 @@
                     <ui:param name="workerActiveMenu" value="worker-cryptotoken"/>
                 </ui:include>
 
-                <h2>Import Certificates</h2>
-
                 <div id="worker_content">
+
+                    <h2>Import Certificates</h2>
+                    
                     <h:form id="csrForm">
 
                         <script>
@@ -125,9 +126,7 @@
                             </f:facet>
                         </h:dataTable>
 
-
-                        <h:commandButton class="buttonFeatured" value="Import" action="#{importCertificatesBean.submitAction()}"/><br/>
-                        <h:link value="Cancel" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                        <h:commandButton class="buttonFeatured" value="Import" action="#{importCertificatesBean.submitAction()}"/> <h:link value="Cancel" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>                        
                     </h:form>
                 </div>
                 

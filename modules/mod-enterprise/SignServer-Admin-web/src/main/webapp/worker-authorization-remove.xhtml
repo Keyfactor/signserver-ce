@@ -66,10 +66,8 @@
                             <span class="alertArea"><h:outputText value="#{workerAuthBean.issuerDN}"/></span>
                         </p>
 
-                        <h:commandButton class="buttonNegative" value="Remove" action="#{workerAuthBean.removePropertyAction()}"/>
+                        <h:commandButton class="buttonNegative" value="Remove" action="#{workerAuthBean.removePropertyAction()}"/> <h:link value="Cancel" outcome="worker-authorization"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
                     </h:form>
-
-                    <h:link value="Cancel" outcome="worker-authorization"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
                 </div>
             </ui:define>
 

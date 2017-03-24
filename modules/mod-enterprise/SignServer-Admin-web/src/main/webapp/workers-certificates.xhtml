@@ -59,9 +59,6 @@
                             var index = 0;
                         </script>
                         <h:dataTable id="table1" value="#{certificatesBulkBean.certificatesWorkers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1,dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
-                            <f:facet name="header">
-                                <h:outputText value="Workers to install certificates for" />
-                            </f:facet>
                             <h:column>
                                 <f:facet name="header">
                                     <!-- TODO: Mark all link -->
@@ -70,7 +67,7 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Id" />
+                                    <h:outputText value="ID" />
                                 </f:facet>
                                 <h:outputText value="#{item.id}" />
                             </h:column>

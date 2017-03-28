@@ -43,7 +43,7 @@
             </ui:define>
 
             <ui:define name="content">
-                <!--<h1><h:graphicImage library="images" name="#{workerBean.worker.imageName}" title="#{workerBean.worker.imageAlt}" class="workerImage1"/> <h:outputText value="#{workerBean.worker.name}"/></h1>-->
+                <!--<h1><h:graphicImage library="default" name="images/#{workerBean.worker.imageName}" title="#{workerBean.worker.imageAlt}" class="workerImage1"/> <h:outputText value="#{workerBean.worker.name}"/></h1>-->
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{workerBean.worker}"/>
                     <ui:param name="workerActiveMenu" value="worker-cryptotoken"/>

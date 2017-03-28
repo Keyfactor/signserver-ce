@@ -72,7 +72,7 @@
                             <h:panelGrid columns="2" class="notable" columnClasses="notable,notable">
                                 <h:outputLink value="worker.xhtml">
                                     <f:param name="id" value="#{item.id}"/>
-                                    <h:graphicImage library="images" name="#{item.imageName}" title="#{item.imageAlt}"/>
+                                    <h:graphicImage library="default" name="images/#{item.imageName}" title="#{item.imageAlt}"/>
                                 </h:outputLink>
                                 <h:panelGrid columns="1" class="notable" columnClasses="notable,notable">
                                     <h:link outcome="worker" value="#{item.name} (#{item.id})">

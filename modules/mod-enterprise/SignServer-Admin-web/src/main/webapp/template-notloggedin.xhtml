@@ -25,16 +25,16 @@
 
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <link rel="shortcut icon" type="image/png" href="#{resource['images/favicon.png']}"/>
-        <h:outputStylesheet name="./css/default.css"/>
-        <h:outputStylesheet name="./css/cssLayout.css"/>
+        <link rel="shortcut icon" type="image/png" href="#{resource['default/images/favicon.png']}"/>
+        <h:outputStylesheet library="default" name="css/default.css"/>
+        <h:outputStylesheet library="default" name="css/cssLayout.css"/>
         <title><ui:insert name="title">Title</ui:insert> - SignServer Admin Web</title>
     </h:head>
 
     <h:body>
         
         <div id="top">
-            <div id="top-left"><h:outputLink value="/signserver/"><h:graphicImage library="images" name="logo.png" height="50"/></h:outputLink></div>
+            <div id="top-left"><h:outputLink value="/signserver/"><h:graphicImage library="default" name="images/logo.png" height="50"/></h:outputLink></div>
             <div id="top-right">
                 <h:outputLink value="/signserver/doc/" class="topOutsideLink">Documentation</h:outputLink>
             </div>

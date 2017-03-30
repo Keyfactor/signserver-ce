@@ -22,7 +22,7 @@
         <module.name>adminweb</module.name>
         <module.priority>30</module.priority>
         <module.web.web-uri>${dist.jar}</module.web.web-uri>
-        <module.web.context-root>/signserver/adminweb</module.web.context-root>
+        <module.web.context>/adminweb</module.web.context>
     </properties>
 
     <dependencies>

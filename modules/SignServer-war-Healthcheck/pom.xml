@@ -20,7 +20,7 @@
         <module.name>healthcheck</module.name>
         <module.priority>30</module.priority>
         <module.web.web-uri>${dist.jar}</module.web.web-uri>
-        <module.web.context-root>/signserver/healthcheck</module.web.context-root>
+        <module.web.context>/healthcheck</module.web.context>
         <postprocess.files>postprocess.file1</postprocess.files>
         <postprocess.file1.src>${project.build.finalName}.war</postprocess.file1.src>
         <postprocess.file1.includes>WEB-INF/web.xml</postprocess.file1.includes>

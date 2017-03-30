@@ -3,7 +3,7 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
              xmlns="http://www.jboss.com/xml/ns/javaee" 
              xsi:schemalocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss_webservices_1_0.xsd">
-    <context-root>/signserver/ValidationWSService</context-root>
+    <context-root>${httpserver.context.root}/ValidationWSService</context-root>
     
     <port-component>
         <ejb-name>ValidationWS</ejb-name>

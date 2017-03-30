@@ -20,7 +20,7 @@
         <module.name>signserverweb</module.name>
         <module.priority>30</module.priority>
         <module.web.web-uri>${dist.jar}</module.web.web-uri>
-        <module.web.context-root>/signserver</module.web.context-root>
+        <module.web.context></module.web.context>
     </properties>
 
     <dependencies>

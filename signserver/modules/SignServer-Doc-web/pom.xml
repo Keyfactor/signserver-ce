@@ -23,7 +23,7 @@
         <module.name>webdoc</module.name>
         <module.priority>30</module.priority>
         <module.web.web-uri>${dist.jar}</module.web.web-uri>
-        <module.web.context-root>/signserver/doc</module.web.context-root>
+        <module.web.context>/doc</module.web.context>
         <doc.dir>../../doc/htdocs</doc.dir>
         <doc.root>../../doc</doc.root>
     </properties>

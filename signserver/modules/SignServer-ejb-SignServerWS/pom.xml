@@ -20,7 +20,8 @@
         <module.priority>20</module.priority>
         <postprocess.files>postprocess.file1</postprocess.files>
         <postprocess.file1.src>${project.build.finalName}.jar</postprocess.file1.src>
-        <postprocess.file1.includes>META-INF/ejb-jar.xml</postprocess.file1.includes>
+        <postprocess.file1.includes>META-INF/ejb-jar.xml,META-INF/jboss-webservices.xml,META-INF/sun-ejb-jar.xml</postprocess.file1.includes>
+        <postprocess.file1.dest></postprocess.file1.dest>
     </properties>
 
     <dependencies>

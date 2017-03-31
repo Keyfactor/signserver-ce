@@ -4,7 +4,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="stylesheet" href="../publicweb.css" type="text/css"/>
-        <link rel="shortcut icon" href="/signserver/favicon.png"/>
+        <link rel="shortcut icon" href="../favicon.png"/>
         <title>SignServer - ClientCLI Download</title>
     </head>
     <body>

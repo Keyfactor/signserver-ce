@@ -5,7 +5,7 @@
         <link rel="stylesheet" href="../publicweb.css" type="text/css"/>
         <link rel="stylesheet" href="demo.css" type="text/css"/>
         <script type="text/javascript" src="demo.js"></script>
-        <link rel="shortcut icon" href="/signserver/favicon.png"/>
+        <link rel="shortcut icon" href="../favicon.png"/>
         <title>MRTD SOD Signing Demo - SignServer</title>
     </head>
     <body onload="ldsVersionChanged()">

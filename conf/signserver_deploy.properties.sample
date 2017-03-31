@@ -199,6 +199,12 @@
 #httpserver.external.privhttps=8443
 #httpserver.external.privhttps=443
 
+# Custom context-root
+# Default: /signserver
+#httpserver.context.root=/signserver
+#httpserver.context.root=/instance1/signserver
+
+
 # Deploy the documentation.
 #
 # Default: true

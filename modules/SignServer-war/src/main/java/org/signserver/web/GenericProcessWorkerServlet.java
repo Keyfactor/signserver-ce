@@ -36,13 +36,14 @@ public class GenericProcessWorkerServlet extends HttpServlet {
     private static final Logger LOG = Logger.getLogger(GenericProcessWorkerServlet.class);
 
     private static final String PROCESS_SERVLET_URL = "/process";
-    private static final String WORKER_URI_START = "/signserver/worker/";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
                     throws ServletException, IOException {
+        final String workerURIStart =
+                req.getServletContext().getContextPath() + "/worker/";
         final String workerName =
-                ServletUtils.parseWorkerName(req, WORKER_URI_START);
+                ServletUtils.parseWorkerName(req, workerURIStart);
 
         if (workerName == null) {
             // give a 404 error

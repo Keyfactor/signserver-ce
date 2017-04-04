@@ -342,6 +342,45 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         assertEquals(expected, actual.asSet());
     }
     
+    /**
+     * Tests the property SET_PERMISSIONS by setting different values and make 
+     * sure they end up in the signed PDF also when the PDF version is being
+     * upgraded. 
+     * 
+     * @throws java.lang.Exception
+     */
+    public void test04SetPermissions_upgradedVersion() throws Exception {
+        // Test requires a PDF with version less then 1.6
+        String header;
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(sampleOwner123)))) {
+            header = in.readLine();
+        }
+        if (!"%PDF-1.4".equals(header)) {
+            throw new Exception("Test expects a PDF with version 1.4 but header was \"" + header + "\"");
+        }
+        
+        try {
+            // Set SHA256 as hash algorithm which will cause the PDF to be upgraded to version 1.6
+            workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA256");
+            workerSession.reloadConfiguration(WORKER1);
+            
+            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+
+            // Without SET_PERMISSIONS the original permissions should remain
+            // The sampleOwner123 originally has: ALLOW_FILL_IN,ALLOW_MODIFY_ANNOTATIONS,ALLOW_MODIFY_CONTENTS
+            workerSession.removeWorkerProperty(WORKER1, "SET_PERMISSIONS");
+            workerSession.reloadConfiguration(WORKER1);
+            Set<String> expected = new HashSet<>(Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"));
+            Permissions actual = getPermissions(signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD), 
+                    SAMPLE_OWNER123_PASSWORD.getBytes("ISO-8859-1"));
+            assertEquals(expected, actual.asSet());
+        } finally {
+            // Remove DIGESTALGORITHM property that we set
+            workerSession.removeWorkerProperty(WORKER1, "DIGESTALGORITHM");
+            workerSession.reloadConfiguration(WORKER1);
+        }
+    }
+    
     /** Tests the property SET_PERMISSIONS by setting different values and make 
      * sure they end up in the signed PDF. Also tests that when not setting 
      * the property the original permissions remain.

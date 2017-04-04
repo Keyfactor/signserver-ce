@@ -696,8 +696,8 @@ public class PDFSigner extends BaseSigner {
             PdfStamper stp = PdfStamper.createSignature(reader, responseOut, updatedPdfVersion, responseFile, appendMode);
             PdfSignatureAppearance sap = stp.getSignatureAppearance();
 
-            // Set the new permissions
-            if (newPermissions != null || params.getSetOwnerPassword() != null) {
+            // Set the new permissions if any (or if in append mode set the old permissions if there are no new)
+            if (newPermissions != null || params.getSetOwnerPassword() != null || !appendMode) {
                 if (cryptoMode < 0) {
                     cryptoMode = PdfWriter.STANDARD_ENCRYPTION_128;
                     if (LOG.isDebugEnabled()) {

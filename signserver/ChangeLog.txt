@@ -1,3 +1,11 @@
+SignServer 4.0.1+sgs2, 2017-04-04
+---------------------------------
+
+** Patch Applied
+    * DSS-1356: SignClient does not support password protected WSDL access
+    * DSS-1376: PDF permissions lost when PDF version is upgraded
+
+
 SignServer 4.0.1+sgs1, 2017-02-28
 ---------------------------------
 

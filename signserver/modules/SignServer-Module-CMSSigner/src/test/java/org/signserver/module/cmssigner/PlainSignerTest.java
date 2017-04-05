@@ -25,6 +25,8 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import static junit.framework.TestCase.assertTrue;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
@@ -42,6 +44,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerType;
 import org.signserver.common.data.SignatureRequest;
 import org.signserver.common.data.SignatureResponse;
 import org.signserver.server.SignServerContext;
@@ -289,14 +292,24 @@ public class PlainSignerTest {
     private WorkerConfig createConfig(String signatureAlgorithm) throws Exception {
         return createConfig(signatureAlgorithm, null);
     }
+    
+    private WorkerConfig createConfig(final String signatureAlgorithm,
+                                      final String logDigestAlgorithm) throws Exception {
+        return createConfig(signatureAlgorithm, logDigestAlgorithm, null);
+    }
 
-    private WorkerConfig createConfig(final String signatureAlgorithm, final String logDigestAlgorithm) throws Exception {
+    private WorkerConfig createConfig(final String signatureAlgorithm,
+                                      final String logDigestAlgorithm,
+                                      final String doLogRequestDigest) throws Exception {
         WorkerConfig config = new WorkerConfig();
         if (signatureAlgorithm != null) {
             config.setProperty("SIGNATUREALGORITHM", signatureAlgorithm);
         }
         if (logDigestAlgorithm != null) {
             config.setProperty("LOGREQUEST_DIGESTALGORITHM", logDigestAlgorithm);
+        }
+        if (doLogRequestDigest != null) {
+            config.setProperty("DO_LOGREQUEST_DIGEST", doLogRequestDigest);
         }
         return config;
     }
@@ -343,6 +356,11 @@ public class PlainSignerTest {
         Object actual = LogMap.getInstance(context).get("REQUEST_DIGEST");
         assertEquals("digest", expected, String.valueOf(actual));
     }
+    
+    private void assertNoRequestDigest(final RequestContext context) throws Exception {
+        final Object requestDigest = LogMap.getInstance(context).get("REQUEST_DIGEST");
+        assertNull("no digest", requestDigest);
+    }
 
     /**
      * Tests logging of the request digest and request digest algorithm using
@@ -357,6 +375,19 @@ public class PlainSignerTest {
         final SimplifiedResponse resp = sign(plainText, tokenRSA, createConfig(null), context);
 
         assertRequestDigestMatches(plainText, "SHA256", resp, context);
+    }
+    
+    @Test
+    public void testNoLogRequestDigest() throws Exception {
+        LOG.info("testNoLogRequestDigest");
+        
+        final WorkerConfig config = createConfig(null);
+        config.setProperty("DO_LOGREQUEST_DIGEST", "false");
+        final RequestContext context = new RequestContext();
+        final byte[] plainText = "some-data".getBytes("ASCII");
+        final SimplifiedResponse resp = sign(plainText, tokenRSA, config, context);
+
+        assertNoRequestDigest(context);
     }
     
     /**
@@ -389,4 +420,90 @@ public class PlainSignerTest {
         assertEquals("responseEncoded", expected, String.valueOf(LogMap.getInstance(context).get("RESPONSE_ENCODED")));
     }
 
+    /**
+     * Test that setting an empty value for DO_LOGREQUEST_DIGEST works.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_doLogrequestDigestEmpty() throws Exception {
+        LOG.info("testInit_doLogrequestDigestEmpty");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        config.setProperty("DO_LOGREQUEST_DIGEST", "");
+        PlainSigner instance = new MockedPlainSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
+    }
+    
+    /**
+     * Test that setting "true" for DO_LOGREQUEST_DIGEST works.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_doLogrequestDigestTrue() throws Exception {
+        LOG.info("testInit_noLogrequestDigestTrue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        config.setProperty("DO_LOGREQUEST_DIGEST", "true");
+        PlainSigner instance = new MockedPlainSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
+    }
+    
+    /**
+     * Test that setting "false" for DO_LOGREQUEST_DIGEST works.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_doLogrequestDigestFalse() throws Exception {
+        LOG.info("testInit_doLogrequestDigestFalse");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        config.setProperty("DO_LOGREQUEST_DIGEST", "false");
+        PlainSigner instance = new MockedPlainSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
+    }
+    
+    /**
+     * Test that setting "TRUE" (upper case) for DO_LOGREQUEST_DIGEST works.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_doLogrequestDigestTrueUpper() throws Exception {
+        LOG.info("testInit_doLogrequestDigestTrueUpper");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        config.setProperty("DO_LOGREQUEST_DIGEST", "TRUE");
+        PlainSigner instance = new MockedPlainSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
+    }
+    
+    /**
+     * Test that setting "true " (invalid with extra space) for DO_LOGREQUEST_DIGEST
+     * results in a configuration error.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_noRequestArchivingInvalid() throws Exception {
+        LOG.info("testInit_doLogrequestDigestInvalid");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        config.setProperty("DO_LOGREQUEST_DIGEST", "true ");
+        PlainSigner instance = new MockedPlainSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        assertTrue("should contain error: " + instance.getFatalErrors(null).toString(),
+                   instance.getFatalErrors(null).contains("Incorrect value for DO_LOGREQUEST_DIGEST"));
+    }
 }

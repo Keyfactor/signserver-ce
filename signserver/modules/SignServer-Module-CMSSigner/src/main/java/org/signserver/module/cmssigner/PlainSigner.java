@@ -77,10 +77,15 @@ public class PlainSigner extends BaseSigner {
 
     private static final String DEFAULT_LOGREQUEST_DIGESTALGORITHM = "SHA256";
     
+    /** If the request digest should be created and logged. */
+    public static final String DO_LOGREQUEST_DIGEST = "DO_LOGREQUEST_DIGEST";
+
+    private static final boolean DEFAULT_DO_LOGREQUEST_DIGEST = true;
+    
     private LinkedList<String> configErrors;
     private String signatureAlgorithm;
     private String logRequestDigestAlgorithm;
-
+    private boolean doLogRequestDigest;
 
     @Override
     public void init(final int workerId, final WorkerConfig config,
@@ -100,6 +105,18 @@ public class PlainSigner extends BaseSigner {
         logRequestDigestAlgorithm = config.getProperty(LOGREQUEST_DIGESTALGORITHM_PROPERTY);
         if (logRequestDigestAlgorithm == null || logRequestDigestAlgorithm.trim().isEmpty()) {
             logRequestDigestAlgorithm = DEFAULT_LOGREQUEST_DIGESTALGORITHM;
+        }
+        
+        // If the request digest should computed and be logged
+        final String s = config.getProperty(DO_LOGREQUEST_DIGEST);
+        if (s == null || s.trim().isEmpty()) {
+            doLogRequestDigest = DEFAULT_DO_LOGREQUEST_DIGEST;
+        } else if ("true".equalsIgnoreCase(s)) {
+            doLogRequestDigest = true;
+        } else if ("false".equalsIgnoreCase(s)) {
+            doLogRequestDigest = false;
+        } else {
+            configErrors.add("Incorrect value for " + DO_LOGREQUEST_DIGEST);
         }
     }
 
@@ -141,25 +158,27 @@ public class PlainSigner extends BaseSigner {
                 return logRequestDigestAlgorithm;
             }
         });
-        try (InputStream input = requestData.getAsInputStream()) {
-            final MessageDigest md = MessageDigest.getInstance(logRequestDigestAlgorithm);
+        if (doLogRequestDigest) {
+            try (InputStream input = requestData.getAsInputStream()) {
+                final MessageDigest md = MessageDigest.getInstance(logRequestDigestAlgorithm);
 
-            // Digest all data
-            // TODO: Future optimization: could be done while the file is read instead
-            final byte[] requestDigest = UploadUtil.digest(input, md);
+                // Digest all data
+                // TODO: Future optimization: could be done while the file is read instead
+                final byte[] requestDigest = UploadUtil.digest(input, md);
 
-            logMap.put(IWorkerLogger.LOG_REQUEST_DIGEST, new Loggable() {
-                @Override
-                public String toString() {
-                    return Hex.toHexString(requestDigest);
-                }
-            });
-        } catch (NoSuchAlgorithmException ex) {
-            LOG.error("Log digest algorithm not supported", ex);
-            throw new SignServerException("Log digest algorithm not supported", ex);
-        } catch (IOException ex) {
-            LOG.error("Log request digest failed", ex);
-            throw new SignServerException("Log request digest failed", ex);
+                logMap.put(IWorkerLogger.LOG_REQUEST_DIGEST, new Loggable() {
+                    @Override
+                    public String toString() {
+                        return Hex.toHexString(requestDigest);
+                    }
+                });
+            } catch (NoSuchAlgorithmException ex) {
+                LOG.error("Log digest algorithm not supported", ex);
+                throw new SignServerException("Log digest algorithm not supported", ex);
+            } catch (IOException ex) {
+                LOG.error("Log request digest failed", ex);
+                throw new SignServerException("Log request digest failed", ex);
+            }
         }
         final String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
 

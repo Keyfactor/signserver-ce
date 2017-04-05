@@ -24,6 +24,7 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.cert.*;
 import java.util.*;
+import org.apache.commons.io.FileUtils;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -95,6 +96,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     
     private File sample;
     private File sampleOpen123;
+    private File sampleOpen456noRestrictions;
     private File sampleOpen123Owner123;
     private File sampleOwner123;
     private File sampleUseraao;
@@ -113,6 +115,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         sampleRestricted = new File(home, "res/test/sample-restricted.pdf");
         sample = new File(home, "res/test/pdf/sample.pdf");
         sampleOpen123 = new File(home, "res/test/pdf/sample-open123.pdf");
+        sampleOpen456noRestrictions = new File(home, "res/test/pdf/sample-open456-norestrictions.pdf");
         sampleOpen123Owner123 = new File(home, "res/test/pdf/sample-open123-owner123.pdf");
         sampleOwner123 = new File(home, "res/test/pdf/sample-owner123.pdf");
         sampleUseraao = new File(home, "res/test/pdf/sample-useraao.pdf");
@@ -346,7 +349,10 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * Tests the property SET_PERMISSIONS by setting different values and make 
      * sure they end up in the signed PDF also when the PDF version is being
      * upgraded. 
-     * 
+     * Also tests that existing permissions/restrictions are remaining and in
+     * the case no restrictions are given then the final PDF also has no
+     * restrictions.
+     *
      * @throws java.lang.Exception
      */
     public void test04SetPermissions_upgradedVersion() throws Exception {
@@ -374,6 +380,40 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             Permissions actual = getPermissions(signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD), 
                     SAMPLE_OWNER123_PASSWORD.getBytes("ISO-8859-1"));
             assertEquals(expected, actual.asSet());
+            
+            // Without SET_PERMISSIONS and without restrictions the final PDF
+            // should also not have any restrictions.
+            // The sample originally has: cryptoMode==-1 / Permissions(0)
+            workerSession.removeWorkerProperty(WORKER1, "SET_PERMISSIONS");
+            workerSession.reloadConfiguration(WORKER1);
+            byte[] sampleBytes = FileUtils.readFileToByteArray(this.sample);
+            if (getCryptoMode(sampleBytes, null) != -1) {
+                throw new Exception("sample PDF should not have any security mode set");
+            }
+
+            expected = getPermissions(sampleBytes, null).asSet();
+            byte[] signedPDF = signPDF(sample);
+            actual = getPermissions(signedPDF, null);
+            assertEquals("permissions of PDF without restrictions", expected, actual.asSet());
+            assertEquals("no security set", -1, getCryptoMode(signedPDF, null));
+
+            
+            // Without SET_PERMISSIONS and without restrictions the final PDF
+            // should also not have any restrictions.
+            // The sample originally has: cryptoMode==-1 / Permissions(0)
+            workerSession.removeWorkerProperty(WORKER1, "SET_PERMISSIONS");
+            workerSession.reloadConfiguration(WORKER1);
+            sampleBytes = FileUtils.readFileToByteArray(this.sampleOpen456noRestrictions);
+            if (getCryptoMode(sampleBytes, "open456".getBytes()) != 1) {
+                throw new Exception("sampleOpen456noRestrictions PDF should have cryptoMode==1 as it has a open password specified");
+            }
+
+            expected = getPermissions(sampleBytes, "open456".getBytes()).asSet();
+            LOG.info("expected: " + expected);
+            signedPDF = signProtectedPDF(sampleOpen456noRestrictions, "open456");
+            actual = getPermissions(signedPDF, "open456".getBytes());
+            assertEquals("permissions of PDF without restrictions", expected, actual.asSet());
+            assertEquals("security set", 1, getCryptoMode(signedPDF, "open456".getBytes()));
         } finally {
             // Remove DIGESTALGORITHM property that we set
             workerSession.removeWorkerProperty(WORKER1, "DIGESTALGORITHM");
@@ -1606,6 +1646,11 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     private Permissions getPermissions(byte[] pdfBytes, byte[] password) throws IOException {
         PdfReader reader = new PdfReader(pdfBytes, password);
         return Permissions.fromInt(reader.getPermissions());
+    }
+
+    private int getCryptoMode(byte[] pdfBytes, byte[] password) throws IOException {
+        PdfReader reader = new PdfReader(pdfBytes, password);
+        return reader.getCryptoMode();
     }
 
     /**

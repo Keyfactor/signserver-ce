@@ -1,3 +1,11 @@
+SignServer 4.0.1+sgs3, 2017-04-06
+---------------------------------
+
+** Patch Applied
+   * DSS-1379: Regression: PDF restrictions set for upgraded PDFs even if
+               original had no restrictions
+
+
 SignServer 4.0.1+sgs2, 2017-04-04
 ---------------------------------
 

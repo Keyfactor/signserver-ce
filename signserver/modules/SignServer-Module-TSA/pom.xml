@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>4.0.1+sgs2</version>
+        <version>4.0.1+sgs3</version>
     </parent>
     <artifactId>SignServer-Module-TSA</artifactId>
     <name>SignServer-Module-TSA</name>

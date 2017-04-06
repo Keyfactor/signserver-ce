@@ -101,9 +101,13 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     private File sampleOwner123;
     private File sampleUseraao;
     private File sampleCertifiedSigningAllowed;
+    private File sampleCertifiedSigningAllowed256;
     private File sampleCertifiedNoChangesAllowed;
+    private File sampleCertifiedNoChangesAllowed256;
     private File sampleCertifiedFormFillingAllowed;
+    private File sampleCertifiedFormFillingAllowed256;
     private File sampleSigned;
+    private File sampleSignedSHA256;
 //    private File sampleLowprintingOwner123;
     
     private JcaX509CertificateConverter converter = new JcaX509CertificateConverter();
@@ -120,9 +124,13 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         sampleOwner123 = new File(home, "res/test/pdf/sample-owner123.pdf");
         sampleUseraao = new File(home, "res/test/pdf/sample-useraao.pdf");
         sampleCertifiedSigningAllowed = new File(home, "res/test/pdf/sample-certified-signingallowed.pdf");
+        sampleCertifiedSigningAllowed256 = new File(home, "res/test/pdf/sample-certified-signingallowed256.pdf");
         sampleCertifiedNoChangesAllowed = new File(home, "res/test/pdf/sample-certified-nochangesallowed.pdf");
+        sampleCertifiedNoChangesAllowed256 = new File(home, "res/test/pdf/sample-certified-nochangesallowed256.pdf");
         sampleCertifiedFormFillingAllowed = new File(home, "res/test/pdf/sample-certified-formfillingallowed.pdf");
+        sampleCertifiedFormFillingAllowed256 = new File(home, "res/test/pdf/sample-certified-formfillingallowed256.pdf");
         sampleSigned = new File(home, "res/test/pdf/sample-signed.pdf");
+        sampleSignedSHA256 = new File(home, "res/test/pdf/sample-signed256.pdf");
 //        sampleLowprintingOwner123 = new File(home, "res/test/pdf/sample-lowprinting-owner123.pdf");
     }
 
@@ -323,26 +331,34 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * 
      * @throws java.lang.Exception
      */
-    public void test04SetPermissions() throws Exception {
-        
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_COPY", "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_FILL_IN"));
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, new LinkedList<String>());
-        
-        // Without SET_PERMISSIONS the original permissions should remain
-        // The sampleOwner123 originally has: ALLOW_FILL_IN,ALLOW_MODIFY_ANNOTATIONS,ALLOW_MODIFY_CONTENTS
-        workerSession.removeWorkerProperty(WORKER1, "SET_PERMISSIONS");
-        workerSession.reloadConfiguration(WORKER1);
-        Set<String> expected = new HashSet<>(Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"));
-        Permissions actual = getPermissions(signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD), 
-                SAMPLE_OWNER123_PASSWORD.getBytes("ISO-8859-1"));
-        assertEquals(expected, actual.asSet());
+    public void test04SetPermissions_SHA1() throws Exception {
+        try {
+            // Set SHA1 as hash algorithm so the PDF will not be upgraded
+            workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA1");
+            workerSession.reloadConfiguration(WORKER1);
+            
+            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
+            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_COPY", "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
+            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
+            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_FILL_IN"));
+            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, new LinkedList<String>());
+
+            // Without SET_PERMISSIONS the original permissions should remain
+            // The sampleOwner123 originally has: ALLOW_FILL_IN,ALLOW_MODIFY_ANNOTATIONS,ALLOW_MODIFY_CONTENTS
+            workerSession.removeWorkerProperty(WORKER1, "SET_PERMISSIONS");
+            workerSession.reloadConfiguration(WORKER1);
+            Set<String> expected = new HashSet<>(Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"));
+            Permissions actual = getPermissions(signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD), 
+                    SAMPLE_OWNER123_PASSWORD.getBytes("ISO-8859-1"));
+            assertEquals(expected, actual.asSet());
+        } finally {
+            workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA256");
+            workerSession.reloadConfiguration(WORKER1);
+        }
     }
     
     /**
@@ -364,61 +380,51 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         if (!"%PDF-1.4".equals(header)) {
             throw new Exception("Test expects a PDF with version 1.4 but header was \"" + header + "\"");
         }
-        
-        try {
-            // Set SHA256 as hash algorithm which will cause the PDF to be upgraded to version 1.6
-            workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA256");
-            workerSession.reloadConfiguration(WORKER1);
-            
-            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
 
-            // Without SET_PERMISSIONS the original permissions should remain
-            // The sampleOwner123 originally has: ALLOW_FILL_IN,ALLOW_MODIFY_ANNOTATIONS,ALLOW_MODIFY_CONTENTS
-            workerSession.removeWorkerProperty(WORKER1, "SET_PERMISSIONS");
-            workerSession.reloadConfiguration(WORKER1);
-            Set<String> expected = new HashSet<>(Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"));
-            Permissions actual = getPermissions(signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD), 
-                    SAMPLE_OWNER123_PASSWORD.getBytes("ISO-8859-1"));
-            assertEquals(expected, actual.asSet());
-            
-            // Without SET_PERMISSIONS and without restrictions the final PDF
-            // should also not have any restrictions.
-            // The sample originally has: cryptoMode==-1 / Permissions(0)
-            workerSession.removeWorkerProperty(WORKER1, "SET_PERMISSIONS");
-            workerSession.reloadConfiguration(WORKER1);
-            byte[] sampleBytes = FileUtils.readFileToByteArray(this.sample);
-            if (getCryptoMode(sampleBytes, null) != -1) {
-                throw new Exception("sample PDF should not have any security mode set");
-            }
+        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
 
-            expected = getPermissions(sampleBytes, null).asSet();
-            byte[] signedPDF = signPDF(sample);
-            actual = getPermissions(signedPDF, null);
-            assertEquals("permissions of PDF without restrictions", expected, actual.asSet());
-            assertEquals("no security set", -1, getCryptoMode(signedPDF, null));
+        // Without SET_PERMISSIONS the original permissions should remain
+        // The sampleOwner123 originally has: ALLOW_FILL_IN,ALLOW_MODIFY_ANNOTATIONS,ALLOW_MODIFY_CONTENTS
+        workerSession.removeWorkerProperty(WORKER1, "SET_PERMISSIONS");
+        workerSession.reloadConfiguration(WORKER1);
+        Set<String> expected = new HashSet<>(Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"));
+        Permissions actual = getPermissions(signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD), 
+                SAMPLE_OWNER123_PASSWORD.getBytes("ISO-8859-1"));
+        assertEquals(expected, actual.asSet());
 
-            
-            // Without SET_PERMISSIONS and without restrictions the final PDF
-            // should also not have any restrictions.
-            // The sample originally has: cryptoMode==-1 / Permissions(0)
-            workerSession.removeWorkerProperty(WORKER1, "SET_PERMISSIONS");
-            workerSession.reloadConfiguration(WORKER1);
-            sampleBytes = FileUtils.readFileToByteArray(this.sampleOpen456noRestrictions);
-            if (getCryptoMode(sampleBytes, "open456".getBytes()) != 1) {
-                throw new Exception("sampleOpen456noRestrictions PDF should have cryptoMode==1 as it has a open password specified");
-            }
-
-            expected = getPermissions(sampleBytes, "open456".getBytes()).asSet();
-            LOG.info("expected: " + expected);
-            signedPDF = signProtectedPDF(sampleOpen456noRestrictions, "open456");
-            actual = getPermissions(signedPDF, "open456".getBytes());
-            assertEquals("permissions of PDF without restrictions", expected, actual.asSet());
-            assertEquals("security set", 1, getCryptoMode(signedPDF, "open456".getBytes()));
-        } finally {
-            // Remove DIGESTALGORITHM property that we set
-            workerSession.removeWorkerProperty(WORKER1, "DIGESTALGORITHM");
-            workerSession.reloadConfiguration(WORKER1);
+        // Without SET_PERMISSIONS and without restrictions the final PDF
+        // should also not have any restrictions.
+        // The sample originally has: cryptoMode==-1 / Permissions(0)
+        workerSession.removeWorkerProperty(WORKER1, "SET_PERMISSIONS");
+        workerSession.reloadConfiguration(WORKER1);
+        byte[] sampleBytes = FileUtils.readFileToByteArray(this.sample);
+        if (getCryptoMode(sampleBytes, null) != -1) {
+            throw new Exception("sample PDF should not have any security mode set");
         }
+
+        expected = getPermissions(sampleBytes, null).asSet();
+        byte[] signedPDF = signPDF(sample);
+        actual = getPermissions(signedPDF, null);
+        assertEquals("permissions of PDF without restrictions", expected, actual.asSet());
+        assertEquals("no security set", -1, getCryptoMode(signedPDF, null));
+
+
+        // Without SET_PERMISSIONS and without restrictions the final PDF
+        // should also not have any restrictions.
+        // The sample originally has: cryptoMode==-1 / Permissions(0)
+        workerSession.removeWorkerProperty(WORKER1, "SET_PERMISSIONS");
+        workerSession.reloadConfiguration(WORKER1);
+        sampleBytes = FileUtils.readFileToByteArray(this.sampleOpen456noRestrictions);
+        if (getCryptoMode(sampleBytes, "open456".getBytes()) != 1) {
+            throw new Exception("sampleOpen456noRestrictions PDF should have cryptoMode==1 as it has a open password specified");
+        }
+
+        expected = getPermissions(sampleBytes, "open456".getBytes()).asSet();
+        LOG.info("expected: " + expected);
+        signedPDF = signProtectedPDF(sampleOpen456noRestrictions, "open456");
+        actual = getPermissions(signedPDF, "open456".getBytes());
+        assertEquals("permissions of PDF without restrictions", expected, actual.asSet());
+        assertEquals("security set", 1, getCryptoMode(signedPDF, "open456".getBytes()));
     }
     
     /** Tests the property SET_PERMISSIONS by setting different values and make 
@@ -659,16 +665,48 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * 
      * @throws java.lang.Exception
      */
-    public void test10SignCertifiedDocument() throws Exception {
-        signPDF(sampleCertifiedSigningAllowed);
+    public void test10SignCertifiedDocument_SHA1() throws Exception {
         try {
-            signPDF(sampleCertifiedNoChangesAllowed);
+            // Note: We can not upgrade a document that is already signed so as
+            // sampleSigned was using SHA1 we need to continue using it
+            workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA1");
+            workerSession.reloadConfiguration(WORKER1);
+            
+            signPDF(sampleCertifiedSigningAllowed);
+            try {
+                signPDF(sampleCertifiedNoChangesAllowed);
+                fail("Should not be possible to sign a certified document with NO_CHANGES_ALLOWED");
+            } catch (IllegalRequestException ok) {
+                LOG.debug("ok: " + ok.getMessage());
+            }
+            try {
+                signPDF(sampleCertifiedFormFillingAllowed);
+                fail("Should not be possible to sign a certified document with FORM_FILLING");
+            } catch (IllegalRequestException ok) {
+                LOG.debug("ok: " + ok.getMessage());
+            }
+        } finally {
+            workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA256");
+            workerSession.reloadConfiguration(WORKER1);
+        }
+    }
+
+    /**
+     * Tests that it is possible to sign a certified document which allows 
+     * signing and not one the does not.
+     * 
+     * @throws java.lang.Exception
+     */
+    public void test10SignCertifiedDocument() throws Exception {
+        signPDF(sampleCertifiedSigningAllowed256);
+        try {
+            signPDF(sampleCertifiedNoChangesAllowed256);
             fail("Should not be possible to sign a certified document with NO_CHANGES_ALLOWED");
         } catch (IllegalRequestException ok) {
             LOG.debug("ok: " + ok.getMessage());
         }
         try {
-            signPDF(sampleCertifiedFormFillingAllowed);
+            signPDF(sampleCertifiedFormFillingAllowed256);
             fail("Should not be possible to sign a certified document with FORM_FILLING");
         } catch (IllegalRequestException ok) {
             LOG.debug("ok: " + ok.getMessage());
@@ -680,18 +718,47 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * 
      * @throws java.lang.Exception
      */
-    public void test11CertifySignedDocument() throws Exception {
+    public void test11CertifySignedDocument_SHA1() throws Exception {
+        try {
+            // Note: We can not upgrade a document that is already signed so as
+            // sampleSigned was using SHA1 we need to continue using it
+            workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA1");
+            workerSession.reloadConfiguration(WORKER1);
+            
+            workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "FORM_FILLING");
+            workerSession.reloadConfiguration(WORKER1);
+            signPDF(sampleSigned);
+
+            workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "FORM_FILLING_AND_ANNOTATIONS");
+            workerSession.reloadConfiguration(WORKER1);
+            signPDF(sampleSigned);
+
+            workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "NO_CHANGES_ALLOWED");
+            workerSession.reloadConfiguration(WORKER1);
+            signPDF(sampleSigned);
+        } finally {
+            workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA256");
+            workerSession.reloadConfiguration(WORKER1);
+        }
+    }
+
+    /**
+     * Tests that it is possible to certify a document that already is signed.
+     * 
+     * @throws java.lang.Exception
+     */
+    public void test11CertifySignedDocument_SHA256() throws Exception {
         workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "FORM_FILLING");
         workerSession.reloadConfiguration(WORKER1);
-        signPDF(sampleSigned);
-        
+        signPDF(sampleSignedSHA256);
+
         workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "FORM_FILLING_AND_ANNOTATIONS");
         workerSession.reloadConfiguration(WORKER1);
-        signPDF(sampleSigned);
-        
+        signPDF(sampleSignedSHA256);
+
         workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "NO_CHANGES_ALLOWED");
         workerSession.reloadConfiguration(WORKER1);
-        signPDF(sampleSigned);
+        signPDF(sampleSignedSHA256);
     }
     
     /**
@@ -699,10 +766,29 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * 
      * @throws java.lang.Exception
      */
-    public void test12SignSignedDocument() throws Exception {
-        signPDF(sampleSigned);
+    public void test12SignSignedDocument_SHA1() throws Exception {
+        try {
+            // Note: We can not upgrade a document that is already signed so as
+            // sampleSigned was using SHA1 we need to continue using it
+            workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA1");
+            workerSession.reloadConfiguration(WORKER1);
+            
+            signPDF(sampleSigned);
+        } finally {
+            workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA256");
+            workerSession.reloadConfiguration(WORKER1);
+        }
     }
-    
+
+    /**
+     * Tests that it is possible to sign an already signed document.
+     * 
+     * @throws java.lang.Exception
+     */
+    public void test12SignSignedDocument_SHA256() throws Exception {
+        signPDF(sampleSignedSHA256);
+    }
+
     /**
      * Tests that it is not possible to certify an already certified document.
      * 
@@ -1617,6 +1703,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             config.setProperty("DEFAULTKEY", "Signer 1");
+            config.setProperty("DIGESTALGORITHM", "SHA256");
             
             config.setProperty(AUTHTYPE, "NOAUTH");
             

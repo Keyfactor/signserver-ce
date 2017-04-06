@@ -4,12 +4,12 @@
     <parent>
     <artifactId>SignServer-Modules</artifactId>
     <groupId>org.signserver</groupId>
-    <version>4.0.1+sgs3</version>
+    <version>4.0.1+sgs4</version>
   </parent>
 
     <groupId>org.signserver</groupId>
     <artifactId>SignServer-Doc-web</artifactId>
-    <version>4.0.1+sgs3</version>
+    <version>4.0.1+sgs4</version>
     <packaging>war</packaging>
 
     <name>SignServer-Doc-web</name>

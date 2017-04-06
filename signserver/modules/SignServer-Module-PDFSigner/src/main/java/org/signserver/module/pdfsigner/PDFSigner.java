@@ -707,18 +707,20 @@ public class PDFSigner extends BaseSigner {
                         LOG.debug("Setting default encryption algorithm");
                     }
                 }
-                if (newPermissions == null) {
-                    newPermissions = currentPermissions;
-                }
+
                 if (params.getSetOwnerPassword() != null) {
                     password = params.getSetOwnerPassword().getBytes("ISO-8859-1");
-                } else if (isUserPassword(reader, password)) {
-                    // We do not have an owner password so lets use a random one
+                } else if (isUserPassword(reader, password) && newPermissions != null) {
+                    // If we don't have an owner password we might have to get one.
+                    // We need to set an owner password if we have new permissions to set otherwise we should not as the original document did not have
                     password = new byte[16];
                     random.nextBytes(password);
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Setting random owner password");
                     }
+                }
+                if (newPermissions == null) {
+                    newPermissions = currentPermissions;
                 }
                 stp.setEncryption(userPassword, password, newPermissions.asInt(), cryptoMode);
                 currentPermissions = newPermissions;

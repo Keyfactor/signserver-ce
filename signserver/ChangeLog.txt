@@ -1,4 +1,4 @@
-SignServer 4.0.1+sgs3, 2017-04-06
+SignServer 4.0.1+sgs4, 2017-04-07
 ---------------------------------
 
 ** Patch Applied

@@ -55,38 +55,38 @@
                         <h:commandButton class="buttonNeutral" id="reload" value="Reload from database..." action="#{workersBean.bulkAction('workers-reload')}"/> <h:commandButton class="buttonNeutral" id="export" value="Export..." action="#{workersBean.bulkAction('workers-export')}"/>
                     </p>
                     
-                    <h:dataTable id="table1" value="#{workersBean.workers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1" rowClasses="dss1,dss1_odd">
-                        <!--<f:facet name="header">
-                            <h:outputText value="Your Shopping Cart" />
-                        </f:facet>-->
-                        <h:column>
-                            <f:facet name="header">
-                                <!-- TODO: Mark all link -->
-                            </f:facet>
-                            <h:selectBooleanCheckbox id="sel-#{item.id}" value="#{workersBean.selectedIds[item.id]}" />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="Name" />
-                            </f:facet>
-                            <h:panelGrid columns="2" class="notable" columnClasses="notable,notable">
-                                <h:outputLink value="worker.xhtml">
-                                    <f:param name="id" value="#{item.id}"/>
-                                    <h:graphicImage library="default" name="images/#{item.imageName}" title="#{item.imageAlt}"/>
-                                </h:outputLink>
-                                <h:panelGrid columns="1" class="notable" columnClasses="notable,notable">
-                                    <h:link outcome="worker" value="#{item.name} (#{item.id})">
+                    <h:panelGroup rendered="#{workersBean.workers.size() == 0}">
+                        <p>
+                            <h:outputText value="(No workers available)"/>
+                        </p>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{workersBean.workers.size() > 0}">
+                        <h:dataTable id="table1" value="#{workersBean.workers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1" rowClasses="dss1,dss1_odd">
+                            <h:column>
+                                <f:facet name="header">
+                                    <!-- TODO: Mark all link -->
+                                </f:facet>
+                                <h:selectBooleanCheckbox id="sel-#{item.id}" value="#{workersBean.selectedIds[item.id]}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Name" />
+                                </f:facet>
+                                <h:panelGrid columns="2" class="notable" columnClasses="notable,notable">
+                                    <h:outputLink value="worker.xhtml">
                                         <f:param name="id" value="#{item.id}"/>
-                                    </h:link>
-                                    <h:outputText value="#{item.status}"/>
-                                </h:panelGrid>
-                            </h:panelGrid>
-                            
-                            
-                        </h:column>
-                        <f:facet name="footer">
-                        </f:facet>
-                    </h:dataTable>
+                                        <h:graphicImage library="default" name="images/#{item.imageName}" title="#{item.imageAlt}"/>
+                                    </h:outputLink>
+                                    <h:panelGrid columns="1" class="notable" columnClasses="notable,notable">
+                                        <h:link outcome="worker" value="#{item.name} (#{item.id})">
+                                            <f:param name="id" value="#{item.id}"/>
+                                        </h:link>
+                                        <h:outputText value="#{item.status}"/>
+                                    </h:panelGrid>
+                                </h:panelGrid>                            
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGroup>
                 </h:form>
 
                 <h:link class="linkPositive" value="Add..." outcome="workers-add"/>

@@ -83,15 +83,13 @@
                                 <f:facet name="header">
                                     <h:outputText value="Key" />
                                 </f:facet>
+                                <h:commandButton class="buttonNeutral" id="otherAdd" value="&gt;" action="#{item.setShowOther(true)}" rendered="#{!item.showOther}" disabled="#{!item.existing}"/>
+                                <h:commandButton class="buttonNeutral" id="otherRemove" value="&lt;" action="#{item.setShowOther(false)}" rendered="#{item.showOther}" disabled="#{!item.existing}"/>
                                 <h:selectOneMenu id="alias" value="#{item.alias}" rendered="#{(!item.showOther and item.aliasMenuValues.size() > 1)}" disabled="#{!item.existing}">
                                     <f:selectItems value="#{item.aliasMenuValues}"/>
                                 </h:selectOneMenu>
                                 <b><h:outputText value="#{item.aliasMenuValuesFirst}" rendered="#{(!item.showOther and item.aliasMenuValues.size() == 1)}"/></b> 
                                 <h:inputText id="otherKeyValue" value="#{item.alias}" rendered="#{item.showOther}" disabled="#{!item.existing}"/>
-                            </h:column>
-                            <h:column>
-                                <h:commandButton class="buttonNeutral" id="otherAdd" value="&gt;" action="#{item.setShowOther(true)}" rendered="#{!item.showOther}" disabled="#{!item.existing}"/>
-                                <h:commandButton class="buttonNeutral" id="otherRemove" value="&lt;" action="#{item.setShowOther(false)}" rendered="#{item.showOther}" disabled="#{!item.existing}"/>
                             </h:column>
                             <h:column>
                                 <f:facet name="header">

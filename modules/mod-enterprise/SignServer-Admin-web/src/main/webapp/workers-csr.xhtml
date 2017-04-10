@@ -81,6 +81,8 @@
                                 <f:facet name="header">
                                     <h:outputText value="Key" />
                                 </f:facet>
+                                <h:commandButton class="buttonNeutral" id="otherAdd" value="&gt;" action="#{item.setShowOther(true)}" rendered="#{!item.showOther and !item.fixedAlias}" disabled="#{!item.existing}"/> 
+                                <h:commandButton class="buttonNeutral" id="otherRemove" value="&lt;" action="#{item.setShowOther(false)}" rendered="#{item.showOther and !item.fixedAlias}" disabled="#{!item.existing}"/> 
                                 <h:panelGroup rendered="#{item.fixedAlias}">
                                     <h:outputText value="#{item.alias}"/>
                                 </h:panelGroup>
@@ -89,7 +91,7 @@
                                         <f:selectItems value="#{item.aliasMenuValues}"/>
                                     </h:selectOneMenu>
                                     <b><h:outputText value="#{item.aliasMenuValuesFirst}" rendered="#{(!item.showOther and item.aliasMenuValues.size() == 1)}"/></b> 
-                                    <h:inputText id="otherKeyValue" value="#{item.alias}" validatorMessage="*" rendered="#{item.showOther}" disabled="#{!item.existing}">
+                                    <h:inputText id="otherKeyValue" value="#{item.alias}" validatorMessage="*" rendered="#{item.showOther}" disabled="#{!item.existing}" size="15">
                                         <f:validator validatorId="optionallyRequiredValidator"/>
                                         <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                                         <f:attribute name="andCheckboxSelected" value="#{components.itemSelect.clientId}"/>
@@ -98,14 +100,10 @@
                                 </h:panelGroup>
                             </h:column>
                             <h:column>
-                                <h:commandButton class="buttonNeutral" id="otherAdd" value="&gt;" action="#{item.setShowOther(true)}" rendered="#{!item.showOther and !item.fixedAlias}" disabled="#{!item.existing}"/>
-                                <h:commandButton class="buttonNeutral" id="otherRemove" value="&lt;" action="#{item.setShowOther(false)}" rendered="#{item.showOther and !item.fixedAlias}" disabled="#{!item.existing}"/>
-                            </h:column>
-                            <h:column>
                                 <f:facet name="header">
                                     <h:outputText value="Signature algorithm" />
                                 </f:facet>
-                                <h:inputText id ="sigAlg" value="#{item.signatureAlgorithm}" requiredMessage="*" disabled="#{!item.existing}">
+                                <h:inputText id ="sigAlg" value="#{item.signatureAlgorithm}" requiredMessage="*" disabled="#{!item.existing}" size="20">
                                     <f:validator validatorId="optionallyRequiredValidator"/>
                                     <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                                     <f:attribute name="andCheckboxSelected" value="#{components.itemSelect.clientId}"/>
@@ -116,7 +114,7 @@
                                 <f:facet name="header">
                                     <h:outputText value="DN" />
                                 </f:facet>
-                                <h:inputText id="dn" value="#{item.dn}" requiredMessage="*" disabled="#{!item.existing}">
+                                <h:inputText id="dn" value="#{item.dn}" requiredMessage="*" disabled="#{!item.existing}" size="30">
                                     <f:validator validatorId="optionallyRequiredValidator"/>
                                     <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                                     <f:attribute name="andCheckboxSelected" value="#{components.itemSelect.clientId}"/>

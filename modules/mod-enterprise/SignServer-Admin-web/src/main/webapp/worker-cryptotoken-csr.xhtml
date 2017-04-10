@@ -97,7 +97,7 @@
                                 <f:facet name="header">
                                     <h:outputText value="Signature algorithm" />
                                 </f:facet>
-                                <h:inputText id ="sigAlg" value="#{item.signatureAlgorithm}" requiredMessage="*" disabled="#{!item.existing}">
+                                <h:inputText id ="sigAlg" value="#{item.signatureAlgorithm}" requiredMessage="*" disabled="#{!item.existing}" size="20">
                                     <f:validator validatorId="optionallyRequiredValidator"/>
                                     <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                                     <f:attribute name="andCheckboxSelected" value="#{components.itemSelect.clientId}"/>
@@ -108,7 +108,7 @@
                                 <f:facet name="header">
                                     <h:outputText value="DN" />
                                 </f:facet>
-                                <h:inputText id="dn" value="#{item.dn}" requiredMessage="*" disabled="#{!item.existing}">
+                                <h:inputText id="dn" value="#{item.dn}" requiredMessage="*" disabled="#{!item.existing}" size="30">
                                     <f:validator validatorId="optionallyRequiredValidator"/>
                                     <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                                     <f:attribute name="andCheckboxSelected" value="#{components.itemSelect.clientId}"/>

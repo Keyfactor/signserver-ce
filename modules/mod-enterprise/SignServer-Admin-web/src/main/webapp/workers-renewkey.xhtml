@@ -86,7 +86,7 @@
                                 <f:facet name="header">
                                     <h:outputText value="Key algorithm" />
                                 </f:facet>
-                                <h:inputText id ="keyAlg" value="#{item.keyAlgorithm}" requiredMessage="*" disabled="#{!item.existing}">
+                                <h:inputText id ="keyAlg" value="#{item.keyAlgorithm}" requiredMessage="*" disabled="#{!item.existing}" size="20">
                                     <f:validator validatorId="optionallyRequiredValidator"/>
                                     <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                                     <f:attribute name="andCheckboxSelected" value="#{components.itemSelect.clientId}"/>
@@ -97,7 +97,7 @@
                                 <f:facet name="header">
                                     <h:outputText value="Key specification" />
                                 </f:facet>
-                                <h:inputText id="keySpec" value="#{item.keySpecification}" requiredMessage="*" disabled="#{!item.existing}">
+                                <h:inputText id="keySpec" value="#{item.keySpecification}" requiredMessage="*" disabled="#{!item.existing}" size="10">
                                     <f:validator validatorId="optionallyRequiredValidator"/>
                                     <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                                     <f:attribute name="andCheckboxSelected" value="#{components.itemSelect.clientId}"/>
@@ -108,7 +108,7 @@
                                 <f:facet name="header">
                                     <h:outputText value="New key alias" />
                                 </f:facet>
-                                <h:inputText id="newAlias" value="#{item.newKeyAlias}" requiredMessage="*" disabled="#{!item.existing}">
+                                <h:inputText id="newAlias" value="#{item.newKeyAlias}" requiredMessage="*" disabled="#{!item.existing}" size="15">
                                     <f:validator validatorId="optionallyRequiredValidator"/>
                                     <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                                     <f:attribute name="andCheckboxSelected" value="#{components.itemSelect.clientId}"/>

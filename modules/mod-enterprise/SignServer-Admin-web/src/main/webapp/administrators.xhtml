@@ -92,18 +92,17 @@
                             <h:link class="linkPositive" value="Add..." outcome="administrators-add"/>
                         </p>
 
-                        <h:panelGrid columns="2" class="notable" headerClass="notable" columnClasses="notable, notable">
-                            <f:facet name="header">
-                                <h:outputText value="Allow any administrator with a valid certificate (will override administrators added in the list above)"/>
-                            </f:facet>
-
+                        <h2>Allow Any Administrator</h2>
+                        <p>
+                            Note: this will override administrators added in the list above and allow any administrator with a valid certificate
+                        </p>
+                        <h:panelGrid columns="2">
                             <h:outputText value="Current setting:"/>
-                            <h:outputText value="Allow any" rendered="#{administratorsBean.allowAny}"/>
-                            <h:outputText value="Only listed" rendered="#{!administratorsBean.allowAny}"/>
-
-                            <h:commandButton class="buttonNeutral" value="Switch to 'Allow any'" rendered="#{!administratorsBean.allowAny}" action="administrators-allowany"/>
-                            <h:commandButton class="buttonNeutral" value="Switch to 'Only listed'" rendered="#{administratorsBean.allowAny}" action="administrators-allowonlylisted"/>
+                            <h:panelGroup rendered="#{administratorsBean.allowAny}"><b><h:outputText value="Allow any"/></b></h:panelGroup>
+                            <h:panelGroup rendered="#{!administratorsBean.allowAny}"><b><h:outputText value="Only listed"/></b></h:panelGroup>
                         </h:panelGrid>
+                        <h:commandButton class="buttonNeutral" value="Switch to 'Allow any'" rendered="#{!administratorsBean.allowAny}" action="administrators-allowany"/>
+                        <h:commandButton class="buttonNeutral" value="Switch to 'Only listed'" rendered="#{administratorsBean.allowAny}" action="administrators-allowonlylisted"/>
                     </h:form>
                 </h:panelGroup>
 

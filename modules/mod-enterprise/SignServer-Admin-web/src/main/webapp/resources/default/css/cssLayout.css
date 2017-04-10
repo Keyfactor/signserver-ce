@@ -85,7 +85,7 @@
 }
 
 li a.active {
-    background-image: url(../selected-menu.png.xhtml?ln=images);
+    background-image: url(../images/selected-menu.png.xhtml?ln=default);
     background-position: center bottom;
     background-repeat: no-repeat;
     background-size: 10px;

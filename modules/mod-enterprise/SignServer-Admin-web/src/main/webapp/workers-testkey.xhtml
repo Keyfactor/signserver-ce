@@ -89,10 +89,10 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <!-- Error -->
+                                    <h:outputText value="Result (key alias, status, public key hash)" />
                                 </f:facet>
                                 <span class="errorMessage"><h:outputText value="#{item.error}"/></span> 
-                                <span class="successMessage"><h:outputText value="#{item.success}"/></span>
+                                <span class="successMessage"><pre><h:outputText value="#{item.success}"/></pre></span>
                             </h:column>
                             <f:facet name="footer">
                             </f:facet>

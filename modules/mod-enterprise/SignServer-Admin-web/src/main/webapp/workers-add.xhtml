@@ -130,19 +130,22 @@
                             <h:message for="table1" class="errorMessage"/>
 
                             <h:panelGroup id="doAdd" rendered="#{addWorkerBean.propertyEditing or addWorkerBean.propertyAdding}">
-                                <h:outputLabel for="propertyName" value="Name*:"/>
-                                <h:inputText id="propertyName" value="#{addWorkerBean.propertyName}" requiredMessage="*">
-                                    <f:validator validatorId="optionallyRequiredValidator"/>
-                                    <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonAdd.clientId},#{components.buttonEdit.clientId}"/>
-                                </h:inputText>
-                                <h:message for="propertyName" class="errorMessage"/>
+                                <h:panelGrid columns="3">
+                                    <h:outputLabel for="propertyName" value="Name*:"/>
+                                    <h:inputText id="propertyName" value="#{addWorkerBean.propertyName}" requiredMessage="*">
+                                        <f:validator validatorId="optionallyRequiredValidator"/>
+                                        <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonAdd.clientId},#{components.buttonEdit.clientId}"/>
+                                    </h:inputText>
+                                    <h:message for="propertyName" class="errorMessage"/>
 
-                                <h:outputLabel for="propertyValue" value="Value:"/>
-                                <h:inputTextarea id="propertyValue" value="#{addWorkerBean.propertyValue}"/>
+                                    <h:outputLabel for="propertyValue" value="Value:"/>
+                                    <h:inputTextarea id="propertyValue" value="#{addWorkerBean.propertyValue}"/>
+                                    <h:panelGroup/>
 
-                                <h:commandButton class="buttonNeutral" value="Add" action="#{addWorkerBean.addPropertyAction()}" rendered="#{addWorkerBean.propertyAdding}" binding="#{components.buttonAdd}"/>
-                                <h:commandButton class="buttonNeutral" value="Apply" action="#{addWorkerBean.editPropertyAction()}" rendered="#{addWorkerBean.propertyEditing}" binding="#{components.buttonEdit}"/>
-                                <h:commandButton class="buttonNeutral" value="Cancel" action="#{addWorkerBean.cancelPropertyAction()}"/>
+                                    <h:commandButton class="buttonNeutral" value="Add" action="#{addWorkerBean.addPropertyAction()}" rendered="#{addWorkerBean.propertyAdding}" binding="#{components.buttonAdd}"/>
+                                    <h:commandButton class="buttonNeutral" value="Apply" action="#{addWorkerBean.editPropertyAction()}" rendered="#{addWorkerBean.propertyEditing}" binding="#{components.buttonEdit}"/>
+                                    <h:commandButton class="buttonNeutral" value="Cancel" action="#{addWorkerBean.cancelPropertyAction()}"/>
+                                </h:panelGrid>
                             </h:panelGroup>
 
                         </h:panelGrid>

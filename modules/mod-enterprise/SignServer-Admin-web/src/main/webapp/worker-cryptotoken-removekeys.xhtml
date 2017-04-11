@@ -28,6 +28,7 @@
         <f:viewParam name="id" value="#{workerBean.id}"/>
         <f:viewParam name="id" value="#{removeKeysBean.id}"/>
         <f:viewParam name="keys" value="#{removeKeysBean.keys}"/>
+        <f:viewParam name="id" value="#{removeKeysBean.workerIds}"/> <!-- Only 1 workerId supported -->
     </f:metadata>
     
     <body>
@@ -87,10 +88,10 @@
                             <p>
                                 Are you sure you want to destroy the key(s)?
                             </p>
-                            <h:commandButton class="buttonNegative" value="Destroy key(s)" action="#{removeKeysBean.destroyAction()}"/> <h:link value="Cancel" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                            <h:commandButton class="buttonNegative" value="Destroy key(s)" action="#{removeKeysBean.destroyAction()}"/> <h:link value="Cancel" outcome="${removeKeysBean.getBackToCryptoTokenLink(removeKeysBean.keysList)}"/>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{removeKeysBean.done}">
-                            <h:commandButton class="buttonFeatured" value="Done" action="#{removeKeysBean.cancelAction()}"/> <h:link value="Cancel" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                            <h:commandButton class="buttonFeatured" value="Done" action="#{removeKeysBean.cancelAction()}"/> <h:link value="Cancel" outcome="${removeKeysBean.getBackToCryptoTokenLink(removeKeysBean.keysList)}"/>
                         </h:panelGroup>
                     </h:form>
                 </div>

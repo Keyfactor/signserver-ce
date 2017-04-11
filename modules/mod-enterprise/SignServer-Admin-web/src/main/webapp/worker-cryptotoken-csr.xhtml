@@ -146,7 +146,7 @@
 
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton class="buttonFeatured" value="Generate" action="#{cSRBulkBean.generateAction()}" binding="#{components.buttonSubmit}"/> <h:link value="Cancel" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                                <h:commandButton class="buttonFeatured" value="Generate" action="#{cSRBulkBean.generateAction()}" binding="#{components.buttonSubmit}"/> <h:link value="Cancel" outcome="#{cSRBulkBean.getBackToCryptoTokenLink(cSRBulkBean.keysList)}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                             </f:facet>
                         </h:panelGrid>
                     </h:panelGroup>

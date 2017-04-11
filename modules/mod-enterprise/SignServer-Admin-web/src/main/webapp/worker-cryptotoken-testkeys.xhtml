@@ -28,6 +28,7 @@
         <f:viewParam name="id" value="#{workerBean.id}"/>
         <f:viewParam name="workers" value="#{testKeyBulkBean.workerIds}"/>
         <f:viewParam name="keys" value="#{testKeyBulkBean.keys}"/>
+        <f:viewParam name="previous" value="#{testKeyBulkBean.previous}"/>
     </f:metadata>
     
     <body>
@@ -74,7 +75,7 @@
 
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton class="buttonFeatured" value="Test" action="#{testKeyBulkBean.testKeyAction()}"/> <h:link value="Cancel" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                                <h:commandButton class="buttonFeatured" value="Test" action="#{testKeyBulkBean.testKeyAction()}"/> <h:link value="Cancel" outcome="${testKeyBulkBean.getBackToCryptoTokenLink(testKeyBulkBean.keysList)}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                             </f:facet>
                         </h:panelGrid>
                     </h:form>

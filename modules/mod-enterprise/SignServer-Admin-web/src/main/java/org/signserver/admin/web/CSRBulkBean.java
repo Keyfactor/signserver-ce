@@ -131,7 +131,7 @@ public class CSRBulkBean extends BulkBean {
         this.keys = keys;
     }
 
-    protected List<String> getKeysList() {
+    public List<String> getKeysList() {
         if (keysList == null) {
             keysList = new ArrayList<>();
             if (keys != null) {

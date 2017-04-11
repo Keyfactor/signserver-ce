@@ -27,6 +27,7 @@
     <f:metadata>
         <f:viewParam name="id" value="#{workerBean.id}"/>
         <f:viewParam name="id" value="#{cryptoTokenBean.id}"/>
+        <f:event type="preRenderView" listener="#{cryptoTokenBean.init()}"/>
     </f:metadata>
     
     <body>

@@ -28,7 +28,6 @@ import java.util.Objects;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.log4j.Logger;
@@ -45,7 +44,7 @@ import org.signserver.admin.web.ejb.AdminWebSessionBean;
  */
 @ManagedBean
 @ViewScoped
-public class ImportCertificatesBean {
+public class ImportCertificatesBean extends BulkBean {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ImportCertificatesBean.class);
@@ -56,9 +55,6 @@ public class ImportCertificatesBean {
     @EJB
     private AdminWebSessionBean workerSessionBean;
 
-    @ManagedProperty(value = "#{authenticationBean}")
-    private AuthenticationBean authBean;
-
     private List<Item> items;
 
     private List<String> keysList;
@@ -68,14 +64,6 @@ public class ImportCertificatesBean {
      * Creates a new instance of WorkerBean
      */
     public ImportCertificatesBean() {
-    }
-
-    public AuthenticationBean getAuthBean() {
-        return authBean;
-    }
-
-    public void setAuthBean(AuthenticationBean authBean) {
-        this.authBean = authBean;
     }
 
     public void setId(Integer id) {
@@ -106,7 +94,7 @@ public class ImportCertificatesBean {
         this.keys = keys;
     }
 
-    protected List<String> getKeysList() {
+    public List<String> getKeysList() {
         if (keysList == null) {
             keysList = new ArrayList<>();
             if (keys != null) {

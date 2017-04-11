@@ -16,14 +16,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.signserver.admin.common.query.QueryCondition;
@@ -63,11 +65,21 @@ public class CryptoTokenBean {
     private final PaginationSupport pagination = new PaginationSupport();
     private List<Entry> entries;
     private String queryError;
+    
+    private String[] keysSelected = new String[0];
 
     /**
      * Creates a new instance of WorkerBean
      */
     public CryptoTokenBean() {
+    }
+
+    public void init() {
+        // Get selected keys: There can be multiple "selected" params.
+        String[] selected = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterValuesMap().get("selected");
+        if (selected != null) {
+            keysSelected = selected;
+        }
     }
 
     public AuthenticationBean getAuthBean() {
@@ -131,10 +143,11 @@ public class CryptoTokenBean {
         return entries;
     }
 
-    private static List<Entry> convert(List<TokenEntry> tes) {
+    private List<Entry> convert(List<TokenEntry> tes) {
         final ArrayList<Entry> results = new ArrayList<>(tes.size());
+        final Set<String> selectedKeys = new HashSet<>(Arrays.asList(keysSelected));
         for (TokenEntry te : tes) {
-            results.add(Entry.fromTokenEntry(te));
+            results.add(Entry.fromTokenEntry(te, selectedKeys.contains(te.getAlias())));
         }
         return results;
     }
@@ -217,6 +230,7 @@ public class CryptoTokenBean {
             sb.append("worker-cryptotoken-testkeys");
             sb.append("?faces-redirect=true&amp;id=").append(String.valueOf(id)).append("&amp;workers=").append(StringUtils.repeat(String.valueOf(id), ",", keys.size()));
             sb.append("&amp;keys=").append(StringUtils.join(keys, ","));
+            sb.append("&amp;previous=cryptotoken");
         }
         return sb.toString();
     }
@@ -247,14 +261,15 @@ public class CryptoTokenBean {
         private final int chainLength;
         private boolean selected;
 
-        public Entry(String alias, String type, int chainLength) {
+        public Entry(String alias, String type, int chainLength, boolean selected) {
             this.alias = alias;
             this.type = type;
             this.chainLength = chainLength;
+            this.selected = selected;
         }
 
-        public static Entry fromTokenEntry(TokenEntry te) {
-            return new Entry(te.getAlias(), getTypeTitle(te.getType()), te.getChain().length);
+        public static Entry fromTokenEntry(TokenEntry te, boolean selected) {
+            return new Entry(te.getAlias(), getTypeTitle(te.getType()), te.getChain().length, selected);
         }
 
         private static String getTypeTitle(String type) {

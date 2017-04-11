@@ -20,7 +20,6 @@ import java.util.ListIterator;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.log4j.Logger;
@@ -37,7 +36,7 @@ import org.signserver.admin.web.ejb.AdminWebSessionBean;
  */
 @ManagedBean
 @ViewScoped
-public class RemoveKeysBean {
+public class RemoveKeysBean extends BulkBean {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(RemoveKeysBean.class);
@@ -47,9 +46,6 @@ public class RemoveKeysBean {
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
-
-    @ManagedProperty(value = "#{authenticationBean}")
-    private AuthenticationBean authBean;
 
     private List<Item> items;
 
@@ -62,14 +58,6 @@ public class RemoveKeysBean {
      * Creates a new instance of WorkerBean
      */
     public RemoveKeysBean() {
-    }
-
-    public AuthenticationBean getAuthBean() {
-        return authBean;
-    }
-
-    public void setAuthBean(AuthenticationBean authBean) {
-        this.authBean = authBean;
     }
 
     public void setId(Integer id) {
@@ -100,7 +88,7 @@ public class RemoveKeysBean {
         this.keys = keys;
     }
 
-    protected List<String> getKeysList() {
+    public List<String> getKeysList() {
         if (keysList == null) {
             keysList = new ArrayList<>();
             if (keys != null) {
@@ -118,7 +106,7 @@ public class RemoveKeysBean {
             Item worker = it.next();
             if (worker.getSuccessMessage() == null) {
                 try {
-                    if (workerSessionBean.removeKey(authBean.getAdminCertificate(), id, worker.getAlias())) {
+                    if (workerSessionBean.removeKey(getAuthBean().getAdminCertificate(), id, worker.getAlias())) {
                         worker.setSuccessMessage("Removed");
                     } else {
                         worker.setSuccessMessage(null);

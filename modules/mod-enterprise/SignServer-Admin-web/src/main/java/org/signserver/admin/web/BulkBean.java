@@ -215,4 +215,15 @@ public class BulkBean {
             return "workers?selected=" + StringUtils.join(getWorkerIdsList(), ",");
         }
     }
+    
+    public String getBackToCryptoTokenLink(List<String> keys) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("worker-cryptotoken?id=").append(getWorkerIdsList().get(0));
+        if (keys != null && !keys.isEmpty()) {
+            for (String key : keys) {
+                sb.append("&amp;selected=").append(key); // TODO: URLEncode
+            }
+        }
+        return sb.toString();
+    }
 }

@@ -1,18 +1,9 @@
+# CLI related configuration
 #
 # $Id$
 #
-# File containting the configuration properties of the sign command line interface
-# 
-#
 
-## Configuration for the signer with id = 1
-# Hostname of master node in the cluster.
-hostname.masternode=localhost
-# Hostname of all hosts in cluster, separated by ';'
-hostname.allnodes=localhost
-
-
-# SignServer Database CLI
+## SignServer Database CLI
 
 # The database type
 # Available types are:

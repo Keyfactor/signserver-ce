@@ -12,6 +12,9 @@
  *************************************************************************/
 package org.signserver.module.cmssigner;
 
+import com.novell.ldap.util.Base64;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,8 +33,11 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
+import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.*;
@@ -90,6 +96,8 @@ public class CMSSigner extends BaseSigner {
     private static final ASN1ObjectIdentifier DEFAULT_CONTENT_OID =
             CMSObjectIdentifiers.data;
     
+    public static final String DER_RE_ENCODE_PROPERTY = "DER_RE_ENCODE";
+    
     private LinkedList<String> configErrors;
     private String signatureAlgorithm;
 
@@ -97,6 +105,7 @@ public class CMSSigner extends BaseSigner {
     private boolean allowDetachedSignatureOverride;
     private boolean clientSideHashing;
     private boolean allowClientSideHashingOverride;
+    private boolean derReEncode;
     
     private Set<AlgorithmIdentifier> acceptedHashDigestAlgorithms;
 
@@ -189,8 +198,18 @@ public class CMSSigner extends BaseSigner {
         } else {
             configErrors.add("Incorrect value for property " + ALLOW_CONTENTOID_OVERRIDE + ". Expecting TRUE or FALSE.");
         }
+
+        // DER re-encode
+        final String derReEncodeValue = config.getProperty(DER_RE_ENCODE_PROPERTY);
+        if (derReEncodeValue == null || Boolean.FALSE.toString().equalsIgnoreCase(derReEncodeValue)) {
+            derReEncode = false;
+        } else if (Boolean.TRUE.toString().equalsIgnoreCase(derReEncodeValue)) {
+            derReEncode = true;
+        } else {
+            configErrors.add("Incorrect value for property " + DER_RE_ENCODE_PROPERTY + ". Expecting TRUE or FALSE.");
+        }
     }
-    
+
     private void initAcceptedHashDigestAlgorithms() {
         final String acceptedHashDigestAlgorithmsValue =
                 config.getProperty(ACCEPTED_HASHDIGEST_ALGORITHMS);
@@ -316,13 +335,34 @@ public class CMSSigner extends BaseSigner {
         }
 
         // Generate the signature
-        try (
-                final OutputStream responseOutputStream = requestData.isFile() && !detached ? responseData.getAsFileOutputStream() : responseData.getAsInMemoryOutputStream();
-                final OutputStream out = generator.open(contentOID, responseOutputStream, !detached);
-                final InputStream requestIn = requestData.getAsInputStream();
-            ) {
-            IOUtils.copyLarge(requestIn, out);
+        if (!derReEncode) {
+            try (
+                    final OutputStream responseOutputStream = requestData.isFile() && !detached ? responseData.getAsFileOutputStream() : responseData.getAsInMemoryOutputStream();
+                    final OutputStream out = generator.open(contentOID, responseOutputStream, !detached);
+                    final InputStream requestIn = requestData.getAsInputStream();
+                ) {
+                IOUtils.copyLarge(requestIn, out);
+            }
+        } else {
+            // Sign and then parse and re-encode as DER
+            // Note, this will not support large files as the above case and will not be as performant.
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Signing and then re-encoding as DER");
+            }
+            final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            try (
+                    final OutputStream out = generator.open(contentOID, bout, !detached);
+                    final InputStream requestIn = requestData.getAsInputStream();
+                ) {
+                IOUtils.copyLarge(requestIn, out);
+            }
+            try (final OutputStream responseOutputStream = requestData.isFile() && !detached ? responseData.getAsFileOutputStream() : responseData.getAsInMemoryOutputStream();) {
+                final CMSSignedData signedData = new CMSSignedData(bout.toByteArray());
+                final DEROutputStream derOut = new DEROutputStream(responseOutputStream);
+                derOut.writeObject(signedData.toASN1Structure());
+            }
         }
+
     }
     
     private void signHash(final ICryptoInstance crypto,

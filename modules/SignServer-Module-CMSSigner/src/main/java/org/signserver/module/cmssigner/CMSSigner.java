@@ -30,6 +30,8 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.*;
@@ -83,6 +85,11 @@ public class CMSSigner extends BaseSigner {
     public static final String CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY = "CLIENTSIDE_HASHDIGESTALGORITHM";
     public static final String USING_CLIENTSUPPLIED_HASH_PROPERTY = "USING_CLIENTSUPPLIED_HASH";
     
+    public static final String CONTENT_OID_PROPERTY = "CONTENTOID";
+    public static final String ALLOW_CONTENTOID_OVERRIDE = "ALLOW_CONTENTOID_OVERRIDE";
+    private static final ASN1ObjectIdentifier DEFAULT_CONTENT_OID =
+            CMSObjectIdentifiers.data;
+    
     private LinkedList<String> configErrors;
     private String signatureAlgorithm;
 
@@ -93,6 +100,9 @@ public class CMSSigner extends BaseSigner {
     
     private Set<AlgorithmIdentifier> acceptedHashDigestAlgorithms;
 
+    private ASN1ObjectIdentifier contentOID;
+    private boolean allowContentOIDOverride;
+    
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
@@ -156,6 +166,28 @@ public class CMSSigner extends BaseSigner {
             configErrors.add("Must specify " + ACCEPTED_HASHDIGEST_ALGORITHMS +
                              " when " + CLIENTSIDEHASHING + " or " +
                              ALLOW_CLIENTSIDEHASHING_OVERRIDE + " is true");
+        }
+        
+        final String contentOIDString = config.getProperty(CONTENT_OID_PROPERTY);
+        if (contentOIDString != null && !contentOIDString.isEmpty()) {
+            try {
+                contentOID = new ASN1ObjectIdentifier(contentOIDString);
+            } catch (IllegalArgumentException e) {
+                configErrors.add("Illegal content OID specified: " + contentOIDString);
+            }
+        } else {
+            contentOID = DEFAULT_CONTENT_OID;
+        }
+        
+        final String allowContentOIDOverrideValue = config.getProperty(ALLOW_CONTENTOID_OVERRIDE);
+        if (allowContentOIDOverrideValue == null ||
+            allowContentOIDOverrideValue.isEmpty() ||
+            Boolean.FALSE.toString().equalsIgnoreCase(allowContentOIDOverrideValue)) {
+            allowContentOIDOverride = false;
+        } else if (Boolean.TRUE.toString().equalsIgnoreCase(allowContentOIDOverrideValue)) {
+            allowContentOIDOverride = true;
+        } else {
+            configErrors.add("Incorrect value for property " + ALLOW_CONTENTOID_OVERRIDE + ". Expecting TRUE or FALSE.");
         }
     }
     
@@ -248,7 +280,8 @@ public class CMSSigner extends BaseSigner {
                           final Collection<Certificate> certs,
                           final RequestContext requestContext,
                           final ReadableData requestData,
-                          final WritableData responseData)
+                          final WritableData responseData,
+                          final ASN1ObjectIdentifier contentOID)
             throws OperatorCreationException, CertificateEncodingException, CMSException, IllegalRequestException, IOException {
         final CMSSignedDataStreamGenerator generator
                     = new CMSSignedDataStreamGenerator();
@@ -285,7 +318,7 @@ public class CMSSigner extends BaseSigner {
         // Generate the signature
         try (
                 final OutputStream responseOutputStream = requestData.isFile() && !detached ? responseData.getAsFileOutputStream() : responseData.getAsInMemoryOutputStream();
-                final OutputStream out = generator.open(responseOutputStream, !detached);
+                final OutputStream out = generator.open(contentOID, responseOutputStream, !detached);
                 final InputStream requestIn = requestData.getAsInputStream();
             ) {
             IOUtils.copyLarge(requestIn, out);
@@ -297,7 +330,8 @@ public class CMSSigner extends BaseSigner {
                           final Collection<Certificate> certs,
                           final RequestContext requestContext,
                           final ReadableData requestData,
-                          final WritableData responseData)
+                          final WritableData responseData,
+                          final ASN1ObjectIdentifier contentOID)
             throws OperatorCreationException, CertificateEncodingException, CMSException, IOException, IllegalRequestException {
         final CMSSignedDataGenerator generator
                     = new CMSSignedDataGenerator();
@@ -338,12 +372,12 @@ public class CMSSigner extends BaseSigner {
         
         final JcaSignerInfoGeneratorBuilder siBuilder = new JcaSignerInfoGeneratorBuilder(calcProv);
         final SignerInfoGenerator sig = siBuilder.build(contentSigner, cert);
-        
+
         generator.addSignerInfoGenerator(sig);
         generator.addCertificates(new JcaCertStore(certs));
         
         // Generate the signature
-        CMSSignedData signedData = generator.generate(new CMSProcessableByteArray("dummy".getBytes()), false);
+        CMSSignedData signedData = generator.generate(new CMSProcessableByteArray(contentOID, "dummy".getBytes()), false);
         
         responseData.getAsInMemoryOutputStream().write(signedData.getEncoded());
     }
@@ -387,11 +421,25 @@ public class CMSSigner extends BaseSigner {
             if (certs == null) {
                 throw new IllegalArgumentException("Null certificate chain. This signer needs a certificate.");
             }
+            
+            ASN1ObjectIdentifier contentOIDToUse;
+            final ASN1ObjectIdentifier requestedContentOID =
+                    getRequestedContentOID(requestContext);
+            if (requestedContentOID == null) {
+                contentOIDToUse = contentOID;
+            } else {
+                if (!requestedContentOID.equals(contentOID) && !allowContentOIDOverride) {
+                    throw new IllegalRequestException("Overriding content OID requested but not allowed");
+                }
+                contentOIDToUse = requestedContentOID;
+            }
 
             if (useClientSideHashing) {
-                signHash(crypto, cert, certs, requestContext, requestData, responseData);
+                signHash(crypto, cert, certs, requestContext, requestData,
+                         responseData, contentOIDToUse);
             } else {
-                signData(crypto, cert, certs, requestContext, requestData, responseData);
+                signData(crypto, cert, certs, requestContext, requestData,
+                         responseData, contentOIDToUse);
             }
 
             final String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
@@ -470,6 +518,15 @@ public class CMSSigner extends BaseSigner {
         final String value = RequestMetadata.getInstance(context).get(USING_CLIENTSUPPLIED_HASH_PROPERTY);
         if (value != null && !value.isEmpty()) {
             result = Boolean.parseBoolean(value);
+        }
+        return result;
+    }
+    
+    private static ASN1ObjectIdentifier getRequestedContentOID(final RequestContext context) {
+        ASN1ObjectIdentifier result = null;
+        final String value = RequestMetadata.getInstance(context).get(CONTENT_OID_PROPERTY);
+        if (value != null && !value.isEmpty()) {
+            result = new ASN1ObjectIdentifier(value);
         }
         return result;
     }

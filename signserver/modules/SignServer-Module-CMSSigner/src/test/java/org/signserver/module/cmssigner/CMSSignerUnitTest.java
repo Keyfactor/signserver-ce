@@ -13,15 +13,22 @@
 package org.signserver.module.cmssigner;
 
 import java.security.KeyPair;
+import java.security.MessageDigest;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Date;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.AlgorithmNameFinder;
+import org.bouncycastle.operator.DefaultAlgorithmNameFinder;
 import org.bouncycastle.util.encoders.Hex;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
@@ -88,6 +95,23 @@ public class CMSSignerUnitTest {
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("DETACHEDSIGNATURE"));
     }
+    
+    /**
+     * Test that providing an incorrect value for CLIENTSIDEHASHING gives
+     * a fatal error.
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_incorrectClientSideHashingValue() throws Exception {
+        LOG.info("testInit_incorrectClientSideHashingValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CLIENTSIDEHASHING", "_incorrect-value--");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("CLIENTSIDEHASHING"));
+    }
 
     /**
      * Test that providing an incorrect value for ALLOW_DETACHEDSIGNATURE_OVERRIDE
@@ -105,7 +129,79 @@ public class CMSSignerUnitTest {
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("ALLOW_DETACHEDSIGNATURE_OVERRIDE"));
     }
+    
+    /**
+     * Test that providing an incorrect value for ALLOW_CLIENTSIDESHASHING_OVERRIDE
+     * gives a fatal error.
+     * @throws Exception
+     */
+    @Test
+    public void testInit_incorrectAllowClientSideHashingOverrideValue() throws Exception {
+        LOG.info("testInit_incorrectAllowClientSideHashingOverrideValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("ALLOW_CLIENTSIDEHASHING_OVERRIDE", "_incorrect-value--");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
 
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("ALLOW_CLIENTSIDEHASHING_OVERRIDE"));
+    }
+
+    /**
+     * Test that specifying CLIENTSIDEHASHING without setting
+     * ACCEPTED_HASH_DIGEST_ALGORITHMS is not allowed.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_incorrectClientSideHashingNoAcceptedDigestAlgorithms() throws Exception {
+        LOG.info("testInit_incorrectClientSideHashingNoAcceptedDigestAlgorithms");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CLIENTSIDEHASHING", "true");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("Must specify ACCEPTED_HASH_DIGEST_ALGORITHMS"));
+    }
+    
+    /**
+     * Test that specifying ALLOW_CLIENTSIDEHASHING_OVERRIDE without setting
+     * ACCEPTED_HASH_DIGEST_ALGORITHMS is not allowed.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_incorrectAllowClientSideHashingOverrodeNoAcceptedDigestAlgorithms() throws Exception {
+        LOG.info("testInit_incorrectClientSideHashingOverrideNoAcceptedDigestAlgorithms");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("ALLOW_CLIENTSIDEHASHING_OVERRIDE", "true");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("Must specify ACCEPTED_HASH_DIGEST_ALGORITHMS"));
+    }
+    
+    /**
+     * Test that specifying CLIENTSIDEHASHING and ALLOW_CLIENTSIDEHASHING_OVERRIDE
+     * without setting ACCEPTED_HASH_DIGEST_ALGORITHMS is not allowed.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_incorrectClientSideHashingAllowClientSideHashingOverrideNoAcceptedDigestAlgorithms() throws Exception {
+        LOG.info("testInit_incorrectClientSideHashingAllowClientSideHashingOverrideNoAcceptedDigestAlgorithms");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CLIENTSIDEHASHING", "true");
+        config.setProperty("ALLOW_CLIENTSIDEHASHING_OVERRIDE", "true");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("Must specify ACCEPTED_HASH_DIGEST_ALGORITHMS"));
+    }
+    
     /**
      * Tests that no signing is performed when the worker is misconfigured.
      * @throws java.lang.Exception
@@ -168,6 +264,27 @@ public class CMSSignerUnitTest {
     }
     
     /**
+     * Tests that client-side hashing is not used if not specified in config and
+     * that overriding it is not allowed by default.
+     * @throws java.lang.Exception
+     */
+    @Test(expected = IllegalRequestException.class)
+    public void testAllowClientSideHashingOverrideDefaultValue() throws Exception {
+        LOG.info("testAllowClientSideHashingOverrideDefaultValue");
+        WorkerConfig config = new WorkerConfig();
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("USING_CLIENTSUPPLIED_HASH", "true");
+        sign(data, tokenRSA, config, requestContext);
+        fail("Should have thrown exception as client-side hashing can not be overridden");
+    }
+    
+    /**
      * Tests that detached signature is used if specified in config and that
      * overriding it can not be done if not allowed.
      * @throws java.lang.Exception
@@ -189,6 +306,30 @@ public class CMSSignerUnitTest {
         sign(data, tokenRSA, config, requestContext);
         fail("Should have thrown exception as detached signature option can not be overridden");
     }
+    
+    /**
+     * Tests that client-side hashing is used if specified in config and that
+     * overriding it can not be done if not allowed.
+     * @throws java.lang.Exception
+     */
+    @Test(expected = IllegalRequestException.class)
+    public void testAllowClientSideHashingOverrideFalseClientSideHashing() throws Exception {
+        LOG.info("testAllowDetachedSignatureOverrideFalseDetached");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CLIENTSIDEHASHING", "TRUE");
+        config.setProperty("ALLOW_CLIENTSIDEHASHING_OVERRIDE", "FALSE");
+        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("USING_CLIENTSUPPLIED_HASH", "false");
+        sign(data, tokenRSA, config, requestContext);
+        fail("Should have thrown exception as detached signature option can not be overridden");
+    }
 
     /**
      * Tests that requesting no detached is okey if no detached is configured 
@@ -201,6 +342,33 @@ public class CMSSignerUnitTest {
         WorkerConfig config = new WorkerConfig();
         config.setProperty("DETACHEDSIGNATURE", "FALSE");
         config.setProperty("ALLOW_DETACHEDSIGNATURE_OVERRIDE", "FALSE");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("DETACHEDSIGNATURE", "false");
+        SimplifiedResponse response = sign(data, tokenRSA, config, requestContext);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        byte[] actualData = (byte[]) signedContent.getContent();
+        assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
+    }
+    
+    /**
+     * Tests that requesting no client-side hashing is okey if no client-side hashing is configured 
+     * even if allow override is false.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClientSideHashingFalseRequestFalse() throws Exception {
+        LOG.info("testDetachedSignatureFalseRequestFalse");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CLIENTSIDEHASHING", "FALSE");
+        config.setProperty("ALLOW_CLIENTSIDEHASHING_OVERRIDE", "FALSE");
         CMSSigner instance = new MockedCMSSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
 
@@ -267,6 +435,214 @@ public class CMSSignerUnitTest {
         CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
         assertNull("detached", signedContent);
     }
+    
+    /**
+     * Tests that requesting client-side hashing is okey if allow override is set to true.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClientSideHashingFalseRequestTrue() throws Exception {
+        LOG.info("testDetachedSignatureFalseRequestTrue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CLIENTSIDEHASHING", "FALSE");
+        config.setProperty("ALLOW_CLIENTSIDEHASHING_OVERRIDE", "TRUE");
+        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256");
+
+        RequestContext requestContext = new RequestContext();
+
+        final MessageDigest digest = MessageDigest.getInstance("SHA256");
+        final byte[] data = digest.digest("foo".getBytes("ASCII"));
+        
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
+        metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-256");
+        
+        SimplifiedResponse response = sign(data, tokenRSA, config, requestContext);
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        assertNull("detached", signedContent);
+        
+        final SignerInformation signer =
+                (SignerInformation) signedData.getSignerInfos().iterator().next();
+        final AlgorithmNameFinder algFinder = new DefaultAlgorithmNameFinder();
+        
+        final Attribute messageDigest =
+                signer.getSignedAttributes().get(CMSAttributes.messageDigest);
+        assertEquals("digest algorithm", "SHA256",
+                algFinder.getAlgorithmName(signer.getDigestAlgorithmID()));
+        assertNotNull("message digest present", messageDigest);
+        
+        final ASN1OctetString messageDigestObject =
+                ASN1OctetString.getInstance(messageDigest.getAttrValues().getObjectAt(0).toASN1Primitive());
+        final byte[] encoded = messageDigestObject.getOctets();
+        
+        assertTrue("digest matches", Arrays.equals(data, encoded));
+    }
+    
+    /**
+     * Tests that when CLIENTSIDEHASHING is set to true, the hash is actually
+     * taken from the request as expected.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClientSideHashingTrue() throws Exception {
+        LOG.info("testDetachedSignatureFalseRequestTrue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CLIENTSIDEHASHING", "TRUE");
+        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256");
+
+        RequestContext requestContext = new RequestContext();
+
+        final MessageDigest digest = MessageDigest.getInstance("SHA256");
+        final byte[] data = digest.digest("foo".getBytes("ASCII"));
+        
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
+        metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-256");
+        
+        SimplifiedResponse response = sign(data, tokenRSA, config, requestContext);
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        assertNull("detached", signedContent);
+        
+        final SignerInformation signer =
+                (SignerInformation) signedData.getSignerInfos().iterator().next();
+        final AlgorithmNameFinder algFinder = new DefaultAlgorithmNameFinder();
+        
+        final Attribute messageDigest =
+                signer.getSignedAttributes().get(CMSAttributes.messageDigest);
+        assertEquals("digest algorithm", "SHA256",
+                algFinder.getAlgorithmName(signer.getDigestAlgorithmID()));
+        assertNotNull("message digest present", messageDigest);
+        
+        final ASN1OctetString messageDigestObject =
+                ASN1OctetString.getInstance(messageDigest.getAttrValues().getObjectAt(0).toASN1Primitive());
+        final byte[] encoded = messageDigestObject.getOctets();
+        
+        assertTrue("digest matches", Arrays.equals(data, encoded));
+    }
+    
+    /**
+     * Tests that when CLIENTSIDEHASHING is set to true, the hash is actually
+     * taken from the request as expected, using SHA512.
+     * Also test multiple accepted algorithms.
+     * 
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClientSideHashingTrueSHA512() throws Exception {
+        LOG.info("testDetachedSignatureFalseRequestTrue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CLIENTSIDEHASHING", "TRUE");
+        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256,SHA-512");
+
+        RequestContext requestContext = new RequestContext();
+
+        final MessageDigest digest = MessageDigest.getInstance("SHA512");
+        final byte[] data = digest.digest("foo".getBytes("ASCII"));
+        
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
+        metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-512");
+        
+        SimplifiedResponse response = sign(data, tokenRSA, config, requestContext);
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        assertNull("detached", signedContent);
+        
+        final SignerInformation signer =
+                (SignerInformation) signedData.getSignerInfos().iterator().next();
+        final AlgorithmNameFinder algFinder = new DefaultAlgorithmNameFinder();
+        
+        final Attribute messageDigest =
+                signer.getSignedAttributes().get(CMSAttributes.messageDigest);
+        assertEquals("digest algorithm", "SHA512",
+                algFinder.getAlgorithmName(signer.getDigestAlgorithmID()));
+        assertNotNull("message digest present", messageDigest);
+        
+        final ASN1OctetString messageDigestObject =
+                ASN1OctetString.getInstance(messageDigest.getAttrValues().getObjectAt(0).toASN1Primitive());
+        final byte[] encoded = messageDigestObject.getOctets();
+        
+        assertTrue("digest matches", Arrays.equals(data, encoded));
+    }
+    
+    /**
+     * Tests that when CLIENTSIDEHASHING is set to true, requesting a non-accepted
+     * hash digest algorithm is not allowed.
+     * 
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClientSideHashingTrueUnacceptedDigestAlgorithm() throws Exception {
+        LOG.info("testClientSideHashingTrueUnacceptedDigestAlgorithm");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CLIENTSIDEHASHING", "TRUE");
+        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256,SHA-512");
+
+        RequestContext requestContext = new RequestContext();
+
+        final MessageDigest digest = MessageDigest.getInstance("SHA1");
+        final byte[] data = digest.digest("foo".getBytes("ASCII"));
+        
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
+        metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-1");
+
+        try {
+            sign(data, tokenRSA, config, requestContext);
+            fail("Should throw IllegalRequestException");
+        } catch (IllegalRequestException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName());
+        }
+    }
+    
+    /**
+     * Tests that requesting client-side hashing is rejected when client doesn't specify hash algo.
+     * @throws java.lang.Exception
+     */
+    @Test(expected = IllegalRequestException.class)
+    public void testClientSideHashingNoDigestAlgoFails() throws Exception {
+        LOG.info("testDetachedSignatureFalseRequestTrue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CLIENTSIDEHASHING", "FALSE");
+        config.setProperty("ALLOW_CLIENTSIDEHASHING_OVERRIDE", "TRUE");
+        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256");
+
+        RequestContext requestContext = new RequestContext();
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
+        
+        SimplifiedResponse response = sign(data, tokenRSA, config, requestContext);
+    }
+    
+    /**
+     * Tests that client-side hashing is rejected when set as default, but client doesn't specify hash algo.
+     * @throws java.lang.Exception
+     */
+    @Test(expected = IllegalRequestException.class)
+    public void testClientSideHashingTrueNoDigestAlgoFails() throws Exception {
+        LOG.info("testClientSideHashingTrueNoDigestAlgoFails");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CLIENTSIDEHASHING", "TRUE");
+        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256");
+
+        RequestContext requestContext = new RequestContext();
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        
+        sign(data, tokenRSA, config, requestContext);
+    }
 
     /**
      * Tests that requesting no detached is okey if allow override is true.
@@ -285,6 +661,34 @@ public class CMSSignerUnitTest {
         RequestContext requestContext = new RequestContext();
         RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
         metadata.put("DETACHEDSIGNATURE", "false");
+        
+        SimplifiedResponse response = sign(data, tokenRSA, config, requestContext);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        byte[] actualData = (byte[]) signedContent.getContent();
+        assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
+    }
+    
+    /**
+     * Tests that requesting no client-side hashing is okey if allow override is true.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClientSideHashingTrueRequestFalse() throws Exception {
+        LOG.info("testClientSideHashingTrueRequestFalse");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CLIENTSIDEHASHING", "TRUE");
+        config.setProperty("ALLOW_CLIENTSIDEHASHING_OVERRIDE", "TRUE");
+        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("USING_CLIENTSUPPLIED_HASH", "false");
         
         SimplifiedResponse response = sign(data, tokenRSA, config, requestContext);
 
@@ -318,6 +722,26 @@ public class CMSSignerUnitTest {
         CMSSignedData signedData = new CMSSignedData(cms);
         CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
         assertNull("detached", signedContent);
+    }
+    
+    /**
+     * Tests that requesting client-side hashing with empty string is the same as not requesting.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClientSideHashingTrueRequestEmpty() throws Exception {
+        LOG.info("testClientSideHashingTrueRequestEmpty");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CLIENTSIDE_HASHING", "TRUE");
+        config.setProperty("ALLOW_CLIENTSIDEHASHING_OVERRIDE", "FALSE");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("USING_CLIENSUPPLIED_HASH", "");
+        sign(data, tokenRSA, config, requestContext);
     }
     
     private SimplifiedResponse sign(final byte[] data, MockedCryptoToken token, WorkerConfig config) throws Exception {

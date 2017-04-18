@@ -19,6 +19,7 @@ import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Date;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.CMSAttributes;
@@ -263,6 +264,94 @@ public class CMSSignerUnitTest {
         fail("Should have thrown exception as detached signature option can not be overridden");
     }
     
+    /**
+     * Test that providing an incorrect value for DER_RE_ENCODE
+     * gives a fatal error.
+     * @throws Exception
+     */
+    @Test
+    public void testInit_incorrectDERReEncodeValue() throws Exception {
+        LOG.info("testInit_incorrectDERReEncodeValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DER_RE_ENCODE", "_incorrect-value--");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("DER_RE_ENCODE"));
+    }
+
+    /**
+     * Tests that not providing a DER_RE_ENCODE property defaults to not DER.
+     * @throws Exception 
+     */
+    @Test
+    public void testDERReEncodeDefaultValue() throws Exception {
+        LOG.info("testDERReEncodeDefaultValue");
+        WorkerConfig config = new WorkerConfig();
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = sign(data, tokenRSA, config);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        assertNotNull(signedData);
+        
+        // Not in DER format by default
+        final byte[] der = new ASN1InputStream(cms).readObject().getEncoded("DER");
+        assertNotEquals("do not expect DER format", Hex.toHexString(der), Hex.toHexString(cms));
+    }
+
+    /**
+     * Tests that setting DER_RE_ENCODE=false does not give DER encoding.
+     * @throws Exception 
+     */
+    @Test
+    public void testDERReEncodeFalse() throws Exception {
+        LOG.info("testDERReEncodeFalse");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DER_RE_ENCODE", "False");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = sign(data, tokenRSA, config);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        assertNotNull(signedData);
+        
+        // Not in DER format by default
+        final byte[] der = new ASN1InputStream(cms).readObject().getEncoded("DER");
+        assertNotEquals("do not expect DER format", Hex.toHexString(der), Hex.toHexString(cms));
+    }
+
+    /**
+     * Tests that setting DER_RE_ENCODE=true gives DER encoding.
+     * @throws Exception 
+     */
+    @Test
+    public void testDERReEncodeTrue() throws Exception {
+        LOG.info("testDERReEncodeTrue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DER_RE_ENCODE", "TruE");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = sign(data, tokenRSA, config);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        assertNotNull(signedData);
+        
+        // Not in DER format by default
+        final byte[] der = new ASN1InputStream(cms).readObject().getEncoded("DER");
+        assertEquals("expect DER format", Hex.toHexString(der), Hex.toHexString(cms));
+    }
+
     /**
      * Tests that client-side hashing is not used if not specified in config and
      * that overriding it is not allowed by default.

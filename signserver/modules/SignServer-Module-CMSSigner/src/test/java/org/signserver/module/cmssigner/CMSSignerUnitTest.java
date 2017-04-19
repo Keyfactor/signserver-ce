@@ -107,6 +107,39 @@ public class CMSSignerUnitTest {
     }
 
     /**
+     * Test that setting an incorrect OID for content OID is not allowed.
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_incorrectContentOID() throws Exception {
+        LOG.info("testInit_incorrectContentOID");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CONTENTOID", "incorrect_oid");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("Illegal content OID specified: incorrect_oid"));
+    }
+    
+    /**
+     * Test that setting an incorrect value for ALLOW_CONTENTOID_OVERRIDE is not
+     * allowed (so that it is not implicitly treated as false).
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_incorrectAllowContentOIDOverride() throws Exception {
+        LOG.info("testInit_incorrectAllowContentOIDOverride");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("ALLOW_CONTENTOID_OVERRIDE", "incorrect");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("Incorrect value for property ALLOW_CONTENTOID_OVERRIDE"));
+    }
+    
+    /**
      * Tests that no signing is performed when the worker is misconfigured.
      * @throws java.lang.Exception
      */
@@ -318,6 +351,258 @@ public class CMSSignerUnitTest {
         CMSSignedData signedData = new CMSSignedData(cms);
         CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
         assertNull("detached", signedContent);
+    }
+    
+    /**
+     * Test that by default, the PKCS#7 signed data OID is used.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testContentOIDDefaultValue() throws Exception {
+        LOG.info("testContentOIDDefaultValue");
+        WorkerConfig config = new WorkerConfig();
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = sign(data, tokenRSA, config);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        assertEquals("content OID", "1.2.840.113549.1.7.1",
+                     signedData.getSignedContentTypeOID());
+    }
+    
+    /**
+     * Test overriding content OID using worker property.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testContentOIDInConfiguration() throws Exception {
+        LOG.info("testContentOIDDefaultValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CONTENTOID", "1.2.3.4");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = sign(data, tokenRSA, config);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        assertEquals("content OID", "1.2.3.4",
+                     signedData.getSignedContentTypeOID());
+    }
+    
+    /**
+     * Test overriding content OID in request.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testContentOIDOverride() throws Exception {
+        LOG.info("testContentOIDDefaultValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("ALLOW_CONTENTOID_OVERRIDE", "true");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("CONTENTOID", "1.2.3.4");
+        SimplifiedResponse response = sign(data, tokenRSA, config, requestContext);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        assertEquals("content OID", "1.2.3.4",
+                     signedData.getSignedContentTypeOID());
+    }
+    
+    /**
+     * Test overriding content OID in request has higher priority than specified
+     * in configuration.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testContentOIDOverrideAndInConfiguration() throws Exception {
+        LOG.info("testContentOIDDefaultValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CONTENTOID", "1.2.3.4");
+        config.setProperty("ALLOW_CONTENTOID_OVERRIDE", "TRUE");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("CONTENTOID", "1.2.3.5");
+        SimplifiedResponse response = sign(data, tokenRSA, config, requestContext);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        assertEquals("content OID", "1.2.3.5",
+                     signedData.getSignedContentTypeOID());
+    }
+    
+    /**
+     * Test overriding content OID is not allowed by default.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDefaulDontAllowOverridingContentOID() throws Exception {
+        LOG.info("testContentOIDDefaultValue");
+        WorkerConfig config = new WorkerConfig();
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("CONTENTOID", "1.2.3.5");
+        
+        try {
+            sign(data, tokenRSA, config, requestContext);
+            fail("Should throw IllegalRequestException");
+        } catch (IllegalRequestException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName());
+        }
+    }
+    
+    /**
+     * Test overriding content OID is not allowed by default with a content OID
+     * specified in the configuration.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDontAllowOverridingContentOIDWithContentOIDInConfig() throws Exception {
+        LOG.info("testContentOIDDefaultValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CONTENTOID", "1.2.3.4");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("CONTENTOID", "1.2.3.5");
+        
+        try {
+            sign(data, tokenRSA, config, requestContext);
+            fail("Should throw IllegalRequestException");
+        } catch (IllegalRequestException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName());
+        }
+    }
+    
+    /**
+     * Test overriding content OID in request with the default OID value is
+     * accepted even when not accepting override.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testOverrideWithDefaultContentOID() throws Exception {
+        LOG.info("testContentOIDDefaultValue");
+        WorkerConfig config = new WorkerConfig();
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("CONTENTOID", "1.2.840.113549.1.7.1");
+        SimplifiedResponse response = sign(data, tokenRSA, config, requestContext);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        assertEquals("content OID", "1.2.840.113549.1.7.1",
+                     signedData.getSignedContentTypeOID());
+    }
+    
+    /**
+     * Test overriding content OID in request with the specified value from the
+     * configuration is accepted even when not accepting override.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testOverrideWithSpecifiedContentOIDFromConfiguration() throws Exception {
+        LOG.info("testContentOIDDefaultValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CONTENTOID", "1.2.3.4");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("CONTENTOID", "1.2.3.4");
+        SimplifiedResponse response = sign(data, tokenRSA, config, requestContext);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        assertEquals("content OID", "1.2.3.4",
+                     signedData.getSignedContentTypeOID());
+    }
+    
+    /**
+     * Test overriding content OID is not allowed when explicitly configuring.
+     * not allowing override.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDontAllowOverridingContentOIDExplicit() throws Exception {
+        LOG.info("testContentOIDDefaultValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("ALLOW_CONTENTOID_OVERRIDE", "false");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("CONTENTOID", "1.2.3.5");
+        
+        try {
+            sign(data, tokenRSA, config, requestContext);
+            fail("Should throw IllegalRequestException");
+        } catch (IllegalRequestException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName());
+        }
+    }
+    
+    /**
+     * Test overriding content OID is not allowed with a content OID
+     * specified in the configuration also when explicitly configuring not
+     * allowing override.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDontAllowOverridingContentOIDWithContentOIDInConfigExplicit() throws Exception {
+        LOG.info("testContentOIDDefaultValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CONTENTOID", "1.2.3.4");
+        config.setProperty("ALLOW_CONTENTOID_OVERRIDE", "FALSE");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("CONTENTOID", "1.2.3.5");
+        
+        try {
+            sign(data, tokenRSA, config, requestContext);
+            fail("Should throw IllegalRequestException");
+        } catch (IllegalRequestException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName());
+        }
     }
     
     private SimplifiedResponse sign(final byte[] data, MockedCryptoToken token, WorkerConfig config) throws Exception {

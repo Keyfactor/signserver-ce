@@ -12,8 +12,6 @@
  *************************************************************************/
 package org.signserver.module.cmssigner;
 
-import com.novell.ldap.util.Base64;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,11 +31,9 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
-import org.bouncycastle.asn1.cms.SignedData;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.*;

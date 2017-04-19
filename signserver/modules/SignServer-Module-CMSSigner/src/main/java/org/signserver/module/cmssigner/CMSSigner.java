@@ -205,11 +205,23 @@ public class CMSSigner extends BaseSigner {
                 }
                 detached = detachedRequested;
             }
+            
+            ASN1ObjectIdentifier contentOIDToUse;
+            final ASN1ObjectIdentifier requestedContentOID =
+                    getRequestedContentOID(requestContext);
+            if (requestedContentOID == null) {
+                contentOIDToUse = contentOID;
+            } else {
+                if (!requestedContentOID.equals(contentOID) && !allowContentOIDOverride) {
+                    throw new IllegalRequestException("Overriding content OID requested but not allowed");
+                }
+                contentOIDToUse = requestedContentOID;
+            }
 
             // Generate the signature
             try (
                     final OutputStream responseOutputStream = requestData.isFile() && !detached ? responseData.getAsFileOutputStream() : responseData.getAsInMemoryOutputStream();
-                    final OutputStream out = generator.open(responseOutputStream, !detached);
+                    final OutputStream out = generator.open(contentOIDToUse, responseOutputStream, !detached);
                     final InputStream requestIn = requestData.getAsInputStream();
                 ) {
                 IOUtils.copyLarge(requestIn, out);

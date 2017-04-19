@@ -463,15 +463,19 @@ public class CMSSigner extends BaseSigner {
             }
             
             ASN1ObjectIdentifier contentOIDToUse;
-            final ASN1ObjectIdentifier requestedContentOID =
-                    getRequestedContentOID(requestContext);
-            if (requestedContentOID == null) {
-                contentOIDToUse = contentOID;
-            } else {
-                if (!requestedContentOID.equals(contentOID) && !allowContentOIDOverride) {
-                    throw new IllegalRequestException("Overriding content OID requested but not allowed");
+            try {
+                final ASN1ObjectIdentifier requestedContentOID =
+                        getRequestedContentOID(requestContext);
+                if (requestedContentOID == null) {
+                    contentOIDToUse = contentOID;
+                } else {
+                    if (!requestedContentOID.equals(contentOID) && !allowContentOIDOverride) {
+                        throw new IllegalRequestException("Overriding content OID requested but not allowed");
+                    }
+                    contentOIDToUse = requestedContentOID;
                 }
-                contentOIDToUse = requestedContentOID;
+            } catch (IllegalArgumentException e) {
+                throw new IllegalRequestException("Illegal OID specified in request");
             }
 
             if (useClientSideHashing) {

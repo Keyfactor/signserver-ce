@@ -1,3 +1,16 @@
+SignServer 4.0.2
+----------------
+
+New features:
+    - Support for configurable content OID in CMS signatures
+    - Support for DER encoding of CMS signatures
+
+Bug fixes:
+    - Master list signer was only working with certificate installed in token
+    - Issues with PDF permissions when PDF version gets upgraded
+    - Regression: TimeMonitor manual was not available in the SignServer manual
+
+
 SignServer 4.0.1
 ----------------
 

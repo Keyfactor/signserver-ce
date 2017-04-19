@@ -1,3 +1,17 @@
+SignServer 4.0.2, 2017-04-19
+----------------------------
+
+** Bug
+    * [DSS-1344] - Regression: TimeMonitor manual not available in the SignServer manual
+    * [DSS-1346] - Master list signer only checks certificate installed in token
+    * [DSS-1376] - PDF permissions lost when PDF version is upgraded
+    * [DSS-1379] - Regression: PDF restrictions set for upgraded PDFs even if original had no restrictions
+
+** New Feature
+    * [DSS-1370] - Configurable content OID in CMS signatures
+    * [DSS-1387] - Support for DER encoding of SignedData
+
+
 SignServer 4.0.1, 2017-01-16
 ----------------------------
 

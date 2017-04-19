@@ -1126,6 +1126,9 @@ Currently the signer certificate is always included.
                             <b>ALLOW_DETACHEDSIGNATURE_OVERRIDE</b> = property specifying if the requestor can request an other value for DETACHEDIGSNATURE than what is configured. Default is false.<br/>
                             If set to true a request could include a metadata property with an other value for DETACHEDSIGNATURE.
                         </p>
+                        <p>
+                            <b>DER_RE_ENCODE</b> = Property specifying if the resulting data structure should be parsed and re-encoded using DER encoding. Note that this option is performed in memory and thus does not support large files. Default is false.
+                        </p>
 
                 </subsection>
                 

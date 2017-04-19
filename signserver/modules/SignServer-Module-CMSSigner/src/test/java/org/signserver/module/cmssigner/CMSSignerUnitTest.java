@@ -694,6 +694,34 @@ public class CMSSignerUnitTest {
         }
     }
     
+    /**
+     * Test overriding content OID with invalid OID should not be allowed.
+     * not allowing override.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDontAllowOverridingWithInvalidOID() throws Exception {
+        LOG.info("testContentOIDDefaultValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("ALLOW_CONTENTOID_OVERRIDE", "true");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("CONTENTOID", "incorrect_oid");
+        
+        try {
+            sign(data, tokenRSA, config, requestContext);
+            fail("Should throw IllegalRequestException");
+        } catch (IllegalRequestException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getClass().getName());
+        }
+    }
+    
     private SimplifiedResponse sign(final byte[] data, MockedCryptoToken token, WorkerConfig config) throws Exception {
         return sign(data, token, config, null);
     }

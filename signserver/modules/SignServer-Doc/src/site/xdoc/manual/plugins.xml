@@ -1129,7 +1129,12 @@ Currently the signer certificate is always included.
                         <p>
                             <b>DER_RE_ENCODE</b> = Property specifying if the resulting data structure should be parsed and re-encoded using DER encoding. Note that this option is performed in memory and thus does not support large files. Default is false.
                         </p>
-
+                        <p>
+                            <b>CONTENTOID</b> = Property specifying the content OID to use in the signedData object by default. If not specified, the default CMS data OID (1.2.840.113549.1.7.1) is used.
+                        </p>
+                        <p>
+                            <b>ALLOW_CONTENTOID_OVERRIDE</b> = Property specifying if the content OID to use in the signedData object should be allowed to be overridden by request metadata (CONTENTOID request parameter). Default is false.
+                        </p> 
                 </subsection>
                 
                 <subsection name="MS Authenticode Signer">

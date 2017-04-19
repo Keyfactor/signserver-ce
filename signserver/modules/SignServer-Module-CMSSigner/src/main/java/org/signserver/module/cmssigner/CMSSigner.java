@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.cmssigner;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,6 +30,7 @@ import javax.persistence.EntityManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.*;
@@ -77,11 +79,14 @@ public class CMSSigner extends BaseSigner {
     private static final ASN1ObjectIdentifier DEFAULT_CONTENT_OID =
             CMSObjectIdentifiers.data;
     
+    public static final String DER_RE_ENCODE_PROPERTY = "DER_RE_ENCODE";
+    
     private LinkedList<String> configErrors;
     private String signatureAlgorithm;
 
     private boolean detachedSignature;
     private boolean allowDetachedSignatureOverride;
+    private boolean derReEncode;
 
     private ASN1ObjectIdentifier contentOID;
     private boolean allowContentOIDOverride;
@@ -137,6 +142,16 @@ public class CMSSigner extends BaseSigner {
             allowContentOIDOverride = true;
         } else {
             configErrors.add("Incorrect value for property " + ALLOW_CONTENTOID_OVERRIDE + ". Expecting TRUE or FALSE.");
+        }
+
+        // DER re-encode
+        final String derReEncodeValue = config.getProperty(DER_RE_ENCODE_PROPERTY);
+        if (derReEncodeValue == null || Boolean.FALSE.toString().equalsIgnoreCase(derReEncodeValue)) {
+            derReEncode = false;
+        } else if (Boolean.TRUE.toString().equalsIgnoreCase(derReEncodeValue)) {
+            derReEncode = true;
+        } else {
+            configErrors.add("Incorrect value for property " + DER_RE_ENCODE_PROPERTY + ". Expecting TRUE or FALSE.");
         }
     }
 
@@ -219,12 +234,32 @@ public class CMSSigner extends BaseSigner {
             }
 
             // Generate the signature
-            try (
-                    final OutputStream responseOutputStream = requestData.isFile() && !detached ? responseData.getAsFileOutputStream() : responseData.getAsInMemoryOutputStream();
-                    final OutputStream out = generator.open(contentOIDToUse, responseOutputStream, !detached);
-                    final InputStream requestIn = requestData.getAsInputStream();
-                ) {
-                IOUtils.copyLarge(requestIn, out);
+            if (!derReEncode) {
+                try (
+                        final OutputStream responseOutputStream = requestData.isFile() && !detached ? responseData.getAsFileOutputStream() : responseData.getAsInMemoryOutputStream();
+                        final OutputStream out = generator.open(contentOIDToUse, responseOutputStream, !detached);
+                        final InputStream requestIn = requestData.getAsInputStream();
+                    ) {
+                    IOUtils.copyLarge(requestIn, out);
+                }
+            } else {
+                // Sign and then parse and re-encode as DER
+                // Note, this will not support large files as the above case and will not be as performant.
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Signing and then re-encoding as DER");
+                }
+                final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                try (
+                        final OutputStream out = generator.open(contentOIDToUse, bout, !detached);
+                        final InputStream requestIn = requestData.getAsInputStream();
+                    ) {
+                    IOUtils.copyLarge(requestIn, out);
+                }
+                try (final OutputStream responseOutputStream = requestData.isFile() && !detached ? responseData.getAsFileOutputStream() : responseData.getAsInMemoryOutputStream();) {
+                    final CMSSignedData signedData = new CMSSignedData(bout.toByteArray());
+                    final DEROutputStream derOut = new DEROutputStream(responseOutputStream);
+                    derOut.writeObject(signedData.toASN1Structure());
+                }
             }
 
             final String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));

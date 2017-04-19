@@ -70,12 +70,20 @@ public class CMSSigner extends BaseSigner {
     public static final String DETACHEDSIGNATURE_PROPERTY = "DETACHEDSIGNATURE";
     public static final String ALLOW_SIGNATURETYPE_OVERRIDE_PROPERTY = "ALLOW_DETACHEDSIGNATURE_OVERRIDE";
 
+    public static final String CONTENT_OID_PROPERTY = "CONTENTOID";
+    public static final String ALLOW_CONTENTOID_OVERRIDE = "ALLOW_CONTENTOID_OVERRIDE";
+    private static final ASN1ObjectIdentifier DEFAULT_CONTENT_OID =
+            CMSObjectIdentifiers.data;
+    
     private LinkedList<String> configErrors;
     private String signatureAlgorithm;
 
     private boolean detachedSignature;
     private boolean allowDetachedSignatureOverride;
 
+    private ASN1ObjectIdentifier contentOID;
+    private boolean allowContentOIDOverride;
+    
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
@@ -105,6 +113,28 @@ public class CMSSigner extends BaseSigner {
             allowDetachedSignatureOverride = true;
         } else {
             configErrors.add("Incorrect value for property " + ALLOW_SIGNATURETYPE_OVERRIDE_PROPERTY + ". Expecting TRUE or FALSE.");
+        }
+        
+        final String contentOIDString = config.getProperty(CONTENT_OID_PROPERTY);
+        if (contentOIDString != null && !contentOIDString.isEmpty()) {
+            try {
+                contentOID = new ASN1ObjectIdentifier(contentOIDString);
+            } catch (IllegalArgumentException e) {
+                configErrors.add("Illegal content OID specified: " + contentOIDString);
+            }
+        } else {
+            contentOID = DEFAULT_CONTENT_OID;
+        }
+        
+        final String allowContentOIDOverrideValue = config.getProperty(ALLOW_CONTENTOID_OVERRIDE);
+        if (allowContentOIDOverrideValue == null ||
+            allowContentOIDOverrideValue.isEmpty() ||
+            Boolean.FALSE.toString().equalsIgnoreCase(allowContentOIDOverrideValue)) {
+            allowContentOIDOverride = false;
+        } else if (Boolean.TRUE.toString().equalsIgnoreCase(allowContentOIDOverrideValue)) {
+            allowContentOIDOverride = true;
+        } else {
+            configErrors.add("Incorrect value for property " + ALLOW_CONTENTOID_OVERRIDE + ". Expecting TRUE or FALSE.");
         }
     }
 
@@ -243,6 +273,15 @@ public class CMSSigner extends BaseSigner {
         final String value = RequestMetadata.getInstance(context).get(DETACHEDSIGNATURE_PROPERTY);
         if (value != null && !value.isEmpty()) {
             result = Boolean.parseBoolean(value);
+        }
+        return result;
+    }
+    
+    private static ASN1ObjectIdentifier getRequestedContentOID(final RequestContext context) {
+        ASN1ObjectIdentifier result = null;
+        final String value = RequestMetadata.getInstance(context).get(CONTENT_OID_PROPERTY);
+        if (value != null && !value.isEmpty()) {
+            result = new ASN1ObjectIdentifier(value);
         }
         return result;
     }

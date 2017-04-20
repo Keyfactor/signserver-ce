@@ -33,19 +33,19 @@
     <div id="worker-menu">
         <ul>
             <li>
-                <h:link outcome="worker" class="#{workerActiveMenu == 'worker' ? 'active' : ''}"><f:param name="id" value="#{workerBean.id}"/>Status Summary</h:link>
+                <h:link outcome="worker" class="#{workerActiveMenu == 'worker' ? 'active' : ''}"><f:param name="id" value="#{workerBean.id}"/>#{text['Status_Summary']}</h:link>
             </li>
             <li>
-                <h:link outcome="worker-status-properties" class="#{workerActiveMenu == 'worker-status-properties' ? 'active' : ''}"><f:param name="id" value="#{workerBean.id}"/>Status Properties</h:link>
+                <h:link outcome="worker-status-properties" class="#{workerActiveMenu == 'worker-status-properties' ? 'active' : ''}"><f:param name="id" value="#{workerBean.id}"/>#{text['Status_Properties']}</h:link>
             </li>
             <li>
-                <h:link outcome="worker-configuration" class="#{workerActiveMenu == 'worker-configuration' ? 'active' : ''}"><f:param name="id" value="#{workerBean.id}"/>Configuration</h:link>
+                <h:link outcome="worker-configuration" class="#{workerActiveMenu == 'worker-configuration' ? 'active' : ''}"><f:param name="id" value="#{workerBean.id}"/>#{text['Configuration']}</h:link>
                 </li>
             <li>
-                <h:link outcome="worker-authorization" class="#{workerActiveMenu == 'worker-authorization' ? 'active' : ''}"><f:param name="id" value="#{workerBean.id}"/>Authorization</h:link>
+                <h:link outcome="worker-authorization" class="#{workerActiveMenu == 'worker-authorization' ? 'active' : ''}"><f:param name="id" value="#{workerBean.id}"/>#{text['Authorization']}</h:link>
             </li>
             <li>
-                <h:link outcome="worker-cryptotoken" class="#{workerActiveMenu == 'worker-cryptotoken' ? 'active' : ''}" rendered="#{workerBean.hasCrypto}"><f:param name="id" value="#{workerBean.id}"/>CryptoToken</h:link>
+                <h:link outcome="worker-cryptotoken" class="#{workerActiveMenu == 'worker-cryptotoken' ? 'active' : ''}" rendered="#{workerBean.hasCrypto}"><f:param name="id" value="#{workerBean.id}"/>#{text['Crypto_Token']}</h:link>
             </li>
         </ul>
     </div>  

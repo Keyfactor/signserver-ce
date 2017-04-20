@@ -29,7 +29,7 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Worker Not Found
+                #{text['Worker_Not_Found']}
             </ui:define>
 
             <ui:define name="top">
@@ -37,10 +37,10 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1>Not Found: <h:outputText value="#{param.id}"/></h1>
+                <h1>#{text['Not_Found']} <h:outputText value="#{param.id}"/></h1>
                 
                 <p>
-                    The specified worker can not be found.
+                    #{text['The_specified_worker_can_not_be_found.']}
                 </p>
                 
                 <p>&nbsp;</p>

@@ -37,7 +37,10 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Worker <h:outputText value="#{workerBean.worker.name}"/> - CryptoToken - Generate Key
+                <h:outputFormat value="#{text['Worker_X']}">
+                    <f:param value="#{workerBean.worker.name}"/>
+                </h:outputFormat>
+                <h:outputText value=" - #{text['Crypto_Token_-_Test Key']}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -50,7 +53,7 @@
                     <ui:param name="workerActiveMenu" value="worker-cryptotoken"/>
                 </ui:include>
 
-                <h2>Test Keys</h2>
+                <h2><h:outputText value="#{text['Test_Keys']}"/></h2>
 
                 <div id="worker_content">
 
@@ -60,13 +63,13 @@
                         <h:dataTable id="table1" value="#{testKeyBulkBean.testKeyWorkers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Alias" />
+                                    <h:outputText value="#{text['Alias']}" />
                                 </f:facet>
                                 <h:outputText id ="alias" value="#{item.alias}"/>
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Result" />
+                                    <h:outputText value="#{text['Result']}" />
                                 </f:facet>
                                 <span class="errorMessage"><h:outputText value="#{item.error}"/></span> 
                                 <span class="successMessage"><h:outputText value="#{item.success}"/></span>
@@ -75,7 +78,7 @@
 
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton class="buttonFeatured" value="Test" action="#{testKeyBulkBean.testKeyAction()}"/> <h:link value="Cancel" outcome="${testKeyBulkBean.getBackToCryptoTokenLink(testKeyBulkBean.keysList)}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                                <h:commandButton class="buttonFeatured" value="#{text['Test']}" action="#{testKeyBulkBean.testKeyAction()}"/> <h:link value="#{text['Cancel']}" outcome="${testKeyBulkBean.getBackToCryptoTokenLink(testKeyBulkBean.keysList)}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                             </f:facet>
                         </h:panelGrid>
                     </h:form>

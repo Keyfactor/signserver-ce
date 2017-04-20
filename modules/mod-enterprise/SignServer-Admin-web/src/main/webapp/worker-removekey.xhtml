@@ -34,7 +34,7 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Worker <h:outputText value="#{workerBean.worker.name}"/> - Destroy key...
+                #{text['Worker']} <h:outputText value="#{workerBean.worker.name}"/> - #{text['Destroy_Key']}
             </ui:define>
 
             <ui:define name="top">
@@ -47,40 +47,40 @@
                     <ui:param name="workerActiveMenu" value="worker"/>
                 </ui:include>
                 
-                <h2>Destroy Key</h2>
+                <h2>#{text['Destroy_Key']}</h2>
                 
                 <div id="worker_content">
                     <h:form>
                         <h:panelGroup rendered="#{workerBean.destroyKeyStep == 0}">
                             <p>
-                                Enter key alias for the key to remove:
+                                #{text['Enter_key_alias_for_the_key_to_remove']}
                             </p>
 
-                            <h:inputText id="destroyKeyAlias" value="#{workerBean.destroyKeyAlias}" required="true" requiredMessage="Name of key to delete"/> <span class="errorMessage"><h:message for="destroyKeyAlias"/></span><br/>
-                            <h:commandButton class="buttonNegative" value="Destroy key" action="#{workerBean.destroyKeyStep1Action()}"/> <h:link value="Cancel" outcome="worker"><f:param name="id" value="#{workerBean.id}"/></h:link>
+                            <h:inputText id="destroyKeyAlias" value="#{workerBean.destroyKeyAlias}" required="true" requiredMessage="#{text['Name_of_key_to_delete']}"/> <span class="errorMessage"><h:message for="destroyKeyAlias"/></span><br/>
+                            <h:commandButton class="buttonNegative" value="#{text['Destroy_Key']}" action="#{workerBean.destroyKeyStep1Action()}"/> <h:link value="#{text['Cancel']}" outcome="worker"><f:param name="id" value="#{workerBean.id}"/></h:link>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{workerBean.destroyKeyStep == 1}">
-                            <h2>WARNING: Will attempt to permanently remove the following key:</h2>
+                            <h2>#{text['WARNING_Will_attempt_to_permanently_remove_the_following_key']}</h2>
                             <p>
                                 <span class="alertArea"><h:outputText value="#{workerBean.destroyKeyAlias}"/></span>
                             </p>
                             <p>
-                                Note: the key might be used by multiple workers.
+                                #{text['Note_the_key_might_be_used_by_multiple_workers.']}
                             </p>
                             <p>
-                                Are you sure you want to destroy the key?
+                                #{text['Are_you_sure_you_want_to_destroy_the_key?']}
                             </p>
-                            <h:commandButton class="buttonNegative" value="Destroy key" action="#{workerBean.destroyKeyStep2Action()}"/> <h:link value="Cancel" outcome="worker"><f:param name="id" value="#{workerBean.id}"/></h:link>
+                            <h:commandButton class="buttonNegative" value="#{text['Destroy_Key']}" action="#{workerBean.destroyKeyStep2Action()}"/> <h:link value="${text['Cancel']}" outcome="worker"><f:param name="id" value="#{workerBean.id}"/></h:link>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{workerBean.destroyKeyStep == 2}">
                             <p>
-                                Removed key: <h:outputText value="#{workerBean.destroyKeyAlias}"/><br/>
-                                Success: <h:outputText value="#{workerBean.destroyKeySuccess}"/><br/>
+                                #{text['Removed_key']} <h:outputText value="#{workerBean.destroyKeyAlias}"/><br/>
+                                #{text['Success']} <h:outputText value="#{workerBean.destroyKeySuccess}"/><br/>
                                 <span class="errorMessage"><h:outputText value="#{workerBean.destroyKeyError}"/></span>
                             </p>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{(workerBean.destroyKeyStep == 2 and !workerBean.destroyKeySuccess)}">
-                            <h:commandButton class="buttonFeatured" value="Back" action="#{workerBean.destroyKeyCancelAction()}"/>
+                            <h:commandButton class="buttonFeatured" value="#{text['Back']}" action="#{workerBean.destroyKeyCancelAction()}"/>
                         </h:panelGroup>
                     </h:form>
                 </div>

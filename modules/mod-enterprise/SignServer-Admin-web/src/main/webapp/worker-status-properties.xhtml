@@ -35,7 +35,7 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Worker <h:outputText value="#{statusPropertiesBean.worker.name}"/> - Status Properties
+                #{text['Worker']} <h:outputText value="#{statusPropertiesBean.worker.name}"/> - #{text['Status_Properties']}
             </ui:define>
 
             <ui:define name="top">
@@ -53,13 +53,13 @@
                     <!-- Note: This buttons are somewhat duplicated in workers.xhtml -->
                     <h:form id="workerMenuOld">
                         <p>
-                            <h:commandButton class="buttonFeatured" value="Activate..." action="#{workerBean.bulkAction('workers-activation')}"/> <h:commandButton class="buttonNeutral" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation')}"/> &nbsp; 
-                            <h:commandButton class="buttonFeatured" value="Renew key..." action="#{workerBean.bulkAction('workers-renewkey')}"/> <h:commandButton class="buttonFeatured" value="Test key..." action="#{workerBean.bulkAction('workers-testkey')}"/> <h:commandButton class="buttonFeatured" value="Generate CSR..." action="#{workerBean.bulkAction('workers-csr')}"/> <h:commandButton class="buttonFeatured" value="Install certificates..." action="#{workerBean.bulkAction('workers-certificates')}"/> &nbsp;
-                            <h:commandButton class="buttonNeutral" value="Renew signer..." action="#{workerBean.bulkAction('workers-renew')}"/> &nbsp;
-                            <h:commandButton class="buttonNegative" value="Destroy key..." action="#{workerBean.workerAction('worker-removekey')}"/> &nbsp; 
-                            <h:commandButton class="buttonNegative" value="Remove..." action="#{workerBean.bulkAction('workers-remove')}"/> &nbsp;
-                            <h:commandButton class="buttonNeutral" value="Reload from database..." action="#{workerBean.bulkAction('workers-reload')}"/> 
-                            <h:commandButton class="buttonNeutral" value="Export..." action="#{workerBean.bulkAction('workers-export')}"/>
+                            <h:commandButton class="buttonFeatured" value="#{text['Activate...']}" action="#{workerBean.bulkAction('workers-activation')}"/> <h:commandButton class="buttonNeutral" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation')}"/> &nbsp; 
+                            <h:commandButton class="buttonFeatured" value="#{text['Renew_Key...']}" action="#{workerBean.bulkAction('workers-renewkey')}"/> <h:commandButton class="buttonFeatured" value="Test key..." action="#{workerBean.bulkAction('workers-testkey')}"/> <h:commandButton class="buttonFeatured" value="Generate CSR..." action="#{workerBean.bulkAction('workers-csr')}"/> <h:commandButton class="buttonFeatured" value="Install certificates..." action="#{workerBean.bulkAction('workers-certificates')}"/> &nbsp;
+                            <h:commandButton class="buttonNeutral" value="#{text['Renew_Signer...']}" action="#{workerBean.bulkAction('workers-renew')}"/> &nbsp;
+                            <h:commandButton class="buttonNegative" value="#{text['Destroy_Key...']}" action="#{workerBean.workerAction('worker-removekey')}"/> &nbsp; 
+                            <h:commandButton class="buttonNegative" value="#{text['Remove...']}" action="#{workerBean.bulkAction('workers-remove')}"/> &nbsp;
+                            <h:commandButton class="buttonNeutral" value="#{text['Reload_From_Database...']}" action="#{workerBean.bulkAction('workers-reload')}"/> 
+                            <h:commandButton class="buttonNeutral" value="#{text['Export...']}" action="#{workerBean.bulkAction('workers-export')}"/>
                         </p>
                     </h:form>
                 </div>
@@ -67,24 +67,21 @@
                 <div id="worker_content">
                     <h:form>
                         <h:dataTable id="table1" value="#{statusPropertiesBean.statuses}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
-                            <!--<f:facet name="header">
-                                <h:outputText value="Your Shopping Cart" />
-                            </f:facet>-->
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Property" />
+                                    <h:outputText value="#{text['Property']}" />
                                 </f:facet>
                                 <h:outputText value="#{item.key}" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Value" />
+                                    <h:outputText value="#{text['Value']}" />
                                 </f:facet>
                                 <h:outputText value="#{item.description}" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Actions"/>
+                                    <h:outputText value="#{text['Actions']}"/>
                                 </f:facet>
                                 <h:link value="Details" outcome="#{item.detailsOutcome}" rendered="#{item.hasDetails}"/> 
                             </h:column>

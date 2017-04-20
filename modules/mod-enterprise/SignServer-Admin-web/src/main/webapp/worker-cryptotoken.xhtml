@@ -36,7 +36,7 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Worker <h:outputText value="#{workerBean.worker.name}"/> - CryptoToken
+                #{text['Worker']} <h:outputText value="#{workerBean.worker.name}"/> - #{text['Crypto_Token']}
             </ui:define>
 
             <ui:define name="top">
@@ -52,14 +52,14 @@
                 
                 <h:form id="workerMenu">
                     <p>
-                        <h:commandButton class="buttonFeatured" value="Activate..." action="#{workerBean.bulkAction('workers-activation', 'cryptotoken')}"/> <h:commandButton class="buttonNeutral" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation', 'cryptotoken')}"/> &nbsp; 
+                        <h:commandButton class="buttonFeatured" value="#{text['Activate...']}" action="#{workerBean.bulkAction('workers-activation', 'cryptotoken')}"/> <h:commandButton class="buttonNeutral" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation', 'cryptotoken')}"/> &nbsp; 
                     </p>
                 </h:form>
 
                 <div id="worker_content">
                     <h:form>
                         <h2>
-                            Entries
+                            #{text['Entries']}
                         </h2>
 
                         <p class="errorMessage">
@@ -84,7 +84,7 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Alias" />
+                                    <h:outputText value="#{text['Alias']}" />
                                 </f:facet>
                                 <h:link value="#{entry.alias}" outcome="worker-cryptotoken-entry">
                                     <f:param name="id" value="#{workerBean.worker.id}"/>
@@ -93,13 +93,13 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Type" />
+                                    <h:outputText value="#{text['Type']}" />
                                 </f:facet>
                                 <h:outputText value="#{entry.type}" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Certificates" />
+                                    <h:outputText value="#{text['Certificates']}" />
                                 </f:facet>
                                 <h:outputText value="#{entry.chainLength}" />
                             </h:column>
@@ -108,11 +108,11 @@
                             </f:facet>
                         </h:dataTable>
                         <p>
-                            <h:link class="linkPositive" value="Generate key..." outcome="worker-cryptotoken-generatekey"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> 
-                            <h:commandButton class="buttonFeatured" value="Test..." action="#{cryptoTokenBean.testKeysAction()}"/> 
-                            <h:commandButton class="buttonFeatured" value="Generate CSR..." action="#{cryptoTokenBean.generateCSRAction()}"/> 
-                            <h:commandButton class="buttonFeatured" value="Import certificates..." action="#{cryptoTokenBean.certificatesAction()}"/> 
-                            <h:commandButton class="buttonNegative" value="Remove..." action="#{cryptoTokenBean.removeKeysAction()}"/>
+                            <h:link class="linkPositive" value="#{text['Generate_Key...']}" outcome="worker-cryptotoken-generatekey"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> 
+                            <h:commandButton class="buttonFeatured" value="#{text['Test...']}" action="#{cryptoTokenBean.testKeysAction()}"/> 
+                            <h:commandButton class="buttonFeatured" value="#{text['Generate_CSR...']}" action="#{cryptoTokenBean.generateCSRAction()}"/> 
+                            <h:commandButton class="buttonFeatured" value="#{text['Import_Certificates...']}" action="#{cryptoTokenBean.certificatesAction()}"/> 
+                            <h:commandButton class="buttonNegative" value="#{text['Remove...']}" action="#{cryptoTokenBean.removeKeysAction()}"/>
                         </p>
                     </h:form>
                 </div>

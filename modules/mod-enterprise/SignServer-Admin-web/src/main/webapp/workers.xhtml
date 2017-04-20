@@ -34,7 +34,7 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Workers
+                #{text['Workers']}
             </ui:define>
 
             <ui:define name="top">
@@ -42,22 +42,22 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1>All Workers</h1>
+                <h1>#{text['All_Workers']}</h1>
 
                 <h:form>
                     
                     <!-- Note: This buttons are somewhat duplicated in worker-menu.xhtml -->
                     <p>
-                        <h:commandButton class="buttonFeatured" id="activate" value="Activate..." action="#{workersBean.bulkAction('workers-activation')}"/> <h:commandButton class="buttonNeutral" id="deactivate" value="Deactivate..." action="#{workersBean.bulkAction('workers-deactivation')}"/> &nbsp; 
-                        <h:commandButton class="buttonFeatured" id="genkey" value="Renew key..." action="#{workersBean.bulkAction('workers-renewkey')}"/> <h:commandButton class="buttonFeatured" id="test" value="Test key..." action="#{workersBean.bulkAction('workers-testkey')}"/> <h:commandButton class="buttonFeatured" id="csr" value="Generate CSR..." action="#{workersBean.bulkAction('workers-csr')}"/> <h:commandButton class="buttonFeatured" id="install" value="Install certificates..." action="#{workersBean.bulkAction('workers-certificates')}"/> &nbsp;
-                        <h:commandButton class="buttonNeutral" id="renewsigner" value="Renew signer..." action="#{workersBean.bulkAction('workers-renew')}"/> &nbsp; 
-                        <h:commandButton class="buttonNegative" id="remove" value="Remove..." action="#{workersBean.bulkAction('workers-remove')}"/> &nbsp; 
-                        <h:commandButton class="buttonNeutral" id="reload" value="Reload from database..." action="#{workersBean.bulkAction('workers-reload')}"/> <h:commandButton class="buttonNeutral" id="export" value="Export..." action="#{workersBean.bulkAction('workers-export')}"/>
+                        <h:commandButton class="buttonFeatured" id="activate" value="#{text['Activate...']}" action="#{workersBean.bulkAction('workers-activation')}"/> <h:commandButton class="buttonNeutral" id="deactivate" value="Deactivate..." action="#{workersBean.bulkAction('workers-deactivation')}"/> &nbsp; 
+                        <h:commandButton class="buttonFeatured" id="genkey" value="#{text['Renew_Key...']}" action="#{workersBean.bulkAction('workers-renewkey')}"/> <h:commandButton class="buttonFeatured" id="test" value="Test key..." action="#{workersBean.bulkAction('workers-testkey')}"/> <h:commandButton class="buttonFeatured" id="csr" value="Generate CSR..." action="#{workersBean.bulkAction('workers-csr')}"/> <h:commandButton class="buttonFeatured" id="install" value="Install certificates..." action="#{workersBean.bulkAction('workers-certificates')}"/> &nbsp;
+                        <h:commandButton class="buttonNeutral" id="renewsigner" value="#{text['Renew_Signer...']}" action="#{workersBean.bulkAction('workers-renew')}"/> &nbsp; 
+                        <h:commandButton class="buttonNegative" id="remove" value="#{text['Remove...']}" action="#{workersBean.bulkAction('workers-remove')}"/> &nbsp; 
+                        <h:commandButton class="buttonNeutral" id="reload" value="#{text['Reload_From_Database...']}" action="#{workersBean.bulkAction('workers-reload')}"/> <h:commandButton class="buttonNeutral" id="export" value="Export..." action="#{workersBean.bulkAction('workers-export')}"/>
                     </p>
                     
                     <h:panelGroup rendered="#{workersBean.workers.size() == 0}">
                         <p>
-                            <h:outputText value="(No workers available)"/>
+                            <h:outputText value="#{text['(No workers available)']}"/>
                         </p>
                     </h:panelGroup>
                     <h:panelGroup rendered="#{workersBean.workers.size() > 0}">
@@ -70,7 +70,7 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Name" />
+                                    <h:outputText value="#{text['Name']}" />
                                 </f:facet>
                                 <h:panelGrid columns="2" class="notable" columnClasses="notable,notable">
                                     <h:outputLink value="worker.xhtml">
@@ -89,7 +89,7 @@
                     </h:panelGroup>
                 </h:form>
 
-                <h:link class="linkPositive" value="Add..." outcome="workers-add"/>
+                <h:link class="linkPositive" value="#{text['Add...']}" outcome="workers-add"/>
 
             </ui:define>
 

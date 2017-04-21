@@ -34,7 +34,10 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Worker <h:outputText value="#{workerBean.worker.name}"/> - Configuration
+                <h:outputFormat value="#{text['Worker_X']}">
+                    <f:param value="#{workerBean.worker.name}"/>
+                </h:outputFormat>
+                <h:outputText value="- #{text['Configuration'}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -49,15 +52,15 @@
                 <div id="worker-actions">
                     <h:form>
                         <p>
-                            <h:commandButton class="buttonNeutral" value="Reload from database..." action="#{workerBean.bulkAction('workers-reload', 'worker-configuration')}"/> 
-                            <h:commandButton class="buttonNeutral" value="Export..." action="#{workerBean.bulkAction('workers-export', 'worker-configuration')}"/>
+                            <h:commandButton class="buttonNeutral" value="#{text['Reload_From_Database...']}" action="#{workerBean.bulkAction('workers-reload', 'worker-configuration')}"/> 
+                            <h:commandButton class="buttonNeutral" value="#{text['Export...']}" action="#{workerBean.bulkAction('workers-export', 'worker-configuration')}"/>
                         </p>
                     </h:form>
                 </div>   
 
                 <div id="worker_content">
                     
-                    <h2>Properties</h2>
+                    <h2><h:outputText value="#{text['Properties']}"/></h2>
                     
                     <h:dataTable id="table1" value="#{workerBean.config}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
                         <!--<f:facet name="header">
@@ -65,25 +68,25 @@
                         </f:facet>-->
                         <h:column>
                             <f:facet name="header">
-                                <h:outputText value="Property" />
+                                <h:outputText value="#{text['Property']}" />
                             </f:facet>
                             <h:outputText value="#{item.key}" />
                         </h:column>
                         <h:column>
                             <f:facet name="header">
-                                <h:outputText value="Value" />
+                                <h:outputText value="#{text['Value']}" />
                             </f:facet>
                             <h:outputText value="#{item.value}" />
                         </h:column>
                         <h:column>
                             <f:facet name="header">
-                                <h:outputText value="Actions"/>
+                                <h:outputText value="#{text['Actions']}"/>
                             </f:facet>
-                            <h:link value="Edit" outcome="worker-configuration-edit">
+                            <h:link value="#{text['Edit']}" outcome="worker-configuration-edit">
                                 <f:param name="id" value="#{workerBean.worker.id}"/>
                                 <f:param name="property" value="#{item.key}"/>
                             </h:link> |
-                            <h:link class="linkNegative" value="Remove" outcome="worker-configuration-remove">
+                            <h:link class="linkNegative" value="#{text['Remove']}" outcome="worker-configuration-remove">
                                 <f:param name="id" value="#{workerBean.worker.id}"/>
                                 <f:param name="property" value="#{item.key}"/>
                             </h:link>
@@ -92,7 +95,7 @@
                         </f:facet>
                     </h:dataTable>
 
-                    <h:link class="linkPositive" value="Add..." outcome="worker-configuration-add"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                    <h:link class="linkPositive" value="#{text['Add...']}" outcome="worker-configuration-add"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                 </div>
             </ui:define>
 

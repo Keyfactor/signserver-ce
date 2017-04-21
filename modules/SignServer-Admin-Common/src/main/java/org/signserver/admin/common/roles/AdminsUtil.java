@@ -21,8 +21,10 @@ import org.signserver.common.ClientEntry;
 import org.signserver.common.SignServerUtil;
 
 /**
+ * Utility methods for handling administrator rules and roles.
  *
- * @author user
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class AdminsUtil {
     

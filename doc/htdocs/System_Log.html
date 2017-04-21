@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- <title>System Log - SignServer - Documentation Space</title> -->
+    <title>System Log - SignServer Manual</title>
+
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="3050729">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">SIGNDS</span>
+                    <!-- <img class="space-logo" src="spacelogo.png" /> -->
+                    <img src="projectlogo.png">
+                </h1>
+                <div class="ht-version">
+                    <p>Version: 4.1.0</p>
+                </div>
+                <a href="SignServer_Manual.html" class="ht-space-link">
+                    <!-- <h2>SignServer - Documentation Space</h2> -->
+                    <h2>SignServer Manual</h2>
+                </a>
+            </header>
+
+            <nav class="ht-pages-nav">
+                <ul class="ht-pages-nav-top">
+                                                <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Introduction.html">SignServer Introduction</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Architecture.html">Architecture</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Release_Notes.html">Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Terms_Used_in_the_SignServer_manual.html">Terms Used in the SignServer manual</a>
+
+            </li>
+                            </ul>
+            </li>
+                                                <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_Installation.html">SignServer Installation</a>
+
+            </li>
+                                                <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Operations.html">SignServer Operations</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Worker_Setup.html">Worker Setup</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Quick_Start_Demo_Setup_using_Administration_CLI.html">Quick Start Demo Setup using Administration CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Quick_Start_Demo_Setup_using_Administration_Web.html">Quick Start Demo Setup using Administration Web</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
+
+            </li>
+                            </ul>
+            </li>
+                                                <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Integration.html">SignServer Integration</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Development.html">Development</a>
+
+            </li>
+                            </ul>
+            </li>
+                                                <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Reference.html">SignServer Reference</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Deploy-time_Configuration.html">Deploy-time Configuration</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Workers.html">SignServer Workers</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Common_configuration.html">Common configuration</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Generic_Worker_Properties.html">Generic Worker Properties</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Authorization_Type.html">Authorization Type</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Archiving.html">Archiving</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Accounter.html">Accounter</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Certificate_Validity_Checks.html">Certificate Validity Checks</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Limiting_the_number_of_signatures.html">Limiting the number of signatures</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Other_properties.html">Other properties</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Signers.html">SignServer Signers</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Common_Properties.html">Common Properties</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Time_Stamp_Signer.html">Time Stamp Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="MS_Authenticode_Time_Stamp_Signer.html">MS Authenticode Time Stamp Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Extended_Time_Stamp_Signer.html">Extended Time Stamp Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="MRTD_Signer.html">MRTD Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="MRTD_SOD_Signer.html">MRTD SOD Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="PDF_Signer.html">PDF Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="ODF_Signer.html">ODF Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="XML_Signer.html">XML Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="XAdES_Signer.html">XAdES Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OOXML_Signer.html">OOXML Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="CMS_Signer.html">CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="MS_Authenticode_Signer.html">MS Authenticode Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JArchive_Signer.html">JArchive Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Master_List_Signer.html">Master List Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Document_Validators.html">SignServer Document Validators</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="XML_Validator.html">XML Validator</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="XAdEs_Validator.html">XAdEs Validator</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Dispatchers.html">SignServer Dispatchers</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="FirstActiveDispatcher.html">FirstActiveDispatcher</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="RequestedPolicyDispatcher.html">RequestedPolicyDispatcher</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="UserMappedDispatcher.html">UserMappedDispatcher</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Validation_Service_Framework.html">SignServer Validation Service Framework</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="DefaultValidationService.html">DefaultValidationService</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Certificate_Validators.html">Certificate Validators</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="The_Validation_CLI_interface.html">The Validation CLI interface</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Timed_Services.html">SignServer Timed Services</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignerStatusReportTimedService.html">SignerStatusReportTimedService</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="HSMKeepAliveTimedService.html">HSMKeepAliveTimedService</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="RenewalTimedService.html">RenewalTimedService</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Other_workers.html">Other workers</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="CryptoWorker.html">CryptoWorker</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="RenewalWorker.html">RenewalWorker</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="StatusPropertiesWorker.html">StatusPropertiesWorker</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="TimeMonitorManager.html">TimeMonitorManager</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="TimeMonitorStatusReportWorker.html">TimeMonitorStatusReportWorker</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
+
+            </li>
+                            </ul>
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Components.html">SignServer Components</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="CryptoTokens.html">CryptoTokens</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="General_properties.html">General properties</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JKSCryptoToken.html">JKSCryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="KeystoreInConfigCryptoToken.html">KeystoreInConfigCryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="P12CryptoToken.html">P12CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Archivers.html">Archivers</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OldDatabaseArchiver.html">OldDatabaseArchiver</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Base64DatabaseArchiver.html">Base64DatabaseArchiver</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Accounters.html">Accounters</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="NoAccounter.html">NoAccounter</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="GlobalConfigSampleAccounter.html">GlobalConfigSampleAccounter</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Alias_Selectors.html">Alias Selectors</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="DefaultAliasSelector.html">DefaultAliasSelector</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="AuthorizedUsernameAliasSelector.html">AuthorizedUsernameAliasSelector</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Authorizers.html">Authorizers</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Logging.html">Logging</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Log.html">Worker Log</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link current" href="System_Log.html">System Log</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="CESeCore_Security_Events_Logger.html">CESeCore Security Events Logger</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debug_Log.html">Debug Log</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Log4j_for_Audit_logs.html">Configure Log4j for Audit logs</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Status_Repository_Logging.html">Status Repository Logging</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_Authentication_and_Authorization.html">SignServer Authentication and Authorization</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Status_Repository.html">Status Repository</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_TimeMonitor_application.html">SignServer TimeMonitor application</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_User_Interfaces.html">SignServer User Interfaces</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Main_Page.html">Main Page</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Workers_Page.html">Workers Page</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Activation_Page.html">Workers Activation Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Deactivation_Page.html">Workers Deactivation Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Key_Generation_Page.html">Workers Key Generation Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Test_Key_Page.html">Workers Test Key Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_CSR_Page.html">Workers CSR Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Install_Certificates_Page.html">Workers Install Certificates Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Renewal_Page.html">Workers Renewal Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Removal_Page.html">Workers Removal Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Reload_from_Database_Page.html">Workers Reload from Database Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Export_Page.html">Workers Export Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Add_Page.html">Workers Add Page</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Worker_Page.html">Worker Page</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Status_Summary_Page.html">Worker Status Summary Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Status_Properties_Page.html">Worker Status Properties Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Configuration_Page.html">Worker Configuration Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Authorization_Page.html">Worker Authorization Page</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Worker_Crypto_Token_Page.html">Worker Crypto Token Page</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Crypto_Token_Generate_Key_Page.html">Crypto Token Generate Key Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Crypto_Token_Generate_CSR_Page.html">Crypto Token Generate CSR Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Crypto_Token_Import_Certificates_Page.html">Crypto Token Import Certificates Page</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Destroy_Key_Page.html">Worker Destroy Key Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Certificate_Details_Page.html">Worker Certificate Details Page</a>
+
+            </li>
+                            </ul>
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Global_Configuration_Page.html">Global Configuration Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Administrators_Page.html">Administrators Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Audit_Log_Page.html">Audit Log Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Archive_Page.html">Archive Page</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
+
+            </li>
+                            </ul>
+            </li>
+                            </ul>
+            </li>
+                                    </ul>
+            </nav>
+
+            <div class="ht-sidebar-other">
+                <div class="ht-sidebar-other-item">
+                    <a href="https://signserver.org">signserver.org</a>
+                </div>
+                <div class="ht-sidebar-other-item">
+                    <a href="https://www.primekey.se/technologies/products-overview/ejbca-enterprise/" title="EJBCA - PKI by PrimeKey"><img src="ejbca-logo.png"/></a>
+                </div>
+                <div class="ht-sidebar-other-item">
+                    <a href="https://www.primekey.se" title="PrimeKey Solutions"><img src="primekey-logo.png"/></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
+        <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
+                                                                                     <li><a href="Logging.html">Logging</a></li>
+                                                            </ul>
+</div>            <h1 id="src-5277909"> <span>System Log</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+    <p  >The purpose of the system log is to log events concerning the SignServer application but not necessarily related to any signing transaction (that is covered by the Worker Log). The audit log covers key and certificate management events, status properties updates (for instance for the status of the time source) and to some extent also configuration changes. For details see the table of events below.    </p>
+    <p  >From version 3.4.0 SignServer uses the CESeCore library to perform audit logging.    </p>
+    <div class="section section-1" id="src-5277909_id-.SystemLogv4.1.0-Availablelogevents">
+        <h1 class="heading "><span>Available log events</span></h1>
+    <div  class="tablewrap">
+        <table class="fixed-table wrapped confluenceTable">
+                    <colgroup>
+                                    <col  width="233"/>
+                                    <col  width="1426"/>
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="2">
+        <p  ><i class=" ">Services</i>    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">SIGNSERVER_STARTUP</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Logged at startup of the SignServer application.    </p>
+    <p  ><strong class=" ">VERSION:</strong> The version of SignServer.    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: SIGNSERVER_STARTUP; MODULE: SERVICE; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; VERSION: SignServer 3.3.0alpha12; REPLY_TIME:1350562045545</code></div>
+</div>
+    </div>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">SIGNSERVER_SHUTDOWN</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Logged at shutdown of the SignServer application.    </p>
+    <p  ><strong class=" ">VERSION:</strong> The version of SignServer.    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: SIGNSERVER_SHUTDOWN; MODULE: SERVICE; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; VERSION: SignServer 3.3.0alpha12; REPLY_TIME:1350562045545</code></div>
+</div>
+    </div>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="2">
+        <p  ><i class=" ">Global configuration</i>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">SET_GLOBAL_PROPERTY</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Logged when a global configuration property was updated.    </p>
+    <p  ><strong class=" ">GLOBALCONFIG_PROPERTY:</strong> The property that was updated.<br/><strong class=" ">GLOBALCONFIG_VALUE:</strong> The new value of the property.    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: SET_GLOBAL_PROPERTY; MODULE: GLOBAL_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; GLOBALCONFIG_VALUE: TESTVALUE47; GLOBALCONFIG_PROPERTY: GLOB.TESTPROPERTY47; REPLY_TIME:1350657202153</code></div>
+</div>
+    </div>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">REMOVE_GLOBAL_PROPERTY</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Logged when a global configuration property was removed.    </p>
+    <p  ><strong class=" ">GLOBALCONFIG_PROPERTY:</strong> The property that was removed.    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: REMOVE_GLOBAL_PROPERTY; MODULE: GLOBAL_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; GLOBALCONFIG_PROPERTY: GLOB.TESTPROPERTY47; REPLY_TIME:1350657202444</code></div>
+</div>
+    </div>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <pre class=" "><strong class=" ">GLOBAL_CONFIG_RELOAD</strong></pre>            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Logged when the global configuration was reloaded from the database.    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: GLOBAL_CONFIG_RELOAD; MODULE: GLOBAL_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; REPLY_TIME:1350657202593</code></div>
+</div>
+    </div>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">GLOBAL_CONFIG_RESYNC</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Logged when the resync command was executed.    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: GLOBAL_CONFIG_RESYNC; MODULE: GLOBAL_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; REPLY_TIME:1350894343902</code></div>
+</div>
+    </div>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="2">
+        <p  ><i class=" ">Worker configuration</i>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">SET_WORKER_CONFIG</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Logged when a worker's configuration was updated by adding and/or removing and/or changing any values.    </p>
+    <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.    </p>
+    <p  >Changes in worker properties are logged with prefixes <strong class=" ">added/changed/removed</strong> followed by a colon and the property name a colon and the property value.<br/>Several property changes can occur in one log line (see examples below).    </p>
+    <p  >Authorized clients are shown as a property with the name <strong class=" ">authorized_client</strong>.    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; added:FOO: bar; REPLY_TIME:1350657202773</code></div>
+</div>
+    </div>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; changed:FOO: newvalue; REPLY_TIME:1350657202873</code></div>
+</div>
+    </div>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; removed:FOO: newvalue; REPLY_TIME:1350657202873</code></div>
+</div>
+    </div>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; added:FOO: bar; changed:BAR: newvalue; REPLY_TIME:1350657202873</code></div>
+</div>
+    </div>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; added:authorized_client: SN: 1234567890, issuer DN: CN=Test; REPLY_TIME:1350657202873</code></div>
+</div>
+    </div>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">CERTINSTALLED</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Logged when a certificate was uploaded to the worker configuration.    </p>
+    <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.<br/><strong class=" ">CERTIFICATE:</strong> The certificate in PEM format.<br/><strong class=" ">SCOPE: </strong>If the setting was at GLOBAL or NODE scope.<br/><strong class=" ">NODE: </strong>The ID of the node if the setting was at NODE scope, otherwise not available.    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: CERTINSTALLED; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; CERTIFICATE: Subject: CN=Anyone Issuer: CN=Anyone </code></div>
+<div class="line"><code class="plain">-----BEGIN CERTIFICATE----- </code></div>
+<div class="line"><code class="plain">MIIBnTCCAQagAwIBAgIIWWNYSOeuN+swDQYJKoZIhvcNAQEFBQAwETEPMA0GA1UE </code></div>
+<div class="line"><code class="plain">AwwGQW55b25lMB4XDTEyMTAxOTE0MzMyM1oXDTEzMTAxOTE0MzMyM1owETEPMA0G </code></div>
+<div class="line"><code class="plain">A1UEAwwGQW55b25lMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCDE9GElbJd </code></div>
+<div class="line"><code class="plain">e74WmIpPSsIF9r5vv0oH6WWo7n31goR1zMIHJPC9V1mpwQZ6C0uCHCV2ZvqQIIAE </code></div>
+<div class="line"><code class="plain">ZQM7mgbPfxjCF74RqKzScZlOSaHnvdf7zCWpYraVrIDt9Wg3HMxye0/L3cCImmkY </code></div>
+<div class="line"><code class="plain">FkFtabtoa5UuPZObdIt154Yg+GpGB8aPBwIDAQABMA0GCSqGSIb3DQEBBQUAA4GB </code></div>
+<div class="line"><code class="plain">AHm3oAUHwM0KwMcEUwWouE0f4+UK6ZvYvxLAgiCVZQnPImcqX1oBl+iFV59FlsXj </code></div>
+<div class="line"><code class="plain">rqoQYJROxIeV0ByGeyBYXqvgTw1YtdqoR+wKmiymjn/lynmTh1fQMcFoUouGfubX </code></div>
+<div class="line"><code class="plain">EK4rfPBXEl33gKbsO5aeMHd5iF2jtx7RfYMsOuHKoDSe </code></div>
+<div class="line"><code class="plain">-----END CERTIFICATE----- </code></div>
+<div class="line"><code class="plain">; SCOPE: GLOBAL; REPLY_TIME:1350657204367</code></div>
+</div>
+    </div>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">CERTCHAININSTALLED</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Logged when a certificate chain was uploaded to the worker configuration or imported to a crypto token.    </p>
+    <p  >With MODULE: WORKER_CONFIG the certificate chain was installed in the configuration:    </p>
+    <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.<br/><strong class=" ">CERTIFICATECHAIN:</strong> The certificates in PEM format.<br/><strong class=" ">SCOPE: </strong>If the setting was at GLOBAL or NODE scope.<br/><strong class=" ">NODE: </strong>The ID of the node if the setting was at NODE scope, otherwise not available.    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: CERTCHAININSTALLED; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; CERTIFICATECHAIN: Subject: CN=Signer,C=SE Issuer: CN=Issuer,C=SE </code></div>
+<div class="line"><code class="plain">-----BEGIN CERTIFICATE----- </code></div>
+<div class="line"><code class="plain">MIIBdjCCASCgAwIBAgIIE+fXOs/SAwMwDQYJKoZIhvcNAQEFBQAwHjEPMA0GA1UE </code></div>
+<div class="line"><code class="plain">AwwGSXNzdWVyMQswCQYDVQQGEwJTRTAeFw0xMjEwMjIwNzQ1MDZaFw0xMzEwMjIw </code></div>
+<div class="line"><code class="plain">NzQ1MDZaMB4xDzANBgNVBAMMBlNpZ25lcjELMAkGA1UEBhMCU0UwgZ8wDQYJKoZI </code></div>
+<div class="line"><code class="plain">hvcNAQEBBQADgY0AMIGJAoGBAKpX5psdaL5CHAKSxoOvB12Ie8iUb/mX6ikF8jfu </code></div>
+<div class="line"><code class="plain">zrbwVgf6bX0RCUnD+v+t9vY7byz+nN32KnmGluNGdBFdM1Ug9Oc+64ZNBbgZi9mi </code></div>
+<div class="line"><code class="plain">cHnKMDLLSECBY2Nux62PZejp5SwtzpjFymt3TMCtRr4UHGu3zkuqLLCHFlGRdvdo </code></div>
+<div class="line"><code class="plain">MPQ9AgMBAAEwDQYJKoZIhvcNAQEFBQADQQADlInGm9AujZfL+1kM7ehaKyKKencF </code></div>
+<div class="line"><code class="plain">fp6YGElOpGEplxxIwgmVc0iYKv4rCkfUAysYL6l3AC+VLK1asxkpEJc1 </code></div>
+<div class="line"><code class="plain">-----END CERTIFICATE----- </code></div>
+<div class="line"><code class="plain">Subject: CN=Issuer,C=SE </code></div>
+<div class="line"><code class="plain">Issuer: CN=Issuer,C=SE </code></div>
+<div class="line"><code class="plain">-----BEGIN CERTIFICATE----- </code></div>
+<div class="line"><code class="plain">MIIBMTCB3KADAgECAggbfKZHs8ttKDANBgkqhkiG9w0BAQUFADAeMQ8wDQYDVQQD </code></div>
+<div class="line"><code class="plain">DAZJc3N1ZXIxCzAJBgNVBAYTAlNFMB4XDTEyMTAyMjA3NDUwNloXDTEzMTAyMjA3 </code></div>
+<div class="line"><code class="plain">NDUwNlowHjEPMA0GA1UEAwwGSXNzdWVyMQswCQYDVQQGEwJTRTBcMA0GCSqGSIb3 </code></div>
+<div class="line"><code class="plain">DQEBAQUAA0sAMEgCQQCpgzxJ6r6D1cP8v1AB88pJsCwi0SJdeRSGYydYYBOafJk0 </code></div>
+<div class="line"><code class="plain">fpqxJCwaiFS3tt9OkWUAXzcixv5+sItkEuEOpmp7AgMBAAEwDQYJKoZIhvcNAQEF </code></div>
+<div class="line"><code class="plain">BQADQQCC5NG3eWx/mXXKZmePOvZEIwyqWHOwzsBB174gkzlyhOdiOr3YwVihyebI </code></div>
+<div class="line"><code class="plain">VAfkEktRrO04Hi5eLR+AxW7EVz6l </code></div>
+<div class="line"><code class="plain">-----END CERTIFICATE----- </code></div>
+<div class="line"><code class="plain">; SCOPE: GLOBAL; REPLY_TIME:1350891906417</code></div>
+</div>
+    </div>
+    <p  >    </p>
+    <p  >With MODULE: KEY_MANAGEMENT the certificate chain was imported to the token:    </p>
+    <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.<br/><strong class=" ">CERTIFICATECHAIN:</strong> The certificates in PEM format.<br/><strong class=" ">KEYALIAS:</strong> The alias of the entry in the token.<br/><strong class=" ">CRYPTOTOKEN:</strong> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: CERTCHAININSTALLED; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: CLI user; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 5801; KEYALIAS: testkeyalias10; CRYPTOTOKEN: HSMCryptoToken1; CERTIFICATECHAIN: Subject: CN=testkeyalias10,C=SE</code></div>
+<div class="line"><code class="plain">Issuer: CN=Issuer,C=SE</code></div>
+<div class="line"><code class="plain">-----BEGIN CERTIFICATE-----</code></div>
+<div class="line"><code class="plain">MIIBMjCB3aADAgECAgEBMA0GCSqGSIb3DQEBCwUAMB4xDzANBgNVBAMMBklzc3Vl</code></div>
+<div class="line"><code class="plain">cjELMAkGA1UEBhMCU0UwHhcNMTUwNTI5MTEzMTAyWhcNMTYwNTI4MTEzMTAyWjAm</code></div>
+<div class="line"><code class="plain">MRcwFQYDVQQDDA50ZXN0a2V5YWxpYXMxMDELMAkGA1UEBhMCU0UwXDANBgkqhkiG</code></div>
+<div class="line"><code class="plain">9w0BAQEFAANLADBIAkEAggmuPO78M3hhwh4MrxYzt0LM6vLmI4IWjLxO8EK8R0FV</code></div>
+<div class="line"><code class="plain">cDu5Rruxc/a51LCt8J8dOxm34h0RakqzObbFYZxwZwIDAQABMA0GCSqGSIb3DQEB</code></div>
+<div class="line"><code class="plain">CwUAA0EAYR/N98UTyjnkFMnRmd1dQfsD6cih7Dt6NTi+qxFeMbbuzVA9HhRcXwQn</code></div>
+<div class="line"><code class="plain">NChSJMtvJ9sKslfhlfqwZGPChSFg3g==</code></div>
+<div class="line"><code class="plain">-----END CERTIFICATE-----</code></div>
+<div class="line"><code class="plain">Subject: CN=Issuer,C=SE</code></div>
+<div class="line"><code class="plain">Issuer: CN=Issuer,C=SE</code></div>
+<div class="line"><code class="plain">-----BEGIN CERTIFICATE-----</code></div>
+<div class="line"><code class="plain">MIIBMTCB3KADAgECAghQdZlXUcZalTANBgkqhkiG9w0BAQUFADAeMQ8wDQYDVQQD</code></div>
+<div class="line"><code class="plain">DAZJc3N1ZXIxCzAJBgNVBAYTAlNFMB4XDTE1MDUyOTExMzEwMloXDTE2MDUyODEx</code></div>
+<div class="line"><code class="plain">MzEwMlowHjEPMA0GA1UEAwwGSXNzdWVyMQswCQYDVQQGEwJTRTBcMA0GCSqGSIb3</code></div>
+<div class="line"><code class="plain">DQEBAQUAA0sAMEgCQQCa35ZZru5A2DigDNyOdsZL789dVVlUTXch/Fa0e82X+FLc</code></div>
+<div class="line"><code class="plain">kuMoRqAuxrEw/5+uG1Xi7EkysdgyRPbdYHmv3hBlAgMBAAEwDQYJKoZIhvcNAQEF</code></div>
+<div class="line"><code class="plain">BQADQQAS3us4jsjHRSooeNuaaAdWjrA7b/nVnkhRjEmHUCORJXGwnHykUGB2idj6</code></div>
+<div class="line"><code class="plain">d3UejoxEJ78E+EAYWO2JvKbhV0ku</code></div>
+<div class="line"><code class="plain">-----END CERTIFICATE-----</code></div>
+<div class="line"><code class="plain">; REPLY_TIME:1432899062650</code></div>
+</div>
+    </div>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">KEYSELECTED</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Logged when the key-pair to use was selected by changing the value of the DEFAULTKEY worker property.    </p>
+    <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.<br/><strong class=" ">KEYALIAS:</strong> The new key alias.<br/><strong class=" ">CRYPTOTOKEN:</strong> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/><strong class=" ">SCOPE: </strong>If the setting was at GLOBAL or NODE scope.<br/><strong class=" ">NODE: </strong>The ID of the node if the setting was at NODE scope, otherwise not available.    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: KEYSELECTED; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; KEYALIAS: ts_key00002; CRYPTOTOKEN: TestSigner6000; SCOPE: GLOBAL; REPLY_TIME:1350891907048</code></div>
+</div>
+    </div>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="2">
+        <p  ><i class=" ">Key management</i>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">KEYGEN</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Logged when a new key-pair was generated using the built-in key generation command.    </p>
+    <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.<br/><strong class=" ">KEYALIAS:</strong> The new key alias.<br/><strong class=" ">CRYPTOTOKEN:</strong> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/><strong class=" ">KEYSPEC:</strong> The key specification (i.e. RSA/DSA bit length or EC curve).<br/><strong class=" ">KEYALG:</strong> The key algorithm.    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: KEYGEN; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 5676; KEYALIAS: ts_key00004; CRYPTOTOKEN: HSMCryptoToken0; KEYSPEC: 2048; KEYALG: RSA; REPLY_TIME:135089190791</code></div>
+</div>
+    </div>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">KEYTEST</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Logged when the key test command was executed and a test signing with either the specified key or all keys in the slot if that was specified.    </p>
+    <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.<br/><strong class=" ">KEYALIAS:</strong> Alias of the the key to test or &quot;all&quot; to test all available keys in the slot.<br/><strong class=" ">CRYPTOTOKEN:</strong> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/><strong class=" ">TESTRESULTS:</strong> The test report with an entry for each tested key.    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: KEYTEST; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 47; KEYALIAS: all; CRYPTOTOKEN: HSMCryptoToken1; TESTRESULTS: KeyTestResult{alias=tsu47_key00005, success=true, status=, publicKeyHash=979359e5261112b11fac341962bec1e7e6052d9e}</code></div>
+<div class="line"><code class="plain">KeyTestResult{alias=key5, success=true, status=, publicKeyHash=46b264e4892ef2e4fd9616e4927534ca3597fd9c}</code></div>
+<div class="line"><code class="plain">KeyTestResult{alias=key3, success=true, status=, publicKeyHash=ae64792f1f50e23eb54bf79d46d819bc07db2d79}</code></div>
+<div class="line"><code class="plain">KeyTestResult{alias=key2, success=true, status=, publicKeyHash=b1317f363e6124a8e15bba8c1adb9f20b2f4ef59}</code></div>
+<div class="line"><code class="plain">KeyTestResult{alias=TS Signer 1, success=true, status=, publicKeyHash=8f6dfccdcea931d4deee9466f43c0eb0e7f4d8b1}</code></div>
+<div class="line"><code class="plain">; REPLY_TIME:1350564289165</code></div>
+</div>
+    </div>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">GENCSR</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Logged when a certificate signing request (CSR) was generated.    </p>
+    <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.<br/><strong class=" ">KEYALIAS:</strong> The key alias of the key used to generate the CSR.<br/><strong class=" ">FOR_DEFAULTKEY: </strong>True if the &quot;default key&quot; was requested.<br/><strong class=" ">CRYPTOTOKEN:</strong> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/><strong class=" ">CSR:</strong> Base64 encoded CSR (typically in PKCS#10 format).    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: GENCSR; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: </code><code class="keyword">null</code><code class="plain">; ISSUER: </code><code class="keyword">null</code><code class="plain">; SERIAL_NUMBER: </code><code class="keyword">null</code><code class="plain">; WORKER_ID: </code><code class="value">5676</code><code class="plain">; KEYALIAS: ts_key00004; CRYPTOTOKEN: HSMCryptoToken0; CSR: MIIBYDCBygIBADAjMRQwEgYDVQQDDAtUUyBTaWduZXIgMTELMAkGA1UEBhMCU0Uw</code></div>
+<div class="line"><code class="plain">gZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAJt8F51wD+QcX+WLyIxjWu3at3q+</code></div>
+<div class="line"><code class="plain">IiJrL5jIenmggUhjOLHGHOStoNOiYEQAaiiTZ623m9y7O3zhqFdAdWZg+JrfsHQJ</code></div>
+<div class="line"><code class="plain">pjKV9RgvJznl6yk/K54BWOBgqjvbloAUGtn8y8Hf+5DYJUJNFqrzvRLcmCQ9JU0H</code></div>
+<div class="line"><code class="plain">mgSmEIqgOIwBL3oBAgMBAAEwDQYJKoZIhvcNAQEFBQADgYEAer5hr/cUYx4jy0XO</code></div>
+<div class="line"><code class="plain">N4U8sP/2gSFppytx9dn5BamVBLjDkcML8B3c9u9omDPebd+LEsCU+HCmYN9xHkSS</code></div>
+<div class="line"><code class="plain">Ei8lcAqyVv+SDLEmvE8gnrPFR/J7uADCRayLVQumW6/YpVO/sFEGuM6rgnn8ZJmW</code></div>
+<div class="line"><code class="plain">X2lhvJ4V1UhlkEAeyIQ861U3IgE=; REPLY_TIME:</code><code class="value">1350891907981</code></div>
+</div>
+    </div>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">KEYREMOVE</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Logged when a key was removed or an removal attempt was performed.    </p>
+    <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.<br/><strong class=" ">KEYALIAS:</strong> The key alias of the key removed.<br/><strong class=" ">CRYPTOTOKEN:</strong> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/><strong class=" ">SUCCESS:</strong> True if the key was removed or false if the removal failed or if removal was not supported by the token.    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: KEYREMOVE; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: CLI user; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 20003; KEYALIAS: signKey000002; CRYPTOTOKEN: HSMCryptoToken1; SUCCESS: true; REPLY_TIME:1391008847962</code></div>
+</div>
+    </div>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="2">
+        <p  ><i class=" ">Status Repository</i>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">SET_STATUS_PROPERTY</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Logged when a status property was updated.    </p>
+    <p  ><strong class=" ">STATUSREPO_PROPERTY:</strong> The updated property.<br/><strong class=" ">STATUSREPO_VALUE:</strong> The new property value.<br/><strong class=" ">STATUSREPO_EXPIRATION:</strong> Expiration time for the status property (timestamp), if any.    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: SET_STATUS_PROPERTY; MODULE: STATUS_REPOSITORY; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; STATUSREPO_EXPIRATION: 1350891909366; STATUSREPO_PROPERTY: TEST_PROPERTY1; STATUSREPO_VALUE: TESTVALUE47; REPLY_TIME:1350891908372</code></div>
+</div>
+    </div>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="2">
+        <p  ><i class=" ">Worker processing</i>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">PROCESS</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Logged for events regarding worker processing but when a worker logger can not be used because the requested worker does not exist etc.    </p>
+    <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker or empty in case of non existing worker.<br/><strong class=" ">Worker logger fields:</strong> All fields available to the worker logger.    </p>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">EVENT: PROCESS; MODULE: WORKER; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; LOG_ID: db517726-ff0d-40dd-8f2b-2297925cb4d3; CLIENT_IP: 127.0.0.1; PROCESS_SUCCESS: false; REQUEST_LENGTH: 0; XFORWARDEDFOR: null; FILENAME: noname.dat; </code></div>
+<div class="line"><code class="plain">REQUEST_FULLURL: </code><code class="comments">http://localhost:8080/signserver/process?null;</code><code class="plain"> LOG_TIME: 1350628977410; WORKER_ID: 0; EXCEPTION: No such worker: 0; REPLY_TIME:1350628977411</code></div>
+</div>
+    </div>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <p  >    </p>
+    <p  >    </p>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="Worker_Log.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Worker Log</span>
+        </a>
+                <a href="CESeCore_Security_Events_Logger.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>CESeCore Security Events Logger</span>
+        </a>
+    </nav>    
+            
+            <article id="html-search-results" class="ht-content" style="display: none;">
+            <header class="ht-content-header">
+                <div id="ht-spacetitle">
+                    <ul>
+                        <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li>
+                    </ul>
+                </div>
+                <h1>Search results</h1>
+            </header>
+            <div id="search-results"></div>
+        </article>
+    
+    <footer id="ht-footer">
+    <small>
+        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+    </small>
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+</body>
+</html>

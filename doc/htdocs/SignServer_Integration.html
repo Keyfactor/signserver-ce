@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- <title>SignServer Integration - SignServer - Documentation Space</title> -->
+    <title>SignServer Integration - SignServer Manual</title>
+
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="3050729">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">SIGNDS</span>
+                    <!-- <img class="space-logo" src="spacelogo.png" /> -->
+                    <img src="projectlogo.png">
+                </h1>
+                <div class="ht-version">
+                    <p>Version: 4.1.0</p>
+                </div>
+                <a href="SignServer_Manual.html" class="ht-space-link">
+                    <!-- <h2>SignServer - Documentation Space</h2> -->
+                    <h2>SignServer Manual</h2>
+                </a>
+            </header>
+
+            <nav class="ht-pages-nav">
+                <ul class="ht-pages-nav-top">
+                                                <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Introduction.html">SignServer Introduction</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Architecture.html">Architecture</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Release_Notes.html">Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Terms_Used_in_the_SignServer_manual.html">Terms Used in the SignServer manual</a>
+
+            </li>
+                            </ul>
+            </li>
+                                                <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_Installation.html">SignServer Installation</a>
+
+            </li>
+                                                <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Operations.html">SignServer Operations</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Worker_Setup.html">Worker Setup</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Quick_Start_Demo_Setup_using_Administration_CLI.html">Quick Start Demo Setup using Administration CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Quick_Start_Demo_Setup_using_Administration_Web.html">Quick Start Demo Setup using Administration Web</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
+
+            </li>
+                            </ul>
+            </li>
+                                                <li class="collapsed">
+        <a class="ht-nav-page-link current" href="SignServer_Integration.html">SignServer Integration</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Development.html">Development</a>
+
+            </li>
+                            </ul>
+            </li>
+                                                <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Reference.html">SignServer Reference</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Deploy-time_Configuration.html">Deploy-time Configuration</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Workers.html">SignServer Workers</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Common_configuration.html">Common configuration</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Generic_Worker_Properties.html">Generic Worker Properties</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Authorization_Type.html">Authorization Type</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Archiving.html">Archiving</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Accounter.html">Accounter</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Certificate_Validity_Checks.html">Certificate Validity Checks</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Limiting_the_number_of_signatures.html">Limiting the number of signatures</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Other_properties.html">Other properties</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Signers.html">SignServer Signers</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Common_Properties.html">Common Properties</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Time_Stamp_Signer.html">Time Stamp Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="MS_Authenticode_Time_Stamp_Signer.html">MS Authenticode Time Stamp Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Extended_Time_Stamp_Signer.html">Extended Time Stamp Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="MRTD_Signer.html">MRTD Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="MRTD_SOD_Signer.html">MRTD SOD Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="PDF_Signer.html">PDF Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="ODF_Signer.html">ODF Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="XML_Signer.html">XML Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="XAdES_Signer.html">XAdES Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OOXML_Signer.html">OOXML Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="CMS_Signer.html">CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="MS_Authenticode_Signer.html">MS Authenticode Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JArchive_Signer.html">JArchive Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Master_List_Signer.html">Master List Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Document_Validators.html">SignServer Document Validators</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="XML_Validator.html">XML Validator</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="XAdEs_Validator.html">XAdEs Validator</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Dispatchers.html">SignServer Dispatchers</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="FirstActiveDispatcher.html">FirstActiveDispatcher</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="RequestedPolicyDispatcher.html">RequestedPolicyDispatcher</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="UserMappedDispatcher.html">UserMappedDispatcher</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Validation_Service_Framework.html">SignServer Validation Service Framework</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="DefaultValidationService.html">DefaultValidationService</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Certificate_Validators.html">Certificate Validators</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="The_Validation_CLI_interface.html">The Validation CLI interface</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Timed_Services.html">SignServer Timed Services</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignerStatusReportTimedService.html">SignerStatusReportTimedService</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="HSMKeepAliveTimedService.html">HSMKeepAliveTimedService</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="RenewalTimedService.html">RenewalTimedService</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Other_workers.html">Other workers</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="CryptoWorker.html">CryptoWorker</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="RenewalWorker.html">RenewalWorker</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="StatusPropertiesWorker.html">StatusPropertiesWorker</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="TimeMonitorManager.html">TimeMonitorManager</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="TimeMonitorStatusReportWorker.html">TimeMonitorStatusReportWorker</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
+
+            </li>
+                            </ul>
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Components.html">SignServer Components</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="CryptoTokens.html">CryptoTokens</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="General_properties.html">General properties</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JKSCryptoToken.html">JKSCryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="KeystoreInConfigCryptoToken.html">KeystoreInConfigCryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="P12CryptoToken.html">P12CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Archivers.html">Archivers</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OldDatabaseArchiver.html">OldDatabaseArchiver</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Base64DatabaseArchiver.html">Base64DatabaseArchiver</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Accounters.html">Accounters</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="NoAccounter.html">NoAccounter</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="GlobalConfigSampleAccounter.html">GlobalConfigSampleAccounter</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Alias_Selectors.html">Alias Selectors</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="DefaultAliasSelector.html">DefaultAliasSelector</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="AuthorizedUsernameAliasSelector.html">AuthorizedUsernameAliasSelector</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Authorizers.html">Authorizers</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Logging.html">Logging</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Log.html">Worker Log</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="System_Log.html">System Log</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="CESeCore_Security_Events_Logger.html">CESeCore Security Events Logger</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debug_Log.html">Debug Log</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Log4j_for_Audit_logs.html">Configure Log4j for Audit logs</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Status_Repository_Logging.html">Status Repository Logging</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_Authentication_and_Authorization.html">SignServer Authentication and Authorization</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Status_Repository.html">Status Repository</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_TimeMonitor_application.html">SignServer TimeMonitor application</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_User_Interfaces.html">SignServer User Interfaces</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Main_Page.html">Main Page</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Workers_Page.html">Workers Page</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Activation_Page.html">Workers Activation Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Deactivation_Page.html">Workers Deactivation Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Key_Generation_Page.html">Workers Key Generation Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Test_Key_Page.html">Workers Test Key Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_CSR_Page.html">Workers CSR Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Install_Certificates_Page.html">Workers Install Certificates Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Renewal_Page.html">Workers Renewal Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Removal_Page.html">Workers Removal Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Reload_from_Database_Page.html">Workers Reload from Database Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Export_Page.html">Workers Export Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Add_Page.html">Workers Add Page</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Worker_Page.html">Worker Page</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Status_Summary_Page.html">Worker Status Summary Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Status_Properties_Page.html">Worker Status Properties Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Configuration_Page.html">Worker Configuration Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Authorization_Page.html">Worker Authorization Page</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Worker_Crypto_Token_Page.html">Worker Crypto Token Page</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Crypto_Token_Generate_Key_Page.html">Crypto Token Generate Key Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Crypto_Token_Generate_CSR_Page.html">Crypto Token Generate CSR Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Crypto_Token_Import_Certificates_Page.html">Crypto Token Import Certificates Page</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Destroy_Key_Page.html">Worker Destroy Key Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Certificate_Details_Page.html">Worker Certificate Details Page</a>
+
+            </li>
+                            </ul>
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Global_Configuration_Page.html">Global Configuration Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Administrators_Page.html">Administrators Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Audit_Log_Page.html">Audit Log Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Archive_Page.html">Archive Page</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
+
+            </li>
+                            </ul>
+            </li>
+                            </ul>
+            </li>
+                                    </ul>
+            </nav>
+
+            <div class="ht-sidebar-other">
+                <div class="ht-sidebar-other-item">
+                    <a href="https://signserver.org">signserver.org</a>
+                </div>
+                <div class="ht-sidebar-other-item">
+                    <a href="https://www.primekey.se/technologies/products-overview/ejbca-enterprise/" title="EJBCA - PKI by PrimeKey"><img src="ejbca-logo.png"/></a>
+                </div>
+                <div class="ht-sidebar-other-item">
+                    <a href="https://www.primekey.se" title="PrimeKey Solutions"><img src="primekey-logo.png"/></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
+        <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
+                                                            </ul>
+</div>            <h1 id="src-5281408"> <span>SignServer Integration</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+    <p  >    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-ClientWebService">Client Web Service</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-Operations">Operations</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-TheoldWebServicesinterface">The old Web Services interface</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-JavaClientAPI">Java Client API</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-SigningAndValidationAPI">SigningAndValidation API</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-SampleCode">Sample Code</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-SigningandvalidatinganXMLdocument">Signing and validating an XML document</a>    </p>
+</li></ul></li></ul></li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-WebServerInterface">Web Server Interface</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-GenericProcessServlet">GenericProcessServlet</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-Configuration">Configuration</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-Samples">Samples</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-WorkerServlet">WorkerServlet</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-Samples.1">Samples</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-SODProcessServlet">SODProcessServlet</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-ePassportSigningRequests">ePassport Signing Requests</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-OtherRequests">Other Requests</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-Samples.2">Samples</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-SODProcessWorkerServlet">SODProcessWorkerServlet</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-Samples.3">Samples</a>    </p>
+</li></ul></li></ul></li><li class=" ">    <p  ><a   href="#src-5281408_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnRlZ3JhdGlvbnY0LjEuMC1DbGllbnRDb21tYW5kTGluZUludGVyZmFjZShDTEkp">Client Command Line Interface (CLI)</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-signdocument">signdocument</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-validatedocument">validatedocument</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-timestamp">timestamp</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-validatecertificate">validatecertificate</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-signdatagroups">signdatagroups</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-AdministrationWebServices">Administration Web Services</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-ApacheHTTPServerasproxy">Apache HTTP Server as proxy</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-5281408_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnRlZ3JhdGlvbnY0LjEuMC1FeGFtcGxlOlJld3JpdGVVUkxzZm9yVFNBKHVzaW5nbW9kX3Byb3h5YW5kbW9kX3Jld3JpdGUp">Example: Rewrite URLs for TSA (using mod_proxy and mod_rewrite)</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5281408_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnRlZ3JhdGlvbnY0LjEuMC1FeGFtcGxlOlJld3JpdGVVUkxzYW5kcmVkaXJlY3R0b0hUVFBTKHVzaW5nQUpQKQ">Example: Rewrite URLs and redirect to HTTPS (using AJP)</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5281408_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnRlZ3JhdGlvbnY0LjEuMC1FeGFtcGxlOkdyYW50aW5nYWNjZXNzdG9zcGVjaWZpY3dvcmtlcnNvbmx5">Example: Granting access to specific workers only</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-AdditionalConfiguration">Additional Configuration</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-CustomPrivateHTTPSport">Custom Private HTTPS port</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5281408_id-.SignServerIntegrationv4.1.0-CustomContextRoot">Custom Context Root</a>    </p>
+</li></ul></li></ul></li></ul>    <div class="section section-1" id="src-5281408_id-.SignServerIntegrationv4.1.0-ClientWebService">
+        <h1 class="heading "><span>Client Web Service</span></h1>
+    <p  >The SignServer ClientWS interface can be used to request signings from SignServer.    </p>
+    <p  >The WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/ClientWSService/ClientWS?wsdl and locally in the sources under modules/SignServer-Client-ClientWS/xml-resources/web-service-references/ClientWS/wsdl/localhost_8080/signserver/ClientWSService/ClientWS.wsdl.    </p>
+    <div class="section section-2" id="src-5281408_id-.SignServerIntegrationv4.1.0-Operations">
+        <h2 class="heading "><span>Operations</span></h2>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">processData</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Generic operation for request signing of any binary (or character) data.    </p>
+    <p  >Parameters:    </p>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">worker</strong> (string)<br/>Name of worker in SignServer which should handle the request.    </p>
+</li><li class=" ">    <p  ><strong class=" ">metadata</strong> (sequence of key-value pairs)<br/>Optional additional request data. For instance the PDFSigner accepts the PDF password as a request data.    </p>
+</li><li class=" ">    <p  ><strong class=" ">data</strong> (base64Binary)<br/>The document/data to process.    </p>
+</li></ul>    <p  >Output:    </p>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">archiveId</strong> (string)<br/>Identifier for the request if archiving was used.    </p>
+</li><li class=" ">    <p  ><strong class=" ">data</strong> (base64Binary)<br/>The signed binary/document.    </p>
+</li><li class=" ">    <p  ><strong class=" ">metadata</strong> (sequence of key-value pairs)<br/>Any optional additional response data.    </p>
+</li><li class=" ">    <p  ><strong class=" ">requestId</strong> (integer)<br/>Identifier for the request/response.    </p>
+</li><li class=" ">    <p  ><strong class=" ">signerCertificate</strong> (base64Binary)<br/>The signer certificate in binary format if available.    </p>
+</li></ul>    <p  >Faults:    </p>
+<ul class=" "><li class=" ">    <p  >RequestFailedException    </p>
+</li><li class=" ">    <p  >InternalServerException    </p>
+</li></ul>            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">processSOD</strong>    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Operation for requesting an SOD to be created and signed.<br/>The ePassport production system calls this operation to get an SOD for the supplied data groups.    </p>
+    <p  >Parameters:    </p>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">worker</strong> (string)<br/>Name of worker in SignServer which should be used for constructing the SOD.    </p>
+</li><li class=" ">    <p  ><strong class=" ">metadata</strong> (sequence of key-value pairs)<br/>Optional additional request data. Not used.    </p>
+</li><li class=" ">    <p  ><strong class=" ">sodData</strong> (a sodRequest structure)<br/>The sodRequest should contain a sequence of datagroups (id 1-16 and their values), optionally also the version of the LDS to use and the version of Unicode.    </p>
+</li></ul>    <p  >Output:    </p>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">archiveId</strong> (string)<br/>Identifier for the request if archiving was used.    </p>
+</li><li class=" ">    <p  ><strong class=" ">data</strong> (base64Binary)<br/>The SOD binary.    </p>
+</li><li class=" ">    <p  ><strong class=" ">metadata</strong> (sequence of key-value pairs)<br/>Any optional additional response data.    </p>
+</li><li class=" ">    <p  ><strong class=" ">requestId</strong> (integer)<br/>Identifier for the request/response.    </p>
+</li><li class=" ">    <p  ><strong class=" ">signerCertificate</strong> (base64Binary)<br/>The signer (DS) certificate in binary format if available.    </p>
+</li></ul>    <p  >Faults:    </p>
+<ul class=" "><li class=" ">    <p  >RequestFailedException    </p>
+</li><li class=" ">    <p  >InternalServerException    </p>
+</li></ul>            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <p  >    </p>
+    <p  ><span id="src-5281408_signserverws"></span>    <span style="color: #000000;">
+     </span>
+    </p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-5281408_id-.SignServerIntegrationv4.1.0-TheoldWebServicesinterface">
+        <h1 class="heading "><span>The old Web Services interface</span></h1>
+    <p  >The SignServerWS is the old web services interface now replaced by SignServer ClientWS. It was new to version 3.0 and at the time replaced the RMI-SSL interface from version 1.0 and 2.0 for two reasons, the RMI-SSL were based on a commercial library and it only worked for Java clients.    </p>
+    <p  >The SignServerWS WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/signserverws/signserverws?wsdl    </p>
+    <p  >The interface has two calls, the main one is 'process' which takes a collection of process request to a processable worker and returns a collection of process responses, the second one is getStatus that performs a health check of the node and returns an OK message if the node is healthy.    </p>
+    <p  ><strong class=" ">Notice:</strong> All though the SignServerWS interface uses web services the actual process data is base64 encoded byte arrays in a special binary format. You will have to lookup the Java source code for the exact format of the request and response data. An alternative is to instead use the much simpler <a  class="external-link" href="file:///C:/Users/Per%20Grahn-M%C3%B6ller/AppData/Local/Temp/Temp1_signserver-htdocs-r7948-2017-01-17.zip/htdocs/manual/integration.html#Web_Server_Interface">Web Server Interface</a> or the newer <a  class="external-link" href="file:///C:/Users/Per%20Grahn-M%C3%B6ller/AppData/Local/Temp/Temp1_signserver-htdocs-r7948-2017-01-17.zip/htdocs/manual/integration.html#Client_Web_Service">ClientWS interface</a>.    </p>
+    <p  >The getStatus call can be used to implement high-availability towards the client. The Java client API described in the next section have built in support for different high availability policies.    </p>
+    <p  >It's possible to turn off the WebService interface by disabling it in the build configuration.    </p>
+    <p  >This interface is only supported using HTTPS. The reason is that JBoss 4 does not rewrite the protocol part of the WSDL URL so we had to hard code it for it to work with HTTPS. For details about this see <a  class="external-link" href="https://jira.primekey.se/browse/DSS-327">DSS-327</a>.    </p>
+    <p  >Since SignServer &gt;=3.2.1 it is possible to supply extra request data called RequestMetadata containing key/value pairs that can be used by the signers. For instance the PDFSigner uses this feature to let the client supply a PDF password.    </p>
+    </div>
+    <div class="section section-1" id="src-5281408_id-.SignServerIntegrationv4.1.0-JavaClientAPI">
+        <h1 class="heading "><span>Java Client API</span></h1>
+    <p  >Built along with the WebService is a Java API that can be used by clients. It's available in the file lib/SignServer-Client-SignServerWS.jar (the old SignServerWS interface) and lib/SignServer-Client-ClientWS.jar (the ClientWS interface).    </p>
+    </div>
+    <div class="section section-1" id="src-5281408_id-.SignServerIntegrationv4.1.0-SigningAndValidationAPI">
+        <h1 class="heading "><span>SigningAndValidation API</span></h1>
+    <p  >The SigningAndValidation API is a wrapper around the previous mentioned API in order to have a simplified interface that also is the same regardless if WebService or EJB Remote calls are used.    </p>
+    <p  >To use the API include the file lib/SignServer-Client-SigningAndValidationAPI.jar.    </p>
+    <div class="section section-2" id="src-5281408_id-.SignServerIntegrationv4.1.0-SampleCode">
+        <h2 class="heading "><span>Sample Code</span></h2>
+    <div class="section section-3" id="src-5281408_id-.SignServerIntegrationv4.1.0-SigningandvalidatinganXMLdocument">
+        <h3 class="heading "><span>Signing and validating an XML document</span></h3>
+<pre class="prettyprint ">try {<br/>    System.setProperty(&quot;javax.net.ssl.trustStore&quot;, &quot;p12/truststore.jks&quot;);<br/>    System.setProperty(&quot;javax.net.ssl.trustStorePassword&quot;, &quot;changeit&quot;);<br/>  <br/>    ISigningAndValidation signserver = new SigningAndValidationWS(&quot;localhost&quot;, 8442, true);<br/><br/>    // Document to sign<br/>    byte[] unsigned = &quot;&lt;document&gt;&lt;name&gt;Some content&lt;/name&gt;&lt;/document&gt;&quot;.getBytes();<br/>    byte[] signed;<br/><br/>    // Signing<br/>    GenericSignResponse signResp = signserver.sign(&quot;DemoXMLSigner&quot;, unsigned);<br/>    signed = signResp.getProcessedData();<br/>    System.out.println(&quot;Signed: &quot; + new String(signed));<br/><br/>    // Validating<br/>    GenericValidationResponse validateResp = signserver.validate(&quot;DemoXMLValidator&quot;, signed);<br/>    System.out.println(&quot;Valid: &quot; + validateResp.isValid());<br/><br/>    if(validateResp.getSignerCertificate() != null) {<br/>        if(validateResp.getSignerCertificate() instanceof X509Certificate) {<br/>            X509Certificate signerCert = (X509Certificate) validateResp.getSignerCertificate();<br/>            System.out.println(&quot;Signed by: &quot; + signerCert.getSubjectDN().getName());<br/>        }<br/>    }<br/>} catch (Exception ex) {<br/>    ex.printStackTrace();<br/>}                                   </pre>    </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-5281408_id-.SignServerIntegrationv4.1.0-WebServerInterface">
+        <h1 class="heading "><span>Web Server Interface</span></h1>
+    <div class="section section-2" id="src-5281408_id-.SignServerIntegrationv4.1.0-GenericProcessServlet">
+        <h2 class="heading "><span>GenericProcessServlet</span></h2>
+    <p  >HTTP requests can be sent to the SignServer servlet GenericProcessServlet located at /signserver/process using either POST or GET.    </p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+        <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >URL:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">/signserver/process</strong>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Method:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">GET</strong> or <strong class=" ">POST</strong>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Request content-type:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">None</strong>, <strong class=" ">&quot;x-www-form-urlencoded&quot;</strong>, <strong class=" ">&quot;multipart/form-data&quot;</strong> or <strong class=" ">other<sup class=" ">*</sup></strong>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Request parameters:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <ul class=" "><li class=" ">    <p  ><strong class=" ">workerName</strong> - Name of the worker that should handle the request. Required unless workerId specified.    </p>
+</li><li class=" ">    <p  ><strong class=" ">workerId</strong> - Id of the worker that should handle the request. Required unless workerName specified.    </p>
+</li><li class=" ">    <p  ><strong class=" ">data</strong> - The bytes that should be signed or validated. Required for x-www-form-urlencoded.    </p>
+</li><li class=" ">    <p  ><strong class=" ">filerecievefile</strong> - File upload used with multipart/form-data.    </p>
+</li><li class=" ">    <p  ><strong class=" ">pdfPassword</strong> - Password for changing PDF. This can also be specified using the generic meta data parameters described below, using the key &quot;pdfPassword&quot;. Optional and only used by PDFSigner.    </p>
+</li><li class=" ">    <p  ><strong class=" ">REQUEST_METADATA</strong> - Meta data to pass on. Specified in Java properties file syntax. Optional.    </p>
+</li><li class=" ">    <p  ><strong class=" ">REQUEST_METADATA.x</strong> - Sets a meta data parameter with the key specified by x. Overrides a value using the same key specified in the REQUEST_METADATA map. Optional.    </p>
+</li><li class=" ">    <p  ><strong class=" ">encoding</strong> - Encoding of the data field. Optional. By specifying &quot;base64&quot; SignServer Base64-decodes the data property before passing it to the worker.    </p>
+</li><li class=" ">    <p  ><strong class=" ">processType</strong> - The type of request. Can be any of &quot;signDocument&quot;, &quot;validateDocument&quot;, or &quot;validateCertificate&quot;. Optional. If not specified, defaults to &quot;signDocument&quot;.    </p>
+</li></ul>            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Response code:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <ul class=" "><li class=" ">    <p  ><strong class=" ">HTTP 200</strong> (OK): The request was successfull    </p>
+</li><li class=" ">    <p  ><strong class=" ">HTTP 400</strong> (Bad Request): The request could not be fulfilled. Some request data were missing or incorrect etc.    </p>
+</li><li class=" ">    <p  ><strong class=" ">HTTP 401</strong> (Unauthorized): The worker requires user authentication    </p>
+</li><li class=" ">    <p  ><strong class=" ">HTTP 404</strong> (Not Found): The requested workerName or workerId does not represent an existing worker    </p>
+</li><li class=" ">    <p  ><strong class=" ">HTTP 413</strong> (Request Entity Too Large): The data field or uploaded file is too large. See the HTTP_MAX_UPLOAD_SIZE global configuration property.    </p>
+</li><li class=" ">    <p  ><strong class=" ">HTTP 500</strong> (Internal Server Error): There was an internal error when processing the request. Typically indicating a configuration problem or unexpected error at the server side.    </p>
+</li><li class=" ">    <p  ><strong class=" ">HTTP 503</strong> (Service Unavailable): The worker is not active, its crypto token is not activated or similar    </p>
+</li></ul>            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Response content-type:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Depending on the worker, text/plain for the validators.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Response content:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The signed document for signers.<br/>A string starting with &quot;VALID&quot; or &quot;INVALID&quot; for document validators. <sup class=" ">*</sup>Note to integrators: In future versions of SignServer there might be more information added after VALID/INVALID, such as a ;-separated list of additional information or more lines with information.<br/>A ;-separated string containing validation status code (see list below), valid purposes, status message, revocation reason (-1 if not revoked), and revocation date (empty when not revoked) for certificate validators.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Validation status codes:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <ul class=" "><li class=" ">    <p  ><strong class=" ">VALID</strong> The certificate is valid    </p>
+</li><li class=" ">    <p  ><strong class=" ">REVOKED</strong> The certificate has been revoked    </p>
+</li><li class=" ">    <p  ><strong class=" ">NOTYETVALID</strong> The certificate is not yet valid    </p>
+</li><li class=" ">    <p  ><strong class=" ">EXPIRED</strong> The certificate has expired    </p>
+</li><li class=" ">    <p  ><strong class=" ">DONTVERIFY</strong> The certificate doesn't verify    </p>
+</li><li class=" ">    <p  ><strong class=" ">CAREVOKED</strong> The CA certificate has been revoked    </p>
+</li><li class=" ">    <p  ><strong class=" ">CANOTYETVALID</strong> The CA certificate is not yet valid    </p>
+</li><li class=" ">    <p  ><strong class=" ">CAEXPIRED</strong> The CA certificate has expired    </p>
+</li><li class=" ">    <p  ><strong class=" ">BADCERTPURPOSE</strong> The certificate has no valid certificate purpose    </p>
+</li><li class=" ">    <p  ><strong class=" ">ISSUERNOTSUPPORTED</strong> The issuer of the certificate is not supported    </p>
+</li></ul>            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <p  ><sup class=" ">*</sup> if the request content-type in a POST is specified as something else than &quot;x-www-form-urlencoded&quot; or &quot;multipart/form-data&quot; the message body is not parsed but instead directly passed to the worker specified by workerName or workerId in the URI's query string.    </p>
+    <div class="section section-3" id="src-5281408_id-.SignServerIntegrationv4.1.0-Configuration">
+        <h3 class="heading "><span>Configuration</span></h3>
+    <p  ><strong class=" ">HTTP_MAX_UPLOAD_SIZE</strong> = Global configuration property that can be set to specify the maximum size (in bytes) of the HTTP request. Defaut: &quot;104857600&quot; (100 MB).    </p>
+    <p  ><strong class=" ">FILE_SIZE_THRESHOLD</strong> = Global configuration property that can be set to specify the size threshold (in bytes) after which the data is written to disk Default: &quot;1048576&quot; (1 MB). The directory uploaded files are temporarly stored to is the default temp directory and can be changed by starting the application server with a different value for the Java property <a  class="external-link" href="http://java.io">java.io</a>.tmpdir.    </p>
+    </div>
+    <div class="section section-3" id="src-5281408_id-.SignServerIntegrationv4.1.0-Samples">
+        <h3 class="heading "><span>Samples</span></h3>
+<ul class=" "><li class=" ">    <p  >HTTP GET:<br/><a  class="external-link" href="http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;data=%3Croot%3Ehej2%3C/root%3E">http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;data=%3Croot%3Ehej2%3C/root%3E</a><br/><a  class="external-link" href="http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D">http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D</a>    </p>
+</li><li class=" ">    <p  >HTTP POST with multipart/form-data or x-www-form-urlencoded:<br/>For example see /signserver/demo/xmlsign.jsp (multipart/form-data) and /signserver/demo/genericsign.jsp (x-www-form-urlencoded).    </p>
+</li><li class=" ">    <p  >HTTP POST with other content-type:<br/>See the TimeStampClient.    </p>
+</li><li class=" ">    <p  >Samples of content output for certificate validation:    </p>
+<ul class=" "><li class=" ">    <p  >VALID;;This certificate is valid;-1;    </p>
+</li><li class=" ">    <p  >ISSUERNOTSUPPORTED;;Issuer of given certificate isn't supported;-1;    </p>
+</li><li class=" ">    <p  >REVOKED;;This certificate is revoked;3;1376565200519    </p>
+</li></ul></li></ul>    </div>
+    </div>
+    <div class="section section-2" id="src-5281408_id-.SignServerIntegrationv4.1.0-WorkerServlet">
+        <h2 class="heading "><span>WorkerServlet</span></h2>
+    <p  >HTTP requests can be sent to the SignServer servlet WorkerServlet located at /signserver/worker/* using either POST or GET.<br/>Requests are forwarded to the GenericProcessServlet, except that the worker name is taken from the URL.<br/>Worker name or ID given through request parameters are ignored.    </p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+        <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >URL:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">/signserver/worker/*</strong> (* denotes a worker name)    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Method:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">GET</strong> or <strong class=" ">POST</strong>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Request content-type:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">None</strong>, <strong class=" ">&quot;x-www-form-urlencoded&quot;</strong>, <strong class=" ">&quot;multipart/form-data&quot;</strong> or <strong class=" ">other<sup class=" ">*</sup></strong>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Request parameters:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <ul class=" "><li class=" ">    <p  ><strong class=" ">data</strong> - The bytes that should be signed or validated. Required for x-www-form-urlencoded.    </p>
+</li><li class=" ">    <p  ><strong class=" ">filerecievefile</strong> - File upload used with multipart/form-data.    </p>
+</li><li class=" ">    <p  ><strong class=" ">pdfPassword</strong> - Password for changing PDF. Optionally and only used by PDFSigner.    </p>
+</li><li class=" ">    <p  ><strong class=" ">encoding</strong> - Encoding of the data field. Optional. By specifying &quot;base64&quot; SignServer Base64-decodes the data property before passing it to the worker.    </p>
+</li></ul>            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Response code:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <ul class=" "><li class=" ">    <p  ><strong class=" ">HTTP 200</strong> (OK): The request was successfull    </p>
+</li><li class=" ">    <p  ><strong class=" ">HTTP 400</strong> (Bad Request): The request could not be fulfilled. Some request data were missing or incorrect etc.    </p>
+</li><li class=" ">    <p  ><strong class=" ">HTTP 401</strong> (Unauthorized): The worker requires user authentication    </p>
+</li><li class=" ">    <p  ><strong class=" ">HTTP 404</strong> (Not Found): The requested workerName or workerId does not represent an existing worker    </p>
+</li><li class=" ">    <p  ><strong class=" ">HTTP 413</strong> (Request Entity Too Large): The data field or uploaded file is too large    </p>
+</li><li class=" ">    <p  ><strong class=" ">HTTP 500</strong> (Internal Server Error): There was an internal error when processing the request. Typically indicating a configuration problem or unexpected error at the server side.    </p>
+</li><li class=" ">    <p  ><strong class=" ">HTTP 503</strong> (Service Unavailable): The worker is not active, its crypto token is not activated or similar    </p>
+</li></ul>            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Response content-type:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Depending on the worker    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <div class="section section-3" id="src-5281408_id-.SignServerIntegrationv4.1.0-Samples.1">
+        <h3 class="heading "><span>Samples</span></h3>
+<ul class=" "><li class=" ">    <p  >HTTP GET:<br/><a  class="external-link" href="http://localhost:8080/signserver/worker/DemoXMLSigner?data=%3Croot%3Ehej2%3C/root%3E">http://localhost:8080/signserver/worker/DemoXMLSigner?data=%3Croot%3Ehej2%3C/root%3E</a><br/><a  class="external-link" href="http://localhost:8080/signserver/worker/DemoXMLSigner?encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D">http://localhost:8080/signserver/worker/DemoXMLSigner?encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D</a>    </p>
+</li></ul>    </div>
+    </div>
+    <div class="section section-2" id="src-5281408_id-.SignServerIntegrationv4.1.0-SODProcessServlet">
+        <h2 class="heading "><span>SODProcessServlet</span></h2>
+    <p  >Servlet recieving HTTP POST requests containing data group hashes and creates a MRTDSODSignerRequest and passes it to the specified MRTDSODSigner. The response from the servlet is the signed security object in binary format.    </p>
+    <div class="section section-3" id="src-5281408_id-.SignServerIntegrationv4.1.0-ePassportSigningRequests">
+        <h3 class="heading "><span>ePassport Signing Requests</span></h3>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+        <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >URL:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">/signserver/sod</strong>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Method:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">POST</strong>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Request parameters:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <ul class=" "><li class=" ">    <p  ><strong class=" ">workerName</strong> - Name of the worker that should handle the request. Required unless workerId specified.    </p>
+</li><li class=" ">    <p  ><strong class=" ">workerId</strong> - Id of the worker that should handle the request. Required unless workerName specified.    </p>
+</li><li class=" ">    <p  ><strong class=" ">dataGroup1 to dataGroup16</strong> - The data group hashes that should be put in the SO(d). At least one required.    </p>
+</li><li class=" ">    <p  ><strong class=" ">encoding</strong> - Encoding of the data group hash fields. Optional. By specifying &quot;base64&quot; SignServer Base64-decodes the data property before passing it to the MRTDSODSigner.    </p>
+</li><li class=" ">    <p  ><strong class=" ">ldsVersion</strong> - Request a specific LDS version: &quot;0107&quot; for V1.7 or &quot;0108&quot; for V1.8. Optional. If not specified the version from the configuration is used. If version is V1.8 unicodeVersion also needs to be specified.    </p>
+</li><li class=" ">    <p  ><strong class=" ">unicodeVersion</strong> - Unicode version to store in the SOd. Optional. Only supported if ldsVersion &quot;0108&quot; specified. Specify &quot;040000&quot; for Unicode version 4.0.0.    </p>
+</li></ul>            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Response code:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The same response codes as for the GenericProcessServlet are used.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Response content-type:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">application/octet-stream</strong>    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <p  >    </p>
+    </div>
+    <div class="section section-3" id="src-5281408_id-.SignServerIntegrationv4.1.0-OtherRequests">
+        <h3 class="heading "><span>Other Requests</span></h3>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+        <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >URL:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">/signserver/sod</strong>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Method:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">GET</strong>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Request parameters:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <ul class=" "><li class=" ">    <p  ><strong class=" ">workerName</strong> - Name of the worker to get the certificate from. Required unless workerId specified.    </p>
+</li><li class=" ">    <p  ><strong class=" ">workerId</strong> - Id of the worker to get the certificate from. Required unless workerName specified.    </p>
+</li><li class=" ">    <p  ><strong class=" ">downloadCert</strong> - If set to &quot;true&quot; the current signer certificate is downloaded in binary (DER) format.    </p>
+</li><li class=" ">    <p  ><strong class=" ">displayCert</strong> - If set to &quot;true&quot; the current signer certificate is displayed in text format.    </p>
+</li></ul>            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <p  >    </p>
+    </div>
+    <div class="section section-3" id="src-5281408_id-.SignServerIntegrationv4.1.0-Samples.2">
+        <h3 class="heading "><span>Samples</span></h3>
+<ul class=" "><li class=" ">    <p  >See /signserver/demo/mrtdsodsign.jsp.    </p>
+</li><li class=" ">    <p  >To download the configured signer certificate:<br/>HTTP GET: <a  class="external-link" href="http://localhost:8080/signserver/sod?downloadCert=true&amp;workerName=CMSSigner">http://localhost:8080/signserver/sod?downloadCert=true&amp;workerName=CMSSigner</a>    </p>
+</li></ul>    </div>
+    </div>
+    <div class="section section-2" id="src-5281408_id-.SignServerIntegrationv4.1.0-SODProcessWorkerServlet">
+        <h2 class="heading "><span>SODProcessWorkerServlet</span></h2>
+    <p  >Servlet recieving HTTP POST requests containing data group hashes and creates a MRTDSODSignerRequest and passes it to the specified MRTDSODSigner. The response from the servlet is the signed security object in binary format.<br/>Requests are forwarded to the SODProcessServlet, except that the worker name is taken from the URL.<br/>Worker name or ID given through request parameters are ignored.    </p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+        <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >URL:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">/signserver/sodworker</strong>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Method:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">POST</strong>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Request parameters:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <ul class=" "><li class=" ">    <p  ><strong class=" ">dataGroup1 to dataGroup16</strong> - The data group hashes that should be put in the SO(d). At least one required.    </p>
+</li><li class=" ">    <p  ><strong class=" ">encoding</strong> - Encoding of the data group hash fields. Optional. By specifying &quot;base64&quot; SignServer Base64-decodes the data property before passing it to the MRTDSODSigner.    </p>
+</li><li class=" ">    <p  ><strong class=" ">ldsVersion</strong> - Request a specific LDS version: &quot;0107&quot; for V1.7 or &quot;0108&quot; for V1.8. Optional. If not specified the version from the configuration is used. If version is V1.8 unicodeVersion also needs to be specified.    </p>
+</li><li class=" ">    <p  ><strong class=" ">unicodeVersion</strong> - Unicode version to store in the SOd. Optional. Only supported if ldsVersion &quot;0108&quot; specified. Specify &quot;040000&quot; for Unicode version 4.0.0.    </p>
+</li></ul>            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Response code:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The same response codes as for the GenericProcessServlet are used.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Response content-type:    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">application/octet-stream</strong>    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <div class="section section-3" id="src-5281408_id-.SignServerIntegrationv4.1.0-Samples.3">
+        <h3 class="heading "><span>Samples</span></h3>
+<ul class=" "><li class=" ">    <p  >See /signserver/demo/mrtdsodsign.jsp.    </p>
+</li></ul>    <p  ><span id="src-5281408_clientcli"></span>    <span style="color: #000000;">
+     </span>
+    </p>
+    </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-5281408_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnRlZ3JhdGlvbnY0LjEuMC1DbGllbnRDb21tYW5kTGluZUludGVyZmFjZShDTEkp">
+        <h1 class="heading "><span>Client Command Line Interface (CLI)</span></h1>
+    <p  >Requests can be sent to the workers using the Client CLI. After building SignServer the script bin/signclient can be run.    </p>
+<pre class="prettyprint ">$ bin/signclient<br/>usage: signclient &lt;signdocument | validatedocument | timestamp | validatecertificate | signdatagroups&gt;</pre>    <div class="section section-2" id="src-5281408_id-.SignServerIntegrationv4.1.0-signdocument">
+        <h2 class="heading "><span>signdocument</span></h2>
+    <p  >Request signing of a document using HTTP(s) or web services.    </p>
+<pre class="prettyprint ">usage: signdocument &lt;-workername WORKERNAME | -workerid WORKERID&gt;<br/>                    [options]<br/>Request a document to be signed by SignServer<br/> -data             Data to send to the worker.<br/> -host             Server name or IP address. Default: localhost<br/> -indir            Directory to read input files from. Required if<br/>                   outdir specified. Can not be combined with infile<br/>                   or outfile.<br/> -infile           File to read data to send to the worker from.<br/> -keyalias         Alias of the key in the keystore to use for<br/>                   authentication.<br/> -keystore         Keystore with private key and certificate for<br/>                   client certificate authentication.<br/> -keystorepwd      Password for reading the keystore.  If keystore is<br/>                   specified but not this keystore password option,<br/>                   the CLI will instead prompt for the password.<br/> -metadata         Additional meta data to send to the signer. The<br/>                   parameters should be given in the form KEY=VALUE.<br/>                   This option can be given multiple times.<br/> -onefirst         In batch mode, don't send all requests until the<br/>                   first succeeds. This is primary to prevent too many<br/>                   incorrect password attempts. Default if username<br/>                   is provided and -startall not provided.<br/> -outdir           Directory to write output files to. Required if<br/>                   indir specified. Can not be combined with infile<br/>                   or outfile.<br/> -outfile          File to write the result to. If not specified the<br/>                   result is written to stdout.<br/> -password         Password for authentication. If username is<br/>                   specified but not this password option, the CLI<br/>                   will instead prompt for the password.<br/> -pdfpassword      Password for changing the PDF (if required).<br/> -port             Server port. Default: 8080 (for HTTP), 8442 for<br/>                   HTTPS and 8443 for HTTPS with client<br/>                   authentication.<br/> -protocol         Method of interacting with SignServer. HTTP,<br/>                   CLIENTWS or WEBSERVICES. Default: HTTP.<br/> -removefromindir  Specify this flag to have the successfully<br/>                   processed input files removed from indir.<br/> -servlet          Servlet to call. Default /signserver/process<br/> -startall         In batch mode, send all requests at once, without<br/>                   waiting for the first to succeed. Default unless<br/>                   username is provided or -onefirst provided.<br/> -threads          Number of threads for sending the requests. Only<br/>                   allowed in batch mode, i.e. when indir and outdir<br/>                   are specified. Default: 1.<br/> -truststore       Keystore with trusted certificates to use with<br/>                   HTTPS.<br/> -truststorepwd    Password for the keystore with trusted<br/>                   certificates. If truststore is specified but not<br/>                   this truststore password option, the CLI will<br/>                   instead prompt for the password.<br/> -username         Username for authentication.<br/> -workerid         ID of worker which should perform the operation.<br/> -workername       Name of worker which should perform the operation.<br/><br/>Sample usages:<br/>a) signdocument -workername XMLSigner -data &quot;&lt;root/&gt;&quot;<br/>b) signdocument -workername XMLSigner -infile /tmp/document.xml<br/>c) signdocument -workerid 2 -data &quot;&lt;root/&gt;&quot; -truststore truststore.jks<br/>-truststorepwd changeit<br/>d) signdocument -workerid 2 -data &quot;&lt;root/&gt;&quot; -keystore superadmin.jks<br/>-truststorepwd foo123<br/>e) signdocument -workerid 2 -data &quot;&lt;root/&gt;&quot; -metadata param1=value1<br/>-metadata param2=value2<br/>f) signdocument -workerid 3 -indir ./input/ -removefromindir -outdir<br/>./output/ -threads 5</pre>    </div>
+    <div class="section section-2" id="src-5281408_id-.SignServerIntegrationv4.1.0-validatedocument">
+        <h2 class="heading "><span>validatedocument</span></h2>
+    <p  >Request a document to be validated.    </p>
+<pre class="prettyprint ">usage: validatedocument &lt;-workername WORKERNAME | -workerid WORKERID&gt;<br/>                        [options]<br/>Request a document to be validated by SignServer<br/> -data             Data to send to the worker.<br/> -host             Server name or IP address. Default: localhost<br/> -infile           File to read data to send to the worker from.<br/> -keyalias         Alias of the key in the keystore to use for<br/>                   authentication.<br/> -keystore         Keystore with private key and certificate for<br/>                   client certificate authentication.<br/> -keystorepwd      Password for reading the keystore.  If keystore is<br/>                   specified but not this keystore password option,<br/>                   the CLI will instead prompt for the password.<br/> -metadata         Additional meta data to send to the signer. The<br/>                   parameters should be given in the form KEY=VALUE.<br/>                   This option can be given multiple times.<br/> -password         Password for authentication.<br/> -port             Server port. Default: 8080 (for HTTP), 8442 for<br/>                   HTTPS and 8443 for HTTPS with client<br/>                   authentication.<br/> -protocol         Method of interaction with SignServer.<br/>                   WEBSERVICES, or HTTP. Default: WEBSERVICES.<br/> -servlet          URL to the webservice servlet. Default:<br/>                   /signserver/signserverws/signserverws?wsdl<br/> -truststore       Keystore with trusted certificates to use with<br/>                   HTTPS.<br/> -truststorepwd    Password for the keystore with trusted<br/>                   certificates. If truststore is specified but not<br/>                   this truststore password option, the CLI will<br/>                   instead prompt for the password.<br/> -username         Username for authentication.<br/> -workerid         ID of worker which should perform the operation.<br/> -workername       Name of worker which should perform the operation.<br/><br/>Sample usages:<br/>a) validatedocument -workername XMLValidator -data &quot;&lt;root&gt;&lt;Signature...<br/>b) validatedocument -workername XMLValidator -infile /tmp/signed.xml<br/>c) validatedocument -workerid 2 -infile /tmp/signed.xml -truststore<br/>truststore.jks -truststorepwd changeit<br/>d) validatedocument -workerid 2 -infile /tmp/signed.xml -keystore<br/>superadmin.jks -truststorepwd foo123<br/>e) validatedocument -workername XMLValidator -protocol HTTP -infile<br/>/tmp/signed.xml<br/>f) validatedocument -workername XMLValidator -infile /tmp/signed.xml -metadata param1=value1 -metadata param2=value2</pre>    </div>
+    <div class="section section-2" id="src-5281408_id-.SignServerIntegrationv4.1.0-timestamp">
+        <h2 class="heading "><span>timestamp</span></h2>
+<pre class="prettyprint ">$ bin/signclient timestamp<br/>usage: timestamp &lt;options&gt; [url]<br/> -base64                Give this option if the stored request/reply<br/>                        should be base64 encoded, default is not.<br/> -certreq               Request signer certificate<br/> -help                  Print this message.<br/> -infile &lt;file&gt;         File containing message to time stamp.<br/> -inrep &lt;file&gt;          Input file containing an earlier stored base64<br/>                        encoded response, to verify.You must specify the<br/>                        verify flag also.<br/> -inreq &lt;file&gt;          Input file containing an earlier stored request to<br/>                        use instead of creating a new. You must specify<br/>                        the request flag also.<br/> -instr &lt;string&gt;        String to be time stamped, if neither instr or<br/>                        infile is given, the client works in test-mode<br/>                        generating it's own message.<br/> -keyalias &lt;arg&gt;        Alias of the key in the keystore to use for<br/>                        authentication.<br/> -keystore &lt;arg&gt;        Keystore with private key and certificate for<br/>                        client certificate authentication.<br/> -keystorepwd &lt;arg&gt;     Password for reading the keystore.  If keystore is<br/>                        specified but not this keystore password option,<br/>                        the CLI will instead prompt for the password.<br/> -outrep &lt;file&gt;         Output file to store the recevied TSA reply, if<br/>                        not given the reply is not stored.<br/> -outreq &lt;file&gt;         Output file to store the sent TSA request, if not<br/>                        given the request is not stored.<br/> -print                 Prints content of a request, response and/or token<br/> -reqpolicy &lt;oid&gt;       Request timestamp issued under a policy OID<br/> -signerfile &lt;file&gt;     Input file containing the PEM encoded certificate<br/>                        of the TSA signer.Used to verify a stored<br/>                        response.<br/> -sleep &lt;num&gt;           Sleep a number of milliseconds after each request.<br/>                        Default 1000 ms.<br/> -truststore &lt;arg&gt;      Keystore with trusted certificates to use with<br/>                        HTTPS.<br/> -truststorepwd &lt;arg&gt;   Password for the keystore with trusted<br/>                        certificates. If truststore is specified but not<br/>                        this truststore password option, the CLI will<br/>                        instead prompt for the password.<br/> -url &lt;url&gt;             Url of TSA, e.g.<br/>                        http://127.0.0.1:8080/signserver/process?workerId=<br/>                        1.<br/> -verify                Give this option if verification of a stored reply<br/>                        should be done, work together with inrep and<br/>                        cafile. If given, no request to the TSA will<br/>                        happen.<br/><br/>Sample usages:<br/>a) timestamp -url http://localhost:8080/signserver/tsa?workerName=TimeStampSigner<br/>b) timestamp -print -inreq query.tsq<br/>c) timestamp -print -inrep reply.tsr</pre>    </div>
+    <div class="section section-2" id="src-5281408_id-.SignServerIntegrationv4.1.0-validatecertificate">
+        <h2 class="heading "><span>validatecertificate</span></h2>
+    <p  >Request a certificate to be validated by the specified service.    </p>
+<pre class="prettyprint ">usage: Usage: java -jar validate.jar &lt;options&gt;<br/><br/> -cert &lt;cert-file&gt;              Path to certificate file (DER or PEM)<br/>                                (Required).<br/> -certpurposes &lt;certpurposes&gt;   A ',' separated string containing<br/>                                requested certificate purposes.<br/> -der                           Certificate is in DER format.<br/> -help                          Display this info<br/> -hosts &lt;hosts&gt;           A ',' separated string containing the<br/>                                hostnames of the validation service nodes.<br/>                                Ex 'host1.someorg.org,host2.someorg.org'.<br/>                                When using the HTTP protocol, only one<br/>                                host name can be specified. (Required).<br/> -pem                           Certificate is in PEM format (Default).<br/> -port &lt;port&gt;                   Remote port of service (Default is 8080 or<br/>                                8442 for SSL).<br/> -protocol &lt;protocol&gt;           Protocol to use, either WEBSERVICES or<br/>                                HTTP. Default: WEBSERVICES.<br/> -service &lt;service-name&gt;        The name or ID of the validation service<br/>                                to process request. (Required)<br/> -silent                        Don't produce any output, only return<br/>                                value.<br/> -truststore &lt;jks-file&gt;         Path to JKS truststore containing trusted<br/>                                CA for SSL Server certificates.<br/> -truststorepwd &lt;password&gt;      Password to unlock the truststore.<br/><br/>The following values is returned by the program that can be used when scripting.<br/>  -2   : Error happened during execution<br/>  -1   : Bad arguments<br/>   0   : Certificate is valid<br/>   1   : Certificate is revoked<br/>   2   : Certificate is not yet valid<br/>   3   : Certificate have expired<br/>   4   : Certificate doesn't verify<br/>   5   : CA Certificate have been revoked<br/>   6   : CA Certificate is not yet valid<br/>   7   : CA Certificate have expired<br/>   8   : Certificate have no valid certificate purpose<br/><br/>Sample usages:<br/>a) validatecertificate -service CertValidationWorker -hosts localhost -cert<br/>    certificate.pem<br/>b) validatecertificate -service 5806 -hosts localhost -cert certificate.pem<br/>    -truststore p12/truststore.jks -truststorepwd changeit<br/>c) validatecertificate -service CertValidationWorker -hosts localhost<br/>    -cert certificate.pem -protocol HTTP</pre>    </div>
+    <div class="section section-2" id="src-5281408_id-.SignServerIntegrationv4.1.0-signdatagroups">
+        <h2 class="heading "><span>signdatagroups</span></h2>
+    <p  >Sign the specified data groups and produce an SOd (MRTD).    </p>
+<pre class="prettyprint ">$ bin/signclient signdatagroups<br/>usage: signdatagroups &lt;options&gt;<br/>Request MRTD data groups to be signed<br/> -data &lt;arg&gt;            Data to send to the worker.<br/> -encoding &lt;arg&gt;        Encoding of the data option. None or base64.<br/>                        Default: none.<br/> -host &lt;arg&gt;            Server name or IP address. Default: localhost<br/> -keyalias &lt;arg&gt;        Alias of the key in the keystore to use for<br/>                        authentication.<br/> -keystore &lt;arg&gt;        Keystore with private key and certificate for<br/>                        client certificate authentication.<br/> -keystorepwd &lt;arg&gt;     Password for reading the keystore.  If keystore is<br/>                        specified but not this keystore password option,<br/>                        the CLI will instead prompt for the password.<br/> -metadata &lt;arg&gt;        Additional meta data to send to the signer. The<br/>                              parameters should be given in the form KEY=VALUE.<br/>                              This option can be given multiple times.<br/> -password &lt;arg&gt;        Password for authentication. If username is<br/>                        specified but not this password option, the CLI<br/>                        will instead prompt for the password.<br/> -port &lt;arg&gt;            Server port. Default: 8080 (for HTTP), 8442 for<br/>                        HTTPS and 8443 for HTTPS with client<br/>                        authentication.<br/> -protocol &lt;arg&gt;        Method of interacting with SignServer. HTTP or<br/>                        CLIENTWS. Default: HTTP.<br/> -repeat &lt;arg&gt;          Run the operation this number of times. Default: 1<br/> -servlet &lt;arg&gt;         Servlet to call. Default /signserver/sod<br/> -truststore &lt;arg&gt;      Keystore with trusted certificates to use with<br/>                        HTTPS.<br/> -truststorepwd &lt;arg&gt;   Password for the keystore with trusted<br/>                        certificates. If truststore is specified but not<br/>                        this truststore password option, the CLI will<br/>                        instead prompt for the password.<br/> -username &lt;arg&gt;        Username for authentication.<br/> -workerid &lt;arg&gt;        ID of worker which should perform the operation.<br/> -workername &lt;arg&gt;      Name of worker which should perform the operation.<br/><br/>Sample usages:<br/>a) signdatagroups -workername MRTDSODSigner -data &quot;1=value1&amp;2=value2&amp;3=value3&quot;<br/>b) signdatagroups -workername MRTDSODSigner -data &quot;1=value1&amp;2=value2&amp;3=value3&quot; -metadata param1=value1 -metadata param2=value2</pre>    <p  ><span id="src-5281408_adminws"></span>    <span style="color: #000000;">
+     </span>
+    </p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-5281408_id-.SignServerIntegrationv4.1.0-AdministrationWebServices">
+        <h1 class="heading "><span>Administration Web Services</span></h1>
+    <p  ><span id="src-5281408_id-.SignServerIntegrationv4.1.0-Administration_Web_Services"></span>The SignServer AdminWS can be used for remote administration of SignServer over client authenticated HTTPS. Access is granted based on a list of certificate serial number and issuer distinguished name pairs. Currently there is only one access level and all administrators granted access will be able to perform all operations.    </p>
+    <p  >The WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/AdminWSService/AdminWS?wsdl    </p>
+    <p  >Authorizing administrators can be done using the Admin CLI command &quot;wsadmins&quot;.    </p>
+<pre class="prettyprint ">Usage: signserver wsadmins -add -certserialno &lt;certificate serial number (in hex)&gt; -issuerdn &lt;issuer DN&gt;<br/>Usage: signserver wsadmins -add -cert &lt;PEM or DER file&gt;<br/>Usage: signserver wsadmins -remove -certserialno &lt;certificate serial number (in hex)&gt; -issuerdn &lt;issuer DN&gt;<br/>Usage: signserver wsadmins -list<br/>Example 1: signserver wsadmins -add -certserialno 123abcdef -issuerdn &quot;C=SE, CN=Neo Morpheus&quot;<br/>Example 2: signserver wsadmins -add -cert cert.pem<br/>Example 3: signserver wsadmins -remove -certserialno 123abcdef -issuerdn &quot;C=SE, CN=Neo Morpheus&quot;<br/>Example 4: signserver wsadmins -list</pre>    <p  >Notice that the certificate serial number should be entered as the hexadecimal representation (leading zeros and upper/lowercase is not significant). Also notice that the issuer DN currently should be entered in the reversed order and with spaces after each component. In the example above the issuer DN from the certificate actually is &quot;CN=Neo Morpheus, C=SE&quot;.    </p>
+    <p  >An administrator can also be added by supplying a client certificate as an argument. The serial number and issuer DN is then taken from that certificate.    </p>
+    <p  >To troubleshoot an &quot;Administrator not authorized to resource&quot; see the logs for how SignServer interprets the serialnumber and subject DN. Example:    </p>
+<pre class=" ">19:00:33,946 INFO  [AdminWS] ADMIN OPERATION; subjectDN=C=SE, O=Markus Organization, OU=Internal Testing 1, CN=External RA Admin 1; serialNumber=4a3442e98e3ce428; issuerDN=C=SE, O=Markus Organization, OU=Internal Testing 1, CN=MarkusAdminCA1; authorized=false; operation=getWorkers; arguments=</pre>    </div>
+    <div class="section section-1" id="src-5281408_id-.SignServerIntegrationv4.1.0-ApacheHTTPServerasproxy">
+        <h1 class="heading "><span>Apache HTTP Server as proxy</span></h1>
+    <p  >This section will show you examples on how the Apache Web Server (version 2.2.20) can be used as a proxy in front of SignServer. This guide is only informative, you should also always consult the current Apache documentation for the modules used. The proxy could be used for multiple reasons including:    </p>
+<ul class=" "><li class=" ">    <p  >Use standard ports (80, 443) instead of unprivileged ports used by the application server    </p>
+</li><li class=" ">    <p  >Making workers accessible through more nice looking URLs.<br/>For example &quot;<a  class="external-link" href="http://tsa.example.com">http://tsa.example.com</a>&quot; instead of &quot;<a  class="external-link" href="http://example.com:8080/signserver/tsa?workerName=TimeStampSigner1">http://example.com:8080/signserver/tsa?workerName=TimeStampSigner1</a>&quot;    </p>
+</li><li class=" ">    <p  >Use any of the access control and authentication mechanism available in Apache    </p>
+</li><li class=" ">    <p  >Redirect HTTP traffic to HTTPS    </p>
+</li><li class=" ">    <p  >Only accepting requests to specified locations    </p>
+</li></ul>    <p  >As the requests should go through the proxy you will probably want to configure the application server to only listen to localhost and/or use a firewall blocking the application server ports from external requests. To configure JBoss to only listen to localhost set the following properties in signserver_deploy.properties:    </p>
+<pre class="prettyprint ">httpsserver.bindaddress.pubhttp=127.0.0.1<br/>httpsserver.bindaddress.pubhttps=127.0.0.1<br/>httpsserver.bindaddress.privhttps=127.0.0.1</pre>    <p  >Install the Apache web server and enable required modules (the following commands are for Ubuntu but should be similar in other distributions as well):    </p>
+<pre class="prettyprint ">$ sudo apt-get install apache2<br/>$ cd /etc/apache2/mods-enabled/<br/>$ sudo ln -s ../mods-available/proxy.load proxy.load<br/>$ sudo ln -s ../mods-available/proxy_http.load proxy_http.load<br/>$ sudo ln -s ../mods-available/proxy_ajp.load proxy_ajp.load<br/>$ sudo ln -s ../mods-available/proxy_balancer.load proxy_balancer.load<br/>$ sudo ln -s ../mods-available/rewrite.load rewrite.load<br/>$ sudo ln -s ../mods-available/ssl.load ssl.load</pre>    <div class="section section-2" id="src-5281408_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnRlZ3JhdGlvbnY0LjEuMC1FeGFtcGxlOlJld3JpdGVVUkxzZm9yVFNBKHVzaW5nbW9kX3Byb3h5YW5kbW9kX3Jld3JpdGUp">
+        <h2 class="heading "><span>Example: Rewrite URLs for TSA (using mod_proxy and mod_rewrite)</span></h2>
+    <p  >A sample configuration how to fix up nice URLs for time-stamping so that you can point your TSA clients to <a  class="external-link" href="http://tsa.example.com/">http://tsa.example.com/</a> instead of <a  class="external-link" href="http://tsa.example.com:8080/signserver/process?workerName=TimeStampSigner1">http://tsa.example.com:8080/signserver/process?workerName=TimeStampSigner1</a>.<br/>This configuration combines mod_proxy with mod_rewrite to be able to set the workerName or workerId, so you can have different TSAs available on different URLs.    </p>
+<pre class="prettyprint ">&lt;VirtualHost tsa.example.com:80&gt;<br/>    ServerName tsa.example.com<br/>    ServerAlias tsa.example.com<br/>    CustomLog /var/log/apache2/access.log combined<br/><br/>    RewriteEngine on<br/>    RewriteLogLevel 5<br/>    RewriteLog &quot;/var/log/apache2/rewrite.log<br/>    RewriteRule ^/$ /?workerName=TimeStampSigner1 [PT]<br/><br/>    ProxyRequests Off<br/>    &lt;Proxy *&gt;<br/>        Order deny,allow<br/>        Allow from all<br/>    &lt;/Proxy&gt;<br/>    ProxyPass / http://127.0.0.1:8080/signserver/process<br/>    ProxyPassReverse / http://127.0.0.1:8080/signserver/process<br/>&lt;/VirtualHost&gt;</pre>    </div>
+    <div class="section section-2" id="src-5281408_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnRlZ3JhdGlvbnY0LjEuMC1FeGFtcGxlOlJld3JpdGVVUkxzYW5kcmVkaXJlY3R0b0hUVFBTKHVzaW5nQUpQKQ">
+        <h2 class="heading "><span>Example: Rewrite URLs and redirect to HTTPS (using AJP)</span></h2>
+    <p  >The following example configures three virtual hosts. The first <a  class="external-link" href="http://signserver.example.com">signserver.example.com</a>:80 just redirects all requests to use HTTPS and thus the virtual host <a  class="external-link" href="http://signserver.example.com">signserver.example.com</a>:443. The second virtual host is configured to proxy requests to the /signserver path on the application server using the AJP protocol. It is also configured to use HTTPS with a server certificate. The last virtual hosts <a  class="external-link" href="http://auth.signserver.example.com">auth.signserver.example.com</a> using an additonal IP address is configured to require client certificate authentication.    </p>
+    <p  >Notice: Some application servers (i.e. JBoss 4) might have problems writing the correct port number in the endpoint URL in the web services WSDL file when using a proxy (i.e. writing 8443 instead of 443).    </p>
+<pre class="prettyprint ">&lt;VirtualHost signserver.example.com:80&gt;<br/>    ServerName signserver.example.com<br/>    ServerAlias signserver.example.com<br/><br/>    RewriteEngine On<br/>    RewriteCond %{HTTPS} off<br/>    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}<br/><br/>    # Configure log<br/>    LogLevel warn<br/>    ErrorLog /var/log/apache2/error.log<br/>    CustomLog /var/log/apache2/access.log combined<br/><br/>&lt;/VirtualHost&gt;<br/><br/>&lt;VirtualHost signserver.example.com:443&gt;<br/>    ServerName signserver.example.com<br/>    ServerAlias signserver.example.com<br/><br/>    ProxyRequests Off<br/>    &lt;Proxy balancer://mycluster-3&gt;<br/>        BalancerMember ajp://localhost:8009/signserver<br/>    &lt;/Proxy&gt;<br/>    ProxyPass / balancer://mycluster-3/<br/><br/>    RewriteEngine   On<br/><br/>    # Treat requests to / and /signserver/ as the same for web services endpoints to work.<br/>    RewriteCond     %{THE_REQUEST}  /signserver/<br/>    RewriteRule     ^/signserver/(.*)$ /$1 [PT]<br/><br/>    # Configure secure SSL for this server using SSL certificate generated by EJBCA<br/>    SSLEngine on<br/>    SSLCipherSuite HIGH<br/>    SSLProtocol all -SSLv2<br/>    SSLCertificateFile /home/markus/Documents/PrimeKey/MarkusCA/example.com/signserver.example.com-cert.pem<br/>    SSLCertificateKeyFile /home/markus/Documents/PrimeKey/MarkusCA/example.com/signserver.example.com-key.pem<br/><br/>    # Configure log<br/>    LogLevel warn<br/>    ErrorLog /var/log/apache2/error.log<br/>    CustomLog /var/log/apache2/access.log combined<br/>&lt;/VirtualHost&gt;<br/><br/># Note: auth.signserver.example.com must have a different IP address<br/>&lt;VirtualHost auth.signserver.example.com:443&gt;<br/>    ServerName auth.signserver.example.com<br/>    ServerAlias auth.signserver.example.com<br/><br/>    ProxyRequests Off<br/>    &lt;Proxy balancer://mycluster-4&gt;<br/>        BalancerMember ajp://localhost:8009/signserver<br/>    &lt;/Proxy&gt;<br/>    ProxyPass / balancer://mycluster-4/<br/><br/>    RewriteEngine   On<br/>    # Treat requests to / and /signserver/ as the same for web services endpoints to work.<br/>    RewriteCond     %{THE_REQUEST}  /signserver/<br/>    RewriteRule     ^/signserver/(.*)$ /$1 [PT]<br/><br/>    # Configure secure SSL for this server using SSL certificate generated by EJBCA<br/>    SSLEngine on<br/>    SSLCipherSuite HIGH<br/>    SSLProtocol all -SSLv2<br/>    SSLCertificateFile /home/markus/Documents/PrimeKey/MarkusCA/example.com/auth.signserver.example.com-cert.pem<br/>    SSLCertificateKeyFile /home/markus/Documents/PrimeKey/MarkusCA/example.com/auth.signserver.example.com-key.pem<br/><br/>    SSLVerifyClient require<br/>    SSLVerifyDepth 1<br/>    SSLCACertificateFile /home/markus/Documents/PrimeKey/MarkusCA/example.com/truststore.pem<br/><br/>    # Configure log<br/>    LogLevel warn<br/>    ErrorLog /var/log/apache2/error.log<br/>    CustomLog /var/log/apache2/access.log combined<br/>&lt;/VirtualHost&gt;</pre>    </div>
+    <div class="section section-2" id="src-5281408_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnRlZ3JhdGlvbnY0LjEuMC1FeGFtcGxlOkdyYW50aW5nYWNjZXNzdG9zcGVjaWZpY3dvcmtlcnNvbmx5">
+        <h2 class="heading "><span>Example: Granting access to specific workers only</span></h2>
+    <p  >This example shows how it is possible to limit access to only specified resources.    </p>
+    <p  >If you are going to grant different users access to different workers always remember to first deny access from the root location. The reason is that there are other ways to access a worker than the &quot;/worker/*&quot; or &quot;/sodworker/*&quot; pattern. For instance /process, /tsa, /pdf and /sod etc as well as using the web services interfaces /signserverws, /SignServerWSService, /validationws, /ValidationWSService and /ClientWSService all can be used to invoke <strong class=" ">any</strong> worker.    </p>
+    <p  >If you instead relay on SignServer to do the authentication/authorization it could still be good from a security point to only grant access to the locations you intend to use. In that case you would probably want to also give access to the web services interfaces, /worker and /process etc.    </p>
+    <p  >Also remember if you are proxying from multiple virtual hosts (i.e. if you have one with and one without client authentication as in the example above) that you might want to add the access restrictions to all of them.    </p>
+<pre class="prettyprint ">    ...<br/>    # First, deny access globally and then only give access to resources explicitly<br/>    &lt;Location /&gt;<br/>    	Order Deny,Allow<br/>    	Deny from all<br/>    &lt;/Location&gt;<br/><br/>    # Allow index page<br/>    &lt;LocationMatch &quot;^/$&quot;&gt;<br/>	Order Allow,Deny<br/>	Allow from all<br/>    &lt;/LocationMatch&gt;<br/><br/>    # Allow demo web pages<br/>    &lt;Location /demo/&gt;<br/>	Order Allow,Deny<br/>	Allow from all<br/>    &lt;/Location&gt;<br/><br/>    # Allow documentation<br/>    &lt;Location /doc/&gt;<br/>	Order Allow,Deny<br/>	Allow from all<br/>    &lt;/Location&gt;<br/><br/>    # Allow web page resources<br/>    &lt;LocationMatch &quot;\.(css|js|jpg|png)$&quot;&gt;<br/>	Order Allow,Deny<br/>	Allow from all<br/>    &lt;/LocationMatch&gt;<br/>    <br/>    # Allow the Admin interface<br/>    &lt;Location /AdminWSService/&gt;<br/>	Order Allow,Deny<br/>	Allow from all<br/>    &lt;/Location&gt;<br/><br/>    # Grant everybody access to the XMLSigner<br/>    &lt;Location /worker/XMLSigner&gt;<br/>	Order Allow,Deny<br/>	Allow from all<br/>    &lt;/Location&gt;<br/>                        <br/>    # Grant everybody access to the MRTDSODSigner<br/>    &lt;Location /sodworker/MRTDSODSigner&gt;<br/>        Order Allow,Deny<br/>        Allow from all<br/>    &lt;/Location&gt;<br/><br/>    # Grant valid users access to the CMSSigner<br/>    &lt;Location /worker/CMSSigner&gt;<br/>	Order Allow,Deny<br/>        Allow from all<br/>        AuthType Basic<br/>        AuthName &quot;Restricted CMSSigner access&quot;<br/>    	AuthUserFile /home/markus/.htpasswd<br/>    	Require valid-user<br/>    &lt;/Location&gt;<br/>    ...</pre>    </div>
+    <div class="section section-2" id="src-5281408_id-.SignServerIntegrationv4.1.0-AdditionalConfiguration">
+        <h2 class="heading "><span>Additional Configuration</span></h2>
+    <div class="section section-3" id="src-5281408_id-.SignServerIntegrationv4.1.0-CustomPrivateHTTPSport">
+        <h3 class="heading "><span>Custom Private HTTPS port</span></h3>
+    <p  >If for instance a reverse proxy is used to change the ports used by SignServer the links in the Administration Web interface might not be correct (i.e. if the standard port 443 is used instead of 8443). In that case this can be configured in conf/signserver_deploy.properties:    </p>
+    <div  class="tablewrap">
+        <table class="confluenceTable">
+                    <colgroup>
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Sample Property    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >httpserver.external.privhttps=443    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    <div class="section section-3" id="src-5281408_id-.SignServerIntegrationv4.1.0-CustomContextRoot">
+        <h3 class="heading "><span>Custom Context Root</span></h3>
+    <p  >With a reverse proxy it is also possible to use a different beginning of the URL for accessing SignServer than the default &quot;/signserver&quot;. If for example the reverse proxy instead serves SignServer under &quot;/myservice/signserver&quot; this might have to be configured in conf/signserver_deploy.properties so that the URLs in the Administration Web interface as well as the Web Services endpoints works as expected:    </p>
+    <div  class="tablewrap">
+        <table class="confluenceTable">
+                    <colgroup>
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Sample Property    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >httpserver.context.root=/myservice/signserver    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    </div>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="Troubleshooting.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Troubleshooting</span>
+        </a>
+                <a href="Development.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Development</span>
+        </a>
+    </nav>    
+            
+            <article id="html-search-results" class="ht-content" style="display: none;">
+            <header class="ht-content-header">
+                <div id="ht-spacetitle">
+                    <ul>
+                        <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li>
+                    </ul>
+                </div>
+                <h1>Search results</h1>
+            </header>
+            <div id="search-results"></div>
+        </article>
+    
+    <footer id="ht-footer">
+    <small>
+        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+    </small>
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+</body>
+</html>

@@ -95,7 +95,6 @@
         <module>SignServer-Test-Performance</module>
         
         <!-- Documentation -->
-        <module>SignServer-Doc</module>
         <module>SignServer-Doc-web</module>
     </modules>
     <dependencies>

@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- <title>SignServer Installation - SignServer - Documentation Space</title> -->
+    <title>SignServer Installation - SignServer Manual</title>
+
+    <meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.scrollTo.min.js"></script>
+
+
+<script type="text/javascript" src="assets/js/scroll-tree.js"></script>
+
+<script type="text/javascript" src="assets/js/theme.main.js"></script>
+
+
+<link rel="stylesheet" href="assets/css/content-style.css">
+    <link rel="stylesheet" href="assets/css/search.css">
+
+<link rel="stylesheet" href="assets/css/theme.main.css">
+<link rel="stylesheet" href="assets/css/theme.colors.css">
+
+            <!-- ES5 support for older browsers, needed by lunr -->
+        <script src="js/augment.js"></script>
+        <script id="worker" type="javascript/worker">
+
+        startIndex = function() {
+            idx = lunr.Index.load(lunrIndex);
+            idx.pipeline.remove(lunr.stopWordFilter);
+            postMessage({type: "setup-complete"});
+        }
+
+        onmessage = function (event) {
+            var message = event.data;
+
+            if ((message.type === 'setup') && message.baseUrl) {
+                var url = message.baseUrl;
+                importScripts(url + 'js/lunr.js');
+                importScripts(url + 'js/lunr-extras.js');
+                importScripts(url + 'js/lunr-index.js');
+                importScripts(url + 'js/lunr-data.js');
+                startIndex();
+            }
+
+            if (idx && (message.type === 'search-request') && message.query) {
+                var searchWord = message.query;
+                var results = idx.search(searchWord).map(function (result) {
+                    return lunrData.filter(function (d) {
+                        return d.id === parseInt(result.ref, 10)
+                    })[0]
+                });
+                postMessage({type: 'search-results', results: results, query: searchWord, queryId: message.queryId});
+            }
+        }
+
+    </script>
+    </head>
+
+<body pageid="3050729">
+
+<div id="ht-loader">
+    <noscript>
+        <p style="width: 100%; text-align:center; position: absolute; margin-top: 200px;">This content cannot be displayed without JavaScript.<br>Please enable JavaScript and reload the page.</p>
+    </noscript>
+</div>
+
+<div>
+   	<header id="ht-headerbar">
+    <div class="ht-headerbar-left">
+        <a href="" id="ht-menu-toggle" class="sp-aui-icon-small sp-aui-iconfont-appswitcher"></a>
+    </div>
+    <div class="ht-headerbar-right">
+            <div class="sp-aui-icon-small ht-search-index-loader ht-header-icon"></div>
+
+        <div id="ht-search">
+            <div class="ht-search-input" style="display: none;">
+              	<a href="#" class="sp-aui-icon-small sp-aui-iconfont-remove ht-search-clear"></a>
+
+                <form action="#" method="GET" id="search">
+                    <input class="search-input" type="text" placeholder="Search" tabindex="-1" autocomplete="off" name="q" value="">
+                    <input type="hidden" name="max" value="15" />
+                    <input type="submit" style="display:none" tabindex="-4"/>
+                </form>
+
+                <a href="#" id="ht-search-button" class="ht-header-icon ht-header-icon-svg">
+                                        <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path d="M29.572,28.802 L28.801,29.571 C28.515,29.857 28.187,30 27.816,30 C27.445,30 27.116,29.857 26.831,29.571 L21.392,24.134 C20.193,24.762 18.908,25.076 17.538,25.076 C15.396,25.076 13.605,24.348 12.163,22.892 C10.721,21.436 10,19.651 10,17.538 C10,15.397 10.721,13.605 12.163,12.163 C13.605,10.721 15.396,10 17.538,10 C19.651,10 21.434,10.721 22.89,12.163 C24.347,13.605 25.075,15.397 25.075,17.538 C25.075,18.937 24.761,20.222 24.132,21.393 L29.572,26.832 C29.857,27.118 30,27.446 30,27.817 C30,28.188 29.857,28.517 29.572,28.802 L29.572,28.802 Z M13.662,21.414 C14.732,22.485 16.024,23.02 17.538,23.02 C19.051,23.02 20.343,22.485 21.413,21.414 C22.484,20.344 23.019,19.052 23.019,17.538 C23.019,16.025 22.484,14.733 21.413,13.662 C20.343,12.592 19.051,12.056 17.538,12.056 C16.024,12.056 14.732,12.592 13.662,13.662 C12.591,14.733 12.056,16.025 12.056,17.538 C12.056,19.052 12.591,20.344 13.662,21.414 L13.662,21.414 Z"></path>
+                        </g>
+                    </svg>
+              	</a>
+
+                <div class="ht-search-dropdown ht-dropdown">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>   	<aside id="ht-sidebar">
+    <div class="ht-sidebar-content">
+        <div class="ht-sidebar-content-scroll-container">
+            <header class="ht-sidebar-header">
+                <h1 class="ht-logo">
+                    <span class="ht-logo-label">SIGNDS</span>
+                    <!-- <img class="space-logo" src="spacelogo.png" /> -->
+                    <img src="projectlogo.png">
+                </h1>
+                <div class="ht-version">
+                    <p>Version: 4.1.0</p>
+                </div>
+                <a href="SignServer_Manual.html" class="ht-space-link">
+                    <!-- <h2>SignServer - Documentation Space</h2> -->
+                    <h2>SignServer Manual</h2>
+                </a>
+            </header>
+
+            <nav class="ht-pages-nav">
+                <ul class="ht-pages-nav-top">
+                                                <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Introduction.html">SignServer Introduction</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Architecture.html">Architecture</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Release_Notes.html">Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Terms_Used_in_the_SignServer_manual.html">Terms Used in the SignServer manual</a>
+
+            </li>
+                            </ul>
+            </li>
+                                                <li class="leaf">
+        <a class="ht-nav-page-link current" href="SignServer_Installation.html">SignServer Installation</a>
+
+            </li>
+                                                <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Operations.html">SignServer Operations</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Worker_Setup.html">Worker Setup</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Quick_Start_Demo_Setup_using_Administration_CLI.html">Quick Start Demo Setup using Administration CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Quick_Start_Demo_Setup_using_Administration_Web.html">Quick Start Demo Setup using Administration Web</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
+
+            </li>
+                            </ul>
+            </li>
+                                                <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Integration.html">SignServer Integration</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Development.html">Development</a>
+
+            </li>
+                            </ul>
+            </li>
+                                                <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Reference.html">SignServer Reference</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Deploy-time_Configuration.html">Deploy-time Configuration</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Workers.html">SignServer Workers</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Common_configuration.html">Common configuration</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Generic_Worker_Properties.html">Generic Worker Properties</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Authorization_Type.html">Authorization Type</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Archiving.html">Archiving</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Accounter.html">Accounter</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Certificate_Validity_Checks.html">Certificate Validity Checks</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Limiting_the_number_of_signatures.html">Limiting the number of signatures</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Other_properties.html">Other properties</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Signers.html">SignServer Signers</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Common_Properties.html">Common Properties</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Time_Stamp_Signer.html">Time Stamp Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="MS_Authenticode_Time_Stamp_Signer.html">MS Authenticode Time Stamp Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Extended_Time_Stamp_Signer.html">Extended Time Stamp Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="MRTD_Signer.html">MRTD Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="MRTD_SOD_Signer.html">MRTD SOD Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="PDF_Signer.html">PDF Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="ODF_Signer.html">ODF Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="XML_Signer.html">XML Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="XAdES_Signer.html">XAdES Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OOXML_Signer.html">OOXML Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="CMS_Signer.html">CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="MS_Authenticode_Signer.html">MS Authenticode Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JArchive_Signer.html">JArchive Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Master_List_Signer.html">Master List Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Document_Validators.html">SignServer Document Validators</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="XML_Validator.html">XML Validator</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="XAdEs_Validator.html">XAdEs Validator</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Dispatchers.html">SignServer Dispatchers</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="FirstActiveDispatcher.html">FirstActiveDispatcher</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="RequestedPolicyDispatcher.html">RequestedPolicyDispatcher</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="UserMappedDispatcher.html">UserMappedDispatcher</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Validation_Service_Framework.html">SignServer Validation Service Framework</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="DefaultValidationService.html">DefaultValidationService</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Certificate_Validators.html">Certificate Validators</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="The_Validation_CLI_interface.html">The Validation CLI interface</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Timed_Services.html">SignServer Timed Services</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignerStatusReportTimedService.html">SignerStatusReportTimedService</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="HSMKeepAliveTimedService.html">HSMKeepAliveTimedService</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="RenewalTimedService.html">RenewalTimedService</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Other_workers.html">Other workers</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="CryptoWorker.html">CryptoWorker</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="RenewalWorker.html">RenewalWorker</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="StatusPropertiesWorker.html">StatusPropertiesWorker</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="TimeMonitorManager.html">TimeMonitorManager</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="TimeMonitorStatusReportWorker.html">TimeMonitorStatusReportWorker</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
+
+            </li>
+                            </ul>
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_Components.html">SignServer Components</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="CryptoTokens.html">CryptoTokens</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="General_properties.html">General properties</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JKSCryptoToken.html">JKSCryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="KeystoreInConfigCryptoToken.html">KeystoreInConfigCryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="P12CryptoToken.html">P12CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Archivers.html">Archivers</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OldDatabaseArchiver.html">OldDatabaseArchiver</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Base64DatabaseArchiver.html">Base64DatabaseArchiver</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Accounters.html">Accounters</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="NoAccounter.html">NoAccounter</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="GlobalConfigSampleAccounter.html">GlobalConfigSampleAccounter</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Alias_Selectors.html">Alias Selectors</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="DefaultAliasSelector.html">DefaultAliasSelector</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="AuthorizedUsernameAliasSelector.html">AuthorizedUsernameAliasSelector</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Authorizers.html">Authorizers</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Logging.html">Logging</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Log.html">Worker Log</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="System_Log.html">System Log</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="CESeCore_Security_Events_Logger.html">CESeCore Security Events Logger</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debug_Log.html">Debug Log</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Log4j_for_Audit_logs.html">Configure Log4j for Audit logs</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Status_Repository_Logging.html">Status Repository Logging</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_Authentication_and_Authorization.html">SignServer Authentication and Authorization</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Status_Repository.html">Status Repository</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_TimeMonitor_application.html">SignServer TimeMonitor application</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="SignServer_User_Interfaces.html">SignServer User Interfaces</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Main_Page.html">Main Page</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Workers_Page.html">Workers Page</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Activation_Page.html">Workers Activation Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Deactivation_Page.html">Workers Deactivation Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Key_Generation_Page.html">Workers Key Generation Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Test_Key_Page.html">Workers Test Key Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_CSR_Page.html">Workers CSR Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Install_Certificates_Page.html">Workers Install Certificates Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Renewal_Page.html">Workers Renewal Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Removal_Page.html">Workers Removal Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Reload_from_Database_Page.html">Workers Reload from Database Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Export_Page.html">Workers Export Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Add_Page.html">Workers Add Page</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Worker_Page.html">Worker Page</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Status_Summary_Page.html">Worker Status Summary Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Status_Properties_Page.html">Worker Status Properties Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Configuration_Page.html">Worker Configuration Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Authorization_Page.html">Worker Authorization Page</a>
+
+            </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Worker_Crypto_Token_Page.html">Worker Crypto Token Page</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Crypto_Token_Generate_Key_Page.html">Crypto Token Generate Key Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Crypto_Token_Generate_CSR_Page.html">Crypto Token Generate CSR Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Crypto_Token_Import_Certificates_Page.html">Crypto Token Import Certificates Page</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Destroy_Key_Page.html">Worker Destroy Key Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Worker_Certificate_Details_Page.html">Worker Certificate Details Page</a>
+
+            </li>
+                            </ul>
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Global_Configuration_Page.html">Global Configuration Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Administrators_Page.html">Administrators Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Audit_Log_Page.html">Audit Log Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Archive_Page.html">Archive Page</a>
+
+            </li>
+                            </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
+
+            </li>
+                            </ul>
+            </li>
+                            </ul>
+            </li>
+                                    </ul>
+            </nav>
+
+            <div class="ht-sidebar-other">
+                <div class="ht-sidebar-other-item">
+                    <a href="https://signserver.org">signserver.org</a>
+                </div>
+                <div class="ht-sidebar-other-item">
+                    <a href="https://www.primekey.se/technologies/products-overview/ejbca-enterprise/" title="EJBCA - PKI by PrimeKey"><img src="ejbca-logo.png"/></a>
+                </div>
+                <div class="ht-sidebar-other-item">
+                    <a href="https://www.primekey.se" title="PrimeKey Solutions"><img src="primekey-logo.png"/></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</aside></div>
+
+<div id="ht-wrap-container">
+
+            
+    <div id="ht-sidebar-dragbar">
+    <div class="ht-sidebar-drag-handle">
+        <span class="drag-handle-1"></span>
+        <span class="drag-handle-2"></span>
+        <span class="drag-handle-3"></span>
+    </div>
+</div>
+    <article id="ht-content" class="ht-content">
+        <header class="ht-content-header">
+            <div id="ht-breadcrumb">
+    <ul>
+        <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
+        <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
+                                                            </ul>
+</div>            <h1 id="src-5278542"> <span>SignServer Installation</span></h1>
+        </header>
+
+        <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
+
+    <p  >    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-5278542_id-.SignServerInstallationv4.1.0-ServerInstallation">Server Installation</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-5278542_id-.SignServerInstallationv4.1.0-1.Checkprerequisites">1. Check prerequisites</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5278542_id-.SignServerInstallationv4.1.0-2.UnpackSignServer">2. Unpack SignServer</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5278542_id-.SignServerInstallationv4.1.0-3.BuildSignServer">3. Build SignServer</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5278542_id-.SignServerInstallationv4.1.0-4.Setenvironmentvariables">4. Set environment variables</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5278542_id-.SignServerInstallationv4.1.0-5.Setupdatabase">5. Setup database</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5278542_id-.SignServerInstallationv4.1.0-6.Configurewebserverkeystores">6. Configure web server keystores</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5278542_id-.SignServerInstallationv4.1.0-7.Configureapplicationserver">7. Configure application server</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5278542_id-.SignServerInstallationv4.1.0-8.Configuredeployment">8. Configure deployment</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5278542_id-.SignServerInstallationv4.1.0-9.DeploySignServer">9. Deploy SignServer</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5278542_id-.SignServerInstallationv4.1.0-10.AccessingSignServer">10. Accessing SignServer</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="#src-5278542_id-.SignServerInstallationv4.1.0-"></a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5278542_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC4xLjAtU2lnblNlcnZlcl93aXRob3V0X0RCQWx0ZXJuYXRpdmVJbnN0YWxsYXRpb246U2lnblNlcnZlcndpdGhvdXREYXRhYmFzZQ">Alternative Installation: SignServer without Database</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-5278542_id-.SignServerInstallationv4.1.0-Configuration">Configuration</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5278542_id-.SignServerInstallationv4.1.0-Structureofdata">Structure of data</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-5278542_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC4xLjAtTWlncmF0aW5ndG8vZnJvbWRhdGFiYXNl">Migrating to/from database</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="#src-5278542_id-.SignServerInstallationv4.1.0-ServerUpgrade">Server Upgrade</a>    </p>
+</li></ul>    <div class="section section-1" id="src-5278542_id-.SignServerInstallationv4.1.0-ServerInstallation">
+        <h1 class="heading "><span>Server Installation</span></h1>
+    <p  >    </p>
+    <div  class="confbox admonition admonition-warning">
+                    <p class="title">Warning</p>
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+    <p  >Make sure you are reading the version of the manual corresponding to the software version you are about to install. The version of the manual is written in the top of this page. See doc/README.txt within the release package for information about how to build this manual for your version.    </p>
+        </div>
+    </div>
+    <p  >    </p>
+    <div class="section section-2" id="src-5278542_id-.SignServerInstallationv4.1.0-1.Checkprerequisites">
+        <h2 class="heading "><span>1. Check prerequisites</span></h2>
+    <p  >Make sure all required softwares are installed:    </p>
+<ul class=" "><li class=" ">    <p  >Java: OpenJDK 7, Oracle JDK 7* or OpenJDK 8**    </p>
+</li><li class=" ">    <p  >Application server: JBoss AS 7.1.1, JBoss EAP 6.x, GlassFish Server Open Source Edition 3.1.2, WildFly 9 or Payara Server 4.1.1.162***    </p>
+</li><li class=" ">    <p  >Database: MySQL or MariaDB 5.5, PostgreSQL 9.x, Oracle Database 10/11g or without****    </p>
+</li><li class=" ">    <p  >Deployment tool: Apache Ant 1.8.0 or later    </p>
+</li><li class=" ">    <p  >Build tool (optional*****): Apache Maven 3    </p>
+</li></ul>    <p  >* When using Oracle JDK you must install the 'Unlimited Strength Jurisdiction Policy Files' for JDK for the parts of SignServer that makes use of strong crypto to work. The policy files can be found at the same place as the JDK download at Oracle. Further information on this can be found in the Oracle documentation on the JCE.<br/>** If supported by the application server.<br/>*** Experimental support for Payara. Currently uses EclipseLink instead of Hibernate.<br/>**** See <a  class="createlink" href="/pages/createpage.action?spaceKey=SIGNDS&amp;title=2017-02-03_09-36-40_Miscellaneous+%28to+be+deleted%29&amp;linkCreation=true&amp;fromPageId=5278542">SignServer without Database</a><br/>***** Only required when building the software from source    </p>
+    </div>
+    <div class="section section-2" id="src-5278542_id-.SignServerInstallationv4.1.0-2.UnpackSignServer">
+        <h2 class="heading "><span>2. Unpack SignServer</span></h2>
+    <p  >Download and unzip the <a  class="external-link" href="https://sourceforge.net/projects/signserver/files/signserver/">latest SignServer Community Edition release</a> archive from SourceForge.    </p>
+    <p  >Note that SignServer is available in different distributions:    </p>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">signserver-4.x.y-bin.zip</strong>:<br/>The binary distribution (recommended)    </p>
+</li><li class=" ">    <p  ><strong class=" ">signserver-4.x.y.zip:</strong><br/>The mixed distribution. Contains the sources as well as all required libraries. This requires you to build SignServer before deploying.    </p>
+</li><li class=" ">    <p  ><strong class=" ">signserver-4.x.y-src.tar.gz:</strong><br/>The source-only tarball distribution. This one can not be deployed without first gathering all the dependencies and then building it. If you choose this one you are on your own.    </p>
+</li></ul>    <p  >Make sure to compare the checksums as provided on <a  class="external-link" href="https://www.signserver.org/download.html">https://signserver.org/download.html</a> or from a by PrimeKey provided download site.    </p>
+<pre class="prettyprint ">sha256sum signserver-4.x.y-bin.zip<br/>unzip signserver-4.x.y-bin.zip</pre>    <p  >Alternatively, you can checkout the latest unstable version from version the Subversion (SVN) <a  class="external-link" href="https://svn.cesecore.eu/svn/signserver/trunk/">repository</a>. Note that as with the mixed distribution this one needs to be built before deploying.    </p>
+    </div>
+    <div class="section section-2" id="src-5278542_id-.SignServerInstallationv4.1.0-3.BuildSignServer">
+        <h2 class="heading "><span>3. Build SignServer</span></h2>
+    <p  >Skip this step if you downloaded the binary distribution (recommended).    </p>
+    <p  >If you instead downloaded the mixed disribution or checked out from SVN and want to build SignServer your self before copying it to the target server then you need to peform the following steps on your build machine.    </p>
+    <p  >Note: Before running any of the Maven (mvn) commands you must make sure you have a secure Maven installation that does not contact the Central repository over insecure HTTP. You should make sure that the URL for the Central repository is specified with HTTTPS (and/or to use an internal repository).<br/>See sample-maven-settings-community.xml for an example on how one can override the default Maven settings in ~/.m2/settings.xml.    </p>
+    <p  >    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">mvn help:effective-settings</code></div>
+</div>
+    </div>
+    <p  >    </p>
+    <p  >Then to build the sources run:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">mvn install -DskipTests</code></div>
+</div>
+    </div>
+    <p  >    </p>
+    <p  >    </p>
+    </div>
+    <div class="section section-2" id="src-5278542_id-.SignServerInstallationv4.1.0-4.Setenvironmentvariables">
+        <h2 class="heading "><span>4. Set environment variables</span></h2>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-APPSRV_HOME">
+        <h3 class="heading "><span>APPSRV_HOME</span></h3>
+    <p  >Set APPSRV_HOME to point to your application server installation (/opt/jboss could be a symbolic link).    </p>
+<pre class="prettyprint ">export APPSRV_HOME=/opt/jboss</pre>    <p  >This variable is used when deploying to the application server and could for instance be set in your .bashrc or similar file or provided everytime the deploy command is executed.    </p>
+    </div>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-SIGNSERVER_NODEID">
+        <h3 class="heading "><span>SIGNSERVER_NODEID</span></h3>
+    <p  >Set SIGNSERVER_NODEID to an unique ID for the server.    </p>
+<pre class="prettyprint ">export SIGNSERVER_NODEID=node1</pre>    <p  >This variable should be available to the application server so it might have to be set in /etc/environment or similar. It is normally not required to have it set but without it there will be warnings printed in the log.    </p>
+    </div>
+    </div>
+    <div class="section section-2" id="src-5278542_id-.SignServerInstallationv4.1.0-5.Setupdatabase">
+        <h2 class="heading "><span>5. Setup database</span></h2>
+    <p  >Skip this section and instead follow the instructions in <a  class="createlink" href="/pages/createpage.action?spaceKey=SIGNDS&amp;title=2017-02-03_09-36-40_Miscellaneous+%28to+be+deleted%29&amp;linkCreation=true&amp;fromPageId=5278542">SignServer without Database</a> if you decide to run SignServer without a database management system.    </p>
+    <p  >If you are using a database you will need to get a JDBC driver from the database vendor.    </p>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-Databaseaccount">
+        <h3 class="heading "><span>Database account</span></h3>
+    <p  >Create a database and database user for SignServer. Please, refer to the database vendor's documentation for how to do that.    </p>
+    </div>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-Tablecreationandindexes">
+        <h3 class="heading "><span>Table creation and indexes</span></h3>
+    <p  >The application server will try to create tables during startup of SignServer but if the database user does not have table create permissions the tables must be created manually. See doc/sql-scripts/create-tables-signserver-*.sql for the database schemas for different databases.    </p>
+    <p  >In order to improve performance the appropriate database indices should also be applied. This is extra important for the AuditRecordData table which otherwise will make SignServer slower and slower to start. See doc/sql-scripts/create-index-signserver.sql.    </p>
+    </div>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-MariaDBbinlogformatconfiguration">
+        <h3 class="heading "><span>MariaDB binlog format configuration</span></h3>
+    <p  >For MariaDB you will have to set binlog_format to &quot;row&quot;, for instance in /etc/mysql/my.cnf:    </p>
+<pre class="prettyprint ">binlog_format=row</pre>    </div>
+    <div class="section section-3" id="src-5278542_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC4xLjAtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JHbGFzc0Zpc2gvUGF5YXJh">
+        <h3 class="heading "><span>Configure database driver for GlassFish/Payara</span></h3>
+    <p  >Copy the driver for your database to the application server lib folder.    </p>
+    </div>
+    <div class="section section-3" id="src-5278542_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC4xLjAtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JKQm9zc0FTNyxKQm9zc0VBUDZvcldpbGRGbHk">
+        <h3 class="heading "><span>Configure database driver for JBoss AS 7, JBoss EAP 6 or WildFly</span></h3>
+    <p  >In JBoss 7/EAP6/WildFly it is not enough to just drop the JAR archive with a database JDBC driver into the deployments directory. Instead you will have to perform the following steps (for MySQL or MariaDB):    </p>
+<ol class=" "><li class=" ">    <p  >Create the necessary directories (relative to JBoss 7 base directory):<br/>On JBoss 7.1.1 or EAP 6.0:    </p>
+<pre class=" ">mkdir -p modules/com/mysql/main/</pre>    <p  >On JBoss 7.2 or EAP 6.1:    </p>
+<pre class=" ">mkdir -p modules/system/layers/base/com/mysql/main/</pre>    <p  >Or for MariaDB, mariadb-java-client-1.1.2.jar:    </p>
+<pre class=" ">mkdir -p modules/org/mariadb/main/</pre>    <p  >On JBoss 7.2, EAP 6.1 (or later) or WildFly:    </p>
+<pre class=" ">mkdir -p modules/system/layers/base/org/mariadb/main/</pre></li><li class=" ">    <p  >Place the mysql.jar or mariadb.jar file in the directory you just created.    </p>
+</li><li class=" ">    <p  >Create, in the created directory, the JDBC module configuration file module.xml with the following contents (replace mysql.jar with the full name of your jar file for example mysql-connector-java-5.1.18-bin.jar):    </p>
+<pre class=" ">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;<br/>&lt;module xmlns=&quot;urn:jboss:module:1.0&quot; name=&quot;com.mysql&quot;&gt;<br/>  &lt;resources&gt;<br/>    &lt;resource-root path=&quot;mysql.jar&quot;/&gt;<br/>  &lt;/resources&gt;<br/>  &lt;dependencies&gt;<br/>    &lt;module name=&quot;javax.api&quot;/&gt;<br/>    &lt;module name=&quot;javax.transaction.api&quot;/&gt;<br/>  &lt;/dependencies&gt;<br/>&lt;/module&gt;</pre>    <p  >Or for MariaDB, mariadb-java-client-1.1.2.jar:    </p>
+<pre class=" ">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;<br/>&lt;module xmlns=&quot;urn:jboss:module:1.0&quot; name=&quot;org.mariadb&quot;&gt;<br/>  &lt;resources&gt;<br/>    &lt;resource-root path=&quot;mariadb-java-client-1.1.2.jar&quot;/&gt;<br/>  &lt;/resources&gt;<br/>  &lt;dependencies&gt;<br/>    &lt;module name=&quot;javax.api&quot;/&gt;<br/>    &lt;module name=&quot;javax.transaction.api&quot;/&gt;<br/>  &lt;/dependencies&gt;<br/>&lt;/module&gt;</pre></li><li class=" ">    <p  >Register the driver by running the following two commands in the JBoss 7 CLI administration tool:    </p>
+<pre class=" ">/subsystem=datasources/jdbc-driver=com.mysql.jdbc.Driver:add(driver-name=com.mysql.jdbc.Driver,driver-module-name=com.mysql,driver-xa-datasource-class-name=com.mysql.jdbc.jdbc.jdbc2.optional.MysqlXADataSource)<br/>:reload</pre>    <p  >Or for MariaDB, mariadb-java-client-1.1.2.jar:    </p>
+<pre class=" ">/subsystem=datasources/jdbc-driver=org.mariadb.jdbc.Driver:add(driver-name=org.mariadb.jdbc.Driver,driver-module-name=org.mariadb,driver-xa-datasource-class-name=org.mariadb.jdbc.MySQLDataSource)<br/>:reload</pre></li></ol>    <p  >For PostgreSQL you would use the following values instead:    </p>
+<pre class=" ">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;<br/>&lt;module xmlns=&quot;urn:jboss:module:1.0&quot; name=&quot;org.postgresql&quot;&gt;<br/>  &lt;resources&gt;<br/>    &lt;resource-root path=&quot;postgresql-9.1-903.jdbc4.jar&quot;/&gt;<br/>  &lt;/resources&gt;<br/>  &lt;dependencies&gt;<br/>    &lt;module name=&quot;javax.api&quot;/&gt;<br/>    &lt;module name=&quot;javax.transaction.api&quot;/&gt;<br/>  &lt;/dependencies&gt;<br/>&lt;/module&gt;</pre><pre class=" ">/subsystem=datasources/jdbc-driver=org.postgresql.Driver:add(driver-name=org.postgresql.Driver,driver-module-name=org.postgresql,driver-xa-datasource-class-name=org.postgresql.xa.PGXADataSource)<br/>:reload</pre>    </div>
+    <div class="section section-3" id="src-5278542_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC4xLjAtQ29uZmlndXJlZGF0YXNvdXJjZWZvckdsYXNzRmlzaC9QYXlhcmE">
+        <h3 class="heading "><span>Configure data source for GlassFish/Payara</span></h3>
+    <p  >For GlassFish/Payara also configure a connection pool and JNDI resource:    </p>
+<ol class=" "><li class=" ">    <p  >Go to the Admin Console: <a  class="external-link" href="http://localhost:4848">http://localhost:4848</a>    </p>
+</li><li class=" ">    <p  >Click on Resources -&gt; JDBC -&gt; Connection Pools    </p>
+</li><li class=" ">    <p  >Add a new Pool. For instance: Name: MySQLPool    </p>
+</li><li class=" ">    <p  >Fill in:<br/>databaseName: signserver<br/>password: signserver<br/>portNumber 3306<br/>serverName: localhost<br/>user: signserver    </p>
+</li><li class=" ">    <p  >Click Ping to test    </p>
+</li><li class=" ">    <p  >Click on Resources -&gt; JDBC -&gt; JDBC Resources    </p>
+</li><li class=" ">    <p  >Add new:<br/>JNDI Name: jdbc/SignServerDS<br/>Pool Name: MySQLPool    </p>
+</li></ol>    </div>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-ConfiguredatasourceforJBossAS7.1">
+        <h3 class="heading "><span>Configure data source for JBoss AS 7.1</span></h3>
+    <p  >The examples are for installing a MariaDB datasource using the jboss-cli with the driver installed as described above.    </p>
+    <p  >A normal datasource (Note: no --enabled=true for JBoss AS 7.1):    </p>
+<pre class="prettyprint ">data-source add --name=signserverds --driver-name=&quot;org.mariadb.jdbc.Driver&quot; --connection-url=&quot;jdbc:mysql://127.0.0.1:3306/signserver&quot; --jndi-name=&quot;java:/SignServerDS&quot; --use-ccm=true --driver-class=&quot;org.mariadb.jdbc.Driver&quot; --user-name=&quot;signserver&quot; --password=&quot;signserver&quot; --validate-on-match=true --background-validation=false --prepared-statements-cache-size=50 --share-prepared-statements=true --min-pool-size=5 --max-pool-size=150 --pool-prefill=true --transaction-isolation=TRANSACTION_READ_COMMITTED --check-valid-connection-sql=&quot;select 1;&quot;</pre>    <p  >Then restart the application server.    </p>
+    </div>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-ConfiguredatasourceforJBossEAP6orWildFly">
+        <h3 class="heading "><span>Configure data source for JBoss EAP 6 or WildFly</span></h3>
+    <p  >The examples are for installing a MariaDB datasource using the jboss-cli with the driver installed as described above.    </p>
+    <p  >A normal datasource (Note: --enabled=true for JBoss EAP 6.x):    </p>
+<pre class="prettyprint ">data-source add --name=signserverds --driver-name=&quot;org.mariadb.jdbc.Driver&quot; --connection-url=&quot;jdbc:mysql://127.0.0.1:3306/signserver&quot; --jndi-name=&quot;java:/SignServerDS&quot; --use-ccm=true --driver-class=&quot;org.mariadb.jdbc.Driver&quot; --user-name=&quot;signserver&quot; --password=&quot;signserver&quot; --validate-on-match=true --background-validation=false --prepared-statements-cache-size=50 --share-prepared-statements=true --min-pool-size=5 --max-pool-size=150 --pool-prefill=true --transaction-isolation=TRANSACTION_READ_COMMITTED --check-valid-connection-sql=&quot;select 1;&quot; --enabled=true</pre>    <p  >Then restart the application server.    </p>
+    </div>
+    </div>
+    <div class="section section-2" id="src-5278542_id-.SignServerInstallationv4.1.0-6.Configurewebserverkeystores">
+        <h2 class="heading "><span>6. Configure web server keystores</span></h2>
+    <div class="section section-3" id="src-5278542_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC4xLjAtR2xhc3NGaXNoL1BheWFyYVNTTGNvbmZpZ3VyYXRpb24">
+        <h3 class="heading "><span>GlassFish/Payara SSL configuration</span></h3>
+    <p  >For GlassFish/Payara enable client authentication for http-listener-2 and manually update the keystores with the right certificates.    </p>
+    </div>
+    <div class="section section-3" id="src-5278542_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC4xLjAtSkJvc3M3L0VBUDZTU0xjb25maWd1cmF0aW9u">
+        <h3 class="heading "><span>JBoss 7/EAP 6 SSL configuration</span></h3>
+    <p  >Copy the keystore file as JBOSS7_HOME/standalone/configuration/keystore/keystore.jks and the trust store as JBOSS7_HOME/standalone/configuration/keystore/truststore.jks.    </p>
+    <p  >Configure interfaces using the approproate bind address (i.e. 0.0.0.0 or 127.0.0.1).    </p>
+<pre class="prettyprint ">/interfaces=/interface=http:add(inet-address=&quot;0.0.0.0&quot;)<br/>/interfaces=/interface=httpspub:add(inet-address=&quot;0.0.0.0&quot;)<br/>/interfaces=/interface=httpspriv:add(inet-address=&quot;0.0.0.0&quot;)</pre>    <p  >Set-up the private port which requires client certificate. Use appropriate values for key-alias (hostname), password (keystore password), ca-certificate-password (truststore password), and supported protocols.    </p>
+<pre class="prettyprint ">/socket-binding-group=standard-sockets/socket-binding=httpspriv:add(port=&quot;8443&quot;,interface=&quot;httpspriv&quot;)<br/>/subsystem=web/connector=httpspriv:add(protocol=HTTP/1.1, scheme=https, socket-binding=httpspriv, secure=true)<br/>/subsystem=web/connector=httpspriv/ssl=configuration:add(key-alias=&quot;localhost&quot;)<br/>/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=password, value=&quot;serverpwd&quot;)<br/>/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=certificate-key-file, value=&quot;${jboss.server.config.dir}/keystore/keystore.jks&quot;)<br/>/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=verify-client, value=true)<br/>/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=ca-certificate-password, value=&quot;changeit&quot;)<br/>/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=ca-certificate-file, value=&quot;${jboss.server.config.dir}/keystore/truststore.jks&quot;)<br/>/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=protocol,value=&quot;TLSv1,TLSv1.1,TLSv1.2&quot;)</pre>    <p  >Set-up the public SSL port which doesn't require the client certificate. Use appropriate values for key-alias (hostname), password (keystore password), and supported protocols.    </p>
+<pre class="prettyprint ">/socket-binding-group=standard-sockets/socket-binding=httpspub:add(port=&quot;8442&quot;,interface=&quot;httpspub&quot;)<br/>/subsystem=web/connector=httpspub:add(protocol=HTTP/1.1, scheme=https, socket-binding=httpspub, secure=true)<br/>/subsystem=web/connector=httpspub/ssl=configuration:add(key-alias=&quot;localhost&quot;)<br/>/subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=password, value=&quot;serverpwd&quot;)<br/>/subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=certificate-key-file, value=&quot;${jboss.server.config.dir}/keystore/keystore.jks&quot;)<br/>/subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=protocol,value=&quot;TLSv1,TLSv1.1,TLSv1.2&quot;)</pre>    <p  >If the server is not so fast, we have to wait a little before we can reload, otherwise it will be bad    </p>
+<pre class="prettyprint ">:reload</pre>    </div>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-WildFly9SSLconfiguration">
+        <h3 class="heading "><span>WildFly 9 SSL configuration</span></h3>
+    <p  >Copy the keystore file as WILDFLY_HOME/standalone/configuration/keystore/keystore.jks and the trust store as WILDFLY_HOME/standalone/configuration/keystore/truststore.jks.    </p>
+    <p  >Configure interfaces using the approproate bind address (i.e. 0.0.0.0 or 127.0.0.1).    </p>
+<pre class="prettyprint ">/interface=http:add(inet-address=&quot;0.0.0.0&quot;)<br/>/interface=httpspub:add(inet-address=&quot;0.0.0.0&quot;)<br/>/interface=httpspriv:add(inet-address=&quot;0.0.0.0&quot;)</pre>    <p  >NOTE:<br/>By default, WildFly imposes a limit of 10 MB on HTTP post size. To enable signing larger files an larger limit may be set on the HTTP/HTTPS listeners.<br/>Replace the value of the max-post-size parameters in the commands below with an appropriate value if needed for signing larger files.    </p>
+    <p  >Secure the CLI by removing the http-remoting-connector from using the http port and instead use a separate port 4447.    </p>
+<pre class="prettyprint ">/subsystem=remoting/http-connector=http-remoting-connector:remove<br/>/subsystem=remoting/http-connector=http-remoting-connector:add(connector-ref=&quot;remoting&quot;,security-realm=&quot;ApplicationRealm&quot;)<br/>/socket-binding-group=standard-sockets/socket-binding=remoting:add(port=&quot;4447&quot;)<br/>/subsystem=undertow/server=default-server/http-listener=remoting:add(socket-binding=remoting, max-post-size=&quot;10485760&quot;)<br/>:reload</pre>    <p  >Set the limit on the HTTP (8080) listener.    </p>
+<pre class=" ">/subsystem=undertow/server=default-server/http-listener=default:write-attribute(name=&quot;max-post-size&quot;, value=&quot;1048576000&quot;)</pre>    <p  >Set-up the private port which requires client certificate. Use appropriate values for key-alias (hostname), password (keystore password), ca-certificate-password (truststore password), and supported protocols.    </p>
+<pre class="prettyprint ">/socket-binding-group=standard-sockets/socket-binding=httpspriv:add(port=&quot;8443&quot;,interface=&quot;httpspriv&quot;)<br/>/core-service=management/security-realm=SSLRealm:add()<br/>/core-service=management/security-realm=SSLRealm/server-identity=ssl:add(keystore-path=&quot;keystore/keystore.jks&quot;, keystore-relative-to=&quot;jboss.server.config.dir&quot;, keystore-password=&quot;serverpwd&quot;, alias=&quot;localhost&quot;)<br/>/core-service=management/security-realm=SSLRealm/authentication=truststore:add(keystore-path=&quot;keystore/truststore.jks&quot;, keystore-relative-to=&quot;jboss.server.config.dir&quot;, keystore-password=&quot;changeit&quot;)<br/>/subsystem=undertow/server=default-server/https-listener=httpspriv:add(socket-binding=&quot;httpspriv&quot;, security-realm=&quot;SSLRealm&quot;, verify-client=REQUIRED, max-post-size=&quot;10485760&quot;)</pre>    <p  >Set-up the public SSL port which doesn't require the client certificate.    </p>
+<pre class="prettyprint ">/socket-binding-group=standard-sockets/socket-binding=httpspub:add(port=&quot;8442&quot;,interface=&quot;httpspub&quot;)<br/>/subsystem=undertow/server=default-server/https-listener=httpspub:add(socket-binding=&quot;httpspub&quot;, security-realm=&quot;SSLRealm&quot;, max-post-size=&quot;10485760&quot;)</pre><pre class="prettyprint ">reload</pre>    </div>
+    </div>
+    <div class="section section-2" id="src-5278542_id-.SignServerInstallationv4.1.0-7.Configureapplicationserver">
+        <h2 class="heading "><span>7. Configure application server</span></h2>
+    <div class="section section-3" id="src-5278542_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC4xLjAtRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ">
+        <h3 class="heading "><span>Fix web service problem in JBoss AS 7/EAP 6/WildFly</span></h3>
+    <p  >Configure WSDL web-host rewriting to use the request host. Needed for webservices to work correctly when requiring client certificate.    </p>
+<pre class="prettyprint ">/subsystem=webservices:write-attribute(name=wsdl-host, value=jbossws.undefined.host)<br/>/subsystem=webservices:write-attribute(name=modify-wsdl-address, value=true)</pre>    <p  >If the server is not so fast, we have to wait a little before we can reload, otherwise it will be bad    </p>
+<pre class="prettyprint ">:reload</pre>    </div>
+    <div class="section section-3" id="src-5278542_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC4xLjAtSkJvc3NBUzcvRUFQNi9XaWxkRmx5VVJJZW5jb2Rpbmc">
+        <h3 class="heading "><span>JBoss AS 7/EAP 6/WildFly URI encoding</span></h3>
+    <p  >Configure the URI encoding    </p>
+<pre class=" ">/system-property=org.apache.catalina.connector.URI_ENCODING:remove()</pre><pre class=" ">/system-property=org.apache.catalina.connector.URI_ENCODING:add(value=UTF-8)</pre><pre class=" ">/system-property=org.apache.catalina.connector.USE_BODY_ENCODING_FOR_QUERY_STRING:remove()</pre><pre class=" ">/system-property=org.apache.catalina.connector.USE_BODY_ENCODING_FOR_QUERY_STRING:add(value=true)</pre><pre class=" ">:reload</pre>    <p  >    </p>
+    </div>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-JBoss7andOracleJDKBouncyCastleissues">
+        <h3 class="heading "><span>JBoss 7 and Oracle JDK BouncyCastle issues</span></h3>
+    <p  >When using Oracle JDK and JBoss 7 you need to install BC jars as a module in JBoss 7. See <a  class="external-link" href="https://issues.jboss.org/browse/JBAS-7882">JBAS-7882</a>.    </p>
+    <p  >How to install modules are described in <a  class="external-link" href="https://docs.jboss.org/author/display/MODULES/Defining+a+module">docs.jboss.org/author/display/MODULES/Defining+a+module</a>.    </p>
+    </div>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-FixXMLSecuritylibraryissue1inJBoss7">
+        <h3 class="heading "><span>Fix XML Security library issue 1 in JBoss 7</span></h3>
+    <p  >JBoss 7 bundles version 1.5.1 of the XML Security library. The library bundled with SignServer is not properly overriding the JBoss-bundled version. To work around this issue copy the JAR file from SignServer into JBoss' modules directory and modifiy the descriptor to use the new version.    </p>
+    <p  >On Linux/Unix systems the following command can be used:    </p>
+<pre class="prettyprint ">cp lib/ext/xmlsec-1.5.8.jar $APPSRV_HOME/modules/org/apache/santuario/xmlsec/main/</pre>    <p  >On Windows systems the following command can be used:    </p>
+<pre class="prettyprint ">copy lib\ext\xmlsec-1.5.8.jar %APPSRV_HOME%\modules\org\apache\santuario\xmlsec\main\</pre>    <p  >Edit $APPSRV_HOME/modules/org/apache/santuario/xmlsec/main/module.xml to use the correct version:    </p>
+<pre class="prettyprint ">&lt;resource-root path=&quot;xmlsec-1.5.8.jar&quot;/&gt;</pre>    </div>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-FixXMLSecuritylibraryissue2inJBoss7">
+        <h3 class="heading "><span>Fix XML Security library issue 2 in JBoss 7</span></h3>
+    <p  >JBoss 7 bundles version 2.7.1 of the Xalan library. The library bundled with SignServer is not properly overriding the JBoss-bundled version. To work around this issue copy the JAR files from SignServer into JBoss' modules directory and modifiy the descriptor to use the new version.    </p>
+    <p  >On Linux/Unix systems the following command can be used:    </p>
+<pre class="prettyprint ">cp lib/ext/xalan-2.7.2.jar lib/ext/serializer-2.7.2.jar $APPSRV_HOME/modules/org/apache/xalan/main/</pre>    <p  >On Windows systems the following command can be used:    </p>
+<pre class="prettyprint ">copy lib\ext\xalan-2.7.2.jar %APPSRV_HOME%\modules\org\apache\xalan\main\<br/>copy lib\ext\serializer-2.7.2.jar %APPSRV_HOME%\modules\org\apache\xalan\main\</pre>    <p  >Edit $APPSRV_HOME/modules/org/apache/xalan/main/module.xml to use the correct versions:    </p>
+<pre class="prettyprint ">&lt;resource-root path=&quot;serializer-2.7.2.jar&quot;/&gt;<br/>&lt;resource-root path=&quot;xalan-2.7.2.jar&quot;/&gt;</pre>    </div>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-CommonsCollectionsSecurityissueinJBoss7andearlier">
+        <h3 class="heading "><span>Commons Collections Security issue in JBoss 7 and earlier</span></h3>
+    <p  >JBoss 7 bundles version 3.2.1 of Commons Collections which has potential security issues. SignServer uses version 3.2.2. Perform similar changes as in the previous section to have JBoss use the 3.2.2 version instead.    </p>
+    </div>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-FixSecurityissuesinJBossEAP">
+        <h3 class="heading "><span>Fix Security issues in JBoss EAP</span></h3>
+    <p  >Make sure to apply the relevant security patches from Red Hat. Pay special attention to the above mentioned XML Security and Commons Collections libraries etc.    </p>
+    </div>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-InstallHibernateinGlassFish3">
+        <h3 class="heading "><span>Install Hibernate in GlassFish 3</span></h3>
+    <p  >If you are using GlassFish 3 and run with a database you will have to install Hibernate. Run pkg install in the GlassFish folder:    </p>
+<pre class="prettyprint ">./bin/pkg install hibernate</pre>    </div>
+    </div>
+    <div class="section section-2" id="src-5278542_id-.SignServerInstallationv4.1.0-8.Configuredeployment">
+        <h2 class="heading "><span>8. Configure deployment</span></h2>
+    <p  >Copy conf/signserver_deploy.properties.sample to conf/signserver_deploy.properties and open it for editing in your favorite text editor.    </p>
+<pre class="prettyprint ">cp conf/signserver_deploy.properties.sample conf/signserver_deploy.properties</pre>    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-Databaseconfiguration">
+        <h3 class="heading "><span>Database configuration</span></h3>
+    <p  >Select database management system    </p>
+<pre class="prettyprint ">database.name=mysql</pre>    <p  >See <a  class="external-link" href="file:///C:/Users/Per%20Grahn-M%C3%B6ller/AppData/Local/Temp/Temp1_signserver-htdocs-r7948-2017-01-17.zip/htdocs/manual/misc.html#Signed20log">Signed log</a> for how to configure for signed audit logs in the database.    </p>
+    </div>
+    </div>
+    <div class="section section-2" id="src-5278542_id-.SignServerInstallationv4.1.0-9.DeploySignServer">
+        <h2 class="heading "><span>9. Deploy SignServer</span></h2>
+    <p  >Run &quot;bin/ant deploy&quot; to build the configuration and deploy it to the selected application server.    </p>
+<pre class="prettyprint ">bin/ant deploy</pre>    <p  >Start the application server and verify that SignServer was deployed.    </p>
+    </div>
+    <div class="section section-2" id="src-5278542_id-.SignServerInstallationv4.1.0-10.AccessingSignServer">
+        <h2 class="heading "><span>10. Accessing SignServer</span></h2>
+    <p  >After startup a few different user interfaces are available.    </p>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-CommandLineInterface">
+        <h3 class="heading "><span>Command Line Interface</span></h3>
+<pre class="prettyprint ">bin/signserver getstatus brief all<br/>Current version of server is : SignServer EE 4.0.0</pre>    </div>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-GraphicalUserInterface">
+        <h3 class="heading "><span>Graphical User Interface</span></h3>
+<pre class="prettyprint ">bin/signserver-gui</pre>    </div>
+    <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-WebInterface">
+        <h3 class="heading "><span>Web Interface</span></h3>
+    <p  >Point your web browser to <a  class="external-link" href="http://localhost:8080/signserver">http://localhost:8080/signserver</a> for demo web pages and local documentation.    </p>
+    </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-5278542_id-.SignServerInstallationv4.1.0-">
+        <h1 class="heading "><span></span></h1>
+    </div>
+    <div class="section section-1" id="src-5278542_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC4xLjAtU2lnblNlcnZlcl93aXRob3V0X0RCQWx0ZXJuYXRpdmVJbnN0YWxsYXRpb246U2lnblNlcnZlcndpdGhvdXREYXRhYmFzZQ">
+        <h1 class="heading "><span id="src-5278542_id-.SignServerInstallationv4.1.0-SignServer_without_DB" class="confluence-anchor-link"></span><span>Alternative Installation: SignServer without Database</span></h1>
+    <p  >Since SignServer 3.2.3 it is sometimes possible to operate SignServer without a database management system and instead rely on SignServer to manage persistence using local files.    </p>
+    <p  >Notice that all features of SignServer is not supported without having a database and that the performance and scalability characteristics might be different. Currently archiving to database is not supported.    </p>
+    <p  >To increase throughput it is recommended to disable the key usage counter as every request would otherwise have to lock and update that file. See the property DISABLEKEYUSAGECOUNTER in the section <a  class="external-link" href="file:///C:/Users/Per%20Grahn-M%C3%B6ller/AppData/Local/Temp/Temp1_signserver-htdocs-r7948-2017-01-17.zip/htdocs/manual/commonconf.html#Limiting_the_number_of_signatures">Limiting the number of signatures</a>.    </p>
+    <p  >Upgrading to a later version should normally be handled automagically during the first startup but please read the UPGRADE.txt document and create a backup of the file-based database files before attempting to run a later version.    </p>
+    <div class="section section-2" id="src-5278542_id-.SignServerInstallationv4.1.0-Configuration">
+        <h2 class="heading "><span>Configuration</span></h2>
+    <p  >In signserver_deploy.properties, set database.type to &quot;nodb&quot;.    </p>
+<pre class="prettyprint ">database.type=nodb</pre>    <p  >Set the location for the local file-based database.    </p>
+<pre class="prettyprint ">database.nodb.location=/path/to/filedb</pre>    <p  >Where the path is some location where SignServer can write files. The default value is empty. If an relative path is used it is most likely relative to the application server's working directory.    </p>
+    <p  >This directory should either point to an existing SignServer file database or be completely empty. If the directory is empty, SignServer will create the initial database structure at startup.    </p>
+    </div>
+    <div class="section section-2" id="src-5278542_id-.SignServerInstallationv4.1.0-Structureofdata">
+        <h2 class="heading "><span>Structure of data</span></h2>
+    <p  >The file based database uses a number of files in the specified directory. Read/write synchronization is handled internally in the application and it is thus not support to do manual changes to the files while the application server is running. It is normally also not supported to have multiple application servers running with SignServer using the same database directory.    </p>
+    </div>
+    <div class="section section-2" id="src-5278542_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC4xLjAtTWlncmF0aW5ndG8vZnJvbWRhdGFiYXNl">
+        <h2 class="heading section"><span>Migrating to/from database</span></h2>
+    <p  >The recommended way of migrating either to or from an other database management system without setting up all worker configuration from scratch is do use admin command &quot;dumpproperties&quot; to dump the current configuration to a file and then on the new system use the &quot;setproperties&quot; followed by the reload command for every worker id.    </p>
+    <p  >Notice: The dumpproperties command will not include the list of authorized clients so those will have to be setup again in the new system. Check with the admin command &quot;listauthorizedclients&quot; if you have any of those.    </p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-5278542_id-.SignServerInstallationv4.1.0-ServerUpgrade">
+        <h1 class="heading "><span>Server Upgrade</span></h1>
+    <p  >See SIGNSERVER_HOME/doc/RELEASE_NOTES.txt and UPGRADE.txt for information about upgrading from an earlier version of SignServer.    </p>
+    <p  >    </p>
+    </div>
+        </div>
+
+    </article>
+
+
+            <nav id="ht-post-nav">
+                <a href="Terms_Used_in_the_SignServer_manual.html" class="ht-post-nav-prev">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Terms Used in the SignServer manual</span>
+        </a>
+                <a href="SignServer_Operations.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>SignServer Operations</span>
+        </a>
+    </nav>    
+            
+            <article id="html-search-results" class="ht-content" style="display: none;">
+            <header class="ht-content-header">
+                <div id="ht-spacetitle">
+                    <ul>
+                        <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li>
+                    </ul>
+                </div>
+                <h1>Search results</h1>
+            </header>
+            <div id="search-results"></div>
+        </article>
+    
+    <footer id="ht-footer">
+    <small>
+        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+    </small>
+    <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
+</footer></div>
+
+<div>
+    <div id="ht-mq-detect"></div>
+</div>
+
+    <script src="js/lunr.js"></script>
+    <script src="js/lunr-extras.js"></script>
+    <script src="assets/js/scroll-search.js"></script>
+
+</body>
+</html>

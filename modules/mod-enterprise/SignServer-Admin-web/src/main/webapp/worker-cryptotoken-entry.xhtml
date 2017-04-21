@@ -36,7 +36,10 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Worker <h:outputText value="#{workerBean.worker.name}"/> - CryptoToken - Token entry <h:outputText value="#{tokenEntryBean.key}"/>
+                <h:outputFormat value="#{text['Worker_X']}">
+                    <f:param value="#{workerBean.worker.name}"/>
+                </h:outputFormat>
+                <h:outputText value="- #{text['Crypto_Token_-_Token_Entry'}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -64,18 +67,18 @@
                                 </f:facet>
                                 <h:column>
                                     <f:facet name="header">
-                                        <h:outputText value="Name" />
+                                        <h:outputText value="#{text['Name']}" />
                                     </f:facet>
                                     <b><h:outputText value="#{item.key}"/></b> 
                                 </h:column>
                                 <h:column>
                                     <f:facet name="header">
-                                        <h:outputText value="Value" />
+                                        <h:outputText value="#{text['Value']}" />
                                     </f:facet>
                                     <b><h:outputText value="#{item.value}"/></b> 
                                 </h:column>
                                 <h:column>
-                                    <h:link value="View" outcome="certificate-details" rendered="#{item.certificate}">
+                                    <h:link value="#{text['View']}" outcome="certificate-details" rendered="#{item.certificate}">
                                         <f:param name="worker" value="#{workerBean.worker.id}"/>
                                         <f:param name="chain" value="#{true}"/>
                                         <f:param name="keyInToken" value="#{tokenEntryBean.key}"/> <!-- TODO: context/back -->

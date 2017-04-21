@@ -37,7 +37,10 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Worker <h:outputText value="#{workerAuthBean.worker.name}"/> - Authorization - Remove
+                <h:outputFormat value="#{text['Worker_X']}">
+                    <f:param value="#{workerAuthBean.worker.name}"/>
+                </h:outputFormat>
+                <h:outputText value="- #{text['Authorization_-_Remove']}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -54,19 +57,19 @@
                     <h:form id="form">
                         <h:inputHidden id="id" value="#{workerAuthBean.id}"/>
 
-                        <h2>Are you sure you want to remove the authorized client?</h2>
+                        <h2><h:outputText value="#{text['Are_you_sure_you_want_to_remove_the_authorized_client']}"/></h2>
 
                         <p>
-                            Certificate serial number:<br/>
+                            <h:outputText value="#{text['Certificate_Serial_Number']}:"/><br/>
                             <span class="alertArea"><h:outputText value="#{workerAuthBean.certSN}"/></span>
                         </p>
 
                         <p>
-                            Issuer DN:<br/>
+                            <h:outputText value="#{text['Issuer_DN']}:"/><br/>
                             <span class="alertArea"><h:outputText value="#{workerAuthBean.issuerDN}"/></span>
                         </p>
 
-                        <h:commandButton class="buttonNegative" value="Remove" action="#{workerAuthBean.removePropertyAction()}"/> <h:link value="Cancel" outcome="worker-authorization"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
+                        <h:commandButton class="buttonNegative" value="#{text['Remove']}" action="#{workerAuthBean.removePropertyAction()}"/> <h:link value="#{text['Cancel']}" outcome="worker-authorization"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
                     </h:form>
                 </div>
             </ui:define>

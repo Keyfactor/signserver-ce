@@ -35,7 +35,10 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Worker <h:outputText value="#{workerBean.worker.name}"/> - Configuration - Edit worker property
+                <h:outputFormat value="#{text['Worker_X']}">
+                    <f:param value="#{workerBean.worker.name}"/>
+                </h:outputFormat>
+                <h:outputText value="- #{text['Configuration_-_Edit_Worker_Property'}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -55,15 +58,15 @@
                         <h:inputHidden id="oldProperty" value="#{workerBean.oldProperty}"/>
 
                         <h:panelGrid columns="3">
-                            <h:outputLabel for="name">Name:</h:outputLabel>
+                            <h:outputLabel for="name"><h:outputText value="#{text['Name']}:"/></h:outputLabel>
                             <h:inputText id="name" value="#{workerBean.property}" size="40" required="true" requiredMessage="*"/>
                             <h:message for="name" class="errorMessage"/>
 
-                            <h:outputLabel for="value">Value:</h:outputLabel>
+                            <h:outputLabel for="value"><h:outputText value="#{text['Value']}:"/></h:outputLabel>
                             <h:inputTextarea id="value" value="#{workerBean.propertyValue}" cols="70" rows="10"/>
                             <h:message for="value" class="errorMessage"/>
                         </h:panelGrid>
-                        <h:commandButton class="buttonFeatured" value="Submit" action="#{workerBean.editPropertyAction()}"/> <h:link value="Cancel" outcome="worker-configuration"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                        <h:commandButton class="buttonFeatured" value="#{text['Submit']}" action="#{workerBean.editPropertyAction()}"/> <h:link value="#{text['Cancel']}" outcome="worker-configuration"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                     </h:form>
                 </div>
                 

@@ -52,7 +52,7 @@ public class ExportBulkBean extends BulkBean {
     private static final String FILE_SUFFIX = ".properties";
 
     private String reloadTarget;
-    private Boolean exportNonWorkerGlobalConfig = true;
+    private Boolean exportNonWorkerGlobalConfig = false;
 
     private List<MyWorker> myWorkers;
     private String result;

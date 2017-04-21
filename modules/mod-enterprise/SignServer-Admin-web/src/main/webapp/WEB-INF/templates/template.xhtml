@@ -71,7 +71,7 @@
                         <h:link outcome="archive" class="#{activeMenu == 'archive' ? 'active' : ''}"><h:outputText value="#{text['Archive']}"/></h:link>
                     </li>
                     <li class="last">
-                        <h:outputLink value="../doc/" class="topOutsideLink"><h:outputText value="#{text['Documentation']}"/></h:outputLink>
+                        <h:outputLink value="#{adminWebBean.documentationLink}" class="topOutsideLink"><h:outputText value="#{text['Documentation']}"/></h:outputLink>
                     </li>
                 </ul>
                 <ui:insert name="top">Top</ui:insert>

@@ -55,7 +55,7 @@
             <div id="top-menu">
                 <ul>
                     <li class="last">
-                        <h:outputLink value="../doc/" class="topOutsideLink">Documentation</h:outputLink>
+                        <h:outputLink value="#{adminWebBean.documentationLink}" class="topOutsideLink">#{text['Documentation']}</h:outputLink>
                     </li>
                 </ul>
                 <ui:insert name="top">Top</ui:insert>

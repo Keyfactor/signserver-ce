@@ -24,6 +24,7 @@ import org.cesecore.config.CesecoreConfiguration;
 import org.signserver.common.CompileTimeSettings;
 
 /**
+ * Managed beam providing static information to the templates.
  *
  * @author Markus Kilås
  * @version $Id$
@@ -67,10 +68,29 @@ public class AdminWebBean {
     }
 
     /**
-     * @return The link to the documentation most relevant for the current page.
+     * Get the most relevant documentation link for the current page or use the
+     * main page if no mapping exists.
+     *
+     * The path is prefix with the location of the documentation.
+     *
+     * @return The link to the documentation
      */
     public String getDocumentationLink() {
-        final String viewId = FacesContext.getCurrentInstance().getViewRoot().getViewId();
-        return "../doc/" + docLinks.getProperty(viewId, "");
+        String subPage = getDocumentationLink(FacesContext.getCurrentInstance().getViewRoot().getViewId());
+        if (subPage == null) {
+            subPage = "";
+        }
+        return "../doc/" + subPage;
+    }
+
+    /**
+     * Get the documentation link for a given page without any path if it
+     * exists.
+     *
+     * @param viewId Page to get the documentation link for
+     * @return The link or null if no link exists
+     */
+    protected String getDocumentationLink(final String viewId) {
+        return docLinks.getProperty(viewId);
     }
 }

@@ -37,7 +37,10 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Worker <h:outputText value="#{workerBean.worker.name}"/> - CryptoToken - Import certificates
+                <h:outputFormat value="#{text['Worker_X']}">
+                    <f:param value="#{workerBean.worker.name}"/>
+                </h:outputFormat>
+                <h:outputText value="- #{text['Crypto_Token_-_Import_Certificates'}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -52,7 +55,7 @@
 
                 <div id="worker_content">
 
-                    <h2>Import Certificates</h2>
+                    <h2><h:outputText value="#{text['Import_Certificates']}"/></h2>
                     
                     <h:form id="csrForm">
 
@@ -64,13 +67,13 @@
                             </f:facet>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Key" />
+                                    <h:outputText value="#{text['Key']}" />
                                 </f:facet>
                                 <b><h:outputText value="#{item.alias}"/></b> 
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    Upload
+                                    <h:outputText value="#{text['Upload']}"/>
                                 </f:facet>
                                 
                                 <ui:remove>
@@ -83,7 +86,7 @@
 
                                 <h:panelGroup>
                                     <p id="certChainFileInputContainer#{item.rowIndex}" class="fileInputContainer"></p>
-                                    <h:commandButton class="buttonNeutral" value="Add" action="#{item.uploadAction()}"/>
+                                    <h:commandButton class="buttonNeutral" value="#{text['Add']}" action="#{item.uploadAction()}"/>
                                     <script>
                                         var thisIndex = index++;
                                         ejbca.ra.createFileUploadInput("certChainNewFileInput#{item.rowIndex}", "certChainFileInputContainer#{item.rowIndex}", function(uploadedText) {
@@ -96,7 +99,7 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Certificate chain" />
+                                    <h:outputText value="#{text['Certificate_Chain']}" />
                                 </f:facet>
 
                                 <h:dataTable value="#{item.friendlyCertificates}" var="cert" >
@@ -104,14 +107,14 @@
                                         <h:outputText value="#{cert.name}"/>
                                     </h:column>
                                     <h:column>
-                                        <h:commandButton class="buttonNeutral" value="X" action="#{item.removeCertificateAction(cert)}"/>
+                                        <h:commandButton class="buttonNeutral" value="×" action="#{item.removeCertificateAction(cert)}"/>
                                     </h:column>
                                 </h:dataTable>
                             </h:column>
 
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Install in token" />
+                                    <h:outputText value="#{text['Install_in_Token']}" />
                                 </f:facet>
                                 <h:selectBooleanCheckbox id="inToken" value="#{true}" disabled="true"/> 
                             </h:column>

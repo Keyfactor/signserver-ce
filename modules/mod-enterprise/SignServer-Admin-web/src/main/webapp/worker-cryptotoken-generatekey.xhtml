@@ -35,7 +35,10 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Generate Key - CryptoToken - Worker <h:outputText value="#{workerBean.worker.name}"/>
+                <h:outputFormat value="#{text['Worker_X']}">
+                    <f:param value="#{workerBean.worker.name}"/>
+                </h:outputFormat>
+                <h:outputText value="- #{text['Crypto_Token_-_Generate_Key'}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -50,25 +53,25 @@
 
                 <div id="worker_content">
 
-                    <h2>Generate Key</h2>
+                    <h2><h:outputText value="#{text['Generate_Key']}"/></h2>
                     
                     <h:form>
                         <h:dataTable value="#{generateKeyBean.items}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="New key alias"/>
+                                    <h:outputText value="#{text['New_Key_Alias']}"/>
                                 </f:facet>
                                 <h:inputText id="alias" value="#{item.alias}"/>
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Key algorithm"/>
+                                    <h:outputText value="#{text['Key_Algorithm']}"/>
                                 </f:facet>
                                 <h:inputText id="keyAlg" value="#{item.keyAlg}"/>
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Key specification"/>
+                                    <h:outputText value="#{text['Key_Specification']}"/>
                                 </f:facet>
                                 <h:inputText id="keySpec" value="#{item.keySpec}"/>
                             </h:column>
@@ -80,7 +83,7 @@
                                 <h:commandButton class="buttonNeutral" value="+" action="#{generateKeyBean.addAction()}" rendered="#{item.last}"/>
                             </h:column>
                         </h:dataTable>
-                        <h:commandButton class="buttonPositive" value="Generate" action="#{generateKeyBean.submitAction()}"/> <h:link value="Cancel" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                        <h:commandButton class="buttonPositive" value="#{text['Generate']}" action="#{generateKeyBean.submitAction()}"/> <h:link value="#{text['Cancel']}" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                     </h:form>
                 </div>
 

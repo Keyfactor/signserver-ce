@@ -16,10 +16,8 @@ import java.math.BigInteger;
 import java.security.cert.X509Certificate;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 import org.apache.log4j.Logger;
 import org.signserver.common.ClientEntry;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.SignServerUtil;
 
 /**

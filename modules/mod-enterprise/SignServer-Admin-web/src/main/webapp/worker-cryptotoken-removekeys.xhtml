@@ -37,7 +37,10 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Worker <h:outputText value="#{workerBean.worker.name}"/> - CryptoToken - Remove Key(s)
+                <h:outputFormat value="#{text['Worker_X']}">
+                    <f:param value="#{workerBean.worker.name}"/>
+                </h:outputFormat>
+                <h:outputText value="- #{text['Crypto_Token_-_Remove_Keys}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -58,10 +61,10 @@
 
                     <h:form>
                         <h:panelGroup rendered="#{!removeKeysBean.done}">
-                            <b>WARNING: Will attempt to permanently remove the following key(s):</b>
+                            <b><h:outputText value="#{text['WARNING_Will_attempt_to_permanently_remove_the_follwing_keys']}"/></b>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{removeKeysBean.done}">
-                            <b>All keys removed:</b>
+                            <b><h:outputText value="#{text['All_keys_removed']}"/></b>
                         </h:panelGroup>
 
                         <h:dataTable id="table1" value="#{removeKeysBean.items}" var="item">
@@ -83,15 +86,15 @@
 
                         <h:panelGroup rendered="#{!removeKeysBean.done}">
                             <p>
-                                Note: the key(s) might be used by multiple workers.
+                                <h:outputText value="#{text['Note_the_keys_might_be_used_by_multiple_workers.']}"/>
                             </p>
                             <p>
-                                Are you sure you want to destroy the key(s)?
+                                <h:outputText value="#{text['Are_you_sure_you_want_to_destroy_the_keys?']}"/>
                             </p>
-                            <h:commandButton class="buttonNegative" value="Destroy key(s)" action="#{removeKeysBean.destroyAction()}"/> <h:link value="Cancel" outcome="${removeKeysBean.getBackToCryptoTokenLink(removeKeysBean.keysList)}"/>
+                            <h:commandButton class="buttonNegative" value="#{text['Destroy_keys']}" action="#{removeKeysBean.destroyAction()}"/> <h:link value="#{text['Cancel']}" outcome="${removeKeysBean.getBackToCryptoTokenLink(removeKeysBean.keysList)}"/>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{removeKeysBean.done}">
-                            <h:commandButton class="buttonFeatured" value="Done" action="#{removeKeysBean.cancelAction()}"/> <h:link value="Cancel" outcome="${removeKeysBean.getBackToCryptoTokenLink(removeKeysBean.keysList)}"/>
+                            <h:commandButton class="buttonFeatured" value="#{text['Done']}" action="#{removeKeysBean.cancelAction()}"/> <h:link value="#{text['Cancel']}" outcome="${removeKeysBean.getBackToCryptoTokenLink(removeKeysBean.keysList)}"/>
                         </h:panelGroup>
                     </h:form>
                 </div>

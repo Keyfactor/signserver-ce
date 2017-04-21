@@ -35,7 +35,10 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Worker <h:outputText value="#{workerBean.worker.name}"/> - Configuration - Remove worker property
+                <h:outputFormat value="#{text['Worker_X']}">
+                    <f:param value="#{workerBean.worker.name}"/>
+                </h:outputFormat>
+                <h:outputText value="- #{text['Configuration_-_Remove_Worker_Property'}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -49,18 +52,18 @@
                 </ui:include>
                 
                 <div id="worker_content">
-                    <h2>Remove Property</h2>
+                    <h2><h:outputText value="#{text['Remove_Property']}"/></h2>
 
                     <h:form id="form">
                         <h:inputHidden id="id" value="#{workerBean.id}"/>
 
-                        <b>Are you sure you want to remove the worker property?</b>
+                        <b><h:outputText value="#{text['Are_you_sure_you_want_to_remove_the_worker_property']}"/></b>
 
                         <p>
-                            Property: <span class="alertArea"><h:outputText value="#{workerBean.property}"/></span>
+                            <h:outputText value="#{text['Property']}:"/> <span class="alertArea"><h:outputText value="#{workerBean.property}"/></span>
                         </p>
 
-                        <h:commandButton class="buttonNegative" value="Remove" action="#{workerBean.removePropertyAction()}"/> <h:link value="Cancel" outcome="worker-configuration"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                        <h:commandButton class="buttonNegative" value="#{text['Remove']}" action="#{workerBean.removePropertyAction()}"/> <h:link value="#{text['Cancel']}" outcome="worker-configuration"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                     </h:form>
                 </div>
             </ui:define>

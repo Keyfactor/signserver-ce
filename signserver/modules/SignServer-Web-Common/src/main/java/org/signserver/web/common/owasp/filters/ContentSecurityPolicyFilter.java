@@ -38,7 +38,7 @@ import org.apache.commons.codec.binary.Hex;
 public class ContentSecurityPolicyFilter implements Filter {
 
 	/** Configuration member to specify if web app use web fonts */
-	public static final boolean APP_USE_WEBFONTS = false;
+	public static final boolean APP_USE_WEBFONTS = true; // Used by /doc
 
 	/** Configuration member to specify if web app use videos or audios */
 	public static final boolean APP_USE_AUDIOS_OR_VIDEOS = false;
@@ -87,7 +87,8 @@ public class ContentSecurityPolicyFilter implements Filter {
 		List<String> cspPolicies = new ArrayList<String>();
 		String originLocationRef = "'self'";
 		// --Disable default source in order to avoid browser fallback loading using 'default-src' locations
-		cspPolicies.add("default-src 'none'");
+		//cspPolicies.add("default-src 'none'");
+                cspPolicies.add("default-src " + "'self' blob:"); // 'self' and blob needed for /doc
 		// --Define loading policies for Scripts
 		cspPolicies.add("script-src " + originLocationRef + " 'unsafe-inline' 'unsafe-eval'");
 		if (INCLUDE_MOZILLA_CSP_DIRECTIVES) {
@@ -116,6 +117,9 @@ public class ContentSecurityPolicyFilter implements Filter {
 		cspPolicies.add("plugin-types application/pdf application/x-shockwave-flash");
 		// --Define browser XSS filtering feature running mode
 		cspPolicies.add("reflected-xss block");
+
+                // Uncomment to have violations posted by the browser
+                //cspPolicies.add("report-uri http://localhost:8080/CSPReportURI-1.0-SNAPSHOT/ReceiveServlet");
 
 		// Target formating
 		this.policies = cspPolicies.toString().replaceAll("(\\[|\\])", "").replaceAll(",", ";").trim();

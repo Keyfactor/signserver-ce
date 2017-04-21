@@ -39,6 +39,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -67,10 +68,16 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
+import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.util.CertTools;
 import org.signserver.admin.gui.SignServerAdminGUIApplication.Protocol;
+import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.AdminWS;
 import org.signserver.admin.gui.adminws.gen.AdminWSService;
+import org.signserver.admin.gui.adminws.gen.Order;
+import org.signserver.admin.gui.adminws.gen.QueryCondition;
+import org.signserver.admin.gui.adminws.gen.QueryOrdering;
+import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.util.ExceptionUtils;
 
 
@@ -623,6 +630,38 @@ public class ConnectDialog extends javax.swing.JDialog {
                         // All is fine
                         connected = true;
                         dispose();
+                    } catch(AdminNotAuthorizedException_Exception ex) {
+                        // Might still be an auditor so try querying
+                        final QueryOrdering order = new QueryOrdering();
+                        order.setColumn(AuditRecordData.FIELD_TIMESTAMP);
+                        order.setOrder(Order.DESC);
+                        
+                        try {
+                            ws.queryAuditLog(0, 1, Collections.<QueryCondition>emptyList(), Collections.singletonList(order));
+
+                            // All is fine
+                            connected = true;
+                            dispose();
+                        } catch (AdminNotAuthorizedException_Exception ex2) {
+                            // Might still be an archive auditor so try querying
+                            final QueryOrdering order2 = new QueryOrdering();
+                            order2.setColumn(ArchiveMetadata.TIME);
+                            order2.setOrder(Order.DESC);
+
+                            try {
+                                ws.queryArchive(0, 1, Collections.<QueryCondition>emptyList(), Collections.singletonList(order2), false);
+
+                                // All is fine
+                                connected = true;
+                                dispose();
+                            } catch (Throwable ex3) {
+                                LOG.error("Error contacting SignServer", ex3);
+                                JOptionPane.showMessageDialog(ConnectDialog.this, ExceptionUtils.catCauses(ex3, "\n"), "Connect", JOptionPane.ERROR_MESSAGE);
+                            }
+                        } catch (Throwable ex2) {
+                            LOG.error("Error contacting SignServer", ex2);
+                            JOptionPane.showMessageDialog(ConnectDialog.this, ExceptionUtils.catCauses(ex2, "\n"), "Connect", JOptionPane.ERROR_MESSAGE);
+                        }
                     } catch (IllegalStateException ex) {
                         LOG.error("Error contacting SignServer", ex);
                         final StringBuilder message = new StringBuilder();
@@ -630,7 +669,7 @@ public class ConnectDialog extends javax.swing.JDialog {
                         // Check if this is a case of JBoss not running
                         if (ex.getMessage() != null && ex.getMessage().contains("No EJB receiver")) {
                             message.append("SignServer not deployed or application server not running:\n");
-                    }
+                        }
 
                         message.append(ExceptionUtils.catCauses(ex, "\n"));
                         JOptionPane.showMessageDialog(ConnectDialog.this, message.toString(), "Connect", JOptionPane.ERROR_MESSAGE);

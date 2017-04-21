@@ -512,12 +512,6 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                                     new AdminEntry(cred, admin, auditor, archiveAuditor);
                             admins.put(cred, newEntry);
 
-                            if (admin) {
-                                SignServerAdminGUIApplication.getAdminWS()
-                                    .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                                    "WSADMINS",
-                                    AdminsUtil.serializeAdmins(admins));
-                            }
                             if (auditor) {
                                 SignServerAdminGUIApplication.getAdminWS()
                                     .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
@@ -529,6 +523,12 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                                     .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                     "WSARCHIVEAUDITORS",
                                     AdminsUtil.serializeArchiveAuditors(admins));
+                            }
+                            if (admin) {
+                                SignServerAdminGUIApplication.getAdminWS()
+                                    .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                    "WSADMINS",
+                                    AdminsUtil.serializeAdmins(admins));
                             }
                         }
                         break;
@@ -607,16 +607,16 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                                 }
                                 SignServerAdminGUIApplication.getAdminWS()
                                     .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                                    "WSADMINS",
-                                    AdminsUtil.serializeAdmins(admins));
-                                SignServerAdminGUIApplication.getAdminWS()
-                                    .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                     "WSAUDITORS",
                                     AdminsUtil.serializeAuditors(admins));
                                 SignServerAdminGUIApplication.getAdminWS()
                                     .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                     "WSARCHIVEAUDITORS",
                                     AdminsUtil.serializeArchiveAuditors(admins));
+                                SignServerAdminGUIApplication.getAdminWS()
+                                    .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                    "WSADMINS",
+                                    AdminsUtil.serializeAdmins(admins));
                             }
                             break;
                         }
@@ -654,12 +654,6 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                     } else {
                         admins.remove(oldEntry.getClient());
 
-                        if (oldEntry.isAdmin()) {
-                            SignServerAdminGUIApplication.getAdminWS()
-                                .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                                "WSADMINS",
-                                AdminsUtil.serializeAdmins(admins));
-                        }
                         if (oldEntry.isAuditor()) {
                             SignServerAdminGUIApplication.getAdminWS()
                                 .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
@@ -671,6 +665,12 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                                 .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                 "WSARCHIVEAUDITORS",
                                 AdminsUtil.serializeArchiveAuditors(admins));
+                        }
+                        if (oldEntry.isAdmin()) {
+                            SignServerAdminGUIApplication.getAdminWS()
+                                .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                "WSADMINS",
+                                AdminsUtil.serializeAdmins(admins));
                         }
                     }
                     refreshButton.doClick();

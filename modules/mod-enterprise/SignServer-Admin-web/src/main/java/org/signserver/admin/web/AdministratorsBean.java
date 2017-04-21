@@ -238,16 +238,16 @@ public class AdministratorsBean {
 
         workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
                 GlobalConfiguration.SCOPE_GLOBAL,
-                "WSADMINS",
-                AdminsUtil.serializeAdmins(admins));
-        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
-                GlobalConfiguration.SCOPE_GLOBAL,
                 "WSAUDITORS",
                 AdminsUtil.serializeAuditors(admins));
         workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
                 GlobalConfiguration.SCOPE_GLOBAL,
                 "WSARCHIVEAUDITORS",
                 AdminsUtil.serializeArchiveAuditors(admins));
+        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
+                GlobalConfiguration.SCOPE_GLOBAL,
+                "WSADMINS",
+                AdminsUtil.serializeAdmins(admins));
         return "administrators?faces-redirect=true";
     }
 
@@ -268,16 +268,16 @@ public class AdministratorsBean {
 
         workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
                 GlobalConfiguration.SCOPE_GLOBAL,
-                "WSADMINS",
-                AdminsUtil.serializeAdmins(admins));
-        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
-                GlobalConfiguration.SCOPE_GLOBAL,
                 "WSAUDITORS",
                 AdminsUtil.serializeAuditors(admins));
         workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
                 GlobalConfiguration.SCOPE_GLOBAL,
                 "WSARCHIVEAUDITORS",
                 AdminsUtil.serializeArchiveAuditors(admins));
+        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
+                GlobalConfiguration.SCOPE_GLOBAL,
+                "WSADMINS",
+                AdminsUtil.serializeAdmins(admins));
         return "administrators?faces-redirect=true";
     }
 
@@ -293,12 +293,6 @@ public class AdministratorsBean {
 
         getAdmins().put(newCred, newEntry);
 
-        if (roleAdmin) {
-            workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
-                    GlobalConfiguration.SCOPE_GLOBAL,
-                    "WSADMINS",
-                    AdminsUtil.serializeAdmins(admins));
-        }
         if (roleAuditor) {
             workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
                     GlobalConfiguration.SCOPE_GLOBAL,
@@ -310,6 +304,12 @@ public class AdministratorsBean {
                     GlobalConfiguration.SCOPE_GLOBAL,
                     "WSARCHIVEAUDITORS",
                     AdminsUtil.serializeArchiveAuditors(admins));
+        }
+        if (roleAdmin) {
+            workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(),
+                    GlobalConfiguration.SCOPE_GLOBAL,
+                    "WSADMINS",
+                    AdminsUtil.serializeAdmins(admins));
         }
         return "administrators?faces-redirect=true";
     }

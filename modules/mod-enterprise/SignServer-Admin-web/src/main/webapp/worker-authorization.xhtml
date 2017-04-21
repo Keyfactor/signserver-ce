@@ -35,7 +35,10 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Worker <h:outputText value="#{workerAuthBean.worker.name}"/> - Authorization
+                <h:outputFormat value="#{text['Worker_X']}">
+                    <f:param value="#{workerAuthBean.worker.name}"/>
+                </h:outputFormat>
+                <h:outputText value="- #{text['Authorization']}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -50,35 +53,35 @@
 
                 <div id="worker_content">
                     
-                    <h2>Clients</h2>
+                    <h2><h:outputText value="#{text['Clients']}"/></h2>
                     
                     <p>
-                        Clients authorized when certificate authentication is used:
+                        <h:outputText value="#{text['Clients_authorized_when_certificate_authentication_is_used']}:"/>
                     </p>
                     
                     <h:dataTable id="table1" value="#{workerAuthBean.authorizedClients}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
                         <h:column>
                             <f:facet name="header">
-                                <h:outputText value="Certificate serial number" />
+                                <h:outputText value="#{text['Certificate_Serial_Number']}" />
                             </f:facet>
                             <h:outputText value="#{item.certSN}" />
                         </h:column>
                         <h:column>
                             <f:facet name="header">
-                                <h:outputText value="Issuer DN" />
+                                <h:outputText value="#{text['Issuer_DN']}" />
                             </f:facet>
                             <h:outputText value="#{item.issuerDN}" />
                         </h:column>
                         <h:column>
                             <f:facet name="header">
-                                <h:outputText value="Actions"/>
+                                <h:outputText value="#{text['Actions']}"/>
                             </f:facet>
                             <h:link value="Edit" outcome="worker-authorization-edit">
                                 <f:param name="id" value="#{workerAuthBean.worker.id}"/>
                                 <f:param name="certSN" value="#{item.certSN}"/>
                                 <f:param name="issuerDN" value="#{item.issuerDN}"/>
                             </h:link> |
-                            <h:link class="linkNegative" value="Remove" outcome="worker-authorization-remove">
+                            <h:link class="linkNegative" value="#{text['Remove']}" outcome="worker-authorization-remove">
                                 <f:param name="id" value="#{workerAuthBean.worker.id}"/>
                                 <f:param name="certSN" value="#{item.certSN}"/>
                                 <f:param name="issuerDN" value="#{item.issuerDN}"/>
@@ -88,7 +91,7 @@
                         </f:facet>
                     </h:dataTable>
 
-                    <h:link class="linkPositive" value="Add..." outcome="worker-authorization-add"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
+                    <h:link class="linkPositive" value="#{text['Add...']}" outcome="worker-authorization-add"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
                 </div>
                 
             </ui:define>

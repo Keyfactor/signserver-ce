@@ -37,7 +37,10 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Worker <h:outputText value="#{workerAuthBean.worker.name}"/> - Configuration - Edit authorization
+                <h:outputFormat value="#{text['Worker_X']}">
+                    <f:param value="#{workerAuthBean.worker.name}"/>
+                </h:outputFormat>
+                <h:outputText value="- #{text['Configuration_-_Edit_Authorization']}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -51,7 +54,11 @@
                 </ui:include>
                 
                 <div id="worker_content">
-                    <h2>Editing client with certificate serial number <h:outputText value="#{workerAuthBean.oldCertSN}"/> issued by <h:outputText value="#{workerAuthBean.oldIssuerDN}"/></h2>
+                    <h2><h:outputFormat value="#{text['Editing_client_with_certificate_serial_number_X_issued_by_Y']}"/>
+                            <f:param value="#{workerAuthBean.oldCertSN}"/>
+                            <f:param value="#{workerAuthBean.oldIssuerDN}"/>
+                        </h:outputFormat>
+                    </h2>
 
                     <h:form id="form">
                         <h:inputHidden id="id" value="#{workerAuthBean.id}"/>
@@ -61,31 +68,31 @@
                         <h:panelGroup id="main" rendered="#{!workerAuthBean.fromCertificate}">
 
                             <h:panelGrid columns="4">
-                                <h:outputLabel for="certSN">Certificate serial number:</h:outputLabel>
+                                <h:outputLabel for="certSN"><h:outputText value="#{text['Certificate_Serial_Number']}:"/></h:outputLabel>
                                 <h:inputText id="certSN" value="#{workerAuthBean.certSN}" size="16" requiredMessage="*">
                                     <f:validator validatorId="optionallyRequiredValidator"/>
                                     <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                                 </h:inputText>
                                 <h:message for="certSN" class="errorMessage"/>
-                                <h:commandButton class="buttonNeutral" value="..." action="#{workerAuthBean.browseAction()}"/>
+                                <h:commandButton class="buttonNeutral" value="…" action="#{workerAuthBean.browseAction()}"/>
 
-                                <h:outputLabel for="issuerDN">Issuer DN:</h:outputLabel>
+                                <h:outputLabel for="issuerDN"><h:outputText value="#{text['Issuer DN']}:"/></h:outputLabel>
                                 <h:inputText id="issuerDN" value="#{workerAuthBean.issuerDN}" size="40" requiredMessage="*">
                                     <f:validator validatorId="optionallyRequiredValidator"/>
                                     <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                                 </h:inputText>
                                 <h:message for="issuerDN" class="errorMessage"/>
-                                <h:commandButton class="buttonNeutral" value="Load current" action="#{workerAuthBean.loadCurrentAction()}"/>
+                                <h:commandButton class="buttonNeutral" value="#{text['Load_Current']}" action="#{workerAuthBean.loadCurrentAction()}"/>
                             </h:panelGrid>
-                            <h:commandButton class="buttonFeatured" value="Submit" action="#{workerAuthBean.editAction()}" binding="#{components.buttonSubmit}"/>
-                            <h:link value="Cancel" outcome="worker-authorization"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
+                            <h:commandButton class="buttonFeatured" value="#{text['Submit']}" action="#{workerAuthBean.editAction()}" binding="#{components.buttonSubmit}"/>
+                            <h:link value="#{text['Cancel']}" outcome="worker-authorization"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
                         </h:panelGroup>
 
                         <h:panelGroup id="fromCert"  rendered="#{workerAuthBean.fromCertificate}">
                             <ui:remove>
                                 <!-- Pure JavaScript file upload, since non-JS fallback of pasting upload exists -->
                             </ui:remove>
-                            <h:outputLabel for="cert">Load from certificate file:</h:outputLabel><br/>
+                            <h:outputLabel for="cert"><h:outputText value="#{text['Load_From_Certificate_File']}:"/></h:outputLabel><br/>
                             <h:inputTextarea id="cert" value="#{workerAuthBean.cert}" cols="50" rows="10"/> 
                             <p id="certFileInputContainer" class="fileInputContainer"></p>
                             <script>
@@ -100,7 +107,7 @@
                                 <h:outputText value="#{workerAuthBean.loadErrorMessage}" class="errorMessage"/>
                             </p>
                             
-                            <h:commandButton class="buttonFeatured" value="Load" action="#{workerAuthBean.loadAction()}"/> <h:commandButton class="buttonNeutral" value="Cancel" action="#{workerAuthBean.cancelBrowseAction()}"/>
+                            <h:commandButton class="buttonFeatured" value="#{text['Load']}" action="#{workerAuthBean.loadAction()}"/> <h:commandButton class="buttonNeutral" value="#{text['Cancel']}" action="#{workerAuthBean.cancelBrowseAction()}"/>
                         </h:panelGroup>
 
                     </h:form>

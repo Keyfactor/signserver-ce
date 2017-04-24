@@ -28,15 +28,15 @@
         <ui:composition template="WEB-INF/templates/template.xhtml">
 
             <ui:define name="title">
-                Page Not Found
+                <h:outputText value="#{text['Page_Not_Found']}"/>
             </ui:define>
 
             <ui:define name="top"/>
 
             <ui:define name="content">
-                <h1>Page Not Found</h1>
+                <h1><h:outputText value="#{text['Page_Not_Found']}"/></h1>
                 <p>
-                    The requested resource could not be found:
+                    <h:outputText value="#{text['The_requested_resource_could_not_be_found']}:"/>
                 </p>
                 <p>
                     <b><h:outputText value="#{requestScope['javax.servlet.error.message']}"/></b>

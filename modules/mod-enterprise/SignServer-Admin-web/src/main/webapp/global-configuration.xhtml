@@ -30,7 +30,7 @@
             <ui:param name="activeMenu" value="global-configuration"/>
 
             <ui:define name="title">
-                Global Configuration
+                <h:outputText value="#{text['Global_Configuration']}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -38,29 +38,29 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1>Properties</h1>
+                <h1><h:outputText value="#{text['Properties']}"/></h1>
                 
                 <h:dataTable id="table1" value="#{globalConfigurationBean.config}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
                     <h:column>
                         <f:facet name="header">
-                            <h:outputText value="Property" />
+                            <h:outputText value="#{text['Property']}" />
                         </f:facet>
                         <h:outputText value="#{item.key}" />
                     </h:column>
                     <h:column>
                         <f:facet name="header">
-                            <h:outputText value="Value" />
+                            <h:outputText value="#{text['Value']}" />
                         </f:facet>
                         <h:outputText value="#{item.value}" />
                     </h:column>
                     <h:column>
                         <f:facet name="header">
-                            <h:outputText value="Actions"/>
+                            <h:outputText value="#{text['Actions']}"/>
                         </f:facet>
-                        <h:link value="Edit" outcome="global-configuration-edit">
+                        <h:link value="#{text['Edit']}" outcome="global-configuration-edit">
                             <f:param name="property" value="#{item.key}"/>
                         </h:link> |
-                        <h:link class="linkNegative" value="Remove" outcome="global-configuration-remove">
+                        <h:link class="linkNegative" value="#{text['Remove']}" outcome="global-configuration-remove">
                             <f:param name="property" value="#{item.key}"/>
                         </h:link>
                     </h:column>
@@ -68,7 +68,7 @@
                     </f:facet>
                 </h:dataTable>
                 
-                <h:link class="linkPositive" value="Add..." outcome="global-configuration-add"/>
+                <h:link class="linkPositive" value="#{text['Add...']}" outcome="global-configuration-add"/>
                 
             </ui:define>
 

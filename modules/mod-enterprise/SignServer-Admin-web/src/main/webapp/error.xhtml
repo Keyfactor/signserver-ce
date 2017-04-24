@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
 
     <ui:remove>
     <!--
@@ -28,13 +29,17 @@
         <ui:composition template="WEB-INF/templates/template.xhtml">
 
             <ui:define name="title">
-                Error
+                <h:outputText value="#{text['Error']}"/>
             </ui:define>
 
             <ui:define name="top"/>
 
             <ui:define name="content">
-                <h1>Error <h:outputText value="#{requestScope['javax.servlet.error.status_code']}"/></h1>
+                <h1>
+                    <h:outputFormat value="#{text['Error_X']}">
+                        <f:param value="#{requestScope['javax.servlet.error.status_code']}"/>
+                    </h:outputFormat>
+                </h1>
                 <p>
                     <h:outputText value="#{requestScope['javax.servlet.error.message']}"/>
                 </p>

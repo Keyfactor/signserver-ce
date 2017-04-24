@@ -34,7 +34,7 @@
             <ui:param name="activeMenu" value="global-configuration"/>
 
             <ui:define name="title">
-                Add property - Global Configuration
+                <h:outputText value="#{text['Add_Property_-_Global_Configuration']}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -42,19 +42,19 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1>Add Property</h1>
+                <h1><h:outputText value="#{text['Add_Property']}"/></h1>
                 
                 <h:form id="form">
                     <h:panelGrid columns="3">
-                        <h:outputLabel for="name">Name:</h:outputLabel>
+                        <h:outputLabel for="name"><h:outputText value="#{text['Name']}:"/></h:outputLabel>
                         <h:inputText id="name" value="#{globalConfigurationBean.property}" size="40" required="true" requiredMessage="*"/>
                         <h:message for="name" class="errorMessage"/>
 
-                        <h:outputLabel for="value">Value:</h:outputLabel>
+                        <h:outputLabel for="value"><h:outputText value="#{text['Value']}:"/></h:outputLabel>
                         <h:inputTextarea id="value" value="#{globalConfigurationBean.propertyValue}" cols="70" rows="10"/>
                         <h:message for="value" class="errorMessage"/>
                     </h:panelGrid>
-                    <h:commandButton class="buttonPositive" value="Submit" action="#{globalConfigurationBean.addPropertyAction()}"/> <h:link value="Cancel" outcome="global-configuration"/>
+                    <h:commandButton class="buttonPositive" value="#{text['Submit']}" action="#{globalConfigurationBean.addPropertyAction()}"/> <h:link value="#{text['Cancel']}" outcome="global-configuration"/>
                 </h:form>
 
             </ui:define>

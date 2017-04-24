@@ -35,7 +35,10 @@
             <ui:param name="activeMenu" value="auditlog"/>
 
             <ui:define name="title">
-                Audit Log - <h:outputText value="Entry #{auditLogEntryBean.sequenceNumber} on #{auditLogEntryBean.node}"/>
+                <h:outputFormat value="#{text['Audit_Log_-_Entry_X_on_Y']}">
+                    <f:param value="#{auditLogEntryBean.sequenceNumber}"/>
+                    <f:param value="#{auditLogEntryBean.node}"/>
+                </h:outputFormat>
             </ui:define>
 
             <ui:define name="top">
@@ -43,7 +46,12 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:outputText value="Entry #{auditLogEntryBean.sequenceNumber} on #{auditLogEntryBean.node}"/></h1>
+                <h1>
+                    <h:outputFormat value="#{text['Entry_X_on_Y']}">
+                        <f:param value="#{auditLogEntryBean.sequenceNumber}"/>
+                        <f:param value="#{auditLogEntryBean.node}"/>
+                    </h:outputFormat>
+                </h1>
                 <h:form>
                     
                     <p class="errorMessage">
@@ -52,37 +60,37 @@
                     
                     <h:panelGroup rendered="#{auditLogEntryBean.queryError == null}">
                         <h:panelGrid columns="2">
-                            <h:outputText value="Time:"/>
+                            <h:outputText value="#{text['Time']}:"/>
                             <h:outputText value="#{auditLogEntryBean.entry.time}"/>
                             
-                            <h:outputText value="Outcome:"/>
+                            <h:outputText value="#{text['Outcome']}:"/>
                             <h:outputText value="#{auditLogEntryBean.entry.outcome}"/>
                             
-                            <h:outputText value="Event:"/>
+                            <h:outputText value="#{text['Event']}:"/>
                             <h:outputText value="#{auditLogEntryBean.entry.event}"/>
                             
-                            <h:outputText value="Module:"/>
+                            <h:outputText value="#{text['Module']}:"/>
                             <h:outputText value="#{auditLogEntryBean.entry.module}"/>
                             
-                            <h:outputText value="Service:"/>
+                            <h:outputText value="#{text['Service']}:"/>
                             <h:outputText value="#{auditLogEntryBean.entry.service}"/>
                             
-                            <h:outputText value="Admin Subject:"/>
+                            <h:outputText value="#{text['Admin_Subject']}:"/>
                             <h:outputText value="#{auditLogEntryBean.entry.adminSubject}"/>
                             
-                            <h:outputText value="Admin Serial Number:"/>
+                            <h:outputText value="#{text['Admin_Serial_Number']}:"/>
                             <h:outputText value="#{auditLogEntryBean.entry.adminSerialNumber}"/>
                             
-                            <h:outputText value="Admin Issuer:"/>
+                            <h:outputText value="#{text['Admin_Issuer']}:"/>
                             <h:outputText value="#{auditLogEntryBean.entry.adminIssuer}"/>
                             
-                            <h:outputText value="Worker ID:"/>
+                            <h:outputText value="#{text['Worker_ID']}:"/>
                             <h:outputText value="#{auditLogEntryBean.entry.workerID}"/>
                             
-                            <h:outputText value="Node:"/>
+                            <h:outputText value="#{text['Node']}:"/>
                             <h:outputText value="#{auditLogEntryBean.entry.node}"/>
                             
-                            <h:outputText value="Details:"/>
+                            <h:outputText value="#{text['Details']}:"/>
                             <h:panelGroup>
                                 <pre>
                                     <h:outputText value="#{auditLogEntryBean.entry.fullDetails}"/>

@@ -37,7 +37,7 @@
             <ui:param name="activeMenu" value="archive"/>
 
             <ui:define name="title">
-                    Archive
+                <h:outputText value="#{text['Archive']}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -45,24 +45,24 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1>Current Conditions</h1>
+                <h1><h:outputText value="#{text['Current_Conditions']}"/></h1>
                 <h:form>
                     <h:panelGroup>
                         <h:dataTable value="#{archiveBean.conditions}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
                             <h:column>
                                 <f:facet name="header">
-                                    Column
+                                    <h:outputText value="#{text['Column']}"/>
                                 </f:facet>
                                 <h:outputText value="#{archiveBean.nameFromColumn[item.column]}"/>
                                 <f:facet name="footer">
                                     <h:selectOneMenu rendered="#{archiveBean.conditionToAdd == null}" value="#{archiveBean.conditionColumn}"><f:selectItems value="#{archiveBean.columns}"/></h:selectOneMenu>
-                                    <h:commandButton class="buttonNeutral" rendered="#{archiveBean.conditionToAdd == null}" action="#{archiveBean.addConditionAction()}" value="Add..."/>
+                                    <h:commandButton class="buttonNeutral" rendered="#{archiveBean.conditionToAdd == null}" action="#{archiveBean.addConditionAction()}" value="#{text['Add...']}"/>
                                     <h:outputText rendered="#{archiveBean.conditionToAdd != null}" value="#{archiveBean.nameFromColumn[archiveBean.conditionToAdd.column]}"></h:outputText>
                                 </f:facet>
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    Condition
+                                    <h:outputText value="#{text['Condition']}"/>
                                 </f:facet>
                                 <h:outputText value="#{archiveBean.nameFromCondition(item.operator)}"/>
                                 <f:facet name="footer">
@@ -71,7 +71,7 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    Value
+                                    <h:outputText value="#{text['Value']}"/>
                                 </f:facet>
                                 <h:outputText value="#{archiveBean.nameFromValue(item.value, item.column)}"/>
                                 <f:facet name="footer">
@@ -80,9 +80,9 @@
                                 </f:facet>
                             </h:column>
                             <h:column>
-                                <h:commandButton class="buttonNeutral" value="Remove" action="#{archiveBean.removeConditionAction(item)}"/>
+                                <h:commandButton class="buttonNeutral" value="#{text['Remove']}" action="#{archiveBean.removeConditionAction(item)}"/>
                                 <f:facet name="footer">
-                                    <h:commandButton class="buttonNeutral" rendered="#{archiveBean.conditionToAdd != null}" value="Add" action="#{archiveBean.addConditionToAddAction()}"/> <h:commandButton class="buttonNeutral" rendered="#{archiveBean.conditionToAdd != null}" value="Remove" action="#{archiveBean.removeConditionToAddAction()}"/>
+                                    <h:commandButton class="buttonNeutral" rendered="#{archiveBean.conditionToAdd != null}" value="#{text['Add']}" action="#{archiveBean.addConditionToAddAction()}"/> <h:commandButton class="buttonNeutral" rendered="#{archiveBean.conditionToAdd != null}" value="#{text['Remove']}" action="#{archiveBean.removeConditionToAddAction()}"/>
                                 </f:facet>
                             </h:column>
                             <f:facet name="footer">
@@ -92,14 +92,14 @@
 
                     <p>&nbsp;</p>
 
-                    <h1>Search Results</h1>
+                    <h1><h:outputText value="#{text['Search_Results']}"/></h1>
                     <h:panelGroup>
-                        <h:commandButton class="buttonNeutral" value="First" action="#{archiveBean.firstAction()}" disabled="#{!archiveBean.enableFirst}"/> 
-                        <h:commandButton class="buttonNeutral" value="Previous" action="#{archiveBean.previousAction()}" disabled="#{!archiveBean.enablePrevious}"/> 
-                        <h:commandButton class="buttonFeatured" value="Reload" action="#{archiveBean.reloadAction()}"/> 
-                        <h:commandButton class="buttonNeutral" value="Next" action="#{archiveBean.nextAction()}" disabled="#{!archiveBean.enableNext}"/> 
-                        Displaying results <h:inputText value="#{archiveBean.fromIndex}" size="3"/> to <h:outputText value="#{archiveBean.queryingToIndex}"/>.
-                        Entries per page: <h:inputText value="#{archiveBean.maxEntries}" size="3"/>
+                        <h:commandButton class="buttonNeutral" value="#{text['First']}" action="#{archiveBean.firstAction()}" disabled="#{!archiveBean.enableFirst}"/> 
+                        <h:commandButton class="buttonNeutral" value="#{text['Previous']}" action="#{archiveBean.previousAction()}" disabled="#{!archiveBean.enablePrevious}"/> 
+                        <h:commandButton class="buttonFeatured" value="#{text['Reload']}" action="#{archiveBean.reloadAction()}"/> 
+                        <h:commandButton class="buttonNeutral" value="#{text['Next']}" action="#{archiveBean.nextAction()}" disabled="#{!archiveBean.enableNext}"/> 
+                        <h:outputText value="#{text['Displaying_results']} "/><h:inputText value="#{archiveBean.fromIndex}" size="3"/><h:outputText value=" #{text['to']} "/><h:outputText value="#{archiveBean.queryingToIndex}"/>.
+                        <h:outputText value="#{text['Entries_per_page']} :"/><h:inputText value="#{archiveBean.maxEntries}" size="3"/>
 
                         <p class="errorMessage">
                             <h:outputText value="#{archiveBean.queryError}"/>
@@ -117,28 +117,28 @@
 
                             <h:column>
                                 <f:facet name="header">
-                                    Archive ID
+                                    <h:outputText value="#{text['Archive_ID']}"/>
                                 </f:facet>
                                 <h:outputText value="#{entry.archiveId}"/>
                             </h:column>
 
                             <h:column>
                                 <f:facet name="header">
-                                    Time
+                                    <h:outputText value="#{text['Time']}"/>
                                 </f:facet>
                                 <h:outputText value="#{entry.time}"/>
                             </h:column>
                             
                             <h:column>
                                 <f:facet name="header">
-                                    Type
+                                    <h:outputText value="#{text['Type']}"/>
                                 </f:facet>
                                 <h:outputText value="#{entry.typeName}"/>
                             </h:column>
                             
                             <h:column>
                                 <f:facet name="header">
-                                    Signer ID
+                                    <h:outputText value="#{text['Worker_ID']}"/>
                                 </f:facet>
                                 <h:link outcome="worker" value="#{entry.signerId}">
                                     <f:param name="id" value="#{entry.signerId}"/>
@@ -147,21 +147,21 @@
                             
                             <h:column>
                                 <f:facet name="header">
-                                    Client Cert Serial Number
+                                    <h:outputText value="#{text['Client_Cert_Serial_Number']}"/>
                                 </f:facet>
                                 <h:outputText value="#{entry.requestCertSerialNumber}"/>
                             </h:column>
                             
                             <h:column>
                                 <f:facet name="header">
-                                    Issuer DN
+                                    <h:outputText value="#{text['Issuer_DN']}"/>
                                 </f:facet>
                                 <h:outputText value="#{entry.requestIssuerDN}"/>
                             </h:column>
                             
                             <h:column>
                                 <f:facet name="header">
-                                    IP Address
+                                    <h:outputText value="#{text['IP_Address']}"/>s
                                 </f:facet>
                                 <h:outputText value="#{entry.requestIP}"/>
                             </h:column>
@@ -170,7 +170,7 @@
                                 <f:facet name="header">
                                 </f:facet>
                                 <h:panelGroup>
-                                    <h:link value="Download" outcome="archive-download">
+                                    <h:link value="#{text['Download']}" outcome="archive-download">
                                         <f:param name="uniqueId" value="#{entry.uniqueId}"/>
                                     </h:link>
                                 </h:panelGroup>
@@ -178,14 +178,17 @@
                             
                             <f:facet name="footer">
                                 <p>
-                                    <h:commandButton class="buttonNeutral" value="Download selected in ZIP" action="#{archiveBean.downloadSelectedAction()}"/>
+                                    <h:commandButton class="buttonNeutral" value="#{text['Download_Selected_in_ZIP']}" action="#{archiveBean.downloadSelectedAction()}"/>
                                 </p>
                                 <p>
-                                    <h:commandButton class="buttonNeutral" value="First" action="#{archiveBean.firstAction()}" disabled="#{!archiveBean.enableFirst}"/> 
-                                    <h:commandButton class="buttonNeutral" value="Previous" action="#{archiveBean.previousAction()}" disabled="#{!archiveBean.enablePrevious}"/> 
-                                    <h:commandButton class="buttonFeatured" value="Reload" action="#{archiveBean.reloadAction()}"/> 
-                                    <h:commandButton class="buttonNeutral" value="Next" action="#{archiveBean.nextAction()}" disabled="#{!archiveBean.enableNext}"/> 
-                                    <h:outputText value="Displaying results #{archiveBean.fromIndex} to #{archiveBean.queryingToIndex}"/>
+                                    <h:commandButton class="buttonNeutral" value="#{text['First']}" action="#{archiveBean.firstAction()}" disabled="#{!archiveBean.enableFirst}"/> 
+                                    <h:commandButton class="buttonNeutral" value="#{text['Previous']}" action="#{archiveBean.previousAction()}" disabled="#{!archiveBean.enablePrevious}"/> 
+                                    <h:commandButton class="buttonFeatured" value="#{text['Reload']}" action="#{archiveBean.reloadAction()}"/> 
+                                    <h:commandButton class="buttonNeutral" value="#{text['Next']}" action="#{archiveBean.nextAction()}" disabled="#{!archiveBean.enableNext}"/> 
+                                    <h:outputFormat value="#{text['Displaying_results_X_to_Y']}">
+                                        <f:param value="#{archiveBean.fromIndex}"/>
+                                        <f:param value="#{archiveBean.queryingToIndex}"/>
+                                    </h:outputFormat>
                                 </p>
                             </f:facet>
                         </h:dataTable>

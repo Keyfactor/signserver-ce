@@ -36,7 +36,7 @@
             <ui:param name="activeMenu" value="archive"/>
 
             <ui:define name="title">
-                Archive - Download
+                <h:outputText value="#{text['Archive_-_Download']}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -44,7 +44,7 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:link value="Archive" outcome="archive"/> - Download</h1>
+                <h1><h:link value="#{text['Archive']}" outcome="archive"/><h:outputText value="- #{text['Download']}"/></h1>
                 
                 <p class="errorMessage">
                     <h:outputText value="#{archiveDownloadBean.errorMessage}"/>

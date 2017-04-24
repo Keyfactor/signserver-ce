@@ -28,13 +28,13 @@
         <ui:composition template="WEB-INF/templates/template.xhtml">
 
             <ui:define name="title">
-                Authorization Error
+                <h:outputText value="#{text['Authorization_Error']}"/>
             </ui:define>
 
             <ui:define name="top"/>
 
             <ui:define name="content">
-                <h1>Authorization Error</h1>
+                <h1><h:outputText value="#{text['Authorization_Error']}"/></h1>
                 <p>
                     <h:outputText value="#{requestScope['javax.servlet.error.message']}"/>
                 </p>

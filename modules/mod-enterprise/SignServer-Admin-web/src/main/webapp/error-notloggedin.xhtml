@@ -28,18 +28,20 @@
         <ui:composition template="WEB-INF/templates/template-notloggedin.xhtml">
 
             <ui:define name="title">
-                Authorization Error
+                <h:outputText value="#{text['Authorization_Error']}"/>
             </ui:define>
 
             <ui:define name="top"/>
 
             <ui:define name="content">
-                <h1>Not Logged In</h1>
+                <h1><h:outputText value="#{text['Not_Logged_In']}"/></h1>
                 <p>
                     <h:outputText value="#{requestScope['javax.servlet.error.message']}"/>
                 </p>
                 <p>
-                    <h:outputLink value="#{loginBean.adminWebPrivateHttpsLink}">Use TLS client certificate</h:outputLink>
+                    <h:outputLink value="#{loginBean.adminWebPrivateHttpsLink}">
+                        <h:outputText value="#{text['Use_TLS_client_certificate']}"/>
+                    </h:outputLink>
                 </p>
                 <p>&nbsp;</p>
                 

@@ -28,7 +28,7 @@
         <link rel="shortcut icon" type="image/png" href="#{resource['default/images/favicon.png']}"/>
         <h:outputStylesheet library="default" name="css/default.css"/>
         <h:outputStylesheet library="default" name="css/cssLayout.css"/>
-        <title><ui:insert name="title">Title</ui:insert> - SignServer Admin Web</title>
+        <title><ui:insert name="title">Title</ui:insert><h:outputText value=" - #{text['SignServer_Admin_Web']}"/></title>
     </h:head>
 
     <h:body>
@@ -37,16 +37,16 @@
             <div id="top-left"><h:outputLink value="../"><h:graphicImage library="default" name="images/logo.png" height="50"/></h:outputLink></div>
             <div id="top-right">
                 <h:panelGrid columns="2">
-                    <h:outputText value="User:" class="top-right-c1"/>
-                    <h:outputText value="n/a" class="top-right-c2"/>
+                    <h:outputText value="#{text['User_COLON']}" class="top-right-c1"/>
+                    <h:outputText value="#{text['n/a']}" class="top-right-c2"/>
                     
-                    <h:outputText value="Node:" class="top-right-c1"/>
+                    <h:outputText value="#{text['Node_COLON']}" class="top-right-c1"/>
                     <h:outputText value="#{adminWebBean.node}" class="top-right-c2"/>
                     
-                    <h:outputText value="Server Time:" class="top-right-c1"/>
+                    <h:outputText value="#{text['Server_Time_COLON']}" class="top-right-c1"/>
                     <h:outputText value="#{adminWebBean.currentTime}" class="top-right-c2"/>
                     
-                    <h:outputText value="Version:" class="top-right-c1"/>
+                    <h:outputText value="#{text['Version_COLON']}" class="top-right-c1"/>
                     <h:outputText value="#{adminWebBean.version}" class="top-right-c2"/>
                 </h:panelGrid>
             </div>

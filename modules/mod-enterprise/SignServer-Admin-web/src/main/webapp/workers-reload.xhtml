@@ -35,7 +35,7 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                <h:outputText value="Workers - Reload from database..."/>
+                <h:outputText value="#{text['Workers_-_Reload_from_Database...']}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -43,22 +43,22 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1>Reload from Database</h1>
+                <h1><h:outputText value="#{text['Reload_from_Database']}"/></h1>
 
                 <p>
-                    <b>Note:</b><br/>
-                    Reloading from database is normally only needed if the configuration in the database has been changed from an other node in a set up with a shared database.
+                    <b><h:outputText value="#{text['Note_COLON']}"/></b><br/>
+                    <h:outputText value="#{text['Reloading_from_database_is_normally_only_needed_if_the_configuration_in_the_database_has_been_changed_from_an_other_node_in_a_set_up_with_a_shared_database.']}"/>
                 </p>
                 
-                <h2>What do you want to reload?</h2>
+                <h2><h:outputText value="#{text['What_do_you_want_to_reload']}"/></h2>
                 
                 <h:messages class="errorMessage" globalOnly="true"/>
 
                 <h:form>
                     
                     <h:selectOneRadio id="reloadTarget" value="#{reloadBulkBean.reloadTarget}">
-                        <f:selectItem itemLabel="All workers in SignServer (including global configuration)" itemValue="#{reloadBulkBean.RELOAD_ALL}"/>
-                        <f:selectItem itemLabel="Selected workers:" itemValue="#{reloadBulkBean.RELOAD_SELECTED}" itemDisabled="#{reloadBulkBean.myWorkers.size() lt 1}"/>
+                        <f:selectItem itemLabel="#{text['All_Workers_in_SignServer_(Including_Global_Configuration)']}" itemValue="#{reloadBulkBean.RELOAD_ALL}"/>
+                        <f:selectItem itemLabel="#{text['Selected_Workers_COLON']}" itemValue="#{reloadBulkBean.RELOAD_SELECTED}" itemDisabled="#{reloadBulkBean.myWorkers.size() lt 1}"/>
                     </h:selectOneRadio>
                     
                     <h:dataTable id="table1" value="#{reloadBulkBean.myWorkers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd" rendered="#{reloadBulkBean.myWorkers.size() gt 0}">
@@ -70,13 +70,13 @@
                         </h:column>
                         <h:column>
                             <f:facet name="header">
-                                <h:outputText value="ID" />
+                                <h:outputText value="#{text['ID']}" />
                             </f:facet>
                             <h:outputText value="#{item.id}" />
                         </h:column>
                         <h:column>
                             <f:facet name="header">
-                                <h:outputText value="Signer" />
+                                <h:outputText value="#{text['Worker']}" />
                             </f:facet>
                             <h:link outcome="worker" value="#{item.name}" disabled="#{!item.existing}">
                                 <f:param name="id" value="#{item.id}"/>
@@ -84,7 +84,7 @@
                         </h:column>
                         <h:column>
                             <f:facet name="header">
-                                <h:outputText value="Result" />
+                                <h:outputText value="#{text['Result']}" />
                             </f:facet>
                             <span class="errorMessage"><h:outputText value="#{item.error}"/></span> 
                             <span class="successMessage"><h:outputText value="#{item.success}"/></span>
@@ -96,7 +96,7 @@
                 
                     <h:panelGrid columns="2">
                         <f:facet name="footer">
-                            <h:commandButton class="buttonFeatured" value="Reload" action="#{reloadBulkBean.reloadAction()}"/> <h:link value="Cancel" outcome="#{reloadBulkBean.backLink}"></h:link>
+                            <h:commandButton class="buttonFeatured" value="#{text['Reload']}" action="#{reloadBulkBean.reloadAction()}"/> <h:link value="#{text['Cancel']}" outcome="#{reloadBulkBean.backLink}"></h:link>
                         </f:facet>
                     </h:panelGrid>
                     

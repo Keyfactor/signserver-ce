@@ -28,7 +28,7 @@
             <ui:param name="activeMenu" value="administrators"/>
 
             <ui:define name="title">
-                Allow Any - Administrators
+                <h:outputText value="#{text['Allow_Any_-_Administrators']}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -36,16 +36,16 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1>Allow Any</h1>
+                <h1><h:outputText value="#{text['Allow_Any']}"/></h1>
 
                 <h:form>
-                    <h2>Are you sure you want to allow any administrator?</h2>
+                    <h2><h:outputText value="#{text['Are_you_sure_you_want_to_allow_any_administrator']}"/></h2>
 
                     <p class="alertArea">
-                        All administrators with a valid certificate will be allowed even if they are not listed.
+                        <h:outputText value="#{text['All_administrators_with_a_valid_certificate_will_be_allowed_even_if_they_are_not_listed.']}/>
                     </p>
 
-                    <h:commandButton class="buttonNegative" value="Apply" action="#{administratorsBean.allowAnyAction(true)}"/> <h:link value="Cancel" outcome="administrators"/>
+                    <h:commandButton class="buttonNegative" value="#{text['Apply']}" action="#{administratorsBean.allowAnyAction(true)}"/> <h:link value="#{text['Cancel']}" outcome="administrators"/>
 
                 </h:form>
 

@@ -122,15 +122,15 @@
                                 <h:message for="certSN" class="errorMessage"/>
                                 <h:commandButton class="buttonNeutral" value="…" action="#{administratorsBean.browseAction()}"/>
 
-                                <h:outputLabel for="issuerDN"><h:outputText value="#{param['Issuer_DN_COLON']}"/></h:outputLabel>
+                                <h:outputLabel for="issuerDN"><h:outputText value="#{text['Issuer_DN_COLON']}"/></h:outputLabel>
                                 <h:inputText id="issuerDN" value="#{administratorsBean.issuerDN}" size="40" requiredMessage="*">
                                     <f:validator validatorId="optionallyRequiredValidator"/>
                                     <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                                 </h:inputText>
                                 <h:message for="issuerDN" class="errorMessage"/>
-                                <h:commandButton class="buttonNeutral" value="Load current" action="#{administratorsBean.loadCurrentAction()}"/>
+                                <h:commandButton class="buttonNeutral" value="#{text['Load_Current']}" action="#{administratorsBean.loadCurrentAction()}"/>
 
-                                <h:outputText value="Roles:"/>
+                                <h:outputText value="#{text['Roles_COLON']}"/>
                                 <h:panelGroup>
                                     <h:selectBooleanCheckbox id="roleAdmin" value="#{administratorsBean.roleAdmin}"/> <h:outputLabel for="roleAdmin" value="#{text['Admin']}" />
                                     <h:selectBooleanCheckbox id="roleAuditor" value="#{administratorsBean.roleAuditor}"/> <h:outputLabel for="roleAuditor" value="#{text['Auditor']}" />
@@ -138,7 +138,7 @@
                                 </h:panelGroup>
                             </h:panelGrid>
                             <h:commandButton class="buttonFeatured" id="buttonSubmit" binding="#{components.buttonSubmit}" value="#{text['Submit']}" action="#{administratorsBean.editSubmitAction()}"/>
-                            <h:link value="Cancel" outcome="administrators"/>
+                            <h:link value="#{text['Cancel']}" outcome="administrators"/>
                         </h:panelGroup>
 
                         <h:panelGroup id="fromCert"  rendered="#{administratorsBean.fromCertificate}">

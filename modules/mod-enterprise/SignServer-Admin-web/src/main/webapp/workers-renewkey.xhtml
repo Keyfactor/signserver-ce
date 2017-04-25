@@ -35,7 +35,9 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                <h:outputText value="Workers - Renew keys for #{renewKeyBulkBean.renewKeyWorkers.size()} signers..."/>
+                <h:outputFormat value="#{text['Workers_-_Renew_Keys_for_X_Workers...']}">
+                    <f:param value="#{renewKeyBulkBean.renewKeyWorkers.size()}"/>
+                </h:outputFormat>
             </ui:define>
 
             <ui:define name="top">
@@ -43,16 +45,16 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1>Renew Keys</h1>
+                <h1><h:outputText value="#{text['Renew_Keys']}"/></h1>
 
                 <h:messages class="errorMessage" globalOnly="true"/>
 
                 <h:form>
                     <h:panelGroup rendered="#{empty renewKeyBulkBean.workers}">
                         <p>
-                            (No workers selected)
+                            <h:outputText value="#{text['(No_workers_selected)']}"/>
                         </p>
-                        <h:link value="Cancel" outcome="#{renewKeyBulkBean.backLink}"></h:link>
+                        <h:link value="#{text['Cancel']}" outcome="#{renewKeyBulkBean.backLink}"></h:link>
                     </h:panelGroup>
                     <h:panelGroup rendered="#{!empty renewKeyBulkBean.workers}">
                         <h:dataTable id="table1" value="#{renewKeyBulkBean.renewKeyWorkers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
@@ -64,13 +66,13 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="ID" />
+                                    <h:outputText value="#{text['ID']}" />
                                 </f:facet>
                                 <h:outputText value="#{item.id}" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Signer" />
+                                    <h:outputText value="#{text['Worker']}" />
                                 </f:facet>
                                 <h:link outcome="worker" value="#{item.name}" disabled="#{!item.existing}">
                                     <f:param name="id" value="#{item.id}"/>
@@ -78,13 +80,13 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Old key alias" />
+                                    <h:outputText value="#{text['Old_Key_Alias']}" />
                                 </f:facet>
                                 <h:outputText value="#{item.oldKeyAlias}" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Key algorithm" />
+                                    <h:outputText value="#{text['Key_Algorithm']}" />
                                 </f:facet>
                                 <h:inputText id ="keyAlg" value="#{item.keyAlgorithm}" requiredMessage="*" disabled="#{!item.existing}" size="20">
                                     <f:validator validatorId="optionallyRequiredValidator"/>
@@ -95,7 +97,7 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Key specification" />
+                                    <h:outputText value="#{text['Key_Specification']}" />
                                 </f:facet>
                                 <h:inputText id="keySpec" value="#{item.keySpecification}" requiredMessage="*" disabled="#{!item.existing}" size="10">
                                     <f:validator validatorId="optionallyRequiredValidator"/>
@@ -106,7 +108,7 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="New key alias" />
+                                    <h:outputText value="#{text['New_Key_Alias']}" />
                                 </f:facet>
                                 <h:inputText id="newAlias" value="#{item.newKeyAlias}" requiredMessage="*" disabled="#{!item.existing}" size="15">
                                     <f:validator validatorId="optionallyRequiredValidator"/>
@@ -129,7 +131,7 @@
 
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton class="buttonFeatured" value="Generate" action="#{renewKeyBulkBean.renewKeyAction()}" binding="#{components.buttonSubmit}"/> <h:link value="Cancel" outcome="#{renewKeyBulkBean.backLink}"></h:link>
+                                <h:commandButton class="buttonFeatured" value="#{text['Generate']}" action="#{renewKeyBulkBean.renewKeyAction()}" binding="#{components.buttonSubmit}"/> <h:link value="#{text['Cancel']}" outcome="#{renewKeyBulkBean.backLink}"></h:link>
                             </f:facet>
                         </h:panelGrid>
                     </h:panelGroup>

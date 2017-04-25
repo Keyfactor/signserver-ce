@@ -34,7 +34,7 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                #{text['Workers']}
+                <h:outputText value="#{text['Workers']}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -42,7 +42,7 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1>#{text['All_Workers']}</h1>
+                <h1><h:outputText value="#{text['All_Workers']}"/></h1>
 
                 <h:form>
                     
@@ -57,7 +57,7 @@
                     
                     <h:panelGroup rendered="#{workersBean.workers.size() == 0}">
                         <p>
-                            <h:outputText value="#{text['(No workers available)']}"/>
+                            <h:outputText value="#{text['(No_workers_available)']}"/>
                         </p>
                     </h:panelGroup>
                     <h:panelGroup rendered="#{workersBean.workers.size() > 0}">

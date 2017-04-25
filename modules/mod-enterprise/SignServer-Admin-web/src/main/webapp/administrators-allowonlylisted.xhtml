@@ -29,7 +29,7 @@
             <ui:param name="activeMenu" value="administrators"/>
 
             <ui:define name="title">
-                Allow Only Listed - Administrators
+                <h:outputText value="#{text['Allow_Only_Listed_-_Administrators']}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -37,16 +37,16 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1>Allow Only Listed</h1>
+                <h1><h:outputText value="#{text['Allow_Only_Listed']}"/></h1>
 
                 <h:form>
-                    <h2>Are you sure you want to change to allow only listed administrators?</h2>
+                    <h2><h:outputText value="#{text['Are_you_sure_you_want_to_change_to_allow_only_listed_administrators']}"/></h2>
 
                     <p class="alertArea">
-                        First make sure that you are listed as an administrator otherwise you will be logged out without the ability to login except from command line interface.
+                        <h:outputText value="#{text['First_make_sure_that_you_are_listed_as_an_administrator_otherwise_you_will_be_logged_out_without_the_ability_to_login_except_from_command_line_interface.']}"/>
                     </p>
 
-                    <h:commandButton class="buttonNegative" value="Apply" action="#{administratorsBean.allowAnyAction(false)}"/> <h:link value="Cancel" outcome="administrators"/>
+                    <h:commandButton class="buttonNegative" value="#{text['Apply']}" action="#{administratorsBean.allowAnyAction(false)}"/> <h:link value="#{text['Cancel']}" outcome="administrators"/>
 
                 </h:form>
 

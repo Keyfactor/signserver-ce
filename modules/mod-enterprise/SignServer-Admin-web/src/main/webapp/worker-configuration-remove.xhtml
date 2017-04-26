@@ -60,7 +60,7 @@
                         <b><h:outputText value="#{text['Are_you_sure_you_want_to_remove_the_worker_property']}"/></b>
 
                         <p>
-                            <h:outputText value="#{text['Property']}:"/> <span class="alertArea"><h:outputText value="#{workerBean.property}"/></span>
+                            <h:outputText value="#{text['Property_COLON']}"/> <span class="alertArea"><h:outputText value="#{workerBean.property}"/></span>
                         </p>
 
                         <h:commandButton class="buttonNegative" value="#{text['Remove']}" action="#{workerBean.removePropertyAction()}"/> <h:link value="#{text['Cancel']}" outcome="worker-configuration"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>

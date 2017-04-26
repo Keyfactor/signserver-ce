@@ -35,7 +35,9 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                <h:outputText value="Workers - Install certificates for #{certificatesBulkBean.certificatesWorkers.size()} signers..."/>
+                <h:outputFormat value="#{text['Workers_-_Install_Certificates_for_X_Workers...']}">
+                    <f:param value="#{certificatesBulkBean.certificatesWorkers.size()}"/>
+                </h:outputFormat>
             </ui:define>
 
             <ui:define name="top">
@@ -43,16 +45,16 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1>Install Certificates</h1>
+                <h1><h:outputText value="#{text['Install_Certificates']}"/></h1>
 
                 <h:messages class="errorMessage" globalOnly="true"/>
 
                 <h:form id="csrForm">
                     <h:panelGroup rendered="#{empty certificatesBulkBean.workers}">
                         <p>
-                            (No workers selected)
+                            <h:outputText value="#{text['(No_Workers_Selected)']}"/>
                         </p>
-                        <h:link value="Cancel" outcome="#{certificatesBulkBean.backLink}"></h:link>
+                        <h:link value="#{text['Cancel']}" outcome="#{certificatesBulkBean.backLink}"></h:link>
                     </h:panelGroup>
                     <h:panelGroup rendered="#{!empty certificatesBulkBean.workers}">
                         <script>
@@ -67,13 +69,13 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="ID" />
+                                    <h:outputText value="#{text['ID']}" />
                                 </f:facet>
                                 <h:outputText value="#{item.id}" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Signer" />
+                                    <h:outputText value="#{text['Worker']}" />
                                 </f:facet>
                                 <h:link outcome="worker" value="#{item.name}" disabled="#{!item.existing}">
                                     <f:param name="id" value="#{item.id}"/>
@@ -81,7 +83,7 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Key" />
+                                    <h:outputText value="#{text['Key']}" />
                                 </f:facet>
                                 <h:commandButton class="buttonNeutral" id="otherAdd" value="&gt;" action="#{item.setShowOther(true)}" rendered="#{!item.showOther}" disabled="#{!item.existing}"/>
                                 <h:commandButton class="buttonNeutral" id="otherRemove" value="&lt;" action="#{item.setShowOther(false)}" rendered="#{item.showOther}" disabled="#{!item.existing}"/>
@@ -93,7 +95,7 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    Upload
+                                    <h:outputText value="#{text['Upload']}"/>
                                 </f:facet>
                                 
                                 <ui:remove>
@@ -106,7 +108,7 @@
 
                                 <h:panelGroup rendered="#{item.existing}">
                                     <p id="certChainFileInputContainer#{item.rowIndex}" class="fileInputContainer"></p>
-                                    <h:commandButton class="buttonNeutral" value="Add" action="#{item.uploadAction()}"/>
+                                    <h:commandButton class="buttonNeutral" value="#{text['Add']}" action="#{item.uploadAction()}"/>
                                     <script>
                                         var thisIndex = index++;
                                         ejbca.ra.createFileUploadInput("certChainNewFileInput#{item.rowIndex}", "certChainFileInputContainer#{item.rowIndex}", function(uploadedText) {
@@ -119,7 +121,7 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Certificate chain" />
+                                    <h:outputText value="#{text['Certificate_Chain']}" />
                                 </f:facet>
 
                                 <h:dataTable value="#{item.friendlyCertificates}" var="cert" >
@@ -127,14 +129,14 @@
                                         <h:outputText value="#{cert.name}"/>
                                     </h:column>
                                     <h:column>
-                                        <h:commandButton class="buttonNeutral" value="X" action="#{item.removeCertificateAction(cert)}"/>
+                                        <h:commandButton class="buttonNeutral" value="×" action="#{item.removeCertificateAction(cert)}"/>
                                     </h:column>
                                 </h:dataTable>
                             </h:column>
                             
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Install in token" />
+                                    <h:outputText value="#{text['Install_in_Token']}" />
                                 </f:facet>
                                 <h:selectBooleanCheckbox id="inToken" value="#{item.inToken}" disabled="#{!item.existing}"/> 
                                 <h:message for="inToken" id="inTokenMessage" />
@@ -154,7 +156,7 @@
 
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton class="buttonFeatured" value="Install" action="#{certificatesBulkBean.installAction()}"/> <h:link value="Cancel" outcome="#{certificatesBulkBean.backLink}"></h:link>
+                                <h:commandButton class="buttonFeatured" value="#{text['Install']}" action="#{certificatesBulkBean.installAction()}"/> <h:link value="#{text['Cancel']}" outcome="#{certificatesBulkBean.backLink}"></h:link>
                             </f:facet>
                         </h:panelGrid>
                     </h:panelGroup>

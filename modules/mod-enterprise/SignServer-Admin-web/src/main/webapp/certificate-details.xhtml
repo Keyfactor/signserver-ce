@@ -99,29 +99,29 @@
                         </h:panelGroup>
                         <h:panelGroup id="generalPanel" rendered="#{certificateDetailsBean.certificateAvailable and certificateDetailsBean.generalPanel}">
 
-                            <p><h:outputText value="#{text['Certificate_Usages']}:"/></p>
+                            <p><h:outputText value="#{text['Certificate_Usages_COLON']}"/></p>
                             <h:dataTable id="usagesTable" value="#{certificateDetailsBean.general.usages}" var="usage">
                                 <h:column>
                                     <h:outputText value="#{usage}"/>
                                 </h:column>
                             </h:dataTable>
 
-                            <p><h:outputText value="#{text['Issued_to']}:"/></p>
+                            <p><h:outputText value="#{text['Issued_to_COLON']}"/></p>
                             <h:panelGrid columns="1">
                                 <h:outputText value="#{certificateDetailsBean.general.subject}"/>
                             </h:panelGrid>
 
-                            <p><h:outputText value="#{text['Serial_Number']}:"/></p>
+                            <p><h:outputText value="#{text['Serial_Number_COLON']}"/></p>
                             <h:panelGrid columns="1">
                                 <h:outputText value="#{certificateDetailsBean.general.serialNumber}"/>
                             </h:panelGrid>
 
-                            <p><h:outputText value="#{text['Issued_by']}:"/></p>
+                            <p><h:outputText value="#{text['Issued_by_COLON']}"/></p>
                             <h:panelGrid columns="1">
                                 <h:outputText value="#{certificateDetailsBean.general.issuer}"/>
                             </h:panelGrid>
 
-                            <p><h:outputText value="#{text['Validity']}:"/></p>
+                            <p><h:outputText value="#{text['Validity_COLON']}"/></p>
                             <h:panelGrid columns="2">
                                 <h:outputText value="#{text['Not_Before']}"/>
                                 <h:outputText value="#{certificateDetailsBean.general.notBefore}"/>
@@ -130,7 +130,7 @@
                                 <h:outputText value="#{certificateDetailsBean.general.notAfter}"/>
                             </h:panelGrid>
 
-                            <p><h:outputText value="#{text['Fingerprints']}:"/></p>
+                            <p><h:outputText value="#{text['Fingerprints_COLON']}"/></p>
                             <h:dataTable id="fingerprintsTable" value="#{certificateDetailsBean.general.fingerprints}" var="finger">
                                 <h:column>
                                     <h:outputText value="#{finger.key}"/>

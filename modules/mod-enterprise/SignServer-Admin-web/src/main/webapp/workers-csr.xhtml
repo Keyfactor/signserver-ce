@@ -36,7 +36,9 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                <h:outputText value="Workers - Generate CSR for #{cSRBulkBean.CSRWorkers.size()} signers..."/>
+                <h:outputFormat value="#{text['Workers_-_Generate_CSR_for_X_Workers...']}">
+                    <f:param value="#{sSRBulkBean.CSRWorkers.size()}"/>
+                </h:outputFormat>
             </ui:define>
 
             <ui:define name="top">
@@ -44,16 +46,16 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1>Generate CSR</h1>
+                <h1><h:outputText value="#{text['Generate_CSR']}"/></h1>
 
                 <h:messages class="errorMessage" globalOnly="true"/>
 
                 <h:form id="csrForm">
                     <h:panelGroup rendered="#{empty cSRBulkBean.workers}">
                         <p>
-                            (No workers selected)
+                            <h:outputText value="#{text['(No_Workers_Selected)']}"/>
                         </p>
-                        <h:link value="Cancel" outcome="#{cSRBulkBean.backLink}"></h:link>
+                        <h:link value="#{text['Cancel']}" outcome="#{cSRBulkBean.backLink}"></h:link>
                     </h:panelGroup>
                     <h:panelGroup rendered="#{!empty cSRBulkBean.workers}">
                         <h:dataTable id="table1" value="#{cSRBulkBean.CSRWorkers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
@@ -65,13 +67,13 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="ID" />
+                                    <h:outputText value="#{text['ID']}" />
                                 </f:facet>
                                 <h:outputText value="#{item.id}" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Signer" />
+                                    <h:outputText value="#{text['Worker']}" />
                                 </f:facet>
                                 <h:link outcome="worker" value="#{item.name}" disabled="#{!item.existing}">
                                     <f:param name="id" value="#{item.id}"/>
@@ -79,7 +81,7 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Key" />
+                                    <h:outputText value="#{text['Key']}" />
                                 </f:facet>
                                 <h:commandButton class="buttonNeutral" id="otherAdd" value="&gt;" action="#{item.setShowOther(true)}" rendered="#{!item.showOther and !item.fixedAlias}" disabled="#{!item.existing}"/> 
                                 <h:commandButton class="buttonNeutral" id="otherRemove" value="&lt;" action="#{item.setShowOther(false)}" rendered="#{item.showOther and !item.fixedAlias}" disabled="#{!item.existing}"/> 
@@ -101,7 +103,7 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Signature algorithm" />
+                                    <h:outputText value="#{text['Signature_Algorithm']}" />
                                 </f:facet>
                                 <h:inputText id ="sigAlg" value="#{item.signatureAlgorithm}" requiredMessage="*" disabled="#{!item.existing}" size="20">
                                     <f:validator validatorId="optionallyRequiredValidator"/>
@@ -112,7 +114,7 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="DN" />
+                                    <h:outputText value="#{text['DN']}" />
                                 </f:facet>
                                 <h:inputText id="dn" value="#{item.dn}" requiredMessage="*" disabled="#{!item.existing}" size="30">
                                     <f:validator validatorId="optionallyRequiredValidator"/>
@@ -124,9 +126,9 @@
 
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Result" />
+                                    <h:outputText value="#{text['Result']}" />
                                 </f:facet>
-                                <h:commandButton class="buttonFeatured" id="download" value="Download" action="#{cSRBulkBean.downloadAction(item)}" rendered="#{(item.pemFile != null)}"/>
+                                <h:commandButton class="buttonFeatured" id="download" value="#{text['Download']}" action="#{cSRBulkBean.downloadAction(item)}" rendered="#{(item.pemFile != null)}"/>
                             </h:column>
 
                             <h:column>
@@ -141,10 +143,10 @@
                             </f:facet>
                         </h:dataTable>
 
-                        Format:
+                        <h:outputText value="#{text['Format_COLON']}"/>
                         <h:selectOneRadio id="format" value="#{cSRBulkBean.format}">
-                            <f:selectItem id="standard" itemValue="#{cSRBulkBean.FORMAT_STANDARD}" itemLabel="Standard CSR"/>
-                            <f:selectItem id="signed" itemValue="#{cSRBulkBean.FORMAT_SIGNED}" itemLabel="CSR signed by worker: "/>
+                            <f:selectItem id="standard" itemValue="#{cSRBulkBean.FORMAT_STANDARD}" itemLabel="#{text['Standard_CSR']}"/>
+                            <f:selectItem id="signed" itemValue="#{cSRBulkBean.FORMAT_SIGNED}" itemLabel="#{text['CSR_Signed_by_Worker_COLON']} "/>
                         </h:selectOneRadio>
                         <h:selectOneMenu id="requestSigner" value="#{cSRBulkBean.requestSigner}">
                             <f:selectItems value="#{cSRBulkBean.availableWorkersMenu}"/>
@@ -153,7 +155,7 @@
 
                         <h:panelGrid columns="2">
                             <f:facet name="footer">
-                                <h:commandButton class="buttonFeatured" value="Generate" action="#{cSRBulkBean.generateAction()}" binding="#{components.buttonSubmit}"/> <h:link value="Cancel" outcome="#{cSRBulkBean.backLink}"></h:link>
+                                <h:commandButton class="buttonFeatured" value="#{text['Generate']}" action="#{cSRBulkBean.generateAction()}" binding="#{components.buttonSubmit}"/> <h:link value="#{text['Cancel']}" outcome="#{cSRBulkBean.backLink}"></h:link>
                             </f:facet>
                         </h:panelGrid>
                     </h:panelGroup>

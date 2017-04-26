@@ -35,7 +35,7 @@
             <ui:param name="activeMenu" value="workers"/>
 
             <ui:define name="title">
-                Workers - Activate...
+                <h:outputText value="#{text['Workers_-_Activate...']}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -43,12 +43,12 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1>Activate</h1>
+                <h1><h:outputText value="#{text['Activate']}"/></h1>
 
                 <h:form>                    
                     <h:panelGroup rendered="#{empty bulkBean.workers}">
                         <p>
-                            (No workers selected)
+                            <h:outputText value="#{text['(No_Workers_Selected)']}"/>
                         </p>
                         <h:link value="Cancel" outcome="#{bulkBean.backLink}"></h:link>
                     </h:panelGroup>
@@ -62,13 +62,13 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="ID" />
+                                    <h:outputText value="#{text['ID']}" />
                                 </f:facet>
                                 <h:outputText value="#{item.id}" />
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Name" />
+                                    <h:outputText value="#{text['Name']}" />
                                 </f:facet>
                                 <h:link outcome="worker" value="#{item.name}" disabled="#{!item.existing}">
                                     <f:param name="id" value="#{item.id}"/>
@@ -76,7 +76,7 @@
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
-                                    <h:outputText value="Result" />
+                                    <h:outputText value="#{text['Result']}" />
                                 </f:facet>
                                 <span class="errorMessage"><h:outputText value="#{item.error}"/></span> 
                                 <span class="successMessage"><h:outputText value="#{item.success}"/></span>
@@ -86,10 +86,10 @@
                         </h:dataTable>
 
                         <h:panelGrid columns="2">
-                            <h:outputLabel for="password">Authentication code:</h:outputLabel> 
+                            <h:outputLabel for="password"><h:outputText value="#{text['Authentication_Code_COLON']}"/></h:outputLabel> 
                             <h:inputSecret id="password" value="#{bulkBean.activatePassword}"/>
                             <f:facet name="footer">
-                                <h:commandButton class="buttonFeatured" value="Activate" action="#{bulkBean.activateAction()}"/> <h:link value="Cancel" outcome="#{bulkBean.backLink}"></h:link>
+                                <h:commandButton class="buttonFeatured" value="#{text['Activate']}" action="#{bulkBean.activateAction()}"/> <h:link value="#{text['Cancel']}" outcome="#{bulkBean.backLink}"></h:link>
                             </f:facet>
                         </h:panelGrid>
 

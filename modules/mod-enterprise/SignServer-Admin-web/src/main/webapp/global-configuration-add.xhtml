@@ -46,11 +46,11 @@
                 
                 <h:form id="form">
                     <h:panelGrid columns="3">
-                        <h:outputLabel for="name"><h:outputText value="#{text['Name']}:"/></h:outputLabel>
+                        <h:outputLabel for="name"><h:outputText value="#{text['Name_COLON']}"/></h:outputLabel>
                         <h:inputText id="name" value="#{globalConfigurationBean.property}" size="40" required="true" requiredMessage="*"/>
                         <h:message for="name" class="errorMessage"/>
 
-                        <h:outputLabel for="value"><h:outputText value="#{text['Value']}:"/></h:outputLabel>
+                        <h:outputLabel for="value"><h:outputText value="#{text['Value_COLON']}"/></h:outputLabel>
                         <h:inputTextarea id="value" value="#{globalConfigurationBean.propertyValue}" cols="70" rows="10"/>
                         <h:message for="value" class="errorMessage"/>
                     </h:panelGrid>

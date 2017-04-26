@@ -167,6 +167,44 @@ public class CMSSignerUnitTest {
     }
     
     /**
+     * Test that specifying an illegal accepted hash digest algorithm results
+     * in a configuration error.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testInit_incorrectAcceptedHashDigestAlgorithm() throws Exception {
+        LOG.info("testInit_incorrectClientSideHashingNoAcceptedDigestAlgorithms");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CLIENTSIDEHASHING", "true");
+        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "_incorrect_");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("Illegal algorithm specified for ACCEPTED_HASH_DIGEST_ALGORITHMS: _incorrect_"));
+    }
+    
+    /**
+     * Test that specifying an illegal accepted hash digest algorithm results
+     * in a configuration error when also a valid alorithm is listed.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testInit_incorrectAndCorrectAcceptedHashDigestAlgorithm() throws Exception {
+        LOG.info("testInit_incorrectClientSideHashingNoAcceptedDigestAlgorithms");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CLIENTSIDEHASHING", "true");
+        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256, _incorrect_");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("Illegal algorithm specified for ACCEPTED_HASH_DIGEST_ALGORITHMS: _incorrect_"));
+    }
+    
+    /**
      * Test that specifying ALLOW_CLIENTSIDEHASHING_OVERRIDE without setting
      * ACCEPTED_HASH_DIGEST_ALGORITHMS is not allowed.
      * 
@@ -183,6 +221,8 @@ public class CMSSignerUnitTest {
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("Must specify ACCEPTED_HASH_DIGEST_ALGORITHMS"));
     }
+    
+    
     
     /**
      * Test that specifying CLIENTSIDEHASHING and ALLOW_CLIENTSIDEHASHING_OVERRIDE

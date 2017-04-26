@@ -219,7 +219,12 @@ public class CMSSigner extends BaseSigner {
                 final String digestAlgorithmStringTrim = digestAlgorithmString.trim();
                 final AlgorithmIdentifier alg = algFinder.find(digestAlgorithmStringTrim);
                 
-                acceptedHashDigestAlgorithms.add(alg);
+                if (alg == null || alg.getAlgorithm() == null) {
+                    configErrors.add("Illegal algorithm specified for " + ACCEPTED_HASHDIGEST_ALGORITHMS + ": " +
+                                     digestAlgorithmStringTrim);
+                } else {
+                    acceptedHashDigestAlgorithms.add(alg);
+                }
             }
         }
         

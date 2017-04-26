@@ -60,37 +60,37 @@
                     
                     <h:panelGroup rendered="#{auditLogEntryBean.queryError == null}">
                         <h:panelGrid columns="2">
-                            <h:outputText value="#{text['Time']}:"/>
+                            <h:outputText value="#{text['Time_COLON']}"/>
                             <h:outputText value="#{auditLogEntryBean.entry.time}"/>
                             
-                            <h:outputText value="#{text['Outcome']}:"/>
+                            <h:outputText value="#{text['Outcome_COLON']}"/>
                             <h:outputText value="#{auditLogEntryBean.entry.outcome}"/>
                             
-                            <h:outputText value="#{text['Event']}:"/>
+                            <h:outputText value="#{text['Event_COLON']}"/>
                             <h:outputText value="#{auditLogEntryBean.entry.event}"/>
                             
-                            <h:outputText value="#{text['Module']}:"/>
+                            <h:outputText value="#{text['Module_COLON']}"/>
                             <h:outputText value="#{auditLogEntryBean.entry.module}"/>
                             
-                            <h:outputText value="#{text['Service']}:"/>
+                            <h:outputText value="#{text['Service_COLON']}"/>
                             <h:outputText value="#{auditLogEntryBean.entry.service}"/>
                             
-                            <h:outputText value="#{text['Admin_Subject']}:"/>
+                            <h:outputText value="#{text['Admin_Subject_COLON']}"/>
                             <h:outputText value="#{auditLogEntryBean.entry.adminSubject}"/>
                             
-                            <h:outputText value="#{text['Admin_Serial_Number']}:"/>
+                            <h:outputText value="#{text['Admin_Serial_Number_COLON']}"/>
                             <h:outputText value="#{auditLogEntryBean.entry.adminSerialNumber}"/>
                             
-                            <h:outputText value="#{text['Admin_Issuer']}:"/>
+                            <h:outputText value="#{text['Admin_Issuer_COLON']}"/>
                             <h:outputText value="#{auditLogEntryBean.entry.adminIssuer}"/>
                             
-                            <h:outputText value="#{text['Worker_ID']}:"/>
+                            <h:outputText value="#{text['Worker_ID_COLON']}"/>
                             <h:outputText value="#{auditLogEntryBean.entry.workerID}"/>
                             
-                            <h:outputText value="#{text['Node']}:"/>
+                            <h:outputText value="#{text['Node_COLON']}"/>
                             <h:outputText value="#{auditLogEntryBean.entry.node}"/>
                             
-                            <h:outputText value="#{text['Details']}:"/>
+                            <h:outputText value="#{text['Details_COLON']}"/>
                             <h:panelGroup>
                                 <pre>
                                     <h:outputText value="#{auditLogEntryBean.entry.fullDetails}"/>

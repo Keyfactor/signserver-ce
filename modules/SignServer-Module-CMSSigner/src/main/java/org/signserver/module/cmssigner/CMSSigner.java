@@ -283,13 +283,13 @@ public class CMSSigner extends BaseSigner {
          * with a null algorithm for an unknown algorithm
          */
         if (alg.getAlgorithm() == null) {
-            throw new IllegalRequestException("Client specified an unknown digest algorithm: " + value);
+            throw new IllegalRequestException("Client specified an unknown digest algorithm");
         }
         
         if (acceptedHashDigestAlgorithms != null &&
             !acceptedHashDigestAlgorithms.isEmpty() &&
             !acceptedHashDigestAlgorithms.contains(alg)) {
-            throw new IllegalRequestException("Client specified a non-accepted digest hash algorithm: " + value);
+            throw new IllegalRequestException("Client specified a non-accepted digest hash algorithm");
         }
         
         return alg;

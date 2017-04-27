@@ -377,6 +377,12 @@ public class PlainSignerTest {
         assertRequestDigestMatches(plainText, "SHA256", resp, context);
     }
     
+    /**
+     * Tests that setting DO_LOGREQUEST_DIGEST to false results in no logging
+     * of the request digest.
+     * 
+     * @throws Exception 
+     */
     @Test
     public void testNoLogRequestDigest() throws Exception {
         LOG.info("testNoLogRequestDigest");

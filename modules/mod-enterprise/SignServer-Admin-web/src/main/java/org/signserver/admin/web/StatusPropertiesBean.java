@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.faces.bean.ManagedBean;
@@ -59,6 +60,9 @@ public class StatusPropertiesBean {
 
     @ManagedProperty(value = "#{authenticationBean}")
     private AuthenticationBean authBean;
+    
+    @ManagedProperty("#{text}")
+    private ResourceBundle text;
 
     private Worker worker;
     private List<StatusProperty> statuses;
@@ -116,7 +120,7 @@ public class StatusPropertiesBean {
             }
 
             statuses.add(new StatusProperty("ID", id, false, null));
-            statuses.add(new StatusProperty("Name", getWorker().getName(), false, null));
+            statuses.add(new StatusProperty(text.getString("Name"), getWorker().getName(), false, null));
             statuses.add(new StatusProperty("Token status", tokenStatus, false, null));
 
             try {
@@ -152,6 +156,10 @@ public class StatusPropertiesBean {
             workerConfig = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), id);
         }
         return workerConfig;
+    }
+
+    public void setText(ResourceBundle text) {
+        this.text = text;
     }
 
     public String workerAction(String page) {

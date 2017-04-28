@@ -72,7 +72,7 @@
                             <h:commandButton class="buttonNeutral" value="#{text['Reload']}" action="#{cryptoTokenBean.reloadAction()}"/> 
                             <h:commandButton class="buttonNeutral" value="#{text['Next']}" action="#{cryptoTokenBean.nextAction()}" disabled="#{!cryptoTokenBean.enableNext}"/> 
                             <h:inputText value="#{cryptoTokenBean.fromIndex}" size="3"/><h:outputText value=" #{text['to']} "/><h:outputText value="#{cryptoTokenBean.queryingToIndex}"/>
-                            <h:outputText value="#{text['Per_Page_COLON']}"/><h:inputText value="#{cryptoTokenBean.maxEntries}" size="3"/>
+                            <h:outputText value=" #{text['Per_Page_COLON']}"/><h:inputText value="#{cryptoTokenBean.maxEntries}" size="3"/>
                         </p>
                         <h:dataTable id="dsstable1" value="#{cryptoTokenBean.entries}" var="entry" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
                             <f:facet name="header" class="cryptotoken-nav">

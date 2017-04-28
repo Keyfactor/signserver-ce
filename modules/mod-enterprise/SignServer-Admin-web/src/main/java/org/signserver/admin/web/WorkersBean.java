@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -42,6 +43,9 @@ public class WorkersBean {
 
     @ManagedProperty(value = "#{authenticationBean}")
     private AuthenticationBean authBean;
+    
+    @ManagedProperty("#{text}")
+    private ResourceBundle text;
 
     private String workersRequestedSelected;
     private Map<Integer, Boolean> selectedIds;
@@ -82,9 +86,11 @@ public class WorkersBean {
                 final String name = config.getProperty("NAME", String.valueOf(id));
                 Worker w = new Worker(id, true, name, config);
                 try {
-                    w.setStatus(workerSessionBean.getStatus(authBean.getAdminCertificate(), new WorkerIdentifier(id)).getFatalErrors().isEmpty() ? "ACTIVE" : "OFFLINE");
+                    w.setStatus(workerSessionBean.getStatus(authBean.getAdminCertificate(),
+                                                            new WorkerIdentifier(id)).getFatalErrors().isEmpty() ?
+                                                            text.getString("ACTIVE") : text.getString("OFFLINE"));
                 } catch (Throwable ignored) { // NOPMD: We safe-guard for bugs in worker implementations and don't want the GUI to fail for those.
-                    w.setStatus("OFFLINE");
+                    w.setStatus(text.getString("OFFLINE"));
                 }
 
                 workers.add(w);
@@ -125,6 +131,10 @@ public class WorkersBean {
             }
         }
         return results;
+    }
+    
+    public void setText(ResourceBundle text) {
+        this.text = text;
     }
 
     public String bulkAction(String page) {

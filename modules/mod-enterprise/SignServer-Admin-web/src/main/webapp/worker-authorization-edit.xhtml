@@ -54,7 +54,7 @@
                 </ui:include>
                 
                 <div id="worker_content">
-                    <h2><h:outputFormat value="#{text['Editing_client_with_certificate_serial_number_X_issued_by_Y']}"/>
+                    <h2><h:outputFormat value="#{text['Editing_client_with_certificate_serial_number_X_issued_by_Y']}">
                             <f:param value="#{workerAuthBean.oldCertSN}"/>
                             <f:param value="#{workerAuthBean.oldIssuerDN}"/>
                         </h:outputFormat>

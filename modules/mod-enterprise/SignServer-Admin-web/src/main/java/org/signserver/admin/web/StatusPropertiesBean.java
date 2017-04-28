@@ -49,8 +49,8 @@ public class StatusPropertiesBean {
     private static final Logger LOG = Logger.getLogger(StatusPropertiesBean.class);
 
     private static final FastDateFormat FDF = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss zz");
-    private static final String CERTIFICATE_CHAIN = "Certificate chain:";
-    private static final String SIGNER_CERTIFICATE = "Signer certificate:";
+    private static final String CERTIFICATE_CHAIN = "Certificate_Chain_COLON";
+    private static final String SIGNER_CERTIFICATE = "Signer_Certificate_COLON";
 
     //@ManagedProperty(value = "#{param.id}")
     private Integer id;
@@ -111,17 +111,18 @@ public class StatusPropertiesBean {
             String tokenStatus;
             try {
                 final WorkerStatus status = workerSessionBean.getStatus(getAuthBean().getAdminCertificate(), new WorkerIdentifier(id));
-                tokenStatus = status.getFatalErrors().isEmpty() ? "ACTIVE" : "OFFLINE";
+                tokenStatus = status.getFatalErrors().isEmpty() ?
+                              text.getString("ACTIVE") : text.getString("OFFLINE");
             } catch (InvalidWorkerIdException ex) {
-                tokenStatus = "Unknown";
+                tokenStatus = text.getString("Unknown");
             } catch (Exception ex) {
-                tokenStatus = "Unknown";
+                tokenStatus = text.getString("Unknown");
                 LOG.error("Error getting status for worker " + id, ex);
             }
 
-            statuses.add(new StatusProperty("ID", id, false, null));
+            statuses.add(new StatusProperty(text.getString("ID"), id, false, null));
             statuses.add(new StatusProperty(text.getString("Name"), getWorker().getName(), false, null));
-            statuses.add(new StatusProperty("Token status", tokenStatus, false, null));
+            statuses.add(new StatusProperty(text.getString("Token_Status"), tokenStatus, false, null));
 
             try {
                 Collection<? extends Certificate> certificateChain;
@@ -135,10 +136,17 @@ public class StatusPropertiesBean {
                     LOG.error("Error getting signer certificate chain", ex);
                     certificateChain = Collections.emptyList();
                 }
-                statuses.add(new StatusProperty("Validity not before:", notBefore, false, null));
-                statuses.add(new StatusProperty("Validity not after:", notAfter, false, null));
-                statuses.add(new StatusProperty(SIGNER_CERTIFICATE, certificate, certificate != null, "certificate-details?worker=" + id));
-                statuses.add(new StatusProperty(CERTIFICATE_CHAIN, certificateChain, certificate != null && !certificateChain.isEmpty(), "certificate-details?worker=" + id + "&amp;chain=true"));
+                statuses.add(new StatusProperty(text.getString("Validity_Not_Before"),
+                                                notBefore, false, null));
+                statuses.add(new StatusProperty(text.getString("Validity_Not_After"),
+                                                notAfter, false, null));
+                statuses.add(new StatusProperty(text.getString(SIGNER_CERTIFICATE),
+                                                certificate, certificate != null,
+                                                "certificate-details?worker=" + id));
+                statuses.add(new StatusProperty(text.getString(CERTIFICATE_CHAIN),
+                                                certificateChain,
+                                                certificate != null && !certificateChain.isEmpty(),
+                                                "certificate-details?worker=" + id + "&amp;chain=true"));
             } catch (CryptoTokenOfflineException ex) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("offline: " + id);

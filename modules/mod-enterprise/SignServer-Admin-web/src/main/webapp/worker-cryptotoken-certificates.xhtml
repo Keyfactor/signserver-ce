@@ -130,7 +130,7 @@
                             </f:facet>
                         </h:dataTable>
 
-                        <h:commandButton class="buttonFeatured" value="Import" action="#{importCertificatesBean.submitAction()}"/> <h:link value="Cancel" outcome="${importCertificatesBean.getBackToCryptoTokenLink(importCertificatesBean.keysList)}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                        <h:commandButton class="buttonFeatured" value="#{text['Import']}" action="#{importCertificatesBean.submitAction()}"/> <h:link value="#{text['Cancel']}" outcome="${importCertificatesBean.getBackToCryptoTokenLink(importCertificatesBean.keysList)}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
                     </h:form>
                 </div>
                 

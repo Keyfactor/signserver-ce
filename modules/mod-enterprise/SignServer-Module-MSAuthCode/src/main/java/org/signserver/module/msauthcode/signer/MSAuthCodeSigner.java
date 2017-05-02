@@ -114,12 +114,13 @@ import org.signserver.server.log.Loggable;
 import org.signserver.server.signers.BaseSigner;
 
 /**
- * Signer for MS portable executable files.
+ * Signer for MS portable executable (.exe) and Windows Installer (.msi) files.
  * 
  * Windows Authenticode Portable Executable Signature Format, 1.0, August 29, 2008:
  * http://msdn.microsoft.com/en-us/subscriptions/gg463180 
  *
  * @author Markus Kilås
+ * @author Marcus Lundblad
  * @version $Id$
  */
 public class MSAuthCodeSigner extends BaseSigner {

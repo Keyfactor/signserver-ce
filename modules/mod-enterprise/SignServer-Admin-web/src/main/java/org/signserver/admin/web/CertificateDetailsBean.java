@@ -107,14 +107,19 @@ public class CertificateDetailsBean {
     public CertificateDetailsBean() {
     }
 
-    public Worker getWorker() throws AdminNotAuthorizedException, NoSuchWorkerException {
+    public Worker getWorker() throws AdminNotAuthorizedException {
         if (worker == null) {
-            Properties config = getWorkerConfig().getProperties();
-            String name = config.getProperty("NAME");
+            Properties conf = getWorkerConfig().getProperties();
+            boolean existing;
+            String name = conf.getProperty("NAME");
             if (name == null) {
-                throw new NoSuchWorkerException(String.valueOf(id));
+                name = "Unknown ID " + id;
+                existing = false;
+            } else {
+                existing = true;
             }
-            worker = new Worker(id, true, name, config);
+            
+            worker = new Worker(id, existing, name, conf);
         }
         return worker;
     }

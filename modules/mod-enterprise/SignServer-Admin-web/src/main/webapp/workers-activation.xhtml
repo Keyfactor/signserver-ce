@@ -87,7 +87,7 @@
 
                         <h:panelGrid columns="2">
                             <h:outputLabel for="password"><h:outputText value="#{text['Authentication_Code_COLON']}"/></h:outputLabel> 
-                            <h:inputSecret id="password" value="#{bulkBean.activatePassword}"/>
+                            <h:inputSecret id="password" value="#{bulkBean.activatePassword}" autocomplete="off"/>
                             <f:facet name="footer">
                                 <h:commandButton class="buttonFeatured" value="#{text['Activate']}" action="#{bulkBean.activateAction()}"/> <h:link value="#{text['Cancel']}" outcome="#{bulkBean.backLink}"></h:link>
                             </f:facet>

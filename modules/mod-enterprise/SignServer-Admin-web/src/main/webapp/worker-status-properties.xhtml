@@ -45,53 +45,61 @@
             </ui:define>
 
             <ui:define name="content">
-                <!-- <h1><h:outputLink value="worker.xhtml"><h:graphicImage library="default" name="images/#{workerBean.worker.imageName}" title="#{workerBean.worker.imageAlt}" class="workerImage1"/> <h:outputText value="#{statusPropertiesBean.worker.name}" /> <f:param name="id" value="#{statusPropertiesBean.worker.id}"/></h:outputLink> &gt; Status Properties</h1> -->
+
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{statusPropertiesBean.worker}"/>
                     <ui:param name="workerActiveMenu" value="worker-status-properties"/>
                 </ui:include>
 
-                <div id="worker-actions">
-                    <!-- Note: This buttons are somewhat duplicated in workers.xhtml -->
-                    <h:form id="workerMenuOld">
-                        <p>
-                            <h:commandButton class="buttonFeatured" value="#{text['Activate...']}" action="#{workerBean.bulkAction('workers-activation')}"/> <h:commandButton class="buttonNeutral" value="#{text['Deactivate...']}" action="#{workerBean.bulkAction('workers-deactivation')}"/> &nbsp; 
-                            <h:commandButton class="buttonFeatured" value="#{text['Renew_Key...']}" action="#{workerBean.bulkAction('workers-renewkey')}"/> <h:commandButton class="buttonFeatured" value="#{text['Test_Key...']}" action="#{workerBean.bulkAction('workers-testkey')}"/> <h:commandButton class="buttonFeatured" value="#{text['Generate_CSR...']}" action="#{workerBean.bulkAction('workers-csr')}"/> <h:commandButton class="buttonFeatured" value="#{text['Install_Certificates...']}" action="#{workerBean.bulkAction('workers-certificates')}"/> &nbsp;
-                            <h:commandButton class="buttonNeutral" value="#{text['Renew_Signer...']}" action="#{workerBean.bulkAction('workers-renew')}"/> &nbsp;
-                            <h:commandButton class="buttonNegative" value="#{text['Destroy_Key...']}" action="#{workerBean.workerAction('worker-removekey')}"/> &nbsp; 
-                            <h:commandButton class="buttonNegative" value="#{text['Remove...']}" action="#{workerBean.bulkAction('workers-remove')}"/> &nbsp;
-                            <h:commandButton class="buttonNeutral" value="#{text['Reload_From_Database...']}" action="#{workerBean.bulkAction('workers-reload')}"/> 
-                            <h:commandButton class="buttonNeutral" value="#{text['Export...']}" action="#{workerBean.bulkAction('workers-export')}"/>
-                        </p>
-                    </h:form>
-                </div>
+                <h:panelGroup rendered="#{statusPropertiesBean.worker.existing}">
+                    <div id="worker-actions">
+                        <!-- Note: This buttons are somewhat duplicated in workers.xhtml -->
+                        <h:form id="workerMenuOld">
+                            <p>
+                                <h:commandButton class="buttonFeatured" value="#{text['Activate...']}" action="#{workerBean.bulkAction('workers-activation')}"/> <h:commandButton class="buttonNeutral" value="#{text['Deactivate...']}" action="#{workerBean.bulkAction('workers-deactivation')}"/> &nbsp; 
+                                <h:commandButton class="buttonFeatured" value="#{text['Renew_Key...']}" action="#{workerBean.bulkAction('workers-renewkey')}"/> <h:commandButton class="buttonFeatured" value="#{text['Test_Key...']}" action="#{workerBean.bulkAction('workers-testkey')}"/> <h:commandButton class="buttonFeatured" value="#{text['Generate_CSR...']}" action="#{workerBean.bulkAction('workers-csr')}"/> <h:commandButton class="buttonFeatured" value="#{text['Install_Certificates...']}" action="#{workerBean.bulkAction('workers-certificates')}"/> &nbsp;
+                                <h:commandButton class="buttonNeutral" value="#{text['Renew_Signer...']}" action="#{workerBean.bulkAction('workers-renew')}"/> &nbsp;
+                                <h:commandButton class="buttonNegative" value="#{text['Destroy_Key...']}" action="#{workerBean.workerAction('worker-removekey')}"/> &nbsp; 
+                                <h:commandButton class="buttonNegative" value="#{text['Remove...']}" action="#{workerBean.bulkAction('workers-remove')}"/> &nbsp;
+                                <h:commandButton class="buttonNeutral" value="#{text['Reload_From_Database...']}" action="#{workerBean.bulkAction('workers-reload')}"/> 
+                                <h:commandButton class="buttonNeutral" value="#{text['Export...']}" action="#{workerBean.bulkAction('workers-export')}"/>
+                            </p>
+                        </h:form>
+                    </div>
 
-                <div id="worker_content">
-                    <h:form>
-                        <h:dataTable id="table1" value="#{statusPropertiesBean.statuses}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
-                            <h:column>
-                                <f:facet name="header">
-                                    <h:outputText value="#{text['Property']}" />
+                    <div id="worker_content">
+                        <h:form>
+                            <h:dataTable id="table1" value="#{statusPropertiesBean.statuses}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
+                                <h:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{text['Property']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{item.key}" />
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{text['Value']}" />
+                                    </f:facet>
+                                    <h:outputText value="#{item.description}" />
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{text['Actions']}"/>
+                                    </f:facet>
+                                    <h:link value="Details" outcome="#{item.detailsOutcome}" rendered="#{item.hasDetails}"/> 
+                                </h:column>
+                                <f:facet name="footer">
                                 </f:facet>
-                                <h:outputText value="#{item.key}" />
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">
-                                    <h:outputText value="#{text['Value']}" />
-                                </f:facet>
-                                <h:outputText value="#{item.description}" />
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">
-                                    <h:outputText value="#{text['Actions']}"/>
-                                </f:facet>
-                                <h:link value="Details" outcome="#{item.detailsOutcome}" rendered="#{item.hasDetails}"/> 
-                            </h:column>
-                            <f:facet name="footer">
-                            </f:facet>
-                        </h:dataTable>
-                    </h:form>
-                </div>
+                            </h:dataTable>
+                        </h:form>
+                    </div>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{!statusPropertiesBean.worker.existing}">
+                    <h2><h:outputText value="#{text['Worker_Not_Found']}"/></h2>
+                    <p>
+                        <h:outputText value="#{text['The_specified_worker_can_not_be_found.']}"/>
+                    </p>
+                </h:panelGroup>
             </ui:define>
 
             <ui:define name="bottom">

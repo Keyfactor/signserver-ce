@@ -49,54 +49,63 @@
                     <ui:param name="worker" value="#{workerBean.worker}"/>
                     <ui:param name="workerActiveMenu" value="worker-configuration"/>
                 </ui:include>
-                <div id="worker-actions">
-                    <h:form>
-                        <p>
-                            <h:commandButton class="buttonNeutral" value="#{text['Reload_From_Database...']}" action="#{workerBean.bulkAction('workers-reload', 'worker-configuration')}"/> 
-                            <h:commandButton class="buttonNeutral" value="#{text['Export...']}" action="#{workerBean.bulkAction('workers-export', 'worker-configuration')}"/>
-                        </p>
-                    </h:form>
-                </div>   
+                
+                <h:panelGroup rendered="#{workerBean.worker.existing}">
+                    <div id="worker-actions">
+                        <h:form>
+                            <p>
+                                <h:commandButton class="buttonNeutral" value="#{text['Reload_From_Database...']}" action="#{workerBean.bulkAction('workers-reload', 'worker-configuration')}"/> 
+                                <h:commandButton class="buttonNeutral" value="#{text['Export...']}" action="#{workerBean.bulkAction('workers-export', 'worker-configuration')}"/>
+                            </p>
+                        </h:form>
+                    </div>   
 
-                <div id="worker_content">
-                    
-                    <h2><h:outputText value="#{text['Properties']}"/></h2>
-                    
-                    <h:dataTable id="table1" value="#{workerBean.config}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
-                        <!--<f:facet name="header">
-                            <h:outputText value="Your Shopping Cart" />
-                        </f:facet>-->
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{text['Property']}" />
-                            </f:facet>
-                            <h:outputText value="#{item.key}" />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{text['Value']}" />
-                            </f:facet>
-                            <h:outputText value="#{item.value}" />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{text['Actions']}"/>
-                            </f:facet>
-                            <h:link value="#{text['Edit']}" outcome="worker-configuration-edit">
-                                <f:param name="id" value="#{workerBean.worker.id}"/>
-                                <f:param name="property" value="#{item.key}"/>
-                            </h:link> |
-                            <h:link class="linkNegative" value="#{text['Remove']}" outcome="worker-configuration-remove">
-                                <f:param name="id" value="#{workerBean.worker.id}"/>
-                                <f:param name="property" value="#{item.key}"/>
-                            </h:link>
-                        </h:column>
-                        <f:facet name="footer">
-                        </f:facet>
-                    </h:dataTable>
+                    <div id="worker_content">
 
-                    <h:link class="linkPositive" value="#{text['Add...']}" outcome="worker-configuration-add"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
-                </div>
+                        <h2><h:outputText value="#{text['Properties']}"/></h2>
+
+                        <h:dataTable id="table1" value="#{workerBean.config}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
+                            <!--<f:facet name="header">
+                                <h:outputText value="Your Shopping Cart" />
+                            </f:facet>-->
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Property']}" />
+                                </f:facet>
+                                <h:outputText value="#{item.key}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Value']}" />
+                                </f:facet>
+                                <h:outputText value="#{item.value}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Actions']}"/>
+                                </f:facet>
+                                <h:link value="#{text['Edit']}" outcome="worker-configuration-edit">
+                                    <f:param name="id" value="#{workerBean.worker.id}"/>
+                                    <f:param name="property" value="#{item.key}"/>
+                                </h:link> |
+                                <h:link class="linkNegative" value="#{text['Remove']}" outcome="worker-configuration-remove">
+                                    <f:param name="id" value="#{workerBean.worker.id}"/>
+                                    <f:param name="property" value="#{item.key}"/>
+                                </h:link>
+                            </h:column>
+                            <f:facet name="footer">
+                            </f:facet>
+                        </h:dataTable>
+
+                        <h:link class="linkPositive" value="#{text['Add...']}" outcome="worker-configuration-add"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                    </div>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{!workerBean.worker.existing}">
+                    <h2><h:outputText value="#{text['Worker_Not_Found']}"/></h2>
+                    <p>
+                        <h:outputText value="#{text['The_specified_worker_can_not_be_found.']}"/>
+                    </p>
+                </h:panelGroup>
             </ui:define>
 
             <ui:define name="bottom">

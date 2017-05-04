@@ -74,14 +74,19 @@ public class StatusPropertiesBean {
     public StatusPropertiesBean() {
     }
 
-    public Worker getWorker() throws AdminNotAuthorizedException, NoSuchWorkerException {
+    public Worker getWorker() throws AdminNotAuthorizedException {
         if (worker == null) {
             Properties conf = getWorkerConfig().getProperties();
-            final String name = conf.getProperty("NAME");
+            boolean existing;
+            String name = conf.getProperty("NAME");
             if (name == null) {
-                throw new NoSuchWorkerException(String.valueOf(id));
+                name = "Unknown ID " + id;
+                existing = false;
+            } else {
+                existing = true;
             }
-            worker = new Worker(id, true, name, conf);
+            
+            worker = new Worker(id, existing, name, conf);
         }
         return worker;
     }

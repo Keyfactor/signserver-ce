@@ -75,14 +75,19 @@ public class WorkerBean {
     public WorkerBean() {
     }
 
-    public Worker getWorker() throws AdminNotAuthorizedException, NoSuchWorkerException {
+    public Worker getWorker() throws AdminNotAuthorizedException {
         if (worker == null) {
             Properties conf = getWorkerConfig().getProperties();
+            boolean existing;
             String name = conf.getProperty("NAME");
             if (name == null) {
-                throw new NoSuchWorkerException(String.valueOf(id));
+                name = "Unknown ID " + id;
+                existing = false;
+            } else {
+                existing = true;
             }
-            worker = new Worker(id, conf.containsKey("NAME"), name, conf);
+            
+            worker = new Worker(id, existing, name, conf);
         }
         return worker;
     }

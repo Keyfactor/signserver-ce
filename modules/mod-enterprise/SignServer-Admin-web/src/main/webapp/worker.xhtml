@@ -44,32 +44,40 @@
             </ui:define>
 
             <ui:define name="content">
-                <!-- <h1><h:link outcome="worker" value="#{workerBean.worker.name}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> &gt; Status Summary</h1> -->
+                
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{workerBean.worker}"/>
                     <ui:param name="workerActiveMenu" value="worker"/>
                 </ui:include>
                 
-                <div id="worker-actions">
-                    <!-- Note: This buttons are somewhat duplicated in workers.xhtml -->
-                    <h:form id="workerMenu">
-                        <p>
-                            <h:commandButton class="buttonFeatured" value="#{text['Activate...']}" action="#{workerBean.bulkAction('workers-activation')}"/> <h:commandButton class="buttonNeutral" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation')}"/> &nbsp; 
-                            <h:commandButton class="buttonFeatured" value="#{text['Renew_Key...']}" action="#{workerBean.bulkAction('workers-renewkey')}"/> <h:commandButton class="buttonFeatured" value="Test key..." action="#{workerBean.bulkAction('workers-testkey')}"/> <h:commandButton class="buttonFeatured" value="#{text['Generate_CSR...']}" action="#{workerBean.bulkAction('workers-csr')}"/> <h:commandButton class="buttonFeatured" value="#{text['Install_Certificates...']}" action="#{workerBean.bulkAction('workers-certificates')}"/> &nbsp;
-                            <h:commandButton class="buttonNeutral" value="#{text['Renew_Signer...']}" action="#{workerBean.bulkAction('workers-renew')}"/> &nbsp;
-                            <h:commandButton class="buttonNegative" value="#{text['Destroy_Key...']}" action="#{workerBean.workerAction('worker-removekey')}"/> &nbsp; 
-                            <h:commandButton class="buttonNegative" value="#{text['Remove...']}" action="#{workerBean.bulkAction('workers-remove')}"/> &nbsp;
-                            <h:commandButton class="buttonNeutral" value="#{text['Reload_From_Database...']}" action="#{workerBean.bulkAction('workers-reload')}"/> 
-                            <h:commandButton class="buttonNeutral" value="#{text['Export...']}" action="#{workerBean.bulkAction('workers-export')}"/>
-                        </p>
-                    </h:form>
-                </div>  
+                <h:panelGroup rendered="#{workerBean.worker.existing}">
+                    <div id="worker-actions">
+                        <!-- Note: This buttons are somewhat duplicated in workers.xhtml -->
+                        <h:form id="workerMenu">
+                            <p>
+                                <h:commandButton class="buttonFeatured" value="#{text['Activate...']}" action="#{workerBean.bulkAction('workers-activation')}"/> <h:commandButton class="buttonNeutral" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation')}"/> &nbsp; 
+                                <h:commandButton class="buttonFeatured" value="#{text['Renew_Key...']}" action="#{workerBean.bulkAction('workers-renewkey')}"/> <h:commandButton class="buttonFeatured" value="Test key..." action="#{workerBean.bulkAction('workers-testkey')}"/> <h:commandButton class="buttonFeatured" value="#{text['Generate_CSR...']}" action="#{workerBean.bulkAction('workers-csr')}"/> <h:commandButton class="buttonFeatured" value="#{text['Install_Certificates...']}" action="#{workerBean.bulkAction('workers-certificates')}"/> &nbsp;
+                                <h:commandButton class="buttonNeutral" value="#{text['Renew_Signer...']}" action="#{workerBean.bulkAction('workers-renew')}"/> &nbsp;
+                                <h:commandButton class="buttonNegative" value="#{text['Destroy_Key...']}" action="#{workerBean.workerAction('worker-removekey')}"/> &nbsp; 
+                                <h:commandButton class="buttonNegative" value="#{text['Remove...']}" action="#{workerBean.bulkAction('workers-remove')}"/> &nbsp;
+                                <h:commandButton class="buttonNeutral" value="#{text['Reload_From_Database...']}" action="#{workerBean.bulkAction('workers-reload')}"/> 
+                                <h:commandButton class="buttonNeutral" value="#{text['Export...']}" action="#{workerBean.bulkAction('workers-export')}"/>
+                            </p>
+                        </h:form>
+                    </div>  
 
-                <div id="worker_content">
-                    <pre>
-                        <h:outputText value="#{workerBean.status}"/>
-                    </pre>
-                </div>
+                    <div id="worker_content">
+                        <pre>
+                            <h:outputText value="#{workerBean.status}"/>
+                        </pre>
+                    </div>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{!workerBean.worker.existing}">
+                    <h2><h:outputText value="#{text['Worker_Not_Found']}"/></h2>
+                    <p>
+                        <h:outputText value="#{text['The_specified_worker_can_not_be_found.']}"/>
+                    </p>
+                </h:panelGroup>
             </ui:define>
 
             <ui:define name="bottom">

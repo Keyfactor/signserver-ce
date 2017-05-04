@@ -51,49 +51,56 @@
                     <ui:param name="workerActiveMenu" value="worker-authorization"/>
                 </ui:include>
 
-                <div id="worker_content">
-                    
-                    <h2><h:outputText value="#{text['Clients']}"/></h2>
-                    
-                    <p>
-                        <h:outputText value="#{text['Clients_authorized_when_certificate_authentication_is_used_COLON']}"/>
-                    </p>
-                    
-                    <h:dataTable id="table1" value="#{workerAuthBean.authorizedClients}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{text['Certificate_Serial_Number']}" />
-                            </f:facet>
-                            <h:outputText value="#{item.certSN}" />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{text['Issuer_DN']}" />
-                            </f:facet>
-                            <h:outputText value="#{item.issuerDN}" />
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">
-                                <h:outputText value="#{text['Actions']}"/>
-                            </f:facet>
-                            <h:link value="Edit" outcome="worker-authorization-edit">
-                                <f:param name="id" value="#{workerAuthBean.worker.id}"/>
-                                <f:param name="certSN" value="#{item.certSN}"/>
-                                <f:param name="issuerDN" value="#{item.issuerDN}"/>
-                            </h:link> |
-                            <h:link class="linkNegative" value="#{text['Remove']}" outcome="worker-authorization-remove">
-                                <f:param name="id" value="#{workerAuthBean.worker.id}"/>
-                                <f:param name="certSN" value="#{item.certSN}"/>
-                                <f:param name="issuerDN" value="#{item.issuerDN}"/>
-                            </h:link>
-                        </h:column>
-                        <f:facet name="footer">
-                        </f:facet>
-                    </h:dataTable>
+                <h:panelGroup rendered="#{workerAuthBean.worker.existing}">
+                    <div id="worker_content">
 
-                    <h:link class="linkPositive" value="#{text['Add...']}" outcome="worker-authorization-add"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
-                </div>
-                
+                        <h2><h:outputText value="#{text['Clients']}"/></h2>
+
+                        <p>
+                            <h:outputText value="#{text['Clients_authorized_when_certificate_authentication_is_used_COLON']}"/>
+                        </p>
+
+                        <h:dataTable id="table1" value="#{workerAuthBean.authorizedClients}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Certificate_Serial_Number']}" />
+                                </f:facet>
+                                <h:outputText value="#{item.certSN}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Issuer_DN']}" />
+                                </f:facet>
+                                <h:outputText value="#{item.issuerDN}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Actions']}"/>
+                                </f:facet>
+                                <h:link value="Edit" outcome="worker-authorization-edit">
+                                    <f:param name="id" value="#{workerAuthBean.worker.id}"/>
+                                    <f:param name="certSN" value="#{item.certSN}"/>
+                                    <f:param name="issuerDN" value="#{item.issuerDN}"/>
+                                </h:link> |
+                                <h:link class="linkNegative" value="#{text['Remove']}" outcome="worker-authorization-remove">
+                                    <f:param name="id" value="#{workerAuthBean.worker.id}"/>
+                                    <f:param name="certSN" value="#{item.certSN}"/>
+                                    <f:param name="issuerDN" value="#{item.issuerDN}"/>
+                                </h:link>
+                            </h:column>
+                            <f:facet name="footer">
+                            </f:facet>
+                        </h:dataTable>
+
+                        <h:link class="linkPositive" value="#{text['Add...']}" outcome="worker-authorization-add"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
+                    </div>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{!workerAuthBean.worker.existing}">
+                    <h2><h:outputText value="#{text['Worker_Not_Found']}"/></h2>
+                    <p>
+                        <h:outputText value="#{text['The_specified_worker_can_not_be_found.']}"/>
+                    </p>
+                </h:panelGroup>
             </ui:define>
 
             <ui:define name="bottom">

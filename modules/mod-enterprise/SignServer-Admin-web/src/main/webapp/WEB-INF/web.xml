@@ -77,6 +77,10 @@
         <error-code>404</error-code>
         <location>/error-404.xhtml</location>
     </error-page>
+    <error-page>
+        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <location>/error-expiredview.xhtml</location>
+    </error-page>
     <!-- Global error page for all other errors -->
     <error-page>
         <location>/error.xhtml</location>

@@ -96,13 +96,13 @@ public class WorkerAuthBean {
             boolean existing;
             String name = conf.getProperty("NAME");
             if (name == null) {
-                name = "Unknown ID " + id;
+                name = "Unknown ID " + getId();
                 existing = false;
             } else {
                 existing = true;
             }
 
-            worker = new Worker(id, existing, name, conf);
+            worker = new Worker(getId(), existing, name, conf);
         }
         return worker;
     }
@@ -120,6 +120,9 @@ public class WorkerAuthBean {
     }
 
     public Integer getId() {
+        if (id == null) {
+            id = 0;
+        }
         return id;
     }
 
@@ -127,7 +130,7 @@ public class WorkerAuthBean {
         if (status == null) {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             try {
-                workerSessionBean.getStatus(authBean.getAdminCertificate(), new WorkerIdentifier(id)).displayStatus(new PrintStream(bout, false, StandardCharsets.UTF_8.toString()), true);
+                workerSessionBean.getStatus(authBean.getAdminCertificate(), new WorkerIdentifier(getId())).displayStatus(new PrintStream(bout, false, StandardCharsets.UTF_8.toString()), true);
                 status = bout.toString(StandardCharsets.UTF_8.toString());
             } catch (UnsupportedEncodingException | InvalidWorkerIdException ex) {
                 throw new IllegalStateException(ex);
@@ -153,7 +156,7 @@ public class WorkerAuthBean {
 
     private WorkerConfig getWorkerConfig() throws AdminNotAuthorizedException {
         if (workerConfig == null) {
-            workerConfig = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), id);
+            workerConfig = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), getId());
         }
         return workerConfig;
     }
@@ -168,7 +171,7 @@ public class WorkerAuthBean {
     public String bulkAction(String page) {
         StringBuilder sb = new StringBuilder();
         sb.append(page);
-        sb.append("?faces-redirect=true&amp;workers=").append(id); // TODO: +Going back page / viewing navigation path
+        sb.append("?faces-redirect=true&amp;workers=").append(getId()); // TODO: +Going back page / viewing navigation path
         return sb.toString();
     }
 
@@ -366,6 +369,17 @@ public class WorkerAuthBean {
 
     public boolean isFromCertificate() {
         return fromCertificate;
+    }
+    
+    /**
+     * Checks that the provided old rule actually exists.
+     * @return true if it exists
+     * @throws AdminNotAuthorizedException 
+     */
+    public boolean isExistingRule() throws AdminNotAuthorizedException {
+        String oldIssuer = getOldIssuerDN();
+        String oldSerial = getOldCertSN();
+        return getAuthorizedClients().contains(new AuthorizedClient(oldSerial, oldIssuer));
     }
 
 }

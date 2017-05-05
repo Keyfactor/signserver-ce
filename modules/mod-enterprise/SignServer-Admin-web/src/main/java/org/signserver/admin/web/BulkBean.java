@@ -23,6 +23,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
@@ -39,6 +40,9 @@ import org.signserver.admin.web.ejb.AdminWebSessionBean;
 @ManagedBean
 @ViewScoped
 public class BulkBean {
+    
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(BulkBean.class);
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
@@ -102,7 +106,11 @@ public class BulkBean {
                 for (String s : split) {
                     s = s.trim();
                     if (!s.isEmpty()) {
-                        workerIdsList.add(Integer.valueOf(s.trim()));
+                        try {
+                            workerIdsList.add(Integer.valueOf(s.trim()));
+                        } catch (NumberFormatException ex) {
+                            LOG.warn("Dropping non-numeric worker ID from selection: " + ex.getMessage());
+                        }
                     }
                 }
             }
@@ -218,7 +226,8 @@ public class BulkBean {
     
     public String getBackToCryptoTokenLink(List<String> keys) {
         final StringBuilder sb = new StringBuilder();
-        sb.append("worker-cryptotoken?id=").append(getWorkerIdsList().get(0));
+        final List<Integer> ids = getWorkerIdsList();
+        sb.append("worker-cryptotoken?id=").append(ids.isEmpty() ? "" : ids.get(0));
         if (keys != null && !keys.isEmpty()) {
             for (String key : keys) {
                 sb.append("&amp;selected=").append(key); // TODO: URLEncode

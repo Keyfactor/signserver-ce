@@ -113,13 +113,13 @@ public class CertificateDetailsBean {
             boolean existing;
             String name = conf.getProperty("NAME");
             if (name == null) {
-                name = "Unknown ID " + id;
+                name = "Unknown ID " + getId();
                 existing = false;
             } else {
                 existing = true;
             }
             
-            worker = new Worker(id, existing, name, conf);
+            worker = new Worker(getId(), existing, name, conf);
         }
         return worker;
     }
@@ -137,6 +137,9 @@ public class CertificateDetailsBean {
     }
 
     public Integer getId() {
+        if (id == null) {
+            id = 0;
+        }
         return id;
     }
 
@@ -146,7 +149,7 @@ public class CertificateDetailsBean {
 
     private WorkerConfig getWorkerConfig() throws AdminNotAuthorizedException {
         if (workerConfig == null) {
-            workerConfig = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), id);
+            workerConfig = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), getId());
         }
         return workerConfig;
     }
@@ -161,7 +164,7 @@ public class CertificateDetailsBean {
     public String bulkAction(String page) {
         StringBuilder sb = new StringBuilder();
         sb.append(page);
-        sb.append("?faces-redirect=true&amp;workers=").append(id); // TODO: +Going back page / viewing navigation path
+        sb.append("?faces-redirect=true&amp;workers=").append(getId()); // TODO: +Going back page / viewing navigation path
         return sb.toString();
     }
 
@@ -208,7 +211,7 @@ public class CertificateDetailsBean {
                 if (certificate == null) {
                     if (keyInToken != null && !keyInToken.isEmpty()) {
                         try {
-                            TokenSearchResults search = workerSessionBean.queryTokenEntries(authBean.getAdminCertificate(), id, 0, 1, Arrays.asList(new QueryCondition(CryptoTokenHelper.TokenEntryFields.alias.name(), RelationalOperator.EQ, keyInToken)), Collections.<QueryOrdering>emptyList(), true);
+                            TokenSearchResults search = workerSessionBean.queryTokenEntries(authBean.getAdminCertificate(), getId(), 0, 1, Arrays.asList(new QueryCondition(CryptoTokenHelper.TokenEntryFields.alias.name(), RelationalOperator.EQ, keyInToken)), Collections.<QueryOrdering>emptyList(), true);
                             if (search.getEntries().isEmpty()) {
                                 LOG.error("No result");
                             } else {
@@ -220,10 +223,10 @@ public class CertificateDetailsBean {
                             LOG.error(ex);
                         }
                     } else if (withChain) {
-                        certificateChain = workerSessionBean.getSignerCertificateChain(authBean.getAdminCertificate(), id);
+                        certificateChain = workerSessionBean.getSignerCertificateChain(authBean.getAdminCertificate(), getId());
                         certificate = (X509Certificate) certificateChain.iterator().next();
                     } else {
-                        certificate = (X509Certificate) workerSessionBean.getSignerCertificate(authBean.getAdminCertificate(), id);
+                        certificate = (X509Certificate) workerSessionBean.getSignerCertificate(authBean.getAdminCertificate(), getId());
                         certificateChain = Arrays.asList((Certificate) certificate);
                     }
                 }

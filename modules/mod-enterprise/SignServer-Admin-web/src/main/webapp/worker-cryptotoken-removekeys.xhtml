@@ -56,47 +56,54 @@
                 <h2><h:outputText value="#{text['Remove_Key(s)']}"/></h2>
 
                 <div id="worker_content">
-                    <h:messages class="errorMessage" globalOnly="true"/>
+                    <h:panelGroup rendered="#{workerBean.worker.existing}">
+                        <h:messages class="errorMessage" globalOnly="true"/>
 
+                        <h:form>
+                            <h:panelGroup rendered="#{!removeKeysBean.done}">
+                                <b><h:outputText value="#{text['WARNING_Will_attempt_to_permanently_remove_the_follwing_keys']}"/></b>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{removeKeysBean.done}">
+                                <b><h:outputText value="#{text['All_keys_removed']}"/></b>
+                            </h:panelGroup>
 
-                    <h:form>
-                        <h:panelGroup rendered="#{!removeKeysBean.done}">
-                            <b><h:outputText value="#{text['WARNING_Will_attempt_to_permanently_remove_the_follwing_keys']}"/></b>
-                        </h:panelGroup>
-                        <h:panelGroup rendered="#{removeKeysBean.done}">
-                            <b><h:outputText value="#{text['All_keys_removed']}"/></b>
-                        </h:panelGroup>
-
-                        <h:dataTable id="table1" value="#{removeKeysBean.items}" var="item">
-                            <f:facet name="header">
-                            </f:facet>
-                            <h:column>
-                                <span class="alertArea"><h:outputText id ="alias" value="#{item.alias}"/></span>
-                            </h:column>
-                            <h:column>
+                            <h:dataTable id="table1" value="#{removeKeysBean.items}" var="item">
                                 <f:facet name="header">
-                                    <!-- Error -->
                                 </f:facet>
-                                <span class="errorMessage"><h:outputText value="#{item.errorMessage}"/></span> 
-                                <span class="successMessage"><h:outputText value="#{item.successMessage}"/></span>
-                            </h:column>
-                            <f:facet name="footer">
-                            </f:facet>
-                        </h:dataTable>
+                                <h:column>
+                                    <span class="alertArea"><h:outputText id ="alias" value="#{item.alias}"/></span>
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        <!-- Error -->
+                                    </f:facet>
+                                    <span class="errorMessage"><h:outputText value="#{item.errorMessage}"/></span> 
+                                    <span class="successMessage"><h:outputText value="#{item.successMessage}"/></span>
+                                </h:column>
+                                <f:facet name="footer">
+                                </f:facet>
+                            </h:dataTable>
 
-                        <h:panelGroup rendered="#{!removeKeysBean.done}">
-                            <p>
-                                <h:outputText value="#{text['Note_the_keys_might_be_used_by_multiple_workers.']}"/>
-                            </p>
-                            <p>
-                                <h:outputText value="#{text['Are_you_sure_you_want_to_destroy_the_keys?']}"/>
-                            </p>
-                            <h:commandButton class="buttonNegative" value="#{text['Destroy_keys']}" action="#{removeKeysBean.destroyAction()}"/> <h:link value="#{text['Cancel']}" outcome="${removeKeysBean.getBackToCryptoTokenLink(removeKeysBean.keysList)}"/>
-                        </h:panelGroup>
-                        <h:panelGroup rendered="#{removeKeysBean.done}">
-                            <h:commandButton class="buttonFeatured" value="#{text['Done']}" action="#{removeKeysBean.cancelAction()}"/> <h:link value="#{text['Cancel']}" outcome="${removeKeysBean.getBackToCryptoTokenLink(removeKeysBean.keysList)}"/>
-                        </h:panelGroup>
-                    </h:form>
+                            <h:panelGroup rendered="#{!removeKeysBean.done}">
+                                <p>
+                                    <h:outputText value="#{text['Note_the_keys_might_be_used_by_multiple_workers.']}"/>
+                                </p>
+                                <p>
+                                    <h:outputText value="#{text['Are_you_sure_you_want_to_destroy_the_keys?']}"/>
+                                </p>
+                                <h:commandButton class="buttonNegative" value="#{text['Destroy_keys']}" action="#{removeKeysBean.destroyAction()}"/> <h:link value="#{text['Cancel']}" outcome="${removeKeysBean.getBackToCryptoTokenLink(removeKeysBean.keysList)}"/>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{removeKeysBean.done}">
+                                <h:commandButton class="buttonFeatured" value="#{text['Done']}" action="#{removeKeysBean.cancelAction()}"/> <h:link value="#{text['Cancel']}" outcome="${removeKeysBean.getBackToCryptoTokenLink(removeKeysBean.keysList)}"/>
+                            </h:panelGroup>
+                        </h:form>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{!workerBean.worker.existing}">
+                        <h2><h:outputText value="#{text['Worker_Not_Found']}"/></h2>
+                        <p>
+                            <h:outputText value="#{text['The_specified_worker_can_not_be_found.']}"/>
+                        </p>
+                    </h:panelGroup>
                 </div>
             </ui:define>
 

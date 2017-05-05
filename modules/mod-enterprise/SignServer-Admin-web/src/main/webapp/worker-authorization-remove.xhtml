@@ -54,23 +54,31 @@
                 </ui:include>
                 
                 <div id="worker_content">
-                    <h:form id="form">
-                        <h:inputHidden id="id" value="#{workerAuthBean.id}"/>
+                    <h:panelGroup rendered="#{workerAuthBean.existingRule}">
+                        <h:form id="form">
+                            <h:inputHidden id="id" value="#{workerAuthBean.id}"/>
 
-                        <h2><h:outputText value="#{text['Are_you_sure_you_want_to_remove_the_authorized_client']}"/></h2>
+                            <h2><h:outputText value="#{text['Are_you_sure_you_want_to_remove_the_authorized_client']}"/></h2>
 
+                            <p>
+                                <h:outputText value="#{text['Certificate_Serial_Number_COLON']}"/><br/>
+                                <span class="alertArea"><h:outputText value="#{workerAuthBean.certSN}"/></span>
+                            </p>
+
+                            <p>
+                                <h:outputText value="#{text['Issuer_DN_COLON']}"/><br/>
+                                <span class="alertArea"><h:outputText value="#{workerAuthBean.issuerDN}"/></span>
+                            </p>
+
+                            <h:commandButton class="buttonNegative" value="#{text['Remove']}" action="#{workerAuthBean.removePropertyAction()}"/> <h:link value="#{text['Cancel']}" outcome="worker-authorization"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
+                        </h:form>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{!workerAuthBean.existingRule}">
+                        <h2><h:outputText value="#{text['n/a']}"/></h2>
                         <p>
-                            <h:outputText value="#{text['Certificate_Serial_Number_COLON']}"/><br/>
-                            <span class="alertArea"><h:outputText value="#{workerAuthBean.certSN}"/></span>
+                            <h:link value="#{text['Cancel']}" outcome="worker-authorization"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
                         </p>
-
-                        <p>
-                            <h:outputText value="#{text['Issuer_DN_COLON']}"/><br/>
-                            <span class="alertArea"><h:outputText value="#{workerAuthBean.issuerDN}"/></span>
-                        </p>
-
-                        <h:commandButton class="buttonNegative" value="#{text['Remove']}" action="#{workerAuthBean.removePropertyAction()}"/> <h:link value="#{text['Cancel']}" outcome="worker-authorization"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
-                    </h:form>
+                    </h:panelGroup>
                 </div>
             </ui:define>
 

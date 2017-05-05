@@ -44,7 +44,7 @@
                     </h:outputFormat>
                     <h:outputText value="- #{text['Status_Properties_-_Certificate_Details']}"/>
                 </h:panelGroup>
-                <h:panelGroup rendered="#{certificateDetailsBean.forKeyInToken}">
+                <h:panelGroup rendered="#{certificateDetailsBean.forKeyInToken and certificateDetailsBean.certificateAvailable}">
                     <h:outputFormat value="#{text['Worker_X']}">
                         <f:param value="#{workerBean.worker.name}"/>
                     </h:outputFormat>
@@ -52,6 +52,13 @@
                     <h:outputFormat value="#{text['Crypto_Token_-_Token_Entry_X_-_Certificate_Details']}">
                         <f:param value="#{certificateDetailsBean.keyInToken}"/>
                     </h:outputFormat>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{certificateDetailsBean.forKeyInToken and !certificateDetailsBean.certificateAvailable}">
+                    <h:outputFormat value="#{text['Worker_X']}">
+                        <f:param value="#{workerBean.worker.name}"/>
+                    </h:outputFormat>
+                    <h:outputText value=" - "/>
+                    <h:outputText value="#{text['Certificate_Details']}"/>
                 </h:panelGroup>
             </ui:define>
 
@@ -68,10 +75,10 @@
                 <h:panelGroup rendered="#{certificateDetailsBean.worker.existing}">
 
                     <div id="worker_content">
-                        <h:panelGroup rendered="#{!certificateDetailsBean.forKeyInToken}">
+                        <h:panelGroup rendered="#{!certificateDetailsBean.forKeyInToken or !certificateDetailsBean.certificateAvailable}">
                             <h2><h:outputText value="#{text['Certificate_Details']}"/></h2>
                         </h:panelGroup>
-                        <h:panelGroup rendered="#{certificateDetailsBean.forKeyInToken}">
+                        <h:panelGroup rendered="#{certificateDetailsBean.forKeyInToken and certificateDetailsBean.certificateAvailable}">
                             <h2>
                                 <h:link outcome="worker-cryptotoken-entry" value="#{text['Token_Entry']}: #{certificateDetailsBean.keyInToken}">
                                     <f:param name="id" value="#{workerBean.worker.id}"/>

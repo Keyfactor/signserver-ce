@@ -119,25 +119,29 @@ public class CryptoTokenBean {
             ordering.setOrder(Order.ASC);
             ordering.setColumn("alias");
 
-            Boolean moreAvailable = null;
-            try {
-                TokenSearchResults results = workerSessionBean.queryTokenEntries(authBean.getAdminCertificate(),
-                        id,
-                        pagination.getFromIndex(), pagination.getMaxEntries(),
-                        Collections.<QueryCondition>emptyList(),
-                        Arrays.asList(ordering),
-                        true);
-                if (results == null) {
-                    entries = Collections.emptyList();
-                } else {
-                    entries = convert(results.getEntries());
-                    moreAvailable = results.isMoreEntriesAvailable();
-                }
-                pagination.updateResults(entries.size(), moreAvailable);
+            if (id == null) {
+                queryError = "No such worker";
+            } else {
+                Boolean moreAvailable = null;
+                try {
+                    TokenSearchResults results = workerSessionBean.queryTokenEntries(authBean.getAdminCertificate(),
+                            id,
+                            pagination.getFromIndex(), pagination.getMaxEntries(),
+                            Collections.<QueryCondition>emptyList(),
+                            Arrays.asList(ordering),
+                            true);
+                    if (results == null) {
+                        entries = Collections.emptyList();
+                    } else {
+                        entries = convert(results.getEntries());
+                        moreAvailable = results.isMoreEntriesAvailable();
+                    }
+                    pagination.updateResults(entries.size(), moreAvailable);
 
-            } catch (OperationUnsupportedException | CryptoTokenOfflineException | QueryException | InvalidWorkerIdException | AuthorizationDeniedException | SignServerException ex) {
-                queryError = ex.getMessage();
-                LOG.error("Reload failed within the selected interval: " + ex.getMessage(), ex);
+                } catch (OperationUnsupportedException | CryptoTokenOfflineException | QueryException | InvalidWorkerIdException | AuthorizationDeniedException | SignServerException ex) {
+                    queryError = ex.getMessage();
+                    LOG.error("Reload failed within the selected interval: " + ex.getMessage(), ex);
+                }
             }
         }
         return entries;
@@ -192,9 +196,11 @@ public class CryptoTokenBean {
 
     private List<String> getSelectedKeys() {
         final List<String> keys = new ArrayList<>();
-        for (Entry entry : entries) {
-            if (entry.isSelected()) {
-                keys.add(entry.getAlias());
+        if (entries != null) {
+            for (Entry entry : entries) {
+                if (entry.isSelected()) {
+                    keys.add(entry.getAlias());
+                }
             }
         }
         return keys;

@@ -54,84 +54,91 @@
                 </ui:include>
 
                 <div id="worker_content">
+                    <h:panelGroup rendered="#{workerBean.worker.existing}">
+                        <h2><h:outputText value="#{text['Import_Certificates']}"/></h2>
 
-                    <h2><h:outputText value="#{text['Import_Certificates']}"/></h2>
-                    
-                    <h:form id="csrForm">
+                        <h:form id="csrForm">
 
-                        <script>
-                            var index = 0;
-                        </script>
-                        <h:dataTable id="table1" value="#{importCertificatesBean.items}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1,dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
-                            <f:facet name="header">
-                            </f:facet>
-                            <h:column>
+                            <script>
+                                var index = 0;
+                            </script>
+                            <h:dataTable id="table1" value="#{importCertificatesBean.items}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1,dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
                                 <f:facet name="header">
-                                    <h:outputText value="#{text['Key']}" />
                                 </f:facet>
-                                <b><h:outputText value="#{item.alias}"/></b> 
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">
-                                    <h:outputText value="#{text['Upload']}"/>
+                                <h:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{text['Key']}" />
+                                    </f:facet>
+                                    <b><h:outputText value="#{item.alias}"/></b> 
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{text['Upload']}"/>
+                                    </f:facet>
+
+                                    <ui:remove>
+                                        <!-- Pure JavaScript file upload, since non-JS fallback of pasting upload exists -->
+                                    </ui:remove>
+
+                                    <h:inputTextarea id="certChainFile" class="fileInputTextarea"
+                                                     value="#{item.certificateChain}" cols="50" rows="5" />
+                                    <h:message for="certChainFile" id="certChainfileMessage" /><br/>
+
+                                    <h:panelGroup>
+                                        <p id="certChainFileInputContainer#{item.rowIndex}" class="fileInputContainer"></p>
+                                        <h:commandButton class="buttonNeutral" value="#{text['Add']}" action="#{item.uploadAction()}"/>
+                                        <script>
+                                            var thisIndex = index++;
+                                            ejbca.ra.createFileUploadInput("certChainNewFileInput#{item.rowIndex}", "certChainFileInputContainer#{item.rowIndex}", function(uploadedText) {
+                                                document.getElementById("csrForm:table1:#{item.rowIndex}:certChainFile").value = uploadedText;
+                                                //document.getElementById("keyPairForm:uploadCsrButton").click();
+                                            });
+                                        </script>
+
+                                    </h:panelGroup>
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{text['Certificate_Chain']}" />
+                                    </f:facet>
+
+                                    <h:dataTable value="#{item.friendlyCertificates}" var="cert" >
+                                        <h:column>
+                                            <h:outputText value="#{cert.name}"/>
+                                        </h:column>
+                                        <h:column>
+                                            <h:commandButton class="buttonNeutral" value="×" action="#{item.removeCertificateAction(cert)}"/>
+                                        </h:column>
+                                    </h:dataTable>
+                                </h:column>
+
+                                <h:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{text['Install_in_Token']}" />
+                                    </f:facet>
+                                    <h:selectBooleanCheckbox id="inToken" value="#{true}" disabled="true"/> 
+                                </h:column>
+
+                                <h:column>
+                                    <f:facet name="header">
+                                        <!-- Error -->
+                                    </f:facet>
+                                    <span class="errorMessage"><h:outputText value="#{item.errorMessage}"/></span> 
+                                </h:column>
+                                <f:facet name="footer">
+
                                 </f:facet>
-                                
-                                <ui:remove>
-                                    <!-- Pure JavaScript file upload, since non-JS fallback of pasting upload exists -->
-                                </ui:remove>
+                            </h:dataTable>
 
-                                <h:inputTextarea id="certChainFile" class="fileInputTextarea"
-                                                 value="#{item.certificateChain}" cols="50" rows="5" />
-                                <h:message for="certChainFile" id="certChainfileMessage" /><br/>
-
-                                <h:panelGroup>
-                                    <p id="certChainFileInputContainer#{item.rowIndex}" class="fileInputContainer"></p>
-                                    <h:commandButton class="buttonNeutral" value="#{text['Add']}" action="#{item.uploadAction()}"/>
-                                    <script>
-                                        var thisIndex = index++;
-                                        ejbca.ra.createFileUploadInput("certChainNewFileInput#{item.rowIndex}", "certChainFileInputContainer#{item.rowIndex}", function(uploadedText) {
-                                            document.getElementById("csrForm:table1:#{item.rowIndex}:certChainFile").value = uploadedText;
-                                            //document.getElementById("keyPairForm:uploadCsrButton").click();
-                                        });
-                                    </script>
-                                    
-                                </h:panelGroup>
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">
-                                    <h:outputText value="#{text['Certificate_Chain']}" />
-                                </f:facet>
-
-                                <h:dataTable value="#{item.friendlyCertificates}" var="cert" >
-                                    <h:column>
-                                        <h:outputText value="#{cert.name}"/>
-                                    </h:column>
-                                    <h:column>
-                                        <h:commandButton class="buttonNeutral" value="×" action="#{item.removeCertificateAction(cert)}"/>
-                                    </h:column>
-                                </h:dataTable>
-                            </h:column>
-
-                            <h:column>
-                                <f:facet name="header">
-                                    <h:outputText value="#{text['Install_in_Token']}" />
-                                </f:facet>
-                                <h:selectBooleanCheckbox id="inToken" value="#{true}" disabled="true"/> 
-                            </h:column>
-
-                            <h:column>
-                                <f:facet name="header">
-                                    <!-- Error -->
-                                </f:facet>
-                                <span class="errorMessage"><h:outputText value="#{item.errorMessage}"/></span> 
-                            </h:column>
-                            <f:facet name="footer">
-
-                            </f:facet>
-                        </h:dataTable>
-
-                        <h:commandButton class="buttonFeatured" value="#{text['Import']}" action="#{importCertificatesBean.submitAction()}"/> <h:link value="#{text['Cancel']}" outcome="${importCertificatesBean.getBackToCryptoTokenLink(importCertificatesBean.keysList)}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
-                    </h:form>
+                            <h:commandButton class="buttonFeatured" value="#{text['Import']}" action="#{importCertificatesBean.submitAction()}"/> <h:link value="#{text['Cancel']}" outcome="${importCertificatesBean.getBackToCryptoTokenLink(importCertificatesBean.keysList)}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                        </h:form>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{!workerBean.worker.existing}">
+                        <h2><h:outputText value="#{text['Worker_Not_Found']}"/></h2>
+                        <p>
+                            <h:outputText value="#{text['The_specified_worker_can_not_be_found.']}"/>
+                        </p>
+                    </h:panelGroup>
                 </div>
                 
             </ui:define>

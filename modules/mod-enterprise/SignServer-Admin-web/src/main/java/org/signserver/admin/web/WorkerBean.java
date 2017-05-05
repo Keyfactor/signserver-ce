@@ -81,13 +81,13 @@ public class WorkerBean {
             boolean existing;
             String name = conf.getProperty("NAME");
             if (name == null) {
-                name = "Unknown ID " + id;
+                name = "Unknown ID " + getId();
                 existing = false;
             } else {
                 existing = true;
             }
             
-            worker = new Worker(id, existing, name, conf);
+            worker = new Worker(getId(), existing, name, conf);
         }
         return worker;
     }
@@ -105,6 +105,9 @@ public class WorkerBean {
     }
 
     public Integer getId() {
+        if (id == null) {
+            id = 0;
+        }
         return id;
     }
 
@@ -146,7 +149,7 @@ public class WorkerBean {
 
     private WorkerConfig getWorkerConfig() throws AdminNotAuthorizedException {
         if (workerConfig == null) {
-            workerConfig = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), id);
+            workerConfig = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), getId());
         }
         return workerConfig;
     }
@@ -165,7 +168,7 @@ public class WorkerBean {
     public String bulkAction(String page, String previous) {
         StringBuilder sb = new StringBuilder();
         sb.append(page);
-        sb.append("?faces-redirect=true&amp;includeViewParams=true&amp;workers=").append(id).append("&amp;previous=").append(previous);
+        sb.append("?faces-redirect=true&amp;includeViewParams=true&amp;workers=").append(getId()).append("&amp;previous=").append(previous);
         return sb.toString();
     }
 
@@ -189,7 +192,7 @@ public class WorkerBean {
         destroyKeyStep = 2;
         destroyKeySuccess = false;
         try {
-            destroyKeySuccess = workerSessionBean.removeKey(authBean.getAdminCertificate(), id, destroyKeyAlias);
+            destroyKeySuccess = workerSessionBean.removeKey(authBean.getAdminCertificate(), getId(), destroyKeyAlias);
             destroyKeyError = null;
         } catch (AdminNotAuthorizedException ex) {
             destroyKeyError = "Authorization denied:\n" + ex.getLocalizedMessage();
@@ -250,23 +253,23 @@ public class WorkerBean {
         String oldPropertyName = getOldProperty();
 
         if (!oldPropertyName.equals(property)) {
-            workerSessionBean.removeWorkerProperty(getAuthBean().getAdminCertificate(), id, oldPropertyName);
+            workerSessionBean.removeWorkerProperty(getAuthBean().getAdminCertificate(), getId(), oldPropertyName);
         }
-        workerSessionBean.setWorkerProperty(getAuthBean().getAdminCertificate(), id, property, propertyValue);
-        workerSessionBean.reloadConfiguration(getAuthBean().getAdminCertificate(), id);
-        return "worker-configuration?faces-redirect=true&amp;includeViewParams=true&amp;id=" + id;
+        workerSessionBean.setWorkerProperty(getAuthBean().getAdminCertificate(), getId(), property, propertyValue);
+        workerSessionBean.reloadConfiguration(getAuthBean().getAdminCertificate(), getId());
+        return "worker-configuration?faces-redirect=true&amp;includeViewParams=true&amp;id=" + getId();
     }
 
     public String addPropertyAction() throws AdminNotAuthorizedException {
-        workerSessionBean.setWorkerProperty(getAuthBean().getAdminCertificate(), id, property, propertyValue);
-        workerSessionBean.reloadConfiguration(getAuthBean().getAdminCertificate(), id);
-        return "worker-configuration?faces-redirect=true&amp;includeViewParams=true&amp;id=" + id;
+        workerSessionBean.setWorkerProperty(getAuthBean().getAdminCertificate(), getId(), property, propertyValue);
+        workerSessionBean.reloadConfiguration(getAuthBean().getAdminCertificate(), getId());
+        return "worker-configuration?faces-redirect=true&amp;includeViewParams=true&amp;id=" + getId();
     }
 
     public String removePropertyAction() throws AdminNotAuthorizedException {
-        workerSessionBean.removeWorkerProperty(getAuthBean().getAdminCertificate(), id, property);
-        workerSessionBean.reloadConfiguration(getAuthBean().getAdminCertificate(), id);
-        return "worker-configuration?faces-redirect=true&amp;includeViewParams=true&amp;id=" + id;
+        workerSessionBean.removeWorkerProperty(getAuthBean().getAdminCertificate(), getId(), property);
+        workerSessionBean.reloadConfiguration(getAuthBean().getAdminCertificate(), getId());
+        return "worker-configuration?faces-redirect=true&amp;includeViewParams=true&amp;id=" + getId();
     }
 
     public boolean isHasCrypto() throws AdminNotAuthorizedException {

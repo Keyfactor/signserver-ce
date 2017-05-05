@@ -72,12 +72,15 @@ public class GenerateKeyBean {
     }
 
     public Integer getId() {
+        if (id == null) {
+            id = 0;
+        }
         return id;
     }
 
     private WorkerConfig getWorkerConfig() throws AdminNotAuthorizedException {
         if (workerConfig == null) {
-            workerConfig = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), id);
+            workerConfig = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), getId());
         }
         return workerConfig;
     }
@@ -123,7 +126,7 @@ public class GenerateKeyBean {
         while (it.hasNext()) {
             Item item = it.next();
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Key generation: worker=" + id
+                LOG.debug("Key generation: worker=" + getId()
                         + ", keyAlg=" + item.getKeyAlg() + ", keySpec="
                         + item.getKeySpec() + ", alias: " + item.getAlias());
             }
@@ -137,7 +140,7 @@ public class GenerateKeyBean {
             try {
                 // Generate key
                 newAlias = workerSessionBean.generateSignerKey(authBean.getAdminCertificate(),
-                        new WorkerIdentifier(id), item.getKeyAlg(), item.getKeySpec(), item.getAlias(), "");
+                        new WorkerIdentifier(getId()), item.getKeyAlg(), item.getKeySpec(), item.getAlias(), "");
 
                 if (newAlias == null) {
                     item.setErrorMessage("Could not generate key");
@@ -158,13 +161,13 @@ public class GenerateKeyBean {
             if (newAlias != null) {
 
                 LOG.debug("Created key " + newAlias + " for signer "
-                        + id);
+                        + getId());
 
                 it.remove();
             }
         }
 
-        return items.isEmpty() ? "worker-cryptotoken?faces-redirect=true&amp;includeViewParams=true&amp;id=" + id : null;
+        return items.isEmpty() ? "worker-cryptotoken?faces-redirect=true&amp;includeViewParams=true&amp;id=" + getId() : null;
     }
 
     public static class Item {

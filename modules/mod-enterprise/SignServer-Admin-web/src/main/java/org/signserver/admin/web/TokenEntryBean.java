@@ -93,13 +93,16 @@ public class TokenEntryBean {
     }
 
     public Integer getId() {
+        if (id == null) {
+            id = 0;
+        }
         return id;
     }
 
     private TokenEntry getEntry() throws AdminNotAuthorizedException {
         if (entry == null) {
             try {
-                TokenSearchResults search = workerSessionBean.queryTokenEntries(authBean.getAdminCertificate(), id, 0, 1, Arrays.asList(new QueryCondition(CryptoTokenHelper.TokenEntryFields.alias.name(), RelationalOperator.EQ, key)), Collections.<QueryOrdering>emptyList(), true);
+                TokenSearchResults search = workerSessionBean.queryTokenEntries(authBean.getAdminCertificate(), getId(), 0, 1, Arrays.asList(new QueryCondition(CryptoTokenHelper.TokenEntryFields.alias.name(), RelationalOperator.EQ, key)), Collections.<QueryOrdering>emptyList(), true);
                 if (search.getEntries().isEmpty()) {
                     errorMessage = "No result";
                 } else {

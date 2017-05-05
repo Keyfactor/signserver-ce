@@ -52,7 +52,7 @@ public class AuditLogEntryBean {
     @ManagedProperty(value = "#{authenticationBean}")
     private AuthenticationBean authBean;
 
-    private String sequenceNumber;
+    private Integer sequenceNumber;
     private String node;
     private String queryError;
     private WebAuditLogEntry entry;
@@ -78,11 +78,11 @@ public class AuditLogEntryBean {
         this.authBean = authBean;
     }
 
-    public String getSequenceNumber() {
+    public Integer getSequenceNumber() {
         return sequenceNumber;
     }
 
-    public void setSequenceNumber(String sequenceNumber) {
+    public void setSequenceNumber(Integer sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
     }
 
@@ -103,24 +103,28 @@ public class AuditLogEntryBean {
 
     public WebAuditLogEntry getEntry() throws AdminNotAuthorizedException {
         if (entry == null && queryError == null) {
-            final List<QueryCondition> conditions = Arrays.asList(
-                    new QueryCondition(AuditRecordData.FIELD_SEQUENCENUMBER, RelationalOperator.EQ, sequenceNumber),
-                    new QueryCondition(AuditRecordData.FIELD_NODEID, RelationalOperator.EQ, node));
-            try {
+            if (sequenceNumber == null) {
+                queryError = "No such entry";
+            } else {
+                final List<QueryCondition> conditions = Arrays.asList(
+                        new QueryCondition(AuditRecordData.FIELD_SEQUENCENUMBER, RelationalOperator.EQ, String.valueOf(sequenceNumber)),
+                        new QueryCondition(AuditRecordData.FIELD_NODEID, RelationalOperator.EQ, node));
+                try {
 
-                List<? extends AuditLogEntry> results = workerSessionBean.queryAuditLog(authBean.getAdminCertificate(),
-                        0, 1,
-                        conditions,
-                        ORDERINGS);
-                if (results == null || results.isEmpty()) {
-                    queryError = "No results";
-                } else {
-                    entry = WebAuditLogEntry.fromAuditLogEntry(results.get(0));
+                    List<? extends AuditLogEntry> results = workerSessionBean.queryAuditLog(authBean.getAdminCertificate(),
+                            0, 1,
+                            conditions,
+                            ORDERINGS);
+                    if (results == null || results.isEmpty()) {
+                        queryError = "No results";
+                    } else {
+                        entry = WebAuditLogEntry.fromAuditLogEntry(results.get(0));
+                    }
+
+                } catch (SignServerException | EJBException ex) {
+                    queryError = ex.getMessage();
+                    LOG.error("Reload failed within the selected interval: " + ex.getMessage());
                 }
-
-            } catch (SignServerException | EJBException ex) {
-                queryError = ex.getMessage();
-                LOG.error("Reload failed within the selected interval: " + ex.getMessage());
             }
         }
         return entry;

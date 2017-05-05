@@ -52,39 +52,46 @@
                 </ui:include>
 
                 <div id="worker_content">
+                    <h:panelGroup rendered="#{workerBean.worker.existing}">
+                        <h2><h:outputText value="#{text['Generate_Key']}"/></h2>
 
-                    <h2><h:outputText value="#{text['Generate_Key']}"/></h2>
-                    
-                    <h:form>
-                        <h:dataTable value="#{generateKeyBean.items}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
-                            <h:column>
-                                <f:facet name="header">
-                                    <h:outputText value="#{text['New_Key_Alias']}"/>
-                                </f:facet>
-                                <h:inputText id="alias" value="#{item.alias}"/>
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">
-                                    <h:outputText value="#{text['Key_Algorithm']}"/>
-                                </f:facet>
-                                <h:inputText id="keyAlg" value="#{item.keyAlg}"/>
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">
-                                    <h:outputText value="#{text['Key_Specification']}"/>
-                                </f:facet>
-                                <h:inputText id="keySpec" value="#{item.keySpec}"/>
-                            </h:column>
-                            <h:column>
-                                <span class="errorMessage"><h:outputText value="#{item.errorMessage}"/></span>
-                            </h:column>
-                            <h:column>
-                                <h:commandButton class="buttonNeutral" value="-" action="#{generateKeyBean.removeAction()}" rendered="#{item.last and not item.first}"/> 
-                                <h:commandButton class="buttonNeutral" value="+" action="#{generateKeyBean.addAction()}" rendered="#{item.last}"/>
-                            </h:column>
-                        </h:dataTable>
-                        <h:commandButton class="buttonPositive" value="#{text['Generate']}" action="#{generateKeyBean.submitAction()}"/> <h:link value="#{text['Cancel']}" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
-                    </h:form>
+                        <h:form>
+                            <h:dataTable value="#{generateKeyBean.items}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
+                                <h:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{text['New_Key_Alias']}"/>
+                                    </f:facet>
+                                    <h:inputText id="alias" value="#{item.alias}"/>
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{text['Key_Algorithm']}"/>
+                                    </f:facet>
+                                    <h:inputText id="keyAlg" value="#{item.keyAlg}"/>
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{text['Key_Specification']}"/>
+                                    </f:facet>
+                                    <h:inputText id="keySpec" value="#{item.keySpec}"/>
+                                </h:column>
+                                <h:column>
+                                    <span class="errorMessage"><h:outputText value="#{item.errorMessage}"/></span>
+                                </h:column>
+                                <h:column>
+                                    <h:commandButton class="buttonNeutral" value="-" action="#{generateKeyBean.removeAction()}" rendered="#{item.last and not item.first}"/> 
+                                    <h:commandButton class="buttonNeutral" value="+" action="#{generateKeyBean.addAction()}" rendered="#{item.last}"/>
+                                </h:column>
+                            </h:dataTable>
+                            <h:commandButton class="buttonPositive" value="#{text['Generate']}" action="#{generateKeyBean.submitAction()}"/> <h:link value="#{text['Cancel']}" outcome="worker-cryptotoken"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                        </h:form>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{!workerBean.worker.existing}">
+                        <h2><h:outputText value="#{text['Worker_Not_Found']}"/></h2>
+                        <p>
+                            <h:outputText value="#{text['The_specified_worker_can_not_be_found.']}"/>
+                        </p>
+                    </h:panelGroup>
                 </div>
 
             </ui:define>

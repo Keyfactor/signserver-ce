@@ -22,6 +22,7 @@ import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import org.apache.log4j.Logger;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
@@ -37,6 +38,9 @@ import org.signserver.admin.web.ejb.AdminWebSessionBean;
 @ManagedBean
 @ViewScoped
 public class WorkersBean {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(WorkersBean.class);
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
@@ -115,7 +119,11 @@ public class WorkersBean {
                 for (String s : split) {
                     s = s.trim();
                     if (!s.isEmpty()) {
-                        selectedIds.put(Integer.valueOf(s.trim()), Boolean.TRUE);
+                        try {
+                            selectedIds.put(Integer.valueOf(s.trim()), Boolean.TRUE);
+                        } catch (NumberFormatException ex) {
+                            LOG.warn("Dropping non-numeric worker ID from selection: " + ex.getMessage());
+                        }
                     }
                 }
             }

@@ -52,19 +52,27 @@
                 </ui:include>
                 
                 <div id="worker_content">
-                    <h2><h:outputText value="#{text['Remove_Property']}"/></h2>
+                    <h:panelGroup rendered="#{workerBean.worker.existing}">
+                        <h2><h:outputText value="#{text['Remove_Property']}"/></h2>
 
-                    <h:form id="form">
-                        <h:inputHidden id="id" value="#{workerBean.id}"/>
+                        <h:form id="form">
+                            <h:inputHidden id="id" value="#{workerBean.id}"/>
 
-                        <b><h:outputText value="#{text['Are_you_sure_you_want_to_remove_the_worker_property']}"/></b>
+                            <b><h:outputText value="#{text['Are_you_sure_you_want_to_remove_the_worker_property']}"/></b>
 
+                            <p>
+                                <h:outputText value="#{text['Property_COLON']}"/> <span class="alertArea"><h:outputText value="#{workerBean.property}"/></span>
+                            </p>
+
+                            <h:commandButton class="buttonNegative" value="#{text['Remove']}" action="#{workerBean.removePropertyAction()}"/> <h:link value="#{text['Cancel']}" outcome="worker-configuration"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                        </h:form>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{!workerBean.worker.existing}">
+                        <h2><h:outputText value="#{text['Worker_Not_Found']}"/></h2>
                         <p>
-                            <h:outputText value="#{text['Property_COLON']}"/> <span class="alertArea"><h:outputText value="#{workerBean.property}"/></span>
+                            <h:outputText value="#{text['The_specified_worker_can_not_be_found.']}"/>
                         </p>
-
-                        <h:commandButton class="buttonNegative" value="#{text['Remove']}" action="#{workerBean.removePropertyAction()}"/> <h:link value="#{text['Cancel']}" outcome="worker-configuration"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
-                    </h:form>
+                    </h:panelGroup>
                 </div>
             </ui:define>
 

@@ -80,13 +80,13 @@ public class StatusPropertiesBean {
             boolean existing;
             String name = conf.getProperty("NAME");
             if (name == null) {
-                name = "Unknown ID " + id;
+                name = "Unknown ID " + getId();
                 existing = false;
             } else {
                 existing = true;
             }
             
-            worker = new Worker(id, existing, name, conf);
+            worker = new Worker(getId(), existing, name, conf);
         }
         return worker;
     }
@@ -104,6 +104,9 @@ public class StatusPropertiesBean {
     }
 
     public Integer getId() {
+        if (id == null) {
+            id = 0;
+        }
         return id;
     }
 
@@ -115,27 +118,27 @@ public class StatusPropertiesBean {
 
             String tokenStatus;
             try {
-                final WorkerStatus status = workerSessionBean.getStatus(getAuthBean().getAdminCertificate(), new WorkerIdentifier(id));
+                final WorkerStatus status = workerSessionBean.getStatus(getAuthBean().getAdminCertificate(), new WorkerIdentifier(getId()));
                 tokenStatus = status.getFatalErrors().isEmpty() ?
                               text.getString("ACTIVE") : text.getString("OFFLINE");
             } catch (InvalidWorkerIdException ex) {
                 tokenStatus = text.getString("Unknown");
             } catch (Exception ex) {
                 tokenStatus = text.getString("Unknown");
-                LOG.error("Error getting status for worker " + id, ex);
+                LOG.error("Error getting status for worker " + getId(), ex);
             }
 
-            statuses.add(new StatusProperty(text.getString("ID"), id, false, null));
+            statuses.add(new StatusProperty(text.getString("ID"), getId(), false, null));
             statuses.add(new StatusProperty(text.getString("Name"), getWorker().getName(), false, null));
             statuses.add(new StatusProperty(text.getString("Token_Status"), tokenStatus, false, null));
 
             try {
                 Collection<? extends Certificate> certificateChain;
-                Date notBefore = workerSessionBean.getSigningValidityNotBefore(authBean.getAdminCertificate(), (int) id);
-                Date notAfter = workerSessionBean.getSigningValidityNotAfter(authBean.getAdminCertificate(), (int) id);
-                Certificate certificate = workerSessionBean.getSignerCertificate(authBean.getAdminCertificate(), (int) id);
+                Date notBefore = workerSessionBean.getSigningValidityNotBefore(authBean.getAdminCertificate(), (int) getId());
+                Date notAfter = workerSessionBean.getSigningValidityNotAfter(authBean.getAdminCertificate(), (int) getId());
+                Certificate certificate = workerSessionBean.getSignerCertificate(authBean.getAdminCertificate(), (int) getId());
                 try {
-                    certificateChain = workerSessionBean.getSignerCertificateChain(authBean.getAdminCertificate(), id);
+                    certificateChain = workerSessionBean.getSignerCertificateChain(authBean.getAdminCertificate(), getId());
                 } catch (EJBException ex) {
                     // Handle problem caused by bug in server
                     LOG.error("Error getting signer certificate chain", ex);
@@ -147,14 +150,14 @@ public class StatusPropertiesBean {
                                                 notAfter, false, null));
                 statuses.add(new StatusProperty(text.getString(SIGNER_CERTIFICATE),
                                                 certificate, certificate != null,
-                                                "certificate-details?worker=" + id));
+                                                "certificate-details?worker=" + getId()));
                 statuses.add(new StatusProperty(text.getString(CERTIFICATE_CHAIN),
                                                 certificateChain,
                                                 certificate != null && !certificateChain.isEmpty(),
-                                                "certificate-details?worker=" + id + "&amp;chain=true"));
+                                                "certificate-details?worker=" + getId() + "&amp;chain=true"));
             } catch (CryptoTokenOfflineException ex) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("offline: " + id);
+                    LOG.debug("offline: " + getId());
                 }
             } catch (RuntimeException ex) {
                 LOG.warn("Methods not supported by server", ex);
@@ -166,7 +169,7 @@ public class StatusPropertiesBean {
 
     private WorkerConfig getWorkerConfig() throws AdminNotAuthorizedException {
         if (workerConfig == null) {
-            workerConfig = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), id);
+            workerConfig = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), getId());
         }
         return workerConfig;
     }
@@ -185,7 +188,7 @@ public class StatusPropertiesBean {
     public String bulkAction(String page) {
         StringBuilder sb = new StringBuilder();
         sb.append(page);
-        sb.append("?faces-redirect=true&amp;workers=").append(id); // TODO: +Going back page / viewing navigation path
+        sb.append("?faces-redirect=true&amp;workers=").append(getId()); // TODO: +Going back page / viewing navigation path
         return sb.toString();
     }
 

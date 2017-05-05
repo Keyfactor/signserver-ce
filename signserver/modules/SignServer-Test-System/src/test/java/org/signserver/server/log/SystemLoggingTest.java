@@ -21,6 +21,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -29,9 +30,13 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.fail;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -72,6 +77,7 @@ import org.signserver.server.timedservices.hsmkeepalive.HSMKeepAliveTimedService
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 import org.signserver.statusrepo.StatusRepositorySession;
+import org.signserver.testutils.WebTestCase;
 
 /**
  * Tests for audit logging using the System Logger.
@@ -1198,6 +1204,48 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + signerName));
     }
     
+    /**
+     * Test that the SecurityEventsWorkerLogger is properly audit-logging the
+     * XCUSTOM1 field all the way from the GenericProcessServlet.
+     * @throws Exception
+     */
+    @Test
+    public void test08ServletProcessXCustom1Header() throws Exception {
+        LOG.info(">test08ServletProcessXCustom1Header");
+        int linesBefore = readEntriesCount(auditLogFile);
+
+        Map<String, String> fields = new HashMap<>();
+        fields.put("workerName", signerName);
+        fields.put("data", "<test/>");
+        Map<String, String> headers = new HashMap<>();
+        final String headerValue = "My Custom Value 123";
+        headers.put("X-SignServer-Custom-1", headerValue);
+        
+        // POST (url-encoded)
+        try {
+            HttpURLConnection con = WebTestCase.sendPostFormUrlencoded(
+                    getServletURL(), fields, headers);
+
+            int response = con.getResponseCode();
+            String message = con.getResponseMessage();
+            LOG.info("Returned " + response + " " + message);
+            assertEquals("POST url-encoded: status response: " + message, 200, response);
+            con.disconnect();
+        } catch (IOException ex) {
+            LOG.error("IOException", ex);
+            fail(ex.getMessage());
+        }
+
+        List<String> lines = readEntries(auditLogFile, linesBefore, 1);
+        String line = lines.get(0);
+        LOG.info(line);
+        assertTrue("Contains event", line.contains("EVENT: PROCESS"));
+        assertTrue("Contains module", line.contains("MODULE: WORKER"));
+        assertTrue("Contains success", line.contains("PROCESS_SUCCESS: true"));
+        assertTrue("Contains worker ID", line.contains("WORKER_ID: " + signerId));
+        assertTrue("Contains XCUSTOM1", line.contains("XCUSTOM1: " + headerValue));
+    }
+
     private String waitForNextLine(final int linesBefore, final int maxTries) throws Exception {
         try {
             for (int i = 0; i < maxTries; i++) {
@@ -1312,5 +1360,9 @@ public class SystemLoggingTest extends ModulesTestCase {
         }
         return result;
     }
-    
+
+    protected String getServletURL() {
+        return getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/process";
+    }
+
 }

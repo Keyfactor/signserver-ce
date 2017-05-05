@@ -267,6 +267,11 @@ public abstract class WebTestCase extends ModulesTestCase {
 
     protected static HttpURLConnection sendPostFormUrlencoded(final String baseURL,
             final Map<String, String> fields) throws MalformedURLException, IOException {
+        return sendPostFormUrlencoded(baseURL, fields, Collections.<String, String>emptyMap());
+    }
+
+    public static HttpURLConnection sendPostFormUrlencoded(final String baseURL,
+            final Map<String, String> fields, final Map<String, String> headers) throws MalformedURLException, IOException {
         final StringBuilder buff = new StringBuilder();
         for (Entry<String, String> entry : fields.entrySet()) {
             buff.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.name())).append("&");
@@ -278,6 +283,9 @@ public abstract class WebTestCase extends ModulesTestCase {
         con.setAllowUserInteraction(false);
         con.setDoOutput(true);
         con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            con.setRequestProperty(header.getKey(), header.getValue());
+        }
         try (PrintWriter out = new PrintWriter(con.getOutputStream())) {
             out.print(body);
         }

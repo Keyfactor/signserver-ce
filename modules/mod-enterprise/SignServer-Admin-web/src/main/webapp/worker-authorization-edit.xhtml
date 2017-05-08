@@ -77,7 +77,7 @@
                                     <h:message for="certSN" class="errorMessage"/>
                                     <h:commandButton class="buttonNeutral" value="…" action="#{workerAuthBean.browseAction()}"/>
 
-                                    <h:outputLabel for="issuerDN"><h:outputText value="#{text['Issuer DN_COLON']}"/></h:outputLabel>
+                                    <h:outputLabel for="issuerDN"><h:outputText value="#{text['Issuer_DN_COLON']}"/></h:outputLabel>
                                     <h:inputText id="issuerDN" value="#{workerAuthBean.issuerDN}" size="40" requiredMessage="*">
                                         <f:validator validatorId="optionallyRequiredValidator"/>
                                         <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>

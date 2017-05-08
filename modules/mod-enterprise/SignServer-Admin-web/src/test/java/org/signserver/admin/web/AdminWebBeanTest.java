@@ -62,7 +62,7 @@ public class AdminWebBeanTest {
      */
     @Test
     public void testGetDocumentationLink() throws Exception {
-        System.out.println("getDocumentationLink");
+        LOG.info("getDocumentationLink");
         AdminWebBean instance = new AdminWebBean();
         instance.init();
         

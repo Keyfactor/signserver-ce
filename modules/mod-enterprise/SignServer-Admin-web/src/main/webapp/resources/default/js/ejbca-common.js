@@ -30,7 +30,11 @@
 
     /** Create a file input element with id "newElementId" as child to the "appendToElementId". */
     var createInputFileElement = function(newElementId, appendToElementId, onUploadFinishedCallback) {
-    	if (document.getElementById(newElementId)) {
+    	if (!window.FileReader) {
+            return;
+        }
+        
+        if (document.getElementById(newElementId)) {
     		console.log("ejbca.ra.createFileUploadInput: Element '" + newElementId + "' already exists.");
     		return;
     	}

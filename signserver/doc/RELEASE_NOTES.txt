@@ -1,7 +1,41 @@
 SignServer 4.1.0
 ----------------
 
+Major Features:
+ - A brand new administration web interface.
+ - Support for signing Windows Installer (MSI) packages.
+
+General Signing:
+- Support for hashing on the client side for CMS/PKCS#7 detached signatures.
+
+Code Signing:
+ - Added MSI signing support.
+ - Performance: Option to disable request hashing in the Plain Signer.
+
+ePassport:
+ - Adapted CMS Signer to be suitable for signing ICAO Deviation Lists.
+
+Time-stamping:
+ - Added sample init.d script for running the SignServer TimeMonitor.
+
+Documentation:
+ - Restructured and improved documentation.
+ - Improved Javadoc for the AdminWS and ClientWS interfaces.
+
+Security:
+ - Further security hardening of the web applications including Content
+   Security Policy headers and HttpOnly cookie protection.
+ - Removed a potential cross site scripting vulnerability on the public
+   web only affecting a set up with the TimeMonitorManager and normally
+   restricted to authenticated users only.
+ - Libraries has been upgraded.
+
+Bug Fixes:
+ - There was 16 issues fixed.
+
 Notice:
+ - There is now a web-based administration interface that by default is 
+   enabled and available on an URL like https://localhost:8443/signserver/adminweb.
  - If you are customizing the SignServer public web to be embedded in a frame, 
    note that SignServer now uses the X-FRAME-OPTIONS HTTP header, preventing
    web GUIs from being framed in modern browsers.

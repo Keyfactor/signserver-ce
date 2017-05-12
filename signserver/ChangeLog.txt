@@ -1,3 +1,94 @@
+SignServer 4.1.0, 2017-06-01
+----------------------------
+
+** Bug
+    * [DSS-1320] - String index out of bounds for empty IMPLEMENTATION_CLASS worker property
+    * [DSS-1321] - Properties are treated as 8-bit latin 1 encoded text in AdminGUI
+    * [DSS-1322] - TimeMonitorManager sample config file is missing TYPE property
+    * [DSS-1323] - Debug logging at INFO level for FileBasedWorkerConfigDataIndex
+    * [DSS-1327] - Replace incorrect spelled usages of "chosen"
+    * [DSS-1335] - Regression: Certificate validation command not available in SignClient for Windows
+    * [DSS-1344] - Regression: TimeMonitor manual not available in the SignServer manual
+    * [DSS-1356] - SignClient does not support password protected WSDL access
+    * [DSS-1359] - Install guide misses setting max-post-size on the http-listener
+    * [DSS-1360] - Error from slf4j for some operations when using WildFly 10
+    * [DSS-1366] - Module server.enterprise not included by default when includemodulesinbuild=false
+    * [DSS-1367] - CSS in admin web not loaded successfully when running on WildFly 10
+    * [DSS-1368] - Test key... results are not displayed properly
+    * [DSS-1369] - Edit Workers Properties Page
+    * [DSS-1372] - Include all non-worker related global configuration / Default Value
+    * [DSS-1388] - Regression: Not possible to login with only Auditor role
+
+** Epic
+    * [DSS-984] - Epic for a Web GUI
+
+** New Feature
+    * [DSS-135] - Web-based admin GUI
+    * [DSS-1179] - Support for hashing on client side for CMSSigner detached signatures
+    * [DSS-1318] - Implement MS Authenticode signer for MSI files
+    * [DSS-1331] - Support for custom error message in health check
+    * [DSS-1349] - Option to not do request hash logging for Plain Signer
+    * [DSS-1370] - Configurable content OID in CMS signatures
+    * [DSS-1375] - Support for configurable context-root
+    * [DSS-1387] - Support for DER encoding of SignedData
+    * [DSS-1397] - Create init.d script for TimeMonitor
+
+** Task
+    * [DSS-1286] - Create web module for the admin web
+    * [DSS-1288] - Implement admin authorization for the admin web
+    * [DSS-1289] - Apply hardening for the admin web
+    * [DSS-1290] - Implement worker configuration management for the admin web
+    * [DSS-1291] - Implement global configuration management for the admin web
+    * [DSS-1292] - Implement management of administrators for the admin web
+    * [DSS-1293] - Implement audit log management for the admin web
+    * [DSS-1294] - Implement archive management for the admin web
+    * [DSS-1295] - Implement worker workflow actions for the admin web
+    * [DSS-1296] - Implement CryptoToken management for the admin web
+    * [DSS-1300] - Investigate transaction/timeout handling in worker processing
+    * [DSS-1305] - Document the new Admin Web
+    * [DSS-1307] - Document URI encoding for the new Admin Web in install guide
+    * [DSS-1308] - Internationalization (i18n) support for admin web
+    * [DSS-1309] - Refactor common code between Admin Web, Admin GUI and Admin WS
+    * [DSS-1334] - List/fix issues in admin web - take 2
+    * [DSS-1386] - Re-run OWASP ZAP when AdminWeb is finished
+    * [DSS-1392] - Test Admin Web on different Web Browsers
+    * [DSS-1393] - Update to final DeployTools 2.0.3
+
+** Improvement
+    * [DSS-348] - Replace usage of SimpleDateFormat
+    * [DSS-1283] - Optimization: Don't copy MSAuthCode request to response file unless archiving is enabled
+    * [DSS-1302] - Quick start / tutorial for setting up workers using the AdminGUI (and/or AdminWeb)
+    * [DSS-1303] - Usability, consistency, styling and layout etc
+    * [DSS-1313] - Make bookmarkable URLs
+    * [DSS-1315] - Implement any remaining functionality from Admin GUI in Admin Web
+    * [DSS-1316] - List/fix issues in admin web
+    * [DSS-1328] - Add TIMESTAMP_FORMAT to the MSAuthCodeSigner sample configuration file
+    * [DSS-1330] - Security hardening
+    * [DSS-1332] - Remove unused left-over module folder SignServer-war-Doc
+    * [DSS-1338] - Upgrade to BouncyCastle 1.54
+    * [DSS-1339] - Fix Jsign so it works with BC 1.54+
+    * [DSS-1342] - Security: upgrade libraries
+    * [DSS-1345] - Support empty value for TIMESTAMP_FORMAT
+    * [DSS-1350] - Improved Javadoc for AdminWS and ClientWS
+    * [DSS-1355] - Add custom HTTP header to log and archive to disk pattern
+    * [DSS-1385] - Include the new documentation
+    * [DSS-1390] - Security hardening
+
+
+SignServer 4.0.2, 2017-05-16
+----------------------------
+
+** Bug
+    * [DSS-1344] - Regression: TimeMonitor manual not available in the SignServer manual
+    * [DSS-1346] - Master list signer only checks certificate installed in token
+    * [DSS-1376] - PDF permissions lost when PDF version is upgraded
+    * [DSS-1379] - Regression: PDF restrictions set for upgraded PDFs even if original had no restrictions
+
+** New Feature
+    * [DSS-1370] - Configurable content OID in CMS signatures
+    * [DSS-1387] - Support for DER encoding of SignedData
+
+
 SignServer 4.0.1, 2017-01-16
 ----------------------------
 

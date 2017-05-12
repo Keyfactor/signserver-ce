@@ -62,7 +62,7 @@ NetBeans IDE
 
 Open the Maven projects directly in the IDE.
 
-The latest NetBeans IDE (currently 8.1) is recommended with one exception:
+The latest NetBeans IDE (currently 8.2) is recommended with one exception:
 The SignServer AdminGUI uses the Swing Application Framework and requires 
 NetBeans IDE =7.0.x for changing some of the GUI parts.
 
@@ -91,9 +91,9 @@ TODO: This is currently untested.
 
 Writing Documentation
 ---------------------
-The SignServer documentation is built by maven-site-plugin using Doxia from 
-XDOC 2.0 (XML) source files under modules/SignServer-Doc and are then placed
-in ./doc/htdocs as well as included in the SignServer-Doc-web.war.
+The SignServer documentation is maintained by PrimeKey in Confluence and
+exported to HTML and put under doc/htdocs as well as included in
+SignServer-Doc-web.war by the build system.
 
 
 Automated Tests

@@ -165,9 +165,12 @@ Installation Guide for details.
     <!-- Configuring                                                         -->
     <!-- =================================================================== -->
 
+    <!-- Create bundle with sample configs to display in the admin web. -->
+    <target name="-pre-configure-ear" depends="-create-sample-configs-dist"/>
+
     <!-- We also create an AdminGUI dist. -->
     <target name="-post-configure-ear"
-            depends="-create-admingui-dist,-create-clientcli-dist,-create-sample-configs-dist"/>
+            depends="-create-admingui-dist,-create-clientcli-dist"/>
 
     <!-- Allow the old name for configure-ear to still be working. -->
     <target name="compose-ear" depends="configure-ear"/>

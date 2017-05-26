@@ -9,6 +9,7 @@
             <default-locale>en</default-locale>
             <supported-locale>en</supported-locale>
             <supported-locale>sv</supported-locale>
+	    <supported-locale>vi</supported-locale>
             <!-- Add additional languages below -->
             
         </locale-config>

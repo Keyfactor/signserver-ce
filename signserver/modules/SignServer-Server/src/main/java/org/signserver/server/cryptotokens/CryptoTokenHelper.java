@@ -412,11 +412,11 @@ public class CryptoTokenHelper {
     public static String suggestSigAlg(PublicKey key) {
         final String alg;
         if (key instanceof ECKey) {
-            alg = "SHA1withECDSA";
+            alg = "SHA256withECDSA";
         } else if (key instanceof RSAKey) {
-            alg = "SHA1withRSA";
+            alg = "SHA256withRSA";
         } else if (key instanceof DSAKey) {
-            alg = "SHA1withDSA";
+            alg = "SHA256withDSA";
         } else {
             alg = null;
         }

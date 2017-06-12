@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Enterprise-Modules</artifactId>
-        <version>4.1.0</version>
+        <version>4.1.1-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-Module-MSAuthCode</artifactId>
     <name>SignServer-Module-MSAuthCode</name>

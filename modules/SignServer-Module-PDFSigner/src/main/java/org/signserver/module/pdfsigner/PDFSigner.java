@@ -166,7 +166,6 @@ public class PDFSigner extends BaseSigner {
     private InternalProcessSessionLocal workerSession;
 
     private String digestAlgorithm = DEFAULTDIGESTALGORITHM;
-    private int minimumPdfVersion;
     
     @Override
     public void init(int signerId, WorkerConfig config,
@@ -196,11 +195,9 @@ public class PDFSigner extends BaseSigner {
         
         digestAlgorithm = config.getProperty(DIGESTALGORITHM, DEFAULTDIGESTALGORITHM);
         
-        try {
-            // calculate minimum PDF version based on digest algorithm
-            minimumPdfVersion = getMinimumPdfVersion();
-        } catch (IllegalArgumentException e) {
-            configErrors.add("Illegal digest algorithm: " + digestAlgorithm);
+        boolean algorithmSupported = PdfSignatureDigestAlgorithms.isSupported(digestAlgorithm);
+        if (!algorithmSupported) {
+           configErrors.add("Illegal digest algorithm: " + digestAlgorithm); 
         }
         
         // additionally check that at least one certificate is included, assumed by iText
@@ -537,29 +534,6 @@ public class PDFSigner extends BaseSigner {
         return encodedSig;
     }
     
-    /**
-     * Get the minimum PDF version (x in 1.x)
-     * given the configured digest algorithm.
-     * 
-     * @return PDF version ("suffix" version)
-     * @throws IllegalArgumentException in case of an unknown digest algorithm
-     */
-    private int getMinimumPdfVersion() throws IllegalArgumentException {
-        if ("SHA1".equals(digestAlgorithm)) {
-            return 0;
-        } else if ("SHA256".equals(digestAlgorithm)) {
-            return 6;
-        } else if ("SHA384".equals(digestAlgorithm)) {
-            return 7;
-        } else if ("SHA512".equals(digestAlgorithm)) {
-            return 7;
-        } else if ("RIPEMD160".equals(digestAlgorithm)) {
-            return 7;
-        } else {
-            throw new IllegalArgumentException("Unknown digest algorithm: " + digestAlgorithm);
-        }
-    }
-    
     protected void addSignatureToPDFDocument(final ICryptoInstance crypto, PDFSignerParameters params,
             byte[] pdfBytes, File pdfFile, byte[] password, int contentEstimated,
             final Request request, final WritableData responseData, final RequestContext context)
@@ -594,16 +568,11 @@ public class PDFSigner extends BaseSigner {
         }
         boolean appendMode = true; // TODO: This could be good to have as a property in the future
 
-        int pdfVersion;
-        
-        try {
-            pdfVersion = Integer.parseInt(Character.toString(reader.getPdfVersion()));
-        } catch (NumberFormatException e) {
-            pdfVersion = 0;
-        }
+        String strPdfVersion = Character.toString(reader.getPdfVersion());
+        PdfVersionCompatibilityChecker pdfVersionCompatibilityChecker = new PdfVersionCompatibilityChecker(strPdfVersion, digestAlgorithm);
             
         if (LOG.isDebugEnabled()) {
-            LOG.debug("PDF version: " + pdfVersion);
+            LOG.debug("PDF version: " + strPdfVersion);
         }
 
         // Don't certify already certified documents
@@ -671,8 +640,8 @@ public class PDFSigner extends BaseSigner {
 
             // increase PDF version if needed by digest algorithm
             final char updatedPdfVersion;
-            if (minimumPdfVersion > pdfVersion) {
-                updatedPdfVersion = Character.forDigit(minimumPdfVersion, 10);
+            if (pdfVersionCompatibilityChecker.isVersionUpgradeRequired()) {
+                updatedPdfVersion = Character.forDigit(pdfVersionCompatibilityChecker.getMinimumCompatiblePdfVersion(), 10);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Need to upgrade PDF to version 1." + updatedPdfVersion);
                 }

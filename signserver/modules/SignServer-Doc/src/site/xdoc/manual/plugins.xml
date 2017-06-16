@@ -271,6 +271,9 @@ When using an algorithm other than SHA1, RFC 5816-compliant time stamps will be 
 To get the old behaviour (with the ESSCertID attribute instead of ESSCertIDv2), SHA1 must be set explicitly.<br/>
 Default: SHA256.
                         </p>
+                        <p>
+                        <b>LEGACYENCODING</b> = Since SignServer 4.0 the encoding of the time-stamp tokens has changed. One consequence is that the order of the certificates in the output might not be the same as in the certificate chain due to the DER encoding and the fact that the certificates field is a set and thus not ordered. To restore the old behavior it is possible to set LEGACYENCODING=true. Default is false. (OPTIONAL).
+                        </p>
 
                     
                     <h4>TimeStampSigner Certificates</h4>

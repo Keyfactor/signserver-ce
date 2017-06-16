@@ -299,6 +299,7 @@ public class TimeStampSigner extends BaseSigner {
     private boolean tsaNameFromCert;
     private boolean includeSigningTimeAttribute;
     private boolean includeCertIDIssuerSerial = true;
+    private boolean legacyEncoding;
     
     private boolean ordering;
    
@@ -446,6 +447,18 @@ public class TimeStampSigner extends BaseSigner {
             configErrors.add("Can not set ACCEPTANYPOLICY to true and ACCEPTEDPOLICIES at the same time");
         } else if (!acceptAnyPolicy && acceptedPoliciesValue == null) {
             configErrors.add("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true");
+        }
+
+        final String legacyEncodingValue = config.getProperty("LEGACYENCODING");
+                
+        if (legacyEncodingValue != null) {
+            if (Boolean.TRUE.toString().equalsIgnoreCase(legacyEncodingValue)) {
+                legacyEncoding = true;
+            } else if (Boolean.FALSE.toString().equalsIgnoreCase(legacyEncodingValue)) {
+                legacyEncoding = false;
+            } else {
+                configErrors.add("Illegal value for LEGACYENCODING: " + legacyEncodingValue);
+            }
         }
 
         // Print the errors for troubleshooting
@@ -640,18 +653,11 @@ public class TimeStampSigner extends BaseSigner {
             TimeStampResponse timeStampResponse;
            
             try {
-                if (additionalExtensions != null) {
-                    timeStampResponse =
-                            timeStampResponseGen.generateGrantedResponse(timeStampRequest,
-                                                          serialNumber, date,
-                                                          includeStatusString ? "Operation Okay" : null,
-                                                          additionalExtensions);
-                } else {
-                    timeStampResponse =
-                            timeStampResponseGen.generateGrantedResponse(timeStampRequest,
-                                                          serialNumber, date,
-                                                          includeStatusString ? "Operation Okay" : null);
-                }
+                timeStampResponse =
+                        timeStampResponseGen.generateGrantedResponse(timeStampRequest,
+                                                      serialNumber, date,
+                                                      includeStatusString ? "Operation Okay" : null,
+                                                      additionalExtensions, legacyEncoding);
             } catch (TSPException e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Got exception generating response: ", e);

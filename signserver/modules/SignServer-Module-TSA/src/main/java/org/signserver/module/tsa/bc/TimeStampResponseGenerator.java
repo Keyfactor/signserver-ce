@@ -240,6 +240,8 @@ public class TimeStampResponseGenerator
      * @param request the request this response is for.
      * @param serialNumber serial number for the response token.
      * @param genTime generation time for the response token.
+     * @param additionalExtensions extra extensions to be added to the response token.
+     * @param legacyEncoding encodes the token as before BC 1.50.
      * @return  the TimeStampResponse with a status of  PKIStatus.GRANTED
      * @throws TSPException on validation exception or internal error.
      */
@@ -273,11 +275,14 @@ public class TimeStampResponseGenerator
         try
         {
             CMSSignedData token = tokenGenerator.generate(request, serialNumber, genTime, additionalExtensions).toCMSSignedData();
-            if (legacyEncoding) {
+            if (legacyEncoding)
+            {
                 ByteArrayInputStream bIn = new ByteArrayInputStream(token.getEncoded());
                 ASN1InputStream aIn = new ASN1InputStream(bIn);
-                tstTokenContentInfo = ContentInfo.getInstance(aIn.readObject()); 
-            } else {
+                tstTokenContentInfo = ContentInfo.getInstance(aIn.readObject());
+            }
+            else
+            {
                 tstTokenContentInfo = token.toASN1Structure();
             }
         }

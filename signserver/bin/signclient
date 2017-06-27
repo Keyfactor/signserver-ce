@@ -66,7 +66,8 @@ fi
 
 # Optional JARs
 VALIDATIONCLI_JAR=`find "${SIGNSRV_HOME}/lib" -name "SignServer-Client-ValidationCLI-*.jar"`
-OPTIONAL_CLASSPATH=${VALIDATIONCLI_JAR}:${EXTRA_CLASSPATH}
+ENTERPRISE_JAR=`find "${SIGNSRV_HOME}/lib" -name "SignServer-ClientCLI-Enterprise-*.jar"`
+OPTIONAL_CLASSPATH=${VALIDATIONCLI_JAR}:${ENTERPRISE_JAR}:${EXTRA_CLASSPATH}
 
 # Construct the classpath
 CP="${MAIN_JAR}"

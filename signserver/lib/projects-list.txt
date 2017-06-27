@@ -25,3 +25,4 @@
 "SLF4J";                      "MIT";                                           "https://www.slf4j.org/";                               "The slf4j-log4j JAR is needed on the classpath for the (legacy) admin GUI and some CLI commands to avoid warnings when running on WildFly 10.";  "No.";
 "Swing Appframework";         "LGPLv2.1";                                      "https://java.net/projects/appframework";               "Framework used for desktop application/GUI support in the Admin GUI.";  "No.";
 "XAdES4j";                    "LGPLv3+";                                       "https://code.google.com/p/xades4j";                    "Used by the XAdESSigner for XAdES support." ;  "Yes. Added support for intermediate certificates. Contributed upstream patch not yet merged. See DSS-686.";
+"XmlPull";                    "Public Domain";                                 "http://www.xmlpull.org/";                              "Dependency of CESeCore.";             "No.";

@@ -103,7 +103,7 @@ public class CMSSignerTest extends ModulesTestCase {
      */
     @Test
     public void test02BasicCMSSignSHA256withRSA() throws Exception {
-        helperBasicCMSSign(getSignerIdDummy1(), "SHA256withRSA", "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.1",
+        helperBasicCMSSign(getSignerIdDummy1(), "SHA256withRSA", "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.11",
                 null, 1);
     }
     

@@ -39,13 +39,13 @@
             <dependency>
                 <artifactId>${bouncycastle.bcpkix.artifact}</artifactId>
                 <groupId>org.bouncycastle</groupId>
-                <version>1.54</version>
+                <version>1.56</version>
             </dependency>
             <dependency>
                 <artifactId>${bouncycastle.bcprov.artifact}</artifactId>
                 <groupId>org.bouncycastle</groupId>
                 <type>jar</type>
-                <version>1.54</version>
+                <version>1.56</version>
             </dependency>
             
             <dependency>
@@ -139,7 +139,7 @@
                 <artifactId>cert-cvc</artifactId>
                 <groupId>org.ejbca.cvc</groupId>
                 <type>jar</type>
-                <version>1.4.3</version>
+                <version>1.4.6</version>
             </dependency>
             
             <dependency>

@@ -77,6 +77,7 @@ import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX500NameUtil;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
 import org.signserver.module.mrtdsodsigner.bc.asn1.icao.LDSSecurityObject;
 import org.signserver.module.mrtdsodsigner.bc.asn1.icao.LDSVersionInfo;
 
@@ -352,7 +353,25 @@ public class SODFile extends PassportFile
                                 AlgorithmParameters params = AlgorithmParameters.getInstance("PSS");
                                 params.init(parameters.toASN1Primitive().getEncoded());
                                 final PSSParameterSpec spec = params.getParameterSpec(PSSParameterSpec.class);
-                                result = lookupMnemonicByOID(new ASN1ObjectIdentifier(spec.getDigestAlgorithm())) + "withRSAand" + lookupMnemonicByOID(new ASN1ObjectIdentifier(spec.getMGFAlgorithm()));
+                                                                final ASN1ObjectIdentifier digestAlg;
+                                String digestNameOrOID = spec.getDigestAlgorithm();
+                                if (digestNameOrOID.length() > 1 && digestNameOrOID.charAt(1) == '.') {
+                                    digestAlg = new ASN1ObjectIdentifier(digestNameOrOID);
+                                } else {
+                                    final DefaultDigestAlgorithmIdentifierFinder finder = new DefaultDigestAlgorithmIdentifierFinder();
+                                    AlgorithmIdentifier digestAlgId = finder.find(digestNameOrOID);
+                                    digestAlg = digestAlgId.getAlgorithm();
+                                }
+
+                                final String mgfAlg;
+                                final String mgfNameOrOID = spec.getMGFAlgorithm();
+                                if (mgfNameOrOID.length() > 1 && mgfNameOrOID.charAt(1) == '.') {
+                                    mgfAlg = lookupMnemonicByOID(new ASN1ObjectIdentifier(mgfNameOrOID));
+                                } else {
+                                    mgfAlg = mgfNameOrOID;
+                                }
+
+                                result = lookupMnemonicByOID(digestAlg) + "withRSAand" + mgfAlg;
                             }
                         } catch (InvalidParameterSpecException | IOException ignored) {}
                     }

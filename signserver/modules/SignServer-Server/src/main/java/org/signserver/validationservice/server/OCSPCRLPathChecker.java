@@ -91,7 +91,7 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
         // check if OCSP access address exists
         try {
             oCSPURLString = CertTools.getAuthorityInformationAccessOcspUrl(x509Cert);
-        } catch (CertificateParsingException e1) {
+        } catch (Exception e1) {
             // eat exception since we are going to fail over to crl
             log.debug("exception on retrieving OCSP url from certificate, will fail over to CRL");
             failOverToCRL = true;
@@ -135,7 +135,7 @@ public class OCSPCRLPathChecker extends OCSPPathChecker {
             // so we fail over to crl
             try {
                 crlURL = CertTools.getCrlDistributionPoint(x509Cert);
-            } catch (CertificateParsingException e) {
+            } catch (Exception e) {
                 // we could not get CDP from certificate
                 // eat up exception, and look in the Configured CRLPATHS
                 log.debug("exception on retrieving CDP url from certificate, will use preconfigured CRLPATHS");

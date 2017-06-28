@@ -137,6 +137,7 @@ public class CryptoTokenHelper {
     private static final String CESECORE_SUBJECT_DUMMY_CN = "CN=some guy";
     private static final String CESECORE_SUBJECT_DUMMY_L = "L=around";
     private static final String CESECORE_SUBJECT_DUMMY_C = "C=US";
+    private static final String CESECORE_SUBJECT_DN_6_8 = "CN=Dummy certificate created by a CESeCore application"; // Since ~6.8.0
     
     /**
      * A workaround for the feature in SignServer 2.0 that property keys are 
@@ -447,6 +448,7 @@ public class CryptoTokenHelper {
      */
     public static boolean isDummyCertificateDN(final String dn) {
         return dn.contains(CryptoTokenHelper.SUBJECT_DUMMY)
+                    || (dn.contains(CESECORE_SUBJECT_DN_6_8))
                     || (dn.contains(CESECORE_SUBJECT_DUMMY_CN) && dn.contains(CESECORE_SUBJECT_DUMMY_L) && dn.contains(CESECORE_SUBJECT_DUMMY_C));
     }
     

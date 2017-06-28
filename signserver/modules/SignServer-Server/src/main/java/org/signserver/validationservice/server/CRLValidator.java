@@ -152,7 +152,7 @@ public class CRLValidator extends BaseValidator {
 
                 try {
                     certURL = CertTools.getCrlDistributionPoint(x509CurrentCert);
-                } catch (CertificateParsingException ex) {
+                } catch (Exception ex) {
                     if (LOG.isDebugEnabled()) {
                         // CertTools.getCrlDistributionPoint throws an exception if it can't find an URL
                         LOG.debug("No CRL distribution point URL found: " + ex.getMessage(), ex);

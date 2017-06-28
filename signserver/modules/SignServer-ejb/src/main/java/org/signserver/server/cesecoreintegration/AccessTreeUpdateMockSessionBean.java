@@ -10,22 +10,21 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package se.primekey.sampleapp1.core.ejb.cesecoreintegration;
+package org.signserver.server.cesecoreintegration;
 
 // No persistence: import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import org.apache.log4j.Logger;
+import org.cesecore.authorization.access.AuthorizationCacheReloadListener;
 import org.cesecore.authorization.cache.AccessTreeUpdateData;
 import org.cesecore.authorization.cache.AccessTreeUpdateSessionLocal;
-import org.cesecore.internal.InternalResources;
 import org.cesecore.jndi.JndiConstants;
 
 /**
  * Mocked version as we don't handle access tree updates.
  * 
- * Based on AccessTreeUpdateSessionBean.java 461 2011-03-08 09:40:15Z tomas from CESeCore
+ * Based on AccessTreeUpdateSessionBean.java 25573 2017-03-22 00:42:52Z jeklund from CESeCore
  * 
  * Bean to handle the AuthorizationTreeUpdateData entity.
  * 
@@ -38,18 +37,10 @@ import org.cesecore.jndi.JndiConstants;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class AccessTreeUpdateMockSessionBean implements AccessTreeUpdateSessionLocal {
 
-    private static final Logger LOG = Logger.getLogger(AccessTreeUpdateMockSessionBean.class);
-
-    /** Internal localization of logs and errors */
-    private static final InternalResources INTERNAL_RESOURCES = InternalResources.getInstance();
+    // No persistence: private static final Logger LOG = Logger.getLogger(AccessTreeUpdateMockSessionBean.class);
 
     // No persistence: @PersistenceContext(unitName = CesecoreConfiguration.PERSISTENCE_UNIT)
     // No persistence: private EntityManager entityManager;
-
-    /**
-     * Cache this local bean, because it will cause many many database lookups otherwise
-     */
-    private AccessTreeUpdateData authTreeData = null;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)    // We don't modify the database in this call
@@ -71,13 +62,45 @@ public class AccessTreeUpdateMockSessionBean implements AccessTreeUpdateSessionL
                 accessTreeUpdateData = new AccessTreeUpdateData();
                 accessTreeUpdateData.setAccessTreeUpdateNumber(AccessTreeUpdateData.DEFAULTACCESSTREEUPDATENUMBER+1);
                 entityManager.persist(accessTreeUpdateData);
+                // Additionally we set the marker that this (new) installation should use the new union access rule pattern
+                setNewAuthorizationPatternMarker();
             } catch (Exception e) {
                 LOG.error(InternalResources.getInstance().getLocalizedMessage("authorization.errorcreateauthtree"), e);
                 throw new EJBException(e);
             }
         } else {
             accessTreeUpdateData.setAccessTreeUpdateNumber(accessTreeUpdateData.getAccessTreeUpdateNumber() + 1);
-        }*/
+        }
+        LOG.debug("Invoking event");
+        final AuthorizationCacheReload event = new AuthorizationCacheReload(accessTreeUpdateData.getAccessTreeUpdateNumber());
+        AuthorizationCacheReloadListeners.INSTANCE.onReload(event);
+        LOG.debug("Done invoking event");
+        */
     }
 
+    @Override
+    public void addReloadEvent(final AuthorizationCacheReloadListener observer) {
+        // No persistence: AuthorizationCacheReloadListeners.INSTANCE.addListener(observer);
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public boolean isNewAuthorizationPatternMarkerPresent() {
+        // No persistence: return entityManager.find(AccessTreeUpdateData.class, AccessTreeUpdateData.NEW_AUTHORIZATION_PATTERN_MARKER)!=null;
+        return false;
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void setNewAuthorizationPatternMarker() {
+        /* No persistence
+         * Use a row in this table as a marker, since it is already a dependency from AuthorizationSessionBean.
+         * (Otherwise we would have to depend on reading configuration which in turn depends back on authorization.)
+         *
+        if (!isNewAuthorizationPatternMarkerPresent()) {
+            final AccessTreeUpdateData marker = new AccessTreeUpdateData();
+            marker.setPrimaryKey(AccessTreeUpdateData.NEW_AUTHORIZATION_PATTERN_MARKER);
+            entityManager.persist(marker);
+        }*/
+    }
 }

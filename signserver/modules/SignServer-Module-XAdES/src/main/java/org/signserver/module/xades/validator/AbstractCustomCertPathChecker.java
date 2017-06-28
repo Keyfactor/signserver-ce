@@ -120,7 +120,7 @@ public abstract class AbstractCustomCertPathChecker extends PKIXCertPathChecker 
         String ocspURLString = null;
         try {
             ocspURLString = CertTools.getAuthorityInformationAccessOcspUrl(certificate);
-        } catch (CertificateParsingException ex) {
+        } catch (Exception ex) {
             if (LOG.isDebugEnabled()) {
                LOG.debug("Could not read AIA OCSP URL: " + ex.getMessage());
             }

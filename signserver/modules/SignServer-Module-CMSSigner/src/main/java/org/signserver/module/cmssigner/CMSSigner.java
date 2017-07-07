@@ -205,6 +205,28 @@ public class CMSSigner extends BaseSigner {
             configErrors.add("Incorrect value for property " + DER_RE_ENCODE_PROPERTY + ". Expecting TRUE or FALSE.");
         }
     }
+    
+    /**
+     * Returns true if the signer wants to augment the CMSSignedData instance.
+     * This can be overridden by extending implementations.
+     * 
+     * @return True if the implementation expects extendCMSData to be called
+     */
+    protected boolean extendsCMSData() {
+        return false;
+    }
+    
+    /**
+     * Augment CMSSignedData object with extended attributes.
+     * Must be overridden by extending implementations when extendCMSData
+     * returns true.
+     * 
+     * @param cms Basic CMS signature data
+     * @return CMS signature data with additional attributes
+     */
+    protected CMSSignedData extendCMSData(CMSSignedData cms) {
+        throw new UnsupportedOperationException("Base CMS signer doesn't support extending CMS data");
+    }
 
     private void initAcceptedHashDigestAlgorithms() {
         final String acceptedHashDigestAlgorithmsValue =
@@ -312,7 +334,7 @@ public class CMSSigner extends BaseSigner {
                  .build(contentSigner, cert));
 
         generator.addCertificates(new JcaCertStore(certs));
-
+        
         // Should the content be detached or not
         final boolean detached;
         final Boolean detachedRequested = getDetachedSignatureRequest(requestContext);
@@ -336,7 +358,7 @@ public class CMSSigner extends BaseSigner {
         }
 
         // Generate the signature
-        if (!derReEncode) {
+        if (!derReEncode && !extendsCMSData()) {
             try (
                     final OutputStream responseOutputStream = requestData.isFile() && !detached ? responseData.getAsFileOutputStream() : responseData.getAsInMemoryOutputStream();
                     final OutputStream out = generator.open(contentOID, responseOutputStream, !detached);
@@ -357,10 +379,20 @@ public class CMSSigner extends BaseSigner {
                 ) {
                 IOUtils.copyLarge(requestIn, out);
             }
+            
+            CMSSignedData signedData = new CMSSignedData(bout.toByteArray());
+            
+            if (extendsCMSData()) {
+                signedData = extendCMSData(signedData);
+            } 
+            
             try (final OutputStream responseOutputStream = requestData.isFile() && !detached ? responseData.getAsFileOutputStream() : responseData.getAsInMemoryOutputStream();) {
-                final CMSSignedData signedData = new CMSSignedData(bout.toByteArray());
-                final DEROutputStream derOut = new DEROutputStream(responseOutputStream);
-                derOut.writeObject(signedData.toASN1Structure());
+                if (derReEncode) {
+                    final DEROutputStream derOut = new DEROutputStream(responseOutputStream);
+                    derOut.writeObject(signedData.toASN1Structure());
+                } else {
+                    responseOutputStream.write(signedData.getEncoded());
+                }
             }
         }
 
@@ -419,6 +451,10 @@ public class CMSSigner extends BaseSigner {
         
         // Generate the signature
         CMSSignedData signedData = generator.generate(new CMSProcessableByteArray(contentOID, "dummy".getBytes()), false);
+        
+        if (extendsCMSData()) {
+            signedData = extendCMSData(signedData);
+        }
         
         responseData.getAsInMemoryOutputStream().write(signedData.getEncoded());
     }

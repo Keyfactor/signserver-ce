@@ -1,6 +1,7 @@
 /*
  * copied from upstream git, this is needed for the bugfixed 
  * using code from github.com/bcgit/bc-java git tree bea9d91835fabcde3be7ec7f5e9b9d9bddcb34cf
+ * also + legacy encoding patch (DSS-1415, bcgit: 4afdba1)
  */
 package org.signserver.module.tsa.bc;
 
@@ -12,6 +13,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -19,6 +21,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERUTF8String;
+import org.bouncycastle.asn1.DLSequence;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIFreeText;
 import org.bouncycastle.asn1.cmp.PKIStatus;
@@ -176,7 +179,7 @@ public class TimeStampResponseGenerator
     {
         try
         {
-            return this.generateGrantedResponse(request, serialNumber, genTime, "Operation Okay", null, false);
+            return this.generateGrantedResponse(request, serialNumber, genTime, "Operation Okay", null);
         }
         catch (Exception e)
         {
@@ -205,30 +208,7 @@ public class TimeStampResponseGenerator
         String              statusString)
         throws TSPException
     {
-        return generateGrantedResponse(request, serialNumber, genTime, statusString, null, false);
-    }
-
-    /**
-     * Return a granted response, if the passed in request passes validation with the passed in status string.
-     * <p>
-     * If genTime is null a timeNotAvailable or a validation exception occurs a TSPValidationException will
-     * be thrown. The parent TSPException will only occur on some sort of system failure.
-     * </p>
-     * @param request the request this response is for.
-     * @param serialNumber serial number for the response token.
-     * @param genTime generation time for the response token.
-     * @return  the TimeStampResponse with a status of  PKIStatus.GRANTED
-     * @throws TSPException on validation exception or internal error.
-     */
-    public TimeStampResponse generateGrantedResponse(
-        TimeStampRequest    request,
-        BigInteger          serialNumber,
-        Date                genTime,
-        String              statusString,
-        Extensions          additionalExtensions)
-        throws TSPException
-    {
-        return generateGrantedResponse(request, serialNumber, genTime, statusString, additionalExtensions, false);
+        return generateGrantedResponse(request, serialNumber, genTime, statusString, null);
     }
 
     /**
@@ -241,7 +221,6 @@ public class TimeStampResponseGenerator
      * @param serialNumber serial number for the response token.
      * @param genTime generation time for the response token.
      * @param additionalExtensions extra extensions to be added to the response token.
-     * @param legacyEncoding encodes the token as before BC 1.50.
      * @return  the TimeStampResponse with a status of  PKIStatus.GRANTED
      * @throws TSPException on validation exception or internal error.
      */
@@ -250,8 +229,7 @@ public class TimeStampResponseGenerator
         BigInteger          serialNumber,
         Date                genTime,
         String              statusString,
-        Extensions          additionalExtensions,
-        boolean             legacyEncoding)
+        Extensions          additionalExtensions)
         throws TSPException
     {
         if (genTime == null)
@@ -274,17 +252,7 @@ public class TimeStampResponseGenerator
         ContentInfo tstTokenContentInfo;
         try
         {
-            CMSSignedData token = tokenGenerator.generate(request, serialNumber, genTime, additionalExtensions).toCMSSignedData();
-            if (legacyEncoding)
-            {
-                ByteArrayInputStream bIn = new ByteArrayInputStream(token.getEncoded());
-                ASN1InputStream aIn = new ASN1InputStream(bIn);
-                tstTokenContentInfo = ContentInfo.getInstance(aIn.readObject());
-            }
-            else
-            {
-                tstTokenContentInfo = token.toASN1Structure();
-            }
+            tstTokenContentInfo = tokenGenerator.generate(request, serialNumber, genTime, additionalExtensions).toCMSSignedData().toASN1Structure();
         }
         catch (TSPException e)
         {
@@ -296,11 +264,9 @@ public class TimeStampResponseGenerator
                     "Timestamp token received cannot be converted to ContentInfo", e);
         }
 
-        TimeStampResp resp = new TimeStampResp(pkiStatusInfo, tstTokenContentInfo);
-
         try
         {
-            return new TimeStampResponse(resp);
+            return new TimeStampResponse(new DLSequence(new ASN1Encodable[] { pkiStatusInfo.toASN1Primitive(), tstTokenContentInfo.toASN1Primitive() }));
         }
         catch (IOException e)
         {

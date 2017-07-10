@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -657,7 +658,7 @@ public class TimeStampSigner extends BaseSigner {
                         timeStampResponseGen.generateGrantedResponse(timeStampRequest,
                                                       serialNumber, date,
                                                       includeStatusString ? "Operation Okay" : null,
-                                                      additionalExtensions, legacyEncoding);
+                                                      additionalExtensions);
             } catch (TSPException e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Got exception generating response: ", e);
@@ -667,7 +668,7 @@ public class TimeStampSigner extends BaseSigner {
             }
 
             final TimeStampToken token = timeStampResponse.getTimeStampToken();
-            final byte[] signedbytes = timeStampResponse.getEncoded();
+            final byte[] signedbytes = legacyEncoding ? timeStampResponse.getEncoded(ASN1Encoding.DL) : timeStampResponse.getEncoded();
             out.write(signedbytes);
             cert = crypto.getCertificate();
             

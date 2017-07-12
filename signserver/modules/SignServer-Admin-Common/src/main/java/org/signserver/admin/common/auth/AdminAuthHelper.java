@@ -107,7 +107,7 @@ public class AdminAuthHelper {
                    cert.getIssuerDN().getName(), cert.getSerialNumber());
         }
     }
-
+    
     private void log(final X509Certificate certificate, 
             final boolean authorized, final String operation,
             final String... args) {
@@ -169,6 +169,12 @@ public class AdminAuthHelper {
         return hasAuthorization(cert, getWSClients("WSARCHIVEAUDITORS"));
     }
     
+    public boolean isPeerAuthorizedNoLogging(final X509Certificate cert, final String operation,
+            final String... args) {
+        LOG.debug(">isPeerAuthorizedNoLogging");
+        return hasAuthorization(cert, getWSClients("WSPEERS"));
+    }
+
     public boolean hasAuthorization(final X509Certificate cert,
             final Set<ClientEntry> authSet) {
         

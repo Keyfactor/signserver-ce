@@ -1,6 +1,7 @@
 "Project";                    "License(s)";                                    "Project URL";                                          "Usage description";                   "Modifications";
 "AOP Alliance";               "Public Domain";                                 "http://aopalliance.sourceforge.net";                   "Dependency of Guice.";                "No.";
 "Apache Commons";             "Apache 2.0";                                    "http://commons.apache.org";                            "Core dependency used for multiple tasks such as file handling, configuration and collections support.";  "No.";
+"Apache HttpComponents";      "Apache 2.0";                                    "https://hc.apache.org";                                "Dependency of EJBCA Peer Connectors" ;  "No." ;
 "Apache OpenEJB";             "Apache 2.0";                                    "http://openejb.apache.org";                            "Core dependency providing the Java EE and Servet APIs.";  "No." ;
 "Apache POI";                 "Apache 2.0";                                    "https://poi.apache.org";                               "Dependency used for signing MSI installers.";  "No.";
 "Bouncy Castle";              "BSD";                                           "http://www.bouncycastle.org";                          "Core dependency used for many cryptographic and related operations.";  "No changes to JAR. Some implementations replaced with alternatives in SignServer source. Changes contributed to upstream. See: DSS-378, DSS-639, DSS-695, DSS-868";

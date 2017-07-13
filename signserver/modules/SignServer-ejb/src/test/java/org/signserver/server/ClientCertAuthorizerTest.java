@@ -32,7 +32,6 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.AuthorizedClient;
-import org.signserver.common.GenericSignRequest;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;

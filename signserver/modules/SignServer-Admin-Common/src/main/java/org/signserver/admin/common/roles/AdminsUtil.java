@@ -33,7 +33,7 @@ public class AdminsUtil {
      */
     private static final Logger LOG = Logger.getLogger(AdminsUtil.class);
 
-    public static LinkedHashMap<ClientEntry, AdminEntry> parseAdmins(String admins, String auditors, String archiveAuditors) {
+    public static LinkedHashMap<ClientEntry, AdminEntry> parseAdmins(String admins, String auditors, String archiveAuditors, String peerSystems) {
         final LinkedHashMap<ClientEntry, AdminEntry> entryMap
                 = new LinkedHashMap<>();
 
@@ -104,6 +104,29 @@ public class AdminsUtil {
                 }
             }
         }
+        
+        // Peer systems
+        if (peerSystems != null && peerSystems.contains(";")) {
+            for (final String entryString : peerSystems.split(";")) {
+                final String[] parts = entryString.split(",", 2);
+
+                try {
+                    final ClientEntry client
+                            = new ClientEntry(new BigInteger(parts[0], 16), parts[1]);
+                    AdminEntry entry = entryMap.get(client);
+                    if (entry == null) {
+                        entry = new AdminEntry(client);
+                        entryMap.put(client, entry);
+                    }
+                    entry.setPeerSystem(true);
+                } catch (NumberFormatException e) {
+                    LOG.error("Invalid serialnumber for administrator: "
+                            + parts[0]);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    LOG.error("Invalid administrator definition: " + entryString);
+                }
+            }
+        }
 
         return entryMap;
     }
@@ -138,6 +161,19 @@ public class AdminsUtil {
         final StringBuilder buff = new StringBuilder();
         for (AdminEntry entry : entries.values()) {
             if (entry.isArchiveAuditor()) {
+                buff.append(entry.getClient().getSerialNumber().toString(16));
+                buff.append(",");
+                buff.append(entry.getClient().getIssuerDN());
+                buff.append(";");
+            }
+        }
+        return buff.toString();
+    }
+
+    public static String serializePeerSystems(final Map<ClientEntry, AdminEntry> entries) {
+        final StringBuilder buff = new StringBuilder();
+        for (AdminEntry entry : entries.values()) {
+            if (entry.isPeerSystem()) {
                 buff.append(entry.getClient().getSerialNumber().toString(16));
                 buff.append(",");
                 buff.append(entry.getClient().getIssuerDN());

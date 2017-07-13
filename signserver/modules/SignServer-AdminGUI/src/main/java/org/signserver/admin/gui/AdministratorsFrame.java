@@ -56,7 +56,8 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         "Issuer DN",
         "Admin",
         "Auditor",
-        "Archive Auditor"
+        "Archive Auditor",
+        "Peer System"
     };
 
     private static final String ALLOWANYWSADMIN = "ALLOWANYWSADMIN";
@@ -81,7 +82,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
 
             @Override
             public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == 2 || columnIndex == 3 || columnIndex == 4) {
+                if (columnIndex == 2 || columnIndex == 3 || columnIndex == 4 || columnIndex == 5) {
                     return Boolean.class;
                 }
                 return super.getColumnClass(columnIndex);
@@ -105,6 +106,9 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                         break;
                     case 4:
                         result = entries.get(rowIndex).isArchiveAuditor();
+                        break;
+                    case 5:
+                        result = entries.get(rowIndex).isPeerSystem();
                         break;
                     default:
                         result = null;
@@ -187,6 +191,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         editRoleArchiveAuditorCheckBox = new javax.swing.JCheckBox();
         certificateSerialNumberErrorLabel = new javax.swing.JLabel();
         issuerErrorLabel = new javax.swing.JLabel();
+        editRolePeerSystemCheckBox = new javax.swing.JCheckBox();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jScrollPane6 = new javax.swing.JScrollPane();
@@ -201,7 +206,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
 
         editPanel.setName("editPanel"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(AdministratorsFrame.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance().getContext().getResourceMap(AdministratorsFrame.class);
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
 
@@ -252,6 +257,9 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         issuerErrorLabel.setText(resourceMap.getString("issuerErrorLabel.text")); // NOI18N
         issuerErrorLabel.setName("issuerErrorLabel"); // NOI18N
 
+        editRolePeerSystemCheckBox.setText(resourceMap.getString("editRolePeerSystemCheckBox.text")); // NOI18N
+        editRolePeerSystemCheckBox.setName("editRolePeerSystemCheckBox"); // NOI18N
+
         javax.swing.GroupLayout editPanelLayout = new javax.swing.GroupLayout(editPanel);
         editPanel.setLayout(editPanelLayout);
         editPanelLayout.setHorizontalGroup(
@@ -260,7 +268,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, editPanelLayout.createSequentialGroup()
-                        .addComponent(certificateSerialNumberErrorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
+                        .addComponent(certificateSerialNumberErrorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 743, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(loadCurrentAdminCertButton, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(editPanelLayout.createSequentialGroup()
@@ -268,15 +276,17 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(editRoleAuditorCheckBox)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(editRoleArchiveAuditorCheckBox))
+                        .addComponent(editRoleArchiveAuditorCheckBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(editRolePeerSystemCheckBox))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, editPanelLayout.createSequentialGroup()
                         .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(issuerErrorLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
-                            .addComponent(editCertSerialNoTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
-                            .addComponent(editIssuerDNTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE))
+                            .addComponent(issuerErrorLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
+                            .addComponent(editCertSerialNoTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
+                            .addComponent(editIssuerDNTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 749, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(loadFromCertificateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -309,7 +319,8 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 .addGroup(editPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(editRoleAdministratorCheckBox)
                     .addComponent(editRoleAuditorCheckBox)
-                    .addComponent(editRoleArchiveAuditorCheckBox))
+                    .addComponent(editRoleArchiveAuditorCheckBox)
+                    .addComponent(editRolePeerSystemCheckBox))
                 .addGap(12, 12, 12))
         );
 
@@ -375,7 +386,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         jToolBar1.setRollover(true);
         jToolBar1.setName("jToolBar1"); // NOI18N
 
-        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getActionMap(AdministratorsFrame.class, this);
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance().getContext().getActionMap(AdministratorsFrame.class, this);
         refreshButton.setAction(actionMap.get("reloadGlobalConfiguration")); // NOI18N
         refreshButton.setText(resourceMap.getString("refreshButton.text")); // NOI18N
         refreshButton.setFocusable(false);
@@ -399,9 +410,9 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 770, Short.MAX_VALUE)
+                    .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 1412, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 660, Short.MAX_VALUE)
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 1302, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(addButton)
@@ -489,6 +500,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                     final boolean admin = editRoleAdministratorCheckBox.isSelected();
                     final boolean auditor = editRoleAuditorCheckBox.isSelected();
                     final boolean archiveAuditor = editRoleArchiveAuditorCheckBox.isSelected();
+                    final boolean peerSystem = editRolePeerSystemCheckBox.isSelected();
 
                     final String certSerialNo = editCertSerialNoTextField.getText();
                     final String issuerDN = editIssuerDNTextField.getText();
@@ -509,7 +521,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                                     "The administrator already existed");
                         } else {
                             final AdminEntry newEntry =
-                                    new AdminEntry(cred, admin, auditor, archiveAuditor);
+                                    new AdminEntry(cred, admin, auditor, archiveAuditor, peerSystem);
                             admins.put(cred, newEntry);
 
                             if (auditor) {
@@ -523,6 +535,12 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                                     .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                     "WSARCHIVEAUDITORS",
                                     AdminsUtil.serializeArchiveAuditors(admins));
+                            }
+                            if (peerSystem) {
+                                SignServerAdminGUIApplication.getAdminWS()
+                                    .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                    "WSPEERS",
+                                    AdminsUtil.serializePeerSystems(admins));
                             }
                             if (admin) {
                                 SignServerAdminGUIApplication.getAdminWS()
@@ -562,6 +580,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                 editRoleAdministratorCheckBox.setSelected(oldEntry.isAdmin());
                 editRoleAuditorCheckBox.setSelected(oldEntry.isAuditor());
                 editRoleArchiveAuditorCheckBox.setSelected(oldEntry.isArchiveAuditor());
+                editRolePeerSystemCheckBox.setSelected(oldEntry.isPeerSystem());
 
                 boolean serialNumberInvalid = false;
                 boolean issuerInvalid = false;
@@ -597,7 +616,8 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                                         new AdminEntry(newCred,
                                             editRoleAdministratorCheckBox.isSelected(),
                                             editRoleAuditorCheckBox.isSelected(),
-                                            editRoleArchiveAuditorCheckBox.isSelected());
+                                            editRoleArchiveAuditorCheckBox.isSelected(),
+                                            editRolePeerSystemCheckBox.isSelected());
 
                                 if (admins.containsKey(newCred)) {
                                     JOptionPane.showMessageDialog(this,
@@ -613,6 +633,10 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                                     .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                     "WSARCHIVEAUDITORS",
                                     AdminsUtil.serializeArchiveAuditors(admins));
+                                SignServerAdminGUIApplication.getAdminWS()
+                                    .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                    "WSPEERS",
+                                    AdminsUtil.serializePeerSystems(admins));
                                 SignServerAdminGUIApplication.getAdminWS()
                                     .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                     "WSADMINS",
@@ -665,6 +689,12 @@ public class AdministratorsFrame extends javax.swing.JFrame {
                                 .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                 "WSARCHIVEAUDITORS",
                                 AdminsUtil.serializeArchiveAuditors(admins));
+                        }
+                        if (oldEntry.isPeerSystem()) {
+                            SignServerAdminGUIApplication.getAdminWS()
+                                .setGlobalProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                "WSPEERS",
+                                AdminsUtil.serializePeerSystems(admins));
                         }
                         if (oldEntry.isAdmin()) {
                             SignServerAdminGUIApplication.getAdminWS()
@@ -823,6 +853,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
     private javax.swing.JCheckBox editRoleAdministratorCheckBox;
     private javax.swing.JCheckBox editRoleArchiveAuditorCheckBox;
     private javax.swing.JCheckBox editRoleAuditorCheckBox;
+    private javax.swing.JCheckBox editRolePeerSystemCheckBox;
     private javax.swing.JLabel issuerErrorLabel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -843,6 +874,7 @@ public class AdministratorsFrame extends javax.swing.JFrame {
         String admins = null;
         String auditors = null;
         String archiveAuditors = null;
+        String peerSystems = null;
 
         for (WsGlobalConfiguration.Config.Entry entry
                     : SignServerAdminGUIApplication.getAdminWS()
@@ -856,9 +888,12 @@ public class AdministratorsFrame extends javax.swing.JFrame {
             } else if (entry.getKey().equals(GlobalConfiguration.SCOPE_GLOBAL
                     + "WSARCHIVEAUDITORS")) {
                 archiveAuditors = (String) entry.getValue();
+            } else if (entry.getKey().equals(GlobalConfiguration.SCOPE_GLOBAL
+                    + "WSPEERS")) {
+                peerSystems = (String) entry.getValue();
             }
         }
 
-        return AdminsUtil.parseAdmins(admins, auditors, archiveAuditors);
+        return AdminsUtil.parseAdmins(admins, auditors, archiveAuditors, peerSystems);
     }
 }

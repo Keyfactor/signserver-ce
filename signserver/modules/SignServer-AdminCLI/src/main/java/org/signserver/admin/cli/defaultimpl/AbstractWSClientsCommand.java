@@ -144,7 +144,7 @@ public abstract class AbstractWSClientsCommand extends AbstractAdminCommand {
                 
             if (LIST.equals(operation)) {
                 final StringBuilder buff = new StringBuilder();
-                buff.append("Authorized auditors:");
+                buff.append("Authorizations:");
                 buff.append("\n");
                 for (ClientEntry entry : entries) {
                     buff.append(String.format("%-20s %s",

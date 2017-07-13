@@ -32,7 +32,7 @@ public class WSAuditorsCommand extends AbstractWSClientsCommand {
 
     @Override
     public String getDescription() {
-        return "Manages authorizations for WS auditors";
+        return "Manages authorizations for auditors";
     }
 
     @Override

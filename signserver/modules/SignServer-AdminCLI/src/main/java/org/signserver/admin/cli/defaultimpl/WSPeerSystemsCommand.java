@@ -17,21 +17,21 @@ package org.signserver.admin.cli.defaultimpl;
  *
  * @version $Id$
  */
-public class WSArchiveAuditorsCommand extends AbstractWSClientsCommand {
+public class WSPeerSystemsCommand extends AbstractWSClientsCommand {
     
     private static final String USAGE =
-            "Usage: signserver wsarchiveauditors -add -certserialno <certificate serial number (in hex)> -issuerdn <issuer DN>\n"
-                + "Usage: signserver warchiveauditors -add -cert <PEM or DER file>\n"
-            + "Usage: signserver warchiveauditors -remove -certserialno <certificate serial number (in hex)> -issuerdn <issuer DN>\n"
-            + "Usage: signserver warchiveauditors -list\n"
-            + "Example 1: signserver warchiveauditors -add -certserialno 123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
-            + "Example 2: signserver warchiveauditors -add -cert wsauditor.pem\n"
-            + "Example 3: signserver warchiveauditors -remove -certserialno 123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
-            + "Example 4: signserver warchiveauditors -list";
+            "Usage: signserver wspeersystems -add -certserialno <certificate serial number (in hex)> -issuerdn <issuer DN>\n"
+                + "Usage: signserver wspeersystems -add -cert <PEM or DER file>\n"
+            + "Usage: signserver wspeersystems -remove -certserialno <certificate serial number (in hex)> -issuerdn <issuer DN>\n"
+            + "Usage: signserver wspeersystems -list\n"
+            + "Example 1: signserver wspeersystems -add -certserialno 123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
+            + "Example 2: signserver wspeersystems -add -cert wsauditor.pem\n"
+            + "Example 3: signserver wspeersystems -remove -certserialno 123ABCDEF -issuerdn \"CN=Neo Morpheus, C=SE\"\n"
+            + "Example 4: signserver wspeersystems -list";
 
     @Override
     public String getDescription() {
-        return "Manages authorizations for archive auditors";
+        return "Manages authorizations for peer systems";
     }
 
     @Override
@@ -41,6 +41,6 @@ public class WSArchiveAuditorsCommand extends AbstractWSClientsCommand {
 
     @Override
     protected String getClientsProperty() {
-        return "WSARCHIVEAUDITORS";
+        return "WSPEERS";
     }
 }

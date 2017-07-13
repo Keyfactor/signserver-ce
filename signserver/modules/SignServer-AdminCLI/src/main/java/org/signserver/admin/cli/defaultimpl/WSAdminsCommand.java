@@ -88,7 +88,7 @@ public class WSAdminsCommand extends AbstractAdminCommand {
 
     @Override
     public String getDescription() {
-        return "Manages authorizations for WS administrators";
+        return "Manages authorizations for administrators";
     }
 
     @Override

@@ -1,3 +1,14 @@
+SignServer 4.2.0
+----------------
+
+Notice:
+ - The security audit logger (configured in databaseprotection.properties)
+   is now case sensitive when it comes to the key aliases.
+   Make sure your keys are pointed out with the right name.
+   Specifically, if the default sample keystore with alias 'dbstorekey' was
+   used it should now be changed to 'dbStoreKey' as that is the correct 
+   name in the keystore.
+
 SignServer 4.1.0
 ----------------
 

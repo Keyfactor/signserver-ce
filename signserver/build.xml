@@ -179,6 +179,13 @@ Installation Guide for details.
         <echo/>
         <echo message="Filtering jars..."/>
 
+        <!-- cesecore-common.jar -->
+        <property name="cesecore-common.jar" value="cesecore-common-6.8.0.jar"/>
+        <move todir="${tmp}" file="${app.ear.dir}/lib/${cesecore-common.jar}"/>
+        <jar destfile="${app.ear.dir}/lib/${cesecore-common.jar}">
+            <zipfileset src="${tmp}/${cesecore-common.jar}" excludes="${cesecore.common.excludes}"/>
+        </jar>
+
         <!-- cesecore-ejb.jar -->
         <property name="cesecore-ejb.jar" value="cesecore-ejb-6.8.0.jar"/>
         <move todir="${tmp}" file="${app.ear.dir}/${cesecore-ejb.jar}"/>

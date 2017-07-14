@@ -459,6 +459,11 @@ public class WorkerSessionMock implements WorkerSessionLocal,
         return lastRequestContext;
     }
 
+    @Override
+    public List<String> getCertificateIssues(int workerId, List<Certificate> certificateChain) throws InvalidWorkerIdException {
+        return new ArrayList<>();
+    }
+
     private static class Worker {
         private final IProcessable processable;
         private final WorkerConfig config;

@@ -18,6 +18,7 @@ import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,6 +32,8 @@ import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
+import org.cesecore.keybind.CertificateImportException;
+import org.cesecore.util.CertTools;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.*;
 import org.signserver.server.aliasselectors.AliasSelector;
@@ -874,5 +877,19 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     protected boolean isNoCertificates() {
         return Boolean.parseBoolean(config.getProperty("NOCERTIFICATES", Boolean.FALSE.toString()));
     }
-    
+
+    @Override
+    public List<String> getCertificateIssues(List<Certificate> certificateChain) {
+        final ArrayList<String> results = new ArrayList<>();
+        if (certificateChain.isEmpty()) {
+            results.add("No certificate");
+        } else {
+            if (CertTools.isCA(certificateChain.get(0))) {
+                results.add("Not an end entity certificate.");
+            }
+        }
+        // TODO: We could try to validate the chain here
+        return results;
+    }
+
 }

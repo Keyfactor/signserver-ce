@@ -470,4 +470,14 @@ public interface WorkerSession {
      * @return list of worker IDs 
      */
     List<Integer> getAllWorkers();
+
+    /**
+     * Checks if there are any issues using this certificate chain with the specfied worker.
+     *
+     * @param workerId worker to ask about the certificate chain
+     * @param certificateChain to check
+     * @return each certificate issue found
+     * @throws InvalidWorkerIdException in case a worker with the specified ID is not available
+     */
+    List<String> getCertificateIssues(int workerId, List<Certificate> certificateChain) throws InvalidWorkerIdException;
 }

@@ -461,6 +461,11 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
                     public List<Certificate> getSignerCertificateChain(WorkerIdentifier signerId, String alias) throws CryptoTokenOfflineException {
                         throw new UnsupportedOperationException("Not supported yet.");
                     }
+
+                    @Override
+                    public List<String> getCertificateIssues(int workerId, List<Certificate> certificateChain) throws InvalidWorkerIdException {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    }
                 };
             }
             return workerSession;

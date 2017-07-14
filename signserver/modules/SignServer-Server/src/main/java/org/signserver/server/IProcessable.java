@@ -224,4 +224,14 @@ public interface IProcessable extends IWorker {
             InvalidAlgorithmParameterException,
             UnsupportedCryptoTokenParameter,
             OperationUnsupportedException;
+
+    /**
+     * Checks if there are any issues using this certificate chain with the worker.
+     *
+     * A typical check could be if the right extended key usages are present.
+     *
+     * @param certificateChain to check
+     * @return each certificate issue found
+     */
+    List<String> getCertificateIssues(List<Certificate> certificateChain);
 }

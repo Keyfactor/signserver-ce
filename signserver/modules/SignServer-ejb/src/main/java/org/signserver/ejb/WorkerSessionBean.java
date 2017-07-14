@@ -1364,4 +1364,19 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             throw new InvalidWorkerIdException(ex.getMessage());
         }
     }
+
+    @Override
+    public List<String> getCertificateIssues(int workerId, List<Certificate> certificateChain) throws InvalidWorkerIdException {
+        try {
+            final IWorker worker = workerManagerSession.getWorker(new WorkerIdentifier(workerId));
+            if (worker instanceof IProcessable) {
+                IProcessable processable = (IProcessable) worker;
+                return processable.getCertificateIssues(certificateChain);
+            } else {
+                return Collections.emptyList();
+            }
+        } catch (NoSuchWorkerException ex) {
+            throw new InvalidWorkerIdException(ex.getMessage());
+        }
+    }
 }

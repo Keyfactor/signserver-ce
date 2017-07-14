@@ -19,6 +19,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -45,6 +46,7 @@ import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.encoders.Base64;
+import org.junit.Test;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
@@ -440,6 +442,38 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
                                         KeyPurposeId.id_kp_emailProtection},
                     true, true,
                     "No other extended key usages than timeStamping is allowed");
+    }
+    
+    /**
+     * Tests for the certificate requirements.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testCertificateIssues() throws Exception {
+        LOG.info(">testCertificateIssues");
+
+        MSAuthCodeTimeStampSigner instance = new MSAuthCodeTimeStampSigner();
+
+        // Certifiate without id_kp_timeStamping
+        final Certificate certNoEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=Without EKU").build());
+        assertEquals(Arrays.asList("Missing extended key usage timeStamping", "The extended key usage extension must be present and marked as critical"), instance.getCertificateIssues(Arrays.asList(certNoEku)));
+        
+        // Certificate with non-critical id_kp_timeStamping
+        boolean critical = false;
+        final Certificate certEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=With non-critical EKU").addExtension(new CertExt(Extension.extendedKeyUsage, critical, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping))).build());
+        assertEquals(Arrays.asList("The extended key usage extension must be present and marked as critical"), instance.getCertificateIssues(Arrays.asList(certEku)));
+        
+        // Certificate with critical id_kp_timeStamping but also with codeSigning
+        critical = true;
+        final Certificate certCritEkuButAlsoOther = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=With critical EKU and other").addExtension(new CertExt(Extension.extendedKeyUsage, critical, new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_timeStamping, KeyPurposeId.id_kp_codeSigning }))).build());
+        assertEquals(Arrays.asList("No other extended key usages than timeStamping is allowed"), instance.getCertificateIssues(Arrays.asList(certCritEkuButAlsoOther)));
+        
+        // OK: Certificate with critical id_kp_timeStamping
+        critical = true;
+        final Certificate certCritEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=With critical EKU").addExtension(new CertExt(Extension.extendedKeyUsage, critical, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping))).build());
+        assertEquals(Collections.<String>emptyList(), instance.getCertificateIssues(Arrays.asList(certCritEku)));
+        
     }
     
     /**

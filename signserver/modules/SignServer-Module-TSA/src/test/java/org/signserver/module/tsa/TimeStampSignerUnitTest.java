@@ -1064,7 +1064,12 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         assertFalse("should not contain error",
                 fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true"));
     }
-    
+
+    /**
+     * Tests for the certificate requirements.
+     *
+     * @throws Exception 
+     */
     @Test
     public void testCertificateIssues() throws Exception {
         LOG.info(">testCertificateIssues");

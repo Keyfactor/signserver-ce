@@ -588,35 +588,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
 
             // Check if certificat has the required EKU
             final Certificate certificate = getSigningCertificate(services);
-            try {
-                if (certificate instanceof X509Certificate) {
-                    final X509Certificate cert = (X509Certificate) certificate;
-                    final List<String> ekus = cert.getExtendedKeyUsage();
-                    
-                    if (ekus == null 
-                            || !ekus.contains(KeyPurposeId.id_kp_timeStamping.getId())) {
-                        result.add("Missing extended key usage timeStamping");
-                    }
-                    if (cert.getCriticalExtensionOIDs() == null 
-                            || !cert.getCriticalExtensionOIDs().contains(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage.getId())) {
-                        result.add("The extended key usage extension must be present and marked as critical");
-                    }
-                    // if extended key usage contains timeStamping and also other
-                    // usages
-                    if (ekus != null
-                            && ekus.contains(KeyPurposeId.id_kp_timeStamping.getId())
-                            && ekus.size() > 1) {
-                        result.add("No other extended key usages than timeStamping is allowed");
-                    }
-                } else {
-                    result.add("Unsupported certificate type");
-                }
-            } catch (CertificateParsingException ex) {
-                result.add("Unable to parse certificate");
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Signer " + workerId + ": Unable to parse certificate: " + ex.getMessage());
-                }
-            }
+            result.addAll(checkTimeStampCertificate(certificate));
         } catch (CryptoTokenOfflineException ex) {
             result.add("No signer certificate available");
             if (LOG.isDebugEnabled()) {
@@ -638,6 +610,49 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             result.add("Time source is misconfigured: " + ex.getMessage());
         }
 
+        return result;
+    }
+    
+    @Override
+    public List<String> getCertificateIssues(List<Certificate> certificateChain) {
+        final List<String> results = super.getCertificateIssues(certificateChain);
+        if (!certificateChain.isEmpty()) {
+            results.addAll(checkTimeStampCertificate(certificateChain.get(0)));
+        }
+        return results;
+    }
+
+    private Collection<? extends String> checkTimeStampCertificate(Certificate certificate) {
+        ArrayList<String> result = new ArrayList<>();
+        try {
+            if (certificate instanceof X509Certificate) {
+                final X509Certificate cert = (X509Certificate) certificate;
+                final List<String> ekus = cert.getExtendedKeyUsage();
+
+                if (ekus == null 
+                        || !ekus.contains(KeyPurposeId.id_kp_timeStamping.getId())) {
+                    result.add("Missing extended key usage timeStamping");
+                }
+                if (cert.getCriticalExtensionOIDs() == null 
+                        || !cert.getCriticalExtensionOIDs().contains(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage.getId())) {
+                    result.add("The extended key usage extension must be present and marked as critical");
+                }
+                // if extended key usage contains timeStamping and also other
+                // usages
+                if (ekus != null
+                        && ekus.contains(KeyPurposeId.id_kp_timeStamping.getId())
+                        && ekus.size() > 1) {
+                    result.add("No other extended key usages than timeStamping is allowed");
+                }
+            } else {
+                result.add("Unsupported certificate type");
+            }
+        } catch (CertificateParsingException ex) {
+            result.add("Unable to parse certificate");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Signer " + workerId + ": Unable to parse certificate: " + ex.getMessage());
+            }
+        }
         return result;
     }
 

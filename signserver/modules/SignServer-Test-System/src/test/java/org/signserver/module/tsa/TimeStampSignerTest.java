@@ -936,6 +936,25 @@ public class TimeStampSignerTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Tests that WorkerSession.getCertificateIssues() returns an issue for an incorrect certificate
+     * and not for an OK one.
+     */
+    @Test
+    public void test13WrongEkuWorkerSessionGetCertificateIssues() throws Exception {
+        final List<Certificate> chain = workerSession.getSignerCertificateChain(WORKER2);
+        final X509Certificate subject = (X509Certificate) workerSession.getSignerCertificate(WORKER2);
+        
+        // Certifiate without id_kp_timeStamping
+        final Certificate certNoEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=Without EKU").setSubjectPublicKey(subject.getPublicKey()).build());
+        List<String> certificateIssues = workerSession.getCertificateIssues(WORKER2.getId(), Arrays.asList(certNoEku));
+        assertFalse("at least one issuse", certificateIssues.isEmpty());
+
+        // Ok certificate should not give any issues
+        certificateIssues = workerSession.getCertificateIssues(WORKER2.getId(), chain);
+        assertTrue("should be okey", certificateIssues.isEmpty());                    
+    }
+    
     /** Tests issuance of time-stamp token when an EC key is specified. */
     @Test
     public void test20BasicTimeStampECDSA() throws Exception {

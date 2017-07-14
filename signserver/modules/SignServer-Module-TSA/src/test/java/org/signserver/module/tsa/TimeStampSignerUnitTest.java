@@ -16,7 +16,9 @@ import java.io.File;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.Security;
+import java.security.cert.Certificate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -29,9 +31,12 @@ import org.bouncycastle.asn1.ess.SigningCertificate;
 import org.bouncycastle.asn1.ess.SigningCertificateV2;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.tsp.TSTInfo;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.IssuerSerial;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
@@ -58,6 +63,8 @@ import org.signserver.common.data.SignatureRequest;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.log.AdminInfo;
+import org.signserver.test.utils.builders.CertBuilder;
+import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.mock.MockedRequestContext;
 import org.signserver.test.utils.mock.MockedServicesImpl;
 
@@ -1056,6 +1063,33 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         
         assertFalse("should not contain error",
                 fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true"));
+    }
+    
+    @Test
+    public void testCertificateIssues() throws Exception {
+        LOG.info(">testCertificateIssues");
+
+        TimeStampSigner instance = new TimeStampSigner();
+
+        // Certifiate without id_kp_timeStamping
+        final Certificate certNoEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=Without EKU").build());
+        assertEquals(Arrays.asList("Missing extended key usage timeStamping", "The extended key usage extension must be present and marked as critical"), instance.getCertificateIssues(Arrays.asList(certNoEku)));
+        
+        // Certificate with non-critical id_kp_timeStamping
+        boolean critical = false;
+        final Certificate certEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=With non-critical EKU").addExtension(new CertExt(Extension.extendedKeyUsage, critical, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping))).build());
+        assertEquals(Arrays.asList("The extended key usage extension must be present and marked as critical"), instance.getCertificateIssues(Arrays.asList(certEku)));
+        
+        // Certificate with critical id_kp_timeStamping but also with codeSigning
+        critical = true;
+        final Certificate certCritEkuButAlsoOther = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=With critical EKU and other").addExtension(new CertExt(Extension.extendedKeyUsage, critical, new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_timeStamping, KeyPurposeId.id_kp_codeSigning }))).build());
+        assertEquals(Arrays.asList("No other extended key usages than timeStamping is allowed"), instance.getCertificateIssues(Arrays.asList(certCritEkuButAlsoOther)));
+        
+        // OK: Certificate with critical id_kp_timeStamping
+        critical = true;
+        final Certificate certCritEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=With critical EKU").addExtension(new CertExt(Extension.extendedKeyUsage, critical, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping))).build());
+        assertEquals(Collections.<String>emptyList(), instance.getCertificateIssues(Arrays.asList(certCritEku)));
+        
     }
 }
 

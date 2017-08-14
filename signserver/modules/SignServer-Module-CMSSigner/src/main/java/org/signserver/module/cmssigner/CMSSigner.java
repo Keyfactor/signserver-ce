@@ -181,7 +181,7 @@ public class CMSSigner extends BaseSigner {
                 configErrors.add("Illegal content OID specified: " + contentOIDString);
             }
         } else {
-            contentOID = DEFAULT_CONTENT_OID;
+            contentOID = getDefaultContentOID();
         }
         
         final String allowContentOIDOverrideValue = config.getProperty(ALLOW_CONTENTOID_OVERRIDE);
@@ -207,6 +207,16 @@ public class CMSSigner extends BaseSigner {
     }
     
     /**
+     * Get the default content OID to use when not explicitly set, or overridden
+     * in the request.
+     * 
+     * @return Content OID
+     */
+    protected ASN1ObjectIdentifier getDefaultContentOID() {
+        return DEFAULT_CONTENT_OID;
+    }
+    
+    /**
      * Returns true if the signer wants to augment the CMSSignedData instance.
      * This can be overridden by extending implementations.
      * 
@@ -222,9 +232,10 @@ public class CMSSigner extends BaseSigner {
      * returns true.
      * 
      * @param cms Basic CMS signature data
+     * @param context Request context
      * @return CMS signature data with additional attributes
      */
-    protected CMSSignedData extendCMSData(CMSSignedData cms) {
+    protected CMSSignedData extendCMSData(CMSSignedData cms, RequestContext context) {
         throw new UnsupportedOperationException("Base CMS signer doesn't support extending CMS data");
     }
 
@@ -383,7 +394,7 @@ public class CMSSigner extends BaseSigner {
             CMSSignedData signedData = new CMSSignedData(bout.toByteArray());
             
             if (extendsCMSData()) {
-                signedData = extendCMSData(signedData);
+                signedData = extendCMSData(signedData, requestContext);
             } 
             
             try (final OutputStream responseOutputStream = requestData.isFile() && !detached ? responseData.getAsFileOutputStream() : responseData.getAsInMemoryOutputStream();) {
@@ -453,7 +464,7 @@ public class CMSSigner extends BaseSigner {
         CMSSignedData signedData = generator.generate(new CMSProcessableByteArray(contentOID, "dummy".getBytes()), false);
         
         if (extendsCMSData()) {
-            signedData = extendCMSData(signedData);
+            signedData = extendCMSData(signedData, requestContext);
         }
         
         responseData.getAsInMemoryOutputStream().write(signedData.getEncoded());

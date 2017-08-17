@@ -235,7 +235,8 @@ public class CMSSigner extends BaseSigner {
      * @param context Request context
      * @return CMS signature data with additional attributes
      */
-    protected CMSSignedData extendCMSData(CMSSignedData cms, RequestContext context) {
+    protected CMSSignedData extendCMSData(CMSSignedData cms, RequestContext context)
+        throws IOException, CMSException {
         throw new UnsupportedOperationException("Base CMS signer doesn't support extending CMS data");
     }
 

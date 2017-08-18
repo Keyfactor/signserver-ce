@@ -295,6 +295,23 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         }
     }
 
+    @Override
+    public boolean isTokenActive(WorkerIdentifier workerId) throws InvalidWorkerIdException {
+        boolean result;
+        try {
+            IWorker worker = workerManagerSession.getWorker(workerId);
+            if (worker instanceof IProcessable) {
+                IProcessable processable = (IProcessable) worker;
+                result = processable.getCryptoTokenStatus(servicesImpl) == WorkerStatus.STATUS_ACTIVE;
+            } else {
+                result = false; // Does not have a token
+            }
+        } catch (NoSuchWorkerException ex) {
+            throw new InvalidWorkerIdException(ex.getMessage());
+        }
+        return result;
+    }
+
     /* (non-Javadoc)
      * @see org.signserver.ejb.interfaces.WorkerSession#getWorkerId(java.lang.String)
      */

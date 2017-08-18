@@ -126,7 +126,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         assertEquals("getStatus: ", 0, actual.getFatalErrors().size());
         assertEquals(getSignerIdDummy1(), actual.getWorkerId());
     }
-
+    
     @Test
     public void test02GetStatus_cryptoTokenOffline() throws Exception {
         // First check that there isn't any other problem
@@ -147,6 +147,47 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         workerSession.reloadConfiguration(getSignerIdDummy1());
         
         assertFalse("getFatalErrors should not be empty", actual.getFatalErrors().isEmpty());
+    }
+    
+    /**
+     * Tests the isTokenActive method. Checking that the token status is independent of the worker status.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void test02isTokenActive() throws Exception {
+        // First check that there isn't any other problem
+        final WorkerStatus before = workerSession.getStatus(new WorkerIdentifier(getSignerIdDummy1()));
+        if (!before.getFatalErrors().isEmpty()) {
+            throw new Exception("Test case expected the worker status to be OK before it will run");
+        }
+        
+        assertTrue("token active", workerSession.isTokenActive(new WorkerIdentifier(getSignerIdDummy1())));
+        
+        // Make a configuration error making the _worker_ offline but the _token_ still active
+        workerSession.setWorkerProperty(getSignerIdDummy1(), WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS, "_not_a_level_");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        assertTrue("token still active", workerSession.isTokenActive(new WorkerIdentifier(getSignerIdDummy1())));
+        if (workerSession.getStatus(new WorkerIdentifier(getSignerIdDummy1())).getFatalErrors().isEmpty()) {
+            throw new Exception("Test case expected the worker status to be OFFLINE because of incorrect value for INCLUDE_CERTIFICATE_LEVEL but it was not");
+        }
+        
+        // Remove the configuration error
+        workerSession.removeWorkerProperty(getSignerIdDummy1(), WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        if (!workerSession.getStatus(new WorkerIdentifier(getSignerIdDummy1())).getFatalErrors().isEmpty()) {
+            throw new Exception("Test case expected the worker status to be ok now");
+        }
+        
+        // Now change so the crypto token is offline
+        final String keyDataBefore = before.getActiveSignerConfig().getProperty("KEYSTOREPATH");
+        workerSession.removeWorkerProperty(getSignerIdDummy1(), "KEYSTOREPATH");
+        workerSession.reloadConfiguration(getSignerIdDummy1());
+        
+        assertFalse("token offline", workerSession.isTokenActive(new WorkerIdentifier(getSignerIdDummy1())));
+        
+        // Restore
+        workerSession.setWorkerProperty(getSignerIdDummy1(), "KEYSTOREPATH", keyDataBefore);
+        workerSession.reloadConfiguration(getSignerIdDummy1());
     }
 
     /*

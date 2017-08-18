@@ -36,6 +36,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerType;
+import org.signserver.server.log.AdminInfo;
 
 /**
  * Interface for the worker session bean.
@@ -53,6 +54,15 @@ public interface WorkerSession {
      * @throws InvalidWorkerIdException in case the worker does not exist
      */
     WorkerStatus getStatus(WorkerIdentifier wi) throws InvalidWorkerIdException;
+
+    /**
+     * Returns if the associated crypto token is active or not.
+     *
+     * @param workerId of the worker to check
+     * @return true if the crypto token is active
+     * @throws InvalidWorkerIdException  in case the worker does not exist
+     */
+    boolean isTokenActive(WorkerIdentifier workerId) throws InvalidWorkerIdException;
 
     /**
      * Returns the Id of a worker given a name

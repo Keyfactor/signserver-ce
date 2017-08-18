@@ -36,7 +36,6 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerType;
-import org.signserver.server.log.AdminInfo;
 
 /**
  * Interface for the worker session bean.

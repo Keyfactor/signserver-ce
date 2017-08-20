@@ -94,7 +94,8 @@ import org.signserver.server.KeyUsageCounterHash;
 public class CryptoTokenHelper {
     
     private static final Logger LOG = Logger.getLogger(CryptoTokenHelper.class);
-   
+
+    public static final String PROPERTY_CRYPTOTOKEN = "CRYPTOTOKEN";
     public static final String PROPERTY_NEXTCERTSIGNKEY = "NEXTCERTSIGNKEY";
     public static final String PROPERTY_ATTRIBUTESFILE = "ATTRIBUTESFILE";
     public static final String PROPERTY_ATTRIBUTES = "ATTRIBUTES";

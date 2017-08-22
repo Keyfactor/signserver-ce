@@ -171,18 +171,18 @@ public abstract class AbstractWSClientsCommand extends AbstractAdminCommand {
                     getGlobalConfigurationSession().setProperty(
                             GlobalConfiguration.SCOPE_GLOBAL, getClientsProperty(),
                             ClientEntry.serializeClientEntries(entries));
-                    getOutputStream().println("Auditor added");
+                    getOutputStream().println("Rule added");
                 } else {
-                    getOutputStream().println("Auditor already exists");
+                    getOutputStream().println("Rule already exists");
                 }
             } else if (REMOVE.equals(operation)) {
                 if (entries.remove(new ClientEntry(certSerialNo, issuerDN))) {
                     getGlobalConfigurationSession().setProperty(
                             GlobalConfiguration.SCOPE_GLOBAL, getClientsProperty(),
                             ClientEntry.serializeClientEntries(entries));
-                    getOutputStream().println("Auditor removed");
+                    getOutputStream().println("Rule removed");
                 } else {
-                    getErrorStream().println("No such auditor");
+                    getErrorStream().println("No such rule");
                 }
             }
             return 0;

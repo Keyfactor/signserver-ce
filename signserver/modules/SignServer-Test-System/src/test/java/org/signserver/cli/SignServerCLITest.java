@@ -427,7 +427,7 @@ public class SignServerCLITest extends ModulesTestCase {
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
             cli.execute("wsauditors", "-add", "-certserialno", "ef34343d2428",
             		"-issuerdn", "CN=Test Root CA 2"));
-        assertPrinted("", cli.getOut(), "Auditor already exists");
+        assertPrinted("", cli.getOut(), "Rule already exists");
         
         // Test removing previously added admin
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
@@ -504,7 +504,7 @@ public class SignServerCLITest extends ModulesTestCase {
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
             cli.execute("wsarchiveauditors", "-add", "-certserialno", "ef34343d2428",
                         "-issuerdn", "CN=Test Root CA 2"));
-        assertPrinted("", cli.getOut(), "Auditor already exists");
+        assertPrinted("", cli.getOut(), "Rule already exists");
         
         // Test removing previously added admin
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,

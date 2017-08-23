@@ -393,6 +393,11 @@ Installation Guide for details.
                 ${dist.includes.extra}
                 "/>
         </antcall>
+        <!-- Include the Enterprise ClientCLI (if available) -->
+        <antcall target="dist">
+            <param name="dist.jars" value="SignServer-ClientCLI-Enterprise-${app.version.number}.jar"/>
+            <param name="dist.includes" value="_nothing_"/>
+        </antcall>
     </target>
     <target name="dist:clientcli-zip" description="Create a binary ZIP distribution of the Client CLI">
         <delete dir="${tmp}/dist"/> <!-- Only include the clientcli in the zip file -->

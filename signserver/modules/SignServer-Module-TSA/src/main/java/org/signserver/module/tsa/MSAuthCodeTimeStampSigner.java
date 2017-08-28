@@ -273,9 +273,6 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
              * data
              */
             if (requestbytes[requestbytes.length - 1] == 0x00) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Skipping trailing NULL byte in request");
-                }
                 inputBytes = Arrays.copyOf(requestbytes, requestbytes.length - 1);
             } else {
                 inputBytes = requestbytes;

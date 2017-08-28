@@ -12,41 +12,43 @@
  *************************************************************************/
 package org.signserver.module.tsa;
 
+import java.util.Collection;
 import java.util.Map;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
 
 /**
- * Implementation of a signed CMS attibute table generator with
- * the ability to exclude the signingTime attribute.
- * 
+ * Implementation of a signed CMS attribute table generator with
+ * the ability to exclude a collection of attributes.
+ *
  * @author Marcus Lundblad
+ * @author Markus Kilås
  * @version $Id$
  *
  */
-public class OptionalSigningTimeSignedAttributeTableGenerator extends
+public class FilteredSignedAttributeTableGenerator extends
         DefaultSignedAttributeTableGenerator {
     
-    private boolean includeSigningTime;
+    private final Collection<ASN1ObjectIdentifier> attributesToRemove;
 
     /**
      *
-     * @param includeSigningTime Determines whether to include the signingTime attribute
+     * @param attributesToRemove Collection of attributes to not include
      */
-    public OptionalSigningTimeSignedAttributeTableGenerator(final boolean includeSigningTime) {
-        this.includeSigningTime = includeSigningTime;
+    public FilteredSignedAttributeTableGenerator(final Collection<ASN1ObjectIdentifier> attributesToRemove) {
+        this.attributesToRemove = attributesToRemove;
     }
 
     @Override
     public AttributeTable getAttributes(Map parameters) {
-        final AttributeTable attrs = super.getAttributes(parameters);
-        
-        if (!includeSigningTime) {
-            return attrs.remove(CMSAttributes.signingTime);
+        AttributeTable attrs = super.getAttributes(parameters);
+
+        for (ASN1ObjectIdentifier oid : attributesToRemove) {
+            attrs = attrs.remove(oid);
         }
-        
+
         return attrs;
     }
 }

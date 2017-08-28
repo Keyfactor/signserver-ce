@@ -20,6 +20,8 @@ import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertNull;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
@@ -27,6 +29,7 @@ import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.ess.SigningCertificate;
 import org.bouncycastle.asn1.ess.SigningCertificateV2;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -671,6 +674,61 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         assertIncludeCertIDIssuerSerial("explicit false", false, timeStampResponse);
     }
     
+    /**
+     * Tests the default value for INCLUDECMSALGORITHMPROTECT.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testIncludeCmsProtectAlgorithmAttribute_default() throws Exception {
+        LOG.info("testIncludeCmsProtectAlgorithmAttribute_default");
+        includeCmsProtectAlgorithmAttribute(null);
+    }
+
+    /**
+     * Tests for INCLUDECMSALGORITHMPROTECT=true.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testIncludeCmsProtectAlgorithmAttribute_true() throws Exception {
+        LOG.info("testIncludeCmsProtectAlgorithmAttribute_true");
+        includeCmsProtectAlgorithmAttribute(true);
+    }
+
+    /**
+     * Tests for INCLUDECMSALGORITHMPROTECT=false.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testIncludeCmsProtectAlgorithmAttribute_false() throws Exception {
+        LOG.info("testIncludeCmsProtectAlgorithmAttribute_false");
+        includeCmsProtectAlgorithmAttribute(false);
+    }
+
+    private void includeCmsProtectAlgorithmAttribute(Boolean includeCmsProtectAlgorithmAttribute) throws Exception {
+        TimeStampRequestGenerator timeStampRequestGenerator =
+                new TimeStampRequestGenerator();
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        if (includeCmsProtectAlgorithmAttribute == null) {
+            workerSession.removeWorkerProperty(WORKER6, "INCLUDECMSALGORITHMPROTECTATTRIBUTE");
+        } else {
+            workerSession.setWorkerProperty(WORKER6, "INCLUDECMSALGORITHMPROTECTATTRIBUTE", includeCmsProtectAlgorithmAttribute ? "TRUE" : "FALSE");
+        }
+        workerSession.reloadConfiguration(WORKER6);
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER6);
+        timeStampResponse.validate(timeStampRequest);
+        
+        // check the signingTime signed attribute
+        final AttributeTable attrs = timeStampResponse.getTimeStampToken().getSignedAttributes();
+        final Attribute attr = attrs.get(CMSAttributes.cmsAlgorithmProtect);
+        
+        if (includeCmsProtectAlgorithmAttribute == null || includeCmsProtectAlgorithmAttribute) {
+            assertNotNull("Should contain cmsProtectAlgorithmAttribute signed attribute", attr);
+        } else {
+            assertNull("Should not contain cmsProtectAlgorithmAttribute signed attribute", attr);
+        }
+    }
+
     private void assertIncludeCertIDIssuerSerial(String message, boolean expected, TimeStampResponse timeStampResponse) {
         IssuerSerial issuerSerial;
         

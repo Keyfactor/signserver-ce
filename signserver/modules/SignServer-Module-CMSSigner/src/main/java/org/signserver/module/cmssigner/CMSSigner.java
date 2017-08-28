@@ -491,8 +491,8 @@ public class CMSSigner extends BaseSigner {
 
         final ReadableData requestData = sReq.getRequestData();
         final WritableData responseData = sReq.getResponseData();
-        X509Certificate cert = null;
-        List<Certificate> certs = null;
+        final X509Certificate cert;
+        final List<Certificate> certs;
         ICryptoInstance crypto = null;
         try {
             crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);

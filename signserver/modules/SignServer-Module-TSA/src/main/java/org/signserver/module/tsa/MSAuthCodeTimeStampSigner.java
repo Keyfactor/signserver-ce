@@ -266,7 +266,19 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                     throw new CryptoTokenOfflineException("Certificate chain not correctly configured");
             }
 
-            ASN1Primitive asn1obj = ASN1Primitive.fromByteArray(Base64.decode(requestbytes));
+            final byte[] inputBytes;
+            /* In some versions of Windows, timestamp requests made by the
+             * MS SDK's signtool command contains an additional NULL byte,
+             * filter this out when present before trying to Base64 decode the
+             * data
+             */
+            if (requestbytes[requestbytes.length - 1] == 0x00) {
+                inputBytes = Arrays.copyOf(requestbytes, requestbytes.length - 1);
+            } else {
+                inputBytes = requestbytes;
+            }
+            
+            ASN1Primitive asn1obj = ASN1Primitive.fromByteArray(Base64.decode(inputBytes));
             ASN1Sequence asn1seq = ASN1Sequence.getInstance(asn1obj);
 
             if (asn1seq.size() != 2) {

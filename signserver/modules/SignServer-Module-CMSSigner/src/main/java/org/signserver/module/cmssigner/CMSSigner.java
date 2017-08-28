@@ -234,6 +234,8 @@ public class CMSSigner extends BaseSigner {
      * @param cms Basic CMS signature data
      * @param context Request context
      * @return CMS signature data with additional attributes
+     * @throws java.io.IOException
+     * @throws org.bouncycastle.cms.CMSException
      */
     protected CMSSignedData extendCMSData(CMSSignedData cms, RequestContext context)
         throws IOException, CMSException {

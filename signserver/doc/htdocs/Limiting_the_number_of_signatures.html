@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="5283995">
+<body pageid="5286104">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <img src="projectlogo.png">
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.1.0</p>
+                    <p>Version: 4.1.1</p>
                 </div>
                 <a href="SignServer_Manual.html" class="ht-space-link">
                     <!-- <h2>SignServer - Documentation Space</h2> -->
@@ -1076,7 +1076,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="Common_configuration.html">Common configuration</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277272"> <span>Limiting the number of signatures</span></h1>
+</div>            <h1 id="src-5287441"> <span>Limiting the number of signatures</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1116,7 +1116,6 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >By default all key usages are counted but by specifying this as &quot;TRUE&quot; key usages performed by this worker will not be counted. Disabling the key usage counter can be a gain in performance as it will be less database transactions. However, if you have requirements on the number of allowed signings for one worker make sure to not use the same key with another worker for which the counter is disabled as those uses will then be missed.    </p>
-    <p  >The key usage counter can not be disabled for a worker if KEYUSAGELIMIT is also specified.    </p>
             </td>
         </tr>
 </tbody>        </table>

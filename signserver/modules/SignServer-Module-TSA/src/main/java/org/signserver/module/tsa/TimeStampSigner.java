@@ -28,6 +28,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -41,6 +42,7 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIStatus;
+import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.Extensions;
@@ -222,6 +224,7 @@ public class TimeStampSigner extends BaseSigner {
     public static final String MAXSERIALNUMBERLENGTH = "MAXSERIALNUMBERLENGTH";
     public static final String INCLUDESTATUSSTRING = "INCLUDESTATUSSTRING";
     public static final String INCLUDESIGNINGTIMEATTRIBUTE = "INCLUDESIGNINGTIMEATTRIBUTE";
+    public static final String INCLUDECMSALGORITHMPROTECTATTRIBUTE = "INCLUDECMSALGORITHMPROTECTATTRIBUTE";
     public static final String INCLUDE_CERTID_ISSUERSERIAL = "INCLUDE_CERTID_ISSUERSERIAL";
     public static final String CERTIFICATE_DIGEST_ALGORITHM = "CERTIFICATE_DIGEST_ALGORITHM";
     public static final String LEGACYENCODING = "LEGACYENCODING";
@@ -303,6 +306,7 @@ public class TimeStampSigner extends BaseSigner {
     private String tsaName;
     private boolean tsaNameFromCert;
     private boolean includeSigningTimeAttribute;
+    private boolean includeCmsProtectAlgorithmAttribute;
     private boolean includeCertIDIssuerSerial = true;
     private boolean legacyEncoding;
     
@@ -408,6 +412,8 @@ public class TimeStampSigner extends BaseSigner {
         
         includeSigningTimeAttribute = Boolean.valueOf(config.getProperty(INCLUDESIGNINGTIMEATTRIBUTE, "true"));
         
+        includeCmsProtectAlgorithmAttribute = Boolean.valueOf(config.getProperty(INCLUDECMSALGORITHMPROTECTATTRIBUTE, "true"));
+
         ordering = Boolean.parseBoolean(config.getProperty(ORDERING, "false"));
         
         if (hasSetIncludeCertificateLevels && includeCertificateLevels == 0) {
@@ -955,8 +961,15 @@ public class TimeStampSigner extends BaseSigner {
             X509CertificateHolder certHolder = new X509CertificateHolder(signingCert.getEncoded());
             
             // set signed attribute table generator based on property
+            final Collection<ASN1ObjectIdentifier> attributesToRemove = new ArrayList<>();
+            if (!includeSigningTimeAttribute) {
+                attributesToRemove.add(CMSAttributes.signingTime);
+            }
+            if (!includeCmsProtectAlgorithmAttribute) {
+                attributesToRemove.add(CMSAttributes.cmsAlgorithmProtect);
+            }
             sigb.setSignedAttributeGenerator(
-                    new OptionalSigningTimeSignedAttributeTableGenerator(includeSigningTimeAttribute));
+                    new FilteredSignedAttributeTableGenerator(attributesToRemove));
             
             SignerInfoGenerator sig = sigb.build(cs, certHolder);
             

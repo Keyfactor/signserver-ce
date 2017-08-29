@@ -1,3 +1,23 @@
+SignServer 4.1.1, 2017-09-19
+----------------------------
+
+** Bug
+    * [DSS-1373] - PDF version not upgraded if digest algorithm spelled as "SHA-256" (with minus sign)
+    * [DSS-1380] - Regression: JBOSS_HOME environment variable not accepted allthough sample config mentions it
+    * [DSS-1407] - Crypto token status test uses obsolete algorithm
+    * [DSS-1414] - English translation, Audit Log in AdminWeb: ???Service_COLON???
+    * [DSS-1421] - Misspelled error message for unknown file types in MSAuthCodeSigner
+    * [DSS-1432] - Missing Swedish translation for Crypto_Token_-_Test_Keys
+    * [DSS-1436] - MSAuthCodeTimeStampSigner does not accept invalid characters as the base64 data
+
+** New Feature
+    * [DSS-1415] - Support legacy encoding of time-stamp tokens
+    * [DSS-1437] - Option to not include RFC6211 attribute in time-stamp tokens
+
+** Improvement
+    * [DSS-1391] - Change default database type
+
+
 SignServer 4.1.0, 2017-06-02
 ----------------------------
 

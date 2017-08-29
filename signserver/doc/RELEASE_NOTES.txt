@@ -1,3 +1,21 @@
+SignServer 4.1.1
+----------------
+
+Time-stamping:
+ - Legacy option to encode the time-stamp tokens as before Bouncy Castle 1.50.
+ - Legacy option to not include the RFC#6211 cmsAlgorithmProtection attribute in the token.
+
+PDF Signing:
+ - Issue with PDF version if digest specified as SHA-256 instead of SHA256 resolved.
+   Fix contributed by Aziz Göktepe.
+
+Admin Web:
+ - A number of translation issues fixed.
+
+Bug fixes:
+ - There was 7 issues fixed.
+
+
 SignServer 4.1.0
 ----------------
 

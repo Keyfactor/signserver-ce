@@ -94,6 +94,8 @@ public class CMSSigner extends BaseSigner {
     
     public static final String DER_RE_ENCODE_PROPERTY = "DER_RE_ENCODE";
     
+    public static final String DIRECTSIGNATURE_PROPERTY = "DIRECTSIGNATURE";
+    
     private LinkedList<String> configErrors;
     private String signatureAlgorithm;
 
@@ -102,6 +104,7 @@ public class CMSSigner extends BaseSigner {
     private boolean clientSideHashing;
     private boolean allowClientSideHashingOverride;
     private boolean derReEncode;
+    private boolean directSignature;
     
     private Set<AlgorithmIdentifier> acceptedHashDigestAlgorithms;
 
@@ -204,6 +207,21 @@ public class CMSSigner extends BaseSigner {
         } else {
             configErrors.add("Incorrect value for property " + DER_RE_ENCODE_PROPERTY + ". Expecting TRUE or FALSE.");
         }
+        
+        // Direct signature (no signed attributes)
+        final String directSignatureValue = config.getProperty(DIRECTSIGNATURE_PROPERTY);
+        if (directSignatureValue == null || Boolean.FALSE.toString().equalsIgnoreCase(directSignatureValue)) {
+            directSignature = false;
+        } else if (Boolean.TRUE.toString().equalsIgnoreCase(directSignatureValue)) {
+            directSignature = true;
+        } else {
+            configErrors.add("Incorrect value for property " + DIRECTSIGNATURE_PROPERTY + ". Expecting TRUE or FALSE.");
+        }
+        
+        if (directSignature && clientSideHashing) {
+            configErrors.add("Can not combine " + CLIENTSIDEHASHING + " and " + DIRECTSIGNATURE_PROPERTY);
+        }
+        
     }
     
     /**
@@ -345,7 +363,7 @@ public class CMSSigner extends BaseSigner {
         final ContentSigner contentSigner = new JcaContentSignerBuilder(sigAlg).setProvider(crypto.getProvider()).build(crypto.getPrivateKey());
         generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(
                  new JcaDigestCalculatorProviderBuilder().setProvider("BC").build())
-                 .build(contentSigner, cert));
+                 .setDirectSignature(directSignature).build(contentSigner, cert));
         
         generator.addCertificates(new JcaCertStore(certs));
         

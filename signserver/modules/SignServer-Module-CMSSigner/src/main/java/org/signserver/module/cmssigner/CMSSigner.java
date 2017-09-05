@@ -210,9 +210,9 @@ public class CMSSigner extends BaseSigner {
         
         // Direct signature (no signed attributes)
         final String directSignatureValue = config.getProperty(DIRECTSIGNATURE_PROPERTY);
-        if (directSignatureValue == null || Boolean.FALSE.toString().equalsIgnoreCase(directSignatureValue)) {
+        if (directSignatureValue == null || directSignatureValue.trim().isEmpty() || Boolean.FALSE.toString().equalsIgnoreCase(directSignatureValue.trim())) {
             directSignature = false;
-        } else if (Boolean.TRUE.toString().equalsIgnoreCase(directSignatureValue)) {
+        } else if (Boolean.TRUE.toString().equalsIgnoreCase(directSignatureValue.trim())) {
             directSignature = true;
         } else {
             configErrors.add("Incorrect value for property " + DIRECTSIGNATURE_PROPERTY + ". Expecting TRUE or FALSE.");

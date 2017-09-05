@@ -56,6 +56,7 @@ import org.signserver.test.utils.mock.MockedCryptoToken;
 import org.signserver.test.utils.mock.MockedServicesImpl;
 import org.signserver.testutils.ModulesTestCase;
 import static junit.framework.TestCase.assertTrue;
+import org.bouncycastle.asn1.cms.AttributeTable;
 
 /**
  * Unit tests for the CMSSigner class.
@@ -1123,7 +1124,71 @@ public class CMSSignerUnitTest {
             fail("Unexpected exception: " + e.getClass().getName());
         }
     }
+
+    /**
+     * Tests that with DIRECTSIGNATURE=true, no signed attributes are included.
+     * @throws Exception
+     */
+    @Test
+    public void testDirectSignatureTrue() throws Exception {
+        LOG.info("testDirectSignatureTrue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DIRECTSIGNATURE", "true");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        AttributeTable signedAttributes = signedData.getSignerInfos().getSigners().iterator().next().getSignedAttributes();
+        assertNull("no signed attributes", signedAttributes);
+    }
+
+    /**
+     * Tests that with DIRECTSIGNATURE=false, there are some signed attributes included.
+     * @throws Exception 
+     */
+    @Test
+    public void testDirectSignatureFalse() throws Exception {
+        LOG.info("testDirectSignatureFalse");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DIRECTSIGNATURE", "false");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        AttributeTable signedAttributes = signedData.getSignerInfos().getSigners().iterator().next().getSignedAttributes();
+        assertTrue("signed attributes expected", signedAttributes.size() > 0);
+    }
     
+    /**
+     * Tests that with an empty (or with blank space actually) value for DIRECTSIGNATURE the default is false
+     * and thus signed attributes are included.
+     * @throws Exception 
+     */
+    @Test
+    public void testDirectSignatureEmptySlashDefault() throws Exception {
+        LOG.info("testDirectSignatureFalse");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DIRECTSIGNATURE", " ");
+        CMSSigner instance = new MockedCMSSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        AttributeTable signedAttributes = signedData.getSignerInfos().getSigners().iterator().next().getSignedAttributes();
+        assertTrue("signed attributes expected", signedAttributes.size() > 0);
+    }
+
     /**
      * Helper method requesting signing using a pre-computed hash.
      * Will also check that the message digest in the response matches the

@@ -378,9 +378,12 @@ Installation Guide for details.
         </antcall>
     </target>
     
-    <target name="dist:clientcli">
+    <target name="dist:clientcli" depends="-dist-clientcli-standard,-dist-clientcli-enterprise"/>
+    
+    <target name="-dist-clientcli-standard">
         <available file="${basedir}/lib/SignServer-Client-CLI.jar" property="clientcli.jar" value="SignServer-Client-CLI.jar"/>
         <available file="${basedir}/lib/SignServer-Client-CLI-${app.version.number}.jar" property="clientcli.jar" value="SignServer-Client-CLI-${app.version.number}.jar"/>
+        <available file="${basedir}/lib/SignServer-ClientCLI-Enterprise-${app.version.number}.jar" property="eeclientcli.jar" value="SignServer-ClientCLI-Enterprise-${app.version.number}.jar"/>
         <fail unless="clientcli.jar" message="Must build SignServer-Client-CLI first"/>
         <antcall target="dist">
             <param name="dist.jars" value="${clientcli.jar}"/>
@@ -393,9 +396,11 @@ Installation Guide for details.
                 ${dist.includes.extra}
                 "/>
         </antcall>
+    </target>
+    <target name="-dist-clientcli-enterprise" if="eeclientcli.jar">
         <!-- Include the Enterprise ClientCLI (if available) -->
         <antcall target="dist">
-            <param name="dist.jars" value="SignServer-ClientCLI-Enterprise-${app.version.number}.jar"/>
+            <param name="dist.jars" value="${eeclientcli.jar}"/>
             <param name="dist.includes" value="_nothing_"/>
         </antcall>
     </target>

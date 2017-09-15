@@ -639,7 +639,7 @@ public class CMSSigner extends BaseSigner {
         final boolean useClientSideHashing =
                 shouldUseClientSideHashing(requestContext);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Using client-side supplied hash");
+            LOG.debug("Using client-side supplied hash: " + useClientSideHashing);
         }
         if (useClientSideHashing) {
             signHash(crypto, cert, certs, sigAlg, requestContext, requestData,

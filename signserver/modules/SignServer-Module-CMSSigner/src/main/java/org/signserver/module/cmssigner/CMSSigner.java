@@ -222,6 +222,10 @@ public class CMSSigner extends BaseSigner {
             configErrors.add("Can not combine " + CLIENTSIDEHASHING + " and " + DIRECTSIGNATURE_PROPERTY);
         }
         
+        if (directSignature && allowClientSideHashingOverride) {
+            configErrors.add("Can not combine " + ALLOW_CLIENTSIDEHASHING_OVERRIDE + " and " + DIRECTSIGNATURE_PROPERTY);
+        }
+        
     }
     
     /**

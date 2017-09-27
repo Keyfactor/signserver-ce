@@ -1188,6 +1188,61 @@ public class CMSSignerUnitTest {
         AttributeTable signedAttributes = signedData.getSignerInfos().getSigners().iterator().next().getSignedAttributes();
         assertTrue("signed attributes expected", signedAttributes.size() > 0);
     }
+    
+    /**
+     * Test that providing an incorrect value for DIRECTSIGNATURE
+     * gives a fatal error.
+     * @throws Exception
+     */
+    @Test
+    public void testInit_incorrectDirectSignatureValue() throws Exception {
+        LOG.info("testInit_incorrectDirectSignatureValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DIRECTSIGNATURE", "_incorrect-value--");
+        CMSSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("DIRECTSIGNATURE"));
+    }
+
+    /**
+     * Test that enabling both DIRECTSIGNATURE and CLIENTSIDEHASHING
+     * gives a fatal error.
+     * @throws Exception
+     */
+    @Test
+    public void testInit_incorrectDirectSignatureAndClientSideHashingCombination() throws Exception {
+        LOG.info("testInit_incorrectDirectSignatureAndClientSideHashingCombination");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty(CMSSigner.DIRECTSIGNATURE_PROPERTY, Boolean.TRUE.toString());
+        config.setProperty(CMSSigner.CLIENTSIDEHASHING, Boolean.TRUE.toString());
+        CMSSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs not containing DIRECTSIGNATURE: " + errors, errors.contains("DIRECTSIGNATURE"));
+        assertTrue("conf errs not containing CLIENTIDEHASHING: " + errors, errors.contains("CLIENTSIDEHASHING"));
+    }
+    
+    /**
+     * Test that enabling both DIRECTSIGNATURE and ALLOW_CLIENTSIDEHASHING_OVERRIDE
+     * gives a fatal error.
+     * @throws Exception
+     */
+    @Test
+    public void testInit_incorrectDirectSignatureAndClientSideHashingOverrideCombination() throws Exception {
+        LOG.info("testInit_incorrectDirectSignatureAndClientSideHashingOverrideCombination");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty(CMSSigner.DIRECTSIGNATURE_PROPERTY, Boolean.TRUE.toString());
+        config.setProperty(CMSSigner.ALLOW_CLIENTSIDEHASHING_OVERRIDE, Boolean.TRUE.toString());
+        CMSSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs not containing DIRECTSIGNATURE: " + errors, errors.contains("DIRECTSIGNATURE"));
+        assertTrue("conf errs not containing ALLOW_CLIENTIDEHASHING_OVERRIDE: " + errors, errors.contains("ALLOW_CLIENTSIDEHASHING_OVERRIDE"));
+    }
 
     /**
      * Helper method requesting signing using a pre-computed hash.

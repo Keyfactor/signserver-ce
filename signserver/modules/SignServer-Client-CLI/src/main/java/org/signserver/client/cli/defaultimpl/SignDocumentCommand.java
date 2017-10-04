@@ -48,11 +48,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(SignDocumentCommand.class);
 
-    /** ResourceBundle with internationalized StringS. */
-    private static final ResourceBundle TEXTS = ResourceBundle.getBundle(
-            "org/signserver/client/cli/defaultimpl/ResourceBundle");
+        /** ResourceBundle with internationalized StringS. */
+        private static final ResourceBundle TEXTS = ResourceBundle.getBundle(
+                "org/signserver/client/cli/defaultimpl/ResourceBundle");
 
-    private static final String DEFAULT_CLIENTWS_WSDL_URL = "/signserver/ClientWSService/ClientWS?wsdl";
+        private static final String DEFAULT_CLIENTWS_WSDL_URL = "/signserver/ClientWSService/ClientWS?wsdl";
     
     /** System-specific new line characters. **/
     private static final String NL = System.getProperty("line.separator");

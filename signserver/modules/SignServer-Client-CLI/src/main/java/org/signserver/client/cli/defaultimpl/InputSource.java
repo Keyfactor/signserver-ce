@@ -23,17 +23,17 @@ import java.io.InputStream;
  */
 public class InputSource {
     private final InputStream inputStream;
-    private final int size;
+    private final long size;
     private final String fileName;
     
-    public InputSource(final InputStream inputStream, final int size,
+    public InputSource(final InputStream inputStream, final long size,
                        final String fileName) {
         this.inputStream = inputStream;
         this.size = size;
         this.fileName = fileName;
     }
     
-    public InputSource(final InputStream inputStream, final int size) {
+    public InputSource(final InputStream inputStream, final long size) {
         this(inputStream, size, null);
     }
     
@@ -41,7 +41,7 @@ public class InputSource {
         return inputStream;
     }
     
-    public int getSize() {
+    public long getSize() {
         return size;
     }
     

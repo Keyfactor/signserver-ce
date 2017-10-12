@@ -46,10 +46,32 @@ public interface FileSpecificHandlerFactory {
     FileSpecificHandler createHandler(InputStream inStream, File outFile, boolean clientSide)
             throws IOException;
     
+    /**
+     * Create a file specific handler given a file type name, input, and output
+     * files.
+     * 
+     * @param fileType
+     * @param inFile
+     * @param outFile
+     * @param clientSide
+     * @return
+     * @throws IOException 
+     */
     FileSpecificHandler createHandler(String fileType, File inFile, File outFile,
                                       boolean clientSide)
             throws IOException;
     
+    /**
+     * Create a file specific handler given a file type name, input stream and
+     * an output file.
+     * 
+     * @param fileType
+     * @param inStream
+     * @param outFile
+     * @param clientSide
+     * @return
+     * @throws IOException 
+     */
     FileSpecificHandler createHandler(String fileType, InputStream inStream,
                                       File outFile, boolean clientSide) throws IOException;
 }

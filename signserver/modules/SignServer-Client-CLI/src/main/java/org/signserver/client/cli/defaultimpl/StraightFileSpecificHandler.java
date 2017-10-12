@@ -60,5 +60,9 @@ public class StraightFileSpecificHandler implements FileSpecificHandler {
             LOG.warn("Unable to close resource: " + ex.getLocalizedMessage());
         }
     }
-    
+
+    @Override
+    public String getFileTypeIdentifier() {
+        return null;
+    }
 }

@@ -58,5 +58,14 @@ public interface FileSpecificHandler extends AutoCloseable {
      */
     @Override
     void close();
+    
+    /**
+     * Get a file type identifier for the handler to use as metadata for the
+     * signers (applicable for client-side hashing and construction-aware
+     * handlers).
+     * 
+     * @return The type identifier, or null if not applicable
+     */
+    String getFileTypeIdentifier();
 
 }

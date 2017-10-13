@@ -39,9 +39,13 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
 
     @Override
     public FileSpecificHandler createHandler(final InputStream inStream,
+                                             final long size,
                                              final File outFile,
                                              final boolean clientSide) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (clientSide) {
+            throw new IllegalArgumentException("Client-side contruction is not supported");
+        }
+        return new StraightFileSpecificHandler(inStream, size);
     }
 
     @Override
@@ -60,9 +64,13 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
     @Override
     public FileSpecificHandler createHandler(final String fileType,
                                              final InputStream inStream,
+                                             final long size,
                                              final File outFile,
                                              final boolean clientSide) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (clientSide) {
+            throw new IllegalArgumentException("Client-side contruction is not supported");
+        }
+        return new StraightFileSpecificHandler(inStream, size);
     }
     
 }

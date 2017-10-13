@@ -43,7 +43,7 @@ public interface FileSpecificHandlerFactory {
      * @return 
      * @throws java.io.IOException 
      */
-    FileSpecificHandler createHandler(InputStream inStream, File outFile, boolean clientSide)
+    FileSpecificHandler createHandler(InputStream inStream, long size, File outFile, boolean clientSide)
             throws IOException;
     
     /**
@@ -73,5 +73,6 @@ public interface FileSpecificHandlerFactory {
      * @throws IOException 
      */
     FileSpecificHandler createHandler(String fileType, InputStream inStream,
+                                      long size,
                                       File outFile, boolean clientSide) throws IOException;
 }

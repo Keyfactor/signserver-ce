@@ -72,5 +72,9 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
         }
         return new StraightFileSpecificHandler(inStream, size);
     }
-    
+
+    @Override
+    public boolean canCreateClientSideCapableHandler() {
+        return false;
+    }
 }

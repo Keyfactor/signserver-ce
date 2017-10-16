@@ -79,4 +79,12 @@ public interface FileSpecificHandlerFactory {
     FileSpecificHandler createHandler(String fileType, InputStream inStream,
                                       long size,
                                       File outFile, boolean clientSide) throws IOException;
+    
+    /**
+     * Return true if the factory can create a client-side hashing and
+     * contruction-capable handler.
+     * 
+     * @return True if can create client-side capable handler
+     */
+    boolean canCreateClientSideCapableHandler();
 }

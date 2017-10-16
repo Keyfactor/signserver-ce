@@ -12,14 +12,22 @@
  *************************************************************************/
 package org.signserver.module.cmssigner;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.Security;
+import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -55,8 +63,9 @@ import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.test.utils.mock.MockedCryptoToken;
 import org.signserver.test.utils.mock.MockedServicesImpl;
 import org.signserver.testutils.ModulesTestCase;
-import static junit.framework.TestCase.assertTrue;
 import org.bouncycastle.asn1.cms.AttributeTable;
+import org.signserver.common.WorkerType;
+import org.signserver.server.log.LogMap;
 
 /**
  * Unit tests for the CMSSigner class.
@@ -283,6 +292,199 @@ public class CMSSignerUnitTest {
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("Incorrect value for property ALLOW_CONTENTOID_OVERRIDE"));
     }
+    
+    /**
+     * Test that setting an empty value for DO_LOGREQUEST_DIGEST works.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_doLogrequestDigestEmpty() throws Exception {
+        LOG.info("testInit_doLogrequestDigestEmpty");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        config.setProperty("DO_LOGREQUEST_DIGEST", "");
+        CMSSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
+    }
+    
+    /**
+     * Test that setting "true" for DO_LOGREQUEST_DIGEST works.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_doLogrequestDigestTrue() throws Exception {
+        LOG.info("testInit_noLogrequestDigestTrue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        config.setProperty("DO_LOGREQUEST_DIGEST", "true");
+        CMSSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
+    }
+    
+    /**
+     * Test that setting "false" for DO_LOGREQUEST_DIGEST works.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_doLogrequestDigestFalse() throws Exception {
+        LOG.info("testInit_doLogrequestDigestFalse");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        config.setProperty("DO_LOGREQUEST_DIGEST", "false");
+        CMSSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
+    }
+    
+    /**
+     * Test that setting "TRUE" (upper case) for DO_LOGREQUEST_DIGEST works.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_doLogrequestDigestTrueUpper() throws Exception {
+        LOG.info("testInit_doLogrequestDigestTrueUpper");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        config.setProperty("DO_LOGREQUEST_DIGEST", "TRUE");
+        CMSSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        assertTrue("no fatal errors", instance.getFatalErrors(null).isEmpty());
+    }
+    
+    /**
+     * Tests that there is no request and response logging by default.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testDefaultsToNoRequestOrResponseLogging() throws Exception {
+        LOG.info("testDefaultsToNoRequestOrResponseLogging");
+        WorkerConfig config = new WorkerConfig();
+        CMSSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false);
+        LogMap logMap = LogMap.getInstance(requestContext);
+        assertNull("no request digest", logMap.get("REQUEST_DIGEST_ALGORITHM"));
+        assertNull("no response digest", logMap.get("RESPONSE_DIGEST_ALGORITHM"));
+    }
+    
+    /**
+     * Tests that the request digest is correct when enabled.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testRequestDigestMatches() throws Exception {
+        LOG.info("testRequestDigestMatches");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DO_LOGREQUEST_DIGEST", "true");
+        CMSSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false);
+        assertRequestDigestMatches(data, "SHA256", requestContext);
+    }
+    
+    /**
+     * Tests that the request digest is correct when enabled.
+     * Specifying SHA512.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testRequestDigestMatches_SHA512() throws Exception {
+        LOG.info("testRequestDigestMatches_SHA512");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DO_LOGREQUEST_DIGEST", "true");
+        config.setProperty("LOGREQUEST_DIGESTALGORITHM", "SHA512");
+        CMSSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false);
+        assertRequestDigestMatches(data, "SHA512", requestContext);
+    }
+    
+    /**
+     * Tests that the response digest is correct when enabled.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testResponseDigestMatches() throws Exception {
+        LOG.info("testResponseDigestMatches");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DO_LOGRESPONSE_DIGEST", "true");
+        CMSSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false);
+        assertResponseDigestMatches(response.getProcessedData(), "SHA256", requestContext);
+    }
+
+    /**
+     * Tests that the response digest is correct when enabled.
+     * Specifying SHA512.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testResponseDigestMatches_SHA512() throws Exception {
+        LOG.info("testResponseDigestMatches_SHA512");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("DO_LOGRESPONSE_DIGEST", "true");
+        config.setProperty("LOGRESPONSE_DIGESTALGORITHM", "SHA512");
+        CMSSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        RequestContext requestContext = new RequestContext();
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, requestContext, false);
+        assertResponseDigestMatches(response.getProcessedData(), "SHA512", requestContext);
+    }
+
+    private void assertRequestDigestMatches(byte[] data, String digestAlgorithm, RequestContext context) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException, UnsupportedEncodingException, IOException {
+        final LogMap logMap = LogMap.getInstance(context);
+        final Object digestAlgLoggable = logMap.get("REQUEST_DIGEST_ALGORITHM");
+        assertEquals("digestAlg", digestAlgorithm, String.valueOf(digestAlgLoggable));
+        
+        final MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
+        final String expected = Hex.toHexString(md.digest(data));
+        final Object digestLoggable = logMap.get("REQUEST_DIGEST");
+        final String actual = String.valueOf(digestLoggable);
+        assertEquals("digest", expected, actual);
+    }
+    
+    private void assertResponseDigestMatches(byte[] data, String digestAlgorithm, RequestContext context) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException, UnsupportedEncodingException, IOException {
+        final LogMap logMap = LogMap.getInstance(context);
+        final Object digestAlgLoggable = logMap.get("RESPONSE_DIGEST_ALGORITHM");
+        assertEquals("digestAlg", digestAlgorithm, String.valueOf(digestAlgLoggable));
+
+        final MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
+        final String expected = Hex.toHexString(md.digest(data));
+        final Object digestLoggable = logMap.get("RESPONSE_DIGEST");
+        final String actual = String.valueOf(digestLoggable);
+        assertEquals("digest", expected, actual);
+    }
+    
     
     /**
      * Tests that no signing is performed when the worker is misconfigured.

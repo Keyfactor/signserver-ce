@@ -16,6 +16,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -46,6 +48,7 @@ import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.util.encoders.Hex;
 import org.signserver.common.*;
 import org.signserver.common.data.ReadableData;
 import org.signserver.common.data.Request;
@@ -59,6 +62,10 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.server.data.impl.UploadUtil;
+import org.signserver.server.log.IWorkerLogger;
+import org.signserver.server.log.LogMap;
+import org.signserver.server.log.Loggable;
 import org.signserver.server.signers.BaseSigner;
 
 /**
@@ -95,7 +102,24 @@ public class CMSSigner extends BaseSigner {
     public static final String DER_RE_ENCODE_PROPERTY = "DER_RE_ENCODE";
     
     public static final String DIRECTSIGNATURE_PROPERTY = "DIRECTSIGNATURE";
-    
+
+    /** If the request digest should be created and logged. */
+    public static final String DO_LOGREQUEST_DIGEST = "DO_LOGREQUEST_DIGEST";
+
+    /** If the response digest should be created and logged. */
+    public static final String DO_LOGRESPONSE_DIGEST = "DO_LOGRESPONSE_DIGEST";
+
+    /** Algorithm for the request digest put in the log. */
+    public static final String LOGREQUEST_DIGESTALGORITHM_PROPERTY = "LOGREQUEST_DIGESTALGORITHM";
+
+    /** Algorithm for the request digest put in the log. */
+    public static final String LOGRESPONSE_DIGESTALGORITHM_PROPERTY = "LOGRESPONSE_DIGESTALGORITHM";
+
+    private static final boolean DEFAULT_DO_LOGREQUEST_DIGEST = false;
+    private static final String DEFAULT_LOGREQUEST_DIGESTALGORITHM = "SHA256";
+    private static final boolean DEFAULT_DO_LOGRESPONSE_DIGEST = false;
+    private static final String DEFAULT_LOGRESPONSE_DIGESTALGORITHM = "SHA256";
+
     private LinkedList<String> configErrors;
     private String signatureAlgorithm;
 
@@ -105,7 +129,12 @@ public class CMSSigner extends BaseSigner {
     private boolean allowClientSideHashingOverride;
     private boolean derReEncode;
     private boolean directSignature;
-    
+
+    private String logRequestDigestAlgorithm;
+    private String logResponseDigestAlgorithm;
+    private boolean doLogRequestDigest;
+    private boolean doLogResponseDigest;
+
     private Set<AlgorithmIdentifier> acceptedHashDigestAlgorithms;
 
     private ASN1ObjectIdentifier contentOID;
@@ -226,6 +255,39 @@ public class CMSSigner extends BaseSigner {
             configErrors.add("Can not combine " + ALLOW_CLIENTSIDEHASHING_OVERRIDE + " and " + DIRECTSIGNATURE_PROPERTY);
         }
         
+        // If the request digest should computed and be logged
+        String s = config.getProperty(DO_LOGREQUEST_DIGEST);
+        if (s == null || s.trim().isEmpty()) {
+            doLogRequestDigest = DEFAULT_DO_LOGREQUEST_DIGEST;
+        } else if ("true".equalsIgnoreCase(s)) {
+            doLogRequestDigest = true;
+        } else if ("false".equalsIgnoreCase(s)) {
+            doLogRequestDigest = false;
+        } else {
+            configErrors.add("Incorrect value for " + DO_LOGREQUEST_DIGEST);
+        }
+
+        // If the response digest should computed and be logged
+        s = config.getProperty(DO_LOGRESPONSE_DIGEST);
+        if (s == null || s.trim().isEmpty()) {
+            doLogResponseDigest = DEFAULT_DO_LOGRESPONSE_DIGEST;
+        } else if ("true".equalsIgnoreCase(s)) {
+            doLogResponseDigest = true;
+        } else if ("false".equalsIgnoreCase(s)) {
+            doLogResponseDigest = false;
+        } else {
+            configErrors.add("Incorrect value for " + DO_LOGRESPONSE_DIGEST);
+        }
+        
+        // Get the log digest algorithms
+        logRequestDigestAlgorithm = config.getProperty(LOGREQUEST_DIGESTALGORITHM_PROPERTY);
+        if (logRequestDigestAlgorithm == null || logRequestDigestAlgorithm.trim().isEmpty()) {
+            logRequestDigestAlgorithm = DEFAULT_LOGREQUEST_DIGESTALGORITHM;
+        }
+        logResponseDigestAlgorithm = config.getProperty(LOGRESPONSE_DIGESTALGORITHM_PROPERTY);
+        if (logResponseDigestAlgorithm == null || logResponseDigestAlgorithm.trim().isEmpty()) {
+            logResponseDigestAlgorithm = DEFAULT_LOGRESPONSE_DIGESTALGORITHM;
+        }
     }
     
     /**
@@ -547,11 +609,61 @@ public class CMSSigner extends BaseSigner {
             
             final String sigAlg = signatureAlgorithm == null ? getDefaultSignatureAlgorithm(crypto.getPublicKey()) : signatureAlgorithm;
 
+            // Log anything interesting from the request to the worker logger
+            final LogMap logMap = LogMap.getInstance(requestContext);
+
+            final byte[] requestDigest;
+            if (doLogRequestDigest) {
+                logMap.put(IWorkerLogger.LOG_REQUEST_DIGEST_ALGORITHM, logRequestDigestAlgorithm);
+
+                try (InputStream input = requestData.getAsInputStream()) {
+                    final MessageDigest md = MessageDigest.getInstance(logRequestDigestAlgorithm);
+
+                    // Digest all data
+                    // TODO: Future optimization: could be done while the file is read instead
+                    requestDigest = UploadUtil.digest(input, md);
+
+                    logMap.put(IWorkerLogger.LOG_REQUEST_DIGEST, new Loggable() {
+                        @Override
+                        public String toString() {
+                            return Hex.toHexString(requestDigest);
+                        }
+                    });
+                } catch (NoSuchAlgorithmException ex) {
+                    LOG.error("Log digest algorithm not supported", ex);
+                    throw new SignServerException("Log digest algorithm not supported", ex);
+                } catch (IOException ex) {
+                    LOG.error("Log request digest failed", ex);
+                    throw new SignServerException("Log request digest failed", ex);
+                }
+            }
+
             sign(crypto, cert, certs, sigAlg, requestContext, requestData,
                          responseData, contentOIDToUse);
 
             final String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
             final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, responseData.toReadableData(), archiveId));
+
+            final byte[] responseDigest;
+            if (doLogResponseDigest) {
+                logMap.put(IWorkerLogger.LOG_RESPONSE_DIGEST_ALGORITHM, logResponseDigestAlgorithm);
+
+                try (InputStream in = responseData.toReadableData().getAsInputStream()) {
+                    final MessageDigest md = MessageDigest.getInstance(logResponseDigestAlgorithm);
+                    responseDigest = UploadUtil.digest(in, md);
+
+                    logMap.put(IWorkerLogger.LOG_RESPONSE_DIGEST,
+                               new Loggable() {
+                                   @Override
+                                   public String toString() {
+                                        return Hex.toHexString(responseDigest);
+                                   }
+                               });
+                } catch (NoSuchAlgorithmException ex) {
+                    LOG.error("Log digest algorithm not supported", ex);
+                    throw new SignServerException("Log digest algorithm not supported", ex);
+                }
+            }
 
             // Suggest new file name
             final Object fileNameOriginal = requestContext.get(RequestContext.FILENAME);

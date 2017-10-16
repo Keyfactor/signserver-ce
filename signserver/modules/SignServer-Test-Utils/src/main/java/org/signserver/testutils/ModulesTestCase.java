@@ -100,6 +100,8 @@ public class ModulesTestCase extends TestCase {
     protected static final String KEYSTORE_TSSIGNER1_ALIAS = "TS Signer 1";
     protected static final String KEYSTORE_AUTHCODESIGNER1_FILE = "res/test/dss10/dss10_authcodesigner1.p12";
     protected static final String KEYSTORE_AUTHCODESIGNER1_ALIAS = "Auth Code Signer 1";
+    protected static final String KEYSTORE_KEYSTORE_FILE = "res/test/dss10/dss10_keystore.p12";
+    protected static final String KEYSTORE_CODE00002_ECDSA_ALIAS = "code00002";
     public static final String KEYSTORE_PASSWORD = "foo123";
 
     /**
@@ -497,8 +499,16 @@ public class ModulesTestCase extends TestCase {
         addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_AUTHCODESIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
     
+    public void addJArchiveSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+        addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_CODE00002_ECDSA_ALIAS);
+    }
+    
     public void addJArchiveCMSSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
         addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_AUTHCODESIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
+    }
+    
+    public void addJArchiveCMSSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+        addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_CODE00002_ECDSA_ALIAS);
     }
     
     public void addExtendedCMSSigner(final int signerId, final String signerName,

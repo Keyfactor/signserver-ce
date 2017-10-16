@@ -29,6 +29,7 @@ public interface FileSpecificHandlerFactory {
      * 
      * @param inFile
      * @param outFile
+     * @param clientSide
      * @return A FileSpecificHandler
      * @throws java.io.IOException
      */
@@ -39,7 +40,9 @@ public interface FileSpecificHandlerFactory {
      * Create a handler given an input stream and an output file.
      * 
      * @param inStream
+     * @param size
      * @param outFile
+     * @param clientSide
      * @return 
      * @throws java.io.IOException 
      */
@@ -67,6 +70,7 @@ public interface FileSpecificHandlerFactory {
      * 
      * @param fileType
      * @param inStream
+     * @param size
      * @param outFile
      * @param clientSide
      * @return

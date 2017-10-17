@@ -470,7 +470,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             if (metadata == null) {
                 metadata = new HashMap<String, String>();
             }
-            metadata.put("USING_CLIENTSUPPLIED_HASH", "true");
+            if (handler.isSignatureInputHash()) {
+                metadata.put("USING_CLIENTSUPPLIED_HASH", "true");
+            }
             metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", digestAlgorithm);
         }
 

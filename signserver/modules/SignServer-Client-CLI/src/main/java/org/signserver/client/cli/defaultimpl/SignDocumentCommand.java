@@ -124,6 +124,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     /** Option DIGESTALGORITHM. */
     public static final String DIGESTALGORITHM = "digestalgorithm";
+    
+    /** Option FILETYPE. */
+    public static final String FILETYPE = "filetype";
 
     /** The command line options. */
     private static final Options OPTIONS;
@@ -188,6 +191,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 TEXTS.getString("CLIENTSIDE_DESCRIPTION"));
         OPTIONS.addOption(DIGESTALGORITHM, true,
                 TEXTS.getString("DIGESTALGORITHM_DESCRIPTION"));
+        OPTIONS.addOption(FILETYPE, true,
+                TEXTS.getString("FILETYPE_DESCRIPTION"));
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             OPTIONS.addOption(option);
         }
@@ -245,6 +250,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     private boolean clientside;
     private String digestAlgorithm;
+    private String fileType;
 
     private final KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
@@ -362,6 +368,10 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         
         if (line.hasOption(DIGESTALGORITHM)) {
             digestAlgorithm = line.getOptionValue(DIGESTALGORITHM);
+        }
+        
+        if (line.hasOption(FILETYPE)) {
+            fileType = line.getOptionValue(FILETYPE);
         }
         
         try {
@@ -713,8 +723,12 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                                                           final File inFile,
                                                           final File outFile)
             throws IOException {
-        // TODO: handle optional file type argument and client-side contruction
-        return handlerFactory.createHandler(inFile, outFile, clientside);
+        if (fileType != null) {
+            return handlerFactory.createHandler(fileType, inFile, outFile,
+                                                clientside);
+        } else {
+            return handlerFactory.createHandler(inFile, outFile, clientside);
+        }
     }
     
     private FileSpecificHandler createFileSpecificHandler(final FileSpecificHandlerFactory handlerFactory,
@@ -722,8 +736,13 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                                                           final long size,
                                                           final File outFile)
             throws IOException {
-        // TODO: handle optional file type argument and client-side contruction
-        return handlerFactory.createHandler(inStream, size, outFile, clientside);
+        if (fileType != null) {
+            return handlerFactory.createHandler(fileType, inStream, size,
+                                                outFile, clientside);
+        } else {
+            return handlerFactory.createHandler(inStream, size, outFile,
+                                                clientside);
+        }
     }
 
     @Override

@@ -127,6 +127,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     /** Option FILETYPE. */
     public static final String FILETYPE = "filetype";
+    
+    /** Option EXTRAOPTION. */
+    public static final String EXTRAOPTION = "extraoption";
 
     /** The command line options. */
     private static final Options OPTIONS;
@@ -193,6 +196,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 TEXTS.getString("DIGESTALGORITHM_DESCRIPTION"));
         OPTIONS.addOption(FILETYPE, true,
                 TEXTS.getString("FILETYPE_DESCRIPTION"));
+        OPTIONS.addOption(EXTRAOPTION, true,
+                TEXTS.getString("EXTRAOPTION_DESCRIPTION"));
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             OPTIONS.addOption(option);
         }
@@ -256,6 +261,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
     /** Meta data parameters passed in */
     private Map<String, String> metadata;
+    
+    /** Extra option parameters passed in */
+    private Map<String, String> extraOptions;
     
     private FileSpecificHandlerFactory handlerFactory;
     
@@ -360,6 +368,14 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         
         if (line.hasOption(METADATA)) {
             metadata = MetadataParser.parseMetadata(line.getOptionValues(METADATA));
+        } else {
+            metadata = new HashMap<>();
+        }
+
+        if (line.hasOption(EXTRAOPTION)) {
+            extraOptions = MetadataParser.parseMetadata(line.getOptionValues(EXTRAOPTION));
+        } else {
+            extraOptions = new HashMap<>();
         }
         
         if (line.hasOption(CLIENTSIDE)) {
@@ -496,9 +512,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         }
         
         if (clientside) {
-            if (metadata == null) {
-                metadata = new HashMap<String, String>();
-            }
             if (handler.isSignatureInputHash()) {
                 metadata.put("USING_CLIENTSUPPLIED_HASH", "true");
             }
@@ -653,14 +666,10 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         try {
             OutputStream outStream = null;
 
-            if (metadata == null) {
-                metadata = new HashMap<String, String>();
-            }
-            
             try (final FileSpecificHandler handler =
                     inFile != null ?
-                    createFileSpecificHandler(handlerFactory, inFile, outFile, metadata) :
-                    createFileSpecificHandler(handlerFactory, bytes, size, outFile, metadata)) {
+                    createFileSpecificHandler(handlerFactory, inFile, outFile, extraOptions) :
+                    createFileSpecificHandler(handlerFactory, bytes, size, outFile, extraOptions)) {
                 if (outFile == null) {
                     outStream = System.out;
                 } else {
@@ -773,27 +782,27 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     private FileSpecificHandler createFileSpecificHandler(final FileSpecificHandlerFactory handlerFactory,
                                                           final File inFile,
-                                                          final File outFile, Map<String, String> metadata)
+                                                          final File outFile, Map<String, String> extraOptions)
             throws IOException {
         if (fileType != null) {
             return handlerFactory.createHandler(fileType, inFile, outFile,
-                                                clientside, metadata);
+                                                clientside, extraOptions);
         } else {
-            return handlerFactory.createHandler(inFile, outFile, clientside, metadata);
+            return handlerFactory.createHandler(inFile, outFile, clientside, extraOptions);
         }
     }
     
     private FileSpecificHandler createFileSpecificHandler(final FileSpecificHandlerFactory handlerFactory,
                                                           final InputStream inStream,
                                                           final long size,
-                                                          final File outFile, Map<String, String> metadata)
+                                                          final File outFile, Map<String, String> extraOptions)
             throws IOException {
         if (fileType != null) {
             return handlerFactory.createHandler(fileType, inStream, size,
-                                                outFile, clientside, metadata);
+                                                outFile, clientside, extraOptions);
         } else {
             return handlerFactory.createHandler(inStream, size, outFile,
-                                                clientside, metadata);
+                                                clientside, extraOptions);
         }
     }
 

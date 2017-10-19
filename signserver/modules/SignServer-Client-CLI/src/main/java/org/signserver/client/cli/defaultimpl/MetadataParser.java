@@ -18,7 +18,7 @@ import java.util.Map;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 
 /**
- * Utility class to handle the -metadata CLI option.
+ * Utility class to handle the -metadata and -extraoption CLI options.
  * 
  * @author Marcus Lundblad
  * @version $Id$
@@ -34,7 +34,7 @@ public class MetadataParser {
             final String[] valueSplit = value.split("=");
             
             if (valueSplit.length != 2) {
-                throw new IllegalCommandArgumentsException("Meta data parameters must be specified as KEY=VALUE");
+                throw new IllegalCommandArgumentsException("Meta data or extra option parameters must be specified as KEY=VALUE");
             }
             
             metadata.put(valueSplit[0].trim(),

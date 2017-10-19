@@ -34,7 +34,7 @@ public interface FileSpecificHandlerFactory {
      * @return A FileSpecificHandler
      * @throws java.io.IOException
      */
-    FileSpecificHandler createHandler(File inFile, File outFile, boolean clientSide, Map<String, String> metadata)
+    FileSpecificHandler createHandler(File inFile, File outFile, boolean clientSide, Map<String, String> extraOptions)
             throws IOException;
     
     /**
@@ -47,7 +47,7 @@ public interface FileSpecificHandlerFactory {
      * @return 
      * @throws java.io.IOException 
      */
-    FileSpecificHandler createHandler(InputStream inStream, long size, File outFile, boolean clientSide, Map<String, String> metadata)
+    FileSpecificHandler createHandler(InputStream inStream, long size, File outFile, boolean clientSide, Map<String, String> extraOptions)
             throws IOException;
     
     /**
@@ -62,7 +62,7 @@ public interface FileSpecificHandlerFactory {
      * @throws IOException 
      */
     FileSpecificHandler createHandler(String fileType, File inFile, File outFile,
-                                      boolean clientSide, Map<String, String> metadata)
+                                      boolean clientSide, Map<String, String> extraOptions)
             throws IOException;
     
     /**
@@ -79,7 +79,7 @@ public interface FileSpecificHandlerFactory {
      */
     FileSpecificHandler createHandler(String fileType, InputStream inStream,
                                       long size,
-                                      File outFile, boolean clientSide, Map<String, String> metadata) throws IOException;
+                                      File outFile, boolean clientSide, Map<String, String> extraOptions) throws IOException;
     
     /**
      * Return true if the factory can create a client-side hashing and

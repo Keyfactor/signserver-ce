@@ -719,6 +719,36 @@ public class DocumentSignerTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Test that using -clientside with -data is not allowed.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test21clientSideWithData() throws Exception {
+        LOG.info("test21clientSideWithData");
+        try {
+            execute("signdocument", "-clientside", "-data", "foo",
+                    "-workername", "MSAuthCodeCMSSigner", "-outfile", "signed.exe");
+            fail("Should have thrown exception about missing arguments");
+        } catch (IllegalCommandArgumentsException expected) {} // NOPMD
+    }
+    
+    /**
+     * Test that using -clientside without -digestalgorithm is not allowed.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test22clientSideNoDigestalgo() throws Exception {
+        LOG.info("test21clientSideWithData");
+        try {
+            execute("signdocument", "-clientside", "-infile", "foo.exe",
+                    "-workername", "MSAuthCodeCMSSigner", "-outfile", "signed.exe");
+            fail("Should have thrown exception about missing arguments");
+        } catch (IllegalCommandArgumentsException expected) {} // NOPMD
+    }
+    
     @Test
     public void test99TearDownDatabase() throws Exception {
         LOG.info("test99TearDownDatabase");

@@ -606,6 +606,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             throws CommandFailureException {
         final ServiceLoader<? extends FileSpecificHandlerFactory> factoryLoader =
                 ServiceLoader.load(FileSpecificHandlerFactory.class);
+        boolean rejectedFileType = false;
         
         try {
             for (final FileSpecificHandlerFactory factory : factoryLoader) {
@@ -614,15 +615,23 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 }
                 if (!clientside ||
                     (clientside && factory.canCreateClientSideCapableHandler())) {
-                    this.handlerFactory = factory;
-                    return;
+                    if (fileType != null && !factory.canHandleFileType(fileType)) {
+                        rejectedFileType = true;
+                    } else {
+                        this.handlerFactory = factory;
+                        return;
+                    }
                 }
             }
         } catch (ServiceConfigurationError e) {
             throw new CommandFailureException("Error loading command factories: " + e.getLocalizedMessage());
         }
 
-        throw new CommandFailureException("Could not find suitable file handler factory");
+        if (rejectedFileType) {
+            throw new CommandFailureException("Could not find file handler factory supporting file type: " + fileType);
+        } else {
+            throw new CommandFailureException("Client-side hashing and contruction is not supported");
+        }
     }
 
     /**

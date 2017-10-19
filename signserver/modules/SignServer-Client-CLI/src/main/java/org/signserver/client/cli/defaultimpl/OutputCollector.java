@@ -24,8 +24,8 @@ import java.io.OutputStream;
  * @version $Id$
  */
 public class OutputCollector {
-    private OutputStream outputStream;
-    private boolean isByteArray;
+    private final OutputStream outputStream;
+    private final boolean isByteArray;
     
     public OutputCollector(final OutputStream os, final boolean isByteArray) {
         outputStream = os;

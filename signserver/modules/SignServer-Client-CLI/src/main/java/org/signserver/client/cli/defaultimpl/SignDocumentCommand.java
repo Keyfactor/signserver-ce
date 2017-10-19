@@ -800,7 +800,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             // Parse the command line
             parseCommandLine(new GnuParser().parse(OPTIONS, args));
             validateOptions();
-            // TODO: handle the client-side option here
             initFileSpecificHandlerFactory();
 
             if (inFile != null) {

@@ -571,8 +571,10 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
      * @param manager for managing the threads
      * @param inFile directory
      * @param outFile directory
+     * @return True if success or False if there is a failure and there is no TransferManager to register the failure on
      */
-    protected void runBatch(TransferManager manager, final File inFile, final File outFile) {
+    protected boolean runBatch(TransferManager manager, final File inFile, final File outFile) {
+        boolean success = true;
         InputStream fin = null;
         try {
             final long size;
@@ -587,10 +589,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 fin = new BufferedInputStream(new FileInputStream(inFile));
                 size = inFile.length();
             }
-            runFile(manager, requestContext, inFile, fin, size, outFile);
+            success = runFile(manager, requestContext, inFile, fin, size, outFile);
         } catch (FileNotFoundException ex) {
             LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),
                     ex.getLocalizedMessage()));
+            success = false;
         } finally {
             if (fin != null) {
                 try {
@@ -600,6 +603,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 }
             }
         }
+        return success;
     }
     
     private void initFileSpecificHandlerFactory()
@@ -642,8 +646,10 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
      * @param inFile directory
      * @param bytes to sign
      * @param outFile directory
+     * @return True if success or False if there is a failure and there is no TransferManager to register the failure on
      */
-    private void runFile(TransferManager manager, Map<String, Object> requestContext, final File inFile, final InputStream bytes, final long size, final File outFile) {  // TODO: merge with runBatch ?, inFile here is only used when removing the file
+    private boolean runFile(TransferManager manager, Map<String, Object> requestContext, final File inFile, final InputStream bytes, final long size, final File outFile) {  // TODO: merge with runBatch ?, inFile here is only used when removing the file
+        boolean success = true;
         try {
             OutputStream outStream = null;
 
@@ -692,6 +698,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             } catch (NoSuchAlgorithmException ex) {
                 // TODO: include digest algorithm in case of error
                 LOG.error("Unknown digest algorithm");
+                success = false;
             } finally {
                 if (outStream != null && outStream != System.out) {
                     outStream.close();
@@ -705,6 +712,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     LOG.error("Could not remove " + inFile);
                     if (manager != null) {
                         manager.registerFailure();
+                    } else {
+                        success = false;
                     }
                 }
             }
@@ -716,6 +725,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     ex.getLocalizedMessage()));
             if (manager != null) {
                 manager.registerFailure();
+            } else {
+                success = false;
             }
         } catch (SOAPFaultException ex) {
             if (ex.getCause() instanceof AuthorizationRequiredException) {
@@ -728,6 +739,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 LOG.error("Access defined failure for " + (inFile == null ? "" : inFile.getName()) + ": " + authEx.getMessage());
             }
             LOG.error(ex);
+            success = false;
         } catch (HTTPException ex) {
             LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": HTTP Error " + ex.getResponseCode() + ": " + ex.getResponseMessage());
             
@@ -742,13 +754,18 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 } else {
                     manager.registerFailure();
                 }
+            } else {
+                success = false;
             }
         } catch (IllegalRequestException | CryptoTokenOfflineException | SignServerException | IOException ex) {
             LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
             if (manager != null) {
                 manager.registerFailure();
+            } else {
+                success = false;
             }
         }
+        return success;
     }
     
     private FileSpecificHandler createFileSpecificHandler(final FileSpecificHandlerFactory handlerFactory,
@@ -788,7 +805,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
             if (inFile != null) {
                 LOG.debug("Will request for single file " + inFile);
-                runBatch(null, inFile, outFile);
+                if (!runBatch(null, inFile, outFile)) {
+                    throw new CommandFailureException("There was a failure");
+                }
             } else if(inDir != null) {
                 LOG.debug("Will request for each file in directory " + inDir);
                 File[] inFiles = inDir.listFiles();
@@ -850,9 +869,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 
             } else {
                 LOG.debug("Will requst for the specified data");
-                runBatch(null, null, outFile);
+                if (!runBatch(null, null, outFile)) {
+                    throw new CommandFailureException("There was a failure");
+                }
             }
-                
+
             return 0;
         } catch (ParseException ex) {
             throw new IllegalCommandArgumentsException(ex.getMessage());

@@ -638,10 +638,14 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         try {
             OutputStream outStream = null;
 
+            if (metadata == null) {
+                metadata = new HashMap<String, String>();
+            }
+            
             try (final FileSpecificHandler handler =
                     inFile != null ?
-                    createFileSpecificHandler(handlerFactory, inFile, outFile) :
-                    createFileSpecificHandler(handlerFactory, bytes, size, outFile)) {
+                    createFileSpecificHandler(handlerFactory, inFile, outFile, metadata) :
+                    createFileSpecificHandler(handlerFactory, bytes, size, outFile, metadata)) {
                 if (outFile == null) {
                     outStream = System.out;
                 } else {
@@ -650,7 +654,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
                 final InputSource inputSource = handler.produceSignatureInput(digestAlgorithm);
                 final DocumentSigner signer =
-                        createSigner(handler, manager == null ? password : manager.getPassword());
+                    createSigner(handler, manager == null ? password : manager.getPassword());
                 
                 // Take start time
                 final long startTime = System.nanoTime();
@@ -740,27 +744,27 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     private FileSpecificHandler createFileSpecificHandler(final FileSpecificHandlerFactory handlerFactory,
                                                           final File inFile,
-                                                          final File outFile)
+                                                          final File outFile, Map<String, String> metadata)
             throws IOException {
         if (fileType != null) {
             return handlerFactory.createHandler(fileType, inFile, outFile,
-                                                clientside);
+                                                clientside, metadata);
         } else {
-            return handlerFactory.createHandler(inFile, outFile, clientside);
+            return handlerFactory.createHandler(inFile, outFile, clientside, metadata);
         }
     }
     
     private FileSpecificHandler createFileSpecificHandler(final FileSpecificHandlerFactory handlerFactory,
                                                           final InputStream inStream,
                                                           final long size,
-                                                          final File outFile)
+                                                          final File outFile, Map<String, String> metadata)
             throws IOException {
         if (fileType != null) {
             return handlerFactory.createHandler(fileType, inStream, size,
-                                                outFile, clientside);
+                                                outFile, clientside, metadata);
         } else {
             return handlerFactory.createHandler(inStream, size, outFile,
-                                                clientside);
+                                                clientside, metadata);
         }
     }
 

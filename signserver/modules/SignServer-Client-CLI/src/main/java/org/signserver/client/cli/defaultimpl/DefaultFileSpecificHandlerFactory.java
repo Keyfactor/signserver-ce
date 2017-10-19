@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import org.signserver.client.cli.spi.FileSpecificHandlerFactory;
 
 /**
@@ -29,7 +30,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
 
     @Override
     public FileSpecificHandler createHandler(final File inFile, final File outFile,
-                                             final boolean clientSide)
+                                             final boolean clientSide, Map<String, String> metadata)
             throws IOException {
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
@@ -41,7 +42,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
     public FileSpecificHandler createHandler(final InputStream inStream,
                                              final long size,
                                              final File outFile,
-                                             final boolean clientSide) {
+                                             final boolean clientSide, Map<String, String> metadata) {
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
         }
@@ -52,7 +53,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
     public FileSpecificHandler createHandler(final String fileType,
                                              final File inFile,
                                              final File outFile,
-                                             final boolean clientSide)
+                                             final boolean clientSide, Map<String, String> metadata)
         throws IOException {
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
@@ -66,7 +67,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final InputStream inStream,
                                              final long size,
                                              final File outFile,
-                                             final boolean clientSide) throws IOException {
+                                             final boolean clientSide, Map<String, String> metadata) throws IOException {
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
         }

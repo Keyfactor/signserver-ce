@@ -15,6 +15,7 @@ package org.signserver.client.cli.spi;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import org.signserver.client.cli.defaultimpl.FileSpecificHandler;
 
 /**
@@ -33,7 +34,7 @@ public interface FileSpecificHandlerFactory {
      * @return A FileSpecificHandler
      * @throws java.io.IOException
      */
-    FileSpecificHandler createHandler(File inFile, File outFile, boolean clientSide)
+    FileSpecificHandler createHandler(File inFile, File outFile, boolean clientSide, Map<String, String> metadata)
             throws IOException;
     
     /**
@@ -46,7 +47,7 @@ public interface FileSpecificHandlerFactory {
      * @return 
      * @throws java.io.IOException 
      */
-    FileSpecificHandler createHandler(InputStream inStream, long size, File outFile, boolean clientSide)
+    FileSpecificHandler createHandler(InputStream inStream, long size, File outFile, boolean clientSide, Map<String, String> metadata)
             throws IOException;
     
     /**
@@ -61,7 +62,7 @@ public interface FileSpecificHandlerFactory {
      * @throws IOException 
      */
     FileSpecificHandler createHandler(String fileType, File inFile, File outFile,
-                                      boolean clientSide)
+                                      boolean clientSide, Map<String, String> metadata)
             throws IOException;
     
     /**
@@ -78,7 +79,7 @@ public interface FileSpecificHandlerFactory {
      */
     FileSpecificHandler createHandler(String fileType, InputStream inStream,
                                       long size,
-                                      File outFile, boolean clientSide) throws IOException;
+                                      File outFile, boolean clientSide, Map<String, String> metadata) throws IOException;
     
     /**
      * Return true if the factory can create a client-side hashing and

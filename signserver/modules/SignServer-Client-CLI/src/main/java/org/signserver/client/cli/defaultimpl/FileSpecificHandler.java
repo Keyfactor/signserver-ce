@@ -13,7 +13,6 @@
 package org.signserver.client.cli.defaultimpl;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 
 /**

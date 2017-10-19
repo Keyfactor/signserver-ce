@@ -695,6 +695,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     LOG.info("Processing " + (inFile == null ? "" : inFile.getName()) + " took "
                         + TimeUnit.NANOSECONDS.toMillis(estimatedTime) + " ms.");
                 }
+            } catch (IllegalArgumentException ex) {
+                LOG.error("Failed: " + ex.getLocalizedMessage());
+                success = false;
             } catch (NoSuchAlgorithmException ex) {
                 // TODO: include digest algorithm in case of error
                 LOG.error("Unknown digest algorithm");

@@ -577,8 +577,10 @@ public class DocumentSignerTest extends ModulesTestCase {
         // so we will not be checking that signing works, just that the prompt
         // gets called.
         // We use the truststore, any keystore should do it.
-        execute(instance, "signdocument", "-workername", "TestXMLSigner", "-data", "<root/>",
+        try {
+            execute(instance, "signdocument", "-workername", "TestXMLSigner", "-data", "<root/>",
                             "-keystore", signserverhome + "/p12/truststore.jks");
+        } catch (CommandFailureException ignored) {} // NOPMD
         assertEquals("calls to readPassword", 1, called.size());
     }
     
@@ -612,9 +614,11 @@ public class DocumentSignerTest extends ModulesTestCase {
         // so we will not be checking that signing works, just that the prompt
         // gets called.
         // We use the truststore, any keystore should do it.
-        execute(instance, "signdocument", "-workername", "TestXMLSigner", "-data", "<root/>",
+        try {
+            execute(instance, "signdocument", "-workername", "TestXMLSigner", "-data", "<root/>",
                             "-keystore", signserverhome + "/p12/truststore.jks");
-        
+        } catch (CommandFailureException ignored) {} // NOPMD
+
         assertEquals("calls to readPassword", 2, calls.size());
     }
     
@@ -693,6 +697,26 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
         assertEquals("calls to readPassword", 2, called.size());
+    }
+    
+    @Test
+    public void test20handleError() throws Exception {
+        LOG.info("test20handleError");
+        try {
+            final File doc = File.createTempFile("test.xml", null);
+            try (FileOutputStream out = new FileOutputStream(doc)) {
+                out.write("<tag/>".getBytes());
+            }
+
+            execute("signdocument", "-workername", 
+                    "TestXMLSignerNotExisting_", "-infile", doc.getAbsolutePath());
+            fail("Should have thrown exception because of the missing worker");
+        } catch (CommandFailureException expected) { // NOPMD
+            
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
     }
     
     @Test

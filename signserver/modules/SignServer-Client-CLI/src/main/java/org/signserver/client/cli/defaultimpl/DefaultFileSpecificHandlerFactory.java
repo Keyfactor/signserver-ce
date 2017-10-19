@@ -78,4 +78,9 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
     public boolean canCreateClientSideCapableHandler() {
         return false;
     }
+
+    @Override
+    public boolean canHandleFileType(String fileType) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }  
 }

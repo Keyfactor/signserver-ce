@@ -88,4 +88,12 @@ public interface FileSpecificHandlerFactory {
      * @return True if can create client-side capable handler
      */
     boolean canCreateClientSideCapableHandler();
+    
+    /**
+     * Return true if the factory can create a handler for a given file type ID.
+     * 
+     * @param fileType
+     * @return True if fileType can be handled
+     */
+    boolean canHandleFileType(String fileType);
 }

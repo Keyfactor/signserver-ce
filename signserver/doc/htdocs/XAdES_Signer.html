@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="5283995">
+<body pageid="5286104">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <img src="projectlogo.png">
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.1.0</p>
+                    <p>Version: 4.2.0</p>
                 </div>
                 <a href="SignServer_Manual.html" class="ht-space-link">
                     <!-- <h2>SignServer - Documentation Space</h2> -->
@@ -173,6 +173,10 @@
 
             </li>
                             </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
+
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
@@ -379,11 +383,23 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Extended_CMS_Signer.html">Extended CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="MS_Authenticode_Signer.html">MS Authenticode Signer</a>
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="JArchive_Signer.html">JArchive Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JArchive_CMS_Signer.html">JArchive CMS Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -1034,6 +1050,14 @@
         <a class="ht-nav-page-link" href="Internationalization.html">Internationalization</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Peer_Systems.html">Peer Systems</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1076,17 +1100,17 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277310"> <span>XAdES Signer</span></h1>
+</div>            <h1 id="src-11569813"> <span>XAdES Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >Fully qualified class name: <strong class=" ">org.signserver.module.xades.signer.XAdESSigner</strong>    </p>
-    <div class="section section-1" id="src-5277310_id-.XAdESSignerv4.1.0-Overview">
+    <div class="section section-1" id="src-11569813_id-.XAdESSignerv4.2.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The XAdES Signer creates XML signatures according to the specified profile of XAdES.    </p>
     </div>
-    <div class="section section-1" id="src-5277310_id-.XAdESSignerv4.1.0-AvailableProperties">
+    <div class="section section-1" id="src-11569813_id-.XAdESSignerv4.2.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1147,7 +1171,15 @@
         <p  >INCLUDE_CERTIFICATE_LEVELS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Number of certificate levels to include in the document's KeyInfo (also see the common properties above). Minimum and default value is 1 which includes only the signer certificate. The value 2 includes the signer certificate and its issuer. To include all certificates specify at least the same value as number of certificates in the certificate chain. TSA_URL = URL of timestamp authority. Required if XADESFORM=T and TSA_WORKER not specified.    </p>
+        <p  >Number of certificate levels to include in the document's KeyInfo (also see the common properties above). Minimum and default value is 1 which includes only the signer certificate. The value 2 includes the signer certificate and its issuer. To include all certificates specify at least the same value as number of certificates in the certificate chain.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >TSA_URL    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >URL of Time-Stamping Authority. Required if XADESFORM=T and TSA_WORKER not specified.    </p>
     <div  class="confbox admonition admonition-info">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
                 <div class="admonition-body">
@@ -1195,7 +1227,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5277310_id-.XAdESSignerv4.1.0-CommitmentTypes">
+    <div class="section section-1" id="src-11569813_id-.XAdESSignerv4.2.0-CommitmentTypes">
         <h1 class="heading "><span>Commitment Types</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">

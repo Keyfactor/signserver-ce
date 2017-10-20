@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="5283995">
+<body pageid="5286104">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <img src="projectlogo.png">
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.1.0</p>
+                    <p>Version: 4.2.0</p>
                 </div>
                 <a href="SignServer_Manual.html" class="ht-space-link">
                     <!-- <h2>SignServer - Documentation Space</h2> -->
@@ -173,6 +173,10 @@
 
             </li>
                             </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
+
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
@@ -379,11 +383,23 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Extended_CMS_Signer.html">Extended CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="MS_Authenticode_Signer.html">MS Authenticode Signer</a>
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="JArchive_Signer.html">JArchive Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JArchive_CMS_Signer.html">JArchive CMS Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -1034,6 +1050,14 @@
         <a class="ht-nav-page-link" href="Internationalization.html">Internationalization</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Peer_Systems.html">Peer Systems</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1153,7 +1177,7 @@
 <div class="line"><code class="plain">unzip signserver-</code><code class="value">4</code><code class="plain">.x.y-bin.zip</code></div>
 </div>
     </div>
-    <p  >Alternatively, you can checkout the latest unstable version from  the Subversion (SVN) <a  class="external-link" href="https://svn.cesecore.eu/svn/signserver/trunk/">repository</a>. Note that as with the mixed distribution this one needs to be built before deploying.    </p>
+    <p  >Alternatively, you can checkout the latest unstable version from the Subversion (SVN) <a  class="external-link" href="https://svn.cesecore.eu/svn/signserver/trunk/">repository</a>. Note that as with the mixed distribution this one needs to be built before deploying.    </p>
     </div>
     <div class="section section-2" id="src-5278542_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC4xLjAtMylCdWlsZFNpZ25TZXJ2ZXI">
         <h2 class="heading "><span>3) Build SignServer</span></h2>
@@ -1204,7 +1228,7 @@
     </div>
     <div class="section section-2" id="src-5278542_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC4xLjAtNSlTZXR1cERhdGFiYXNl">
         <h2 class="heading "><span>5) Setup Database</span></h2>
-    <p  >Skip this section and instead follow the instructions in <a   href="#src-5278542_id-.SignServerInstallationv4.1.0-SignServer_without_DB">SignServer without Database</a>  if you decide to run SignServer without a database management system.    </p>
+    <p  >Skip this section and instead follow the instructions in <a   href="#src-5278542_id-.SignServerInstallationv4.1.0-SignServer_without_DB">SignServer without Database</a> if you decide to run SignServer without a database management system.    </p>
     <p  >If you are using a database you will need to get a JDBC driver from the database vendor.    </p>
     <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-Databaseaccount">
         <h3 class="heading section"><span>Database account</span></h3>
@@ -1371,8 +1395,8 @@
     <p  >    </p>
     <div class="section section-3" id="src-5278542_id-.SignServerInstallationv4.1.0-Databaseconfiguration">
         <h3 class="heading "><span>Database configuration</span></h3>
-    <p  >Select database management system    </p>
-<pre class="prettyprint ">database.name=mysql</pre>    <p  >See  <a   href="CESeCore_Security_Events_Logger.html">Signed log</a> for how to configure for signed audit logs in the database.    </p>
+    <p  >Select database management system unless it is the default MySQL/MariaDB:    </p>
+<pre class="prettyprint ">database.name=mysql</pre>    <p  >See <a   href="CESeCore_Security_Events_Logger.html">Signed log</a> for how to configure for signed audit logs in the database.    </p>
     <p  >    </p>
     </div>
     </div>

@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="5283995">
+<body pageid="5286104">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <img src="projectlogo.png">
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.1.0</p>
+                    <p>Version: 4.2.0</p>
                 </div>
                 <a href="SignServer_Manual.html" class="ht-space-link">
                     <!-- <h2>SignServer - Documentation Space</h2> -->
@@ -173,6 +173,10 @@
 
             </li>
                             </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
+
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
@@ -379,11 +383,23 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Extended_CMS_Signer.html">Extended CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="MS_Authenticode_Signer.html">MS Authenticode Signer</a>
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="JArchive_Signer.html">JArchive Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JArchive_CMS_Signer.html">JArchive CMS Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -1034,6 +1050,14 @@
         <a class="ht-nav-page-link current" href="Internationalization.html">Internationalization</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Peer_Systems.html">Peer Systems</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1073,16 +1097,16 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                             </ul>
-</div>            <h1 id="src-5284295"> <span>Internationalization</span></h1>
+</div>            <h1 id="src-9798086"> <span>Internationalization</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The <a   href="Administration_Web.html">AdminWeb</a> supports different languages. Currently English and Swedish is supported.    </p>
-    <div class="section section-1" id="src-5284295_id-.Internationalizationv4.1.0-TranslationProcess">
+    <div class="section section-1" id="src-9798086_id-.Internationalizationv4.2.0-TranslationProcess">
         <h1 class="heading "><span>Translation Process</span></h1>
     <p  >The process of translating SignServer into a new language could be like the following:    </p>
-<ol class=" "><li class=" ">    <p  >Copy the latest language file for the English language <strong class=" ">languagefile_en.properties</strong> to a new file in the same location but with &quot;en&quot; replaced with the language code of the new language, for example &quot;ut&quot; for Utopian: <strong class=" ">languagefile_ut.properties</strong>    </p>
+<ol class=" "><li class=" ">    <p  >Copy the latest language file for the English language <strong class=" ">languagefile.properties</strong> to a new file in the same location but with the language code of the new language, for example &quot;ut&quot; for Utopian: <strong class=" ">languagefile_ut.properties</strong>    </p>
 </li><li class=" ">    <p  >Edit <strong class=" ">faces-config.xml</strong> and make sure the new language code is listed as an available language:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1091,7 +1115,7 @@
 <div class="line"><code class="plain">      &lt;</code><code class="keyword">default</code><code class="plain">-locale&gt;en&lt;/</code><code class="keyword">default</code><code class="plain">-locale&gt;</code></div>
 <div class="line"><code class="plain">      &lt;</code><code class="keyword">supported</code><code class="plain">-locale&gt;en&lt;/</code><code class="keyword">supported</code><code class="plain">-locale&gt;</code></div>
 <div class="line"><code class="plain">      &lt;</code><code class="keyword">supported</code><code class="plain">-locale&gt;sv&lt;/</code><code class="keyword">supported</code><code class="plain">-locale&gt;</code></div>
-<div class="line"><code class="plain">      &lt;</code><code class="keyword">supported</code><code class="plain">-locale&gt;ut&lt;/</code><code class="keyword">supported</code><code class="plain">-locale&gt;</code></div>
+<div class="line"><code class="plain">      &lt;</code><code class="keyword">supported</code><code class="plain">-locale&gt;ut&lt;/</code><code class="keyword">supported</code><code class="plain">-locale&gt;</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >Update the relevant information in the beginning of <strong class=" ">languagefile_ut.properties</strong> and fill in the name of the new language in the <strong class=" ">LANGUAGE_ENGLISHNAME</strong> and <strong class=" ">LANGUAGE_NATIVENAME</strong> properties.    </p>
@@ -1099,12 +1123,12 @@
 </li><li class=" ">    <p  >Build SignServer if the changes were made in the sources and then deploy or simply deploy if the changes where made in the binary (i.e. .war file) distribution.    </p>
 </li><li class=" ">    <p  >Test SignServer with a web browser (or operating system) configured to prefer the new language code and make sure that all pages are translated.    </p>
 </li></ol>    </div>
-    <div class="section section-1" id="src-5284295_id-.Internationalizationv4.1.0-FileLocationsintheSources">
+    <div class="section section-1" id="src-9798086_id-.Internationalizationv4.2.0-FileLocationsintheSources">
         <h1 class="heading "><span>File Locations in the Sources</span></h1>
 <ul class=" "><li class=" ">    <p  >modules/mod-enterprise/SignServer-Admin-web/src/main/resources/org/signserver/admin/web/languagefile_en.properties    </p>
 </li><li class=" ">    <p  >modules/mod-enterprise/SignServer-Admin-web/src/main/webapp/WEB-INF/faces-config.xml    </p>
 </li></ul>    </div>
-    <div class="section section-1" id="src-5284295_id-.Internationalizationv4.1.0-FileLocationsinBinaryDistribution">
+    <div class="section section-1" id="src-9798086_id-.Internationalizationv4.2.0-FileLocationsinBinaryDistribution">
         <h1 class="heading "><span>File Locations in Binary Distribution</span></h1>
 <ul class=" "><li class=" ">    <p  >Inside lib/SignServer-Admin-web-x.y.z.war: /WEB-INF/classes/org/signserver/admin/web/languagefile_en.properties    </p>
 </li><li class=" ">    <p  >Inside lib/SignServer-Admin-web-x.y.z.war: /WEB-INF/faces-config.xml    </p>
@@ -1127,7 +1151,18 @@
             </svg>
             <span>Database CLI</span>
         </a>
-        </nav>    
+                <a href="Peer_Systems.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Peer Systems</span>
+        </a>
+    </nav>    
             
             <article id="html-search-results" class="ht-content" style="display: none;">
             <header class="ht-content-header">

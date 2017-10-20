@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="5283995">
+<body pageid="5286104">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <img src="projectlogo.png">
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.1.0</p>
+                    <p>Version: 4.2.0</p>
                 </div>
                 <a href="SignServer_Manual.html" class="ht-space-link">
                     <!-- <h2>SignServer - Documentation Space</h2> -->
@@ -173,6 +173,10 @@
 
             </li>
                             </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
+
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
@@ -379,11 +383,23 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Extended_CMS_Signer.html">Extended CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="MS_Authenticode_Signer.html">MS Authenticode Signer</a>
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="JArchive_Signer.html">JArchive Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JArchive_CMS_Signer.html">JArchive CMS Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -1034,6 +1050,14 @@
         <a class="ht-nav-page-link" href="Internationalization.html">Internationalization</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Peer_Systems.html">Peer Systems</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1077,7 +1101,7 @@
                                                                                                          <li class="shortcut"><a href="Administration_Web.html">Administration Web</a></li>
                                                                                      <li><a href="Workers_Page.html">Workers Page</a></li>
                                                             </ul>
-</div>            <h1 id="src-5282339"> <span>Workers Install Certificates Page</span></h1>
+</div>            <h1 id="src-5287046"> <span>Workers Install Certificates Page</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1085,10 +1109,10 @@
     <p  >Install certificates to the worker configuration or into the crypto token.    </p>
     <p  >Make sure each worker that should have certificates installed are selected.    </p>
     <p  >Work from left to right for each worker and fill in the required information.    </p>
-    <div class="section section-1" id="src-5282339_id-.WorkersInstallCertificatesPagev4.1.0-InstallCertificates">
+    <div class="section section-1" id="src-5287046_id-.WorkersInstallCertificatesPagev4.2.0-InstallCertificates">
         <h1 class="heading "><span>Install Certificates</span></h1>
     <div  class="tablewrap">
-        <table class="relative-table confluenceTable">
+        <table class="relative-table wrapped confluenceTable">
                     <colgroup>
                                     <col  width="7%"/>
                                     <col  width="92%"/>
@@ -1126,6 +1150,8 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Upload (or paste the content of) a PEM file with the complete certificate chain ordered with the end entity (signer) certificate first and followed by each issuer CA certificates or upload the individual certificates one at a time. For each file click the Add button to load the certificates. Use the <strong class=" ">X</strong> button to remove a certificate if needed.    </p>
+    <p  >After adding certificates, warnings can be displayed in this cell if the certificate chain is not in the right order (i.e. starting with the end entity / signer certificate and then followed by the issuing CAs) or if the certificates does not have the right key usages.    </p>
+    <p  >Which checks that are made depends on the <a   href="SignServer_Workers.html">worker implementation</a>.    </p>
             </td>
         </tr>
     <tr>
@@ -1139,10 +1165,10 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5282339_id-.WorkersInstallCertificatesPagev4.1.0-Actions">
+    <div class="section section-1" id="src-5287046_id-.WorkersInstallCertificatesPagev4.2.0-Actions">
         <h1 class="heading "><span>Actions</span></h1>
     <div  class="tablewrap">
-        <table class="confluenceTable">
+        <table class="wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />

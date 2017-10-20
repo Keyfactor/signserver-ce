@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="5283995">
+<body pageid="5286104">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <img src="projectlogo.png">
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.1.0</p>
+                    <p>Version: 4.2.0</p>
                 </div>
                 <a href="SignServer_Manual.html" class="ht-space-link">
                     <!-- <h2>SignServer - Documentation Space</h2> -->
@@ -173,6 +173,10 @@
 
             </li>
                             </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
+
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
@@ -379,11 +383,23 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Extended_CMS_Signer.html">Extended CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="MS_Authenticode_Signer.html">MS Authenticode Signer</a>
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="JArchive_Signer.html">JArchive Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JArchive_CMS_Signer.html">JArchive CMS Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -1034,6 +1050,14 @@
         <a class="ht-nav-page-link" href="Internationalization.html">Internationalization</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Peer_Systems.html">Peer Systems</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1130,7 +1154,32 @@
     <p  >Confirm the removal by clicking the <strong class=" ">Remove</strong> button.    </p>
             </td>
         </tr>
-    <tr>
+</tbody>        </table>
+            </div>
+    <p  >    </p>
+    <div class="section section-2" id="src-5282269_id-.AdministratorsPagev4.1.0-AllowAnyAdministrator">
+        <h2 class="heading "><span>Allow Any Administrator</span></h2>
+    <div  class="confbox admonition admonition-warning">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+    <p  >Before switching to allowing only listed administrator make sure your credentials are listed otherwise you will directly be denied access after the switch.    </p>
+        </div>
+    </div>
+    <div  class="tablewrap">
+        <table class="confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Action    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Description    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Switch to 'Only listed'    </p>
             </td>
@@ -1148,11 +1197,116 @@
         </tr>
 </tbody>        </table>
             </div>
-    <div  class="confbox admonition admonition-warning">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Before switching to allowing only listed administrator make sure your credentials are listed otherwise you will directly be denied access after the switch.    </p>
-        </div>
+    </div>
+    <div class="section section-2" id="src-5282269_id-.AdministratorsPagev4.1.0-PeerSystems">
+        <h2 class="heading "><span>Peer Systems</span></h2>
+    <div  class="tablewrap">
+        <table class="confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Action    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Description    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Allow incoming connections    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Check this check box and Click the Save button in order to allow incoming connections from <a   href="Peer_Systems.html">Peer Systems</a>.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Save    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Saves the state of the <i class=" ">Allow incoming connections</i> check box.    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    <div class="section section-2" id="src-5282269_id-.AdministratorsPagev4.1.0-IncomingConnections">
+        <h2 class="heading "><span>Incoming Connections</span></h2>
+    <div  class="tablewrap">
+        <table class="relative-table confluenceTable">
+                    <colgroup>
+                                    <col  width="16%"/>
+                                    <col  width="83%"/>
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Column/Action    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Description    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Remote identity    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The subject DN from the client certificate for the incoming connection.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Remote address    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The IP address of the incoming connection.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Last seen    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The date and time the connection was last made.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Authorized    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >If the certificate is in the <i class=" ">Peer Systems</i> role.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Clear    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Click the button to forget the connection.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Modify Authorization    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The button is visible if there is a rule for the certificate. Clicking the button opens the Edit Authorization page for the rule.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Add Authoriztion...    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The link is visible if there is not a rule for the certificate. Clicking the link opens the Add Authorization page with the certificate information filled in and the Peers Role selected.    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
     </div>
     </div>
         </div>

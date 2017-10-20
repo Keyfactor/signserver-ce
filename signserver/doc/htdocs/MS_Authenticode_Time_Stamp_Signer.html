@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="5283995">
+<body pageid="5286104">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <img src="projectlogo.png">
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.1.0</p>
+                    <p>Version: 4.2.0</p>
                 </div>
                 <a href="SignServer_Manual.html" class="ht-space-link">
                     <!-- <h2>SignServer - Documentation Space</h2> -->
@@ -173,6 +173,10 @@
 
             </li>
                             </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
+
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
@@ -379,11 +383,23 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Extended_CMS_Signer.html">Extended CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="MS_Authenticode_Signer.html">MS Authenticode Signer</a>
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="JArchive_Signer.html">JArchive Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JArchive_CMS_Signer.html">JArchive CMS Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -1034,6 +1050,14 @@
         <a class="ht-nav-page-link" href="Internationalization.html">Internationalization</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Peer_Systems.html">Peer Systems</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1076,17 +1100,17 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277295"> <span>MS Authenticode Time Stamp Signer</span></h1>
+</div>            <h1 id="src-5287040"> <span>MS Authenticode Time Stamp Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The class name is: <strong class=" ">org.signserver.server.signers.tsa.MSAuthCodeTimeStampSigner</strong>.    </p>
-    <div class="section section-1" id="src-5277295_id-.MSAuthenticodeTimeStampSignerv4.1.0-Overview">
+    <div class="section section-1" id="src-5287040_id-.MSAuthenticodeTimeStampSignerv4.1.1-Overview">
         <h1 class="heading section"><span>Overview</span></h1>
     <p  class="section">This time stamp signer is compatible with the Microsoft Authenticode Time Stamping code signing.    </p>
     </div>
-    <div class="section section-1" id="src-5277295_id-.MSAuthenticodeTimeStampSignerv4.1.0-AvailableProperties">
+    <div class="section section-1" id="src-5287040_id-.MSAuthenticodeTimeStampSignerv4.1.1-AvailableProperties">
         <h1 class="heading section"><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1129,11 +1153,15 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5277295_id-.MSAuthenticodeTimeStampSignerv4.1.0-Howto">
+    <div class="section section-1" id="src-5287040_id-.MSAuthenticodeTimeStampSignerv4.1.1-Howto">
         <h1 class="heading section"><span>Howto</span></h1>
     <p  >There is a howto about testing Authenticode signing available in <strong class=" ">doc/howtos/test_ms_authcode.txt</strong>.    </p>
-    <p  >    </p>
     </div>
+    <div class="section section-1" id="src-5287040_id-.MSAuthenticodeTimeStampSignerv4.1.1-CertificateRequirements">
+        <h1 class="heading "><span>Certificate Requirements</span></h1>
+<ul class=" "><li class=" ">    <p  >A time-stamp signer certificate must have the extended key usage extension present and marked as critical.    </p>
+</li><li class=" ">    <p  >The extended key usage extension must contain the timeStamping key purpose ID and only that one.    </p>
+</li></ul>    </div>
         </div>
 
     </article>

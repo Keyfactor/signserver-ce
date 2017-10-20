@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="5283995">
+<body pageid="5286104">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <img src="projectlogo.png">
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.1.0</p>
+                    <p>Version: 4.2.0</p>
                 </div>
                 <a href="SignServer_Manual.html" class="ht-space-link">
                     <!-- <h2>SignServer - Documentation Space</h2> -->
@@ -173,6 +173,10 @@
 
             </li>
                             </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
+
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
@@ -379,11 +383,23 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Extended_CMS_Signer.html">Extended CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="MS_Authenticode_Signer.html">MS Authenticode Signer</a>
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="JArchive_Signer.html">JArchive Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JArchive_CMS_Signer.html">JArchive CMS Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -1034,6 +1050,14 @@
         <a class="ht-nav-page-link" href="Internationalization.html">Internationalization</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Peer_Systems.html">Peer Systems</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1258,7 +1282,7 @@
             </div>
     </div>
     <div class="section section-1" id="src-5277692_id-.PKCS11CryptoTokenv4.1.0-Defaultglobalproperties">
-        <h1 class="heading "><span>Default global properties</span></h1>
+        <h1 class="heading "><span>Default global properties </span></h1>
     <p  >Some worker properties can instead by specified as default values in the global configuration so they does not have to be repeated in every worker. Individual workers can override the default global values (if any) by specifying the property as usual.    </p>
     <p  >Global default values are specified as global values in the global configuration with the name prefixed with &quot;DEFAULT.&quot;. The following properties can currently be specified in the global configuration:    </p>
 <ul class=" "><li class=" ">    <p  >SHAREDLIBRARYNAME    </p>
@@ -1271,7 +1295,7 @@
 </li><li class=" ">    <p  >ATTRIBUTESFILE    </p>
 </li><li class=" ">    <p  >PIN    </p>
 </li></ul>    <div class="section section-2" id="src-5277692_id-.PKCS11CryptoTokenv4.1.0-Exampleusage">
-        <h2 class="heading "><span>Example usage</span></h2>
+        <h2 class="heading "><span>Example usage </span></h2>
     <p  >Edit (preferably a copy of) pkcs11-crypto.properties to match your PKCS#11 token. Run the following command to set up the token:    </p>
 <pre class=" ">bin/signserver setproperties pkcs11-crypto-configuragtion.properties</pre>    <p  >Reload the configuration using the ID that was printed (in this example 8):    </p>
 <pre class=" ">bin/signserver reload 8</pre>    <p  >Activate the crypto token by specifying the PIN code:    </p>

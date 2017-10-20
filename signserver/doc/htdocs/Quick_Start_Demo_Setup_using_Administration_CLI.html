@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="5283995">
+<body pageid="5286104">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <img src="projectlogo.png">
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.1.0</p>
+                    <p>Version: 4.2.0</p>
                 </div>
                 <a href="SignServer_Manual.html" class="ht-space-link">
                     <!-- <h2>SignServer - Documentation Space</h2> -->
@@ -173,6 +173,10 @@
 
             </li>
                             </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
+
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
@@ -379,11 +383,23 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Extended_CMS_Signer.html">Extended CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="MS_Authenticode_Signer.html">MS Authenticode Signer</a>
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="JArchive_Signer.html">JArchive Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JArchive_CMS_Signer.html">JArchive CMS Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -1034,6 +1050,14 @@
         <a class="ht-nav-page-link" href="Internationalization.html">Internationalization</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Peer_Systems.html">Peer Systems</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1104,7 +1128,7 @@
 <pre class="prettyprint ">$ bin/signserver setproperties doc/sample-configs/timestamp.properties</pre></li><li class=" ">    <p  >Activate the configuration with:    </p>
 <pre class="prettyprint ">$ bin/signserver reload 2</pre></li><li class=" ">    <p  >You can check the status and configuration with:    </p>
 <pre class="prettyprint ">$ bin/signserver getstatus complete all</pre></li><li class=" ">    <p  >Run the test client to see that everything is up:    </p>
-<pre class="prettyprint ">$ bin/signclient timestamp http://localhost:8080/signserver/process?workerName=TimeStampSigner</pre>    <p  >The message &quot;TimeStampRequest validated&quot; should appear once a second. Also check JBOSS_HOME/server/default/log/server.log or GLASSFISH_HOME/domains/domain1/logs/server.log that successful messages appear.    </p>
+<pre class="prettyprint ">$ bin/signclient timestamp http://localhost:8080/signserver/process?workerName=TimeStampSigner</pre>    <p  >The message &quot;TimeStampRequest validated&quot; should appear once a second. Also check JBOSS_HOME/standalone/log/server.log or GLASSFISH_HOME/domains/domain1/logs/server.log that successful messages appear.    </p>
 </li></ol>    </div>
     <div class="section section-1" id="src-5282873_id-.QuickStartDemoSetupusingAdministrationCLIv4.1.0-QuickstartdemoPDFsigner">
         <h1 class="heading "><span>Quick start demo PDF signer</span></h1>

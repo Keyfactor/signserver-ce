@@ -1,6 +1,23 @@
 SignServer 4.2.0
 ----------------
 
+Featured Features:
+ - Rekeying from EJBCA using Peer Connectors.
+ - Client-side hashing for Authenticode and JAR signing.
+
+General:
+- Bouncy Castle and CESeCore libraries updated.
+- Fixed translation issues.
+- New PrimeKey logos.
+
+Code Signing:
+ - Authenticode signing with client-side hashing.
+ - JAR signing with client-side hashing.
+ - One issue with duplicated signature names fixed for JAR signing.
+
+Bug Fixes:
+ - One issue with SignClient exit code fixed.
+
 Notice:
  - The security audit logger (configured in databaseprotection.properties)
    is now case sensitive when it comes to the key aliases.
@@ -8,6 +25,25 @@ Notice:
    Specifically, if the default sample keystore with alias 'dbstorekey' was
    used it should now be changed to 'dbStoreKey' as that is the correct 
    name in the keystore.
+
+
+SignServer 4.1.1
+----------------
+
+Time-stamping:
+ - Legacy option to encode the time-stamp tokens as before Bouncy Castle 1.50.
+ - Legacy option to not include the RFC#6211 cmsAlgorithmProtection attribute in the token.
+
+PDF Signing:
+ - Issue with PDF version if digest specified as SHA-256 instead of SHA256 resolved.
+   Fix contributed by Aziz Göktepe.
+
+Admin Web:
+ - A number of translation issues fixed.
+
+Bug fixes:
+ - There was 7 issues fixed.
+
 
 SignServer 4.1.0
 ----------------

@@ -27,6 +27,12 @@ General procedures:
 5. Build and deploy as described in the installation guide.
 
 
+From SignServer 4.1.x to SignServer 4.2.x
+-----------------------------------------
+
+   (No database changes required)
+
+
 From SignServer 4.0.x to SignServer 4.1.x
 -----------------------------------------
 

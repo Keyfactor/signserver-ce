@@ -1,3 +1,53 @@
+SignServer 4.2.0, 2017-10-25
+----------------------------
+
+** Bug
+    * [DSS-1432] - Missing Swedish translation for Crypto_Token_-_Test_Keys
+    * [DSS-1433] - Non-translated strings not falling back to default language
+    * [DSS-1463] - JArchiveSigner does not fail properly on duplicated signature names
+    * [DSS-1464] - signdocument command does not exit with error code for single failures
+
+** New Feature
+    * [DSS-1182] - Support for Authenticode signing without sending the binary to the server
+    * [DSS-1183] - Support for JAR signing without sending the binary to the server
+    * [DSS-1336] - Support for rekeying using EJBCA Peer Connector
+    * [DSS-1419] - Report an issue when trying to upload a certificate (chain) not appropriate for the worker
+    * [DSS-1438] - CMS direct signature support
+    * [DSS-1444] - Batch signing support in client side hashing and construction
+    * [DSS-1461] - Log request and/or response digests in CMS Signer
+
+** Task
+    * [DSS-1422] - Use the new logos in the interfaces
+    * [DSS-1435] - Include the enterprise module introduced in DSS-1182 in the SignClient download
+
+** Improvement
+    * [DSS-1123] - Upgrade to Bouncy Castle 1.56
+    * [DSS-1399] - Add SignServer Logo to SignServer Documentation Page
+    * [DSS-1409] - Upgrade CESeCore to 6.8.0
+    * [DSS-1429] - Method for getting token status, not worker status
+    * [DSS-1440] - Add compliance tests for ExtendedCMSSigner
+
+
+SignServer 4.1.1, 2017-09-19
+----------------------------
+
+** Bug
+    * [DSS-1373] - PDF version not upgraded if digest algorithm spelled as "SHA-256" (with minus sign)
+    * [DSS-1380] - Regression: JBOSS_HOME environment variable not accepted allthough sample config mentions it
+    * [DSS-1407] - Crypto token status test uses obsolete algorithm
+    * [DSS-1414] - English translation, Audit Log in AdminWeb: ???Service_COLON???
+    * [DSS-1421] - Misspelled error message for unknown file types in MSAuthCodeSigner
+    * [DSS-1432] - Missing Swedish translation for Crypto_Token_-_Test_Keys
+    * [DSS-1436] - MSAuthCodeTimeStampSigner does not accept invalid characters as the base64 data
+
+** New Feature
+    * [DSS-1415] - Support legacy encoding of time-stamp tokens
+    * [DSS-1437] - Option to not include RFC6211 attribute in time-stamp tokens
+
+** Improvement
+    * [DSS-1391] - Change default database type
+
+
 SignServer 4.1.0, 2017-06-02
 ----------------------------
 

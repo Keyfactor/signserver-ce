@@ -31,6 +31,7 @@ public interface FileSpecificHandlerFactory {
      * @param inFile input for the handler given as a file
      * @param outFile output file for the handler to use
      * @param clientSide true if the handler should be able to do client-side hashing and construction
+     * @param extraOptions extra settings for the implementation
      * @return A FileSpecificHandler
      * @throws java.io.IOException if unable to use the input file, i.e. file non-existing
      */
@@ -44,6 +45,7 @@ public interface FileSpecificHandlerFactory {
      * @param size the number of bytes provided in the input stream
      * @param outFile output file for the handler to use
      * @param clientSide true if the handler should be able to do client-side hashing and construction
+     * @param extraOptions extra settings for the implementation
      * @return A FileSpecificHandler 
      */
     FileSpecificHandler createHandler(InputStream inStream, long size, File outFile, boolean clientSide, Map<String, String> extraOptions);
@@ -56,6 +58,7 @@ public interface FileSpecificHandlerFactory {
      * @param inFile input for the handler given as a file
      * @param outFile output file for the handler to use
      * @param clientSide true if the handler should be able to do client-side hashing and construction
+     * @param extraOptions extra settings for the implementation
      * @return A FileSpecificHandler
      * @throws IOException if unable to use the input file, i.e. file non-existing
      */
@@ -72,6 +75,7 @@ public interface FileSpecificHandlerFactory {
      * @param size the number of bytes provided in the input stream
      * @param outFile output file for the handler to use
      * @param clientSide true if the handler should be able to do client-side hashing and construction
+     * @param extraOptions extra settings for the implementation
      * @return A FileSpecificHandler 
      */
     FileSpecificHandler createHandler(String fileType, InputStream inStream,

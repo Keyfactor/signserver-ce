@@ -19,7 +19,7 @@ import java.util.Map;
 import org.signserver.client.cli.defaultimpl.FileSpecificHandler;
 
 /**
- * Interface for factory classes capbable of creating FileSpecificHandlerS.
+ * Interface for factory classes capable of creating FileSpecificHandlerS.
  * 
  * @author Marcus Lundblad
  * @version $Id$
@@ -28,11 +28,11 @@ public interface FileSpecificHandlerFactory {
     /**
      * Create a handler for given input and output file.
      * 
-     * @param inFile
-     * @param outFile
-     * @param clientSide
+     * @param inFile input for the handler given as a file
+     * @param outFile output file for the handler to use
+     * @param clientSide true if the handler should be able to do client-side hashing and construction
      * @return A FileSpecificHandler
-     * @throws java.io.IOException
+     * @throws java.io.IOException if unable to use the input file, i.e. file non-existing
      */
     FileSpecificHandler createHandler(File inFile, File outFile, boolean clientSide, Map<String, String> extraOptions)
             throws IOException;
@@ -40,26 +40,24 @@ public interface FileSpecificHandlerFactory {
     /**
      * Create a handler given an input stream and an output file.
      * 
-     * @param inStream
-     * @param size
-     * @param outFile
-     * @param clientSide
-     * @return 
-     * @throws java.io.IOException 
+     * @param inStream input for the handler given as an input stream
+     * @param size the number of bytes provided in the input stream
+     * @param outFile output file for the handler to use
+     * @param clientSide true if the handler should be able to do client-side hashing and construction
+     * @return A FileSpecificHandler 
      */
-    FileSpecificHandler createHandler(InputStream inStream, long size, File outFile, boolean clientSide, Map<String, String> extraOptions)
-            throws IOException;
+    FileSpecificHandler createHandler(InputStream inStream, long size, File outFile, boolean clientSide, Map<String, String> extraOptions);
     
     /**
      * Create a file specific handler given a file type name, input, and output
      * files.
      * 
-     * @param fileType
-     * @param inFile
-     * @param outFile
-     * @param clientSide
-     * @return
-     * @throws IOException 
+     * @param fileType file type identifier, overriding any autodetection done by the factory
+     * @param inFile input for the handler given as a file
+     * @param outFile output file for the handler to use
+     * @param clientSide true if the handler should be able to do client-side hashing and construction
+     * @return A FileSpecificHandler
+     * @throws IOException if unable to use the input file, i.e. file non-existing
      */
     FileSpecificHandler createHandler(String fileType, File inFile, File outFile,
                                       boolean clientSide, Map<String, String> extraOptions)
@@ -69,17 +67,16 @@ public interface FileSpecificHandlerFactory {
      * Create a file specific handler given a file type name, input stream and
      * an output file.
      * 
-     * @param fileType
-     * @param inStream
-     * @param size
-     * @param outFile
-     * @param clientSide
-     * @return
-     * @throws IOException 
+     * @param fileType file type identifier, overriding any autodetection done by the factory
+     * @param inStream input for the handler given as an input stream
+     * @param size the number of bytes provided in the input stream
+     * @param outFile output file for the handler to use
+     * @param clientSide true if the handler should be able to do client-side hashing and construction
+     * @return A FileSpecificHandler 
      */
     FileSpecificHandler createHandler(String fileType, InputStream inStream,
                                       long size,
-                                      File outFile, boolean clientSide, Map<String, String> extraOptions) throws IOException;
+                                      File outFile, boolean clientSide, Map<String, String> extraOptions);
     
     /**
      * Return true if the factory can create a client-side hashing and

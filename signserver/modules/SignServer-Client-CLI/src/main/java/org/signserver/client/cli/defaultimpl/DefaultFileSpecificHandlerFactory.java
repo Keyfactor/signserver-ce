@@ -67,7 +67,7 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final InputStream inStream,
                                              final long size,
                                              final File outFile,
-                                             final boolean clientSide, Map<String, String> metadata) throws IOException {
+                                             final boolean clientSide, Map<String, String> metadata) {
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
         }

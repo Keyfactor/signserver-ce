@@ -107,16 +107,17 @@
                 <h1 class="ht-logo">
                     <span class="ht-logo-label">SIGNDS</span>
                     <!-- <img class="space-logo" src="spacelogo.png" /> -->
-                    <img src="projectlogo.png">
+                    <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
                     <p>Version: 4.2.0</p>
                 </div>
-                <a href="SignServer_Manual.html" class="ht-space-link">
-                    <!-- <h2>SignServer - Documentation Space</h2> -->
-                    <h2>SignServer Manual</h2>
-                </a>
             </header>
+
+            <a href="SignServer_Manual.html" class="ht-space-link">
+                <!-- <h2>SignServer - Documentation Space</h2> -->
+                <h2>SignServer Manual</h2>
+            </a>
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
@@ -1064,15 +1065,14 @@
             </nav>
 
             <div class="ht-sidebar-other">
-                <div class="ht-sidebar-other-item">
-                    <a href="https://signserver.org">signserver.org</a>
-                </div>
-                <div class="ht-sidebar-other-item">
-                    <a href="https://www.primekey.se/technologies/products-overview/ejbca-enterprise/" title="EJBCA - PKI by PrimeKey"><img src="ejbca-logo.png"/></a>
-                </div>
-                <div class="ht-sidebar-other-item">
-                    <a href="https://www.primekey.se" title="PrimeKey Solutions"><img src="primekey-logo.png"/></a>
-                </div>
+                <h2>Other Resources</h2>
+                <nav class="ht-pages-nav">
+                    <ul class="ht-pages-nav-top">
+                    <li class="leaf"><a class="ht-nav-page-link" href="https://www.signserver.org">signserver.org</a></li>
+                    <li class="leaf"><a class="ht-nav-page-link" href="https://www.ejbca.org">ejbca.org</a></li>
+                    <li class="leaf"><a class="ht-nav-page-link" href="https://www.primekey.com">primekey.com</a></li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
@@ -1117,7 +1117,7 @@
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The MS Authenticode CMS signer is special-purpose version of the extended CMS signer, producing Authenticode-compatible CMS signatures suitable for embedding into portable executables (.exe, .dll) and MSI installer packages. This is intended for use with client-side hashing, where a client does the hashing of the original file and requests this hash to be signed by SignServer, giving a resulting signature which is then inserted into the resulting output file by the client.    </p>
     <p  >This signer has all the properties of <a   href="Extended_CMS_Signer.html">Extended CMS Signer</a>, and also the same Authenticode-specific properties as the MS Authenticode signer, however setting CONTENTOID or allowing overriding content OID (by setting ALLOW_CONTENTOID_OVERRIDE to true) is not supported (as the content OID will be set to be compatible with Authenticode specification).    </p>
-    <p  >The <a   href="Client_CLI.html#src-11568150_id-.ClientCLIv4.2.0-clientsidesign">Client-side hashing CLI command</a> can be used to sign a portable executable or MSI installer by hashing on the client-side, signing the hash server-side using this signer, and finally assembling the final signed binary or installer on the client-side.    </p>
+    <p  >The signdocument command can be used with <a   href="Client-Side_Hashing.html">Client-Side Hashing and construction</a> to sign a portable executable or MSI installer by hashing on the client-side, signing the hash server-side using this signer, and finally assembling the final signed binary or installer on the client-side.    </p>
     </div>
     <div class="section section-1" id="src-11568133_id-.MSAuthenticodeCMSSignerv4.2.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>

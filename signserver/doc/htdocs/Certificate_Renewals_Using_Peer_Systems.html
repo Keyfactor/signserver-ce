@@ -107,16 +107,17 @@
                 <h1 class="ht-logo">
                     <span class="ht-logo-label">SIGNDS</span>
                     <!-- <img class="space-logo" src="spacelogo.png" /> -->
-                    <img src="projectlogo.png">
+                    <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
                     <p>Version: 4.2.0</p>
                 </div>
-                <a href="SignServer_Manual.html" class="ht-space-link">
-                    <!-- <h2>SignServer - Documentation Space</h2> -->
-                    <h2>SignServer Manual</h2>
-                </a>
             </header>
+
+            <a href="SignServer_Manual.html" class="ht-space-link">
+                <!-- <h2>SignServer - Documentation Space</h2> -->
+                <h2>SignServer Manual</h2>
+            </a>
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
@@ -1064,15 +1065,14 @@
             </nav>
 
             <div class="ht-sidebar-other">
-                <div class="ht-sidebar-other-item">
-                    <a href="https://signserver.org">signserver.org</a>
-                </div>
-                <div class="ht-sidebar-other-item">
-                    <a href="https://www.primekey.se/technologies/products-overview/ejbca-enterprise/" title="EJBCA - PKI by PrimeKey"><img src="ejbca-logo.png"/></a>
-                </div>
-                <div class="ht-sidebar-other-item">
-                    <a href="https://www.primekey.se" title="PrimeKey Solutions"><img src="primekey-logo.png"/></a>
-                </div>
+                <h2>Other Resources</h2>
+                <nav class="ht-pages-nav">
+                    <ul class="ht-pages-nav-top">
+                    <li class="leaf"><a class="ht-nav-page-link" href="https://www.signserver.org">signserver.org</a></li>
+                    <li class="leaf"><a class="ht-nav-page-link" href="https://www.ejbca.org">ejbca.org</a></li>
+                    <li class="leaf"><a class="ht-nav-page-link" href="https://www.primekey.com">primekey.com</a></li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
@@ -1124,7 +1124,7 @@
     <div class="section section-2" id="src-5288346_id-.CertificateRenewalsUsingPeerSystemsv4.2.0-ConfiguringSignServerforIncomingPeerConnectionsusingAdminWeb">
         <h2 class="heading "><span>Configuring SignServer for Incoming Peer Connections using Admin Web</span></h2>
 <ol class=" "><li class=" ">    <p  >In the <a   href="Administration_Web.html">SignServer Administration Web</a> got to the <a   href="Administrators_Page.html">Administrators page</a>.    </p>
-</li><li class=" ">    <p  >There should now be a line under <i class=" ">Incoming Connections</i> created when the ping request was sent from EJBCA. If the client certificate of the incoming request does not already match an authorization rule there will be a link <strong class=" ">Add Authorization...</strong> to click. On the other hand there was already an existing rule there would instead be a <strong class=" ">Modify Authorization</strong> button to click.    </p>
+</li><li class=" ">    <p  >There should now be a line under <i class=" ">Incoming Connections</i> created when the ping request was sent from EJBCA. If the client certificate of the incoming request does not already match an authorization rule there will be a link <strong class=" ">Add Authorization...</strong> to click. If, on the other hand there was already an existing rule there would instead be a <strong class=" ">Modify Authorization</strong> button to click.    </p>
 </li><li class=" ">    <p  >Make sure the rule has the <strong class=" ">Peer System</strong> role selected and save the rule.    </p>
 </li><li class=" ">    <p  >Now under Incoming Connections the connection should say <i class=" ">Yes</i> in the <i class=" ">Authorized</i> column.    </p>
 </li></ol>    <p  >Now this time when sending a ping request from EJBCA there should not be any error message.    </p>
@@ -1145,12 +1145,12 @@
 </div>
     </div>
     <p  >This is the serial number and issuer DN to that should be added to the authorization rules.<br/>Note: SignServer is very picky with the formatting of the serial number and issuer DN. It is recommended to always copy the values from the log to get the right format.    </p>
-</li><li class=" ">    <p  >Under <i class=" ">Authorizations</i>, click the link <strong class=" ">Add...</strong>.    </p>
-</li><li class=" ">    <p  >Fill in the Certificate Serial Number.    </p>
-</li><li class=" ">    <p  >Fill in the Issuer DN.    </p>
-</li><li class=" ">    <p  >Make sure <u class=" ">only</u> the <strong class=" ">Peer System</strong> role is selected.    </p>
-</li><li class=" ">    <p  >Click the button <strong class=" ">Add</strong>.    </p>
-</li><li class=" ">    <p  >Now under Incoming Connections the connection should say <i class=" ">Yes</i> in the <i class=" ">Authorized</i> column.    </p>
+</li><li class=" ">    <p  >Using the certificate serial number and issue DN exactly as it was written in the log, run the command to add the authorization rule:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">bin/signserver wspeersystems -add -certserialno 4fe9278255cba7b -issuerdn </code><code class="string">"C=SE, O=SignServer, OU=Testing, CN=DSS Sub CA 11"</code></div>
+</div>
+    </div>
 </li></ol>    <p  >Now this time when sending a ping request from EJBCA there should not be any error message.    </p>
     </div>
     <div class="section section-2" id="src-5288346_id-.CertificateRenewalsUsingPeerSystemsv4.2.0-ExposingWorkersasKeyBindings">

@@ -624,9 +624,6 @@ body {
   display: none;
 }
 #ht-sidebar h1.ht-logo img {
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
   width: auto;
   max-width: 250px;
   max-height: 100px;
@@ -833,7 +830,6 @@ body {
   font-size: 0.875em;
   margin-bottom: 20px;
   width: 100%;
-  margin-top: -20px;
 }
 @media screen and (max-width: 640px) {
   #ht-sidebar .ht-pages-nav {

@@ -107,16 +107,17 @@
                 <h1 class="ht-logo">
                     <span class="ht-logo-label">SIGNDS</span>
                     <!-- <img class="space-logo" src="spacelogo.png" /> -->
-                    <img src="projectlogo.png">
+                    <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
                     <p>Version: 4.2.0</p>
                 </div>
-                <a href="SignServer_Manual.html" class="ht-space-link">
-                    <!-- <h2>SignServer - Documentation Space</h2> -->
-                    <h2>SignServer Manual</h2>
-                </a>
             </header>
+
+            <a href="SignServer_Manual.html" class="ht-space-link">
+                <!-- <h2>SignServer - Documentation Space</h2> -->
+                <h2>SignServer Manual</h2>
+            </a>
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
@@ -1064,15 +1065,14 @@
             </nav>
 
             <div class="ht-sidebar-other">
-                <div class="ht-sidebar-other-item">
-                    <a href="https://signserver.org">signserver.org</a>
-                </div>
-                <div class="ht-sidebar-other-item">
-                    <a href="https://www.primekey.se/technologies/products-overview/ejbca-enterprise/" title="EJBCA - PKI by PrimeKey"><img src="ejbca-logo.png"/></a>
-                </div>
-                <div class="ht-sidebar-other-item">
-                    <a href="https://www.primekey.se" title="PrimeKey Solutions"><img src="primekey-logo.png"/></a>
-                </div>
+                <h2>Other Resources</h2>
+                <nav class="ht-pages-nav">
+                    <ul class="ht-pages-nav-top">
+                    <li class="leaf"><a class="ht-nav-page-link" href="https://www.signserver.org">signserver.org</a></li>
+                    <li class="leaf"><a class="ht-nav-page-link" href="https://www.ejbca.org">ejbca.org</a></li>
+                    <li class="leaf"><a class="ht-nav-page-link" href="https://www.primekey.com">primekey.com</a></li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
@@ -1102,7 +1102,7 @@
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >The <a   href="Administration_Web.html">AdminWeb</a> supports different languages. Currently English and Swedish is supported.    </p>
+    <p  >The <a   href="Administration_Web.html">AdminWeb</a> supports different languages. Currently English, Swedish and Vietnamese are supported.    </p>
     <div class="section section-1" id="src-9798086_id-.Internationalizationv4.2.0-TranslationProcess">
         <h1 class="heading "><span>Translation Process</span></h1>
     <p  >The process of translating SignServer into a new language could be like the following:    </p>
@@ -1125,12 +1125,12 @@
 </li></ol>    </div>
     <div class="section section-1" id="src-9798086_id-.Internationalizationv4.2.0-FileLocationsintheSources">
         <h1 class="heading "><span>File Locations in the Sources</span></h1>
-<ul class=" "><li class=" ">    <p  >modules/mod-enterprise/SignServer-Admin-web/src/main/resources/org/signserver/admin/web/languagefile_en.properties    </p>
+<ul class=" "><li class=" ">    <p  >modules/mod-enterprise/SignServer-Admin-web/src/main/resources/org/signserver/admin/web/languagefile.properties    </p>
 </li><li class=" ">    <p  >modules/mod-enterprise/SignServer-Admin-web/src/main/webapp/WEB-INF/faces-config.xml    </p>
 </li></ul>    </div>
     <div class="section section-1" id="src-9798086_id-.Internationalizationv4.2.0-FileLocationsinBinaryDistribution">
         <h1 class="heading "><span>File Locations in Binary Distribution</span></h1>
-<ul class=" "><li class=" ">    <p  >Inside lib/SignServer-Admin-web-x.y.z.war: /WEB-INF/classes/org/signserver/admin/web/languagefile_en.properties    </p>
+<ul class=" "><li class=" ">    <p  >Inside lib/SignServer-Admin-web-x.y.z.war: /WEB-INF/classes/org/signserver/admin/web/languagefile.properties    </p>
 </li><li class=" ">    <p  >Inside lib/SignServer-Admin-web-x.y.z.war: /WEB-INF/faces-config.xml    </p>
 </li></ul>    <p  >    </p>
     </div>

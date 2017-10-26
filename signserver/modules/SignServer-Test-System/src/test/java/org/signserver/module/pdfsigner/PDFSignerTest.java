@@ -181,7 +181,7 @@ public class PDFSignerTest extends ModulesTestCase {
         StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(WORKERID));
         assertTrue(stat.getTokenStatus() == WorkerStatus.STATUS_ACTIVE);
     }
-
+    
     /**
      * Tests default certification level.
      * @throws Exception in case of exception
@@ -429,11 +429,18 @@ public class PDFSignerTest extends ModulesTestCase {
     public void test13VeryLongCertChain() throws Exception {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
         byte[] certFile = getTestFile("dss10" + File.separator + "long_chain.pem");
-        
-    	workerSession.setWorkerProperty(WORKERID, "SIGNERCERTCHAIN", new String(certFile));
-    	workerSession.reloadConfiguration(WORKERID);
-    	
-    	signGenericDocument(WORKERID, pdfOk);
+
+        workerSession.setWorkerProperty(WORKERID, "SIGNERCERTCHAIN", new String(certFile));
+        workerSession.reloadConfiguration(WORKERID);
+
+        try {
+            signGenericDocument(WORKERID, pdfOk);
+        } catch (Exception e) {
+            fail("There should be no exception");
+        } finally {
+            workerSession.removeWorkerProperty(WORKERID, "SIGNERCERTCHAIN");
+            workerSession.reloadConfiguration(WORKERID);
+        }
     }
     
     /**

@@ -461,8 +461,6 @@ public class PDFSignerTest extends ModulesTestCase {
 
         try {
             signGenericDocument(WORKERID, pdfOk);
-        } catch (Exception e) {
-            fail("There should be no exception");
         } finally {
             workerSession.removeWorkerProperty(WORKERID, "SIGNERCERTCHAIN");
             workerSession.reloadConfiguration(WORKERID);

@@ -78,6 +78,7 @@ import org.signserver.server.log.ExceptionLoggable;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
 import org.signserver.server.signers.BaseSigner;
+import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
 
 
 /**
@@ -95,15 +96,15 @@ import org.signserver.server.signers.BaseSigner;
  *  </tr>
  *
  * </table>
- * 
+ *
  * Specifying a signer certificate (normally the SIGNERCERT property) is required 
  * as information from that certificate will be used to indicate which signer
  * signed the time-stamp token.
- * 
- * The SIGNERCERTCHAIN property contains all certificates included in the token 
- * if the client requests the certificates. The RFC specified that the signer 
+ *
+ * The SIGNERCERTCHAIN property contains all certificates included in the token
+ * if the client requests the certificates. The RFC specified that the signer
  * certificate MUST be included in the list returned.
- * 
+ *
  *
  * @author Marcus Lundblad
  * @version $Id$
@@ -140,7 +141,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     public static final String TSA = "TSA";
     public static final String REQUIREVALIDCHAIN = "REQUIREVALIDCHAIN";
     public static final String INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE = "INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE";
-    
+
     private static final String dataOID = "1.2.840.113549.1.7.1";
     private static final String msOID = "1.3.6.1.4.1.311.3.2.1";
 
@@ -149,24 +150,24 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
 
     private static final String DEFAULT_TIMESOURCE =
             "org.signserver.server.LocalComputerTimeSource";
-    
+
     private static final String DEFAULT_SIGNATUREALGORITHM = "SHA1withRSA";
-    
+
     /** MIME type for the request data. **/
     private static final String REQUEST_CONTENT_TYPE = "application/octect-stream";
-    
+
     /** MIME type for the response data. **/
     private static final String RESPONSE_CONTENT_TYPE = "application/octet-stream";
 
     private ITimeSource timeSource = null;
     private String signatureAlgo;
-    
+
     private boolean validChain = true;
-    
+
     private boolean includeSigningCertificateAttribute;
-    
+
     private List<String> configErrors;
-    
+
     @Override
     public void init(final int signerId, final WorkerConfig config,
             final WorkerContext workerContext,
@@ -187,38 +188,35 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                         + "Using TimeSource: "
                         + timeSource.getClass().getName());
             }
-            
-            signatureAlgo = config.getProperty(SIGNATUREALGORITHM);
-            
-            if (signatureAlgo == null) {
-            	signatureAlgo = DEFAULT_SIGNATUREALGORITHM;
-            }
+
+            signatureAlgo = config.getProperty(SIGNATUREALGORITHM, DEFAULT_SIGNATUREALGORITHM);
+
         } catch (SignServerException e) {
             LOG.error("Could not create time source: " + e.getMessage());
         }
-   
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("bctsp version: " + TimeStampResponseGenerator.class
-                .getPackage().getImplementationVersion() + ", "
-                + TimeStampRequest.class.getPackage()
-                    .getImplementationVersion());
+                    .getPackage().getImplementationVersion() + ", "
+                    + TimeStampRequest.class.getPackage()
+                            .getImplementationVersion());
         }
-        
+
         // Validate certificates in signer certificate chain
         final String requireValidChain = config.getProperty(REQUIREVALIDCHAIN, Boolean.FALSE.toString());
         if (Boolean.parseBoolean(requireValidChain)) {
             validChain = validateChain(null);
         }
-        
+
         includeSigningCertificateAttribute =
                 Boolean.parseBoolean(config.getProperty(INCLUDE_SIGNING_CERTIFICATE_ATTRIBUTE, "false"));
-        
+
         configErrors = new LinkedList<>();
-        
+
         if (hasSetIncludeCertificateLevels) {
             configErrors.add(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported.");
         }
-    }
+        }        
 
     /**
      * The main method performing the actual timestamp operation.
@@ -236,24 +234,24 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     @Override
     public Response processData(final Request signRequest,
             final RequestContext requestContext) throws
-                IllegalRequestException,
-                CryptoTokenOfflineException,
-                SignServerException {
+            IllegalRequestException,
+            CryptoTokenOfflineException,
+            SignServerException {
 
         // Check that the request contains a valid TimeStampRequest object.
         if (!(signRequest instanceof SignatureRequest)) {
             final IllegalRequestException exception =
                     new IllegalRequestException(
-                    "Received request wasn't an expected GenericSignRequest. ");
+                            "Received request wasn't an expected GenericSignRequest. ");
             throw exception;
         }
         final SignatureRequest sReq = (SignatureRequest) signRequest;
+
         
-        
-    	// Log values
+        // Log values
         final LogMap logMap = LogMap.getInstance(requestContext);
-    	
-    	try {
+
+        try {
             final byte[] requestbytes = sReq.getRequestData().getAsByteArray();
 
             if (requestbytes == null || requestbytes.length == 0) {
@@ -262,8 +260,8 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             }
 
             if (!validChain) {
-                    LOG.error("Certificate chain not correctly configured");
-                    throw new CryptoTokenOfflineException("Certificate chain not correctly configured");
+                LOG.error("Certificate chain not correctly configured");
+                throw new CryptoTokenOfflineException("Certificate chain not correctly configured");
             }
 
             final byte[] inputBytes;
@@ -280,45 +278,45 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             } else {
                 inputBytes = requestbytes;
             }
-            
+
             ASN1Primitive asn1obj = ASN1Primitive.fromByteArray(Base64.decode(inputBytes));
             ASN1Sequence asn1seq = ASN1Sequence.getInstance(asn1obj);
 
             if (asn1seq.size() != 2) {
-                    LOG.error("Wrong structure, should be an ASN1Sequence with 2 elements");
-                    throw new IllegalRequestException("Wrong structure, should be an ASN1Sequence with 2 elements");
+                LOG.error("Wrong structure, should be an ASN1Sequence with 2 elements");
+                throw new IllegalRequestException("Wrong structure, should be an ASN1Sequence with 2 elements");
             }
 
             ASN1ObjectIdentifier oid = ASN1ObjectIdentifier.getInstance(asn1seq.getObjectAt(0));
             ASN1Sequence asn1seq1 = ASN1Sequence.getInstance(asn1seq.getObjectAt(1));
 
             final ContentInfo ci = ContentInfo.getInstance(asn1seq1);
-            
+
             if (!oid.getId().equals(msOID)) {
-                    LOG.error("Invalid OID in request: " + oid.getId());
-                    throw new IllegalRequestException("Invalid OID in request: " + oid.getId());
+                LOG.error("Invalid OID in request: " + oid.getId());
+                throw new IllegalRequestException("Invalid OID in request: " + oid.getId());
             }
 
             if (asn1seq1.size() != 2) {
-                    LOG.error("Wrong structure, should be an ASN1Sequence with 2 elements as the value of element 0 in the outer ASN1Sequence");
-                    throw new IllegalRequestException("Wrong structure, should be an ASN1Sequence with 2 elements as the value of element 0 in the outer ASN1Sequence");
-            } 
+                LOG.error("Wrong structure, should be an ASN1Sequence with 2 elements as the value of element 0 in the outer ASN1Sequence");
+                throw new IllegalRequestException("Wrong structure, should be an ASN1Sequence with 2 elements as the value of element 0 in the outer ASN1Sequence");
+            }
 
             oid = ASN1ObjectIdentifier.getInstance(asn1seq1.getObjectAt(0));
 
             if (!oid.getId().equals(dataOID)) {
-                    throw new IllegalRequestException("Wrong contentType OID: " + oid.getId());
+                throw new IllegalRequestException("Wrong contentType OID: " + oid.getId());
             }
 
             ASN1TaggedObject tag = ASN1TaggedObject.getInstance(asn1seq1.getObjectAt(1));
 
             if (tag.getTagNo() != 0) {
-                    throw new IllegalRequestException("Wrong tag no (should be 0): " + tag.getTagNo());
-            } 
+                throw new IllegalRequestException("Wrong tag no (should be 0): " + tag.getTagNo());
+            }
 
             ASN1OctetString octets = ASN1OctetString.getInstance(tag.getObject());
             byte[] content = octets.getOctets();
-           
+
             final byte[] signedbytes;
             final WritableData responseData = sReq.getResponseData();
             X509Certificate x509cert = null;
@@ -340,7 +338,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                 Certificate[] certs = (Certificate[]) certList.toArray(new Certificate[certList.size()]);
 
                 // Sign
-                x509cert = (X509Certificate) certs[0]; 
+                x509cert = (X509Certificate) certs[0];
 
                 timeSrc = getTimeSource();
                 if (LOG.isDebugEnabled()) {
@@ -360,7 +358,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                         final DERInteger serial = new DERInteger(x509cert.getSerialNumber());
                         final X509CertificateHolder certHolder =
                                 new X509CertificateHolder(x509cert.getEncoded());
-                        final X500Name issuer = certHolder.getIssuer();                   
+                        final X500Name issuer = certHolder.getIssuer();
                         final GeneralName name = new GeneralName(issuer);
                         final GeneralNames names = new GeneralNames(name);
                         final IssuerSerial is = new IssuerSerial(names, ASN1Integer.getInstance(serial));
@@ -393,92 +391,92 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                 CMSSignedData cmssd = MSAuthCodeCMSUtils.generate(cmspba, true, Arrays.asList(sig),
                         MSAuthCodeCMSUtils.getCertificatesFromStore(cs), Collections.emptyList(), ci);
 
-                der = ASN1Primitive.fromByteArray(cmssd.getEncoded()).getEncoded(); 
+                der = ASN1Primitive.fromByteArray(cmssd.getEncoded()).getEncoded();
                 signedbytes = Base64.encode(der, false);
                 out.write(signedbytes);
             } finally {
                 releaseCryptoInstance(crypto, requestContext);
             }
-  
+
             // Log values
             logMap.put(ITimeStampLogger.LOG_TSA_TIME,
-                       new Loggable() {
-                           @Override
-                           public String toString() {
-                               return String.valueOf(date.getTime());
-                           }
-                       });
+                    new Loggable() {
+                @Override
+                public String toString() {
+                    return String.valueOf(date.getTime());
+                }
+            });
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESOURCE,
-                       new Loggable() {
-                           @Override
-                           public String toString() {
-                               return timeSrc.getClass().getSimpleName();
-                           }
-                       });
+                    new Loggable() {
+                @Override
+                public String toString() {
+                    return timeSrc.getClass().getSimpleName();
+                }
+            });
 
             final String archiveId = createArchiveId(requestbytes, (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
             final GenericSignResponse signResponse;
 
             logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED,
-                       new Loggable() {
-                           @Override
-                           public String toString() {
-                               return new String(signedbytes);
-                           }
-                       });
+                    new Loggable() {
+                @Override
+                public String toString() {
+                    return new String(signedbytes);
+                }
+            });
 
             final Collection<? extends Archivable> archivables = Arrays.asList(
                     new DefaultArchivable(Archivable.TYPE_REQUEST, REQUEST_CONTENT_TYPE, sReq.getRequestData(), archiveId),
                     new DefaultArchivable(Archivable.TYPE_RESPONSE, RESPONSE_CONTENT_TYPE, responseData.toReadableData(), archiveId));
-            
+
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
-        
+
             return new SignatureResponse(sReq.getRequestID(),
-                        		responseData,
-                                    x509cert,
-                                    archiveId,
-                                    archivables,
-                                    RESPONSE_CONTENT_TYPE);
+                    responseData,
+                    x509cert,
+                    archiveId,
+                    archivables,
+                    RESPONSE_CONTENT_TYPE);
 
         } catch (IOException e) {
             final IllegalRequestException exception =
                     new IllegalRequestException(
-                    "IOException: " + e.getMessage(), e);
+                            "IOException: " + e.getMessage(), e);
             LOG.error("IOException: ", e);
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                       new ExceptionLoggable(exception));
+                    new ExceptionLoggable(exception));
             throw exception;
         } catch (CMSException e) {
         	final SignServerException exception =
         			new SignServerException(e.getMessage(), e);
-        	LOG.error("CMSException: ", e);
-        	logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                           new ExceptionLoggable(exception));
-        	throw exception;
+            LOG.error("CMSException: ", e);
+            logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
+                    new ExceptionLoggable(exception));
+            throw exception;
         } catch (OperatorCreationException e) {
             final SignServerException exception =
                 new SignServerException(e.getMessage(), e);
             LOG.error("OperatorCreationException: ", e);
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                       new ExceptionLoggable(exception));
+                    new ExceptionLoggable(exception));
             throw exception;
         } catch (CertificateEncodingException e) {
             final SignServerException exception =
                 new SignServerException(e.getMessage(), e);
             LOG.error("CertificateEncodingException: ", e);
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                       new ExceptionLoggable(exception));
+                    new ExceptionLoggable(exception));
             throw exception;
         } catch (ArrayIndexOutOfBoundsException e) {
             // the BC base64 decoder doesn't check the the base64 input length...
             final IllegalRequestException exception =
                     new IllegalRequestException(
-                    "ArrayIndexOutOfBoundsException: " + e.getMessage(), e);
+                            "ArrayIndexOutOfBoundsException: " + e.getMessage(), e);
             LOG.error("ArrayIndexOutOfBoundsException: ", e);
             logMap.put(ITimeStampLogger.LOG_TSA_EXCEPTION,
-                       new ExceptionLoggable(exception));
+                    new ExceptionLoggable(exception));
             throw exception;
         }
     }
@@ -489,11 +487,8 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     private ITimeSource getTimeSource() throws SignServerException {
         if (timeSource == null) {
             try {
-                String classpath =
-                        this.config.getProperties().getProperty(TIMESOURCE);
-                if (classpath == null) {
-                    classpath = DEFAULT_TIMESOURCE;
-                }
+                String classpath
+                        = this.config.getProperty(TIMESOURCE, DEFAULT_TIMESOURCE);
 
                 final Class<?> implClass = Class.forName(classpath);
                 final Object obj = implClass.newInstance();
@@ -544,9 +539,9 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     }
 
     /**
-     * @return True if each certificate in the certificate chain can be verified 
-     * by the next certificate (if any). This does not check that the last 
-     * certificate is a trusted certificate as the root certificate is normally 
+     * @return True if each certificate in the certificate chain can be verified
+     * by the next certificate (if any). This does not check that the last
+     * certificate is a trusted certificate as the root certificate is normally
      * not included.
      */
     private boolean validateChain(final IServices services) {
@@ -558,7 +553,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                 List<Certificate> chain = (List<Certificate>) signingCertificateChain;
                 for (int i = 0; i < chain.size(); i++) {
                     Certificate subject = chain.get(i);
-                    
+
                     // If we have the issuer we can validate the certificate
                     if (chain.size() > i + 1) {
                         Certificate issuer = chain.get(i + 1);
@@ -591,7 +586,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         final List<String> result = new LinkedList<>();
         result.addAll(super.getFatalErrors(services));
         result.addAll(configErrors);
-        
+
         try {
             // Check signer certificate chain if required
             if (!validChain) {
@@ -609,17 +604,18 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Signer " + workerId + ": Could not get signer certificate: " + ex.getMessage());
             }
-        } 
-        
+        }
+
         // check time source
         final RequestContext context = new RequestContext(true);
         context.setServices(services);
         try {
-            if (timeSource.getGenTime(context) == null) {
-        	result.add("Time source not available");
-        	if (LOG.isDebugEnabled()) {
-        		LOG.debug("Signer " + workerId + ": time source not available");
-        	}
+            // Check whether timemSource is null or empty 
+            if (timeSource == null || timeSource.getGenTime(context) == null) {
+                result.add("Time source not available");
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Signer " + workerId + ": time source not available");
+                }
             }
         } catch (SignServerException ex) {
             result.add("Time source is misconfigured: " + ex.getMessage());
@@ -627,7 +623,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
 
         return result;
     }
-    
+
     @Override
     public List<String> getCertificateIssues(List<Certificate> certificateChain) {
         final List<String> results = super.getCertificateIssues(certificateChain);
@@ -644,11 +640,11 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                 final X509Certificate cert = (X509Certificate) certificate;
                 final List<String> ekus = cert.getExtendedKeyUsage();
 
-                if (ekus == null 
+                if (ekus == null
                         || !ekus.contains(KeyPurposeId.id_kp_timeStamping.getId())) {
                     result.add("Missing extended key usage timeStamping");
                 }
-                if (cert.getCriticalExtensionOIDs() == null 
+                if (cert.getCriticalExtensionOIDs() == null
                         || !cert.getCriticalExtensionOIDs().contains(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage.getId())) {
                     result.add("The extended key usage extension must be present and marked as critical");
                 }

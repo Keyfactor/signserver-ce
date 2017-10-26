@@ -180,6 +180,18 @@ public class PlainSignerTest {
         SimplifiedResponse resp = sign(plainText, tokenRSA, createConfig(null));
         assertSignedAndVerifiable(plainText, "SHA1withRSA", tokenRSA, resp);
     }
+    
+    /**
+     * Test signing using empty Signature Algorithms.
+     * @throws Exception 
+     */
+    @Test
+    public void testNormalSigningWithEmptyParams() throws Exception {
+        LOG.info("testNormalSigningWithEmptyParams");
+        byte[] plainText = "some-data".getBytes("ASCII");
+        SimplifiedResponse resp = sign(plainText, tokenRSA, createConfig("  "));
+        assertSignedAndVerifiable(plainText, "SHA1withRSA", tokenRSA, resp);
+    }
 
     /**
      * Test signing using an DSA key-pair.

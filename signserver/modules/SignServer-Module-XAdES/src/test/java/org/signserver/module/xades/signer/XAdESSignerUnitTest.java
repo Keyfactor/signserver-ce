@@ -57,6 +57,7 @@ import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.common.data.SignatureRequest;
+import org.signserver.module.xades.signer.XAdESSigner.Profiles;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.test.utils.builders.CertBuilder;
@@ -258,6 +259,31 @@ public class XAdESSignerUnitTest {
         assertTrue("error: " + errors, errors.contains("TSA_URL"));
     }
     
+    /**
+     * Test of Init method with Empty values for TSA_URL and TSA_Worker parameters of class XAdESSigner.
+     */
+    @Test
+    public void testInit_EmptyTSA_URLAndTSA_Worker() {
+        LOG.info("testInit_EmptyTSA_URLAndTSA_Worker");
+        int signerId = 4711;
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        config.setProperty("XADESFORM", "T");
+        config.setProperty("TSA_URL", "  ");
+        config.setProperty("TSA_WORKER", "   ");
+        config.setProperty("TSA_USERNAME", "username123");
+        config.setProperty("TSA_PASSWORD", "password123");
+
+        WorkerContext workerContext = null;
+        EntityManager em = null;
+        XAdESSigner instance = new MockedXAdESSigner(tokenRSA);
+        instance.init(signerId, config, workerContext, em);
+
+        final List<String> fatalErrors = instance.getFatalErrors(null);
+        assertFalse("error: " + fatalErrors, fatalErrors.contains("Can not specify " + XAdESSigner.PROPERTY_TSA_URL + " and " + XAdESSigner.PROPERTY_TSA_WORKER + " at the same time."));
+        assertTrue("error: " + fatalErrors, fatalErrors.contains("Property " + XAdESSigner.PROPERTY_TSA_URL + " or " + XAdESSigner.PROPERTY_TSA_WORKER + " are required when " + XAdESSigner.PROPERTY_XADESFORM + " is " + Profiles.T));
+    }
+   
     /**
      * Test of init method default value for XADESFORM, of class XAdESSigner.
      */
@@ -529,6 +555,17 @@ public class XAdESSignerUnitTest {
     public void testProcessData_basicSigningRSASHA1() throws Exception {
         testProcessData_basicSigningInternal(KeyType.RSA,
                 "SHA1withRSA", SignatureMethod.RSA_SHA1,
+                "NONE", Collections.<String>emptyList(), null, false, false, null, null);
+    }
+    
+    /**
+     * Test signing with signature algorithm specified as empty value.
+     * @throws Exception
+     */
+    @Test
+    public void testProcessData_SigningEmptyAlgo() throws Exception {
+        testProcessData_basicSigningInternal(KeyType.RSA,
+                "   ", XAdESSigner.SIGNATURE_METHOD_RSA_SHA256,
                 "NONE", Collections.<String>emptyList(), null, false, false, null, null);
     }
     

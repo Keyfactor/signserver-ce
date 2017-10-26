@@ -54,6 +54,7 @@ import org.signserver.server.log.Loggable;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.server.statistics.Event;
 import org.signserver.validationservice.server.ValidationUtils;
+import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
 
 /**
  * A Signer signing PDF files using the IText PDF library.
@@ -176,12 +177,12 @@ public class PDFSigner extends BaseSigner {
         
         // Check properties for archive to disk
         if (StringUtils.equalsIgnoreCase("TRUE",
-                config.getProperty(PROPERTY_ARCHIVETODISK))) {
+                config.getProperty(PROPERTY_ARCHIVETODISK,Boolean.FALSE.toString()))) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Archiving to disk");
             }
 
-            final String path = config.getProperty(PROPERTY_ARCHIVETODISK_PATH_BASE);
+            final String path = config.getProperty(PROPERTY_ARCHIVETODISK_PATH_BASE,DEFAULT_NULL);
             if (path == null) {
                 LOG.warn("Worker[" + workerId
                         + "]: Archiving path missing");
@@ -207,7 +208,7 @@ public class PDFSigner extends BaseSigner {
         }
         
         // check that TSA_URL and TSA_WORKER is not set at the same time
-        if (config.getProperty(TSA_URL) != null && config.getProperty(TSA_WORKER) != null) {
+        if (config.getProperty(TSA_URL,DEFAULT_NULL) != null && config.getProperty(TSA_WORKER,DEFAULT_NULL) != null) {
             configErrors.add("Can not specify " + TSA_URL + " and " + TSA_WORKER + " at the same time.");
         }
     }
@@ -345,7 +346,7 @@ public class PDFSigner extends BaseSigner {
 
             // Archive to disk
             if (StringUtils.equalsIgnoreCase("TRUE",
-                    config.getProperty(PROPERTY_ARCHIVETODISK))) {
+                    config.getProperty(PROPERTY_ARCHIVETODISK,Boolean.FALSE.toString()))) {
                 archiveToDisk(sReq, responseData.toReadableData(), requestContext);
             }
             
@@ -935,7 +936,7 @@ public class PDFSigner extends BaseSigner {
                 new Date(), fields);
 
         final File outputPath = new File(new File(config.getProperty(
-                PROPERTY_ARCHIVETODISK_PATH_BASE)),
+                PROPERTY_ARCHIVETODISK_PATH_BASE,DEFAULT_NULL)),
                 pathFromPattern);
 
         if (!outputPath.exists()) {

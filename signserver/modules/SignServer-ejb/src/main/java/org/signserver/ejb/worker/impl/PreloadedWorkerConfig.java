@@ -46,14 +46,13 @@ public class PreloadedWorkerConfig {
      * @param fatalErrors list to add configuration errors to
      */
     protected PreloadedWorkerConfig(final WorkerConfig config, final List<String> fatalErrors) {
-        final Properties p = config.getProperties();
-        this.name = p.getProperty(NAME);
-        this.disabled = p.getProperty(DISABLED, "FALSE").equalsIgnoreCase("TRUE"); // TODO: Make stricter check
+        this.name = config.getProperty(NAME);
+        this.disabled = config.getProperty(DISABLED, "FALSE").equalsIgnoreCase("TRUE"); // TODO: Make stricter check
 
-        this.disableKeyUsageCounter = p.getProperty(DISABLEKEYUSAGECOUNTER, "FALSE").equalsIgnoreCase("TRUE");
+        this.disableKeyUsageCounter = config.getProperty(DISABLEKEYUSAGECOUNTER, "FALSE").equalsIgnoreCase("TRUE");
         long keyUsageLimitValue;
         try {
-            keyUsageLimitValue = Long.valueOf(p.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
+            keyUsageLimitValue = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
         } catch (NumberFormatException ex) {
             fatalErrors.add("Incorrect value in worker property " + SignServerConstants.KEYUSAGELIMIT);
             keyUsageLimitValue = -1;
@@ -62,12 +61,21 @@ public class PreloadedWorkerConfig {
         this.keyUsageLimit = keyUsageLimitValue;
         this.keyUsageLimitSpecified = keyUsageLimit != -1;
         if (disableKeyUsageCounter && keyUsageLimitSpecified) {
-            fatalErrors.add("Configuration error: " +  SignServerConstants.DISABLEKEYUSAGECOUNTER + "=TRUE but " + SignServerConstants.KEYUSAGELIMIT + " is also configured.");
+            fatalErrors.add("Configuration error: " + SignServerConstants.DISABLEKEYUSAGECOUNTER + "=TRUE but " + SignServerConstants.KEYUSAGELIMIT + " is also configured.");
         }
 
-        this.checkCertValidity = p.getProperty(SignServerConstants.CHECKCERTVALIDITY, Boolean.TRUE.toString()).equalsIgnoreCase(Boolean.TRUE.toString());
-        this.checkPrivateKeyValidity = p.getProperty(SignServerConstants.CHECKCERTPRIVATEKEYVALIDITY, Boolean.TRUE.toString()).equalsIgnoreCase(Boolean.TRUE.toString());
-        this.minRemainingCertValidity = Integer.valueOf(p.getProperty(SignServerConstants.MINREMAININGCERTVALIDITY, "0"));
+        this.checkCertValidity = config.getProperty(SignServerConstants.CHECKCERTVALIDITY, Boolean.TRUE.toString()).equalsIgnoreCase(Boolean.TRUE.toString());
+        this.checkPrivateKeyValidity = config.getProperty(SignServerConstants.CHECKCERTPRIVATEKEYVALIDITY, Boolean.TRUE.toString()).equalsIgnoreCase(Boolean.TRUE.toString());
+
+        // Empty value for minRemainingCertValidity parameter gives NumberFormatExceptionError so need to handle it
+        int minRemainingCertValidityValue;
+        try {
+            minRemainingCertValidityValue = Integer.valueOf(config.getProperty(SignServerConstants.MINREMAININGCERTVALIDITY, "0"));
+        } catch (NumberFormatException ex) {
+            // Not adding here in fatarErrors as it will be handled at SignerLevel
+            minRemainingCertValidityValue = 0;
+        }
+        this.minRemainingCertValidity = minRemainingCertValidityValue;
     }
 
     public String getName() {

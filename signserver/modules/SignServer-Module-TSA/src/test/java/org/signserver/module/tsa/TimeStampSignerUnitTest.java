@@ -1154,5 +1154,32 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         assertEquals(Collections.<String>emptyList(), instance.getCertificateIssues(Arrays.asList(certCritEku)));
         
     }
+    
+    /**
+     * Test that Signing works with parameters specified as empty values.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testEmptyParamsWorks() throws Exception {
+        LOG.info("testEmptyParamsOK");
+        TimeStampRequestGenerator timeStampRequestGenerator
+                = new TimeStampRequestGenerator();
+        TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
+                TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+        workerSession.setWorkerProperty(WORKER1, "ACCEPTEDALGORITHMS", "  ");
+        workerSession.setWorkerProperty(WORKER1, "SIGNATUREALGORITHM", "  ");
+        workerSession.setWorkerProperty(WORKER1, "REQUIREVALIDCHAIN", "  ");
+        workerSession.setWorkerProperty(WORKER1, "ACCEPTEDEXTENSIONS", "  ");
+        workerSession.setWorkerProperty(WORKER1, "TIMESOURCE", "  ");
+        workerSession.setWorkerProperty(WORKER1, "MAXSERIALNUMBERLENGTH", "  ");
+        workerSession.setWorkerProperty(WORKER1, "ACCURACYMICROS", "   ");
+        workerSession.setWorkerProperty(WORKER1, "INCLUDE_CERTID_ISSUERSERIAL", "   ");
+        workerSession.setWorkerProperty(WORKER1, "INCLUDESTATUSSTRING", "   ");
+        workerSession.setWorkerProperty(WORKER1, "MINREMAININGCERTVALIDITY", "   ");
+        workerSession.reloadConfiguration(WORKER1);
+        final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER1);
+        timeStampResponse.validate(timeStampRequest);
+    }
 }
 

@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
 
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Image;
@@ -100,37 +101,31 @@ public class PDFSignerParameters {
             throws IllegalRequestException, SignServerException {
 
         // The reason shown in the PDF signature
-        if (config.getProperties().getProperty(PDFSigner.REASON) != null) {
-            reason = config.getProperties().getProperty(PDFSigner.REASON);
-        }
+       reason = config.getProperty(PDFSigner.REASON,PDFSigner.REASONDEFAULT);
         LOG.debug("Using reason: " + reason);
 
         // The location shown in the PDF signature
-        if (config.getProperties().getProperty(PDFSigner.LOCATION) != null) {
-            location = config.getProperties().getProperty(PDFSigner.LOCATION);
-        }
+        location = config.getProperty(PDFSigner.LOCATION,PDFSigner.LOCATIONDEFAULT);       
         LOG.debug("Using location: " + location);
 
         // are we adding visible or invisible signature
         // note : ParseBoolean returns false for everything but "True"
-        if (config.getProperties().getProperty(PDFSigner.ADD_VISIBLE_SIGNATURE) != null) {
-            add_visible_signature = Boolean.parseBoolean(config.getProperties().getProperty(PDFSigner.ADD_VISIBLE_SIGNATURE).trim());
-        }
+        add_visible_signature = Boolean.parseBoolean(config.getProperty(PDFSigner.ADD_VISIBLE_SIGNATURE, Boolean.toString(PDFSigner.ADD_VISIBLE_SIGNATURE_DEFAULT)).trim());
         LOG.debug("Using visible signature: " + add_visible_signature);
 
         // timestamp url
-        if (config.getProperties().getProperty(PDFSigner.TSA_URL) != null) {
+        if (config.getProperty(PDFSigner.TSA_URL,DEFAULT_NULL) != null) {
             tsa_url = config.getProperties().getProperty(PDFSigner.TSA_URL);
             use_timestamp = true;
             LOG.debug("Using tsa url : " + tsa_url);
-        } else if (config.getProperties().getProperty(PDFSigner.TSA_WORKER) != null) {
+        } else if (config.getProperty(PDFSigner.TSA_WORKER,DEFAULT_NULL) != null) {
             tsa_worker = config.getProperties().getProperty(PDFSigner.TSA_WORKER);
             use_timestamp = true;
         }
 
         if (use_timestamp
-                && config.getProperties().getProperty(PDFSigner.TSA_USERNAME) != null
-                && config.getProperties().getProperty(PDFSigner.TSA_PASSWORD) != null) {
+                && config.getProperty(PDFSigner.TSA_USERNAME,DEFAULT_NULL) != null
+                && config.getProperties().getProperty(PDFSigner.TSA_PASSWORD) != null) { // Password Might be empty string so no default
             tsa_username = config.getProperties().getProperty(
                     PDFSigner.TSA_USERNAME);
             tsa_password = config.getProperties().getProperty(
@@ -139,26 +134,19 @@ public class PDFSignerParameters {
         }
 
         // should we embed crl inside the cms package
-        if (config.getProperties().getProperty(PDFSigner.EMBED_CRL) != null) {
-            embed_crl = Boolean.parseBoolean(config.getProperties().getProperty(PDFSigner.EMBED_CRL).trim());
-        }
+        embed_crl = Boolean.parseBoolean(config.getProperty(PDFSigner.EMBED_CRL, Boolean.toString(PDFSigner.EMBED_CRL_DEFAULT)).trim());
         LOG.debug("Using embed crl inside cms package : " + isEmbed_crl());
 
         // should we embed ocsp response inside the cms package
-        if (config.getProperties().getProperty(PDFSigner.EMBED_OCSP_RESPONSE) != null) {
-            embed_ocsp_response = Boolean.parseBoolean(config.getProperties().getProperty(PDFSigner.EMBED_OCSP_RESPONSE).trim());
-        }
+        embed_ocsp_response = Boolean.parseBoolean(config.getProperty(PDFSigner.EMBED_OCSP_RESPONSE, Boolean.toString(PDFSigner.EMBED_OCSP_RESPONSE_DEFAULT)).trim());
         LOG.debug("Using embed ocsp inside cms package : "
                 + isEmbed_ocsp_response());
 
         // should we refuse PDF documents that contains multiple
         // indirect objects with the same name
-        if (config.getProperties().getProperty(
-                PDFSigner.REFUSE_DOUBLE_INDIRECT_OBJECTS) != null) {
-            refuseDoubleIndirectObjects = Boolean.parseBoolean(config.getProperties().getProperty(
-                    PDFSigner.REFUSE_DOUBLE_INDIRECT_OBJECTS));
-        }
-
+        refuseDoubleIndirectObjects = Boolean.parseBoolean(config.getProperty(
+                PDFSigner.REFUSE_DOUBLE_INDIRECT_OBJECTS, Boolean.FALSE.toString()));
+        
         // Reject permissions
         String rejectPermissionsValue = config.getProperties().getProperty(PDFSigner.REJECT_PERMISSIONS);
         if (rejectPermissionsValue != null) {
@@ -188,24 +176,16 @@ public class PDFSignerParameters {
         // if signature is choosen to be visible proceed with setting visibility
         // properties
         if (add_visible_signature) {
-            // page to draw visible signature at
-            if (config.getProperties().getProperty(
-                    PDFSigner.VISIBLE_SIGNATURE_PAGE) != null) {
-                visible_sig_page = config.getProperties().getProperty(
-                        PDFSigner.VISIBLE_SIGNATURE_PAGE);
-            }
-
+            // page to draw visible signature at            
+                visible_sig_page = config.getProperty(PDFSigner.VISIBLE_SIGNATURE_PAGE, PDFSigner.VISIBLE_SIGNATURE_PAGE_DEFAULT);
+            
             LOG.debug("Using visible signature page: " + visible_sig_page);
 
             // The location of the visible signature rectangle(llx, lly, urx,
             // ury)
             // llx = lower left x coordinate, lly = lower left y coordinate, urx
             // = upper right x coordinate, ury = upper right y coordinate
-            if (config.getProperties().getProperty(
-                    PDFSigner.VISIBLE_SIGNATURE_RECTANGLE) != null) {
-                visible_sig_rectangle = config.getProperties().getProperty(
-                        PDFSigner.VISIBLE_SIGNATURE_RECTANGLE);
-            }
+            visible_sig_rectangle = config.getProperty(PDFSigner.VISIBLE_SIGNATURE_RECTANGLE, PDFSigner.VISIBLE_SIGNATURE_RECTANGLE_DEFAULT);
             LOG.debug("Using rectangle: " + visible_sig_rectangle);
 
             String[] rect = visible_sig_rectangle.split(",");
@@ -220,31 +200,22 @@ public class PDFSignerParameters {
 
             // custom image to use with signature
             // base64 encoded byte[]
-            if (config.getProperties().getProperty(
-                    PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64) != null) {
-                visible_sig_custom_image_base64 = config.getProperties().getProperty(
-                        PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64);
-                LOG.debug("base64 encoded custom image is set");
-            }
-
+            visible_sig_custom_image_base64 = config.getProperty(
+                    PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64, DEFAULT_NULL);
+            LOG.debug("base64 encoded custom image is set");
+            
             // custom image path. Do not set if base64 encoded image is
             // specified
-            if (visible_sig_custom_image_base64 == null
-                    || visible_sig_custom_image_base64.isEmpty()) {
-                if (config.getProperties().getProperty(
-                        PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH) != null) {
-                    visible_sig_custom_image_path = config.getProperties().getProperty(
-                            PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH);
-                    LOG.debug("using custom image path : "
-                            + visible_sig_custom_image_path);
-                }
+            if (visible_sig_custom_image_base64 == null) {
+                visible_sig_custom_image_path = config.getProperty(
+                        PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH, DEFAULT_NULL);
+                LOG.debug("using custom image path : "
+                        + visible_sig_custom_image_path);
             }
 
-            boolean use_image_from_base64_string = visible_sig_custom_image_base64 != null
-                    && !visible_sig_custom_image_base64.isEmpty();
-            boolean use_image_from_path = visible_sig_custom_image_path != null
-                    && !visible_sig_custom_image_path.isEmpty();
-
+            boolean use_image_from_base64_string = visible_sig_custom_image_base64 != null;                    
+            boolean use_image_from_path = visible_sig_custom_image_path != null;
+                  
             use_custom_image = use_image_from_base64_string
                     || use_image_from_path;
 
@@ -281,10 +252,8 @@ public class PDFSignerParameters {
                             e);
                 }
 
-                if (config.getProperties().getProperty(
-                        PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE) != null) {
-                    visible_sig_custom_image_scale_to_rectangle = Boolean.parseBoolean(config.getProperties().getProperty(
-                            PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE).trim());
+                visible_sig_custom_image_scale_to_rectangle = Boolean.parseBoolean(config.getProperty(PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE, Boolean.toString(PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE_DEFAULT)).trim());
+                if (Boolean.toString(visible_sig_custom_image_scale_to_rectangle) != null) {
                     LOG.debug("resize custom image to rectangle : "
                             + visible_sig_custom_image_scale_to_rectangle);
                 }
@@ -302,25 +271,23 @@ public class PDFSignerParameters {
         }
 
         // Certification level
-        final String level = config.getProperty(PDFSigner.CERTIFICATION_LEVEL);
-        if (level != null) {
-            if (level.equalsIgnoreCase("NO_CHANGES_ALLOWED")) {
-                certification_level =
-                        PdfSignatureAppearance.CERTIFIED_NO_CHANGES_ALLOWED;
-            } else if (level.equalsIgnoreCase("FORM_FILLING_AND_ANNOTATIONS")) {
-                certification_level =
-                        PdfSignatureAppearance.CERTIFIED_FORM_FILLING_AND_ANNOTATIONS;
-            } else if (level.equalsIgnoreCase("FORM_FILLING")) {
-                certification_level =
-                        PdfSignatureAppearance.CERTIFIED_FORM_FILLING;
-            } else if (level.equalsIgnoreCase("NOT_CERTIFIED")) {
-                certification_level = PdfSignatureAppearance.NOT_CERTIFIED;
-            } else {
-                throw new SignServerException(
-                        "Unknown value for CERTIFICATION_LEVEL");
-            }
+        final String level = config.getProperty(PDFSigner.CERTIFICATION_LEVEL, "NOT_CERTIFIED");
+        if (level.equalsIgnoreCase("NO_CHANGES_ALLOWED")) {
+            certification_level
+                    = PdfSignatureAppearance.CERTIFIED_NO_CHANGES_ALLOWED;
+        } else if (level.equalsIgnoreCase("FORM_FILLING_AND_ANNOTATIONS")) {
+            certification_level
+                    = PdfSignatureAppearance.CERTIFIED_FORM_FILLING_AND_ANNOTATIONS;
+        } else if (level.equalsIgnoreCase("FORM_FILLING")) {
+            certification_level
+                    = PdfSignatureAppearance.CERTIFIED_FORM_FILLING;
+        } else if (level.equalsIgnoreCase("NOT_CERTIFIED")) {
+            certification_level = PdfSignatureAppearance.NOT_CERTIFIED;
+        } else {
+            throw new SignServerException(
+                    "Unknown value for CERTIFICATION_LEVEL");
         }
-        if (LOG.isDebugEnabled()) {
+              if (LOG.isDebugEnabled()) {
             LOG.debug("using certification level: " + certification_level);
         }
     }

@@ -279,8 +279,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      */
     @Override
     public String getAuthenticationType() {
-        return config.getProperties().getProperty(WorkerConfig.PROPERTY_AUTHTYPE, IProcessable.AUTHTYPE_CLIENTCERT);
-    }
+        return config.getProperty(WorkerConfig.PROPERTY_AUTHTYPE, IProcessable.AUTHTYPE_CLIENTCERT);
+        }
 
     /**
      * Return the crypto token used by this instance.

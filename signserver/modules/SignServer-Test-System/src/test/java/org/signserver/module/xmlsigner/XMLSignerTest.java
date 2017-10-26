@@ -163,6 +163,16 @@ public class XMLSignerTest extends ModulesTestCase {
     }
     
     /**
+     * Test signing with an RSA key using the Empty signature algorithm.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test17BasicXmlSignEmptySigAlg() throws Exception {
+        testBasicXmlSign(WORKERID, "   ", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
+    }
+    
+    /**
      * Test explicitly setting the signature algorithm to SHA1withRSA.
      * 
      * @throws Exception

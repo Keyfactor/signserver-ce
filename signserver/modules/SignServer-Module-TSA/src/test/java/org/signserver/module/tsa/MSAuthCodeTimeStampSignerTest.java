@@ -532,6 +532,52 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
     }
     
     /**
+     * Signer parameters when specified empty should work fine.
+     * @throws Exception
+     */
+    @Test
+    public void testWithEmptyParams() throws Exception {
+
+        final KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
+        final String signatureAlgorithm = "SHA1withRSA";
+        final CertBuilder certBuilder
+                = new CertBuilder().
+                        setSelfSignKeyPair(signerKeyPair).
+                        setNotBefore(new Date()).
+                        setSignatureAlgorithm(signatureAlgorithm);
+        KeyPurposeId[] ekus = new KeyPurposeId[]{KeyPurposeId.id_kp_timeStamping};
+        if (ekus != null && ekus.length > 0) {
+            certBuilder.addExtension(new CertExt(Extension.extendedKeyUsage,
+                    true,
+                    new ExtendedKeyUsage(ekus)));
+        }
+        final Certificate[] certChain
+                = new Certificate[]{new JcaX509CertificateConverter().getCertificate(
+                            certBuilder.build())};
+        final Certificate signerCertificate = certChain[0];
+        final MockedCryptoToken token
+                = new MockedCryptoToken(signerKeyPair.getPrivate(),
+                        signerKeyPair.getPublic(),
+                        signerCertificate,
+                        Arrays.asList(certChain), "BC");
+
+        final MSAuthCodeTimeStampSigner instance
+                = new MockedMSAuthCodeTimeStampSigner(token);
+
+        WorkerConfig workerConfig = new WorkerConfig();
+
+        workerConfig.setProperty("TIMESOURCE", "   ");
+        workerConfig.setProperty("TYPE", "PROCESSABLE");
+        workerConfig.setProperty("SIGNATUREALGORITHM", " ");
+
+        instance.init(2, workerConfig, new SignServerContext(), null);
+
+        final List<String> fatalErrors = instance.getFatalErrors(null);
+
+        assertTrue("Should not report fatal error" + fatalErrors, fatalErrors.isEmpty());
+    }      
+    
+    /**
      * Mocked signer using a mocked crypto token.
      * 
      */

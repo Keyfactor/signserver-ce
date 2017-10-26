@@ -50,6 +50,7 @@ import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.signers.BaseSigner;
+import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
 
 /**
  * A Signer creating a signed Security Object Data (SOD) file to be stored in ePassports.
@@ -108,13 +109,13 @@ public class MRTDSODSigner extends BaseSigner {
     public void init(int workerId, WorkerConfig config,
             WorkerContext workerContext, EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
-        
+
         configErrors = new LinkedList<>();
-        
+
         if (hasSetIncludeCertificateLevels) {
             configErrors.add(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported.");
         }
-    }
+        }
 
     @Override
     public Response processData(Request signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
@@ -216,7 +217,7 @@ public class MRTDSODSigner extends BaseSigner {
             // Version values from configuration
             String ldsVersion = config.getProperty(PROPERTY_LDSVERSION,
                     DEFAULT_LDSVERSION);
-            String unicodeVersion = config.getProperty(PROPERTY_UNICODEVERSION);
+            String unicodeVersion = config.getProperty(PROPERTY_UNICODEVERSION,DEFAULT_NULL);
 
             // Version values in request overrides configuration
             final String ldsVersionRequest = sodRequest.getLdsVersion();

@@ -183,11 +183,16 @@ public class WorkerConfig extends UpgradeableDataHashMap {
      * Returns the specific property from the configuration with a defaultValue option.
      * 
      * @param key Property to get value of
-     * @param defaultValue Default value, if the property isn't set
-     * @return the value corresponding to that property, or defaultValue if unset
+     * @param defaultValue Default value, if the property isn't set or empty
+     * @return the value corresponding to that property, or defaultValue if unset/empty
      */
     public String getProperty(String key, String defaultValue) {
-        return ((Properties) data.get(PROPERTIES)).getProperty(key, defaultValue);
+        String s = ((Properties) data.get(PROPERTIES)).getProperty(key, defaultValue);
+        if (s == null || s.trim().isEmpty()) {
+            return defaultValue;
+        } else {
+            return s;
+        }
     }
 
     /**

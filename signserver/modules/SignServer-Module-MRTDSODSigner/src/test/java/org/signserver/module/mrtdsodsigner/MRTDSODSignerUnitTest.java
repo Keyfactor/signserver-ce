@@ -268,7 +268,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
         dataGroups4.put(2, digestHelper("Dummy Value 10".getBytes(), "SHA256"));
         signHelper(WORKER18, 14, dataGroups3, false, "SHA256", "SHA256withECDSA");
     }
-
+    
     /**
      * Requests signing of some data groups, using two different signers
      * with different algorithms and verifies the result. The signer does the
@@ -611,6 +611,30 @@ public class MRTDSODSignerUnitTest extends TestCase {
     private byte[] digestHelper(byte[] data, String digestAlgorithm) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
         return md.digest(data);
+    }
+    
+     /**
+     * Test that Signing works when parameters - SIGNATUREALGORITHM, DIGESTALGORITHM and LDSVERSION specified empty.
+     *
+     * @throws Exception
+     */
+    public void test08SignDataWithEmptyParams() throws Exception {
+
+        workerSession.setWorkerProperty(WORKER5, "LDSVERSION", " ");
+        workerSession.setWorkerProperty(WORKER5, "DIGESTALGORITHM", " ");
+        workerSession.setWorkerProperty(WORKER5, "SIGNATUREALGORITHM", " ");
+        workerSession.reloadConfiguration(WORKER5);
+
+        // DG1, DG2 and default values
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<>();
+        dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA256"));
+        dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA256"));
+        try {
+            signHelper(WORKER5, 12, dataGroups1, false, "SHA256",
+                    "SHA256withRSA");
+        } catch (Exception ex) {
+            fail("There should not be any exception");
+        }
     }
 
     private void setupWorkers() {

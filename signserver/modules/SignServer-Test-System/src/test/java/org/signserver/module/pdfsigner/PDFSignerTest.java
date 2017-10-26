@@ -183,6 +183,32 @@ public class PDFSignerTest extends ModulesTestCase {
     }
     
     /**
+     * Tests that Empty value for AUTHTYPE property should be allowed.
+     *
+     * @throws Exception in case of exception
+     */
+    @Test
+    public void test20EmptyAuthTypeAllowed() throws Exception {
+        final byte[] pdfOk = getTestFile(TESTPDF_OK);
+
+        workerSession.setWorkerProperty(WORKERID, "AUTHTYPE", "         ");
+        workerSession.reloadConfiguration(WORKERID);
+
+        StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(WORKERID));        
+        assertTrue(stat.getFatalErrors().isEmpty());
+
+        String errorMessage = "client authentication is required";
+        try {
+            signGenericDocument(WORKERID, pdfOk);
+        } catch (Exception e) {
+            assertTrue("Should contain error", e.getMessage().contains(errorMessage));
+        } finally {
+            workerSession.setWorkerProperty(WORKERID, "AUTHTYPE", "NOAUTH");
+            workerSession.reloadConfiguration(WORKERID);
+        }
+    }
+
+    /**
      * Tests default certification level.
      * @throws Exception in case of exception
      */

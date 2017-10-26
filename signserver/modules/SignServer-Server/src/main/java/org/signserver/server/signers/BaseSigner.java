@@ -325,6 +325,12 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Signer " + workerId + ": Signer certificate validity time check failed: " + ex.getMessage());
                 }
+            } // Invalid value for minRemainingCertValidity parameter gives NumberFormatExceptionError 
+            catch (NumberFormatException ex) {
+                result.add(ex.getMessage());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Signer " + workerId + ": Signer certificate validity time check failed: " + ex.getMessage());
+                }
             }
         }
 

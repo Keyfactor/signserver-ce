@@ -55,7 +55,7 @@ public abstract class BaseTimedService extends BaseWorker implements ITimedServi
         super.init(workerId, config, workerContext, workerEM);
         
         final String[] logTypeStrings =
-                config.getProperty(ServiceConfig.WORK_LOG_TYPES,
+                config.getProperties().getProperty(ServiceConfig.WORK_LOG_TYPES,
                                    ServiceConfig.DEFAULT_WORK_LOG_TYPES).split(",");
         for (final String logType : logTypeStrings) {
             final String logTypeTrimmed = logType.trim();

@@ -59,6 +59,7 @@ import org.signserver.common.data.WritableData;
 import org.signserver.server.signers.BaseSigner;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
 
 /**
  * A Signer signing XML documents.
@@ -105,10 +106,10 @@ public class XMLSigner extends BaseSigner {
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
-        
+
         // Get the signature algorithm
-        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM);
-    }
+        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM,DEFAULT_NULL);
+        }
 
     @Override
     public Response processData(Request signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {

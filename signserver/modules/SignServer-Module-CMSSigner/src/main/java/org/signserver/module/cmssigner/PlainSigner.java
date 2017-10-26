@@ -52,6 +52,7 @@ import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
 import org.signserver.server.signers.BaseSigner;
+import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
 
 /**
  * A Signer signing arbitrary content and produces a plain signature.
@@ -96,22 +97,14 @@ public class PlainSigner extends BaseSigner {
         configErrors = new LinkedList<>();
 
         // Get the signature algorithm
-        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM_PROPERTY);
-        if (signatureAlgorithm != null && signatureAlgorithm.trim().isEmpty()) {
-            signatureAlgorithm = null;
-        }
-        
+        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM_PROPERTY,DEFAULT_NULL);
+                
         // Get the log digest algorithm
-        logRequestDigestAlgorithm = config.getProperty(LOGREQUEST_DIGESTALGORITHM_PROPERTY);
-        if (logRequestDigestAlgorithm == null || logRequestDigestAlgorithm.trim().isEmpty()) {
-            logRequestDigestAlgorithm = DEFAULT_LOGREQUEST_DIGESTALGORITHM;
-        }
+        logRequestDigestAlgorithm = config.getProperty(LOGREQUEST_DIGESTALGORITHM_PROPERTY,DEFAULT_LOGREQUEST_DIGESTALGORITHM);
         
         // If the request digest should computed and be logged
-        final String s = config.getProperty(DO_LOGREQUEST_DIGEST);
-        if (s == null || s.trim().isEmpty()) {
-            doLogRequestDigest = DEFAULT_DO_LOGREQUEST_DIGEST;
-        } else if ("true".equalsIgnoreCase(s)) {
+        final String s = config.getProperty(DO_LOGREQUEST_DIGEST, Boolean.toString(DEFAULT_DO_LOGREQUEST_DIGEST));
+        if ("true".equalsIgnoreCase(s)) {
             doLogRequestDigest = true;
         } else if ("false".equalsIgnoreCase(s)) {
             doLogRequestDigest = false;

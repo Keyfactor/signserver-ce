@@ -286,7 +286,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         assertEquals("token status", WorkerStatus.STATUS_ACTIVE, stat.getTokenStatus());
         assertEquals("ALLOK: " + stat.getFatalErrors(), 0, stat.getFatalErrors().size());
     }
-
+    
     /**
      * Test that a timestamp token is not granted for an policy not listed in
      * ACCEPTEDPOLICIES and that a proper resoonse is sent back.

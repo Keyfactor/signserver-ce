@@ -524,6 +524,33 @@ public class CMSSignerUnitTest {
         CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
         byte[] actualData = (byte[]) signedContent.getContent();
         assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
+    }    
+    
+    /**
+     * Tests that specifying empty value for Signer parameters works.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testSignWithEmptyParams() throws Exception {
+        LOG.info("testSignWithEmptyParams");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty(CMSSigner.SIGNATUREALGORITHM_PROPERTY, "  ");
+        config.setProperty(CMSSigner.DETACHEDSIGNATURE_PROPERTY, "  ");
+        config.setProperty(CMSSigner.CLIENTSIDEHASHING, "  ");
+        config.setProperty(CMSSigner.ACCEPTED_HASHDIGEST_ALGORITHMS, "  ");
+
+        CMSSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        SimplifiedResponse response = CMSSignerUnitTest.this.signAndVerify(data, tokenRSA, config, null, false);
+
+        byte[] cms = response.getProcessedData();
+        CMSSignedData signedData = new CMSSignedData(cms);
+        CMSProcessableByteArray signedContent = (CMSProcessableByteArray) signedData.getSignedContent();
+        byte[] actualData = (byte[]) signedContent.getContent();
+        assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
     }
 
     /**

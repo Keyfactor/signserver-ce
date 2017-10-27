@@ -547,6 +547,7 @@ public class PDFSignerTest extends ModulesTestCase {
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(5675);
+        removeWorker(TSAWORKERID);
     }
 
     private GenericSignResponse signNoCheck(final int workerId,

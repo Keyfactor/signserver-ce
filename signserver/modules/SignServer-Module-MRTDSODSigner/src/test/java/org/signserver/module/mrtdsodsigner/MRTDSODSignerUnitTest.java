@@ -266,7 +266,7 @@ public class MRTDSODSignerUnitTest extends TestCase {
         Map<Integer, byte[]> dataGroups4 = new LinkedHashMap<>();
         dataGroups4.put(1, digestHelper("Dummy Value 9".getBytes(), "SHA256"));
         dataGroups4.put(2, digestHelper("Dummy Value 10".getBytes(), "SHA256"));
-        signHelper(WORKER18, 14, dataGroups3, false, "SHA256", "SHA256withECDSA");
+        signHelper(WORKER18, 14, dataGroups4, false, "SHA256", "SHA256withECDSA");
     }
     
     /**

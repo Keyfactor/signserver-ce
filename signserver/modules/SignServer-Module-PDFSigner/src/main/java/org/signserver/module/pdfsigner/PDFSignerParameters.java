@@ -101,11 +101,11 @@ public class PDFSignerParameters {
             throws IllegalRequestException, SignServerException {
 
         // The reason shown in the PDF signature
-       reason = config.getProperty(PDFSigner.REASON,PDFSigner.REASONDEFAULT);
+        reason = config.getProperty(PDFSigner.REASON, PDFSigner.REASONDEFAULT);
         LOG.debug("Using reason: " + reason);
 
         // The location shown in the PDF signature
-        location = config.getProperty(PDFSigner.LOCATION,PDFSigner.LOCATIONDEFAULT);       
+        location = config.getProperty(PDFSigner.LOCATION, PDFSigner.LOCATIONDEFAULT);
         LOG.debug("Using location: " + location);
 
         // are we adding visible or invisible signature
@@ -114,21 +114,21 @@ public class PDFSignerParameters {
         LOG.debug("Using visible signature: " + add_visible_signature);
 
         // timestamp url
-        if (config.getProperty(PDFSigner.TSA_URL,DEFAULT_NULL) != null) {
-            tsa_url = config.getProperties().getProperty(PDFSigner.TSA_URL);
+        if (config.getProperty(PDFSigner.TSA_URL, DEFAULT_NULL) != null) {
+            tsa_url = config.getProperty(PDFSigner.TSA_URL, DEFAULT_NULL);
             use_timestamp = true;
             LOG.debug("Using tsa url : " + tsa_url);
-        } else if (config.getProperty(PDFSigner.TSA_WORKER,DEFAULT_NULL) != null) {
-            tsa_worker = config.getProperties().getProperty(PDFSigner.TSA_WORKER);
+        } else if (config.getProperty(PDFSigner.TSA_WORKER, DEFAULT_NULL) != null) {
+            tsa_worker = config.getProperty(PDFSigner.TSA_WORKER, DEFAULT_NULL);
             use_timestamp = true;
         }
 
         if (use_timestamp
-                && config.getProperty(PDFSigner.TSA_USERNAME,DEFAULT_NULL) != null
-                && config.getProperties().getProperty(PDFSigner.TSA_PASSWORD) != null) { // Password Might be empty string so no default
-            tsa_username = config.getProperties().getProperty(
-                    PDFSigner.TSA_USERNAME);
-            tsa_password = config.getProperties().getProperty(
+                && config.getProperty(PDFSigner.TSA_USERNAME, DEFAULT_NULL) != null
+                && config.getPropertyThatCouldBeEmpty(PDFSigner.TSA_PASSWORD) != null) { // Password Might be empty string so no default
+            tsa_username = config.getProperty(
+                    PDFSigner.TSA_USERNAME, DEFAULT_NULL);
+            tsa_password = config.getPropertyThatCouldBeEmpty(
                     PDFSigner.TSA_PASSWORD);
             use_timestamp_authorization = true;
         }
@@ -148,13 +148,13 @@ public class PDFSignerParameters {
                 PDFSigner.REFUSE_DOUBLE_INDIRECT_OBJECTS, Boolean.FALSE.toString()));
         
         // Reject permissions
-        String rejectPermissionsValue = config.getProperties().getProperty(PDFSigner.REJECT_PERMISSIONS);
+        String rejectPermissionsValue = config.getPropertyThatCouldBeEmpty(PDFSigner.REJECT_PERMISSIONS);
         if (rejectPermissionsValue != null) {
             String[] array = rejectPermissionsValue.split(",");
             rejectPermissions.addAll(Arrays.asList(array));
         }
         // Set permissions
-        String setPermissionsValue = config.getProperties().getProperty(PDFSigner.SET_PERMISSIONS);
+        String setPermissionsValue = config.getPropertyThatCouldBeEmpty(PDFSigner.SET_PERMISSIONS);
         if (setPermissionsValue != null) {
             String[] array = setPermissionsValue.split(",");
             try {
@@ -164,21 +164,21 @@ public class PDFSignerParameters {
             }
         }
         // Remove permissions
-        String removePermissionsValue = config.getProperties().getProperty(PDFSigner.REMOVE_PERMISSIONS);
+        String removePermissionsValue = config.getPropertyThatCouldBeEmpty(PDFSigner.REMOVE_PERMISSIONS);
         if (removePermissionsValue != null) {
             String[] array = removePermissionsValue.split(",");
             removePermissions = new HashSet<>();
             removePermissions.addAll(Arrays.asList(array));
         }
         // Set ownerpassword
-        setOwnerPassword = config.getProperties().getProperty(PDFSigner.SET_OWNERPASSWORD);
+        setOwnerPassword = config.getPropertyThatCouldBeEmpty(PDFSigner.SET_OWNERPASSWORD);
         
         // if signature is choosen to be visible proceed with setting visibility
         // properties
         if (add_visible_signature) {
             // page to draw visible signature at            
-                visible_sig_page = config.getProperty(PDFSigner.VISIBLE_SIGNATURE_PAGE, PDFSigner.VISIBLE_SIGNATURE_PAGE_DEFAULT);
-            
+            visible_sig_page = config.getProperty(PDFSigner.VISIBLE_SIGNATURE_PAGE, PDFSigner.VISIBLE_SIGNATURE_PAGE_DEFAULT);
+
             LOG.debug("Using visible signature page: " + visible_sig_page);
 
             // The location of the visible signature rectangle(llx, lly, urx,

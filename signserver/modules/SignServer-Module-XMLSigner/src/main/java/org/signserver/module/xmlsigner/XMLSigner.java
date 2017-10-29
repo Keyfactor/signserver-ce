@@ -108,7 +108,7 @@ public class XMLSigner extends BaseSigner {
         super.init(workerId, config, workerContext, workerEM);
 
         // Get the signature algorithm
-        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM,DEFAULT_NULL);
+        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM, DEFAULT_NULL);
         }
 
     @Override

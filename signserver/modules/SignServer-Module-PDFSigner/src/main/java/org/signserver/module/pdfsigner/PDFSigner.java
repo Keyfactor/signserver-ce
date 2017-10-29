@@ -177,12 +177,12 @@ public class PDFSigner extends BaseSigner {
         
         // Check properties for archive to disk
         if (StringUtils.equalsIgnoreCase("TRUE",
-                config.getProperty(PROPERTY_ARCHIVETODISK,Boolean.FALSE.toString()))) {
+                config.getProperty(PROPERTY_ARCHIVETODISK, Boolean.FALSE.toString()))) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Archiving to disk");
             }
 
-            final String path = config.getProperty(PROPERTY_ARCHIVETODISK_PATH_BASE,DEFAULT_NULL);
+            final String path = config.getPropertyThatCouldBeEmpty(PROPERTY_ARCHIVETODISK_PATH_BASE);
             if (path == null) {
                 LOG.warn("Worker[" + workerId
                         + "]: Archiving path missing");
@@ -208,7 +208,7 @@ public class PDFSigner extends BaseSigner {
         }
         
         // check that TSA_URL and TSA_WORKER is not set at the same time
-        if (config.getProperty(TSA_URL,DEFAULT_NULL) != null && config.getProperty(TSA_WORKER,DEFAULT_NULL) != null) {
+        if (config.getProperty(TSA_URL, DEFAULT_NULL) != null && config.getProperty(TSA_WORKER, DEFAULT_NULL) != null) {
             configErrors.add("Can not specify " + TSA_URL + " and " + TSA_WORKER + " at the same time.");
         }
     }
@@ -346,7 +346,7 @@ public class PDFSigner extends BaseSigner {
 
             // Archive to disk
             if (StringUtils.equalsIgnoreCase("TRUE",
-                    config.getProperty(PROPERTY_ARCHIVETODISK,Boolean.FALSE.toString()))) {
+                    config.getProperty(PROPERTY_ARCHIVETODISK, Boolean.FALSE.toString()))) {
                 archiveToDisk(sReq, responseData.toReadableData(), requestContext);
             }
             
@@ -917,7 +917,7 @@ public class PDFSigner extends BaseSigner {
         // Fill in fields that can be used to construct path and filename
         final Map<String, String> fields = new HashMap<>();
         fields.put("WORKERID", String.valueOf(workerId));
-        fields.put("WORKERNAME", config.getProperty("NAME"));
+        fields.put("WORKERNAME", config.getPropertyThatCouldBeEmpty("NAME"));
         fields.put("REMOTEIP", (String) requestContext.get(RequestContext.REMOTE_IP));
         fields.put("TRANSACTIONID", (String) requestContext.get(RequestContext.TRANSACTION_ID));
         fields.put("REQUESTID", String.valueOf(sReq.getRequestID()));
@@ -931,12 +931,12 @@ public class PDFSigner extends BaseSigner {
 
         final String pathFromPattern = formatFromPattern(
                 archivetodiskPattern, config.getProperty(
-                PROPERTY_ARCHIVETODISK_PATH_PATTERN,
-                DEFAULT_ARCHIVETODISK_PATH_PATTERN),
+                        PROPERTY_ARCHIVETODISK_PATH_PATTERN,
+                        DEFAULT_ARCHIVETODISK_PATH_PATTERN),
                 new Date(), fields);
 
-        final File outputPath = new File(new File(config.getProperty(
-                PROPERTY_ARCHIVETODISK_PATH_BASE,DEFAULT_NULL)),
+        final File outputPath = new File(new File(config.getPropertyThatCouldBeEmpty(
+                PROPERTY_ARCHIVETODISK_PATH_BASE)),
                 pathFromPattern);
 
         if (!outputPath.exists()) {
@@ -948,8 +948,8 @@ public class PDFSigner extends BaseSigner {
 
         final String fileNameFromPattern = formatFromPattern(
                 archivetodiskPattern, config.getProperty(
-                PROPERTY_ARCHIVETODISK_FILENAME_PATTERN,
-                DEFAULT_ARCHIVETODISK_FILENAME_PATTERN),
+                        PROPERTY_ARCHIVETODISK_FILENAME_PATTERN,
+                        DEFAULT_ARCHIVETODISK_FILENAME_PATTERN),
                 new Date(), fields);
 
         final File outputFile = new File(outputPath, fileNameFromPattern);

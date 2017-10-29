@@ -78,7 +78,6 @@ import org.signserver.server.log.ExceptionLoggable;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
 import org.signserver.server.signers.BaseSigner;
-import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
 
 
 /**
@@ -176,7 +175,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
 
         // Overrides the default worker logger to be this worker
         //  implementation's default instead of the WorkerSessionBean's
-        if (config.getProperty("WORKERLOGGER") == null) {
+        if (config.getPropertyThatCouldBeEmpty("WORKERLOGGER") == null) {
             config.setProperty("WORKERLOGGER", DEFAULT_WORKERLOGGER);
         }
 

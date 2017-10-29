@@ -323,7 +323,7 @@ public class TimeStampSigner extends BaseSigner {
 
         // Overrides the default worker logger to be this worker
         //  implementation's default instead of the WorkerSessionBean's
-        if (config.getProperty("WORKERLOGGER") == null) {
+        if (config.getPropertyThatCouldBeEmpty("WORKERLOGGER") == null) {
             config.setProperty("WORKERLOGGER", DEFAULT_WORKERLOGGER);
         }
 
@@ -348,7 +348,7 @@ public class TimeStampSigner extends BaseSigner {
             defaultDigestOID = DEFAULT_DIGESTOID;
         }*/
 
-        final String policyId = config.getProperty(DEFAULTTSAPOLICYOID,DEFAULT_NULL);
+        final String policyId = config.getProperty(DEFAULTTSAPOLICYOID, DEFAULT_NULL);
 
         try {
             if (policyId != null) {
@@ -415,7 +415,7 @@ public class TimeStampSigner extends BaseSigner {
         }
 
         // Optional property INCLUDE_CERTID_ISSUERSERIAL, default: true
-        String value = config.getProperty(INCLUDE_CERTID_ISSUERSERIAL,Boolean.TRUE.toString());
+        String value = config.getProperty(INCLUDE_CERTID_ISSUERSERIAL, Boolean.TRUE.toString());
         if (Boolean.TRUE.toString().equalsIgnoreCase(value)) {
             includeCertIDIssuerSerial = true;
         } else if (Boolean.FALSE.toString().equalsIgnoreCase(value)) {
@@ -430,8 +430,8 @@ public class TimeStampSigner extends BaseSigner {
         certificateDigestAlgorithm =
                 getCertificateDigestAlgorithmFromString(certificateDigestAlgorithmString);
 
-        final String acceptAnyPolicyValue = config.getProperty(ACCEPTANYPOLICY,Boolean.FALSE.toString());
-        final String acceptedPoliciesValue = config.getProperties().getProperty(ACCEPTEDPOLICIES); // Empty value has a special meaning here so no default
+        final String acceptAnyPolicyValue = config.getProperty(ACCEPTANYPOLICY, Boolean.FALSE.toString());
+        final String acceptedPoliciesValue = config.getPropertyThatCouldBeEmpty(ACCEPTEDPOLICIES); // Empty value has a special meaning here so no default
 
         if (acceptAnyPolicyValue != null) {
             if (Boolean.TRUE.toString().equalsIgnoreCase(acceptAnyPolicyValue)) {
@@ -833,7 +833,7 @@ public class TimeStampSigner extends BaseSigner {
     private Set<ASN1ObjectIdentifier> getAcceptedAlgorithms() {
         if (acceptedAlgorithms == null) {
             final String nonParsedAcceptedAlgorihms =
-                    this.config.getProperty(ACCEPTEDALGORITHMS,DEFAULT_NULL);
+                    this.config.getProperty(ACCEPTEDALGORITHMS, DEFAULT_NULL);
             if (nonParsedAcceptedAlgorihms == null) {
                 acceptedAlgorithms = TSPAlgorithms.ALLOWED;
             } else {
@@ -860,7 +860,7 @@ public class TimeStampSigner extends BaseSigner {
     private Set<String> getAcceptedPolicies() {
         if (acceptedPolicies == null) {
             final String nonParsedAcceptedPolicies =
-                    this.config.getProperties().getProperty(ACCEPTEDPOLICIES);
+                    this.config.getPropertyThatCouldBeEmpty(ACCEPTEDPOLICIES);
             acceptedPolicies = makeSetOfProperty(nonParsedAcceptedPolicies);
         }
 
@@ -871,7 +871,7 @@ public class TimeStampSigner extends BaseSigner {
     private Set<String> getAcceptedExtensions() {
         if (acceptedExtensions == null) {
             final String nonParsedAcceptedExtensions =
-                    this.config.getProperty(ACCEPTEDEXTENSIONS,DEFAULT_NULL);
+                    this.config.getProperty(ACCEPTEDEXTENSIONS, DEFAULT_NULL);
             acceptedExtensions = makeSetOfProperty(nonParsedAcceptedExtensions);
         }
 
@@ -960,17 +960,17 @@ public class TimeStampSigner extends BaseSigner {
 
             timeStampTokenGen = new TimeStampTokenGenerator(sig, calc, tSAPolicyOID, includeCertIDIssuerSerial);
 
-            if (config.getProperty(ACCURACYMICROS,DEFAULT_NULL) != null) {
+            if (config.getProperty(ACCURACYMICROS, DEFAULT_NULL) != null) {
                 timeStampTokenGen.setAccuracyMicros(Integer.parseInt(
                         config.getProperty(ACCURACYMICROS)));
             }
 
-            if (config.getProperty(ACCURACYMILLIS,DEFAULT_NULL) != null) {
+            if (config.getProperty(ACCURACYMILLIS, DEFAULT_NULL) != null) {
                 timeStampTokenGen.setAccuracyMillis(Integer.parseInt(
                         config.getProperty(ACCURACYMILLIS)));
             }
 
-            if (config.getProperty(ACCURACYSECONDS,DEFAULT_NULL) != null) {
+            if (config.getProperty(ACCURACYSECONDS, DEFAULT_NULL) != null) {
                 timeStampTokenGen.setAccuracySeconds(Integer.parseInt(
                         config.getProperty(ACCURACYSECONDS)));
             }

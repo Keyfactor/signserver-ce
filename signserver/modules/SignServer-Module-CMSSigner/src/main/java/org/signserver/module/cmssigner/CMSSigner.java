@@ -150,10 +150,10 @@ public class CMSSigner extends BaseSigner {
         configErrors = new LinkedList<>();
 
         // Get the signature algorithm
-        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM_PROPERTY,DEFAULT_NULL);
+        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM_PROPERTY, DEFAULT_NULL);
         
         // Detached signature
-        final String detachedSignatureValue = config.getProperty(DETACHEDSIGNATURE_PROPERTY,Boolean.FALSE.toString());
+        final String detachedSignatureValue = config.getProperty(DETACHEDSIGNATURE_PROPERTY, Boolean.FALSE.toString());
         if (Boolean.FALSE.toString().equalsIgnoreCase(detachedSignatureValue)) {
             detachedSignature = false;
         } else if (Boolean.TRUE.toString().equalsIgnoreCase(detachedSignatureValue)) {
@@ -163,7 +163,7 @@ public class CMSSigner extends BaseSigner {
         }
 
         // Allow detached signature override
-        final String allowDetachedSignatureOverrideValue = config.getProperty(ALLOW_SIGNATURETYPE_OVERRIDE_PROPERTY,Boolean.FALSE.toString());
+        final String allowDetachedSignatureOverrideValue = config.getProperty(ALLOW_SIGNATURETYPE_OVERRIDE_PROPERTY, Boolean.FALSE.toString());
         if (Boolean.FALSE.toString().equalsIgnoreCase(allowDetachedSignatureOverrideValue)) {
             allowDetachedSignatureOverride = false;
         } else if (Boolean.TRUE.toString().equalsIgnoreCase(allowDetachedSignatureOverrideValue)) {
@@ -172,7 +172,7 @@ public class CMSSigner extends BaseSigner {
             configErrors.add("Incorrect value for property " + ALLOW_SIGNATURETYPE_OVERRIDE_PROPERTY + ". Expecting TRUE or FALSE.");
         }
         
-        final String clientSideHashingValue = config.getProperty(CLIENTSIDEHASHING,Boolean.FALSE.toString());
+        final String clientSideHashingValue = config.getProperty(CLIENTSIDEHASHING, Boolean.FALSE.toString());
         if (Boolean.FALSE.toString().equalsIgnoreCase(clientSideHashingValue)) {
             clientSideHashing = false;
         } else if (Boolean.TRUE.toString().equalsIgnoreCase(clientSideHashingValue)) {
@@ -181,7 +181,7 @@ public class CMSSigner extends BaseSigner {
             configErrors.add("Incorrect value for property " + CLIENTSIDEHASHING + ". Expecting TRUE or FALSE.");
         }
         
-        final String allowClientSideHashingOverrideValue = config.getProperty(ALLOW_CLIENTSIDEHASHING_OVERRIDE,Boolean.FALSE.toString());
+        final String allowClientSideHashingOverrideValue = config.getProperty(ALLOW_CLIENTSIDEHASHING_OVERRIDE, Boolean.FALSE.toString());
         if (Boolean.FALSE.toString().equalsIgnoreCase(allowClientSideHashingOverrideValue)) {
             allowClientSideHashingOverride = false;
         } else if (Boolean.TRUE.toString().equalsIgnoreCase(allowClientSideHashingOverrideValue)) {
@@ -203,7 +203,7 @@ public class CMSSigner extends BaseSigner {
                              ALLOW_CLIENTSIDEHASHING_OVERRIDE + " is true");
         }
         
-        final String contentOIDString = config.getProperty(CONTENT_OID_PROPERTY,DEFAULT_NULL);
+        final String contentOIDString = config.getProperty(CONTENT_OID_PROPERTY, DEFAULT_NULL);
         if (contentOIDString != null && !contentOIDString.isEmpty()) {
             try {
                 contentOID = new ASN1ObjectIdentifier(contentOIDString);
@@ -214,7 +214,7 @@ public class CMSSigner extends BaseSigner {
             contentOID = getDefaultContentOID();
         }
         
-        final String allowContentOIDOverrideValue = config.getProperty(ALLOW_CONTENTOID_OVERRIDE,Boolean.FALSE.toString());
+        final String allowContentOIDOverrideValue = config.getProperty(ALLOW_CONTENTOID_OVERRIDE, Boolean.FALSE.toString());
         if (Boolean.FALSE.toString().equalsIgnoreCase(allowContentOIDOverrideValue)) {
             allowContentOIDOverride = false;
         } else if (Boolean.TRUE.toString().equalsIgnoreCase(allowContentOIDOverrideValue)) {
@@ -224,7 +224,7 @@ public class CMSSigner extends BaseSigner {
         }
 
         // DER re-encode
-        final String derReEncodeValue = config.getProperty(DER_RE_ENCODE_PROPERTY,Boolean.FALSE.toString());
+        final String derReEncodeValue = config.getProperty(DER_RE_ENCODE_PROPERTY, Boolean.FALSE.toString());
         if (Boolean.FALSE.toString().equalsIgnoreCase(derReEncodeValue)) {
             derReEncode = false;
         } else if (Boolean.TRUE.toString().equalsIgnoreCase(derReEncodeValue)) {
@@ -234,7 +234,7 @@ public class CMSSigner extends BaseSigner {
         }
         
         // Direct signature (no signed attributes)
-        final String directSignatureValue = config.getProperty(DIRECTSIGNATURE_PROPERTY,Boolean.FALSE.toString());
+        final String directSignatureValue = config.getProperty(DIRECTSIGNATURE_PROPERTY, Boolean.FALSE.toString());
         if (Boolean.FALSE.toString().equalsIgnoreCase(directSignatureValue.trim())) {
             directSignature = false;
         } else if (Boolean.TRUE.toString().equalsIgnoreCase(directSignatureValue.trim())) {
@@ -252,10 +252,8 @@ public class CMSSigner extends BaseSigner {
         }
         
         // If the request digest should computed and be logged
-        String s = config.getProperty(DO_LOGREQUEST_DIGEST);
-        if (s == null || s.trim().isEmpty()) {
-            doLogRequestDigest = DEFAULT_DO_LOGREQUEST_DIGEST;
-        } else if ("true".equalsIgnoreCase(s)) {
+        String s = config.getProperty(DO_LOGREQUEST_DIGEST, Boolean.toString(DEFAULT_DO_LOGREQUEST_DIGEST));
+        if ("true".equalsIgnoreCase(s)) {
             doLogRequestDigest = true;
         } else if ("false".equalsIgnoreCase(s)) {
             doLogRequestDigest = false;
@@ -264,26 +262,18 @@ public class CMSSigner extends BaseSigner {
         }
 
         // If the response digest should computed and be logged
-        s = config.getProperty(DO_LOGRESPONSE_DIGEST);
-        if (s == null || s.trim().isEmpty()) {
-            doLogResponseDigest = DEFAULT_DO_LOGRESPONSE_DIGEST;
-        } else if ("true".equalsIgnoreCase(s)) {
+        s = config.getProperty(DO_LOGRESPONSE_DIGEST, Boolean.toString(DEFAULT_DO_LOGRESPONSE_DIGEST));
+        if ("true".equalsIgnoreCase(s)) {
             doLogResponseDigest = true;
         } else if ("false".equalsIgnoreCase(s)) {
             doLogResponseDigest = false;
         } else {
             configErrors.add("Incorrect value for " + DO_LOGRESPONSE_DIGEST);
         }
-        
+
         // Get the log digest algorithms
-        logRequestDigestAlgorithm = config.getProperty(LOGREQUEST_DIGESTALGORITHM_PROPERTY);
-        if (logRequestDigestAlgorithm == null || logRequestDigestAlgorithm.trim().isEmpty()) {
-            logRequestDigestAlgorithm = DEFAULT_LOGREQUEST_DIGESTALGORITHM;
-        }
-        logResponseDigestAlgorithm = config.getProperty(LOGRESPONSE_DIGESTALGORITHM_PROPERTY);
-        if (logResponseDigestAlgorithm == null || logResponseDigestAlgorithm.trim().isEmpty()) {
-            logResponseDigestAlgorithm = DEFAULT_LOGRESPONSE_DIGESTALGORITHM;
-        }
+        logRequestDigestAlgorithm = config.getProperty(LOGREQUEST_DIGESTALGORITHM_PROPERTY, DEFAULT_LOGREQUEST_DIGESTALGORITHM);
+        logResponseDigestAlgorithm = config.getProperty(LOGRESPONSE_DIGESTALGORITHM_PROPERTY, DEFAULT_LOGRESPONSE_DIGESTALGORITHM);
     }
     
     /**
@@ -323,10 +313,10 @@ public class CMSSigner extends BaseSigner {
     }
 
     private void initAcceptedHashDigestAlgorithms() {
-        final String acceptedHashDigestAlgorithmsValue =
-                config.getProperty(ACCEPTED_HASHDIGEST_ALGORITHMS,DEFAULT_NULL);
+        final String acceptedHashDigestAlgorithmsValue
+                = config.getProperty(ACCEPTED_HASHDIGEST_ALGORITHMS, DEFAULT_NULL);
         final DigestAlgorithmIdentifierFinder algFinder = new DefaultDigestAlgorithmIdentifierFinder();
-        
+
         if (acceptedHashDigestAlgorithmsValue != null) {
             acceptedHashDigestAlgorithms = new HashSet<>();
             for (final String digestAlgorithmString

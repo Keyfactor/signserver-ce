@@ -141,9 +141,9 @@ public class MRTDSODSigner extends BaseSigner {
             }
             if (status != WorkerStatus.STATUS_ACTIVE) {
                 log.info("Crypto token status is not active, will see if we can autoactivate.");
-                String pin = config.getProperty("PIN");
+                String pin = config.getPropertyThatCouldBeEmpty("PIN");
                 if (pin == null) {
-                    pin = config.getProperty("pin");
+                    pin = config.getPropertyThatCouldBeEmpty("pin");
                 }
                 if (pin != null) {
                     log.info("Deactivating and re-activating crypto token.");
@@ -217,7 +217,7 @@ public class MRTDSODSigner extends BaseSigner {
             // Version values from configuration
             String ldsVersion = config.getProperty(PROPERTY_LDSVERSION,
                     DEFAULT_LDSVERSION);
-            String unicodeVersion = config.getProperty(PROPERTY_UNICODEVERSION,DEFAULT_NULL);
+            String unicodeVersion = config.getProperty(PROPERTY_UNICODEVERSION, DEFAULT_NULL);
 
             // Version values in request overrides configuration
             final String ldsVersionRequest = sodRequest.getLdsVersion();

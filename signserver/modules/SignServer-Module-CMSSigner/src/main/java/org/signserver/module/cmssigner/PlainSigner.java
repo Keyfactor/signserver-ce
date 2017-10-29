@@ -97,10 +97,10 @@ public class PlainSigner extends BaseSigner {
         configErrors = new LinkedList<>();
 
         // Get the signature algorithm
-        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM_PROPERTY,DEFAULT_NULL);
+        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM_PROPERTY, DEFAULT_NULL);
                 
         // Get the log digest algorithm
-        logRequestDigestAlgorithm = config.getProperty(LOGREQUEST_DIGESTALGORITHM_PROPERTY,DEFAULT_LOGREQUEST_DIGESTALGORITHM);
+        logRequestDigestAlgorithm = config.getProperty(LOGREQUEST_DIGESTALGORITHM_PROPERTY, DEFAULT_LOGREQUEST_DIGESTALGORITHM);
         
         // If the request digest should computed and be logged
         final String s = config.getProperty(DO_LOGREQUEST_DIGEST, Boolean.toString(DEFAULT_DO_LOGREQUEST_DIGEST));

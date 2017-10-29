@@ -228,10 +228,10 @@ public class XAdESSigner extends BaseSigner {
         // PROPERTY_TSA_URL, PROPERTY_TSA_USERNAME, PROPERTY_TSA_PASSWORD, PROPERTY_TSA_WORKER
         TSAParameters tsa = null;
         if (form == Profiles.T) {
-            tsaUrl = config.getProperty(PROPERTY_TSA_URL,DEFAULT_NULL);
-            tsaUsername = config.getProperty(PROPERTY_TSA_USERNAME,DEFAULT_NULL);
-            tsaPassword = config.getProperties().getProperty(PROPERTY_TSA_PASSWORD);
-            final String tsaWorkerName = config.getProperty(PROPERTY_TSA_WORKER,DEFAULT_NULL);
+            tsaUrl = config.getProperty(PROPERTY_TSA_URL, DEFAULT_NULL);
+            tsaUsername = config.getProperty(PROPERTY_TSA_USERNAME, DEFAULT_NULL);
+            tsaPassword = config.getPropertyThatCouldBeEmpty(PROPERTY_TSA_PASSWORD);
+            final String tsaWorkerName = config.getProperty(PROPERTY_TSA_WORKER, DEFAULT_NULL);
             
             if (tsaUrl == null && tsaWorkerName == null) {
                 configErrors.add("Property " + PROPERTY_TSA_URL + " or " + PROPERTY_TSA_WORKER + " are required when " + PROPERTY_XADESFORM + " is " + Profiles.T);
@@ -252,7 +252,7 @@ public class XAdESSigner extends BaseSigner {
         }
       
         // check that TSA_URL and TSA_WORKER is not set at the same time
-        if (config.getProperty(PROPERTY_TSA_URL,DEFAULT_NULL) != null && config.getProperty(PROPERTY_TSA_WORKER,DEFAULT_NULL) != null) {
+        if (config.getProperty(PROPERTY_TSA_URL, DEFAULT_NULL) != null && config.getProperty(PROPERTY_TSA_WORKER, DEFAULT_NULL) != null) {
             configErrors.add("Can not specify " + PROPERTY_TSA_URL + " and " + PROPERTY_TSA_WORKER + " at the same time.");
         }
 
@@ -280,9 +280,9 @@ public class XAdESSigner extends BaseSigner {
         parameters = new XAdESSignerParameters(form, tsa);
         
         // Get the signature algorithm
-        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM,DEFAULT_NULL);
+        signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM, DEFAULT_NULL);
                 
-        claimedRoleDefault = config.getProperty(CLAIMED_ROLE,DEFAULT_NULL);
+        claimedRoleDefault = config.getProperty(CLAIMED_ROLE, DEFAULT_NULL);
         claimedRoleFromUsername =
                 Boolean.parseBoolean(config.getProperty(CLAIMED_ROLE_FROM_USERNAME, Boolean.FALSE.toString()));
 

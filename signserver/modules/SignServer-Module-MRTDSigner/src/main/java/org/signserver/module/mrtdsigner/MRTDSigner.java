@@ -97,6 +97,11 @@ public class MRTDSigner extends BaseSigner {
         if (log.isTraceEnabled()) {
             log.trace(">processData");
         }
+        
+        if (!configErrors.isEmpty()) {
+            throw new SignServerException("Worker is misconfigured");
+        }
+        
         Response ret = null;
 
         ICryptoInstance crypto = null;

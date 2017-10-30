@@ -274,6 +274,11 @@ public class PDFSigner extends BaseSigner {
             throw new IllegalRequestException(
                     "Received request wasn't an expected GenericSignRequest.");
         }
+        
+        if (!configErrors.isEmpty()) {
+            throw new SignServerException("Worker is misconfigured");
+        }
+        
         final SignatureRequest sReq = (SignatureRequest) signRequest;
         final String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
         final ReadableData requestData = sReq.getRequestData();

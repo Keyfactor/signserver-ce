@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.crypto.Cipher;
+import static junit.framework.TestCase.assertEquals;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -27,6 +28,7 @@ import org.signserver.common.GenericSignResponse;
 import org.signserver.common.MRTDSignRequest;
 import org.signserver.common.MRTDSignResponse;
 import org.signserver.common.RemoteRequestContext;
+import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
@@ -161,6 +163,26 @@ public class MRTDSignerTest extends ModulesTestCase {
            workerSession.removeWorkerProperty(7890, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
            workerSession.reloadConfiguration(7890);
        }
+    }
+    
+    /**
+     * Tests that Signer refuses to sign if worker has configuration errors.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void test05NoSigningWhenWorkerMisconfigued() throws Exception {
+        int reqid = 13;
+        byte[] signreq1 = "Hello World".getBytes();
+
+         workerSession.setWorkerProperty(7890, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS, "2");
+         workerSession.reloadConfiguration(7890);
+         
+        try {
+            GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(7890), new GenericSignRequest(reqid, signreq1), new RemoteRequestContext());
+        } catch (SignServerException expected) {
+            assertEquals("exception message", "Worker is misconfigured", expected.getMessage());
+        }        
     }
     
     @Test

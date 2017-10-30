@@ -1538,6 +1538,23 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         signPDF(sampleOk);
     }
     
+     /**
+     * Tests that Signer refuses to sign if worker has configuration errors.
+     *
+     * @throws java.lang.Exception
+     */
+    public void test21NoSigningWhenWorkerMisconfigued() throws Exception {
+        workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "IllegalHash");
+        workerSession.reloadConfiguration(WORKER1);
+
+        try {
+            signPDF(sampleOk);
+            fail("Request should not have been accepted as worker must be offline now");
+        } catch (SignServerException expected) {
+            assertEquals("exception message", "Worker is misconfigured", expected.getMessage());
+        }
+    }
+    
     /**
      * Test that specifying an unknown hash algorithm gives a configuration
      * error.

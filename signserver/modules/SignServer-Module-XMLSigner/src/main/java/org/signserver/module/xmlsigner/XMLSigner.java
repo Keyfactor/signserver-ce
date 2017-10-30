@@ -293,4 +293,4 @@ public class XMLSigner extends BaseSigner {
 
         return result;
     }
-}
+    }

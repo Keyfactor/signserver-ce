@@ -48,6 +48,7 @@ import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.Test;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
@@ -575,6 +576,56 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         final List<String> fatalErrors = instance.getFatalErrors(null);
 
         assertTrue("Should not report fatal error" + fatalErrors, fatalErrors.isEmpty());
+    }      
+    
+    /**
+     * Tests that Signer refuses to sign if worker has configuration errors.
+     * @throws Exception
+     */
+    @Test
+    public void testNoSigningWhenWorkerMisconfigued() throws Exception {
+        SignServerUtil.installBCProvider();
+
+        final String CRYPTOTOKEN_CLASSNAME
+                = "org.signserver.server.cryptotokens.KeystoreCryptoToken";
+
+        final GlobalConfigurationSessionMock globalConfig
+                = new GlobalConfigurationSessionMock();
+        final WorkerSessionMock workerMock = new WorkerSessionMock();
+        final IServices services = new MockedServicesImpl().with(GlobalConfigurationSessionLocal.class, globalConfig);
+
+        final WorkerConfig config = new WorkerConfig();
+        config.setProperty("NAME", "TestMSAuthCodeTimeStampSigner");
+        config.setProperty("AUTHTYPE", "NOAUTH");
+        config.setProperty("TIMESOURCE", "org.signserver.server.ZeroTimeSource");
+        config.setProperty("SIGNATUREALGORITHM", "   ");
+        config.setProperty("INCLUDE_CERTIFICATE_LEVELS", "3");
+        config.setProperty("DEFAULTKEY", KEY_ALIAS_1);
+        config.setProperty("KEYSTOREPATH",
+                getSignServerHome() + File.separator + "res"
+                + File.separator + "test" + File.separator + "dss10"
+                + File.separator + "dss10_tssigner1.p12");
+        config.setProperty("KEYSTORETYPE", "PKCS12");
+        config.setProperty("KEYSTOREPASSWORD", "foo123");
+
+        final MSAuthCodeTimeStampSigner worker = new MSAuthCodeTimeStampSigner();
+
+        workerMock.setupWorker(SIGNER_ID, CRYPTOTOKEN_CLASSNAME, config, worker);
+        workerMock.reloadConfiguration(SIGNER_ID);        
+        assertFalse("There should be config error ", worker.getFatalErrors(services).isEmpty());
+
+        SignatureResponse resp;
+        final byte[] data = REQUEST_DATA.getBytes();
+        try (
+                CloseableReadableData requestData = createRequestData(data);
+                CloseableWritableData responseData = createResponseData(false);) {
+            // create sample hard-coded request
+            SignatureRequest signRequest = new SignatureRequest(REQUEST_ID, requestData, responseData);
+
+            resp = (SignatureResponse) workerMock.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(SIGNER_ID), signRequest, new MockedRequestContext(services));
+        } catch (SignServerException expected) {
+            assertEquals("exception message", "Worker is misconfigured", expected.getMessage());
+        }
     }      
     
     /**

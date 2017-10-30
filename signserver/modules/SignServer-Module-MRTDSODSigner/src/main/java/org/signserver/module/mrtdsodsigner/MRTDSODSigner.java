@@ -129,6 +129,10 @@ public class MRTDSODSigner extends BaseSigner {
             throw new IllegalRequestException("Received request wasn't an expected SODSignRequest.");
         }
         
+         if (!configErrors.isEmpty()) {
+            throw new SignServerException("Worker is misconfigured");
+        }
+        
         final SODRequest sodRequest = (SODRequest) signRequest;
 
         final IServices services = requestContext.getServices();

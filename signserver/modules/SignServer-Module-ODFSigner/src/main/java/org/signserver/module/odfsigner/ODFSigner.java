@@ -86,6 +86,11 @@ public class ODFSigner extends BaseSigner {
             throw new IllegalRequestException(
                     "Received request wasn't an expected GenericSignRequest.");
         }
+        
+        if (!configErrors.isEmpty()) {
+            throw new SignServerException("Worker is misconfigured");
+        }
+        
         final SignatureRequest sReq = (SignatureRequest) signRequest;
         ReadableData data = sReq.getRequestData();
         final String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));

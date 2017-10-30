@@ -684,6 +684,27 @@ public class MRTDSODSignerUnitTest extends TestCase {
             LOG.debug("Message was: " + ignored.getMessage());
         }
     }
+    
+     /**
+     * Tests that Signer refuses to sign if worker has configuration errors.
+     * @throws Exception
+     */
+    public void test11NoSigningWhenWorkerMisconfigued() throws Exception {
+        // DG1, DG2 and default values
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<>();
+        dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA256"));
+        dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA256"));
+
+        workerSession.setWorkerProperty(WORKER1, "INCLUDE_CERTIFICATE_LEVELS", "3");
+        workerSession.reloadConfiguration(WORKER1);
+
+        try {
+            signHelper(WORKER1, 12, dataGroups1, false, "SHA256", "SHA256withRSA");
+            fail("Should have failed");
+        } catch (SignServerException expected) {
+            assertEquals("exception message", "Worker is misconfigured", expected.getMessage());
+        }
+    }
 
     private void setupWorkers() {
 

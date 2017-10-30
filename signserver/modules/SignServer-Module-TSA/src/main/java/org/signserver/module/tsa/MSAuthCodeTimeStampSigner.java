@@ -246,6 +246,9 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
         }
         final SignatureRequest sReq = (SignatureRequest) signRequest;
 
+        if (!configErrors.isEmpty()) {
+            throw new SignServerException("Worker is misconfigured");
+        }
         
         // Log values
         final LogMap logMap = LogMap.getInstance(requestContext);

@@ -119,6 +119,27 @@ public class ODFSignerTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Tests that Signer refuses to sign if worker has configuration errors.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void test04NoSigningWhenWorkerMisconfigued() throws Exception {
+        int reqid = 13;
+
+        workerSession.setWorkerProperty(WORKERID, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS, "2");
+        workerSession.reloadConfiguration(WORKERID);
+
+        GenericSignRequest signRequest = new GenericSignRequest(reqid, Base64.decode(TEST_ODF_DOC.getBytes()));
+        try {
+            GenericSignResponse res = (GenericSignResponse) processSession.process(
+                    new WorkerIdentifier(WORKERID), signRequest, new RemoteRequestContext());
+        } catch (SignServerException expected) {
+            assertEquals("exception message", "Worker is misconfigured", expected.getMessage());
+        }
+    }
+    
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID);

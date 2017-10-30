@@ -1455,7 +1455,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      *
      * @throws Exception
      */
-    public void testEmptyStringInTSA_URLAndTSA_WORKER_TreatedAsNotSpecified() throws Exception {
+    public void test20EmptyStringInTSA_URLAndTSA_WORKER_TreatedAsNotSpecified() throws Exception {
 
         final MockedCryptoToken token = generateToken(false);
 
@@ -1486,7 +1486,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      *
      * @throws Exception
      */
-    public void testEmptyAuthTypeAllowed() throws Exception {
+    public void test20EmptyAuthTypeAllowed() throws Exception {
 
         final MockedCryptoToken token = generateToken(false);
 
@@ -1516,7 +1516,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      *
      * @throws java.lang.Exception
      */
-    public void testSigningWithEmptyParams() throws Exception {
+    public void test20SigningWithEmptyParams() throws Exception {
         workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "  ");
         workerSession.setWorkerProperty(WORKER1, "REASON", " ");
         workerSession.setWorkerProperty(WORKER1, "LOCATION", " ");

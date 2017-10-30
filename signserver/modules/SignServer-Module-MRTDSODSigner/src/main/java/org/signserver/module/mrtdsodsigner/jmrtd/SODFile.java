@@ -777,6 +777,9 @@ public class SODFile extends PassportFile
             } else {
                 digestEncryptionAlgorithmParams = null;
             }
+        }
+        catch (NoSuchAlgorithmException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

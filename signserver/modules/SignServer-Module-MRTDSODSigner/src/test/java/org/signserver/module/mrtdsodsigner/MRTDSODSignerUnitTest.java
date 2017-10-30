@@ -35,6 +35,7 @@ import org.junit.runners.MethodSorters;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SODSignResponse;
+import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
@@ -634,6 +635,29 @@ public class MRTDSODSignerUnitTest extends TestCase {
                     "SHA256withRSA");
         } catch (Exception ex) {
             fail("There should not be any exception");
+        }
+    }
+    
+    /**
+     * Test that Signer process fails gracefully and displays actual problem when configured SIGNATUREALGORITHM is invalid.
+     *
+     * @throws Exception
+     */
+    public void test09SignDataWithUnSupportedSigAlgo() throws Exception {
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<>();
+        dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA256"));
+        dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA256"));
+
+        workerSession.setWorkerProperty(WORKER1, "SIGNATUREALGORITHM", "INVALID1234");
+        workerSession.reloadConfiguration(WORKER1);
+
+        try {
+            signHelper(WORKER1, 12, dataGroups1, false, "SHA256", "INVALID1234");
+            fail("Should have failed");
+        } catch (SignServerException ignored) {
+            // OK
+            assertEquals("Problem constructing SOD as configured algorithm not supported", ignored.getMessage());
+            LOG.debug("Message was: " + ignored.getMessage());
         }
     }
 

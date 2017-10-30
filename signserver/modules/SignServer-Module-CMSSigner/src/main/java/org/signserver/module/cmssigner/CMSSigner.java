@@ -68,6 +68,7 @@ import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
 import org.signserver.server.signers.BaseSigner;
 import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
+import org.signserver.server.HashDigestUtils;
 
 /**
  * A Signer signing arbitrary content and produces the result in
@@ -495,6 +496,13 @@ public class CMSSigner extends BaseSigner {
         final ContentSigner contentSigner = new JcaContentSignerBuilder(sigAlg).setProvider(crypto.getProvider()).build(crypto.getPrivateKey());
         final byte[] digestData = requestData.getAsByteArray();
         final AlgorithmIdentifier alg = getClientSideHashAlgorithm(requestContext);
+                
+        // Check supplied Hash Digest length
+        final String clientSpecifiedHashDigestAlgo = RequestMetadata.getInstance(requestContext).get(CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY);
+        boolean isSuppliedHashDigestLengthOk = HashDigestUtils.isSuppliedHashDigestLengthValid(clientSpecifiedHashDigestAlgo, digestData.length);
+        if (!isSuppliedHashDigestLengthOk) {
+            throw new IllegalRequestException("Client-side hashing data length must match with the length of client specified digest algorithm");
+        }
         
         final DigestCalculator digestCalculator = new DigestCalculator() {
             @Override

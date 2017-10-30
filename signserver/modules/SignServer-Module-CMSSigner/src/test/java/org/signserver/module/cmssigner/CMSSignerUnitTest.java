@@ -552,6 +552,35 @@ public class CMSSignerUnitTest {
         byte[] actualData = (byte[]) signedContent.getContent();
         assertEquals(Hex.toHexString(data), Hex.toHexString(actualData));
     }
+    
+    /**
+     * Test that when length of client supplied hash digest does not match with the length of specified digest algorithm,it fails.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClientSideHashingMessageDigestLengthNotMatchedWithSpecifiedHashAlgoFails() throws Exception {
+        LOG.info("testClientSideHashingMessageDigestLengthNotMatchedWithSpecifiedHashAlgoFails");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("CLIENTSIDEHASHING", "TRUE");
+        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256,SHA-512");
+
+        RequestContext requestContext = new RequestContext();
+
+        RequestMetadata metadata = RequestMetadata.getInstance(requestContext);
+        metadata.put("USING_CLIENTSUPPLIED_HASH", "TRUE");
+        metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-512");
+
+        String errorMessage = "Client-side hashing data length must match with the length of client specified digest algorithm";
+
+        try {
+            signAndVerifyWithHash("foo".getBytes("ASCII"), "SHA-256", tokenRSA, config, requestContext);
+            fail("Should throw IllegalRequestException");
+        } catch (IllegalRequestException e) {
+            // expected since CLIENTSIDE_HASHDIGESTALGORITHM is SHA-512 but digest generated from SHA-256
+            assertEquals(errorMessage, e.getMessage());
+        }
+    }
 
     /**
      * Tests that detached signature is not used if not specified in config and

@@ -660,6 +660,30 @@ public class MRTDSODSignerUnitTest extends TestCase {
             LOG.debug("Message was: " + ignored.getMessage());
         }
     }
+    
+     /**
+     * Test that when length of client supplied hash digest does not match with the length of configured digest algorithm,it fails.
+     *
+     * @throws Exception
+     */
+    public void test10SignData_MessageDigestLengthNotMatchedWithConfiguredHashAlgoFails() throws Exception {
+        // DG1, DG2 and default values
+        Map<Integer, byte[]> dataGroups1 = new LinkedHashMap<>();
+        dataGroups1.put(1, digestHelper("Dummy Value 1".getBytes(), "SHA256"));
+        dataGroups1.put(2, digestHelper("Dummy Value 2".getBytes(), "SHA256"));
+
+        workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA512");
+        workerSession.reloadConfiguration(WORKER1);
+
+        try {
+            signHelper(WORKER1, 12, dataGroups1, false, "SHA512", "SHA256withRSA");
+            fail("Should have failed");
+        } catch (IllegalRequestException ignored) {
+            // OK
+            assertEquals("Client-side hashing data length must match with the length of client specified digest algorithm", ignored.getMessage());
+            LOG.debug("Message was: " + ignored.getMessage());
+        }
+    }
 
     private void setupWorkers() {
 

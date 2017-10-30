@@ -51,6 +51,7 @@ import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.signers.BaseSigner;
 import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
+import org.signserver.server.HashDigestUtils;
 
 /**
  * A Signer creating a signed Security Object Data (SOD) file to be stored in ePassports.
@@ -210,6 +211,19 @@ public class MRTDSODSigner extends BaseSigner {
                             log.debug("Resulting hash is of length: " + result.length);
                         }
                         dghashes.put(dgId.getKey(), result);
+                    }
+                }
+            } else {
+                for (Map.Entry<Integer, byte[]> dgId : dgvalues.entrySet()) {
+                    final byte[] value = dgId.getValue();
+                    if (log.isDebugEnabled()) {
+                        log.debug("Hashing data group " + dgId + ", value is of length: " + value.length);
+                    }
+                    if ((value != null) && (value.length > 0)) {
+                        boolean isSuppliedHashDigestLengthOk = HashDigestUtils.isSuppliedHashDigestLengthValid(digestAlgorithm, value.length);
+                        if (!isSuppliedHashDigestLengthOk) {
+                            throw new IllegalRequestException("Client-side hashing data length must match with the length of client specified digest algorithm");
+                        }
                     }
                 }
             }

@@ -136,7 +136,7 @@ public class ODFSignerTest extends ModulesTestCase {
             GenericSignResponse res = (GenericSignResponse) processSession.process(
                     new WorkerIdentifier(WORKERID), signRequest, new RemoteRequestContext());
         } catch (SignServerException expected) {
-            assertEquals("exception message", "Worker is misconfigured", expected.getMessage());
+            assertTrue("exception message", expected.getMessage().contains("Worker is misconfigured"));
         }
     }
     

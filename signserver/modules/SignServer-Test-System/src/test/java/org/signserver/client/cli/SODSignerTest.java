@@ -14,6 +14,8 @@ package org.signserver.client.cli;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -78,9 +80,9 @@ public class SODSignerTest extends ModulesTestCase {
                 + File.separator + "demods1.p12");
         workerSession.setWorkerProperty(WORKERID, "DEFAULTKEY", "demods1");
         workerSession.reloadConfiguration(WORKERID);
-        
-        // Dummy worker echoing request metadata
-        addSigner(EchoRequestMetadataSigner.class.getName(), WORKERID2, "EchoRequestMetadataSigner", true);
+
+        // Dummy worker echoing request metadata     
+        addSigner("org.signserver.server.signers.EchoRequestMetadataSigner", WORKERID2, "EchoRequestMetadataSigner", true);
     }
 
     @Test
@@ -100,11 +102,18 @@ public class SODSignerTest extends ModulesTestCase {
     @Test
     public void test02signDataFromParameter() throws Exception {
         LOG.info("test02signDataFromParameter");
-        assertEquals(CommandLineInterface.RETURN_SUCCESS, 
-                clientCLI.execute("signdatagroups", "-workername", "TestMRTDSODSigner1", "-data", "1=value1&2=value2&3=value3"));
-        String res = clientCLI.getOut().toString();
-        assertNotNull("non null result", res);
-        assertTrue("non empty result: " + res.length(), res.length() > 50);
+        workerSession.setWorkerProperty(WORKERID, "DODATAGROUPHASHING", "true");
+        workerSession.reloadConfiguration(WORKERID);
+        try {
+            assertEquals(CommandLineInterface.RETURN_SUCCESS,
+                    clientCLI.execute("signdatagroups", "-workername", "TestMRTDSODSigner1", "-data", "1=value1&2=value2&3=value3"));
+            String res = clientCLI.getOut().toString();
+            assertNotNull("non null result", res);
+            assertTrue("non empty result: " + res.length(), res.length() > 50);
+        } finally {
+            workerSession.setWorkerProperty(WORKERID, "DODATAGROUPHASHING", "false");
+            workerSession.reloadConfiguration(WORKERID);
+        }
     }
     
     /**
@@ -117,18 +126,25 @@ public class SODSignerTest extends ModulesTestCase {
     @Test
     public void test02signDataFromParameterOverClientWS() throws Exception {
         LOG.info("test02signDataFromParameterOverClientWS");
-        assertEquals(CommandLineInterface.RETURN_SUCCESS, 
-                clientCLI.execute("signdatagroups", "-workername", "TestMRTDSODSigner1", "-data", "1=value1&2=value2&3=value3", "-protocol", "CLIENTWS", 
-                "-truststore", getSignServerHome() + "/p12/truststore.jks", "-truststorepwd", "changeit", "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort())));
-        String res = clientCLI.getOut().toString();
-        assertNotNull("non null result", res);
-        assertTrue("non empty result: " + res.length(), res.length() > 50);
-        byte[] resBytes = clientCLI.getOut().toByteArray();
-        SODFile sod = new SODFile(new ByteArrayInputStream(resBytes));
-        Map<Integer, byte[]> dataGroupHashes = sod.getDataGroupHashes();
-        assertEquals("DG1", "value1", new String(dataGroupHashes.get(1)));
-        assertEquals("DG2", "value2", new String(dataGroupHashes.get(2)));
-        assertEquals("DG3", "value3", new String(dataGroupHashes.get(3)));
+        workerSession.setWorkerProperty(WORKERID, "DODATAGROUPHASHING", "true");
+        workerSession.reloadConfiguration(WORKERID);
+        try {
+            assertEquals(CommandLineInterface.RETURN_SUCCESS,
+                    clientCLI.execute("signdatagroups", "-workername", "TestMRTDSODSigner1", "-data", "1=value1&2=value2&3=value3", "-protocol", "CLIENTWS",
+                            "-truststore", getSignServerHome() + "/p12/truststore.jks", "-truststorepwd", "changeit", "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort())));
+            String res = clientCLI.getOut().toString();
+            assertNotNull("non null result", res);
+            assertTrue("non empty result: " + res.length(), res.length() > 50);
+            byte[] resBytes = clientCLI.getOut().toByteArray();
+            SODFile sod = new SODFile(new ByteArrayInputStream(resBytes));
+            Map<Integer, byte[]> dataGroupHashes = sod.getDataGroupHashes();
+            assertEquals("DG1", new String(digestHelper("value1".getBytes(), "SHA256")), new String(dataGroupHashes.get(1)));
+            assertEquals("DG2", new String(digestHelper("value2".getBytes(), "SHA256")), new String(dataGroupHashes.get(2)));
+            assertEquals("DG3", new String(digestHelper("value3".getBytes(), "SHA256")), new String(dataGroupHashes.get(3)));
+        } finally {
+            workerSession.setWorkerProperty(WORKERID, "DODATAGROUPHASHING", "false");
+            workerSession.reloadConfiguration(WORKERID);
+        }
     }
 
     /**
@@ -196,5 +212,10 @@ public class SODSignerTest extends ModulesTestCase {
                 String.valueOf(WORKERID2)
         ));
         workerSession.reloadConfiguration(WORKERID2);
+    }
+    
+    private byte[] digestHelper(byte[] data, String digestAlgorithm) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance(digestAlgorithm);
+        return md.digest(data);
     }
 }

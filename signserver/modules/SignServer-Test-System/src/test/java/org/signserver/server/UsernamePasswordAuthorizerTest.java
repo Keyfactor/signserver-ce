@@ -222,8 +222,10 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
     
     @Test
     public void test04HashedAndSaltedPasswordSODOverClientWS() throws Exception {
+        workerSession.setWorkerProperty(getSignerIdSODSigner1(), "DODATAGROUPHASHING", "true");
+        workerSession.reloadConfiguration(getSignerIdSODSigner1());
         try {
-            byte[] res = execute(new SignDataGroupsCommand(), "signdatagroups", "-workerid", 
+            byte[] res = execute(new SignDataGroupsCommand(), "signdatagroups", "-workerid",
                     String.valueOf(getSignerIdSODSigner1()), "-data", "1=value1&2=value2&3=value3",
                     "-username", "user3", "-password", "foo123", "-protocol", "CLIENTWS",
                     "-truststore", new File(getSignServerHome(), "p12/truststore.jks").getAbsolutePath(), "-truststorepwd", "changeit",
@@ -233,13 +235,18 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
+        } finally {
+            workerSession.setWorkerProperty(getSignerIdSODSigner1(), "DODATAGROUPHASHING", "false");
+            workerSession.reloadConfiguration(getSignerIdSODSigner1());
         }
     }
     
     @Test
     public void test04HashedAndSaltedPasswordSODOverHTTP() throws Exception {
+        workerSession.setWorkerProperty(getSignerIdSODSigner1(), "DODATAGROUPHASHING", "true");
+        workerSession.reloadConfiguration(getSignerIdSODSigner1());
         try {
-            byte[] res = execute(new SignDataGroupsCommand(), "signdatagroups", "-workerid", 
+            byte[] res = execute(new SignDataGroupsCommand(), "signdatagroups", "-workerid",
                     String.valueOf(getSignerIdSODSigner1()), "-data", "1=value1&2=value2&3=value3",
                     "-username", "user3", "-password", "foo123", "-protocol", "HTTP",
                     "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPPort()));
@@ -248,6 +255,9 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
+        } finally {
+            workerSession.setWorkerProperty(getSignerIdSODSigner1(), "DODATAGROUPHASHING", "false");
+            workerSession.reloadConfiguration(getSignerIdSODSigner1());
         }
     }
 

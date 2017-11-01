@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -509,9 +510,9 @@ public class P11SignTest extends ModulesTestCase {
 
         // Test signing
         HashMap<Integer, byte[]> dgs = new HashMap<>();
-        dgs.put(1, "Yy==".getBytes());
-        dgs.put(2, "Yy==".getBytes());
-        dgs.put(3, "Yy==".getBytes());
+        dgs.put(1, Base64.decode("PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=".getBytes(StandardCharsets.US_ASCII)));
+        dgs.put(2, Base64.decode("PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=".getBytes(StandardCharsets.US_ASCII)));
+        dgs.put(3, Base64.decode("PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=".getBytes(StandardCharsets.US_ASCII)));
         final SODSignRequest signRequest = new SODSignRequest(233, dgs);
         final SODSignResponse res = (SODSignResponse) processSession.process(new WorkerIdentifier(workerId), signRequest, new RemoteRequestContext());
         Certificate signercert = res.getSignerCertificate();

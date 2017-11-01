@@ -25,7 +25,6 @@ import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.module.mrtdsodsigner.MRTDSODSigner;
-import org.signserver.server.signers.EchoRequestMetadataSigner;
 
 import org.junit.Test;
 import org.signserver.common.WorkerIdentifier;
@@ -55,7 +54,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {
         addSigner(MRTDSODSigner.class.getName(), false);
-        addSigner(EchoRequestMetadataSigner.class.getName(), 123, "DummySigner123", true);
+        addSigner("org.signserver.server.signers.EchoRequestMetadataSigner", 123, "DummySigner123", true);
         getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
     }
 
@@ -66,9 +65,9 @@ public class SODProcessServletResponseTest extends WebTestCase {
     public void test01HttpStatus200() {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "BTfUgfc6dXM0MoBS2jr5YmztlwKOILhJ9hFcIs12UZc=");
+        fields.put("dataGroup3", "idxq5/Bqn0a1Za8D6rDs4L9gJNNlm346HQNXPP6wtZ0=");
         fields.put("encoding", "base64");
 
         assertStatusReturned(fields, 200, SKIP_MULTIPART);
@@ -97,9 +96,9 @@ public class SODProcessServletResponseTest extends WebTestCase {
         final String unknownLdsVersion = "9999";
         Map<String, String> fields = new HashMap<>();
         fields.put("workerId", String.valueOf(getSignerIdDummy1()));
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "BTfUgfc6dXM0MoBS2jr5YmztlwKOILhJ9hFcIs12UZc=");
+        fields.put("dataGroup3", "idxq5/Bqn0a1Za8D6rDs4L9gJNNlm346HQNXPP6wtZ0=");
         fields.put("encoding", "base64");
         fields.put("ldsVersion", unknownLdsVersion);
 
@@ -114,9 +113,9 @@ public class SODProcessServletResponseTest extends WebTestCase {
         final String nonExistingWorker = "_NotExistingWorker123_";
         Map<String, String> fields = new HashMap<>();
         fields.put("workerName", nonExistingWorker);
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "BTfUgfc6dXM0MoBS2jr5YmztlwKOILhJ9hFcIs12UZc=");
+        fields.put("dataGroup3", "idxq5/Bqn0a1Za8D6rDs4L9gJNNlm346HQNXPP6wtZ0=");
         fields.put("encoding", "base64");
 
         assertStatusReturned(fields, 404, SKIP_MULTIPART);
@@ -130,9 +129,9 @@ public class SODProcessServletResponseTest extends WebTestCase {
         final int nonExistingId = 0;
         Map<String, String> fields = new HashMap<>();
         fields.put("workerId", String.valueOf(nonExistingId));
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "BTfUgfc6dXM0MoBS2jr5YmztlwKOILhJ9hFcIs12UZc=");
+        fields.put("dataGroup3", "idxq5/Bqn0a1Za8D6rDs4L9gJNNlm346HQNXPP6wtZ0=");
         fields.put("encoding", "base64");
 
         assertStatusReturned(fields, 404, SKIP_MULTIPART);
@@ -145,9 +144,9 @@ public class SODProcessServletResponseTest extends WebTestCase {
     public void test04HttpStatus503() {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "BTfUgfc6dXM0MoBS2jr5YmztlwKOILhJ9hFcIs12UZc=");
+        fields.put("dataGroup3", "idxq5/Bqn0a1Za8D6rDs4L9gJNNlm346HQNXPP6wtZ0=");
         fields.put("encoding", "base64");
 
         try {
@@ -176,9 +175,9 @@ public class SODProcessServletResponseTest extends WebTestCase {
     public void test05HttpStatus500_exception() throws Exception {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "BTfUgfc6dXM0MoBS2jr5YmztlwKOILhJ9hFcIs12UZc=");
+        fields.put("dataGroup3", "idxq5/Bqn0a1Za8D6rDs4L9gJNNlm346HQNXPP6wtZ0=");
         fields.put("encoding", "base64");
 
         // Set any bad properties that will make the signer fail with an exception
@@ -213,7 +212,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
         props.load(new StringReader(propsString));
         
         return props;
-    }
+}
     
     /**
      * Test setting a single metadata param using REQUEST_METADATA.x.
@@ -224,9 +223,9 @@ public class SODProcessServletResponseTest extends WebTestCase {
     public void test06RequestMetadataSingleParam() throws Exception {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerId", "123");
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "BTfUgfc6dXM0MoBS2jr5YmztlwKOILhJ9hFcIs12UZc=");
+        fields.put("dataGroup3", "idxq5/Bqn0a1Za8D6rDs4L9gJNNlm346HQNXPP6wtZ0=");
         fields.put("encoding", "base64");
         fields.put("REQUEST_METADATA.FOO", "BAR");
         
@@ -247,9 +246,9 @@ public class SODProcessServletResponseTest extends WebTestCase {
     public void test07RequestMetadataPropertiesFile() throws Exception {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerId", "123");
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "BTfUgfc6dXM0MoBS2jr5YmztlwKOILhJ9hFcIs12UZc=");
+        fields.put("dataGroup3", "idxq5/Bqn0a1Za8D6rDs4L9gJNNlm346HQNXPP6wtZ0=");
         fields.put("encoding", "base64");
         fields.put("REQUEST_METADATA", "FOO=BAR\nFOO2=BAR2");
         
@@ -272,9 +271,9 @@ public class SODProcessServletResponseTest extends WebTestCase {
     public void test08RequestMetadataOverride() throws Exception {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerId", "123");
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "BTfUgfc6dXM0MoBS2jr5YmztlwKOILhJ9hFcIs12UZc=");
+        fields.put("dataGroup3", "idxq5/Bqn0a1Za8D6rDs4L9gJNNlm346HQNXPP6wtZ0=");
         fields.put("encoding", "base64");
         fields.put("REQUEST_METADATA", "FOO=BAR\nFOO2=BAR2");
         fields.put("REQUEST_METADATA.FOO", "OVERRIDE");

@@ -21,9 +21,9 @@
 
             <form id="requestform" action="../sodworker/MRTDSODSigner" method="post">
                 <p>
-                    DG1: <input type="text" size="80" name="dataGroup1" value="Yy=="/><br/>
-                    DG2: <input type="text" size="80" name="dataGroup2" value="Yy=="/><br/>
-                    DG3: <input type="text" size="80" name="dataGroup3" value="Yy=="/><br/>
+                    DG1: <input type="text" size="80" name="dataGroup1" value="PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4="/><br/>
+                    DG2: <input type="text" size="80" name="dataGroup2" value="BTfUgfc6dXM0MoBS2jr5YmztlwKOILhJ9hFcIs12UZc="/><br/>
+                    DG3: <input type="text" size="80" name="dataGroup3" value="idxq5/Bqn0a1Za8D6rDs4L9gJNNlm346HQNXPP6wtZ0="/><br/>
                     DG4: <input type="text" size="80" name="dataGroup4"/><br/>
                     DG5: <input type="text" size="80" name="dataGroup5"/><br/>
                     DG6: <input type="text" size="80" name="dataGroup6"/><br/>
@@ -39,7 +39,7 @@
                     DG16: <input type="text" size="80" name="dataGroup16"/><br/>
                 </p>
                 <!-- if encoding = binary values will not be base64 decoded before use -->
-                <!-- a good test value, base64 encoded is Yy== -->
+                <!-- a good test value, base64 encoded is PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4= -->
                 <p>
                     Encoding of datagroups:<br/>
                     <input type="radio" name="encoding" value="binary"/>None<br/>

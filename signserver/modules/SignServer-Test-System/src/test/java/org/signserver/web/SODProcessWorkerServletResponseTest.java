@@ -19,7 +19,6 @@ import java.util.Map;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.module.mrtdsodsigner.MRTDSODSigner;
-import org.signserver.server.signers.EchoRequestMetadataSigner;
 
 import org.junit.Test;
 import org.signserver.common.WorkerIdentifier;
@@ -66,7 +65,7 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
     @Test
     public void test00SetupDatabase() throws Exception {
         addSigner(MRTDSODSigner.class.getName(), false);
-        addSigner(EchoRequestMetadataSigner.class.getName(), 123, "DummySigner123", true);
+        addSigner("org.signserver.server.signers.EchoRequestMetadataSigner", 123, "DummySigner123", true);
         getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
     }
 
@@ -90,9 +89,9 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
     public void test01HttpStatus200() {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup3", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
         fields.put("encoding", "base64");
     
         assertStatusReturned(fields, 200, getSignerNameDummy1(), true, false,
@@ -109,9 +108,9 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
         Map<String, String> fields = new HashMap<>();
         
         fields.put("workerName", UNEXISTING_WORKER_NAME);
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup3", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
         fields.put("encoding", "base64");
 
         assertStatusReturned(fields, 200, getSignerNameDummy1(), true, false,
@@ -126,9 +125,9 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
     public void test03HttpStatus200_overrideRequestParamWorkerId() {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerId", String.valueOf(UNEXISTING_WORKER_ID));
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup3", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
         fields.put("encoding", "base64");
 
         assertStatusReturned(fields, 200, getSignerNameDummy1(), true, false,
@@ -141,9 +140,9 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
     @Test
     public void test04HttpStatus404() {
         Map<String, String> fields = new HashMap<>();
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup3", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
         fields.put("encoding", "base64");
         
         assertStatusReturned(fields, 404, UNEXISTING_WORKER_NAME, true, false,
@@ -159,9 +158,9 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
     @Test
     public void test05HttpStatus404_setCorrectWorkerNameRequestParam() {
         Map<String, String> fields = new HashMap<>();
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup3", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
         fields.put("encoding", "base64");
         fields.put("workerName", getSignerNameDummy1());
 
@@ -178,9 +177,9 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
     @Test
     public void test06HttpStatus404_setCorrectWorkerIdRequestParam() {
         Map<String, String> fields = new HashMap<>();
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup3", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
         fields.put("encoding", "base64");
         fields.put("workerName", getSignerNameDummy1());
         fields.put("workerId", String.valueOf(getSignerIdDummy1()));
@@ -198,9 +197,9 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
     @Test
     public void test07HttpStatus404_setCorrectWorkerIdAndNameRequestParam() {
         Map<String, String> fields = new HashMap<>();
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup3", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
         fields.put("encoding", "base64");
         fields.put("workerId", String.valueOf(getSignerIdDummy1()));
         fields.put("workerName", getSignerNameDummy1());
@@ -217,9 +216,9 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
     public void test08HttpStatus404_emptyWorkerName() {
         Map<String, String> fields = new HashMap<>();
         fields.put("data", "<root/>");
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup3", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
         fields.put("encoding", "base64");
 
         assertStatusReturned(fields, 404, "", true, false, false);
@@ -233,9 +232,9 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
     @Test
     public void test09HttpStatus404_emptyWorkerNameWithWorkerNameRequestParam() {
         Map<String, String> fields = new HashMap<>();
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup3", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
         fields.put("encoding", "base64");
         fields.put("workerName", getSignerNameDummy1());
 
@@ -250,9 +249,9 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
     @Test
     public void test10HttpStatus404_emptyWorkerNameWithWorkerIdRequestParam() {
         Map<String, String> fields = new HashMap<>();
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup3", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
         fields.put("encoding", "base64");
         fields.put("workerId", String.valueOf(getSignerIdDummy1()));
 
@@ -267,9 +266,9 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
     @Test
     public void test11HttpStatus404_emptyWorkerNameNoSlash() {
         Map<String, String> fields = new HashMap<>();
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup3", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
         fields.put("encoding", "base64");
 
         assertStatusReturned(fields, 404, "", false, false, false);
@@ -284,9 +283,9 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
     @Test
     public void test12HttpStatus404_emptyWorkerNameNoSlashWithWorkerNameRequestParam() {
         Map<String, String> fields = new HashMap<>();
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup3", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
         fields.put("encoding", "base64");
         fields.put("workerName", getSignerNameDummy1());
 
@@ -301,9 +300,9 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
     @Test
     public void test13HttpStatus404_emptyWorkerNameNoSlashWithWorkerIdRequestParam() {
         Map<String, String> fields = new HashMap<>();
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup3", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
         fields.put("encoding", "base64");
         fields.put("workerId", String.valueOf(getSignerIdDummy1()));
 
@@ -317,9 +316,9 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
     @Test
     public void test14HttpStatus404_extraSlashBeforeWorkerName() {
         Map<String, String> fields = new HashMap<>();
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup3", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
         fields.put("encoding", "base64");
 
         assertStatusReturned(fields, 404, getSignerNameDummy1(), true, true,
@@ -336,9 +335,9 @@ public class SODProcessWorkerServletResponseTest extends WebTestCase {
     @Test
     public void test15HttpStatus404_extraSlashBeforeServletName() {
         Map<String, String> fields = new HashMap<>();
-        fields.put("dataGroup1", "Yy==");
-        fields.put("dataGroup2", "Yy==");
-        fields.put("dataGroup3", "Yy==");
+        fields.put("dataGroup1", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup2", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
+        fields.put("dataGroup3", "PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=");
         fields.put("encoding", "base64");
         fields.put("workerName", getSignerNameDummy1());
         

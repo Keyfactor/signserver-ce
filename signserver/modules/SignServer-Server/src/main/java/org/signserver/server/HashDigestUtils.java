@@ -20,27 +20,26 @@ package org.signserver.server;
  */
 public class HashDigestUtils {
     /**
-     * Validate the length of client supplied hash digest against the length of specified digest algorithm.
-     * @param suppliedHashDataLengthBytes to read from
-     * @param configuredHashDigestAlgo to read from
-     * @return boolean value
+     * Validate the length of client supplied hash digest against the length of digest algorithm.
+     * @param hashDigestAlgo client specified or server side configured hashDigestAlgorithm
+     * @param suppliedHashDataLengthBytes length of client supplied hash digest in Bytes
+     * @return boolean value indicating whether hash digest length valid or not
      */
-    public static Boolean isSuppliedHashDigestLengthValid(final String configuredHashDigestAlgo, int suppliedHashDataLengthBytes) {
+    public static Boolean isSuppliedHashDigestLengthValid(final String hashDigestAlgo, int suppliedHashDataLengthBytes) {
         Integer clientSpecifiedHashLengthBits = null;
 
-        if (configuredHashDigestAlgo != null && !configuredHashDigestAlgo.isEmpty()) {
-            clientSpecifiedHashLengthBits = getOutputSizeBitsFromDigestAlgorithmString(configuredHashDigestAlgo);
+        if (hashDigestAlgo != null && !hashDigestAlgo.isEmpty()) {
+            clientSpecifiedHashLengthBits = getOutputSizeBitsFromDigestAlgorithmString(hashDigestAlgo);
         }
 
         if (clientSpecifiedHashLengthBits != null) {
             int clientSpecifiedHashLengthBytes = clientSpecifiedHashLengthBits / 8;
             return (clientSpecifiedHashLengthBytes == suppliedHashDataLengthBytes);
-        } else {
-            return null;
         }
+        return false;
     }
     
-    public static Integer getOutputSizeBitsFromDigestAlgorithmString(final String digestAlg) {
+    public static int getOutputSizeBitsFromDigestAlgorithmString(final String digestAlg) {
         switch (digestAlg.toUpperCase()) {
             case "MD5":
             case "MD-5":
@@ -61,7 +60,7 @@ public class HashDigestUtils {
             case "SHA-512":
                 return 512;
             default:
-                return null;
+                throw new IllegalArgumentException("Invalid Digest Algorithm");
         }
     }
 }

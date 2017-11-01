@@ -275,10 +275,9 @@ public class MRTDSODSigner extends BaseSigner {
             // Reconstruct the sod
             sod = new SODFile(new ByteArrayInputStream(constructedSod.getEncoded()));
 
-        } catch (NoSuchAlgorithmException | CertificateException ex) {
-            if (ex instanceof NoSuchAlgorithmException) {
-                throw new SignServerException("Problem constructing SOD as configured algorithm not supported", ex);
-            }
+        } catch (NoSuchAlgorithmException ex) {
+            throw new SignServerException("Problem constructing SOD as configured algorithm not supported", ex);
+        } catch (CertificateException ex) {
             throw new SignServerException("Problem constructing SOD", ex);
         } catch (IOException ex) {
             throw new SignServerException("Problem reconstructing SOD", ex);

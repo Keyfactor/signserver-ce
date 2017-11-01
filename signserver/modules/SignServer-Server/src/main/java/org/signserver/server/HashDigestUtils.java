@@ -39,6 +39,11 @@ public class HashDigestUtils {
         return false;
     }
     
+    /**
+     * Returns the length of output digest in bits for provided digest algorithm.     * 
+     * @param digestAlg digest algorithm 
+     * @return digest output length in bits
+     */
     public static int getOutputSizeBitsFromDigestAlgorithmString(final String digestAlg) {
         switch (digestAlg.toUpperCase()) {
             case "MD5":

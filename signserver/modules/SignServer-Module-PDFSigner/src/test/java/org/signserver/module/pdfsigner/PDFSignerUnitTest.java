@@ -1556,6 +1556,20 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     }
     
     /**
+     * Tests that signing fails with an expected exception when the signing
+     * certificate has a CDP and the fetched CRL is an empty file.
+     */
+    public void test22FailWithEmptyCRLFile() throws Exception {
+        try {
+            signPDF(sampleOk, WORKER2);
+            fail("Request should not have been accepted");
+        } catch (SignServerException expected) {
+            assertEquals("exception message", "Empty CRL file fetched from CDP",
+                         expected.getMessage());
+        }
+    }
+    
+    /**
      * Test that specifying an unknown hash algorithm gives a configuration
      * error.
      *
@@ -1765,10 +1779,19 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     }
 
     private byte[] signPDF(File file) throws Exception {
-        return signProtectedPDF(file, null);
+        return signProtectedPDF(file, WORKER1, null);
+    }
+    
+    private byte[] signPDF(final File file, final int workerId) throws Exception {
+        return signProtectedPDF(file, workerId, null);
     }
 
-    private byte[] signProtectedPDF(File file, String password) throws Exception {
+    private byte[] signProtectedPDF(final File file, final String password) throws Exception {
+        return signProtectedPDF(file, WORKER1, password);
+    }
+    
+    private byte[] signProtectedPDF(final File file, final int workerId,
+            final String password) throws Exception {
         LOG.debug("Tests signing of " + file.getName() + " with password:");
         if (password == null) {
             LOG.debug("null");
@@ -1784,7 +1807,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
                 CloseableWritableData responseData = createResponseData(true);
             ) {
             final Response response = 
-                    processSession.process(createAdminInfo(), new WorkerIdentifier(WORKER1), 
+                    processSession.process(createAdminInfo(), new WorkerIdentifier(workerId), 
                             new SignatureRequest(200, requestData, responseData),
                             context);
             assertNotNull(response);
@@ -1794,7 +1817,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
     private void setupWorkers()
             throws NoSuchAlgorithmException, NoSuchProviderException,
-            CertBuilderException, CertificateException, FileNotFoundException {
+            CertBuilderException, CertificateException, FileNotFoundException,
+            IOException {
 
         final GlobalConfigurationSessionMock globalMock
                 = new GlobalConfigurationSessionMock();
@@ -1825,6 +1849,37 @@ public class PDFSignerUnitTest extends ModulesTestCase {
                 @Override
                 public ICryptoTokenV4 getCryptoToken(final IServices services) {
                     return token;
+                }
+            });
+            workerSession.reloadConfiguration(workerId);
+        }
+        
+        // WORKER2
+        // signer with a signer certificate with a CDP URL pointing at an empty file
+        final File empty = File.createTempFile("test", "crl");
+        // WORKER1
+        final MockedCryptoToken tokenCRL = generateToken(false, empty.toURI().toString());
+        {
+            final int workerId = WORKER2;
+            final WorkerConfig config = new WorkerConfig();
+            config.setProperty(NAME, "TestPDFSigner2");
+            config.setProperty("KEYSTOREPATH",
+                    getSignServerHome() + File.separator + "res" + File.separator +
+                            "test" + File.separator + "dss10" + File.separator +
+                            "dss10_signer1.p12");
+            config.setProperty("KEYSTORETYPE", "PKCS12");
+            config.setProperty("KEYSTOREPASSWORD", "foo123");
+            config.setProperty("DEFAULTKEY", "Signer 1");
+            config.setProperty("DIGESTALGORITHM", "SHA256");
+            config.setProperty("EMBED_CRL", "true");
+
+            config.setProperty(AUTHTYPE, "NOAUTH");
+
+            workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
+                    new PDFSigner() {
+                @Override
+                public ICryptoTokenV4 getCryptoToken(final IServices services) {
+                    return tokenCRL;
                 }
             });
             workerSession.reloadConfiguration(workerId);

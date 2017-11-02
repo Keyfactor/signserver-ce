@@ -1457,7 +1457,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      */
     public void test20EmptyStringInTSA_URLAndTSA_WORKER_TreatedAsNotSpecified() throws Exception {
 
-        final MockedCryptoToken token = generateToken(false);
+        final MockedCryptoToken token = generateToken(false, null);
 
         WorkerConfig workerConfig = new WorkerConfig();
 
@@ -1488,7 +1488,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      */
     public void test20EmptyAuthTypeAllowed() throws Exception {
 
-        final MockedCryptoToken token = generateToken(false);
+        final MockedCryptoToken token = generateToken(false, null);
 
         WorkerConfig workerConfig = new WorkerConfig();
 
@@ -1588,7 +1588,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test17OnlySHA1AcceptedForDSA() throws Exception {
-        final MockedCryptoToken token = generateToken(true);
+        final MockedCryptoToken token = generateToken(true, null);
         final MockedPDFSigner instance = new MockedPDFSigner(token);
 
         final WorkerConfig workerConfig = new WorkerConfig();
@@ -1609,7 +1609,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test18SHA1acceptedForDSA() throws Exception {
-        final MockedCryptoToken token = generateToken(true);
+        final MockedCryptoToken token = generateToken(true, null);
         final MockedPDFSigner instance = new MockedPDFSigner(token);
 
         final WorkerConfig workerConfig = new WorkerConfig();
@@ -1631,7 +1631,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * @throws Exception
      */
     public void test19SHA256AcceptedForRSA() throws Exception {
-        final MockedCryptoToken token = generateToken(false);
+        final MockedCryptoToken token = generateToken(false, null);
         final MockedPDFSigner instance = new MockedPDFSigner(token);
 
         final WorkerConfig workerConfig = new WorkerConfig();
@@ -1650,16 +1650,24 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * Helper method creating a mocked token, using DSA or RSA keys.
      *
      * @param useDSA True if DSA is to be used, otherwise RSA
+     * @param cdpUrl URL to use if a CDP URL should be included in the signing
+     *               cert, if null, no CDP URL is added.
      * @return Mocked crypto token
      * @throws NoSuchAlgorithmException
      * @throws NoSuchProviderException
      * @throws CertBuilderException
      * @throws CertificateException
      */
-    private MockedCryptoToken generateToken(final boolean useDSA) throws NoSuchAlgorithmException, NoSuchProviderException,
+    private MockedCryptoToken generateToken(final boolean useDSA, final String cdpUrl) throws NoSuchAlgorithmException, NoSuchProviderException,
             CertBuilderException, CertificateException {
         final KeyPair signerKeyPair = useDSA ? CryptoUtils.generateDSA(1024) : CryptoUtils.generateRSA(1024);
-        final Certificate[] certChain = new Certificate[] {converter.getCertificate(new CertBuilder().build())};
+        CertBuilder certBuilder = new CertBuilder();
+        
+        if (cdpUrl != null) {
+            certBuilder = certBuilder.addCDPURI(cdpUrl);
+        }
+
+        final Certificate[] certChain = new Certificate[] {converter.getCertificate(certBuilder.build())};
         final Certificate signerCertificate = certChain[0];
         final String provider = "BC";
 
@@ -1796,7 +1804,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         processSession = workerMock;
 
         // WORKER1
-        final MockedCryptoToken token = generateToken(false);
+        final MockedCryptoToken token = generateToken(false, null);
         {
             final int workerId = WORKER1;
             final WorkerConfig config = new WorkerConfig();

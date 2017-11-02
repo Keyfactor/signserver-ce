@@ -862,6 +862,10 @@ public class PDFSigner extends BaseSigner {
                 }
 
                 currCrl = ValidationUtils.fetchCRLFromURL(currCertURL);
+
+                if (currCrl == null) {
+                    throw new SignServerException("Empty CRL file fetched from CDP");
+                }
             } catch (CertificateParsingException e) {
                 throw new SignServerException(
                         "Error obtaining CDP from signing certificate", e);

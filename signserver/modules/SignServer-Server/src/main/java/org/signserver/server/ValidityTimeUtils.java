@@ -68,7 +68,7 @@ public class ValidityTimeUtils {
                 SignServerConstants.CHECKCERTPRIVATEKEYVALIDITY, Boolean.TRUE.toString()).
                 equalsIgnoreCase(Boolean.TRUE.toString());
 
-        // Empty value for minRemainingCertValidity parameter gives NumberFormatExceptionError
+        // Invalid value for minRemainingCertValidity parameter gives NumberFormatException
         int minremainingcertvalidity;
         try {
             minremainingcertvalidity = Integer.valueOf(awc.getProperty(SignServerConstants.MINREMAININGCERTVALIDITY, "0"));

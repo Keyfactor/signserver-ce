@@ -12,5 +12,4 @@ if [[ x"$ANT_HOME" != x"" ]]; then
     ANT_EXEC=$ANT_HOME/bin/ant
 fi
 
-$ANT_EXEC -f "$DIR/../build.xml" -q $@ | grep -v "Trying to override old definition of task http://www.netbeans.org/"
-exit ${PIPESTATUS[0]}
+$ANT_EXEC -f "$DIR/../build.xml" -q $@

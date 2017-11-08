@@ -38,7 +38,8 @@ public class AuditLogFields {
     public static final Set<RelationalOperator> NO_ARG_OPS;
     public static final Set<String> ALLOWED_FIELDS;
     
-    public static final String ERR_DB_PROTECTION_FAILED = "Database protection failed within the selected interval:";
+    public static final String ERR_DB_PROTECTION_FAILED = "Database protection failed within the selected interval: ";
+    public static final String ERR_RELOAD_FAILED = "Reload failed within the selected interval: ";
 
     static {
         

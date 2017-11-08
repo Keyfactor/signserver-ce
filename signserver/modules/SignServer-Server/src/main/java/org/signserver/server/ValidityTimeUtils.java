@@ -73,7 +73,7 @@ public class ValidityTimeUtils {
         try {
             minremainingcertvalidity = Integer.valueOf(awc.getProperty(SignServerConstants.MINREMAININGCERTVALIDITY, "0"));
         } catch (NumberFormatException ex) {
-            throw new NumberFormatException("Invalid value in worker property :" + SignServerConstants.MINREMAININGCERTVALIDITY + " " + ex.getMessage());
+            throw new NumberFormatException("Invalid value in worker property: " + SignServerConstants.MINREMAININGCERTVALIDITY + " " + ex.getMessage());
         }
 
         return getSigningValidity(notAfter, workerId, checkcertvalidity, checkprivatekeyvalidity, minremainingcertvalidity, cert);

@@ -175,9 +175,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
 
         // Overrides the default worker logger to be this worker
         //  implementation's default instead of the WorkerSessionBean's
-        if (config.getPropertyThatCouldBeEmpty("WORKERLOGGER") == null) {
-            config.setProperty("WORKERLOGGER", DEFAULT_WORKERLOGGER);
-        }
+        config.setProperty("WORKERLOGGER", config.getProperty("WORKERLOGGER", DEFAULT_WORKERLOGGER));
 
         // Check that the timestamp server is properly configured
         try {

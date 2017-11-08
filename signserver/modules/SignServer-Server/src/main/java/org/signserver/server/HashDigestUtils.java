@@ -25,17 +25,13 @@ public class HashDigestUtils {
      * @param suppliedHashDataLengthBytes length of client supplied hash digest in Bytes
      * @return boolean value indicating whether hash digest length valid or not
      */
-    public static Boolean isSuppliedHashDigestLengthValid(final String hashDigestAlgo, int suppliedHashDataLengthBytes) {
-        Integer clientSpecifiedHashLengthBits = null;
+    public static boolean isSuppliedHashDigestLengthValid(final String hashDigestAlgo, int suppliedHashDataLengthBytes) {
 
-        if (hashDigestAlgo != null && !hashDigestAlgo.isEmpty()) {
-            clientSpecifiedHashLengthBits = getOutputSizeBitsFromDigestAlgorithmString(hashDigestAlgo);
-        }
-
-        if (clientSpecifiedHashLengthBits != null) {
-            int clientSpecifiedHashLengthBytes = clientSpecifiedHashLengthBits / 8;
+        if (hashDigestAlgo != null && !hashDigestAlgo.trim().isEmpty()) {
+            int clientSpecifiedHashLengthBytes = getOutputSizeBitsFromDigestAlgorithmString(hashDigestAlgo) / 8;
             return (clientSpecifiedHashLengthBytes == suppliedHashDataLengthBytes);
         }
+
         return false;
     }
     

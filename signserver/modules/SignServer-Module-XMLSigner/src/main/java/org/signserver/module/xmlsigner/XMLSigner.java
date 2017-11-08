@@ -63,10 +63,10 @@ import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
 
 /**
  * A Signer signing XML documents.
- * 
+ *
  * Implements a ISigner and have the following properties:
  * No properties yet
- * 
+ *
  * @author Markus Kilås
  * @version $Id$
  */
@@ -78,11 +78,11 @@ public class XMLSigner extends BaseSigner {
 
     // Property constants
     public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
-    
+
     /**
      * Addional signature methods not yet covered by
      * javax.xml.dsig.SignatureMethod
-     * 
+     *
      * Defined in RFC 4051 {@link http://www.ietf.org/rfc/rfc4051.txt}
      */
     private static final String SIGNATURE_METHOD_RSA_SHA256 =
@@ -101,7 +101,7 @@ public class XMLSigner extends BaseSigner {
             "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512";
 
     private String signatureAlgorithm;
-    
+
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
@@ -109,7 +109,7 @@ public class XMLSigner extends BaseSigner {
 
         // Get the signature algorithm
         signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM, DEFAULT_NULL);
-        }
+    }
 
     @Override
     public Response processData(Request signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
@@ -229,18 +229,18 @@ public class XMLSigner extends BaseSigner {
         }
 
         final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, responseData.toReadableData(), archiveId));
-        
+
         // The client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);
-        
+
         return new SignatureResponse(sReq.getRequestID(), responseData,
-                    cert,
-                    archiveId, archivables, CONTENT_TYPE);
+                cert,
+                archiveId, archivables, CONTENT_TYPE);
     }
 
     /**
      * Get an XMLSec URI for a given signature algorithm in BC style.
-     * 
+     *
      * @param sigAlg Signature algorithm name in BC style
      * @return The URI for the algo in XMLSec.
      * @throws NoSuchAlgorithmException
@@ -273,10 +273,10 @@ public class XMLSigner extends BaseSigner {
 
         return result;
     }
-    
+
     /**
      * Return the default signature algo name given the private key.
-     * 
+     *
      * @param privKey
      * @return
      */
@@ -293,4 +293,4 @@ public class XMLSigner extends BaseSigner {
 
         return result;
     }
-    }
+}

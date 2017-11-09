@@ -236,8 +236,8 @@
 
 # Path to the ClientCLI binary dist file
 # Default: ${basedir}/lib/signserver-clientcli.zip
-#web.admingui.dist.file=${basedir}/lib/signserver-clientcli.zip
-#web.admingui.dist.file=/tmp/signserver-clientcli.zip
+#web.clientcli.dist.file=${basedir}/lib/signserver-clientcli.zip
+#web.clientcli.dist.file=/tmp/signserver-clientcli.zip
 
 # -------------- Status And Health Check Configuration -------------------------
 #

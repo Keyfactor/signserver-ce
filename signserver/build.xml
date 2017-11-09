@@ -378,18 +378,20 @@ Installation Guide for details.
         </antcall>
     </target>
     
-    <target name="dist:clientcli" depends="-dist-clientcli-standard,-dist-clientcli-enterprise"/>
+    <target name="dist:clientcli" depends="-dist-clientcli-standard,-dist-clientcli-enterprise,-dist-clientcli-stresstest"/>
     
     <target name="-dist-clientcli-standard">
         <available file="${basedir}/lib/SignServer-Client-CLI.jar" property="clientcli.jar" value="SignServer-Client-CLI.jar"/>
         <available file="${basedir}/lib/SignServer-Client-CLI-${app.version.number}.jar" property="clientcli.jar" value="SignServer-Client-CLI-${app.version.number}.jar"/>
         <available file="${basedir}/lib/SignServer-ClientCLI-Enterprise-${app.version.number}.jar" property="eeclientcli.jar" value="SignServer-ClientCLI-Enterprise-${app.version.number}.jar"/>
+        <available file="${basedir}/lib/SignServer-Test-Performance-${app.version.number}.jar" property="performancecli.jar" value="SignServer-Test-Performance-${app.version.number}.jar"/>
         <fail unless="clientcli.jar" message="Must build SignServer-Client-CLI first"/>
         <antcall target="dist">
             <param name="dist.jars" value="${clientcli.jar}"/>
             <param name="dist.includes" value="
                 bin/signclient,
                 bin/signclient.cmd,
+                bin/stresstest,
                 conf/log4j.properties,
                 doc/lgpl-2.1.txt,
                 res/deploytools/cesecore/defaultvalues.properties,
@@ -402,6 +404,15 @@ Installation Guide for details.
         <antcall target="dist">
             <param name="dist.jars" value="${eeclientcli.jar}"/>
             <param name="dist.includes" value="_nothing_"/>
+        </antcall>
+    </target>
+    <target name="-dist-clientcli-stresstest" if="performancecli.jar">
+        <!-- Include the Enterprise ClientCLI (if available) -->
+        <antcall target="dist">
+            <param name="dist.jars" value="${performancecli.jar}"/>
+            <param name="dist.includes" value="
+                bin/stresstest,
+                bin/stresstest.cmd"/>
         </antcall>
     </target>
     <target name="dist:clientcli-zip" description="Create a binary ZIP distribution of the Client CLI">

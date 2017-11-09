@@ -28,6 +28,7 @@ import java.util.ServiceLoader;
 import java.util.concurrent.TimeUnit;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.cli.*;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
@@ -663,6 +664,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
      */
     private boolean runFile(TransferManager manager, Map<String, Object> requestContext, final File inFile, final InputStream bytes, final long size, final File outFile) {  // TODO: merge with runBatch ?, inFile here is only used when removing the file
         boolean success = true;
+        boolean cleanUpIOFilesOnFailure = false;
         try {
             OutputStream outStream = null;
 
@@ -707,17 +709,19 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             } catch (IllegalArgumentException ex) {
                 LOG.error("Failed: " + ex.getLocalizedMessage());
                 success = false;
+                cleanUpIOFilesOnFailure = true;
             } catch (NoSuchAlgorithmException ex) {
                 // TODO: include digest algorithm in case of error
                 LOG.error("Unknown digest algorithm");
                 success = false;
+                cleanUpIOFilesOnFailure = true;
             } finally {
                 if (outStream != null && outStream != System.out) {
                     outStream.close();
                 }
             }
 
-            if (removeFromIndir && inFile != null && inFile.exists()) {
+            if (removeFromIndir && inFile != null && inFile.exists() && !cleanUpIOFilesOnFailure) {
                 if (inFile.delete()) {
                     LOG.info("Removed " + inFile);
                 } else {
@@ -737,8 +741,10 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     ex.getLocalizedMessage()));
             if (manager != null) {
                 manager.registerFailure();
+                cleanUpIOFilesOnFailure = true;
             } else {
                 success = false;
+                cleanUpIOFilesOnFailure = true;
             }
         } catch (SOAPFaultException ex) {
             if (ex.getCause() instanceof AuthorizationRequiredException) {
@@ -752,6 +758,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             }
             LOG.error(ex);
             success = false;
+            cleanUpIOFilesOnFailure = true;
         } catch (HTTPException ex) {
             LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": HTTP Error " + ex.getResponseCode() + ": " + ex.getResponseMessage());
             
@@ -765,17 +772,24 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     }
                 } else {
                     manager.registerFailure();
+                    cleanUpIOFilesOnFailure = true;
                 }
             } else {
                 success = false;
+                cleanUpIOFilesOnFailure = true;
             }
         } catch (IllegalRequestException | CryptoTokenOfflineException | SignServerException | IOException ex) {
             LOG.error("Failure for " + (inFile == null ? "" : inFile.getName()) + ": " + ex.getMessage());
             if (manager != null) {
                 manager.registerFailure();
+                cleanUpIOFilesOnFailure=true;
             } else {
                 success = false;
+                cleanUpIOFilesOnFailure=true;
             }
+        }
+        if (cleanUpIOFilesOnFailure) {
+            cleanupInputOutputFilesOnFailure(inFile, outFile);
         }
         return success;
     }
@@ -805,7 +819,30 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                                                 clientside, extraOptions);
         }
     }
-
+    
+    /**
+     * Removes output file and rename input file with failed extension in case of failure.
+     * @param inFile representing input file on disk
+     * @param outFile representing output file on disk
+     */
+    private void cleanupInputOutputFilesOnFailure(final File inFile, final File outFile) {
+        if (outFile != null && outFile.exists()) {
+            if (FileUtils.deleteQuietly(outFile)) {
+                LOG.info("Removed output file " + outFile);
+            } else {
+                LOG.error("Could not remove output file " + inFile);
+            }
+        }
+        if (inFile != null && inFile.exists()) {
+            File newName = new File(inFile.getAbsolutePath() + ".failed");
+            if (inFile.renameTo(newName)) {
+                LOG.info("Renamed input file "+ inFile + " to " + newName);
+            } else {
+                LOG.error("Could not rename input file " + inFile);
+            }
+        }
+    }
+    
     @Override
     public int execute(String[] args) throws IllegalCommandArgumentsException, CommandFailureException {
         try {

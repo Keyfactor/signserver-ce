@@ -749,6 +749,46 @@ public class DocumentSignerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
     
+    /**
+     * Tests that output file is removed and input file is renamed with failed extension in case of command failure.
+     * @throws Exception
+     */
+    @Test
+    public void test23cleanUpWhenFailure() throws Exception {
+        LOG.info("test23cleanUpWhenFailure");
+        File inFile = null;
+        File outFile = null;
+        File renamedFile = null;
+        try {
+            inFile = File.createTempFile("test.xml", null);
+            LOG.info("inFile " + inFile);
+            FileUtils.writeStringToFile(inFile, "Invalid xml file");
+            outFile = new File(inFile.getParentFile(), inFile.getName() + "-signed");
+
+            execute("signdocument",
+                    "-workername", "TestXMLSigner",
+                    "-infile", inFile.getAbsolutePath(),
+                    "-outfile", outFile.getAbsolutePath());
+            fail("This should have failed");
+
+        } catch (CommandFailureException ex) {
+            assertTrue(outFile != null && !outFile.exists());
+            assertTrue(inFile != null && !inFile.exists());
+            renamedFile = new File(inFile.getAbsolutePath() + ".failed");
+            assertTrue(renamedFile.exists());
+        } finally {
+            if (inFile != null) {
+                FileUtils.deleteQuietly(inFile);
+            }
+            if (outFile != null) {
+                FileUtils.deleteQuietly(outFile);
+            }
+            if (renamedFile != null) {
+                FileUtils.deleteQuietly(renamedFile);
+            }
+        }
+    }
+    
     @Test
     public void test99TearDownDatabase() throws Exception {
         LOG.info("test99TearDownDatabase");

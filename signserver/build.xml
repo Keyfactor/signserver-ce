@@ -391,7 +391,6 @@ Installation Guide for details.
             <param name="dist.includes" value="
                 bin/signclient,
                 bin/signclient.cmd,
-                bin/stresstest,
                 conf/log4j.properties,
                 doc/lgpl-2.1.txt,
                 res/deploytools/cesecore/defaultvalues.properties,
@@ -407,7 +406,7 @@ Installation Guide for details.
         </antcall>
     </target>
     <target name="-dist-clientcli-stresstest" if="performancecli.jar">
-        <!-- Include the Enterprise ClientCLI (if available) -->
+        <!-- Include the stresstest CLI (if available) -->
         <antcall target="dist">
             <param name="dist.jars" value="${performancecli.jar}"/>
             <param name="dist.includes" value="

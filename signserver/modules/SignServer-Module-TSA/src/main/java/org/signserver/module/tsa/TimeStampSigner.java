@@ -395,7 +395,7 @@ public class TimeStampSigner extends BaseSigner {
        
         includeStatusString = Boolean.parseBoolean(config.getProperty(INCLUDESTATUSSTRING, "true"));
 
-        tsaName = config.getProperty(TSA,DEFAULT_NULL);
+        tsaName = config.getProperty(TSA, DEFAULT_NULL);
         tsaNameFromCert = Boolean.parseBoolean(config.getProperty(TSA_FROM_CERT, "false"));
 
         if (tsaName != null && tsaNameFromCert) {

@@ -64,6 +64,7 @@ import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.bouncycastle.cert.ocsp.RevokedStatus;
 import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.cesecore.util.CertTools;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.signserver.common.SignServerException;
 import org.signserver.common.data.DocumentValidationRequest;
@@ -1634,6 +1635,16 @@ public class XAdESValidator2UnitTest {
     private void updateCRLs(final X509CRLHolder rootcaCRL, final X509CRLHolder subcaCRL) throws IOException {
         FileUtils.writeByteArrayToFile(rootcaCRLFile, rootcaCRL.getEncoded());
         FileUtils.writeByteArrayToFile(subca1CRLFile, subcaCRL.getEncoded());
+    }
+    
+    @AfterClass
+    public static void tearDownClass() {
+        if (FileUtils.deleteQuietly(rootcaCRLFile)) {
+            LOG.info("Removed rootcaCRLFile file:- " + rootcaCRLFile);
+        }
+        if (FileUtils.deleteQuietly(subca1CRLFile)) {
+            LOG.info("Removed subca1CRLFile file:- " + subca1CRLFile);
+        }
     }
     
     /**

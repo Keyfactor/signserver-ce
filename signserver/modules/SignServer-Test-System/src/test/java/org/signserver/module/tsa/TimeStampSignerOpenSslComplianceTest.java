@@ -13,15 +13,12 @@
 package org.signserver.module.tsa;
 
 import java.io.File;
-import java.io.IOException;
-import java.security.cert.CertificateException;
 import static junit.framework.TestCase.assertTrue;
 import org.apache.log4j.Logger;
 import static org.junit.Assert.assertEquals;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
-import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.common.util.PathUtil;
 import org.signserver.testutils.CLITestHelper;

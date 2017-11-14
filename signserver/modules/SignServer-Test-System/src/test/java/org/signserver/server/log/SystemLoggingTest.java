@@ -737,7 +737,7 @@ public class SystemLoggingTest extends ModulesTestCase {
         workerSession.removeWorkerProperty(signerId, "NODE47.DEFAULTKEY");
         
         // Reset defaultkey
-        workerSession.setWorkerProperty(signerId, "DEFAULTKEY", "Signer 1");
+        workerSession.setWorkerProperty(signerId, "DEFAULTKEY", "signer00003");
     }
 
     @Test

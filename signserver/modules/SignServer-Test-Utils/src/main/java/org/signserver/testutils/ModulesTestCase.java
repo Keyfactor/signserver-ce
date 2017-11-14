@@ -473,11 +473,17 @@ public class ModulesTestCase extends TestCase {
         }
     }    
     
-    public void addTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
-        addP12DummySigner("org.signserver.module.tsa.TimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_TSSIGNER1_ALIAS);
+    public void addTimeStampSigner(final int signerId, final String signerName,
+                                   final String alias, final boolean autoActivate)
+            throws CertificateException, FileNotFoundException {
+        addP12DummySigner("org.signserver.module.tsa.TimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, alias);
         getWorkerSession().setWorkerProperty(signerId, "DEFAULTTSAPOLICYOID", "1.2.3");
         getWorkerSession().setWorkerProperty(signerId, "ACCEPTANYPOLICY", "true");
         getWorkerSession().reloadConfiguration(signerId);
+    }
+    
+    public void addTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+        addTimeStampSigner(signerId, signerName, KEYSTORE_TSSIGNER1_ALIAS, autoActivate);
     }
     
     public void addMSTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {

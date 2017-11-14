@@ -59,7 +59,7 @@ public class MRTDSignerTest extends ModulesTestCase {
     public void test00SetupDatabase() throws Exception {
         setProperties(new File(getSignServerHome(), "res/test/test-mrtdsigner-configuration.properties"));
         workerSession.setWorkerProperty(7890, "KEYSTOREPATH",
-                getSignServerHome() + File.separator + KEYSTORE_SIGNER1_FILE);
+                getSignServerHome() + File.separator + KEYSTORE_KEYSTORE_FILE);
         workerSession.setWorkerProperty(7890, "KEYSTORETYPE", "PKCS12");
         workerSession.setWorkerProperty(7890, "KEYSTOREPASSWORD", KEYSTORE_PASSWORD);
         workerSession.setWorkerProperty(7890, "DEFAULTKEY", KEYSTORE_SIGNER1_ALIAS);

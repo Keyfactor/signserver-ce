@@ -99,8 +99,25 @@ public class TimeStampSignerTest extends ModulesTestCase {
     private static final WorkerIdentifier WORKER20 = new WorkerIdentifier(8920);
 
     /** BASE64-encoded cert for WORKER1 */
-    private static String CERTSTRING = "MIIEkTCCAnmgAwIBAgIIeCvAS5OwAJswDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMDUyNzEyMTU1NVoXDTIxMDUyNDEyMTU1NVowSjEUMBIGA1UEAwwLVFMgU2lnbmVyIDExEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnT38GG8i/bGnuFMwnOdg+caHMkdPBacRdBaIggwMPfE50SOZ2TLrDEHJotxYda7HS0+tX5dIcalmEYCls/ptHzO5TQpqdRTuTqxp5cMA379yhD0OqTVNAmHrvPj9IytktoAtB/xcjwkRTHagaCmg5SWNcLKyVUct7nbeRA5yDSJQsCAEGHNZbJ50vATg1DQEyKT87GKfSBsclA0WIIIHMt8/SRhpsUZxESayU6YA4KCxVtexF5x+COLB6CzzlRG9JA8WpX9yKgIMsMDAscsJLiLPjhET5hwAFm5ZRfQQG9LI06QNTGqukuTlDbYrQGAUR5ZXW00WNHfgS00CjUCu0QIDAQABo3gwdjAdBgNVHQ4EFgQUOF0FflO2G+IN6c92pCNlPoorGVwwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCB4AwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwDQYJKoZIhvcNAQELBQADggIBADELkeIO9aiKjS/GaBUUhMr+k5UbVeK69WapU+7gTsWwa9D2vAOhAkfQ1OcUJoZaminv8pcNfo1Ey5qLtxBCmUy1fVomVWOPl6u1w8B6uYgE608hi2bfx28uIeksqpdqUX0Qf6ReUyl+FOh4xNrsyaF81TrIKt8ekq0iD+YAtT/jqgv4bUvs5fgIms4QOXgMUzNAP7cPU44KxcmR5I5Uy/Ag82hGIz64hZmeIDT0X59kbQvlZqFaiZvYOikoZSFvdM5kSVfItMgp7qmyLxuM/WaXqJWp6Mm+8ZZmcECugd4AEpE7xIiB7M/KEe+X4ItBNTKdAoaxWa+yeuYS7ol9rHt+Nogelj/06ZRQ0x03UqC7uKpgYAICjQEXIjcZofWSTh9KzKNfS1sQyIQ6yNTT2VMdYW9JC2OLKPV4AEJuBw30X8HOciJRRXOq9KRrIA2RSiaC5/3oAYscWuo31Fmj8CWQknXAIb39gPuZRwGOJbi1tUu2zmRsUNJfAe3hnvk+uxhnyp2vKB2KN5/VQgisx+8doEK/+Nbj/PPG/zASKimWG++5m0JNY4chIfR43gDDcF+4INof/8V84wbvUF+TpvP/mYM8wC9OkUyRvzqv9vjWOncCdbdjCuqPxDItwm9hhr+PbxsMaBes9rAiV9YT1FnpA++YpCufveFCQPDbCTgJ";
-
+    private static String CERTSTRING = "MIIDjDCCAnSgAwIBAgIINj1ol0TMjXEwDQYJKoZIhvcNAQELBQAwTDEWMBQGA1UE\n" +
+                                        "AwwNRFNTIFN1YiBDQSAxMTEQMA4GA1UECwwHVGVzdGluZzETMBEGA1UECgwKU2ln\n" +
+                                        "blNlcnZlcjELMAkGA1UEBhMCU0UwHhcNMTcxMTEzMDgxOTU0WhcNMTkxMTEzMDgx\n" +
+                                        "OTU0WjBGMRAwDgYDVQQDDAd0czAwMDAzMRAwDgYDVQQLDAdUZXN0aW5nMRMwEQYD\n" +
+                                        "VQQKDApTaWduU2VydmVyMQswCQYDVQQGEwJTRTCCASIwDQYJKoZIhvcNAQEBBQAD\n" +
+                                        "ggEPADCCAQoCggEBAKd9BLnJFsqpzJECkn1YF1R/e6oFa5J8E5WYg/MNe5wV9bqq\n" +
+                                        "wUCI82B+N2yi9aole4CL9hMKuaDw6aYYHzX+qt4M58WGLP4PEmcqCHiX4aRhF4L+\n" +
+                                        "rTM22sZNMpq7jC+nFfOBUWqUE2hpDsyE0VGR6HjxvJ9Lwd4E019P7Tz/dmONAJQg\n" +
+                                        "8940qvLEmRlgEsibNL2dzvdLUJKJheuS0aYot+l6y6RmE6wUliIE4xfm0qH9Ka5v\n" +
+                                        "Z6OzrEHSSHyxlX+EKWQu1fILo+a9uaP8F85fotzW7aIcgH9YGEaqktUDmd7y6fEu\n" +
+                                        "uMU6lGZNvIphi6in4m0BdSI3v8DW5gbKB56VwkECAwEAAaN4MHYwDAYDVR0TAQH/\n" +
+                                        "BAIwADAfBgNVHSMEGDAWgBQcYEFK3pit5dYDiuhmgql+sPIChzAWBgNVHSUBAf8E\n" +
+                                        "DDAKBggrBgEFBQcDCDAdBgNVHQ4EFgQUJMLKwuQOYfaTPEtmCQgdpXMUxJowDgYD\n" +
+                                        "VR0PAQH/BAQDAgeAMA0GCSqGSIb3DQEBCwUAA4IBAQATIbGLrOoqUPmTfP46Vbtq\n" +
+                                        "u1VNJ6aPCVYrwgzZeWdDCs1pdlTpxeKr2jZhQx4HNIk+3bwO718fh3vgz8iCvTOz\n" +
+                                        "bjwPbHRv1MSj3VniMO1oca42tqjyv0TUjKIxmVgESuTz80tUb9Bv/RMITrTYWsxn\n" +
+                                        "Yyq6Xxh31NjuHOMMvj26xQvpZUEoZ2+DMEcxsRadRe+rOlUjZhJ9MaipF5jFGS2w\n" +
+                                        "+s1dVA9W6ZQLk/QiBtPj9nuD4qey9btEXIicMDtPzPQ5dnV/6psCvY/1eCNcp41d\n" +
+                                        "Q/oHejSOzaeBvDG1N0K0Pgj0foloHTzLcfreACrzTskOse0sF5FkFFtuHZgR5NvQ";
     /** Dummy OID used for testing an invalid hashing algorithm */
     private static String DUMMY_OID = "1.42.42.42.42";
     
@@ -1253,12 +1270,12 @@ public class TimeStampSignerTest extends ModulesTestCase {
     @Test
     public void test34TSANameFromCert() throws Exception {
        workerSession.removeWorkerProperty(WORKER1.getId(), TimeStampSigner.TSA);
-        workerSession.setWorkerProperty(WORKER1.getId(), TimeStampSigner.TSA_FROM_CERT, "true");
+       workerSession.setWorkerProperty(WORKER1.getId(), TimeStampSigner.TSA_FROM_CERT, "true");
        workerSession.reloadConfiguration(WORKER1.getId());
        
        final TimeStampResponse response = assertSuccessfulTimestamp(WORKER1, true);
        final GeneralName name = response.getTimeStampToken().getTimeStampInfo().getTsa();
-       final GeneralName expectedName = new GeneralName(new X500Name("CN=TS Signer 1,OU=Testing,O=SignServer,C=SE"));
+       final GeneralName expectedName = new GeneralName(new X500Name("CN=ts00003,OU=Testing,O=SignServer,C=SE"));
        
        assertEquals("TSA included", expectedName, name);
        

@@ -94,12 +94,9 @@ public class ModulesTestCase extends TestCase {
     private static final int XML_VALIDATOR_WORKER_ID = 5882;
     private static final String XML_VALIDATOR_WORKER_NAME = "TestXMLValidator";
 
-    protected static final String KEYSTORE_SIGNER1_FILE = "res/test/dss10/dss10_signer1.p12";
-    protected static final String KEYSTORE_SIGNER1_ALIAS = "Signer 1";
-    protected static final String KEYSTORE_TSSIGNER1_FILE = "res/test/dss10/dss10_tssigner1.p12";
-    protected static final String KEYSTORE_TSSIGNER1_ALIAS = "TS Signer 1";
-    protected static final String KEYSTORE_AUTHCODESIGNER1_FILE = "res/test/dss10/dss10_authcodesigner1.p12";
-    protected static final String KEYSTORE_AUTHCODESIGNER1_ALIAS = "Auth Code Signer 1";
+    protected static final String KEYSTORE_SIGNER1_ALIAS = "signer00003";
+    protected static final String KEYSTORE_TSSIGNER1_ALIAS = "ts00003";
+    protected static final String KEYSTORE_AUTHCODESIGNER1_ALIAS = "code00003";
     protected static final String KEYSTORE_KEYSTORE_FILE = "res/test/dss10/dss10_keystore.p12";
     protected static final String KEYSTORE_CODE00002_ECDSA_ALIAS = "code00002";
     public static final String KEYSTORE_PASSWORD = "foo123";
@@ -281,7 +278,7 @@ public class ModulesTestCase extends TestCase {
     }
 
     public void addDummySigner1(boolean autoActivation) throws CertificateException, FileNotFoundException {
-        addP12DummySigner(getSignerIdDummy1(), getSignerNameDummy1(), new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), autoActivation ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
+        addP12DummySigner(getSignerIdDummy1(), getSignerNameDummy1(), new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivation ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
     }
 
     public int getSignerIdDummy1() {
@@ -310,17 +307,17 @@ public class ModulesTestCase extends TestCase {
     
     public void addCMSSigner1() throws CertificateException, FileNotFoundException {
         addP12DummySigner("org.signserver.module.cmssigner.CMSSigner",
-                getSignerIdCMSSigner1(), getSignerNameCMSSigner1(), new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), KEYSTORE_PASSWORD, KEYSTORE_SIGNER1_ALIAS);
+                getSignerIdCMSSigner1(), getSignerNameCMSSigner1(), new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), KEYSTORE_PASSWORD, KEYSTORE_SIGNER1_ALIAS);
     }
     
     public void addPDFSigner1() throws CertificateException, FileNotFoundException {
     	addP12DummySigner("org.signserver.module.pdfsigner.PDFSigner",
-                getSignerIdPDFSigner1(), getSignerNamePDFSigner1(), new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), KEYSTORE_PASSWORD, KEYSTORE_SIGNER1_ALIAS);
+                getSignerIdPDFSigner1(), getSignerNamePDFSigner1(), new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), KEYSTORE_PASSWORD, KEYSTORE_SIGNER1_ALIAS);
     }
     
     public void addPDFSigner(final int workerId, final String workerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.pdfsigner.PDFSigner",
-                workerId, workerName, new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
+                workerId, workerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
     }
     
     public int getSignerIdCMSSigner1() {
@@ -356,7 +353,7 @@ public class ModulesTestCase extends TestCase {
             final int signerId, final String signerName, final boolean autoActivate)
         throws CertificateException, FileNotFoundException {
         addP12DummySigner(className, signerId, signerName,
-                new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
+                new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
     }
     
     public String getSigner1KeyAlias() {
@@ -477,26 +474,26 @@ public class ModulesTestCase extends TestCase {
     }    
     
     public void addTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
-        addP12DummySigner("org.signserver.module.tsa.TimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_TSSIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_TSSIGNER1_ALIAS);
+        addP12DummySigner("org.signserver.module.tsa.TimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_TSSIGNER1_ALIAS);
         getWorkerSession().setWorkerProperty(signerId, "DEFAULTTSAPOLICYOID", "1.2.3");
         getWorkerSession().setWorkerProperty(signerId, "ACCEPTANYPOLICY", "true");
         getWorkerSession().reloadConfiguration(signerId);
     }
     
     public void addMSTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
-        addP12DummySigner("org.signserver.module.tsa.MSAuthCodeTimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_TSSIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_TSSIGNER1_ALIAS);
+        addP12DummySigner("org.signserver.module.tsa.MSAuthCodeTimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_TSSIGNER1_ALIAS);
     }
     
     public void addMSAuthCodeSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
-        addP12DummySigner("org.signserver.module.msauthcode.signer.MSAuthCodeSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_AUTHCODESIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
+        addP12DummySigner("org.signserver.module.msauthcode.signer.MSAuthCodeSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
     
     public void addMSAuthCodeCMSSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
-        addP12DummySigner("org.signserver.module.msauthcode.signer.MSAuthCodeCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_AUTHCODESIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
+        addP12DummySigner("org.signserver.module.msauthcode.signer.MSAuthCodeCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
     
     public void addJArchiveSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
-        addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_AUTHCODESIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
+        addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
     
     public void addJArchiveSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
@@ -504,7 +501,7 @@ public class ModulesTestCase extends TestCase {
     }
     
     public void addJArchiveCMSSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
-        addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_AUTHCODESIGNER1_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
+        addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
     
     public void addJArchiveCMSSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
@@ -516,7 +513,7 @@ public class ModulesTestCase extends TestCase {
             throws CertificateException, FileNotFoundException {
         addP12DummySigner("org.signserver.module.extendedcmssigner.ExtendedCMSSigner",
                           signerId, signerName,
-                          new File(getSignServerHome(), KEYSTORE_SIGNER1_FILE),
+                          new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE),
                                    autoActivate ? KEYSTORE_PASSWORD : null,
                                    KEYSTORE_SIGNER1_ALIAS);
     }

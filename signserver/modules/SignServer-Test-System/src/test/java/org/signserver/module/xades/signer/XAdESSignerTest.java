@@ -16,7 +16,9 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.cert.CertStore;
+import java.security.cert.Certificate;
 import java.security.cert.CollectionCertStoreParameters;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
@@ -86,8 +88,12 @@ public class XAdESSignerTest extends ModulesTestCase {
             CertStore certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters(workerSession.getSignerCertificateChain(new WorkerIdentifier(WORKER_ID))));
             KeyStore trustAnchors = KeyStore.getInstance("JKS");
             trustAnchors.load(null, "foo123".toCharArray());
-            trustAnchors.setCertificateEntry("signerIssuer", workerSession.getSignerCertificateChain(new WorkerIdentifier(WORKER_ID)).get(1));
-            trustAnchors.setCertificateEntry("tsIssuer", workerSession.getSignerCertificateChain(new WorkerIdentifier(TS_ID)).get(1));
+            final List<Certificate> signerCertificateChain =
+                workerSession.getSignerCertificateChain(new WorkerIdentifier(WORKER_ID));
+            final List<Certificate> tsSignerCertificateChain =
+                workerSession.getSignerCertificateChain(new WorkerIdentifier(TS_ID));
+            trustAnchors.setCertificateEntry("signerIssuer", signerCertificateChain.get(signerCertificateChain.size() - 1));
+            trustAnchors.setCertificateEntry("tsIssuer", tsSignerCertificateChain.get(tsSignerCertificateChain.size() - 1));
 
             CertificateValidationProvider certValidator = new PKIXCertificateValidationProvider(trustAnchors, false, certStore);
 

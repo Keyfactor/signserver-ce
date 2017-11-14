@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.cmssigner;
 
+import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -523,5 +524,128 @@ public class PlainSignerTest {
         
         assertTrue("should contain error: " + instance.getFatalErrors(null).toString(),
                    instance.getFatalErrors(null).contains("Incorrect value for DO_LOGREQUEST_DIGEST"));
+    }
+    
+    /**
+     * Test that Signing works and signature is verified when Signature algorithm is NONEwithRSA and input is SHA-512 hash digest.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testNONESigning_RSA_SHA512_structure() throws Exception {
+        LOG.info("testNONESigning_RSA_SHA512_structure");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        md.update(plainText);
+        byte[] hash = md.digest();
+
+        // Taken from RFC 3447, page 42 for SHA-512, create input for signing
+        byte[] modifierBytes = {0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60, (byte) 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03, 0x05, 0x00, 0x04, 0x40};
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(modifierBytes);
+        baos.write(hash);
+
+        SimplifiedResponse resp = sign(baos.toByteArray(), tokenRSA, createConfig("NONEwithRSA"));
+        assertSignedAndVerifiable(plainText, "SHA512withRSA", tokenRSA, resp);
+    }
+    
+    /**
+     * Test that Signing works and signature is verified when Signature algorithm is NONEwithECDSA and input is SHA-512 hash digest.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testNONESigning_ECDSA_SHA512_structure() throws Exception {
+        LOG.info("testNONESigning_ECDSA_SHA512_structure");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        md.update(plainText);
+        byte[] hash = md.digest();
+        SimplifiedResponse resp = sign(hash, tokenECDSA, createConfig("NONEwithECDSA"));
+        assertSignedAndVerifiable(plainText, "SHA512withECDSA", tokenECDSA, resp);
+    }
+    
+    /**
+     * Test that Signing works and signature is verified when Signature algorithm is NONEwithRSA and input is SHA-256 hash digest.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testNONESigning_RSA_SHA256_structure() throws Exception {
+        LOG.info("testNONESigning_RSA_SHA256_structure");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(plainText);
+        byte[] hash = md.digest();
+
+        // Taken from RFC 3447, page 42 for SHA-256, create input for signing
+        byte[] modifierBytes = {0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, (byte) 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20};
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(modifierBytes);
+        baos.write(hash);
+
+        SimplifiedResponse resp = sign(baos.toByteArray(), tokenRSA, createConfig("NONEwithRSA"));
+        assertSignedAndVerifiable(plainText, "SHA256withRSA", tokenRSA, resp);
+    } 
+    
+    /**
+     * Test that Signing works and signature is verified when Signature algorithm is NONEwithECDSA and input is SHA-256 hash digest.
+     * 
+     * @throws Exception 
+     */
+     @Test
+    public void testNONESigning_ECDSA_SHA256_structure() throws Exception {
+         LOG.info("testNONESigning_ECDSA_SHA256_structure");
+         // code example includes MessageDigest for the sake of completeness
+         byte[] plainText = "some-data".getBytes("ASCII");
+         MessageDigest md = MessageDigest.getInstance("SHA-256");
+         md.update(plainText);
+         byte[] hash = md.digest();
+         SimplifiedResponse resp = sign(hash, tokenECDSA, createConfig("NONEwithECDSA"));
+         assertSignedAndVerifiable(plainText, "SHA256withECDSA", tokenECDSA, resp);
+    }
+    
+    /**
+     * Test that Signing works and signature is verified when Signature algorithm is NONEwithRSA and input is SHA-384 hash digest.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testNONESigning_RSA_SHA384_structure() throws Exception {
+        LOG.info("testNONESigning_RSA_SHA384_structure");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-384");
+        md.update(plainText);
+        byte[] hash = md.digest();
+
+        // Taken from RFC 3447, page 42 for SHA-384, create input for signing
+        byte[] modifierBytes = {0x30, 0x41, 0x30, 0x0d, 0x06, 0x09, 0x60, (byte) 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02, 0x05, 0x00, 0x04, 0x30};
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(modifierBytes);
+        baos.write(hash);
+
+        SimplifiedResponse resp = sign(baos.toByteArray(), tokenRSA, createConfig("NONEwithRSA"));
+        assertSignedAndVerifiable(plainText, "SHA384withRSA", tokenRSA, resp);
+    }
+    
+    /**
+     * Test that Signing works and signature is verified when Signature algorithm is NONEwithECDSA and input is SHA-384 hash digest.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testNONESigning_ECDSA_SHA384_structure() throws Exception {
+        LOG.info("testNONESigning_ECDSA_SHA384_structure");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-384");
+        md.update(plainText);
+        byte[] hash = md.digest();
+        SimplifiedResponse resp = sign(hash, tokenECDSA, createConfig("NONEwithECDSA"));
+        assertSignedAndVerifiable(plainText, "SHA384withECDSA", tokenECDSA, resp);
     }
 }

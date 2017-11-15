@@ -772,10 +772,10 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail("This should have failed");
 
         } catch (CommandFailureException ex) {
-            assertTrue(outFile != null && !outFile.exists());
-            assertTrue(inFile != null && !inFile.exists());
+            assertTrue("Output file exists: ", outFile != null && !outFile.exists());
+            assertTrue("Input file exists: ", inFile != null && !inFile.exists());
             renamedFile = new File(inFile.getAbsolutePath() + ".failed");
-            assertTrue(renamedFile.exists());
+            assertTrue("Failed Input file not exists: ", renamedFile.exists());
         } finally {
             if (inFile != null) {
                 FileUtils.deleteQuietly(inFile);

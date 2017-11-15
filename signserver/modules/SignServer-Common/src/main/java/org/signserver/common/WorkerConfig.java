@@ -170,13 +170,13 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     }
 
     /**
-     * Returns the specific property from the configuration.
+     * Returns the specific property from the configuration or default value as null if the property isn't set or empty.
      * 
      * @param key Property to get value of
-     * @return the value corresponding to that property.
+     * @return the value corresponding to that property or default Value as null if unset/empty
      */
     public String getProperty(String key) {
-        return ((Properties) data.get(PROPERTIES)).getProperty(key);
+        return getProperty(key, null);
     }
     
     /**

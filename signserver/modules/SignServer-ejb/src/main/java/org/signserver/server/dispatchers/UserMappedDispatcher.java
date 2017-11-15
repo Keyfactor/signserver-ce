@@ -71,7 +71,7 @@ public class UserMappedDispatcher extends BaseDispatcher {
         name = config.getProperty("NAME");
 
         mappings = new HashMap<>();
-        final String workersValue = config.getProperty(PROPERTY_USERNAME_MAPPING);
+        final String workersValue = config.getPropertyThatCouldBeEmpty(PROPERTY_USERNAME_MAPPING);
         if (workersValue == null) {
             configErrors.add("Property " + PROPERTY_USERNAME_MAPPING + " missing!");
         } else {

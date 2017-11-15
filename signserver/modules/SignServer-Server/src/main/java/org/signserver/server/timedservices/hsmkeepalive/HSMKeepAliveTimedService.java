@@ -51,7 +51,7 @@ public class HSMKeepAliveTimedService extends BaseTimedService {
     public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
 
-        final String cryptoTokensValue = config.getProperty(CRYPTOTOKENS);
+        final String cryptoTokensValue = config.getPropertyThatCouldBeEmpty(CRYPTOTOKENS);
 
         if (cryptoTokensValue != null) {
             cryptoTokens = new LinkedList<>();

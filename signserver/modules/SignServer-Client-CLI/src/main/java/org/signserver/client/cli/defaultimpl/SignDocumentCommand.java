@@ -789,6 +789,13 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             }
         }
         if (cleanUpIOFilesOnFailure) {
+            try {
+                if (bytes != null) {
+                    bytes.close();
+                }
+            } catch (IOException ex) {
+                LOG.error("Error closing input file stream so input file rename operation will be failed " + ex);
+            }
             cleanupInputOutputFilesOnFailure(inFile, outFile);
         }
         return success;

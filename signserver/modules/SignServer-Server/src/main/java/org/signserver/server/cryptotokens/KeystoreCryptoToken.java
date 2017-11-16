@@ -21,6 +21,7 @@ import java.security.cert.CertificateException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.*;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -62,10 +63,13 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     public static final String TYPE_PKCS12 = "PKCS12";
     public static final String TYPE_JKS = "JKS";
     public static final String TYPE_INTERNAL = "INTERNAL";
+    
+    private static final String PROPERTY_SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
 
     private String keystorepath = null;
     private String keystorepassword = null;
     private boolean autoActivate;
+    private String signatureAlgorithm;
 
     private volatile KeyStore ks; // Note: Needs volatile as different threads might load the key store at activation time
     private String keystoretype;
@@ -112,6 +116,12 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             }
         }
 
+        // Optional property SIGNATUREALGORITHM
+        final String value = properties.getProperty(PROPERTY_SIGNATUREALGORITHM);
+        if (!StringUtils.isBlank(value)) {
+            signatureAlgorithm = value;
+        }
+
         // Read property KEYGENERATIONLIMIT
         final String keygenLimitValue = properties.getProperty(CryptoTokenHelper.PROPERTY_KEYGENERATIONLIMIT);
         if (keygenLimitValue != null && !keygenLimitValue.trim().isEmpty()) {
@@ -121,7 +131,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                 throw new CryptoTokenInitializationFailureException("Incorrect value for " + CryptoTokenHelper.PROPERTY_KEYGENERATIONLIMIT + ": " + ex.getLocalizedMessage());
             }
         }
-        
+
         // If a password is specified we are in auto-activate mode
         autoActivate = keystorepassword != null;
         if (autoActivate) {
@@ -361,7 +371,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             final char[] authCode,
             final IServices services) throws CryptoTokenOfflineException,
             KeyStoreException {
-        return CryptoTokenHelper.testKey(getKeyStore(), alias, authCode, "BC");
+        return CryptoTokenHelper.testKey(getKeyStore(), alias, authCode, "BC", signatureAlgorithm);
     }
 
     @Override

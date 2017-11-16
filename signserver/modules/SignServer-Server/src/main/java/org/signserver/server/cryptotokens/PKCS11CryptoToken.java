@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
@@ -79,6 +80,8 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
 
     /** Our worker cache entry name. */
     private static final String WORKERCACHE_ENTRY = "PKCS11CryptoToken.CRYPTO_INSTANCE";
+    
+    private static final String PROPERTY_SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
 
     public PKCS11CryptoToken() throws InstantiationException {
         delegate = new KeyStorePKCS11CryptoToken();
@@ -86,6 +89,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
 
     private String keyAlias;
     private String nextKeyAlias;
+    private String signatureAlgorithm;
 
     // cached P11 library definitions (defined at deploy-time)
     private PKCS11Settings settings;
@@ -95,6 +99,12 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     @Override
     public void init(int workerId, Properties props, org.signserver.server.IServices services) throws CryptoTokenInitializationFailureException {
         try {
+            // Optional property SIGNATUREALGORITHM
+            final String value = props.getProperty(PROPERTY_SIGNATUREALGORITHM);
+            if (!StringUtils.isBlank(value)) {
+                signatureAlgorithm = value;
+            }
+            
             final String attributesValue = props.getProperty(CryptoTokenHelper.PROPERTY_ATTRIBUTES);
             if (attributesValue != null && props.getProperty(CryptoTokenHelper.PROPERTY_ATTRIBUTESFILE) != null) {
                 throw new CryptoTokenInitializationFailureException(
@@ -274,7 +284,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                         PrivateKey privateKey = delegate.getPrivateKey(testKey);
                         if (privateKey != null) {
                             PublicKey publicKey = delegate.getPublicKey(testKey);
-                            CryptoTokenHelper.testSignAndVerify(privateKey, publicKey, delegate.getSignProviderName());
+                            CryptoTokenHelper.testSignAndVerify(privateKey, publicKey, delegate.getSignProviderName(), signatureAlgorithm);
                             result = WorkerStatus.STATUS_ACTIVE;
                         }
                     }
@@ -369,7 +379,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     @Override
     public Collection<KeyTestResult> testKey(String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, KeyStoreException {
         final KeyStore keyStore = delegate.getActivatedKeyStore();
-        return CryptoTokenHelper.testKey(keyStore, alias, authCode, keyStore.getProvider().getName());
+        return CryptoTokenHelper.testKey(keyStore, alias, authCode, keyStore.getProvider().getName(), signatureAlgorithm);
     }
 
     @Override

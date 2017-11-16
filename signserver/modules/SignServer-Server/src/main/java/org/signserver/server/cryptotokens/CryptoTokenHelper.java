@@ -227,10 +227,11 @@ public class CryptoTokenHelper {
      * @param alias Alias of key to test or "all" to test all
      * @param authCode Key password (if used, ie for JKS only)
      * @param signatureProvider Provider for creating the signature
+     * @param signatureAlgorithm To test signing with or null to use the default
      * @return The results for each key found
      * @throws CryptoTokenOfflineException In case the key could not be used
      */
-    public static Collection<KeyTestResult> testKey(KeyStore keyStore, String alias, char[] authCode, String signatureProvider) throws CryptoTokenOfflineException {
+    public static Collection<KeyTestResult> testKey(KeyStore keyStore, String alias, char[] authCode, String signatureProvider, String signatureAlgorithm) throws CryptoTokenOfflineException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("testKey for alias: " + alias);
         }
@@ -257,7 +258,7 @@ public class CryptoTokenHelper {
                             if (entryCert != null) {
                                 final PublicKey publicKey = entryCert.getPublicKey();
                                 publicKeyHash = createKeyHash(publicKey);
-                                testSignAndVerify(privateKey, publicKey, signatureProvider);
+                                testSignAndVerify(privateKey, publicKey, signatureProvider, signatureAlgorithm);
                                 success = true;
                                 status = "";
                             } else {
@@ -292,14 +293,20 @@ public class CryptoTokenHelper {
      * @param privateKey Private key to sign with
      * @param publicKey Public key to verify with
      * @param signatureProvider Name of provider to sign with
+     * @param signatureAlgorithm To use for the test signature or null to use the default
      * @throws NoSuchAlgorithmException In case the key or signature algorithm is unknown
      * @throws NoSuchProviderException In case the supplied provider name is unknown or BC is not installed
      * @throws InvalidKeyException If signature verification failed or the key was invalid
      * @throws SignatureException If the signature could not be made or verified correctly
      */
-    public static void testSignAndVerify(PrivateKey privateKey, PublicKey publicKey, String signatureProvider) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException {
+    public static void testSignAndVerify(PrivateKey privateKey, PublicKey publicKey, String signatureProvider, String signatureAlgorithm) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException {
         final byte input[] = "Lillan gick pa vagen ut, motte dar en katt...".getBytes();
-        final String sigAlg = suggestSigAlg(publicKey);
+        final String sigAlg;
+        if (signatureAlgorithm == null) {
+            sigAlg = suggestSigAlg(publicKey);
+        } else {
+            sigAlg = signatureAlgorithm;
+        }
         if (sigAlg == null) {
             throw new NoSuchAlgorithmException("Unknown key algorithm: "
                     + publicKey.getAlgorithm());

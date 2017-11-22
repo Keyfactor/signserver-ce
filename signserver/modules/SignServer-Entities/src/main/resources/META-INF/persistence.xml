@@ -11,6 +11,7 @@
     <class>org.signserver.server.config.entities.WorkerConfigDataBean</class>
     <class>org.signserver.server.entities.KeyUsageCounter</class>
     <class>org.signserver.server.archive.olddbarchiver.entities.ArchiveDataBean</class>
+    <class>org.signserver.server.key.entities.KeyData</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="hibernate.dialect" value="${hibernate.dialect}"/>

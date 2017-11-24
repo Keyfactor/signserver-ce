@@ -27,6 +27,9 @@ import org.signserver.testutils.ModulesTestCase;
 
 /**
  * Compliance test running OpenSSL to verify timestamps signed by SignServer.
+ * These tests can be disabled by setting the test.openssl.enabled test
+ * configuration parameter to false for test environments where the openssl
+ * CLI tool is not available.
  * 
  * @author Marcus Lundblad
  * @version $Id$

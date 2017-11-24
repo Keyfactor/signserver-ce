@@ -750,7 +750,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
     
     /**
-     * Tests that output file is removed and input file is renamed with failed extension in case of command failure.
+     * Tests that output file is removed but input file is not touched when command is specified with 'infile' flag and fails.
      * @throws Exception
      */
     @Test
@@ -773,9 +773,11 @@ public class DocumentSignerTest extends ModulesTestCase {
 
         } catch (CommandFailureException ex) {
             assertTrue("Output file exists: ", outFile != null && !outFile.exists());
-            assertTrue("Input file exists: ", inFile != null && !inFile.exists());
+            // input file should be present
+            assertTrue("Input file not exists: ", inFile != null && inFile.exists());
             renamedFile = new File(inFile.getAbsolutePath() + ".failed");
-            assertTrue("Failed Input file not exists: ", renamedFile.exists());
+            // input file with failed extension should not be present since input file is not touched/renamed when inFile flag is specified 
+            assertTrue("Failed Input file exists: ", !renamedFile.exists());
         } finally {
             if (inFile != null) {
                 FileUtils.deleteQuietly(inFile);

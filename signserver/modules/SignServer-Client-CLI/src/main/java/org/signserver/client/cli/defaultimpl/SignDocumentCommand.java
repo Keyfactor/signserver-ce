@@ -789,14 +789,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             }
         }
         if (cleanUpIOFilesOnFailure) {
-            try {
-                if (bytes != null) {
-                    bytes.close();
-                }
-            } catch (IOException ex) {
-                LOG.error("Error closing input file stream so input file rename operation will be failed " + ex);
-            }
-            cleanupInputOutputFilesOnFailure(inFile, outFile);
+            cleanupInputOutputFilesOnFailure(manager != null, inFile, outFile, bytes);
         }
         return success;
     }
@@ -829,21 +822,30 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     /**
      * Removes output file and rename input file with failed extension in case of failure.
+     * @param isBatchMode whether signing is performed in batch mode
      * @param inFile representing input file on disk
      * @param outFile representing output file on disk
+     * @param inputStream Stream holding reference to inFile
      */
-    private void cleanupInputOutputFilesOnFailure(final File inFile, final File outFile) {
+    private void cleanupInputOutputFilesOnFailure(boolean isBatchMode, final File inFile, final File outFile, InputStream inputStream) {
         if (outFile != null && outFile.exists()) {
             if (FileUtils.deleteQuietly(outFile)) {
                 LOG.info("Removed output file " + outFile);
             } else {
-                LOG.error("Could not remove output file " + inFile);
+                LOG.error("Could not remove output file " + outFile);
             }
         }
-        if (inFile != null && inFile.exists()) {
+        if (isBatchMode && inFile != null && inFile.exists()) {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException ex) {
+                LOG.error("Error closing input file stream so input file rename operation will be failed " + ex);
+            }
             File newName = new File(inFile.getAbsolutePath() + ".failed");
             if (inFile.renameTo(newName)) {
-                LOG.info("Renamed input file "+ inFile + " to " + newName);
+                LOG.info("Renamed input file " + inFile + " to " + newName);
             } else {
                 LOG.error("Could not rename input file " + inFile);
             }

@@ -84,7 +84,10 @@ import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.QueryException;
 import org.signserver.common.SignServerException;
+import org.signserver.server.IServices;
 import org.signserver.server.KeyUsageCounterHash;
+import org.signserver.server.entities.IKeyUsageCounterDataService;
+import org.signserver.server.entities.KeyUsageCounter;
 
 /**
  * Helper methods used by the CryptoTokens.
@@ -510,7 +513,7 @@ public class CryptoTokenHelper {
         return new JcaX509CertificateConverter().getCertificate(cg.build(contentSigner));
     }
 
-    public static TokenSearchResults searchTokenEntries(final KeyStore keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) throws CryptoTokenOfflineException, QueryException {
+    public static TokenSearchResults searchTokenEntries(final KeyStore keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, IServices services) throws CryptoTokenOfflineException, QueryException {
         final TokenSearchResults result;
         try {
             final ArrayList<TokenEntry> tokenEntries = new ArrayList<>();
@@ -559,13 +562,14 @@ public class CryptoTokenHelper {
                                         AlgorithmTools.getKeyAlgorithm(pubKey);
                                 info.put(INFO_KEY_ALGORITHM, keyAlgorithm);
                                 info.put(INFO_KEY_SPECIFICATION,
-                                         AlgorithmTools.getKeySpecification(pubKey));
+                                        AlgorithmTools.getKeySpecification(pubKey));
                                 if (AlgorithmConstants.KEYALGORITHM_RSA.equals(keyAlgorithm)) {
                                     final RSAPublicKey rsaKey = (RSAPublicKey) pubKey;
-                                    
+
                                     info.put(INFO_KEY_PUBLIC_EXPONENT,
-                                             rsaKey.getPublicExponent().toString(10));
+                                            rsaKey.getPublicExponent().toString(10));
                                 }
+                                entry.setNoOfSignings(getNoOfSignings(pubKey, services));
                             }
                             try {
                                 entry.setParsedChain(chain);
@@ -581,6 +585,7 @@ public class CryptoTokenHelper {
                                 info.put("Error", ex.getMessage());
                                 LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
                             }
+                            entry.setNoOfSignings(getNoOfSignings(certificate.getPublicKey(), services));
                         } else if (TokenEntry.TYPE_SECRETKEY_ENTRY.equals(type)) {
                             try {
                                 KeyStore.Entry entry1 = keyStore.getEntry(keyAlias, null);
@@ -811,5 +816,14 @@ public class CryptoTokenHelper {
 
             keyStore.setKeyEntry(alias, key, authCode, new Certificate[] { newCert });
         }
+    }  
+        
+    private static String getNoOfSignings(PublicKey publicKey, final IServices services) {
+        long keyUsageCounterValue = 0;
+        KeyUsageCounter counter = services.get(IKeyUsageCounterDataService.class).getCounter(KeyUsageCounterHash.create(publicKey));
+        if (counter != null) {
+            keyUsageCounterValue = counter.getCounter();
+        }
+        return String.valueOf(keyUsageCounterValue);
     }
 }

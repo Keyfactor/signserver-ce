@@ -329,7 +329,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             throws CryptoTokenOfflineException, QueryException {
         try {
             KeyStore keyStore = getKeyStore();
-            return CryptoTokenHelper.searchTokenEntries(keyStore, startIndex, max, qc, includeData);
+            return CryptoTokenHelper.searchTokenEntries(keyStore, startIndex, max, qc, includeData, services);
         } catch (KeyStoreException ex) {
             throw new CryptoTokenOfflineException(ex);
         }

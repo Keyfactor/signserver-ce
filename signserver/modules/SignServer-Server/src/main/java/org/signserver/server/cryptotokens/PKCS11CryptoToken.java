@@ -463,7 +463,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     @Override
     public TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, Map<String, Object> params, final IServices services) throws CryptoTokenOfflineException, QueryException {
         try {
-            return CryptoTokenHelper.searchTokenEntries(getKeyStore(), startIndex, max, qc, includeData);
+            return CryptoTokenHelper.searchTokenEntries(getKeyStore(), startIndex, max, qc, includeData, services);
         } catch (KeyStoreException ex) {
             throw new CryptoTokenOfflineException(ex);
         }

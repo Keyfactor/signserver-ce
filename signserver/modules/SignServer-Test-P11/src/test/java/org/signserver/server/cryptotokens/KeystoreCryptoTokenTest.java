@@ -54,6 +54,8 @@ import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.IServices;
 import org.signserver.server.ServicesImpl;
+import org.signserver.server.entities.IKeyUsageCounterDataService;
+import org.signserver.server.entities.KeyUsageCounter;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.test.utils.mock.MockedServicesImpl;
 
@@ -97,13 +99,13 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
         initKeystore();
         searchTokenEntriesHelper(existingKey1);
     }
-
+   
     @Test
     public void testImportCertificateChain() throws Exception {
         initKeystore();
         importCertificateChainHelper(existingKey1);
     }
-
+    
     @Test
     public void testExportCertificateChain() throws Exception {
         initKeystore();
@@ -112,7 +114,7 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
 
     @Override
     protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws CryptoTokenOfflineException, QueryException {
-        return instance.searchTokenEntries(startIndex, max, qc, includeData, null, new ServicesImpl());
+        return instance.searchTokenEntries(startIndex, max, qc, includeData, null, instance.getMockedServices());
     }
 
     @Override
@@ -164,11 +166,12 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
         * @return A mocked IServices with the same WorkerSessionLocal as a call
         * to getWorkerSession() would return
         */
-       public IServices getMockedServices() {
-           IServices servicesImpl = new ServicesImpl();
-           servicesImpl.put(WorkerSessionLocal.class, getWorkerSession(null));
-           return servicesImpl;
-       }
+        public IServices getMockedServices() {
+            IServices servicesImpl = new ServicesImpl();
+            servicesImpl.put(WorkerSessionLocal.class, getWorkerSession(null));
+            servicesImpl.put(IKeyUsageCounterDataService.class, getKeyUsageCounterDataService());
+            return servicesImpl;
+        }
     
         @Override
         protected WorkerSessionLocal getWorkerSession(final IServices services) { // TODO Extract to adaptor
@@ -475,5 +478,30 @@ public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
             }
             return workerSession;
         }
+    }
+    
+     private static IKeyUsageCounterDataService getKeyUsageCounterDataService() {
+        IKeyUsageCounterDataService KeyUsageCounterDataService = new IKeyUsageCounterDataService() {
+            @Override
+            public void create(String keyHash) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public KeyUsageCounter getCounter(String keyHash) {
+                return null;
+            }
+
+            @Override
+            public boolean incrementIfWithinLimit(String keyHash, long limit) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public boolean isWithinLimit(String keyHash, long keyUsageLimit) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        };
+        return KeyUsageCounterDataService;
     }
 }

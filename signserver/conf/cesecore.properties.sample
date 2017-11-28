@@ -33,3 +33,13 @@ securityeventsaudit.exporter.1=org.cesecore.audit.impl.AuditExporterXml
 #securityeventsaudit.deviceproperty.1.export.dir=/tmp/
 #securityeventsaudit.deviceproperty.1.export.fetchsize=1000
 #securityeventsaudit.deviceproperty.1.validate.fetchsize=1000
+
+#------------------- PKCS#11 -------------------------------------
+# Configuration of PKCS#11 tokens.
+#
+
+# Setting the PKCS#11 attribute CKA_MODIFYABLE to FALSE after a key is generated.
+#
+# This is only done if Java has been patched with support for this.
+# Default: false
+#pkcs11.makeKeyUnmodifiableAfterGeneration=true

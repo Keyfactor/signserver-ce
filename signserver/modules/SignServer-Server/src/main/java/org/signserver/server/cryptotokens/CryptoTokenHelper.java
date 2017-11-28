@@ -67,7 +67,9 @@ import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 import org.cesecore.certificates.util.AlgorithmConstants;
 import org.cesecore.certificates.util.AlgorithmTools;
+import org.cesecore.keys.token.p11.PKCS11Utils;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
+import org.cesecore.keys.token.p11.exception.P11RuntimeException;
 import org.cesecore.util.CertTools;
 import org.cesecore.util.QueryParameterException;
 import org.cesecore.util.query.Elem;
@@ -576,6 +578,15 @@ public class CryptoTokenHelper {
                             } catch (CertificateEncodingException ex) {
                                 info.put("Error", ex.getMessage());
                                 LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
+                            }
+                            
+                            if (isJREPatched()) {
+                                try {
+                                    final boolean modifiable = PKCS11Utils.getInstance().isKeyModifiable(keyStore.getKey(keyAlias, null), keyStore.getProvider().getName());
+                                    info.put("Modifiable", String.valueOf(modifiable));
+                                } catch (P11RuntimeException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
+                                    info.put("Modifiable", "Error: " + ex.getMessage());
+                                }
                             }
                         } else if (TokenEntry.TYPE_TRUSTED_ENTRY.equals(type)) {
                             Certificate certificate = keyStore.getCertificate(keyAlias);

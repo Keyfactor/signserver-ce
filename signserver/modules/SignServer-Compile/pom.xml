@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.signserver</groupId>
+        <artifactId>SignServer-Modules</artifactId>
+        <version>4.3.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>SignServer-Compile</artifactId>
+    <packaging>jar</packaging>
+    <description>
+        Compile-time stubs for classes that might not be available unless the JRE has been patched. Note that this module should only be depended on with the scope 'provided' so that it is not deployed on the application server.
+    </description>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <dist.jar>${project.build.finalName}.jar</dist.jar>
+    </properties>
+    <name>SignServer-Compile</name>
+</project>

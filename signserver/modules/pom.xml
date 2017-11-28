@@ -40,6 +40,7 @@
         <module>SignServer-ejb-interfaces</module>
         <module>SignServer-ejb</module>
         <module>CESeCore-jars</module>
+        <module>SignServer-Compile</module>
         
         <!-- Interfaces -->
         <module>SignServer-Admin-Common</module>

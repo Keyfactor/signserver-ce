@@ -826,4 +826,21 @@ public class CryptoTokenHelper {
         }
         return String.valueOf(keyUsageCounterValue);
     }
+    
+    /**
+     * @return True if the JRE has been patched with additional PKCS#11 features
+     */
+    public static boolean isJREPatched() {
+        boolean result = true;
+        try {
+            Class.forName("sun.security.pkcs11.P11AsymmetricParameterSpec");
+            LOG.debug("JRE patched");
+        } catch (ClassNotFoundException ex) {
+            result = false;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("JRE not patched: " + ex.getMessage());
+            }
+        }
+        return result;
+    }
 }

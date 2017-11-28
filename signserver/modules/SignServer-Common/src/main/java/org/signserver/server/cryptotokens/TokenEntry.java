@@ -31,7 +31,7 @@ public class TokenEntry implements Serializable {
     private static final long serialVersionUID = 1L;
     
     public static final String TYPE_PRIVATEKEY_ENTRY = "PRIVATEKEY_ENTRY";
-    public static final String TYPE_SECRETKEY_ENTRY = "SECRATEKEY_ENTRY";
+    public static final String TYPE_SECRETKEY_ENTRY = "SECRETKEY_ENTRY";
     public static final String TYPE_TRUSTED_ENTRY = "TRUSTED_ENTRY";
     
     private final String alias;

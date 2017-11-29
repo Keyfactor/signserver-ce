@@ -44,7 +44,7 @@ public class TokenEntry implements Serializable {
     private Date creationDate;
     
     private Map<String, String> info;
-    private String noOfSignings;
+    private long noOfSignings;
     
     public TokenEntry(String alias, String type) {
         this.alias = alias;
@@ -126,11 +126,11 @@ public class TokenEntry implements Serializable {
         return this.info;
     }
     
-    public void setNoOfSignings(String noOfSignings) {
+    public void setNoOfSignings(long noOfSignings) {
         this.noOfSignings = noOfSignings;
     }
 
-    public String getNoOfSignings() {
+    public long getNoOfSignings() {
         return this.noOfSignings;
     }
 

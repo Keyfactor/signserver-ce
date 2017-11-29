@@ -829,13 +829,13 @@ public class CryptoTokenHelper {
         }
     }  
         
-    private static String getNoOfSignings(PublicKey publicKey, final IServices services) {
+    private static long getNoOfSignings(PublicKey publicKey, final IServices services) {
         long keyUsageCounterValue = 0;
         KeyUsageCounter counter = services.get(IKeyUsageCounterDataService.class).getCounter(KeyUsageCounterHash.create(publicKey));
         if (counter != null) {
             keyUsageCounterValue = counter.getCounter();
         }
-        return String.valueOf(keyUsageCounterValue);
+        return keyUsageCounterValue;
     }
     
     /**

@@ -8,6 +8,7 @@ import sun.security.pkcs11.wrapper.CK_ATTRIBUTE;
  * Using this {@link AlgorithmParameterSpec} allows you to define the public and private PKCS#11 attribute templates when generating an asymmetric
  * key. The class uses another {@link AlgorithmParameterSpec} valid for the provider or a "key size" for key algorithm specification.
  */
+@SuppressWarnings("PMD") // This file is only to provide the API. Ignore warnings from unused formal parameters etc
 public class P11AsymmetricParameterSpec implements AlgorithmParameterSpec {
 
     final CK_ATTRIBUTE publicTemplate[];

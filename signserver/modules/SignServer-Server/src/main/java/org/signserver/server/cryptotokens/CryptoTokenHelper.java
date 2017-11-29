@@ -120,6 +120,8 @@ public class CryptoTokenHelper {
     public static final String PROPERTY_SELFSIGNED_VALIDITY = "SELFSIGNED_VALIDITY";
     public static final String PROPERTY_SELFSIGNED_SIGNATUREALGORITHM = "SELFSIGNED_SIGNATUREALGORITHM";
     
+    public static final String TOKEN_ENTRY_MODIFIABLE = "Modifiable";
+    
     private static final long DEFAULT_BACKDATE = (long) 10 * 60; // 10 minutes in seconds
     private static final long DEFAULT_VALIDITY_S = (long) 30 * 24 * 60 * 60 * 365; // 30 year in seconds
     private static final String DEFAULT_SIGNATUREALGORITHM = "SHA1withRSA"; // Legacy default
@@ -583,9 +585,9 @@ public class CryptoTokenHelper {
                             if (isJREPatched()) {
                                 try {
                                     final boolean modifiable = PKCS11Utils.getInstance().isKeyModifiable(keyStore.getKey(keyAlias, null), keyStore.getProvider().getName());
-                                    info.put("Modifiable", String.valueOf(modifiable));
+                                    info.put(CryptoTokenHelper.TOKEN_ENTRY_MODIFIABLE, String.valueOf(modifiable));
                                 } catch (P11RuntimeException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
-                                    info.put("Modifiable", "Error: " + ex.getMessage());
+                                    info.put(CryptoTokenHelper.TOKEN_ENTRY_MODIFIABLE, "Error: " + ex.getMessage());
                                 }
                             }
                         } else if (TokenEntry.TYPE_TRUSTED_ENTRY.equals(type)) {

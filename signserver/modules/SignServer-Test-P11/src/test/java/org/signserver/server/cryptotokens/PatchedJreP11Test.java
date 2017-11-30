@@ -31,7 +31,6 @@ import org.cesecore.util.query.elems.Term;
 import static org.junit.Assert.assertEquals;
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
@@ -48,8 +47,10 @@ import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 
 /**
+ * Tests requiring a patched JRE.
  *
- * @author user
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class PatchedJreP11Test {
     /** Logger for this class */
@@ -121,9 +122,7 @@ public class PatchedJreP11Test {
     }
     
     @Before
-    //@Override
     public void setUp() throws Exception {
-        
         SignServerUtil.installBCProvider();
     }
     
@@ -158,6 +157,7 @@ public class PatchedJreP11Test {
     @Test
     public void testGenerateUnmodifiableKey() throws Exception {
         Assume.assumeTrue("Test requires patched JRE", CryptoTokenHelper.isJREPatched());
+        LOG.info(">testGenerateUnmodifiableKey");
         Properties properties = new Properties();
         try (FileInputStream fin = new FileInputStream(new File(PathUtil.getAppHome(), "conf/cesecore.properties"))) {
             properties.load(fin);

@@ -573,7 +573,7 @@ public class CryptoTokenHelper {
                                     info.put(INFO_KEY_PUBLIC_EXPONENT,
                                             rsaKey.getPublicExponent().toString(10));
                                 }
-                                entry.setNoOfSignings(getNoOfSignings(pubKey, services));
+                                info.put(NO_OF_SIGNINGS, getNoOfSignings(pubKey, services));
                             }
                             try {
                                 entry.setParsedChain(chain);
@@ -598,7 +598,7 @@ public class CryptoTokenHelper {
                                 info.put("Error", ex.getMessage());
                                 LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
                             }
-                            entry.setNoOfSignings(getNoOfSignings(certificate.getPublicKey(), services));
+                            info.put(NO_OF_SIGNINGS, getNoOfSignings(certificate.getPublicKey(), services));
                         } else if (TokenEntry.TYPE_SECRETKEY_ENTRY.equals(type)) {
                             try {
                                 KeyStore.Entry entry1 = keyStore.getEntry(keyAlias, null);
@@ -628,6 +628,7 @@ public class CryptoTokenHelper {
     public static final String INFO_KEY_SPECIFICATION = "Key specification";
     public static final String INFO_KEY_ALGORITHM = "Key algorithm";
     public static final String INFO_KEY_PUBLIC_EXPONENT = "Public exponent";
+    public static final String NO_OF_SIGNINGS = "Signings";
     
     private static boolean shouldBeIncluded(TokenEntry tokenEntry, QueryCriteria qc) throws QueryException {
         final List<Elem> terms = new ArrayList<>();
@@ -831,13 +832,13 @@ public class CryptoTokenHelper {
         }
     }  
         
-    private static long getNoOfSignings(PublicKey publicKey, final IServices services) {
+    public static String getNoOfSignings(PublicKey publicKey, final IServices services) {
         long keyUsageCounterValue = 0;
         KeyUsageCounter counter = services.get(IKeyUsageCounterDataService.class).getCounter(KeyUsageCounterHash.create(publicKey));
         if (counter != null) {
             keyUsageCounterValue = counter.getCounter();
         }
-        return keyUsageCounterValue;
+        return String.valueOf(keyUsageCounterValue);
     }
     
     /**

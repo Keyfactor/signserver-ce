@@ -14,10 +14,6 @@ package org.signserver.server.cryptotokens;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

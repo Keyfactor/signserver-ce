@@ -67,7 +67,6 @@ import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.ExceptionUtil;
 import org.signserver.server.IServices;
-import sun.security.pkcs11.P11AsymmetricParameterSpec;
 import sun.security.pkcs11.wrapper.CK_ATTRIBUTE;
 
 /**
@@ -495,7 +494,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                     }
 
                     // Use different P11AsymmetricParameterSpec classes as the underlaying library assumes the spec contains the string "RSA" or "EC"
-                    final P11AsymmetricParameterSpec specWithAttributes;
+                    final AlgorithmParameterSpec specWithAttributes;
                     if ("RSA".equalsIgnoreCase(keyAlgorithm)) {
                         specWithAttributes = new RSAP11AsymmetricParameterSpec(publicTemplate, privateTemplate.toArray(new CK_ATTRIBUTE[0]), spec);
                     } else if ("ECDSA".equalsIgnoreCase(keyAlgorithm)) {
@@ -519,22 +518,6 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }
-    }
-
-    private class RSAP11AsymmetricParameterSpec extends P11AsymmetricParameterSpec {
-        
-        public RSAP11AsymmetricParameterSpec(CK_ATTRIBUTE[] cktrbts, CK_ATTRIBUTE[] cktrbts1, AlgorithmParameterSpec aps) {
-            super(cktrbts, cktrbts1, aps);
-        }
-        
-    }
-    
-    private class ECP11AsymmetricParameterSpec extends P11AsymmetricParameterSpec {
-        
-        public ECP11AsymmetricParameterSpec(CK_ATTRIBUTE[] cktrbts, CK_ATTRIBUTE[] cktrbts1, AlgorithmParameterSpec aps) {
-            super(cktrbts, cktrbts1, aps);
-        }
-        
     }
 
     @Override

@@ -31,6 +31,10 @@ import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.ECGenParameterSpec;
+import java.security.spec.RSAKeyGenParameterSpec;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +43,11 @@ import java.util.Properties;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x9.X9ECParameters;
+import org.bouncycastle.crypto.ec.CustomNamedCurves;
+import org.bouncycastle.jcajce.provider.asymmetric.util.ECUtil;
 import org.bouncycastle.operator.OperatorCreationException;
+import org.cesecore.certificates.util.AlgorithmTools;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
 import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
@@ -59,6 +67,8 @@ import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.ExceptionUtil;
 import org.signserver.server.IServices;
+import sun.security.pkcs11.P11AsymmetricParameterSpec;
+import sun.security.pkcs11.wrapper.CK_ATTRIBUTE;
 
 /**
  * CryptoToken implementation wrapping the new PKCS11CryptoToken from CESeCore.
@@ -82,6 +92,9 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     private static final String WORKERCACHE_ENTRY = "PKCS11CryptoToken.CRYPTO_INSTANCE";
     
     private static final String PROPERTY_SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
+    private static final long CKA_ALLOWED_MECHANISMS = 1073743360L;
+    
+    private AllowedMechanisms allowedMechanisms;
 
     public PKCS11CryptoToken() throws InstantiationException {
         delegate = new KeyStorePKCS11CryptoToken();
@@ -257,6 +270,20 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                     throw new CryptoTokenInitializationFailureException("Incorrect value for " + CryptoTokenHelper.PROPERTY_KEYGENERATIONLIMIT + ": " + ex.getLocalizedMessage());
                 }
             }
+            
+            // Optional property allowedMechanisms
+            final String allowedMechanismsValue = props.getProperty(CryptoTokenHelper.PROPERTY_ALLOWED_MECHANISMS);            
+            if (allowedMechanismsValue != null) {
+                try {
+                    allowedMechanisms = AllowedMechanisms.parse(allowedMechanismsValue);
+                } catch (IllegalArgumentException ex) {
+                    throw new CryptoTokenInitializationFailureException(ex.getMessage());
+                }
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Allowed mechanisms: " + allowedMechanisms);
+            }
+
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException | NumberFormatException ex) {
             LOG.error("Init failed", ex);
             throw new CryptoTokenInitializationFailureException(ex.getMessage());
@@ -420,15 +447,70 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         }
         
         try {
-            if ("RSA".equalsIgnoreCase(keyAlgorithm) &&
-                keySpec.contains("exp")) {
-                delegate.generateKeyPair(
-                        CryptoTokenHelper.getPublicExponentParamSpecForRSA(keySpec),
-                        alias);
+            // Construct the apropriate AlgorithmParameterSpec
+            final AlgorithmParameterSpec spec;
+            if ("RSA".equalsIgnoreCase(keyAlgorithm)) {
+                if (keySpec.contains("exp")) {
+                    spec = CryptoTokenHelper.getPublicExponentParamSpecForRSA(keySpec);
+                } else {
+                    spec = new RSAKeyGenParameterSpec(Integer.valueOf(keySpec), RSAKeyGenParameterSpec.F4);
+                }
+            } else if ("DSA".equalsIgnoreCase(keyAlgorithm)) {
+                spec = null; // We don't currently support setting attributes for DSA keys. This could be added in future if needed but requires changes in underlaying APIs
+            } else if ("ECDSA".equalsIgnoreCase(keyAlgorithm)) {
+                // Convert it to the OID if possible since the human friendly name might differ in the provider
+                if (ECUtil.getNamedCurveOid(keySpec) != null) {
+                    final String oidOrName = AlgorithmTools.getEcKeySpecOidFromBcName(keySpec);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("keySpecification '" + keySpec + "' transformed into OID " + oidOrName);
+                    }
+                    spec = new ECGenParameterSpec(oidOrName);
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Curve did not have an OID in BC, trying to pick up Parameter spec: " + keySpec);
+                    }
+                    // This may be a new curve without OID, like curve25519 and we have to do something a bit different
+                    X9ECParameters ecP = CustomNamedCurves.getByName(keySpec);
+                    if (ecP == null) {
+                        throw new InvalidAlgorithmParameterException("Can not generate EC curve, no OID and no ECParameters found: " + keySpec);
+                    }
+                    spec = new org.bouncycastle.jce.spec.ECParameterSpec(ecP.getCurve(), ecP.getG(), ecP.getN(), ecP.getH(), ecP.getSeed()); 
+                }
             } else {
-                delegate.generateKeyPair(keySpec, alias);
+                throw new IllegalArgumentException("Unsupported key algorithm: " + keyAlgorithm);
             }
             
+            if (spec == null) {
+                // Generate the old way without support for attributes
+                delegate.generateKeyPair(keySpec, alias);
+            } else {
+                if (CryptoTokenHelper.isJREPatched()) {
+                    // TODO: Later on we could take this attributes from config or from params
+                    final CK_ATTRIBUTE[] publicTemplate = {};
+                    final List<CK_ATTRIBUTE> privateTemplate = new ArrayList<>(1);
+
+                    // TODO: Later on we could override this attributes from the config with values from params
+                    if (allowedMechanisms != null) {
+                        privateTemplate.add(new CK_ATTRIBUTE(CKA_ALLOWED_MECHANISMS, allowedMechanisms.toBinaryEncoding()));
+                    }
+
+                    // Use different P11AsymmetricParameterSpec classes as the underlaying library assumes the spec contains the string "RSA" or "EC"
+                    final P11AsymmetricParameterSpec specWithAttributes;
+                    if ("RSA".equalsIgnoreCase(keyAlgorithm)) {
+                        specWithAttributes = new RSAP11AsymmetricParameterSpec(publicTemplate, privateTemplate.toArray(new CK_ATTRIBUTE[0]), spec);
+                    } else if ("ECDSA".equalsIgnoreCase(keyAlgorithm)) {
+                        specWithAttributes = new ECP11AsymmetricParameterSpec(publicTemplate, privateTemplate.toArray(new CK_ATTRIBUTE[0]), spec);
+                    } else {
+                        throw new IllegalArgumentException("Unsupported key algorithm: " + keyAlgorithm);
+                    }
+                    
+                    delegate.generateKeyPair(specWithAttributes, alias);
+                } else {
+                    // Generate without support for attributes
+                    delegate.generateKeyPair(spec, alias);
+                }
+            }
+
             if (params != null) {
                 final KeyStore ks = delegate.getActivatedKeyStore();
                 CryptoTokenHelper.regenerateCertIfWanted(alias, authCode, params, ks, ks.getProvider().getName());
@@ -437,6 +519,22 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }
+    }
+
+    private class RSAP11AsymmetricParameterSpec extends P11AsymmetricParameterSpec {
+        
+        public RSAP11AsymmetricParameterSpec(CK_ATTRIBUTE[] cktrbts, CK_ATTRIBUTE[] cktrbts1, AlgorithmParameterSpec aps) {
+            super(cktrbts, cktrbts1, aps);
+        }
+        
+    }
+    
+    private class ECP11AsymmetricParameterSpec extends P11AsymmetricParameterSpec {
+        
+        public ECP11AsymmetricParameterSpec(CK_ATTRIBUTE[] cktrbts, CK_ATTRIBUTE[] cktrbts1, AlgorithmParameterSpec aps) {
+            super(cktrbts, cktrbts1, aps);
+        }
+        
     }
 
     @Override

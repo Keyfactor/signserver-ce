@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -119,8 +120,11 @@ public class CryptoTokenHelper {
     public static final String PROPERTY_SELFSIGNED_DN = "SELFSIGNED_DN";
     public static final String PROPERTY_SELFSIGNED_VALIDITY = "SELFSIGNED_VALIDITY";
     public static final String PROPERTY_SELFSIGNED_SIGNATUREALGORITHM = "SELFSIGNED_SIGNATUREALGORITHM";
+
+    public static final String PROPERTY_ALLOWED_MECHANISMS = "ALLOWED_MECHANISMS";
     
     public static final String TOKEN_ENTRY_MODIFIABLE = "Modifiable";
+    public static final String TOKEN_ENTRY_PKCS11_ATTRIBUTES = "PKCS#11 Attributes";
     
     private static final long DEFAULT_BACKDATE = (long) 10 * 60; // 10 minutes in seconds
     private static final long DEFAULT_VALIDITY_S = (long) 30 * 24 * 60 * 60 * 365; // 30 year in seconds
@@ -583,12 +587,42 @@ public class CryptoTokenHelper {
                             }
                             
                             if (isJREPatched()) {
+                                final PKCS11Utils p11 = PKCS11Utils.getInstance();
+                                
+                                Key key = null;
+                                String keyError = null;
                                 try {
-                                    final boolean modifiable = PKCS11Utils.getInstance().isKeyModifiable(keyStore.getKey(keyAlias, null), keyStore.getProvider().getName());
-                                    info.put(CryptoTokenHelper.TOKEN_ENTRY_MODIFIABLE, String.valueOf(modifiable));
-                                } catch (P11RuntimeException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
-                                    info.put(CryptoTokenHelper.TOKEN_ENTRY_MODIFIABLE, "Error: " + ex.getMessage());
+                                    key = keyStore.getKey(keyAlias, null);
+                                } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
+                                    keyError = ex.getMessage();
+                                    if (LOG.isDebugEnabled()) {
+                                        LOG.debug("Unable to get key to query P11 info", ex);
+                                    }
                                 }
+                                final String providerName = keyStore.getProvider().getName();
+
+                                // Modifiable
+                                if (key == null) {
+                                    info.put(CryptoTokenHelper.TOKEN_ENTRY_MODIFIABLE, "Error: " + keyError);
+                                } else {
+                                    final boolean modifiable = p11.isKeyModifiable(key, providerName);
+                                    info.put(CryptoTokenHelper.TOKEN_ENTRY_MODIFIABLE, String.valueOf(modifiable));
+                                }
+                                
+                                // Security Info
+                                if (key != null) {
+                                    try {
+                                        final StringBuilder sb = new StringBuilder();
+                                        p11.securityInfo(key, providerName, sb);
+                                        info.put(CryptoTokenHelper.TOKEN_ENTRY_PKCS11_ATTRIBUTES, sb.toString().replace("  ", "\n"));
+                                    } catch (P11RuntimeException ex) {
+                                        info.put(CryptoTokenHelper.TOKEN_ENTRY_PKCS11_ATTRIBUTES, "Error: " + ex.getMessage());
+                                        if (LOG.isDebugEnabled()) {
+                                            LOG.debug("Unable to query security info for key", ex);
+                                        }
+                                    }
+                                }
+                                
                             }
                         } else if (TokenEntry.TYPE_TRUSTED_ENTRY.equals(type)) {
                             Certificate certificate = keyStore.getCertificate(keyAlias);
@@ -756,7 +790,7 @@ public class CryptoTokenHelper {
      * @return
      * @throws InvalidAlgorithmParameterException 
      */
-    public static AlgorithmParameterSpec getPublicExponentParamSpecForRSA(final String keySpec)
+    public static RSAKeyGenParameterSpec getPublicExponentParamSpecForRSA(final String keySpec)
         throws InvalidAlgorithmParameterException {
         final String[] parts = keySpec.split("exp");
 

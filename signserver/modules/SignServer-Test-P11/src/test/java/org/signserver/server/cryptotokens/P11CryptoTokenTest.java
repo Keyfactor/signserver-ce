@@ -142,7 +142,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
 
     @Override
     protected void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException {
-        getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_TOKEN), keySpec, keySpec, alias, null);
+        getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_TOKEN), keyType, keySpec, alias, null);
     }
 
     @Override

@@ -413,8 +413,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         return delegate.getActivatedKeyStore();
     }
 
-    @Override
-    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+    private void generateKeyPair(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         if (keySpec == null) {
             throw new IllegalArgumentException("Missing keyspec parameter");
         }
@@ -519,6 +518,24 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
             throw new CryptoTokenOfflineException(ex);
         }
     }
+    
+    @Override
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+        if (CryptoTokenHelper.shouldGenerateKeyPair(keyAlgorithm)) {
+            generateKeyPair(keyAlgorithm, keySpec, alias, authCode, params, services);
+        } else {
+            generateSecretKey(keyAlgorithm, keySpec, alias);
+        }
+    }
+    
+    private void generateSecretKey(String keyAlgorithm, String keySpec, String alias) throws CryptoTokenOfflineException {
+        try {
+            delegate.generateKey(keyAlgorithm, Integer.valueOf(keySpec), alias);
+        } catch (NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException | org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        }
+    }
 
     @Override
     public void importCertificateChain(final List<Certificate> certChain,
@@ -544,7 +561,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     @Override
     public TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, Map<String, Object> params, final IServices services) throws CryptoTokenOfflineException, QueryException {
         try {
-            return CryptoTokenHelper.searchTokenEntries(getKeyStore(), startIndex, max, qc, includeData, services);
+            return CryptoTokenHelper.searchTokenEntries(getKeyStore(), startIndex, max, qc, includeData, services, null);
         } catch (KeyStoreException ex) {
             throw new CryptoTokenOfflineException(ex);
         }

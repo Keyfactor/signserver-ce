@@ -24,6 +24,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.ProviderException;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -49,6 +50,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
 import org.apache.commons.collections.CollectionUtils;
@@ -521,7 +523,7 @@ public class CryptoTokenHelper {
         return new JcaX509CertificateConverter().getCertificate(cg.build(contentSigner));
     }
 
-    public static TokenSearchResults searchTokenEntries(final KeyStore keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, IServices services) throws CryptoTokenOfflineException, QueryException {
+    public static TokenSearchResults searchTokenEntries(final KeyStore keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, IServices services, char[] authCode) throws CryptoTokenOfflineException, QueryException {
         final TokenSearchResults result;
         try {
             final ArrayList<TokenEntry> tokenEntries = new ArrayList<>();
@@ -635,11 +637,16 @@ public class CryptoTokenHelper {
                             info.put(NO_OF_SIGNINGS, getNoOfSignings(certificate.getPublicKey(), services));
                         } else if (TokenEntry.TYPE_SECRETKEY_ENTRY.equals(type)) {
                             try {
-                                KeyStore.Entry entry1 = keyStore.getEntry(keyAlias, null);
-                                SecretKey secretKey = ((KeyStore.SecretKeyEntry) entry1).getSecretKey();
+                                SecretKey secretKey = (SecretKey) keyStore.getKey(keyAlias, authCode);
 
                                 info.put(INFO_KEY_ALGORITHM, secretKey.getAlgorithm());
                                 //info.put(INFO_KEY_SPECIFICATION, AlgorithmTools.getKeySpecification(chain[0].getPublicKey())); // TODO: Key specification support for secret keys
+                                final Certificate[] chain = new Certificate[0];
+                                try {
+                                    entry.setParsedChain(chain);
+                                } catch (CertificateEncodingException ex) {
+                                    LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
+                                }
                             } catch (NoSuchAlgorithmException | UnrecoverableEntryException ex) {
                                 info.put("Error", ex.getMessage());
                                 LOG.error("Unable to get secret key for alias: " + keyAlias, ex);
@@ -890,5 +897,19 @@ public class CryptoTokenHelper {
             }
         }
         return result;
+    }
+    
+    public static void listAlgorithmsbyProvider(Provider provider) {
+        System.out.println("Provider: " + provider.getName());
+        for (Provider.Service service : provider.getServices()) {
+            System.out.println("  Algorithm: " + service.getAlgorithm());
+        }
+    }
+    
+    public static boolean shouldGenerateKeyPair(String keyAlgorithm){
+        if (keyAlgorithm.equals("RSA")) {       
+        return true;}
+        else 
+            return false;
     }
 }

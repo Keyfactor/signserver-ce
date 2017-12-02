@@ -20,6 +20,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.*;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -61,7 +63,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     public static final String NEXTKEY = "NEXTCERTSIGNKEY";
 
     public static final String TYPE_PKCS12 = "PKCS12";
-    public static final String TYPE_JKS = "JKS";
+    public static final String TYPE_JKS = "JCEKS";
     public static final String TYPE_INTERNAL = "INTERNAL";
     
     private static final String PROPERTY_SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
@@ -329,14 +331,13 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             throws CryptoTokenOfflineException, QueryException {
         try {
             KeyStore keyStore = getKeyStore();
-            return CryptoTokenHelper.searchTokenEntries(keyStore, startIndex, max, qc, includeData, services);
+            return CryptoTokenHelper.searchTokenEntries(keyStore, startIndex, max, qc, includeData, services, authenticationCode);
         } catch (KeyStoreException ex) {
             throw new CryptoTokenOfflineException(ex);
         }
     }
 
-    @Override
-    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+    private void generateKeyPair(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         if (keySpec == null) {
             throw new IllegalArgumentException("Missing keyspec parameter");
         }
@@ -387,11 +388,11 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             chain[0] = CryptoTokenHelper.createDummyCertificate(alias, sigAlgName, keyPair, getProvider(PROVIDERUSAGE_SIGN));
             LOG.debug("Creating certificate with entry "+alias+'.');
 
-            keystore.setKeyEntry(alias, keyPair.getPrivate(), authCode, chain);
+            keystore.setKeyEntry(alias, keyPair.getPrivate(), authenticationCode, chain);
             
             // TODO: Future optimization: we don't need to regenerate if we create it right from the beginning a few lines up!
             if (params != null) {
-                CryptoTokenHelper.regenerateCertIfWanted(alias, authCode, params, keystore, keystore.getProvider().getName());
+                CryptoTokenHelper.regenerateCertIfWanted(alias, authenticationCode, params, keystore, keystore.getProvider().getName());
             }
             
             final OutputStream os;
@@ -431,6 +432,42 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             throw new CryptoTokenOfflineException(ex);
         }
     }
+    
+    @Override
+    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+        if (CryptoTokenHelper.shouldGenerateKeyPair(keyAlgorithm)) {
+            generateKeyPair(keyAlgorithm, keySpec, alias, authCode, params, services);
+        } else {
+            generateSecretKey(keyAlgorithm, keySpec, alias);
+        }
+    }
+    
+    private void generateSecretKey(String keyAlgorithm, String keySpec, String alias) throws CryptoTokenOfflineException {
+        OutputStream os = null;
+        try {
+            final KeyGenerator keyGen = KeyGenerator.getInstance(keyAlgorithm);
+            keyGen.init(Integer.valueOf(keySpec));
+            SecretKey secretKey = keyGen.generateKey();
+            final KeyStore keystore = getKeyStore();
+            KeyStore.ProtectionParameter protParam = new KeyStore.PasswordProtection(authenticationCode);
+            KeyStore.SecretKeyEntry skEntry = new KeyStore.SecretKeyEntry(secretKey);
+            keystore.setEntry(alias, skEntry, protParam);
+
+            os = new FileOutputStream(new File(keystorepath));
+            keystore.store(os, authenticationCode);
+        } catch (NoSuchAlgorithmException | UnsupportedOperationException | KeyStoreException | IOException | CertificateException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
+        } finally {
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException ex) {
+                    LOG.error("Error closing file", ex);
+                }
+            }
+        }
+    }
 
     @Override
     public KeyStore getKeyStore() throws UnsupportedOperationException,
@@ -450,7 +487,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             TYPE_INTERNAL.equalsIgnoreCase(type)) {
             result = KeyStore.getInstance("PKCS12", "BC");
         } else {
-            result = KeyStore.getInstance("JKS");
+            result = KeyStore.getInstance("JCEKS");
         }
 
         InputStream in = null;

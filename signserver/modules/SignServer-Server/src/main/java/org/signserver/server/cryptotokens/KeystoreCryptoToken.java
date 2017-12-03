@@ -33,6 +33,7 @@ import org.signserver.common.*;
 import org.signserver.server.IServices;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import static org.signserver.server.cryptotokens.CryptoTokenHelper.SECRET_KEY_PREFIX;
 
 /**
  * Class that uses a PKCS12 or JKS file on the file system for signing.
@@ -435,14 +436,22 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     
     @Override
     public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
-        if (CryptoTokenHelper.shouldGenerateKeyPair(keyAlgorithm)) {
-            generateKeyPair(keyAlgorithm, keySpec, alias, authCode, params, services);
-        } else {
-            generateSecretKey(keyAlgorithm, keySpec, alias);
+        try {
+            if (CryptoTokenHelper.shouldGenerateKeyPair(keyAlgorithm, getKeyStore().getProvider())) {
+                generateKeyPair(keyAlgorithm, keySpec, alias, authCode, params, services);
+            } else {
+                generateSecretKey(keyAlgorithm, keySpec, alias);
+            }
+        } catch (UnsupportedOperationException | KeyStoreException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
         }
     }
     
     private void generateSecretKey(String keyAlgorithm, String keySpec, String alias) throws CryptoTokenOfflineException {
+        if (keyAlgorithm.startsWith(CryptoTokenHelper.SECRET_KEY_PREFIX)) {
+            keyAlgorithm = keyAlgorithm.substring(keyAlgorithm.indexOf(SECRET_KEY_PREFIX) + 4);
+        }
         OutputStream os = null;
         try {
             final KeyGenerator keyGen = KeyGenerator.getInstance(keyAlgorithm);

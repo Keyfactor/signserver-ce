@@ -67,6 +67,7 @@ import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.ExceptionUtil;
 import org.signserver.server.IServices;
+import static org.signserver.server.cryptotokens.CryptoTokenHelper.SECRET_KEY_PREFIX;
 import sun.security.pkcs11.wrapper.CK_ATTRIBUTE;
 
 /**
@@ -521,14 +522,22 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     
     @Override
     public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
-        if (CryptoTokenHelper.shouldGenerateKeyPair(keyAlgorithm)) {
-            generateKeyPair(keyAlgorithm, keySpec, alias, authCode, params, services);
-        } else {
-            generateSecretKey(keyAlgorithm, keySpec, alias);
+        try {
+            if (CryptoTokenHelper.shouldGenerateKeyPair(keyAlgorithm, getKeyStore().getProvider())) {
+                generateKeyPair(keyAlgorithm, keySpec, alias, authCode, params, services);
+            } else {
+                generateSecretKey(keyAlgorithm, keySpec, alias);
+            }
+        } catch (UnsupportedOperationException | KeyStoreException ex) {
+            LOG.error(ex, ex);
+            throw new CryptoTokenOfflineException(ex);
         }
     }
     
     private void generateSecretKey(String keyAlgorithm, String keySpec, String alias) throws CryptoTokenOfflineException {
+        if (keyAlgorithm.startsWith(CryptoTokenHelper.SECRET_KEY_PREFIX)) {
+            keyAlgorithm = keyAlgorithm.substring(keyAlgorithm.indexOf(SECRET_KEY_PREFIX) + 4);
+        }
         try {
             delegate.generateKey(keyAlgorithm, Integer.valueOf(keySpec), alias);
         } catch (NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException | org.cesecore.keys.token.CryptoTokenOfflineException ex) {

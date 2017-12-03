@@ -39,9 +39,9 @@ import java.security.interfaces.DSAKey;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
@@ -50,7 +50,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
 import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
 import org.apache.commons.collections.CollectionUtils;
@@ -152,6 +151,11 @@ public class CryptoTokenHelper {
     private static final String CESECORE_SUBJECT_DUMMY_L = "L=around";
     private static final String CESECORE_SUBJECT_DUMMY_C = "C=US";
     private static final String CESECORE_SUBJECT_DN_6_8 = "CN=Dummy certificate created by a CESeCore application"; // Since ~6.8.0
+    
+    private static final String[] ACCEPTEDSECRETKEYALGONAMES = {
+        "AES",
+        "DES"};
+    public static final String SECRET_KEY_PREFIX = "SEC:";
     
     /**
      * A workaround for the feature in SignServer 2.0 that property keys are 
@@ -899,17 +903,30 @@ public class CryptoTokenHelper {
         return result;
     }
     
-    public static void listAlgorithmsbyProvider(Provider provider) {
+    private static boolean ifProviderSupportsSecretKeyAlgo(Provider provider, String algoName) {
+        List algoList = new ArrayList<String>();
         System.out.println("Provider: " + provider.getName());
         for (Provider.Service service : provider.getServices()) {
             System.out.println("  Algorithm: " + service.getAlgorithm());
+            algoList.add(service.getAlgorithm());
         }
+        return algoList.contains(algoName);
     }
     
-    public static boolean shouldGenerateKeyPair(String keyAlgorithm){
-        if (keyAlgorithm.equals("RSA")) {       
-        return true;}
-        else 
-            return false;
+    public static boolean shouldGenerateKeyPair(String keyAlgorithm, Provider provider) {
+        return !isKeyAlgoSymmetric(keyAlgorithm.trim(), provider);
+    }
+    
+    private static boolean isKeyAlgoSymmetric(String keyAlgorithm, Provider provider) {
+        if (keyAlgorithm.startsWith(SECRET_KEY_PREFIX)) {
+            String algoName = keyAlgorithm.substring(keyAlgorithm.indexOf(SECRET_KEY_PREFIX) + 4);
+            if (ifProviderSupportsSecretKeyAlgo(provider, algoName)) {
+                return true;
+            } else {
+                throw new IllegalArgumentException("Unsupported Secret Key algorithm: " + algoName);
+            }
+        } else {
+            return Arrays.asList(ACCEPTEDSECRETKEYALGONAMES).contains(keyAlgorithm);
+        }
     }
 }

@@ -99,6 +99,25 @@ public class AllowedMechanismsTest {
                 + "6745238100000000";
         assertEquals(expected, Hex.toHexString(instance.toBinaryEncoding()));
     }
+    
+    /**
+     * Tests parsing of the binary encoding from a CKA_ALLOWED_MECHANISMS attribute.
+     */
+    @Test
+    public void testFromBinaryEncoding() {
+        LOG.info(">testFromBinaryEncoding");
+        final Long[] expected = new Long[] { 0x00000040l, 0x00000000l, 0x00000250l, 0x252l, 624l, 0x81234567l };
+
+        final String binary = 
+                  "4000000000000000"
+                + "0000000000000000"
+                + "5002000000000000"
+                + "5202000000000000"
+                + "7002000000000000"
+                + "6745238100000000";
+
+        assertArrayEquals(expected, AllowedMechanisms.fromBinaryEncoding(Hex.decode(binary)).toLongArray());
+    }
 
     /**
      * Test of toString method.

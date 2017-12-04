@@ -12,8 +12,10 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +29,7 @@ import java.util.List;
  * @version $Id$
  */
 public class AllowedMechanisms {
-
+    
     private final List<Long> mechs;
 
     public AllowedMechanisms(List<Long> mechs) {
@@ -58,6 +60,19 @@ public class AllowedMechanisms {
                     throw new IllegalArgumentException("Mechanism could not be parsed as number: " + ex.getMessage());
                 }
             }
+        }
+        return new AllowedMechanisms(mechs);
+    }
+    
+    public static AllowedMechanisms fromBinaryEncoding(final byte[] binary) throws IllegalArgumentException {
+        final ArrayList<Long> mechs = new ArrayList<>();
+        try {
+            final LongBuffer lb = ByteBuffer.wrap(binary).order(ByteOrder.LITTLE_ENDIAN).asLongBuffer();
+            while (lb.hasRemaining()) {
+                mechs.add(lb.get());
+            }
+        } catch (BufferUnderflowException ex) {
+            throw new IllegalArgumentException("Unable to parse allowed mechanisms value: " + ex.getMessage());
         }
         return new AllowedMechanisms(mechs);
     }

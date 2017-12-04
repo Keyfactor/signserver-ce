@@ -415,36 +415,12 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     }
 
     private void generateKeyPair(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
-        if (keySpec == null) {
-            throw new IllegalArgumentException("Missing keyspec parameter");
-        }
-        if (alias == null) {
-            throw new IllegalArgumentException("Missing alias parameter");
-        }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("keyAlgorithm: " + keyAlgorithm + ", keySpec: " + keySpec
-                    + ", alias: " + alias);
-        }
         // Keyspec for DSA is prefixed with "dsa"
         if (keyAlgorithm != null && keyAlgorithm.equalsIgnoreCase("DSA")
                 && !keySpec.contains("dsa")) {
             keySpec = "dsa" + keySpec;
         }
-
-        // Check key generation limit, if configured
-        if (keygenerationLimit != null && keygenerationLimit > -1) {
-            final int current;
-            try {
-                current = delegate.getActivatedKeyStore().size();
-                if (current >= keygenerationLimit) {
-                    throw new TokenOutOfSpaceException("Key generation limit exceeded: " + current);
-                }
-            } catch (KeyStoreException ex) {
-                LOG.error("Checking key generation limit failed", ex);
-                throw new TokenOutOfSpaceException("Current number of key entries could not be obtained: " + ex.getMessage(), ex);
-            }
-        }
-        
+                
         try {
             // Construct the apropriate AlgorithmParameterSpec
             final AlgorithmParameterSpec spec;
@@ -522,6 +498,31 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     
     @Override
     public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+        if (keySpec == null) {
+            throw new IllegalArgumentException("Missing keyspec parameter");
+        }
+        if (alias == null) {
+            throw new IllegalArgumentException("Missing alias parameter");
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("keyAlgorithm: " + keyAlgorithm + ", keySpec: " + keySpec
+                    + ", alias: " + alias);
+        }
+
+        // Check key generation limit, if configured
+        if (keygenerationLimit != null && keygenerationLimit > -1) {
+            final int current;
+            try {
+                current = delegate.getActivatedKeyStore().size();
+                if (current >= keygenerationLimit) {
+                    throw new TokenOutOfSpaceException("Key generation limit exceeded: " + current);
+                }
+            } catch (KeyStoreException ex) {
+                LOG.error("Checking key generation limit failed", ex);
+                throw new TokenOutOfSpaceException("Current number of key entries could not be obtained: " + ex.getMessage(), ex);
+            }
+        }
+
         try {
             if (CryptoTokenHelper.shouldGenerateKeyPair(keyAlgorithm, getKeyStore().getProvider())) {
                 generateKeyPair(keyAlgorithm, keySpec, alias, authCode, params, services);
@@ -540,7 +541,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         }
         try {
             delegate.generateKey(keyAlgorithm, Integer.valueOf(keySpec), alias);
-        } catch (NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException | org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+        } catch (IllegalArgumentException | NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException | org.cesecore.keys.token.CryptoTokenOfflineException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }

@@ -64,7 +64,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     public static final String NEXTKEY = "NEXTCERTSIGNKEY";
 
     public static final String TYPE_PKCS12 = "PKCS12";
-    public static final String TYPE_JKS = "JCEKS";
+    public static final String TYPE_JKS = "JKS";
     public static final String TYPE_INTERNAL = "INTERNAL";
     
     private static final String PROPERTY_SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
@@ -339,34 +339,9 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     }
 
     private void generateKeyPair(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
-        if (keySpec == null) {
-            throw new IllegalArgumentException("Missing keyspec parameter");
-        }
-        if (alias == null) {
-            throw new IllegalArgumentException("Missing alias parameter");
-        }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("keyAlgorithm: " + keyAlgorithm + ", keySpec: " + keySpec
-                    + ", alias: " + alias);
-        }
         try {
-
             final KeyStore keystore = getKeyStore();
-
-            // Check key generation limit, if configured
-            if (keygenerationLimit != null && keygenerationLimit > -1) {
-                final int current;
-                try {
-                    current = keystore.size();
-                    if (current >= keygenerationLimit) {
-                        throw new TokenOutOfSpaceException("Key generation limit exceeded: " + current);
-                    }
-                } catch (KeyStoreException ex) {
-                    LOG.error("Checking key generation limit failed", ex);
-                    throw new TokenOutOfSpaceException("Current number of key entries could not be obtained: " + ex.getMessage(), ex);
-                }
-            }
-            
+                        
             final KeyPairGenerator kpg = KeyPairGenerator.getInstance(keyAlgorithm, "BC");
 
             if ("ECDSA".equals(keyAlgorithm)) {
@@ -436,8 +411,34 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     
     @Override
     public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+        if (keySpec == null) {
+            throw new IllegalArgumentException("Missing keyspec parameter");
+        }
+        if (alias == null) {
+            throw new IllegalArgumentException("Missing alias parameter");
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("keyAlgorithm: " + keyAlgorithm + ", keySpec: " + keySpec
+                    + ", alias: " + alias);
+        }
         try {
-            if (CryptoTokenHelper.shouldGenerateKeyPair(keyAlgorithm, getKeyStore().getProvider())) {
+            final KeyStore keystore = getKeyStore();
+
+            // Check key generation limit, if configured
+            if (keygenerationLimit != null && keygenerationLimit > -1) {
+                final int current;
+                try {
+                    current = keystore.size();
+                    if (current >= keygenerationLimit) {
+                        throw new TokenOutOfSpaceException("Key generation limit exceeded: " + current);
+                    }
+                } catch (KeyStoreException ex) {
+                    LOG.error("Checking key generation limit failed", ex);
+                    throw new TokenOutOfSpaceException("Current number of key entries could not be obtained: " + ex.getMessage(), ex);
+                }
+            }
+
+            if (CryptoTokenHelper.shouldGenerateKeyPair(keyAlgorithm, null)) {
                 generateKeyPair(keyAlgorithm, keySpec, alias, authCode, params, services);
             } else {
                 generateSecretKey(keyAlgorithm, keySpec, alias);
@@ -496,7 +497,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             TYPE_INTERNAL.equalsIgnoreCase(type)) {
             result = KeyStore.getInstance("PKCS12", "BC");
         } else {
-            result = KeyStore.getInstance("JCEKS");
+            result = KeyStore.getInstance("JKS");
         }
 
         InputStream in = null;
@@ -702,5 +703,5 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
         public void setPrivateKey(final PrivateKey privKey) {
             privateKey = privKey;
         }
-    }
-}
+     }
+  }

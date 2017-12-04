@@ -127,6 +127,8 @@ public class CryptoTokenHelper {
     public static final String TOKEN_ENTRY_MODIFIABLE = "Modifiable";
     public static final String TOKEN_ENTRY_PKCS11_ATTRIBUTES = "PKCS#11 Attributes";
     
+    public static final String SECRET_KEY_PREFIX = "SEC:";
+    
     private static final long DEFAULT_BACKDATE = (long) 10 * 60; // 10 minutes in seconds
     private static final long DEFAULT_VALIDITY_S = (long) 30 * 24 * 60 * 60 * 365; // 30 year in seconds
     private static final String DEFAULT_SIGNATUREALGORITHM = "SHA1withRSA"; // Legacy default
@@ -155,8 +157,7 @@ public class CryptoTokenHelper {
     private static final String[] ACCEPTEDSECRETKEYALGONAMES = {
         "AES",
         "DES"};
-    public static final String SECRET_KEY_PREFIX = "SEC:";
-    
+        
     /**
      * A workaround for the feature in SignServer 2.0 that property keys are 
      * always converted to upper case. The EJBCA CA Tokens usually use mixed case properties.
@@ -905,9 +906,7 @@ public class CryptoTokenHelper {
     
     private static boolean ifProviderSupportsSecretKeyAlgo(Provider provider, String algoName) {
         List algoList = new ArrayList<String>();
-        System.out.println("Provider: " + provider.getName());
         for (Provider.Service service : provider.getServices()) {
-            System.out.println("  Algorithm: " + service.getAlgorithm());
             algoList.add(service.getAlgorithm());
         }
         return algoList.contains(algoName);
@@ -919,11 +918,15 @@ public class CryptoTokenHelper {
     
     private static boolean isKeyAlgoSymmetric(String keyAlgorithm, Provider provider) {
         if (keyAlgorithm.startsWith(SECRET_KEY_PREFIX)) {
-            String algoName = keyAlgorithm.substring(keyAlgorithm.indexOf(SECRET_KEY_PREFIX) + 4);
-            if (ifProviderSupportsSecretKeyAlgo(provider, algoName)) {
+            if (provider == null) {
                 return true;
             } else {
-                throw new IllegalArgumentException("Unsupported Secret Key algorithm: " + algoName);
+                String algoName = keyAlgorithm.substring(keyAlgorithm.indexOf(SECRET_KEY_PREFIX) + 4);
+                if (ifProviderSupportsSecretKeyAlgo(provider, algoName)) {
+                    return true;
+                } else {
+                    throw new IllegalArgumentException("Unsupported Secret Key algorithm: " + algoName);
+                }
             }
         } else {
             return Arrays.asList(ACCEPTEDSECRETKEYALGONAMES).contains(keyAlgorithm);

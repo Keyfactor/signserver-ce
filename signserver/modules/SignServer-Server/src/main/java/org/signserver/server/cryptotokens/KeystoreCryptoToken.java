@@ -324,7 +324,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             final char[] authCode,
             final IServices services) throws CryptoTokenOfflineException,
             KeyStoreException {
-        return CryptoTokenHelper.testKey(getKeyStore(), alias, authCode, "BC", signatureAlgorithm);
+        return CryptoTokenHelper.testKey(getKeyStore(), alias, authenticationCode, "BC", signatureAlgorithm);
     }
 
     @Override

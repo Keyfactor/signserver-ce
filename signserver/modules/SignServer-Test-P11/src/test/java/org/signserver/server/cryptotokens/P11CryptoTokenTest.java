@@ -23,6 +23,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.elems.RelationalOperator;
+import org.cesecore.util.query.elems.Term;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -55,6 +57,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     private final String slot;
     private final String pin;
     private final String existingKey1;
+    private final String testSecretKeyAlias="testSecretKey";
     
     private final WorkerSessionRemote workerSession = getWorkerSession();
     
@@ -132,6 +135,41 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
             exportCertificatesHelper(existingKey1);
         } finally {
             removeWorker(CRYPTO_TOKEN);
+        }
+    }
+    
+    private void secretKeyGenerationHelper(String algo, String keySpec) throws Exception {
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN);
+            workerSession.reloadConfiguration(CRYPTO_TOKEN);
+
+            removeExistingOrFindNewEntry(testSecretKeyAlias, true);
+            generateKey(algo, keySpec, testSecretKeyAlias);
+            removeExistingOrFindNewEntry(testSecretKeyAlias, false);
+        } finally {
+            removeWorker(CRYPTO_TOKEN);
+        }
+    }
+
+    @Test
+    public void testGenerateSecretKey_AES_256_PKCS11CryptoToken() throws Exception {
+        secretKeyGenerationHelper("AES", "256");
+    }
+
+    @Test
+    public void testGenerateSecretKey_DES_56_PKCS11CryptoToken() throws Exception {
+        secretKeyGenerationHelper("DES", "56");
+    }
+
+    private void removeExistingOrFindNewEntry(String alias, boolean removeExisting) throws CryptoTokenOfflineException, OperationUnsupportedException, QueryException, AuthorizationDeniedException, InvalidWorkerIdException, InvalidAlgorithmParameterException, SignServerException, KeyStoreException, UnsupportedCryptoTokenParameter {
+        TokenSearchResults searchResults = searchTokenEntries(0, 1, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), alias)), true);
+        List<TokenEntry> entries = searchResults.getEntries();
+        if (removeExisting) {
+            if (!entries.isEmpty()) {
+                destroyKey(alias);
+            }
+        } else {
+            assertEquals(1, entries.size());
         }
     }
 

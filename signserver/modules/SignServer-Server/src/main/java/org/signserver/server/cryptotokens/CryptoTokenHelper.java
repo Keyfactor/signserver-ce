@@ -584,7 +584,7 @@ public class CryptoTokenHelper {
                                     info.put(INFO_KEY_PUBLIC_EXPONENT,
                                             rsaKey.getPublicExponent().toString(10));
                                 }
-                                info.put(NO_OF_SIGNINGS, getNoOfSignings(pubKey, services));
+                                info.put(NO_OF_SIGNINGS, String.valueOf(getNoOfSignings(pubKey, services)));
                             }
                             try {
                                 entry.setParsedChain(chain);
@@ -639,7 +639,7 @@ public class CryptoTokenHelper {
                                 info.put("Error", ex.getMessage());
                                 LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
                             }
-                            info.put(NO_OF_SIGNINGS, getNoOfSignings(certificate.getPublicKey(), services));
+                            info.put(NO_OF_SIGNINGS, String.valueOf(getNoOfSignings(certificate.getPublicKey(), services)));
                         } else if (TokenEntry.TYPE_SECRETKEY_ENTRY.equals(type)) {
                             try {
                                 SecretKey secretKey = (SecretKey) keyStore.getKey(keyAlias, authCode);
@@ -878,13 +878,13 @@ public class CryptoTokenHelper {
         }
     }  
         
-    public static String getNoOfSignings(PublicKey publicKey, final IServices services) {
+    public static long getNoOfSignings(PublicKey publicKey, final IServices services) {
         long keyUsageCounterValue = 0;
         KeyUsageCounter counter = services.get(IKeyUsageCounterDataService.class).getCounter(KeyUsageCounterHash.create(publicKey));
         if (counter != null) {
             keyUsageCounterValue = counter.getCounter();
         }
-        return String.valueOf(keyUsageCounterValue);
+        return keyUsageCounterValue;
     }
     
     /**

@@ -147,6 +147,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
             generateKey(algo, keySpec, testSecretKeyAlias);
             removeExistingOrFindNewEntry(testSecretKeyAlias, false);
         } finally {
+            destroyKey(testSecretKeyAlias);
             removeWorker(CRYPTO_TOKEN);
         }
     }

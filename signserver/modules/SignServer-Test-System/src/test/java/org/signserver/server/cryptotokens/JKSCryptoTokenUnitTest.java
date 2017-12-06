@@ -31,7 +31,7 @@ import org.signserver.test.utils.mock.MockedServicesImpl;
  *
  * @version $Id$
  */
-public class JKSCryptoTokenTest extends TestCase {
+public class JKSCryptoTokenUnitTest extends TestCase {
 
     /** Project base directory. */
     private File homeDir;

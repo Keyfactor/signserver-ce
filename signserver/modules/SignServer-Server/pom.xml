@@ -80,6 +80,10 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.signserver.jacknji11</groupId>
+      <artifactId>jacknji11</artifactId>
+    </dependency>
   </dependencies>
 </project>
 

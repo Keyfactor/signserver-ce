@@ -38,6 +38,7 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 
 /**
@@ -79,8 +80,9 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
         // Setup token
         workerSession.setWorkerProperty(tokenId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
         workerSession.setWorkerProperty(tokenId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
+        workerSession.setWorkerProperty(tokenId, WorkerConfig.TYPE, WorkerType.CRYPTO_WORKER.name());
         workerSession.setWorkerProperty(tokenId, "NAME", CRYPTO_TOKEN_NAME);
-        workerSession.setWorkerProperty(tokenId, "SHAREDLIBRARYNAME", sharedLibraryName);
+        workerSession.setWorkerProperty(tokenId, "SHAREDLIBRARYNAME", sharedLibraryName);        
         workerSession.setWorkerProperty(tokenId, "SLOT", slot);
         workerSession.setWorkerProperty(tokenId, "PIN", pin);
         workerSession.setWorkerProperty(tokenId, "DEFAULTKEY", existingKey1); // Test key
@@ -102,6 +104,23 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
             "}");
     }
     
+    @Test
+    public void testDisabled() throws Exception {
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN);
+            final String marker = "_MARKER-";
+            workerSession.setWorkerProperty(CRYPTO_TOKEN, "SHAREDLIBRARYNAME", marker);
+            workerSession.setWorkerProperty(CRYPTO_TOKEN, "DISABLED", "tRUe"); // Note: different casings intended
+            workerSession.reloadConfiguration(CRYPTO_TOKEN);
+            
+            String errors = workerSession.getStatus(new WorkerIdentifier(CRYPTO_TOKEN)).getFatalErrors().toString();
+            assertTrue("errors contains disabled: " + errors, errors.contains("Disabled"));
+            assertFalse("errors not including marker: " + errors, errors.contains(marker));
+        } finally {
+            removeWorker(CRYPTO_TOKEN);
+        }
+    }
+
     @Test
     public void testSearchTokenEntries_PKCS11CryptoToken() throws Exception {
         try {

@@ -81,12 +81,14 @@ import org.cesecore.util.query.elems.LogicOperator;
 import org.cesecore.util.query.elems.Operation;
 import org.cesecore.util.query.elems.Term;
 import org.signserver.common.Base64SignerCertReqData;
+import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.QueryException;
+import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.server.IServices;
 import org.signserver.server.KeyUsageCounterHash;
@@ -930,6 +932,20 @@ public class CryptoTokenHelper {
             }
         } else {
             return Arrays.asList(ACCEPTEDSECRETKEYALGONAMES).contains(keyAlgorithm);
+        }
+    }
+
+    /**
+     * Checks that the crypto token is enabled, i.e. that it is not disabled.
+     * Otherwise throws an exception.
+     *
+     * @param config worker configuration
+     * @throws CryptoTokenInitializationFailureException in case it is diabled
+     * @see SignServerConstants#DISABLED
+     */
+    public static void checkEnabled(Properties config) throws CryptoTokenInitializationFailureException {
+        if (Boolean.parseBoolean(config.getProperty(SignServerConstants.DISABLED))) {
+            throw new CryptoTokenInitializationFailureException("Disabled");
         }
     }
 }

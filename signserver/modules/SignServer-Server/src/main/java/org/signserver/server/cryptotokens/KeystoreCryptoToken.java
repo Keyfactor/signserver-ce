@@ -105,6 +105,9 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             throw new CryptoTokenInitializationFailureException("KEYSTORETYPE should be either PKCS12, JKS, or INTERNAL");
         }
 
+        // Check that the crypto token is not disabled
+        CryptoTokenHelper.checkEnabled(properties);
+
         // check keystore file
         if (TYPE_PKCS12.equals(keystoretype) || TYPE_JKS.equals(keystoretype)) {
             if (keystorepath == null) {

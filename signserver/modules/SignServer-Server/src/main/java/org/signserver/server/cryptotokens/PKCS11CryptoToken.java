@@ -40,6 +40,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -48,6 +49,7 @@ import org.bouncycastle.crypto.ec.CustomNamedCurves;
 import org.bouncycastle.jcajce.provider.asymmetric.util.ECUtil;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.cesecore.certificates.util.AlgorithmTools;
+import org.cesecore.keys.token.CryptoToken;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
 import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
@@ -62,8 +64,10 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.QueryException;
 import org.signserver.common.RequestContext;
+import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.common.TokenOutOfSpaceException;
+import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.ExceptionUtil;
 import org.signserver.server.IServices;
@@ -86,7 +90,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
 
     private static final Logger LOG = Logger.getLogger(PKCS11CryptoToken.class);
 
-    private final KeyStorePKCS11CryptoToken delegate;
+    private KeyStorePKCS11CryptoToken delegate;
 
     /** Our worker cache entry name. */
     private static final String WORKERCACHE_ENTRY = "PKCS11CryptoToken.CRYPTO_INSTANCE";
@@ -97,7 +101,6 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     private AllowedMechanisms allowedMechanisms;
 
     public PKCS11CryptoToken() throws InstantiationException {
-        delegate = new KeyStorePKCS11CryptoToken();
     }
 
     private String keyAlias;
@@ -112,6 +115,9 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     @Override
     public void init(int workerId, Properties props, org.signserver.server.IServices services) throws CryptoTokenInitializationFailureException {
         try {
+            // Check that the crypto token is not disabled
+            CryptoTokenHelper.checkEnabled(props);
+            
             // Optional property SIGNATUREALGORITHM
             final String value = props.getProperty(PROPERTY_SIGNATUREALGORITHM);
             if (!StringUtils.isBlank(value)) {
@@ -248,8 +254,6 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
             if (slotLabelValue == null) {
                 throw new CryptoTokenInitializationFailureException("Missing " + CryptoTokenHelper.PROPERTY_SLOTLABELVALUE + " property");
             }
-            
-            delegate.init(props, null, workerId);
 
             keyAlias = props.getProperty("defaultKey");
             nextKeyAlias = props.getProperty("nextCertSignKey");
@@ -284,11 +288,16 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                 LOG.debug("Allowed mechanisms: " + allowedMechanisms);
             }
 
+            delegate = new KeyStorePKCS11CryptoToken();
+            delegate.init(props, null, workerId);
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException | NumberFormatException ex) {
             LOG.error("Init failed", ex);
             throw new CryptoTokenInitializationFailureException(ex.getMessage());
         } catch (NoSuchSlotException ex) {
             LOG.error("Slot not found", ex);
+            throw new CryptoTokenInitializationFailureException(ex.getMessage());
+        } catch (InstantiationException ex) {
+            LOG.error("PKCS11 key store initialization failed", ex);
             throw new CryptoTokenInitializationFailureException(ex.getMessage());
         }
     }

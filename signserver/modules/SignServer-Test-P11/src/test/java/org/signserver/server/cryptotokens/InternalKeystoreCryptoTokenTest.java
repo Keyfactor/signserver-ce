@@ -65,16 +65,15 @@ import org.signserver.test.utils.mock.MockedServicesImpl;
  * @author Markus Kilås
  * @version $Id$
  */
-public class KeystoreCryptoTokenTest extends CryptoTokenTestBase {
+public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
     /** Logger for this class */
-    private static final Logger LOG = Logger.getLogger(KeystoreCryptoTokenTest.class);
+    private static final Logger LOG = Logger.getLogger(InternalKeystoreCryptoTokenTest.class);
     
     private final MockedKeystoreInConfig instance = new MockedKeystoreInConfig();
     
-    private final String existingKey1 = getConfig().getProperty("test.p11.existingkey1");
-    private final String existingKey2 = getConfig().getProperty("test.p11.existingkey2");
+    private final String existingKey1 = getConfig().getProperty("test.p11.existingkey1");    
 
-    public KeystoreCryptoTokenTest() {
+    public InternalKeystoreCryptoTokenTest() {
     }
     
     @Before

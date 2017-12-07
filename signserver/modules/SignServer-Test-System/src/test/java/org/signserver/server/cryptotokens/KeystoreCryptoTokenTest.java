@@ -99,6 +99,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
         workerSession.setWorkerProperty(workerId, "NAME", "CMSSignerP12");
         workerSession.setWorkerProperty(workerId, "KEYSTORETYPE", "PKCS12");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(workerId, "TYPE", "PROCESSABLE");
         workerSession.setWorkerProperty(workerId, "KEYSTOREPATH", keystoreFile.getAbsolutePath());
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", SIGN_KEY_ALIAS);
         if (autoActivate) {
@@ -138,6 +139,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.cmssigner.CMSSigner");
         workerSession.setWorkerProperty(workerId, "NAME", "CMSSignerP12");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
+        workerSession.setWorkerProperty(workerId, "TYPE", "PROCESSABLE");
         workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", "TestCryptoTokenP12");
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", SIGN_KEY_ALIAS);
     }

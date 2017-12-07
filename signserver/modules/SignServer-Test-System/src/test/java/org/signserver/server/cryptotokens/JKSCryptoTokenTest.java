@@ -54,11 +54,19 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
      */
     private static final Logger LOG = Logger.getLogger(JKSCryptoTokenTest.class);
     
-    private final WorkerSessionRemote workerSession = getWorkerSession();    
+    private final WorkerSessionRemote workerSession = getWorkerSession();
     private static final int CRYPTO_TOKEN = 10300;
     private static final String CRYPTO_TOKEN_NAME = "TestJKSCryptoToken";
-    private final String testSecretKeyAlias="testsecretkey";
-
+    private final String testSecretKeyAlias = "testsecretkey";
+    private static boolean isTestSupportedByJavaVersion = false;
+    
+    static {
+        if (System.getProperty("java.version").startsWith("1.8") || System.getProperty("java.version").startsWith("1.9")
+                || System.getProperty("java.version").startsWith("9")) {
+            isTestSupportedByJavaVersion = true;
+        }
+    }
+    
     public JKSCryptoTokenTest() {
     }
     
@@ -85,16 +93,22 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
     @Test
     public void testGenerateSecretKey_AES_256() throws Exception {
         LOG.info("testGenerateSecretKey_AES_256");
-       // secretKeyGenerationHelper("AES", "256");
-       setupCryptoTokenProperties(CRYPTO_TOKEN);
-        workerSession.reloadConfiguration(CRYPTO_TOKEN);
+        if (isTestSupportedByJavaVersion) {
+            secretKeyGenerationHelper("AES", "256");
+        } else {
+            LOG.info("Test is not supported by Java Version so do nothing");
+        }
     }
     
-//    @Test
-//    public void testGenerateSecretKey_DES_56() throws Exception {
-//        LOG.info("testGenerateSecretKey_DES_56");
-//        secretKeyGenerationHelper("DES", "56");
-//    }
+    @Test
+    public void testGenerateSecretKey_DES_56() throws Exception {
+        LOG.info("testGenerateSecretKey_DES_56");
+        if (isTestSupportedByJavaVersion) {
+            secretKeyGenerationHelper("DES", "56");
+        } else {
+            LOG.info("Test is not supported by Java Version so do nothing");
+        }
+    }
     
     private void secretKeyGenerationHelper(String algo, String keySpec) throws Exception {
         try {

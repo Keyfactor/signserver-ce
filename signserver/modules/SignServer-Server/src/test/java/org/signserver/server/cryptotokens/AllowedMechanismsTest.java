@@ -42,6 +42,19 @@ public class AllowedMechanismsTest {
     }
     
     /**
+     * Tests parsing of hex, decimal and constant name values.
+     */
+    @Test
+    public void testParseHexAndDecimalAndConstant() {
+        LOG.info(">testParseHexAndDecimalAndConstant");
+        String allowedMechanismsProperty = " SHA256_RSA_PKCS, 0x00000000 SHA256;SHA256_HMAC_GENERAL ,624 0x81234567"; // Note: leading whitespace, mix or space and comma and semicolon is intentional
+        Long[] expected = new Long[] { 0x40l, 0l, 0x250l, 0x252l, 624l, 0x81234567L };
+        
+        AllowedMechanisms result = AllowedMechanisms.parse(allowedMechanismsProperty);
+        assertArrayEquals(expected, result.toLongArray());
+    }
+    
+    /**
      * Tests parsing of hex and decimal values with empty value.
      */
     @Test
@@ -126,7 +139,7 @@ public class AllowedMechanismsTest {
     public void testToString() {
         LOG.info(">testToString");
         String allowedMechanismsProperty = " 0x00000040, 0x00000000 0x00000250;0x252 ,624 0x81234567"; // Note: leading whitespace, mix or space and comma and semicolon is intentional
-        String expected = "AllowedMechanisms{0x00000040, 0x00000000, 0x00000250, 0x00000252, 0x00000270, 0x81234567}";
+        String expected = "AllowedMechanisms{SHA256_RSA_PKCS, RSA_PKCS_KEY_PAIR_GEN, SHA256, SHA256_HMAC_GENERAL, SHA512, 0x81234567}";
         
         AllowedMechanisms result = AllowedMechanisms.parse(allowedMechanismsProperty);
         assertEquals(expected, result.toString());

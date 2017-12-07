@@ -54,7 +54,11 @@ public class AllowedMechanisms {
                     if (part.startsWith("0x") && part.length() > 2) {
                         mechs.add(Long.parseLong(part.substring(2), 16));
                     } else {
-                        mechs.add(Long.parseLong(part));
+                        Long l = MechanismNames.longFromName(part);
+                        if (l == null) {
+                            l = Long.parseLong(part);
+                        }
+                        mechs.add(l);
                     }
                 } catch (NumberFormatException ex) {
                     throw new IllegalArgumentException("Mechanism could not be parsed as number: " + ex.getMessage());
@@ -104,7 +108,8 @@ public class AllowedMechanisms {
         final StringBuilder sb = new StringBuilder();
         final Iterator<Long> iterator = mechs.iterator();
         while (iterator.hasNext()) {
-            sb.append(String.format("0x%08x", iterator.next()));
+            sb.append(MechanismNames.nameFromLong(iterator.next()));
+            //sb.append(String.format("0x%08x", iterator.next()));
             if (iterator.hasNext()) {
                 sb.append(", ");
             }

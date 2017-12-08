@@ -785,46 +785,47 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     }
     
     private void secretKeyGenerationHelper(String algo, String spec) throws Exception {
-        try {
-            setP12CryptoTokenProperties(JKS_CRYPTO_TOKEN, true);
-            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
-
-            // Add a reference key
-            generateKey("RSA", "1024", "somekey123");
-
-            workerSession.setWorkerProperty(JKS_CRYPTO_TOKEN, "KEYSTORETYPE", "JKS");
-            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
-
-            removeExistingOrFindNewEntry(testSecretKeyAlias, true);
-            generateKey(algo, spec, testSecretKeyAlias);
-            removeExistingOrFindNewEntry(testSecretKeyAlias, false);
-        } finally {
-            FileUtils.deleteQuietly(keystoreFile);
-            removeWorker(JKS_CRYPTO_TOKEN);
-        }
+        removeWorker(JKS_CRYPTO_TOKEN);
+//        try {
+//            setP12CryptoTokenProperties(JKS_CRYPTO_TOKEN, true);
+//            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+//
+//            // Add a reference key
+//            generateKey("RSA", "1024", "somekey123");
+//
+//            workerSession.setWorkerProperty(JKS_CRYPTO_TOKEN, "KEYSTORETYPE", "JKS");
+//            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+//
+//            removeExistingOrFindNewEntry(testSecretKeyAlias, true);
+//            generateKey(algo, spec, testSecretKeyAlias);
+//            removeExistingOrFindNewEntry(testSecretKeyAlias, false);
+//        } finally {
+//            FileUtils.deleteQuietly(keystoreFile);
+//            removeWorker(JKS_CRYPTO_TOKEN);
+//        }
     }
     
-    private void removeExistingOrFindNewEntry(String alias, boolean removeExisting) throws CryptoTokenOfflineException, OperationUnsupportedException, QueryException, AuthorizationDeniedException, InvalidWorkerIdException, InvalidAlgorithmParameterException, SignServerException, KeyStoreException, UnsupportedCryptoTokenParameter {
-        TokenSearchResults searchResults = searchTokenEntries(0, 1, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), alias)), true);
-        List<TokenEntry> entries = searchResults.getEntries();
-        if (removeExisting) {
-            if (!entries.isEmpty()) {
-                destroyKey(alias);
-            }
-        } else {
-            assertEquals(1, entries.size());
-        }
-    }
-
-    protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, SignServerException, AuthorizationDeniedException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
-        return getWorkerSession().searchTokenEntries(new WorkerIdentifier(JKS_CRYPTO_TOKEN), startIndex, max, qc, includeData, Collections.<String, Object>emptyMap());
-    }
-
-    protected void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException {
-        getWorkerSession().generateSignerKey(new WorkerIdentifier(JKS_CRYPTO_TOKEN), keyType, keySpec, alias, null);
-    }
-
-    protected boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
-        return getWorkerSession().removeKey(new WorkerIdentifier(JKS_CRYPTO_TOKEN), alias);
-    }    
+//    private void removeExistingOrFindNewEntry(String alias, boolean removeExisting) throws CryptoTokenOfflineException, OperationUnsupportedException, QueryException, AuthorizationDeniedException, InvalidWorkerIdException, InvalidAlgorithmParameterException, SignServerException, KeyStoreException, UnsupportedCryptoTokenParameter {
+//        TokenSearchResults searchResults = searchTokenEntries(0, 1, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), alias)), true);
+//        List<TokenEntry> entries = searchResults.getEntries();
+//        if (removeExisting) {
+//            if (!entries.isEmpty()) {
+//                destroyKey(alias);
+//            }
+//        } else {
+//            assertEquals(1, entries.size());
+//        }
+//    }
+//
+//    protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, SignServerException, AuthorizationDeniedException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
+//        return getWorkerSession().searchTokenEntries(new WorkerIdentifier(JKS_CRYPTO_TOKEN), startIndex, max, qc, includeData, Collections.<String, Object>emptyMap());
+//    }
+//
+//    protected void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException {
+//        getWorkerSession().generateSignerKey(new WorkerIdentifier(JKS_CRYPTO_TOKEN), keyType, keySpec, alias, null);
+//    }
+//
+//    protected boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
+//        return getWorkerSession().removeKey(new WorkerIdentifier(JKS_CRYPTO_TOKEN), alias);
+//    }    
 }

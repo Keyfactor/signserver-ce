@@ -42,7 +42,7 @@ import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 
 /**
- * JKS CryptoToken test uses JKS file on file system.
+ * JKS CryptoToken test uses JKS file on file system, The JKS keystore in the file uses a standard PKCS12 format.
  * 
  * @author Vinay Singh
  * @version $Id$
@@ -89,7 +89,12 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
         workerSession.setWorkerProperty(tokenId, "KEYSTORETYPE", "JKS");
         workerSession.setWorkerProperty(tokenId, "KEYSTOREPASSWORD", "foo123");
     }    
-        
+    
+    /**
+     * Tests AES secret key generation.
+     * 
+     * @throws Exception
+     */    
     @Test
     public void testGenerateSecretKey_AES_256() throws Exception {
         LOG.info("testGenerateSecretKey_AES_256");
@@ -100,6 +105,11 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
         }
     }
     
+    /**
+     * Tests DES secret key generation.
+     * 
+     * @throws Exception
+     */  
     @Test
     public void testGenerateSecretKey_DES_56() throws Exception {
         LOG.info("testGenerateSecretKey_DES_56");

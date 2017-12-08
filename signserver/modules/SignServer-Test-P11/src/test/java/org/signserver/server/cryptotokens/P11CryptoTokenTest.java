@@ -171,11 +171,21 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
         }
     }
 
+    /**
+     * Tests AES secret key generation.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testGenerateSecretKey_AES_256_PKCS11CryptoToken() throws Exception {
         secretKeyGenerationHelper("AES", "256");
     }
 
+    /**
+     * Tests DES secret key generation.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testGenerateSecretKey_DES_56_PKCS11CryptoToken() throws Exception {
         secretKeyGenerationHelper("DES", "56");

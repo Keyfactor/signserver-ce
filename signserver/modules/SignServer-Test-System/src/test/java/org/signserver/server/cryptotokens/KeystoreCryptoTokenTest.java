@@ -15,14 +15,17 @@ package org.signserver.server.cryptotokens;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -40,13 +43,21 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.util.encoders.Base64;
+import org.cesecore.authorization.AuthorizationDeniedException;
+import org.cesecore.util.query.QueryCriteria;
+import org.cesecore.util.query.elems.RelationalOperator;
+import org.cesecore.util.query.elems.Term;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.KeyTestResult;
+import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.PKCS10CertReqInfo;
+import org.signserver.common.QueryException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.TokenOutOfSpaceException;
+import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 
@@ -62,6 +73,8 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     
     private static final int WORKER_CMS = 30003;
     private static final int CRYPTO_TOKEN = 30103;
+    private static final int JKS_CRYPTO_TOKEN = 30104;
+    private final String testSecretKeyAlias="testsecretkey";
     
     private static final String SIGN_KEY_ALIAS = "p12signkey1234";
     private static final String TEST_KEY_ALIAS = "p12testkey1234";
@@ -723,4 +736,95 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
             removeWorker(workerId);
         }
     }
+    
+    private void setP12CryptoTokenProperties(final int tokenId, boolean autoActivate) throws Exception {
+        // Create keystore
+        keystoreFile = File.createTempFile(KEYSTORE_NAME, ".p12");
+        FileOutputStream out = null;
+        try {
+            KeyStore ks = KeyStore.getInstance("PKCS12", "BC");
+            ks.load(null, null);
+            out = new FileOutputStream(keystoreFile);
+            ks.store(out, pin.toCharArray());
+        } finally {
+            IOUtils.closeQuietly(out);
+        }
+
+        // Setup crypto token
+        workerSession.setWorkerProperty(tokenId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
+        workerSession.setWorkerProperty(tokenId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, KeystoreCryptoToken.class.getName());
+        workerSession.setWorkerProperty(tokenId, "NAME", "TestJKSCryptoTokenP12");
+        workerSession.setWorkerProperty(tokenId, "KEYSTORETYPE", "PKCS12");
+        workerSession.setWorkerProperty(tokenId, "TYPE", "PROCESSABLE");
+        workerSession.setWorkerProperty(tokenId, "KEYSTOREPATH", keystoreFile.getAbsolutePath());       
+        if (autoActivate) {
+            workerSession.setWorkerProperty(tokenId, "KEYSTOREPASSWORD", pin);
+        } else {
+            workerSession.removeWorkerProperty(tokenId, "KEYSTOREPASSWORD");
+        }        
+    }
+    
+    /**
+     * Tests AES secret key generation loading a PKS12 CryptoToken and changing KEYSTOREYPTE Type to JKS.
+     * 
+     * @throws Exception
+     */
+    public void testGenerateSecretKey_AES_256_JKSTypeP12CryptoToken() throws Exception {
+        LOG.info("testGenerateSecretKey_AES_256_JKSTypeP12CryptoToken");
+        secretKeyGenerationHelper("AES", "256");
+    }
+    
+    /**
+     * Tests DES secret key generation loading a PKS12 CryptoToken and changing KEYSTOREYPTE Type to JKS.
+     * 
+     * @throws Exception
+     */
+    public void testGenerateSecretKey_DES_56_JKSTypeP12CryptoToken() throws Exception {
+        LOG.info("testGenerateSecretKey_DES_56_JKSTypeP12CryptoToken");
+        secretKeyGenerationHelper("DES", "56");
+    }
+    
+    private void secretKeyGenerationHelper(String algo, String spec) throws Exception {
+        try {
+            setP12CryptoTokenProperties(JKS_CRYPTO_TOKEN, true);
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            // Add a reference key
+            generateKey("RSA", "1024", "somekey123");
+
+            workerSession.setWorkerProperty(JKS_CRYPTO_TOKEN, "KEYSTORETYPE", "JKS");
+            workerSession.reloadConfiguration(JKS_CRYPTO_TOKEN);
+
+            removeExistingOrFindNewEntry(testSecretKeyAlias, true);
+            generateKey(algo, spec, testSecretKeyAlias);
+            removeExistingOrFindNewEntry(testSecretKeyAlias, false);
+        } finally {
+            FileUtils.deleteQuietly(keystoreFile);
+            removeWorker(JKS_CRYPTO_TOKEN);
+        }
+    }
+    
+    private void removeExistingOrFindNewEntry(String alias, boolean removeExisting) throws CryptoTokenOfflineException, OperationUnsupportedException, QueryException, AuthorizationDeniedException, InvalidWorkerIdException, InvalidAlgorithmParameterException, SignServerException, KeyStoreException, UnsupportedCryptoTokenParameter {
+        TokenSearchResults searchResults = searchTokenEntries(0, 1, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), alias)), true);
+        List<TokenEntry> entries = searchResults.getEntries();
+        if (removeExisting) {
+            if (!entries.isEmpty()) {
+                destroyKey(alias);
+            }
+        } else {
+            assertEquals(1, entries.size());
+        }
+    }
+
+    protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, SignServerException, AuthorizationDeniedException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
+        return getWorkerSession().searchTokenEntries(new WorkerIdentifier(JKS_CRYPTO_TOKEN), startIndex, max, qc, includeData, Collections.<String, Object>emptyMap());
+    }
+
+    protected void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException {
+        getWorkerSession().generateSignerKey(new WorkerIdentifier(JKS_CRYPTO_TOKEN), keyType, keySpec, alias, null);
+    }
+
+    protected boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
+        return getWorkerSession().removeKey(new WorkerIdentifier(JKS_CRYPTO_TOKEN), alias);
+    }    
 }

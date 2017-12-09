@@ -641,6 +641,12 @@ public class CryptoTokenHelper {
                                 info.put("Error", ex.getMessage());
                                 LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
                             }
+                            final Certificate[] chain = new Certificate[0];
+                            try {
+                                entry.setParsedChain(chain);
+                            } catch (CertificateEncodingException ex) {
+                                LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
+                            }
                             info.put(NO_OF_SIGNINGS, String.valueOf(getNoOfSignings(certificate.getPublicKey(), services)));
                         } else if (TokenEntry.TYPE_SECRETKEY_ENTRY.equals(type)) {
                             try {

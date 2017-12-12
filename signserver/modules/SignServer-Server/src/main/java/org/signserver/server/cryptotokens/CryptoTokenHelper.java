@@ -964,7 +964,7 @@ public class CryptoTokenHelper {
     }
     
     private static boolean isKeyAlgoSymmetric(String keyAlgorithm, Provider provider) {
-        if (provider.getName().equals("JackNJI11")) {
+        if (provider != null && provider.getName().equals("JackNJI11")) {
             if (keyAlgorithm.startsWith(SECRET_KEY_PREFIX)) {
                 return true;
             } else {

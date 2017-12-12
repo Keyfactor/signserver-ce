@@ -147,11 +147,9 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
             // Parse newer attribute properties
             try {
                 attributeProperties = AttributeProperties.fromWorkerProperties(props);
-                
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Attribute properties:\n" + attributeProperties);
                 }
-                
             } catch (IllegalArgumentException ex) {
                 throw new CryptoTokenInitializationFailureException("Unable to parse attributes: " + ex.getMessage());
             }

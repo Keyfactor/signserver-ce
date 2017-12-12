@@ -96,8 +96,7 @@ import org.signserver.server.IServices;
 import org.signserver.server.KeyUsageCounterHash;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounter;
-import se.primekey.signserver.labs.unlimitedkeys.common.KeyIdentifierUtils;
-import static se.primekey.signserver.labs.unlimitedkeys.common.provider.JackNJI11Provider.NAME;
+import org.signserver.server.KeyIdentifierUtils;
 
 /**
  * Helper methods used by the CryptoTokens.
@@ -965,7 +964,7 @@ public class CryptoTokenHelper {
     }
     
     private static boolean isKeyAlgoSymmetric(String keyAlgorithm, Provider provider) {
-        if (provider.getName().equals(NAME)) {
+        if (provider.getName().equals("JackNJI11")) {
             if (keyAlgorithm.startsWith(SECRET_KEY_PREFIX)) {
                 return true;
             } else {

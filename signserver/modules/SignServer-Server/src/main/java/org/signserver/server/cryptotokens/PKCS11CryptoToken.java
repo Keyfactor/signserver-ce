@@ -40,7 +40,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -49,7 +48,6 @@ import org.bouncycastle.crypto.ec.CustomNamedCurves;
 import org.bouncycastle.jcajce.provider.asymmetric.util.ECUtil;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.cesecore.certificates.util.AlgorithmTools;
-import org.cesecore.keys.token.CryptoToken;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
 import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
@@ -64,10 +62,8 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.QueryException;
 import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.common.TokenOutOfSpaceException;
-import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.ExceptionUtil;
 import org.signserver.server.IServices;
@@ -96,9 +92,8 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     private static final String WORKERCACHE_ENTRY = "PKCS11CryptoToken.CRYPTO_INSTANCE";
     
     private static final String PROPERTY_SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
-    private static final long CKA_ALLOWED_MECHANISMS = 1073743360L;
-    
-    private AllowedMechanisms allowedMechanisms;
+
+    private AttributeProperties attributeProperties;
 
     public PKCS11CryptoToken() throws InstantiationException {
     }
@@ -147,6 +142,18 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                 } finally {
                     IOUtils.closeQuietly(out);
                 }
+            }
+
+            // Parse newer attribute properties
+            try {
+                attributeProperties = AttributeProperties.fromWorkerProperties(props);
+                
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Attribute properties:\n" + attributeProperties);
+                }
+                
+            } catch (IllegalArgumentException ex) {
+                throw new CryptoTokenInitializationFailureException("Unable to parse attributes: " + ex.getMessage());
             }
 
             // Check that both the new or the legacy properties are specified at the same time
@@ -273,19 +280,6 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                 } catch (NumberFormatException ex) {
                     throw new CryptoTokenInitializationFailureException("Incorrect value for " + CryptoTokenHelper.PROPERTY_KEYGENERATIONLIMIT + ": " + ex.getLocalizedMessage());
                 }
-            }
-            
-            // Optional property allowedMechanisms
-            final String allowedMechanismsValue = props.getProperty(CryptoTokenHelper.PROPERTY_ALLOWED_MECHANISMS);            
-            if (allowedMechanismsValue != null) {
-                try {
-                    allowedMechanisms = AllowedMechanisms.parse(allowedMechanismsValue);
-                } catch (IllegalArgumentException ex) {
-                    throw new CryptoTokenInitializationFailureException(ex.getMessage());
-                }
-            }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Allowed mechanisms: " + allowedMechanisms);
             }
 
             delegate = new KeyStorePKCS11CryptoToken();
@@ -469,21 +463,17 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                 delegate.generateKeyPair(keySpec, alias);
             } else {
                 if (CryptoTokenHelper.isJREPatched()) {
-                    // TODO: Later on we could take this attributes from config or from params
-                    final CK_ATTRIBUTE[] publicTemplate = {};
-                    final List<CK_ATTRIBUTE> privateTemplate = new ArrayList<>(1);
+                    final CK_ATTRIBUTE[] publicTemplate = convert(attributeProperties.getPublicTemplate(keyAlgorithm));
+                    final CK_ATTRIBUTE[] privateTemplate = convert(attributeProperties.getPrivateTemplate(keyAlgorithm));
 
-                    // TODO: Later on we could override this attributes from the config with values from params
-                    if (allowedMechanisms != null) {
-                        privateTemplate.add(new CK_ATTRIBUTE(CKA_ALLOWED_MECHANISMS, allowedMechanisms.toBinaryEncoding()));
-                    }
+                    // TODO: Later on we could override attribute properties from the params parameter
 
                     // Use different P11AsymmetricParameterSpec classes as the underlaying library assumes the spec contains the string "RSA" or "EC"
                     final AlgorithmParameterSpec specWithAttributes;
                     if ("RSA".equalsIgnoreCase(keyAlgorithm)) {
-                        specWithAttributes = new RSAP11AsymmetricParameterSpec(publicTemplate, privateTemplate.toArray(new CK_ATTRIBUTE[0]), spec);
+                        specWithAttributes = new RSAP11AsymmetricParameterSpec(publicTemplate, privateTemplate, spec);
                     } else if ("ECDSA".equalsIgnoreCase(keyAlgorithm)) {
-                        specWithAttributes = new ECP11AsymmetricParameterSpec(publicTemplate, privateTemplate.toArray(new CK_ATTRIBUTE[0]), spec);
+                        specWithAttributes = new ECP11AsymmetricParameterSpec(publicTemplate, privateTemplate, spec);
                     } else {
                         throw new IllegalArgumentException("Unsupported key algorithm: " + keyAlgorithm);
                     }
@@ -645,6 +635,17 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     @Override
     public void releaseCryptoInstance(ICryptoInstance instance, RequestContext context) {
         // NOP
+    }
+
+    private CK_ATTRIBUTE[] convert(List<AttributeProperties.Attribute> attributes) {
+        if (attributes == null) {
+            return new CK_ATTRIBUTE[0];
+        }
+        final List<CK_ATTRIBUTE> result = new ArrayList<>(attributes.size());
+        for (AttributeProperties.Attribute attribute : attributes) {
+            result.add(new CK_ATTRIBUTE(attribute.getId(), attribute.getValue()));
+        }
+        return result.toArray(new CK_ATTRIBUTE[0]);
     }
 
     private static class KeyStorePKCS11CryptoToken extends org.cesecore.keys.token.PKCS11CryptoToken {

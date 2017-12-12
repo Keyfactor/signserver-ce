@@ -54,6 +54,9 @@ public class AllowedMechanisms {
                     if (part.startsWith("0x") && part.length() > 2) {
                         mechs.add(Long.parseLong(part.substring(2), 16));
                     } else {
+                        if (part.startsWith("CKM_")) {
+                            part = part.substring("CKM_".length());
+                        }
                         Long l = MechanismNames.longFromName(part);
                         if (l == null) {
                             l = Long.parseLong(part);

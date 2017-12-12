@@ -45,7 +45,7 @@ public class MechanismNames {
         if (s == null) {
             return String.format("0x%08x", l);
         } else {
-            return s;
+            return "CKM_" + s;
         }
     }
 

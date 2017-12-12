@@ -19,7 +19,6 @@ import java.util.TreeSet;
 import static junit.framework.TestCase.assertEquals;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Hex;
-import static org.junit.Assert.assertArrayEquals;
 import org.junit.Test;
 import org.pkcs11.jacknji11.CKA;
 
@@ -181,7 +180,7 @@ public class AttributePropertiesTest {
         Properties actual = AttributeProperties.fromWorkerProperties(properties).toWorkerProperties();
         
         assertEquals("ATTRIBUTE.PRIVATE.RSA.CKA_VERIFY", "true", actual.get("ATTRIBUTE.PRIVATE.RSA.CKA_VERIFY"));
-        assertEquals("ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS", "SHA256_RSA_PKCS, RSA_PKCS_KEY_PAIR_GEN", actual.get("ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS"));
+        assertEquals("ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS", "CKM_SHA256_RSA_PKCS, CKM_RSA_PKCS_KEY_PAIR_GEN", actual.get("ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS"));
         assertEquals("ATTRIBUTE.PRIVATE.ECDSA.CKA_EXTRACTABLE", "false", actual.get("ATTRIBUTE.PRIVATE.ECDSA.CKA_EXTRACTABLE"));        
     }
     

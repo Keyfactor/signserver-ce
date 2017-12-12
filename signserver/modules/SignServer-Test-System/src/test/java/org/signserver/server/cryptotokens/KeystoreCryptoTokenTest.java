@@ -800,6 +800,20 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
         }
     }
     
+    /**
+     * Tests Blowfish secret key generation loading a PKS12 CryptoToken and changing KEYSTOREYPTE Type to JKS.
+     * 
+     * @throws Exception
+     */
+    public void testGenerateSecretKey_Blowfish_168_JKSTypeP12CryptoToken() throws Exception {
+        LOG.info("testGenerateSecretKey_Blowfish_168_JKSTypeP12CryptoToken");
+        if (isTestSupportedByJavaVersion) {
+            secretKeyGenerationHelper("Blowfish", "168");
+        } else {
+            LOG.info("Test is not supported by Java Version so do nothing");
+        }
+    }
+    
     private void secretKeyGenerationHelper(String algo, String spec) throws Exception {
         try {
             setP12CryptoTokenProperties(JKS_CRYPTO_TOKEN, true);

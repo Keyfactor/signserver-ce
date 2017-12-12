@@ -190,6 +190,16 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     public void testGenerateSecretKey_DES_56_PKCS11CryptoToken() throws Exception {
         secretKeyGenerationHelper("DES", "56");
     }
+    
+    /**
+     * Tests DESede secret key generation.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateSecretKey_DESede_168_PKCS11CryptoToken() throws Exception {
+        secretKeyGenerationHelper("DESede", "168");
+    }
 
     private void removeExistingOrFindNewEntry(String alias, boolean removeExisting) throws CryptoTokenOfflineException, OperationUnsupportedException, QueryException, AuthorizationDeniedException, InvalidWorkerIdException, InvalidAlgorithmParameterException, SignServerException, KeyStoreException, UnsupportedCryptoTokenParameter {
         TokenSearchResults searchResults = searchTokenEntries(0, 1, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), alias)), true);

@@ -120,6 +120,21 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
         }
     }
     
+    /**
+     * Tests Blowfish secret key generation.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateSecretKey_Blowfish_168_JKSTypeP12CryptoToken() throws Exception {
+        LOG.info("testGenerateSecretKey_Blowfish_168_JKSTypeP12CryptoToken");
+        if (isTestSupportedByJavaVersion) {
+            secretKeyGenerationHelper("Blowfish", "168");
+        } else {
+            LOG.info("Test is not supported by Java Version so do nothing");
+        }
+    }
+    
     private void secretKeyGenerationHelper(String algo, String keySpec) throws Exception {
         try {
             setupCryptoTokenProperties(CRYPTO_TOKEN);

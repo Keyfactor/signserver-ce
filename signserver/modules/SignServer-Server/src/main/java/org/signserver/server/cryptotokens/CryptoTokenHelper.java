@@ -897,7 +897,14 @@ public class CryptoTokenHelper {
             keyStore.setKeyEntry(alias, key, authCode, new Certificate[] { newCert });
         }
     }  
-        
+    
+    /**
+     * Fetches the counter value for number of signing from database for provided public key.
+     *
+     * @param publicKey public Key associated with signer certificate
+     * @param services required for acquiring database service
+     * @return long value representing signing counter.
+     */
     public static long getNoOfSignings(PublicKey publicKey, final IServices services) {
         long keyUsageCounterValue = 0;
         KeyUsageCounter counter = services.get(IKeyUsageCounterDataService.class).getCounter(KeyUsageCounterHash.create(publicKey));

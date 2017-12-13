@@ -521,7 +521,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         }
 
         try {
-            if (CryptoTokenHelper.shouldGenerateKeyPair(keyAlgorithm, getKeyStore().getProvider())) {
+            if (CryptoTokenHelper.isKeyAlgorithmAsymmetric(keyAlgorithm, getKeyStore().getProvider())) {
                 generateKeyPair(keyAlgorithm, keySpec, alias, authCode, params, services);
             } else {
                 generateSecretKey(keyAlgorithm, keySpec, alias);
@@ -534,7 +534,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     
     private void generateSecretKey(String keyAlgorithm, String keySpec, String alias) throws CryptoTokenOfflineException {
         if (keyAlgorithm.startsWith(CryptoTokenHelper.SECRET_KEY_PREFIX)) {
-            keyAlgorithm = keyAlgorithm.substring(keyAlgorithm.indexOf(SECRET_KEY_PREFIX) + 4);
+            keyAlgorithm = keyAlgorithm.substring(keyAlgorithm.indexOf(SECRET_KEY_PREFIX) + SECRET_KEY_PREFIX.length());
         }
         try {
             delegate.generateKey(keyAlgorithm, Integer.valueOf(keySpec), alias);

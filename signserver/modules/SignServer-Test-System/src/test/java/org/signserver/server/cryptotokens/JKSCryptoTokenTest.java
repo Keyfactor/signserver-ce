@@ -58,13 +58,11 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
     private static final int CRYPTO_TOKEN = 10300;
     private static final String CRYPTO_TOKEN_NAME = "TestJKSCryptoToken";
     private final String testSecretKeyAlias = "testsecretkey";
-    private static boolean isTestSupportedByJavaVersion = false;
-    
+    private static final double TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS= 1.7; 
+    private static final double JAVA_VERSION;
+        
     static {
-        if (System.getProperty("java.version").startsWith("1.8") || System.getProperty("java.version").startsWith("1.9")
-                || System.getProperty("java.version").startsWith("9")) {
-            isTestSupportedByJavaVersion = true;
-        }
+        JAVA_VERSION = getJavaVersion();
     }
     
     public JKSCryptoTokenTest() {
@@ -98,7 +96,7 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
     @Test
     public void testGenerateSecretKey_AES_256() throws Exception {
         LOG.info("testGenerateSecretKey_AES_256");
-        if (isTestSupportedByJavaVersion) {
+        if (JAVA_VERSION > TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS) {
             secretKeyGenerationHelper("AES", "256");
         } else {
             LOG.info("Test is not supported by Java Version so do nothing");
@@ -113,7 +111,7 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
     @Test
     public void testGenerateSecretKey_DES_56() throws Exception {
         LOG.info("testGenerateSecretKey_DES_56");
-        if (isTestSupportedByJavaVersion) {
+        if (JAVA_VERSION > TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS) {
             secretKeyGenerationHelper("DES", "56");
         } else {
             LOG.info("Test is not supported by Java Version so do nothing");
@@ -128,7 +126,7 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
     @Test
     public void testGenerateSecretKey_Blowfish_168_JKSTypeP12CryptoToken() throws Exception {
         LOG.info("testGenerateSecretKey_Blowfish_168_JKSTypeP12CryptoToken");
-        if (isTestSupportedByJavaVersion) {
+        if (JAVA_VERSION > TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS) {
             secretKeyGenerationHelper("Blowfish", "168");
         } else {
             LOG.info("Test is not supported by Java Version so do nothing");
@@ -140,25 +138,27 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
             setupCryptoTokenProperties(CRYPTO_TOKEN);
             workerSession.reloadConfiguration(CRYPTO_TOKEN);
 
-            removeExistingOrFindNewEntry(testSecretKeyAlias, true);
+            removeExisting(testSecretKeyAlias);
             generateKey(algo, keySpec, testSecretKeyAlias);
-            removeExistingOrFindNewEntry(testSecretKeyAlias, false);
+            findNewEntry(testSecretKeyAlias);
         } finally {
             destroyKey(testSecretKeyAlias);
             removeWorker(CRYPTO_TOKEN);
         }
     }
     
-    private void removeExistingOrFindNewEntry(String alias, boolean removeExisting) throws CryptoTokenOfflineException, OperationUnsupportedException, QueryException, AuthorizationDeniedException, InvalidWorkerIdException, InvalidAlgorithmParameterException, SignServerException, KeyStoreException, UnsupportedCryptoTokenParameter {
+    private void removeExisting(String alias) throws CryptoTokenOfflineException, OperationUnsupportedException, QueryException, AuthorizationDeniedException, InvalidWorkerIdException, InvalidAlgorithmParameterException, SignServerException, KeyStoreException, UnsupportedCryptoTokenParameter {
         TokenSearchResults searchResults = searchTokenEntries(0, 1, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), alias)), true);
         List<TokenEntry> entries = searchResults.getEntries();
-        if (removeExisting) {
-            if (!entries.isEmpty()) {
-                destroyKey(alias);
-            }
-        } else {
-            assertEquals(1, entries.size());
+        if (!entries.isEmpty()) {
+            destroyKey(alias);
         }
+    }
+    
+    private void findNewEntry(String alias) throws CryptoTokenOfflineException, OperationUnsupportedException, QueryException, AuthorizationDeniedException, InvalidWorkerIdException, InvalidAlgorithmParameterException, SignServerException, KeyStoreException, UnsupportedCryptoTokenParameter {
+        TokenSearchResults searchResults = searchTokenEntries(0, 1, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), alias)), true);
+        List<TokenEntry> entries = searchResults.getEntries();
+        assertEquals(1, entries.size());
     }
 
     @Override

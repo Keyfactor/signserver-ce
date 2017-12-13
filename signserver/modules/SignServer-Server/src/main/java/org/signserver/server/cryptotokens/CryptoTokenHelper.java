@@ -133,8 +133,8 @@ public class CryptoTokenHelper {
     public static final String TOKEN_ENTRY_PKCS11_ATTRIBUTES = "PKCS#11 Attributes";
     
     public static final String SECRET_KEY_PREFIX = "SEC:";
-    public static final String SERVICE_TYPE_KEYGENEARTOR = "KeyGenerator";
-    public static final String SERVICE_TYPE_KEYPAIRGENEARTOR = "KeyPairGenerator";
+    public static final String SERVICE_TYPE_KEYGENERATOR = "KeyGenerator";
+    public static final String SERVICE_TYPE_KEYPAIRGENERATOR = "KeyPairGenerator";
     
     private static final long DEFAULT_BACKDATE = (long) 10 * 60; // 10 minutes in seconds
     private static final long DEFAULT_VALIDITY_S = (long) 30 * 24 * 60 * 60 * 365; // 30 year in seconds
@@ -924,42 +924,50 @@ public class CryptoTokenHelper {
         return result;
     }
     
-    private static boolean ifSecretKeyGeneratorServiceExists(Provider provider, String algoName) {
-        boolean isProvidedAlgoSecretKey = false;
+    private static boolean secretKeyGeneratorServiceExists(String algoName, Provider provider) {
+        boolean result = false;
         if (provider != null) {
-            System.out.println("Provider: " + provider.getName());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Provider: " + provider.getName());
+            }
             for (Provider.Service service : provider.getServices()) {
-                System.out.println("Type: " + service.getType() + "  Algorithm: " + service.getAlgorithm());
-                if (service.getType().equals(SERVICE_TYPE_KEYGENEARTOR) && service.getAlgorithm().equals(algoName)) {
-                    isProvidedAlgoSecretKey = true;
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Type: " + service.getType() + "  Algorithm: " + service.getAlgorithm());
+                }
+                if (service.getType().equals(SERVICE_TYPE_KEYGENERATOR) && service.getAlgorithm().equals(algoName)) {
+                    result = true;
                     break;
                 }
-                if (service.getType().equals(SERVICE_TYPE_KEYPAIRGENEARTOR) && service.getAlgorithm().equals(algoName)) {
-                    isProvidedAlgoSecretKey = false;
+                if (service.getType().equals(SERVICE_TYPE_KEYPAIRGENERATOR) && service.getAlgorithm().equals(algoName)) {
+                    result = false;
                     break;
                 }
             }
         } else {
             outerLoop:
             for (Provider secProvider : Security.getProviders()) {
-                System.out.println("Provider: " + secProvider.getName());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Provider: " + secProvider.getName());
+                }
                 for (Provider.Service service : secProvider.getServices()) {
-                    System.out.println("Type: " + service.getType() + "  Algorithm: " + service.getAlgorithm());
-                    if (service.getType().equals(SERVICE_TYPE_KEYGENEARTOR) && service.getAlgorithm().equals(algoName)) {
-                        isProvidedAlgoSecretKey = true;
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Type: " + service.getType() + "  Algorithm: " + service.getAlgorithm());
+                    }
+                    if (service.getType().equals(SERVICE_TYPE_KEYGENERATOR) && service.getAlgorithm().equals(algoName)) {
+                        result = true;
                         break outerLoop;
                     }
-                    if (service.getType().equals(SERVICE_TYPE_KEYPAIRGENEARTOR) && service.getAlgorithm().equals(algoName)) {
-                        isProvidedAlgoSecretKey = false;
+                    if (service.getType().equals(SERVICE_TYPE_KEYPAIRGENERATOR) && service.getAlgorithm().equals(algoName)) {
+                        result = false;
                         break outerLoop;
                     }
                 }
             }
         }
-        return isProvidedAlgoSecretKey;
+        return result;
     }
     
-    public static boolean shouldGenerateKeyPair(String keyAlgorithm, Provider provider) {
+    public static boolean isKeyAlgorithmAsymmetric(String keyAlgorithm, Provider provider) {
         return !isKeyAlgoSymmetric(keyAlgorithm.trim(), provider);
     }
     
@@ -993,7 +1001,7 @@ public class CryptoTokenHelper {
             } else if (Arrays.asList(KNOWNPRIVATEKEYALGONAMES).contains(keyAlgorithm)) {
                 return false;
             } else {
-                return ifSecretKeyGeneratorServiceExists(provider, keyAlgorithm);
+                return secretKeyGeneratorServiceExists(keyAlgorithm, provider);
             }
         }
     }

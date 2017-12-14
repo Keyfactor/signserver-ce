@@ -60,6 +60,7 @@ import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import static org.signserver.server.cryptotokens.CryptoTokenHelper.SECRET_KEY_PREFIX;
 
 /**
  * System tests for the KeystoreCryptoToken.
@@ -806,7 +807,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
     public void testGenerateSecretKey_Blowfish_168_JKSTypeP12CryptoToken() throws Exception {
         LOG.info("testGenerateSecretKey_Blowfish_168_JKSTypeP12CryptoToken");
         if (JAVA_VERSION > TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS) {
-            secretKeyGenerationHelper("Blowfish", "168");
+            secretKeyGenerationHelper(SECRET_KEY_PREFIX + "Blowfish", "168");
         } else {
             LOG.info("Test is not supported by Java Version so do nothing");
         }

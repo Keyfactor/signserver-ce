@@ -27,7 +27,6 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.ProviderException;
 import java.security.PublicKey;
-import java.security.Security;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.UnrecoverableEntryException;
@@ -55,7 +54,6 @@ import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.PredicateUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
@@ -96,7 +94,6 @@ import org.signserver.server.IServices;
 import org.signserver.server.KeyUsageCounterHash;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounter;
-import org.signserver.server.KeyIdentifierUtils;
 
 /**
  * Helper methods used by the CryptoTokens.
@@ -133,8 +130,7 @@ public class CryptoTokenHelper {
     public static final String TOKEN_ENTRY_PKCS11_ATTRIBUTES = "PKCS#11 Attributes";
     
     public static final String SECRET_KEY_PREFIX = "SEC:";
-    public static final String SERVICE_TYPE_KEYGENERATOR = "KeyGenerator";
-    public static final String SERVICE_TYPE_KEYPAIRGENERATOR = "KeyPairGenerator";
+    public static final String CKM_SECRET_KEY_ALGO_SUFFIX="_KEY_GEN";
     
     private static final long DEFAULT_BACKDATE = (long) 10 * 60; // 10 minutes in seconds
     private static final long DEFAULT_VALIDITY_S = (long) 30 * 24 * 60 * 60 * 365; // 30 year in seconds
@@ -164,9 +160,6 @@ public class CryptoTokenHelper {
     private static final String[] KNOWNSECRETKEYALGONAMES = {
         "AES",
         "DES"};
-    private static final String[] KNOWNPRIVATEKEYALGONAMES = {
-        "RSA",
-        "DSA"};
         
     /**
      * A workaround for the feature in SignServer 2.0 that property keys are 
@@ -929,89 +922,40 @@ public class CryptoTokenHelper {
             }
         }
         return result;
+    }  
+        
+    /**
+     * Identifies whether KeyPair or Key should be generated for provided keyAlgorithm.
+     *
+     * @param keyAlgorithm user provided keyAlgorithm
+     * @return True if keyAlgorithm identified as Asymmetric
+     */
+    public static boolean isKeyAlgorithmAsymmetric(String keyAlgorithm) {
+        return !isKeyAlgoSymmetric(keyAlgorithm.trim());
     }
     
-    private static boolean secretKeyGeneratorServiceExists(String algoName, Provider provider) {
-        boolean result = false;
-        if (provider != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Provider: " + provider.getName());
-            }
-            for (Provider.Service service : provider.getServices()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Type: " + service.getType() + "  Algorithm: " + service.getAlgorithm());
-                }
-                if (service.getType().equals(SERVICE_TYPE_KEYGENERATOR) && service.getAlgorithm().equals(algoName)) {
-                    result = true;
-                    break;
-                }
-                if (service.getType().equals(SERVICE_TYPE_KEYPAIRGENERATOR) && service.getAlgorithm().equals(algoName)) {
-                    result = false;
-                    break;
-                }
-            }
+    private static boolean isKeyAlgoSymmetric(String keyAlgorithm) {
+        if (keyAlgorithm.startsWith(SECRET_KEY_PREFIX)) {
+            return true;
         } else {
-            outerLoop:
-            for (Provider secProvider : Security.getProviders()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Provider: " + secProvider.getName());
-                }
-                for (Provider.Service service : secProvider.getServices()) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Type: " + service.getType() + "  Algorithm: " + service.getAlgorithm());
-                    }
-                    if (service.getType().equals(SERVICE_TYPE_KEYGENERATOR) && service.getAlgorithm().equals(algoName)) {
-                        result = true;
-                        break outerLoop;
-                    }
-                    if (service.getType().equals(SERVICE_TYPE_KEYPAIRGENERATOR) && service.getAlgorithm().equals(algoName)) {
-                        result = false;
-                        break outerLoop;
-                    }
-                }
-            }
-        }
-        return result;
-    }
-    
-    public static boolean isKeyAlgorithmAsymmetric(String keyAlgorithm, Provider provider) {
-        return !isKeyAlgoSymmetric(keyAlgorithm.trim(), provider);
-    }
-    
-    private static boolean isKeyAlgoSymmetric(String keyAlgorithm, Provider provider) {
-        if (provider != null && provider.getName().equals("JackNJI11")) {
-            if (keyAlgorithm.startsWith(SECRET_KEY_PREFIX)) {
-                return true;
-            } else {
-                if (StringUtils.isNumeric(keyAlgorithm)) {
-                    long providerAlgoValue = Long.parseLong(keyAlgorithm);
-                    if (KeyIdentifierUtils.KNOWNSECRETKEYALGOL2SMAPKEYS.contains(providerAlgoValue)) {
-                        return true;
-                    } else if (KeyIdentifierUtils.KNOWNPRIVATEKEYALGOL2SMAPKEYS.contains(providerAlgoValue)) {
-                        return false;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    if (KeyIdentifierUtils.KNOWNSECRETKEYALGOS2LMAPKEYS.contains(keyAlgorithm)) {
-                        return true;
-                    } else if (KeyIdentifierUtils.KNOWNPRIVATEKEYALGOS2LMAPKEYS.contains(keyAlgorithm)) {
-                        return false;
-                    } else {
-                        return false;
-                    }
-                }
-            }
-        } else {
-            if (Arrays.asList(KNOWNSECRETKEYALGONAMES).contains(keyAlgorithm)) {
-                return true;
-            } else if (Arrays.asList(KNOWNPRIVATEKEYALGONAMES).contains(keyAlgorithm)) {
-                return false;
-            } else {
-                return secretKeyGeneratorServiceExists(keyAlgorithm, provider);
-            }
+            return Arrays.asList(KNOWNSECRETKEYALGONAMES).contains(keyAlgorithm);
         }
     }
+    
+    /**
+     * Determines Constant value for provided algorithm name with respect to JacKNJI11 Provider.
+     * @param algorithm
+     * @return
+     */
+    public static long getProviderAlgoValue(String algorithm) {
+        String providerAlgoName = algorithm + CKM_SECRET_KEY_ALGO_SUFFIX;
+        Long longValue = MechanismNames.longFromName(providerAlgoName);
+        if (longValue != null) {
+            return longValue;
+        } else {
+            throw new IllegalArgumentException("Secret Key Algorithm " + algorithm + " not supported ");
+        }
+    }  
 
     /**
      * Checks that the crypto token is enabled, i.e. that it is not disabled.

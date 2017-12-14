@@ -441,7 +441,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
                 }
             }
 
-            if (CryptoTokenHelper.isKeyAlgorithmAsymmetric(keyAlgorithm, null)) {
+            if (CryptoTokenHelper.isKeyAlgorithmAsymmetric(keyAlgorithm)) {
                 generateKeyPair(keyAlgorithm, keySpec, alias, authCode, params, services);
             } else {
                 generateSecretKey(keyAlgorithm, keySpec, alias);

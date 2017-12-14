@@ -521,19 +521,19 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         }
 
         try {
-            if (CryptoTokenHelper.isKeyAlgorithmAsymmetric(keyAlgorithm, getKeyStore().getProvider())) {
+            if (CryptoTokenHelper.isKeyAlgorithmAsymmetric(keyAlgorithm)) {
                 generateKeyPair(keyAlgorithm, keySpec, alias, authCode, params, services);
             } else {
                 generateSecretKey(keyAlgorithm, keySpec, alias);
             }
-        } catch (UnsupportedOperationException | KeyStoreException ex) {
+        } catch (UnsupportedOperationException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }
     }
     
     private void generateSecretKey(String keyAlgorithm, String keySpec, String alias) throws CryptoTokenOfflineException {
-        if (keyAlgorithm.startsWith(CryptoTokenHelper.SECRET_KEY_PREFIX)) {
+        if (keyAlgorithm.startsWith(SECRET_KEY_PREFIX)) {
             keyAlgorithm = keyAlgorithm.substring(keyAlgorithm.indexOf(SECRET_KEY_PREFIX) + SECRET_KEY_PREFIX.length());
         }
         try {

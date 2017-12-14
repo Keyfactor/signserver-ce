@@ -40,6 +40,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import static org.signserver.server.cryptotokens.CryptoTokenHelper.SECRET_KEY_PREFIX;
 
 /**
  * Generic CryptoToken tests using PKCS#11.
@@ -198,7 +199,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
      */
     @Test
     public void testGenerateSecretKey_DESede_168_PKCS11CryptoToken() throws Exception {
-        secretKeyGenerationHelper("DESede", "168");
+        secretKeyGenerationHelper(SECRET_KEY_PREFIX + "DESede", "168");
     }
 
     private void removeExisting(String alias) throws CryptoTokenOfflineException, OperationUnsupportedException, QueryException, AuthorizationDeniedException, InvalidWorkerIdException, InvalidAlgorithmParameterException, SignServerException, KeyStoreException, UnsupportedCryptoTokenParameter {

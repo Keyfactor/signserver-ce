@@ -13,6 +13,7 @@
 package org.signserver.server.cryptotokens;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
@@ -21,6 +22,7 @@ import java.security.cert.CertificateException;
 import java.util.Collections;
 import java.util.List;
 import static junit.framework.TestCase.assertEquals;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
@@ -60,13 +62,17 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
     private static final String CRYPTO_TOKEN_NAME = "TestJKSCryptoToken";
     private final String testSecretKeyAlias = "testsecretkey";
     private static final double TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS= 1.7; 
-    private static final double JAVA_VERSION;
-        
+    private static final double JAVA_VERSION;    
+    private static final String KEYSTORE_NAME = "jkstestkeystore1234";
+    private File keystoreFile;
+    private final File keystore; 
+            
     static {
         JAVA_VERSION = getJavaVersion();
     }
     
-    public JKSCryptoTokenTest() {
+    public JKSCryptoTokenTest() throws FileNotFoundException {
+        keystore = new File(getSignServerHome(), "res/test/samplejkskeystore.jks");
     }
     
     @Before
@@ -75,8 +81,9 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
         super.setUp();        
     }
 
-    private void setupCryptoTokenProperties(final int tokenId) throws Exception {
-        final File keystore = new File(getSignServerHome(), "res/test/samplejkskeystore.jks");
+    private void setupCryptoTokenProperties(final int tokenId) throws Exception {        
+        keystoreFile = File.createTempFile(KEYSTORE_NAME, ".jks");
+        FileUtils.copyFile(keystore, keystoreFile);
         
         // Setup token
         workerSession.setWorkerProperty(tokenId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
@@ -84,7 +91,7 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
         workerSession.setWorkerProperty(tokenId, "CRYPTOTOKEN_IMPLEMENTATION_CLASS", KeystoreCryptoToken.class.getName());
         workerSession.setWorkerProperty(tokenId, "NAME", CRYPTO_TOKEN_NAME);
         workerSession.setWorkerProperty(tokenId, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(tokenId, "KEYSTOREPATH", keystore.getAbsolutePath());
+        workerSession.setWorkerProperty(tokenId, "KEYSTOREPATH", keystoreFile.getAbsolutePath());
         workerSession.setWorkerProperty(tokenId, "KEYSTORETYPE", "JKS");
         workerSession.setWorkerProperty(tokenId, "KEYSTOREPASSWORD", "foo123");
     }    
@@ -145,6 +152,7 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
         } finally {
             destroyKey(testSecretKeyAlias);
             removeWorker(CRYPTO_TOKEN);
+            FileUtils.deleteQuietly(keystoreFile);
         }
     }
     

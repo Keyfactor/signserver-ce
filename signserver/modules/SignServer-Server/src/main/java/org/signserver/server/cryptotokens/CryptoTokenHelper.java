@@ -688,6 +688,8 @@ public class CryptoTokenHelper {
     public static final String INFO_KEY_ALGORITHM = "Key algorithm";
     public static final String INFO_KEY_PUBLIC_EXPONENT = "Public exponent";
     public static final String NO_OF_SIGNINGS = "Signings";
+    public static final String WRAPPING_KEY = "Wrapping Key";
+    public static final String WRAPPING_CIPHER = "Wrapping Cipher";
     
     private static boolean shouldBeIncluded(TokenEntry tokenEntry, QueryCriteria qc) throws QueryException {
         final List<Elem> terms = new ArrayList<>();

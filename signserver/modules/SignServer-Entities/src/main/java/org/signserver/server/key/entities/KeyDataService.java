@@ -21,13 +21,15 @@ public class KeyDataService {
         this.em = em;
     }
 
-    public void create(String keyAlias, String keyData, String certData) throws AliasAlreadyExistsException {
+    public void create(String keyAlias, String keyData, String certData, String wrappingKeyAlias, long wrappingCipher) throws AliasAlreadyExistsException {
         KeyData data = em.find(KeyData.class, keyAlias);
         if (data == null) {
             data = new KeyData();
             data.setKeyAlias(keyAlias);
             data.setKeyData(keyData);
             data.setCertData(certData);
+            data.setWrappingKeyAlias(wrappingKeyAlias);
+            data.setWrappingCipher(wrappingCipher);
             em.persist(data);
         } else {
             throw new AliasAlreadyExistsException(keyAlias);

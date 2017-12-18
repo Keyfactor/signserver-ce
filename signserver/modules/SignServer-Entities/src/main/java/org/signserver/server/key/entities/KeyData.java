@@ -23,6 +23,11 @@ public class KeyData implements Serializable {
     @Column(length = 255)
     private String alias;
 
+    @Column(length = 255)
+    private String wrappingKeyAlias;
+
+    private long wrappingCipher;
+    
     @Lob
     @Column(length = 1048576)
     private String keyData;
@@ -53,6 +58,34 @@ public class KeyData implements Serializable {
 
     public void setCertData(String certData) {
         this.certData = certData;
+    }
+    
+    /**
+     * @return the wrappingKeyAlias
+     */
+    public String getWrappingKeyAlias() {
+        return wrappingKeyAlias;
+    }
+
+    /**
+     * @param wrappingKeyAlias the wrappingKeyAlias to set
+     */
+    public void setWrappingKeyAlias(String wrappingKeyAlias) {
+        this.wrappingKeyAlias = wrappingKeyAlias;
+    }
+
+    /**
+     * @return the wrappingCipher
+     */
+    public long getWrappingCipher() {
+        return wrappingCipher;
+    }
+
+    /**
+     * @param wrappingCipher the wrappingCipher to set
+     */
+    public void setWrappingCipher(long wrappingCipher) {
+        this.wrappingCipher = wrappingCipher;
     }
 
     @Override

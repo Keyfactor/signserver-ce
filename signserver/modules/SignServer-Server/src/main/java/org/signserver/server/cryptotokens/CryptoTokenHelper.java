@@ -131,6 +131,7 @@ public class CryptoTokenHelper {
     
     public static final String SECRET_KEY_PREFIX = "SEC:";
     public static final String CKM_SECRET_KEY_ALGO_SUFFIX="_KEY_GEN";
+    public static final String CKM_CIPHER_ALGO_SUFFIX="_CBC_PAD";
     
     private static final long DEFAULT_BACKDATE = (long) 10 * 60; // 10 minutes in seconds
     private static final long DEFAULT_VALIDITY_S = (long) 30 * 24 * 60 * 60 * 365; // 30 year in seconds
@@ -957,7 +958,22 @@ public class CryptoTokenHelper {
         } else {
             throw new IllegalArgumentException("Secret Key Algorithm " + algorithm + " not supported ");
         }
-    }  
+    }
+    
+    /**
+     * Determines Constant value for provided cipher algorithm name with respect to JacKNJI11 Provider.
+     * @param algorithm
+     * @return
+     */
+    public static long getProviderCipherAlgoValue(String algorithm) {
+        String providerAlgoName = algorithm + CKM_CIPHER_ALGO_SUFFIX;
+        Long longValue = MechanismNames.longFromName(providerAlgoName);
+        if (longValue != null) {
+            return longValue;
+        } else {
+            throw new IllegalArgumentException("Cipher for Algorithm " + algorithm + " not supported ");
+        }
+    }
 
     /**
      * Checks that the crypto token is enabled, i.e. that it is not disabled.

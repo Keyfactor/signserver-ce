@@ -24,7 +24,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
-import java.security.Provider;
 import java.security.ProviderException;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -133,8 +132,8 @@ public class CryptoTokenHelper {
     public static final String TOKEN_ENTRY_PKCS11_ATTRIBUTES = "PKCS#11 Attributes";
     
     public static final String SECRET_KEY_PREFIX = "SEC:";
-    public static final String CKM_SECRET_KEY_ALGO_SUFFIX="_KEY_GEN";
-    public static final String CKM_CIPHER_ALGO_SUFFIX="_CBC_PAD";
+    public static final String CKM_SECRET_KEY_ALGO_SUFFIX="_KEY_GEN";    
+    public static final String CKM_PREFIX="CKM_";
     
     private static final long DEFAULT_BACKDATE = (long) 10 * 60; // 10 minutes in seconds
     private static final long DEFAULT_VALIDITY_S = (long) 30 * 24 * 60 * 60 * 365; // 30 year in seconds
@@ -977,17 +976,17 @@ public class CryptoTokenHelper {
     }
     
     /**
-     * Determines Constant value for provided cipher algorithm name with respect to JacKNJI11 Provider.
-     * @param algorithm
+     * Determines constant value for provided cipher algorithm name with respect to JacKNJI11 Provider.
+     * @param cipherAlgorithm cipher Algorithm name starting with prefix CKM_
      * @return
      */
-    public static long getProviderCipherAlgoValue(String algorithm) {
-        String providerAlgoName = algorithm + CKM_CIPHER_ALGO_SUFFIX;
+    public static long getProviderCipherAlgoValue(String cipherAlgorithm) {
+        String providerAlgoName = cipherAlgorithm.substring(cipherAlgorithm.indexOf(CKM_PREFIX) + CKM_PREFIX.length());
         Long longValue = MechanismNames.longFromName(providerAlgoName);
         if (longValue != null) {
             return longValue;
         } else {
-            throw new IllegalArgumentException("Cipher for Algorithm " + algorithm + " not supported ");
+            throw new IllegalArgumentException("Cipher Algorithm " + cipherAlgorithm + " not supported ");
         }
     }
 

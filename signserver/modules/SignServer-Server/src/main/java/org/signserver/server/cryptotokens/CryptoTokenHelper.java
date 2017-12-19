@@ -92,6 +92,9 @@ import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.server.IServices;
 import org.signserver.server.KeyUsageCounterHash;
+import static org.signserver.server.cryptotokens.CryptoTokenHelper.PROPERTY_SELFSIGNED_DN;
+import static org.signserver.server.cryptotokens.CryptoTokenHelper.PROPERTY_SELFSIGNED_SIGNATUREALGORITHM;
+import static org.signserver.server.cryptotokens.CryptoTokenHelper.PROPERTY_SELFSIGNED_VALIDITY;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounter;
 
@@ -862,37 +865,50 @@ public class CryptoTokenHelper {
         String dn = (String) params.get(PROPERTY_SELFSIGNED_DN);
         Long validity = (Long) params.get(PROPERTY_SELFSIGNED_VALIDITY);
         String signatureAlgorithm = (String) params.get(PROPERTY_SELFSIGNED_SIGNATUREALGORITHM);
-
+        
         // If any of the params are specified, we should re-generate the certificate
         if (dn != null || validity != null || signatureAlgorithm != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Regenerate self signed certificate requested with values: "
-                        + "DN: " + dn + ", "
-                        + "validity: " + validity + ", "
-                        + "signature algorithm: " + signatureAlgorithm);
-            }
-            // Our default DN
-            if (dn == null) {
-                dn = getDummyCertificateDN(alias);
-            }
-            
-            // Our default validity
-            if (validity == null) {
-                validity = DEFAULT_VALIDITY_S;
-            }
-            
-            // Our default signature algorithm
-            if (signatureAlgorithm == null) {
-                signatureAlgorithm = DEFAULT_SIGNATUREALGORITHM;
-            }
-            
             final PrivateKey key = (PrivateKey) keyStore.getKey(alias, authCode);
             final X509Certificate oldCert = (X509Certificate) keyStore.getCertificate(alias);
-            final X509Certificate newCert = getSelfCertificate(dn, DEFAULT_BACKDATE, validity, signatureAlgorithm, new KeyPair(oldCert.getPublicKey(), key), provider);
+            final X509Certificate newCert = createDummyCertificate(alias, params, new KeyPair(oldCert.getPublicKey(), key), provider);
 
             keyStore.setKeyEntry(alias, key, authCode, new Certificate[] { newCert });
         }
-    }  
+    }
+    
+    
+    
+    public static X509Certificate createDummyCertificate(final String alias, final Map<String, Object> params, final KeyPair keyPair, final String provider) throws OperatorCreationException, CertificateException {
+        String dn = (String) params.get(PROPERTY_SELFSIGNED_DN);
+        Long validity = (Long) params.get(PROPERTY_SELFSIGNED_VALIDITY);
+        String signatureAlgorithm = (String) params.get(PROPERTY_SELFSIGNED_SIGNATUREALGORITHM);
+        return createDummyCertificate(alias, dn, validity, signatureAlgorithm, keyPair, provider);
+    }
+    
+    private static X509Certificate createDummyCertificate(final String alias, String dn, Long validity, String signatureAlgorithm, final KeyPair keyPair, final String provider) throws OperatorCreationException, CertificateException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Regenerate self signed certificate requested with values: "
+                    + "DN: " + dn + ", "
+                    + "validity: " + validity + ", "
+                    + "signature algorithm: " + signatureAlgorithm);
+        }
+        // Our default DN
+        if (dn == null) {
+            dn = getDummyCertificateDN(alias);
+        }
+
+        // Our default validity
+        if (validity == null) {
+            validity = DEFAULT_VALIDITY_S;
+        }
+
+        // Our default signature algorithm
+        if (signatureAlgorithm == null) {
+            signatureAlgorithm = DEFAULT_SIGNATUREALGORITHM;
+        }
+
+        return getSelfCertificate(dn, DEFAULT_BACKDATE, validity, signatureAlgorithm, keyPair, provider);
+    }
     
     /**
      * Fetches the counter value for number of signing from database for provided public key.

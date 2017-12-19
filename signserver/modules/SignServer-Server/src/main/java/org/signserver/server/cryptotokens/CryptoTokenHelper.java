@@ -875,8 +875,16 @@ public class CryptoTokenHelper {
         }
     }
     
-    
-    
+    /**
+     * Create a dummy certificate with the provided parameters.
+     * @param alias to use in the name
+     * @param params map of parameters to use
+     * @param keyPair where the public key will be in the certificate and the private used to sign it
+     * @param provider for the keys
+     * @return the new certificate
+     * @throws OperatorCreationException
+     * @throws CertificateException 
+     */
     public static X509Certificate createDummyCertificate(final String alias, final Map<String, Object> params, final KeyPair keyPair, final String provider) throws OperatorCreationException, CertificateException {
         String dn = (String) params.get(PROPERTY_SELFSIGNED_DN);
         Long validity = (Long) params.get(PROPERTY_SELFSIGNED_VALIDITY);

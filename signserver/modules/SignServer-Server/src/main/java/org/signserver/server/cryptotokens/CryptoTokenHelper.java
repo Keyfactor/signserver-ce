@@ -134,7 +134,7 @@ public class CryptoTokenHelper {
     public static final String SECRET_KEY_PREFIX = "SEC:";
     public static final String CKM_SECRET_KEY_ALGO_SUFFIX = "_KEY_GEN";
     public static final String CKM_PREFIX = "CKM_";
-    public static final String WRAPPINGCIPHERALGORITHM = "WRAPPINGCIPHERALGORITHM";
+    public static final String PROPERTY_WRAPPING_CIPHER_ALGORITHM = "WRAPPING_CIPHER_ALGORITHM";
     public static final String DEFAULT_WRAPPING_CIPHER_ALGORITHM = "CKM_AES_CBC_PAD";
     
     private static final long DEFAULT_BACKDATE = (long) 10 * 60; // 10 minutes in seconds

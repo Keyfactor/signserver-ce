@@ -28,6 +28,11 @@ DROP TABLE IF EXISTS keyusagecounter;
 --
 DROP TABLE IF EXISTS archivedata;
 
+--
+-- Drop table `KeyData`
+--
+DROP TABLE IF EXISTS KeyData;
+
 
 --
 -- Drop table `SEQUENCE`

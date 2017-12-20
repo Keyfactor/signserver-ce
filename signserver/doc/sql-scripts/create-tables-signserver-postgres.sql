@@ -73,6 +73,17 @@ CREATE TABLE archivedata (
 );
 
 
+--
+-- Table structure for table `KeyData`
+--
+CREATE TABLE `KeyData` (
+  `alias` character varying(255) NOT NULL,
+  `wrappingKeyAlias` character varying(255) NOT NULL,
+  `wrappingCipher` bigint NOT NULL,
+  `keyData` text NOT NULL,
+  `certData` text NOT NULL 
+); 
+
 
 --
 -- Name: hibernate_sequence; Type: SEQUENCE; Schema: public; Owner: signserver
@@ -122,4 +133,11 @@ ALTER TABLE ONLY keyusagecounter
 
 ALTER TABLE ONLY signerconfigdata
     ADD CONSTRAINT signerconfigdata_pkey PRIMARY KEY (signerid);
+
+--
+-- Name: keydata_pkey; Type: CONSTRAINT; Schema: public; Owner: signserver; Tablespace: 
+--
+
+ALTER TABLE ONLY keydata
+    ADD CONSTRAINT keyusagecounter_pkey PRIMARY KEY (alias);
 

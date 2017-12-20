@@ -981,7 +981,7 @@ public class CryptoTokenHelper {
         if (longValue != null) {
             return longValue;
         } else {
-            throw new IllegalArgumentException("Secret key Algorithm " + algorithm + " not supported");
+            throw new IllegalArgumentException("Secret key algorithm " + algorithm + " not supported");
         }
     }
     

@@ -84,4 +84,17 @@ CREATE TABLE `SEQUENCE` (
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 
+--
+-- Table structure for table `KeyData`
+--
+CREATE TABLE `KeyData` (
+  `alias` varchar(255) NOT NULL,
+  `wrappingKeyAlias` varchar(255) NOT NULL,
+  `wrappingCipher` bigint(19) NOT NULL,
+  `keyData` LONGTEXT NOT NULL,
+  `certData` LONGTEXT NOT NULL,
+  PRIMARY KEY (`alias`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;
+
+
 -- End

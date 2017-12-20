@@ -34,6 +34,12 @@ DROP TABLE IF EXISTS `ArchiveData`;
 
 
 --
+-- Drop table `KeyData`
+--
+DROP TABLE IF EXISTS `KeyData`;
+
+
+--
 -- Drop table `SEQUENCE`
 --
 DROP TABLE IF EXISTS `SEQUENCE`;

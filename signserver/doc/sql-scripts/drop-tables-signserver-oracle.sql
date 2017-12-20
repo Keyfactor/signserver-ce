@@ -34,4 +34,10 @@ DROP TABLE "KEYUSAGECOUNTER";
 DROP TABLE "ARCHIVEDATA";
 
 
+--
+-- Drop table `KeyData`
+--
+DROP TABLE "KeyData";
+
+
 -- End

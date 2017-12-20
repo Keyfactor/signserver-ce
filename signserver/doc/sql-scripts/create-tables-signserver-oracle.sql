@@ -78,6 +78,19 @@ CREATE TABLE "ARCHIVEDATA" (
 
 
 --
+-- Table structure for table `KeyData`
+--
+CREATE TABLE `KeyData` (
+  `alias` varchar(255) NOT NULL,
+  `wrappingKeyAlias` varchar(255) NOT NULL,
+  `wrappingCipher` NUMBER(19,0) NOT NULL,
+  `keyData` CLOB NOT NULL,
+  `certData` CLOB NOT NULL,
+  PRIMARY KEY (`alias`)
+); 
+
+
+--
 -- Table structure for table `SEQUENCE`
 --
 CREATE SEQUENCE "HIBERNATE_SEQUENCE"  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1;

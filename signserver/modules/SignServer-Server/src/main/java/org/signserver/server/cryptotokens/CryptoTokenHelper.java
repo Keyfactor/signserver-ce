@@ -132,8 +132,10 @@ public class CryptoTokenHelper {
     public static final String TOKEN_ENTRY_PKCS11_ATTRIBUTES = "PKCS#11 Attributes";
     
     public static final String SECRET_KEY_PREFIX = "SEC:";
-    public static final String CKM_SECRET_KEY_ALGO_SUFFIX="_KEY_GEN";    
-    public static final String CKM_PREFIX="CKM_";
+    public static final String CKM_SECRET_KEY_ALGO_SUFFIX = "_KEY_GEN";
+    public static final String CKM_PREFIX = "CKM_";
+    public static final String WRAPPINGCIPHERALGORITHM = "WRAPPINGCIPHERALGORITHM";
+    public static final String DEFAULT_WRAPPING_CIPHER_ALGORITHM = "CKM_AES_CBC_PAD";
     
     private static final long DEFAULT_BACKDATE = (long) 10 * 60; // 10 minutes in seconds
     private static final long DEFAULT_VALIDITY_S = (long) 30 * 24 * 60 * 60 * 365; // 30 year in seconds
@@ -979,7 +981,7 @@ public class CryptoTokenHelper {
         if (longValue != null) {
             return longValue;
         } else {
-            throw new IllegalArgumentException("Secret Key Algorithm " + algorithm + " not supported ");
+            throw new IllegalArgumentException("Secret key Algorithm " + algorithm + " not supported");
         }
     }
     
@@ -994,7 +996,7 @@ public class CryptoTokenHelper {
         if (longValue != null) {
             return longValue;
         } else {
-            throw new IllegalArgumentException("Cipher Algorithm " + cipherAlgorithm + " not supported ");
+            throw new IllegalArgumentException("Cipher algorithm " + cipherAlgorithm + " not supported");
         }
     }
 

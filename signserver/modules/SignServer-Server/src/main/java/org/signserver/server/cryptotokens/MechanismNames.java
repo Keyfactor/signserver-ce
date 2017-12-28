@@ -27,12 +27,25 @@ public class MechanismNames {
 
     private static final Map<Long, String> L2S = C.createL2SMap(CKM.class);
     private static final Map<String, Long> S2L;
+    private static final Map<String, Long> SIGALGOS2L;
 
     static {
         S2L = new HashMap<>(L2S.size());
         for (Map.Entry<Long, String> entry : L2S.entrySet()) {
             S2L.put(entry.getValue(), entry.getKey());
         }
+
+        SIGALGOS2L = new HashMap<>();
+        SIGALGOS2L.put("NONEwithRSA", CKM.RSA_PKCS);
+        SIGALGOS2L.put("MD5withRSA", CKM.MD5_RSA_PKCS);
+        SIGALGOS2L.put("SHA1withRSA", CKM.SHA1_RSA_PKCS);
+        SIGALGOS2L.put("SHA224withRSA", CKM.SHA224_RSA_PKCS);
+        SIGALGOS2L.put("SHA256withRSA", CKM.SHA256_RSA_PKCS);
+        SIGALGOS2L.put("SHA384withRSA", CKM.SHA384_RSA_PKCS);
+        SIGALGOS2L.put("SHA512withRSA", CKM.SHA512_RSA_PKCS);
+        SIGALGOS2L.put("NONEwithDSA", CKM.DSA);
+        SIGALGOS2L.put("SHA1withDSA", CKM.DSA_SHA1);
+        //SIGALGOS2L.put("SHA256withRSAandMGF1", CKM.SHA256_RSA_PKCS_PSS);
     }
 
     /**
@@ -56,5 +69,15 @@ public class MechanismNames {
      */
     public static Long longFromName(String name) {
         return S2L.get(name);
+    }
+
+    /**
+     * Provides the long value for signature algorithm name.
+     *
+     * @param name to get long value for
+     * @return long value or null if unknown
+     */
+    public static Long longFromSigAlgoName(String name) {
+        return SIGALGOS2L.get(name);
     }
 }

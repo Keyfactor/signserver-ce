@@ -34,6 +34,7 @@ import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
 import org.signserver.common.*;
+import static org.signserver.common.SignServerConstants.DISABLED;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.IServices;
 import org.signserver.server.KeyUsageCounterHash;
@@ -161,7 +162,14 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         }
 
         // Worker status
-        briefEntries.add(new WorkerStatusInfo.Entry("Worker status", status == WorkerStatus.STATUS_ACTIVE && (fatalErrors.isEmpty()) ? "Active" : "Offline"));
+        boolean workerSetAsDisabled = config.getProperty(DISABLED, "FALSE").equalsIgnoreCase("TRUE");
+        if (workerSetAsDisabled) {
+            briefEntries.add(new WorkerStatusInfo.Entry("Worker status", "Disabled"));
+        } else {
+            briefEntries.add(new WorkerStatusInfo.Entry("Worker status", status == WorkerStatus.STATUS_ACTIVE && (fatalErrors.isEmpty()) ? "Active" : "Offline"));
+        }
+        
+        // Token status
         briefEntries.add(new WorkerStatusInfo.Entry("Token status", status == WorkerStatus.STATUS_ACTIVE ? "Active" : "Offline"));
 
         // Signings

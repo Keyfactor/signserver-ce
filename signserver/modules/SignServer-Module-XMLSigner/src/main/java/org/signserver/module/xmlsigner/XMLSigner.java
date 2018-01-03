@@ -286,9 +286,9 @@ public class XMLSigner extends BaseSigner {
         if (privKey instanceof DSAPrivateKey) {
             result = "SHA1withDSA";
         } else if (privKey instanceof ECPrivateKey) {
-            result = "SHA1withECDSA";
+            result = "SHA256withECDSA";
         } else {
-            result = "SHA1withRSA";
+            result = "SHA256withRSA";
         }
 
         return result;

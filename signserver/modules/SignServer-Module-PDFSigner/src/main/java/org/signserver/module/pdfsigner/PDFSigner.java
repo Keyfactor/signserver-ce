@@ -155,7 +155,7 @@ public class PDFSigner extends BaseSigner {
     private static final String CONTENT_TYPE = "application/pdf";
 
     public static final String DIGESTALGORITHM = "DIGESTALGORITHM";
-    private static final String DEFAULTDIGESTALGORITHM = "SHA1";
+    private static final String DEFAULTDIGESTALGORITHM = "SHA256";
     
     private Pattern archivetodiskPattern;
 

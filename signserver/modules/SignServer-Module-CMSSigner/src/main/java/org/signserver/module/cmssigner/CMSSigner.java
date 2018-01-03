@@ -686,11 +686,11 @@ public class CMSSigner extends BaseSigner {
         final String result;
 
         if (publicKey instanceof ECPublicKey) {
-            result = "SHA1withECDSA";
+            result = "SHA256withECDSA";
         }  else if (publicKey instanceof DSAPublicKey) {
-            result = "SHA1withDSA";
+            result = "SHA256withDSA";
         } else {
-            result = "SHA1withRSA";
+            result = "SHA256withRSA";
         }
 
         return result;

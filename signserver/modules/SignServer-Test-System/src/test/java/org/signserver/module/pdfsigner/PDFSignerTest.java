@@ -100,8 +100,8 @@ public class PDFSignerTest extends ModulesTestCase {
          
             final String expectedDigestAlgorithm;
             if (digestAlgorithm == null) {
-                // if no hash algorithm was specified, the default should be "SHA1"
-                expectedDigestAlgorithm = "SHA1";
+                // if no hash algorithm was specified, the default should be "SHA256"
+                expectedDigestAlgorithm = "SHA256";
             } else {
                 expectedDigestAlgorithm = digestAlgorithm;
             }
@@ -110,7 +110,9 @@ public class PDFSignerTest extends ModulesTestCase {
             final PdfReader reader = new PdfReader(response.getProcessedData());
             final char version = reader.getPdfVersion();
             
-            checkPdfVersion(version, digestAlgorithm);
+            if (digestAlgorithm != null) {
+                checkPdfVersion(version, digestAlgorithm);
+            }
             
             final AcroFields af = reader.getAcroFields();
             final List<String> sigNames = af.getSignatureNames();
@@ -206,6 +208,17 @@ public class PDFSignerTest extends ModulesTestCase {
             workerSession.setWorkerProperty(WORKERID, "AUTHTYPE", "NOAUTH");
             workerSession.reloadConfiguration(WORKERID);
         }
+    }
+    
+     /**
+     * Test signing PDF with Default (SHA256) hash.
+     * @throws Exception
+     */
+    @Test
+    public void test21WithDefaultDigestAlgorithm() throws Exception {
+        final byte[] pdfOk = getTestFile(TESTPDF_OK);
+
+        signGenericPDFWithHash(WORKERID, pdfOk, null);
     }
 
     /**

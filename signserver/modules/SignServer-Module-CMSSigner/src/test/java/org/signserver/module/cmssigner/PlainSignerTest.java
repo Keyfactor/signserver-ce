@@ -179,7 +179,7 @@ public class PlainSignerTest {
         LOG.info("testNormalSigning_RSA");
         byte[] plainText = "some-data".getBytes("ASCII");
         SimplifiedResponse resp = sign(plainText, tokenRSA, createConfig(null));
-        assertSignedAndVerifiable(plainText, "SHA1withRSA", tokenRSA, resp);
+        assertSignedAndVerifiable(plainText, "SHA256withRSA", tokenRSA, resp);
     }
     
     /**
@@ -191,7 +191,7 @@ public class PlainSignerTest {
         LOG.info("testNormalSigningWithEmptyParams");
         byte[] plainText = "some-data".getBytes("ASCII");
         SimplifiedResponse resp = sign(plainText, tokenRSA, createConfig("  "));
-        assertSignedAndVerifiable(plainText, "SHA1withRSA", tokenRSA, resp);
+        assertSignedAndVerifiable(plainText, "SHA256withRSA", tokenRSA, resp);
     }
 
     /**
@@ -203,7 +203,7 @@ public class PlainSignerTest {
         LOG.info("testNormalSigning_DSA");
         byte[] plainText = "some-data".getBytes("ASCII");
         SimplifiedResponse resp = sign(plainText, tokenDSA, createConfig(null));
-        assertSignedAndVerifiable(plainText, "SHA1withDSA", tokenDSA, resp);
+        assertSignedAndVerifiable(plainText, "SHA256withDSA", tokenDSA, resp);
     }
 
     /**
@@ -215,7 +215,7 @@ public class PlainSignerTest {
         LOG.info("testNormalSigning_ECDSA");
         byte[] plainText = "some-data".getBytes("ASCII");
         SimplifiedResponse resp = sign(plainText, tokenECDSA, createConfig(null));
-        assertSignedAndVerifiable(plainText, "SHA1withECDSA", tokenECDSA, resp);
+        assertSignedAndVerifiable(plainText, "SHA256withECDSA", tokenECDSA, resp);
     }
     
     /**

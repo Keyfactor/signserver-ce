@@ -85,6 +85,13 @@ public class TimeStampCommand extends AbstractCommand {
     
     /** OID for the ETSI qualified timestamping extension value. */
     private static final ASN1ObjectIdentifier ID_ETSI_TSTS;
+    
+    /**
+     * OID for default digest algorithm to be used while creating timestamp
+     * request.
+     */
+    private static final ASN1ObjectIdentifier DEFAULT_DIGEST_ALGORITHM = TSPAlgorithms.SHA256;
+    private static final int DEFAULT_DIGEST_ALGORITHM_OUTPUT_LENGTH = 32; //SHA-256;
 
     private String urlstring;
 
@@ -102,6 +109,8 @@ public class TimeStampCommand extends AbstractCommand {
     private String infilestring;
 
     private String signerfilestring;
+    
+    private String digestalgorithm;
 
     private boolean base64;
 
@@ -185,6 +194,11 @@ public class TimeStampCommand extends AbstractCommand {
                 + "request to use instead of creating a new. "
                 + "You must specify the request flag also.");
         final Option inreq = OptionBuilder.create("inreq");
+        
+        OptionBuilder.hasArg();
+        OptionBuilder.withArgName("string");
+        OptionBuilder.withDescription("Digest algorithm used for creating timestamp request hash. Default SHA256");
+        final Option digestAlgorithm = OptionBuilder.create("digestalgorithm");
 
         OptionBuilder.hasArg();
         OptionBuilder.withArgName("num");
@@ -217,6 +231,7 @@ public class TimeStampCommand extends AbstractCommand {
         options.addOption(optionSleep);
         options.addOption(certReqOption);
         options.addOption(reqPolicyOption);
+        options.addOption(digestAlgorithm);
        
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             options.addOption(option);
@@ -302,6 +317,9 @@ public class TimeStampCommand extends AbstractCommand {
             }
             if (cmd.hasOption("reqpolicy")) {
                 reqPolicy = cmd.getOptionValue("reqpolicy");
+            }
+            if (cmd.hasOption("digestAlgorithm")) {
+                digestalgorithm = cmd.getOptionValue("digestAlgorithm");
             }
             
             try {
@@ -659,15 +677,22 @@ public class TimeStampCommand extends AbstractCommand {
         final TimeStampRequestGenerator timeStampRequestGenerator =
                 new TimeStampRequestGenerator();
         boolean doRun = true;
+        ASN1ObjectIdentifier requestDigestAlgorithm = DEFAULT_DIGEST_ALGORITHM;
+        int digestLength = DEFAULT_DIGEST_ALGORITHM_OUTPUT_LENGTH;
         do {
+
+            if (digestalgorithm != null) {
+                requestDigestAlgorithm = getDigestAlgorithmFromString(digestalgorithm);
+                digestLength = getOutputSizeBitsFromDigestAlgorithmString(digestalgorithm) / 8;
+            }
 
             final int nonce = rand.nextInt();
 
-            byte[] digest = new byte[20];
+            byte[] digest = new byte[digestLength];
             if (instring != null) {
                 final byte[] digestBytes = instring.getBytes(StandardCharsets.UTF_8);
                 final MessageDigest dig = MessageDigest.getInstance(
-                        TSPAlgorithms.SHA1.getId(),
+                        requestDigestAlgorithm.getId(),
                         "BC");
                 dig.update(digestBytes);
                 digest = dig.digest();
@@ -676,7 +701,7 @@ public class TimeStampCommand extends AbstractCommand {
             }
             if (infilestring != null) {
             	// TSPAlgorithms constants changed from Strings to ASN1Encoded objects
-                digest = digestFile(infilestring, TSPAlgorithms.SHA1.getId());
+                digest = digestFile(infilestring, requestDigestAlgorithm.getId());
                 doRun = false;
             }
             final byte[] hexDigest = Hex.encode(digest);
@@ -693,7 +718,7 @@ public class TimeStampCommand extends AbstractCommand {
                     timeStampRequestGenerator.setReqPolicy(new ASN1ObjectIdentifier(reqPolicy));
                 }
                 timeStampRequest = timeStampRequestGenerator.generate(
-                        TSPAlgorithms.SHA1, digest, BigInteger.valueOf(nonce));
+                        requestDigestAlgorithm, digest, BigInteger.valueOf(nonce));
             } else {
                 LOG.debug("Reading request from file");
                 timeStampRequest = new TimeStampRequest(
@@ -990,5 +1015,84 @@ public class TimeStampCommand extends AbstractCommand {
             LOG.error("Error creating certificate factory", nspe);
         }
         return null;
+    }
+    
+    /**
+     * Returns the length of output digest in bits for provided digest algorithm.     * 
+     * @param digestAlg digest algorithm 
+     * @return digest output length in bits
+     */
+    private static int getOutputSizeBitsFromDigestAlgorithmString(final String digestAlg) {
+        switch (digestAlg.toUpperCase()) {
+            case "MD5":
+            case "MD-5":
+                return 128;
+            case "GOST3411":
+            case "GOST-3411":
+                return 256;
+            case "RIPEMD128":
+            case "RIPEMD-128":
+                return 128;
+            case "RIPEMD160":
+            case "RIPEMD-160":
+                return 160;
+            case "RIPEMD256":
+            case "RIPEMD-256":
+                return 256;
+            case "SHA1":
+            case "SHA-1":
+                return 160;
+            case "SHA224":
+            case "SHA-224":
+                return 224;
+            case "SHA256":
+            case "SHA-256":
+                return 256;
+            case "SHA384":
+            case "SHA-384":
+                return 384;
+            case "SHA512":
+            case "SHA-512":
+                return 512;
+            default:
+                throw new IllegalArgumentException("Invalid digest algorithm: " + digestAlg);
+        }
+    }
+    
+    private ASN1ObjectIdentifier getDigestAlgorithmFromString(final String digestAlg) throws CommandFailureException {
+        switch (digestAlg) {
+            case "MD5":
+            case "MD-5":
+                return TSPAlgorithms.MD5;
+            case "GOST3411":
+            case "GOST-3411":
+                return TSPAlgorithms.GOST3411;
+            case "RIPEMD128":
+            case "RIPEMD-128":
+                return TSPAlgorithms.RIPEMD128;
+            case "RIPEMD160":
+            case "RIPEMD-160":
+                return TSPAlgorithms.RIPEMD160;
+            case "RIPEMD256":
+            case "RIPEMD-256":
+                return TSPAlgorithms.RIPEMD256;
+            case "SHA1":
+            case "SHA-1":
+                return TSPAlgorithms.SHA1;
+            case "SHA224":
+            case "SHA-224":
+                return TSPAlgorithms.SHA224;
+            case "SHA256":
+            case "SHA-256":
+                return TSPAlgorithms.SHA256;
+            case "SHA384":
+            case "SHA-384":
+                return TSPAlgorithms.SHA384;
+            case "SHA512":
+            case "SHA-512":
+                return TSPAlgorithms.SHA512;
+            default:
+                throw new IllegalArgumentException("Invalid digest algorithm: " + digestAlg);
+        }
     }
 }

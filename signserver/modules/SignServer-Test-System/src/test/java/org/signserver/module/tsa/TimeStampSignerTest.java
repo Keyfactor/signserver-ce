@@ -148,6 +148,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
      */
     private static final String REQUEST_WITH_POLICY1235 =
             "MCsCAQEwITAJBgUrDgMCGgUABBQyoGF6q0yf5yXxtbxEEpEYCtJbcwYDKgMF";
+    private static final String SHA256WITHRSA_ENCRYPTION_ALG_OID ="1.2.840.113549.1.1.11";
 
     private static String signserverhome;
     private static int moduleVersion;
@@ -203,7 +204,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         // Test that it is using the right algorithm
         final TimeStampToken token = response.getTimeStampToken();
         final SignerInformation si = (SignerInformation) token.toCMSSignedData().getSignerInfos().getSigners().iterator().next();
-        assertEquals("sha1withrsa", "1.2.840.113549.1.1.1", si.getEncryptionAlgOID());
+        assertEquals("sha256withrsa", SHA256WITHRSA_ENCRYPTION_ALG_OID, si.getEncryptionAlgOID()); // SHA256withRSA is default signature algorithm
     }
 
     /**
@@ -444,11 +445,12 @@ public class TimeStampSignerTest extends ModulesTestCase {
                     assertEquals("There should only be one signer in the timestamp response", 1, signerInfos.size());
 
                     for (Object o : signerInfos) {
-                            SignerInformation si = (SignerInformation) o;
+                    SignerInformation si = (SignerInformation) o;
 
-                            // test the response signature algorithm
-                            assertEquals("Timestamp used unexpected signature algorithm", TSPAlgorithms.SHA1.toString(), si.getDigestAlgOID());
-                            assertEquals("Timestamp is signed with unexpected signature encryption algorithm", "1.2.840.113549.1.1.1", si.getEncryptionAlgOID());
+                    // test the response signature algorithm 
+                    // SHA256withRSA is default signature algorithm and same will be used for verification
+                    assertEquals("Timestamp used unexpected signature algorithm", TSPAlgorithms.SHA256.toString(), si.getDigestAlgOID());
+                    assertEquals("Timestamp is signed with unexpected signature encryption algorithm", SHA256WITHRSA_ENCRYPTION_ALG_OID, si.getEncryptionAlgOID());
 
                             final AttributeTable attrs = si.getSignedAttributes();
                             final ASN1EncodableVector scAttrs =

@@ -351,6 +351,10 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
     	testProcessDataWithAlgo("SHA256withRSA", SHA256_OID, REQUEST_DATA.getBytes(), false, null);
     }
     
+    public void testProcessDataWithDefaultSignatureAlgorithm() throws Exception {
+        testProcessDataWithAlgo("  ", SHA256_OID, REQUEST_DATA.getBytes(), false, null);
+    }
+    
     /**
      * Test with requestData with zero length. Shall give an IllegalRequestException.
      * @throws Exception

@@ -275,7 +275,7 @@ public class TimeStampSigner extends BaseSigner {
         }
     }
 
-    private static final String DEFAULT_SIGNATUREALGORITHM = "SHA1withRSA";
+    private static final String DEFAULT_SIGNATUREALGORITHM = "SHA256withRSA";
     private static final String DEFAULT_ORDERING = "FALSE";
     private static final String DEFAULT_CERTIFICATE_DIGEST_ALGORITHM = "SHA256";
 

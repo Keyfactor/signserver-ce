@@ -150,7 +150,7 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
     private static final String DEFAULT_TIMESOURCE =
             "org.signserver.server.LocalComputerTimeSource";
 
-    private static final String DEFAULT_SIGNATUREALGORITHM = "SHA1withRSA";
+    private static final String DEFAULT_SIGNATUREALGORITHM = "SHA256withRSA";
 
     /** MIME type for the request data. **/
     private static final String REQUEST_CONTENT_TYPE = "application/octect-stream";

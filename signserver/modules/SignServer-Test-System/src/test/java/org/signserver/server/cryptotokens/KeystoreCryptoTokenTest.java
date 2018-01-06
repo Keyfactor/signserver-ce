@@ -292,6 +292,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
             try {
                 workerSession.removeKey(new WorkerIdentifier(workerId), "keywithexponent");
             } catch (SignServerException ignored) {}
+            FileUtils.deleteQuietly(keystoreFile);
             removeWorker(workerId);
         }
     }
@@ -645,6 +646,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
            assertTrue("Should contain error",
                    errors.contains("Failed to initialize crypto token: Missing KEYSTORETYPE property"));
        } finally {
+           FileUtils.deleteQuietly(keystoreFile);
            removeWorker(workerId);
        }
     }
@@ -668,6 +670,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
            assertTrue("Should contain error",
                    errors.contains("Failed to initialize crypto token: KEYSTORETYPE should be either PKCS12, JKS, or INTERNAL"));
        } finally {
+           FileUtils.deleteQuietly(keystoreFile);
            removeWorker(workerId);
        }
     }
@@ -691,6 +694,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
             assertTrue("Should contain error",
                     errors.contains("Failed to initialize crypto token: Missing KEYSTOREPATH property"));
         } finally {
+            FileUtils.deleteQuietly(keystoreFile);
             removeWorker(workerId);
         }
     }
@@ -714,6 +718,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
             assertTrue("Should contain error",
                     errors.contains("Failed to initialize crypto token: File not found: non-existing.p12"));
         } finally {
+            FileUtils.deleteQuietly(keystoreFile);
             removeWorker(workerId);
         }
     }
@@ -740,6 +745,7 @@ public class KeystoreCryptoTokenTest extends KeystoreCryptoTokenTestBase {
         } catch (Exception e) {
             fail("Unexpected exception: " + e.getClass().getName());
         } finally {
+            FileUtils.deleteQuietly(keystoreFile);
             removeWorker(workerId);
         }
     }

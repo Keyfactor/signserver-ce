@@ -654,6 +654,8 @@ public class CryptoTokenHelper {
                                 LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
                             }
                             info.put(NO_OF_SIGNINGS, String.valueOf(getNoOfSignings(certificate.getPublicKey(), services)));
+                            info.put(INFO_KEY_ALGORITHM, "Certificate");
+                            info.put(INFO_KEY_SPECIFICATION, "n/a"); // Key specification is not applicable for trusted entries 
                         } else if (TokenEntry.TYPE_SECRETKEY_ENTRY.equals(type)) {
                             try {
                                 SecretKey secretKey = (SecretKey) keyStore.getKey(keyAlias, authCode);

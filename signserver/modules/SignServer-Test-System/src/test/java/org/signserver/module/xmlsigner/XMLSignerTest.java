@@ -222,7 +222,7 @@ public class XMLSignerTest extends ModulesTestCase {
 
     @Test
     public void test08BasicXmlSignDSADefaultSigAlg() throws Exception {
-        testBasicXmlSign(WORKERID2, null, "http://www.w3.org/2000/09/xmldsig#dsa-sha1");
+        testBasicXmlSign(WORKERID2, null, "http://www.w3.org/2009/xmldsig11#dsa-sha256");
     }
     
     @Test

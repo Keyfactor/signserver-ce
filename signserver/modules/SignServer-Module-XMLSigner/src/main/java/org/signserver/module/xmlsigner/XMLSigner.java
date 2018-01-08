@@ -99,6 +99,8 @@ public class XMLSigner extends BaseSigner {
             "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384";
     private static final String SIGNATURE_METHOD_ECDSA_SHA512 =
             "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512";
+    private static final String SIGNATURE_METHOD_DSA_SHA256 =
+            "http://www.w3.org/2009/xmldsig11#dsa-sha256";
 
     private String signatureAlgorithm;
 
@@ -251,6 +253,8 @@ public class XMLSigner extends BaseSigner {
 
         if ("SHA1withDSA".equals(sigAlg)) {
             result = SignatureMethod.DSA_SHA1;
+        } else if ("SHA256withDSA".equals(sigAlg)) {
+            result = SIGNATURE_METHOD_DSA_SHA256;
         } else if ("SHA1withRSA".equals(sigAlg)) {
             result = SignatureMethod.RSA_SHA1;
         } else if ("SHA256withRSA".equals(sigAlg)) {
@@ -284,7 +288,7 @@ public class XMLSigner extends BaseSigner {
         final String result;
 
         if (privKey instanceof DSAPrivateKey) {
-            result = "SHA1withDSA";
+            result = "SHA256withDSA";
         } else if (privKey instanceof ECPrivateKey) {
             result = "SHA256withECDSA";
         } else {

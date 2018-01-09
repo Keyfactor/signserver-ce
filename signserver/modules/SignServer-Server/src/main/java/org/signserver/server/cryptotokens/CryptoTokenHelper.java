@@ -1007,7 +1007,7 @@ public class CryptoTokenHelper {
      * Otherwise throws an exception.
      *
      * @param config worker configuration
-     * @throws CryptoTokenInitializationFailureException in case it is diabled
+     * @throws CryptoTokenInitializationFailureException in case it is disabled
      * @see SignServerConstants#DISABLED
      */
     public static void checkEnabled(Properties config) throws CryptoTokenInitializationFailureException {

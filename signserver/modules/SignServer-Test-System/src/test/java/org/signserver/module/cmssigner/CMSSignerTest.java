@@ -54,7 +54,7 @@ import org.signserver.ejb.interfaces.WorkerSession;
  * @version $Id$
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class CMSSignerTest extends ModulesTestCase {
+public class CMSSignerTest  {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(CMSSignerTest.class);
@@ -65,28 +65,33 @@ public class CMSSignerTest extends ModulesTestCase {
     private static final double TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS= 1.7;
     private static final double JAVA_VERSION;
     
-    private final WorkerSession workerSession = getWorkerSession();
-    private final ProcessSessionRemote processSession = getProcessSession();
+    private final WorkerSession workerSession;
+    private final ProcessSessionRemote processSession;
+    private final ModulesTestCase mt = new ModulesTestCase();
     
-     static {
-        JAVA_VERSION = getJavaVersion();
+    static {
+        JAVA_VERSION = ModulesTestCase.getJavaVersion();
     }
+
+    public CMSSignerTest() {
+        workerSession = mt.getWorkerSession();
+        processSession = mt.getProcessSession();
+    }
+     
     
-    @Before
-    @Override
-    protected void setUp() throws Exception {
+    @Before    
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
-    @After
-    @Override
-    protected void tearDown() throws Exception {
+    @After    
+    public void tearDown() throws Exception {
         TestingSecurityManager.remove();
     }	
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        addSigner("org.signserver.module.cmssigner.CMSSigner", true);
+        mt.addSigner("org.signserver.module.cmssigner.CMSSigner", true);
     }
 
     /**
@@ -100,7 +105,7 @@ public class CMSSignerTest extends ModulesTestCase {
     public void test01BasicCMSSignRSA() throws Exception {
         LOG.debug(">test01BasicCMSSignRSA");
 
-        helperBasicCMSSign(getSignerIdDummy1(), null, "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.11", null, 1);
+        helperBasicCMSSign(mt.getSignerIdDummy1(), null, "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.11", null, 1);
         
         LOG.debug("<test01BasicCMSSignRSA");
     }
@@ -111,7 +116,7 @@ public class CMSSignerTest extends ModulesTestCase {
      */
     @Test
     public void test02BasicCMSSignSHA256withRSA() throws Exception {
-        helperBasicCMSSign(getSignerIdDummy1(), "SHA256withRSA", "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.11",
+        helperBasicCMSSign(mt.getSignerIdDummy1(), "SHA256withRSA", "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.11",
                 null, 1);
     }
     
@@ -123,17 +128,17 @@ public class CMSSignerTest extends ModulesTestCase {
     @Test
     public void test03BasicCMSSignSHA1withECDSA() throws Exception {
         // Setup signer
-        final File keystore = new File(getSignServerHome(), "res/test/dss10/dss10_signer5ec.p12");
+        final File keystore = new File(mt.getSignServerHome(), "res/test/dss10/dss10_signer5ec.p12");
         if (!keystore.exists()) {
             throw new FileNotFoundException(keystore.getAbsolutePath());
         }
-        addP12DummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_ECDSA,
+        mt.addP12DummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_ECDSA,
             "TestCMSSignerP12ECDSA", keystore, "foo123", "signerec");
         workerSession.reloadConfiguration(WORKERID_ECDSA);
         
         helperBasicCMSSign(WORKERID_ECDSA, "SHA1withECDSA", "1.3.14.3.2.26", "1.2.840.10045.4.1", null, 1);
         
-        removeWorker(WORKERID_ECDSA);
+        mt.removeWorker(WORKERID_ECDSA);
     }
 
     /**
@@ -144,16 +149,16 @@ public class CMSSignerTest extends ModulesTestCase {
     @Test
     public void test04BasicCMSSignSHA1withDSA() throws Exception {
         // Setup signer
-        final File keystore = new File(getSignServerHome(), "res/test/dss10/dss10_tssigner6dsa.jks");
+        final File keystore = new File(mt.getSignServerHome(), "res/test/dss10/dss10_tssigner6dsa.jks");
         if (!keystore.exists()) {
             throw new FileNotFoundException(keystore.getAbsolutePath());
         }
-        addJKSDummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_DSA, "TestCMSSignerJKSDSA", keystore, "foo123", "mykey");
+        mt.addJKSDummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_DSA, "TestCMSSignerJKSDSA", keystore, "foo123", "mykey");
         workerSession.reloadConfiguration(WORKERID_DSA);
         
         helperBasicCMSSign(WORKERID_DSA, "SHA1withDSA", "1.3.14.3.2.26", "1.2.840.10040.4.3", null, 1);
         
-        removeWorker(WORKERID_DSA);
+        mt.removeWorker(WORKERID_DSA);
     }
     
     /**
@@ -168,16 +173,16 @@ public class CMSSignerTest extends ModulesTestCase {
         Assume.assumeTrue("Test not supported by java version " + JAVA_VERSION, JAVA_VERSION > TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS);
 
         // Setup signer
-        final File keystore = new File(getSignServerHome(), "res/test/dss10/dss10_tssigner6dsa.jks");
+        final File keystore = new File(mt.getSignServerHome(), "res/test/dss10/dss10_tssigner6dsa.jks");
         if (!keystore.exists()) {
             throw new FileNotFoundException(keystore.getAbsolutePath());
         }
-        addJKSDummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_DSA, "TestCMSSignerJKSDSA", keystore, "foo123", "mykey");
+        mt.addJKSDummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_DSA, "TestCMSSignerJKSDSA", keystore, "foo123", "mykey");
         workerSession.reloadConfiguration(WORKERID_DSA);
 
         helperBasicCMSSign(WORKERID_DSA, "SHA256withDSA", "2.16.840.1.101.3.4.2.1", "2.16.840.1.101.3.4.3.2", null, 1);
 
-        removeWorker(WORKERID_DSA);
+        mt.removeWorker(WORKERID_DSA);
     }
     
     /**
@@ -188,17 +193,17 @@ public class CMSSignerTest extends ModulesTestCase {
     @Test
     public void test09BasicCMSSignSHA256withECDSA() throws Exception {
         // Setup signer
-        final File keystore = new File(getSignServerHome(), "res/test/dss10/dss10_signer5ec.p12");
+        final File keystore = new File(mt.getSignServerHome(), "res/test/dss10/dss10_signer5ec.p12");
         if (!keystore.exists()) {
             throw new FileNotFoundException(keystore.getAbsolutePath());
         }
-        addP12DummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_ECDSA,
+        mt.addP12DummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_ECDSA,
             "TestCMSSignerP12ECDSA", keystore, "foo123", "signerec");
         workerSession.reloadConfiguration(WORKERID_ECDSA);
         
         helperBasicCMSSign(WORKERID_ECDSA, "SHA256withECDSA", "2.16.840.1.101.3.4.2.1", "1.2.840.10045.4.3.2", null, 1);
         
-        removeWorker(WORKERID_ECDSA);
+        mt.removeWorker(WORKERID_ECDSA);
     }
     
     /**
@@ -208,7 +213,7 @@ public class CMSSignerTest extends ModulesTestCase {
      */
     @Test
     public void test05IncludeNoCerts() throws Exception {
-        helperBasicCMSSign(getSignerIdDummy1(), null, "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.11", "0", 0);
+        helperBasicCMSSign(mt.getSignerIdDummy1(), null, "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.11", "0", 0);
     }
     
     /**
@@ -218,7 +223,7 @@ public class CMSSignerTest extends ModulesTestCase {
      */
     @Test
     public void test06ExplicitIncludedCerts() throws Exception {
-        helperBasicCMSSign(getSignerIdDummy1(), null, "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.11", "1", 1);
+        helperBasicCMSSign(mt.getSignerIdDummy1(), null, "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.11", "1", 1);
     }
     
     /**
@@ -228,7 +233,7 @@ public class CMSSignerTest extends ModulesTestCase {
      */
     @Test
     public void test07TruncatedIncludedCerts() throws Exception {
-        helperBasicCMSSign(getSignerIdDummy1(), null, "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.11", "2", 1);
+        helperBasicCMSSign(mt.getSignerIdDummy1(), null, "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.11", "2", 1);
     }
 
     private void helperBasicCMSSign(final int workerId, final String sigAlg, final String expectedDigAlgOID,
@@ -263,24 +268,24 @@ public class CMSSignerTest extends ModulesTestCase {
         final byte[] data = res.getProcessedData();
    
         // Answer to right question
-        assertSame("Request ID", reqid, res.getRequestID());
+        ModulesTestCase.assertSame("Request ID", reqid, res.getRequestID());
 
         try ( // Output for manual inspection
                 FileOutputStream fos = new FileOutputStream(
-                        new File(getSignServerHome(),
+                        new File(mt.getSignServerHome(),
                                 "tmp" + File.separator + "signedcms_" + sigAlg + ".p7s"))) {
             fos.write((byte[]) data);
         }
 
         // Check certificate returned
         final Certificate signercert = res.getSignerCertificate();
-        assertNotNull("Signer certificate", signercert);
+        ModulesTestCase.assertNotNull("Signer certificate", signercert);
 
         // Check that the signed data contains the document (i.e. not detached)
         final CMSSignedData signedData = new CMSSignedData(data);
         final byte[] content = (byte[]) signedData.getSignedContent()
                 .getContent();
-        assertEquals("Signed document", testDocument, new String(content));
+        ModulesTestCase.assertEquals("Signed document", testDocument, new String(content));
 
         // Get signers
         final Collection signers = signedData.getSignerInfos().getSigners();
@@ -291,7 +296,7 @@ public class CMSSignerTest extends ModulesTestCase {
                 new JcaSignerInfoVerifierBuilder(new JcaDigestCalculatorProviderBuilder().build()).setProvider("BC").build(signercert.getPublicKey());
 
         // Verify using the signer's certificate
-        assertTrue("Verification using signer certificate",
+        ModulesTestCase.assertTrue("Verification using signer certificate",
                 signer.verify(sigVerifier));
 
         // Check that the signer's certificate is included
@@ -305,18 +310,18 @@ public class CMSSignerTest extends ModulesTestCase {
         Collection<? extends X509CertificateHolder> signerCerts =
                 certStore.getMatches(certSelector);
         
-        assertEquals("Certificate included", expectedIncludedCertificateLevels, signerCerts.size());
+        ModulesTestCase.assertEquals("Certificate included", expectedIncludedCertificateLevels, signerCerts.size());
         if (!signerCerts.isEmpty()) {
             final X509CertificateHolder certHolder =
                     signerCerts.iterator().next();
             final X509CertificateObject cert =
                     new X509CertificateObject(certHolder.toASN1Structure());
-            assertEquals(signercert, cert);
+            ModulesTestCase.assertEquals(signercert, cert);
         }
 
         // check the signature algorithm
-        assertEquals("Digest algorithm", expectedDigAlgOID, signer.getDigestAlgorithmID().getAlgorithm().getId());
-        assertEquals("Encryption algorithm", expectedEncAlgOID, signer.getEncryptionAlgOID());   
+        ModulesTestCase.assertEquals("Digest algorithm", expectedDigAlgOID, signer.getDigestAlgorithmID().getAlgorithm().getId());
+        ModulesTestCase.assertEquals("Encryption algorithm", expectedEncAlgOID, signer.getEncryptionAlgOID());   
     }
 
     /**
@@ -325,6 +330,6 @@ public class CMSSignerTest extends ModulesTestCase {
      */
     @Test
     public void test99TearDownDatabase() throws Exception {
-        removeWorker(getSignerIdDummy1());
+        mt.removeWorker(mt.getSignerIdDummy1());
     }
 }

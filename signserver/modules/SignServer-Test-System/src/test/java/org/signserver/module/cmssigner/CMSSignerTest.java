@@ -31,6 +31,7 @@ import org.bouncycastle.cms.SignerId;
 import org.bouncycastle.jce.provider.X509CertificateObject;
 import org.bouncycastle.util.Selector;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -164,21 +165,19 @@ public class CMSSignerTest extends ModulesTestCase {
     public void test08BasicCMSSignSHA256withDSA() throws Exception {
         // Looks like SHA256withDSA is not supported as signature algorithm by SUN provider in all java 7 versions.Example: 1.7.0_45 & 1.7.0_55
         // so let's run this test with Java 8 and higher versions only
-        if (JAVA_VERSION > TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS) {
-            // Setup signer
-            final File keystore = new File(getSignServerHome(), "res/test/dss10/dss10_tssigner6dsa.jks");
-            if (!keystore.exists()) {
-                throw new FileNotFoundException(keystore.getAbsolutePath());
-            }
-            addJKSDummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_DSA, "TestCMSSignerJKSDSA", keystore, "foo123", "mykey");
-            workerSession.reloadConfiguration(WORKERID_DSA);
+        Assume.assumeTrue("Test not supported by java version " + JAVA_VERSION, JAVA_VERSION > TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS);
 
-            helperBasicCMSSign(WORKERID_DSA, "SHA256withDSA", "2.16.840.1.101.3.4.2.1", "2.16.840.1.101.3.4.3.2", null, 1);
-
-            removeWorker(WORKERID_DSA);
-        } else {
-            LOG.info("Test is not supported by Java version so do nothing");
+        // Setup signer
+        final File keystore = new File(getSignServerHome(), "res/test/dss10/dss10_tssigner6dsa.jks");
+        if (!keystore.exists()) {
+            throw new FileNotFoundException(keystore.getAbsolutePath());
         }
+        addJKSDummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_DSA, "TestCMSSignerJKSDSA", keystore, "foo123", "mykey");
+        workerSession.reloadConfiguration(WORKERID_DSA);
+
+        helperBasicCMSSign(WORKERID_DSA, "SHA256withDSA", "2.16.840.1.101.3.4.2.1", "2.16.840.1.101.3.4.3.2", null, 1);
+
+        removeWorker(WORKERID_DSA);
     }
     
     /**

@@ -81,7 +81,7 @@ CREATE TABLE "ARCHIVEDATA" (
 -- Table structure for table `KeyData`
 --
 CREATE TABLE `KeyData` (
-  `alias` varchar(255) NOT NULL,
+  `keyAlias` varchar(255) NOT NULL,
   `wrappingKeyAlias` varchar(255) NOT NULL,
   `wrappingCipher` NUMBER(19,0) NOT NULL,
   `keyData` CLOB NOT NULL,

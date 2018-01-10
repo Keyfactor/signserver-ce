@@ -77,7 +77,7 @@ CREATE TABLE archivedata (
 -- Table structure for table `KeyData`
 --
 CREATE TABLE `KeyData` (
-  `alias` character varying(255) NOT NULL,
+  `keyAlias` character varying(255) NOT NULL,
   `wrappingKeyAlias` character varying(255) NOT NULL,
   `wrappingCipher` bigint NOT NULL,
   `keyData` text NOT NULL,
@@ -139,5 +139,5 @@ ALTER TABLE ONLY signerconfigdata
 --
 
 ALTER TABLE ONLY keydata
-    ADD CONSTRAINT keyusagecounter_pkey PRIMARY KEY (alias);
+    ADD CONSTRAINT keyusagecounter_pkey PRIMARY KEY (keyAlias);
 

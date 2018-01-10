@@ -21,7 +21,7 @@ public class KeyData implements Serializable {
 
     @Id
     @Column(length = 255)
-    private String alias;
+    private String keyAlias;
 
     @Column(length = 255)
     private String wrappingKeyAlias;
@@ -37,11 +37,11 @@ public class KeyData implements Serializable {
     private String certData;
 
     public String getKeyAlias() {
-        return alias;
+        return keyAlias;
     }
 
     public void setKeyAlias(String keyAlias) {
-        this.alias = keyAlias;
+        this.keyAlias = keyAlias;
     }
 
     public String getKeyData() {
@@ -91,7 +91,7 @@ public class KeyData implements Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 37 * hash + (this.alias != null ? this.alias.hashCode() : 0);
+        hash = 37 * hash + (this.keyAlias != null ? this.keyAlias.hashCode() : 0);
         return hash;
     }
 
@@ -104,7 +104,7 @@ public class KeyData implements Serializable {
             return false;
         }
         final KeyData other = (KeyData) obj;
-        if ((this.alias == null) ? (other.alias != null) : !this.alias.equals(other.alias)) {
+        if ((this.keyAlias == null) ? (other.keyAlias != null) : !this.keyAlias.equals(other.keyAlias)) {
             return false;
         }
         return true;
@@ -112,7 +112,7 @@ public class KeyData implements Serializable {
 
     @Override
     public String toString() {
-        return "KeyData{" + "keyAlias=" + alias + '}';
+        return "KeyData{" + "keyAlias=" + keyAlias + '}';
     }
 
 }

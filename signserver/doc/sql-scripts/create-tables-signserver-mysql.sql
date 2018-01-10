@@ -88,7 +88,7 @@ CREATE TABLE `SEQUENCE` (
 -- Table structure for table `KeyData`
 --
 CREATE TABLE `KeyData` (
-  `alias` varchar(255) NOT NULL,
+  `keyAlias` varchar(255) NOT NULL,
   `wrappingKeyAlias` varchar(255) NOT NULL,
   `wrappingCipher` bigint(19) NOT NULL,
   `keyData` LONGTEXT NOT NULL,

@@ -173,7 +173,7 @@ public class PatchedJreP11Test {
             workerSession.reloadConfiguration(CRYPTO_TOKEN);
             
             // Remove old key (if one)
-            TokenSearchResults searchResults = base.searchTokenEntries(0, 1, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), testKeyName)), true);
+            TokenSearchResults searchResults = base.searchTokenEntries(0, 1, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), testKeyName)), true);
             List<TokenEntry> entries = searchResults.getEntries();
             if (!entries.isEmpty()) {
                 base.destroyKey(testKeyName);
@@ -183,7 +183,7 @@ public class PatchedJreP11Test {
             base.generateKey("RSA", "2048", testKeyName);
             
             // Query one specific entry
-            searchResults = base.searchTokenEntries(0, 1, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.alias.name(), testKeyName)), true);
+            searchResults = base.searchTokenEntries(0, 1, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), testKeyName)), true);
             entries = searchResults.getEntries();
             assertEquals(1, entries.size());
             

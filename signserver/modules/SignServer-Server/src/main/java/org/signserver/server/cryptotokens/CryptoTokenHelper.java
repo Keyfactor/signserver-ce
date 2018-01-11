@@ -143,7 +143,7 @@ public class CryptoTokenHelper {
 
     public enum TokenEntryFields {
         /** Key alias of entry. */
-        alias,
+        keyAlias,
         
         /**
          * Type of entry.
@@ -738,7 +738,7 @@ public class CryptoTokenHelper {
         
         final Object actualValue;
         switch (TokenEntryFields.valueOf(term.getName())) {
-            case alias: {
+            case keyAlias: {
                 actualValue = entry.getAlias();
                 break;
             }

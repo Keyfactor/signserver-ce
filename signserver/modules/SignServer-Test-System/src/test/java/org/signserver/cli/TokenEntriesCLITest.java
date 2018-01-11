@@ -81,7 +81,7 @@ public class TokenEntriesCLITest extends ModulesTestCase {
             workerSession.generateSignerKey(new WorkerIdentifier(tokenId), "RSA", "512", testKeyAlias1, "foo123".toCharArray());
             
             assertEquals(CommandLineInterface.RETURN_SUCCESS,
-                     cli.execute("querytokenentries", "-token", String.valueOf(tokenId), "-from", "0", "-limit", "1", "-criteria", "keyAlias LIKE %KeyAlias%"));
+                     cli.execute("querytokenentries", "-token", String.valueOf(tokenId), "-from", "0", "-limit", "1", "-criteria", "alias LIKE %KeyAlias%"));
             assertPrinted("Should contain entries", cli.getOut(), "0: testKeyAlias1");
             
         } finally {

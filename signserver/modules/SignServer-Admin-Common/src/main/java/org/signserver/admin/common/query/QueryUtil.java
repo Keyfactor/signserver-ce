@@ -25,6 +25,8 @@ import org.cesecore.util.query.Elem;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
 import org.signserver.common.ArchiveMetadata;
+import static org.signserver.common.SignServerConstants.TOKEN_ENTRY_FIELDS_ALIAS;
+import static org.signserver.common.SignServerConstants.TOKEN_ENTRY_FIELDS_KEY_ALIAS;
 
 /**
  * Utility functions for managing
@@ -53,8 +55,8 @@ public class QueryUtil {
                     throws IllegalArgumentException, NumberFormatException, ParseException {
         // find an operator
         final String[] parts = criteria.split(" ", 3);
-        
-        final String field = parts[0];
+
+        String field = parts[0];
         
         if (parts.length < 2) {
             throw new IllegalArgumentException("Missing operator");
@@ -72,6 +74,10 @@ public class QueryUtil {
         
         if (!allowedFields.contains(field)) {
             throw new IllegalArgumentException("Unrecognized field: " + field);
+        }
+        
+        if (field.equals(TOKEN_ENTRY_FIELDS_ALIAS)) {
+            field = TOKEN_ENTRY_FIELDS_KEY_ALIAS;
         }
         
         if (!noArgOps.contains(op)) {
@@ -128,6 +134,9 @@ public class QueryUtil {
                     value = Long.parseLong(cond.getValue());
                 } else if (INT_COLUMNS.contains(cond.getColumn())) {
                     value = Integer.parseInt(cond.getValue());
+                } else if (cond.getColumn().equals(TOKEN_ENTRY_FIELDS_ALIAS)) {
+                    cond.setColumn(TOKEN_ENTRY_FIELDS_KEY_ALIAS);
+                    value = cond.getValue();
                 } else {
                     value = cond.getValue();
                 }

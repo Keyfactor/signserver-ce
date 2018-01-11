@@ -94,4 +94,7 @@ public class SignServerConstants {
      * 
      */
     public static final String DEFAULT_NULL = null;
+    
+    public static final String TOKEN_ENTRY_FIELDS_ALIAS = "alias";        // Old criteria column name that still need to be supported for client interfaces
+    public static final String TOKEN_ENTRY_FIELDS_KEY_ALIAS = "keyAlias"; // Current criteria column name and defined in CryptoTokenHelper.TokenEntryFields
 }

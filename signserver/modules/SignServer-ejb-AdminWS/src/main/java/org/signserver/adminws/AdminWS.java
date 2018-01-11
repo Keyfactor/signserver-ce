@@ -80,6 +80,8 @@ import org.signserver.server.data.impl.DataUtils;
 import org.signserver.server.data.impl.UploadConfig;
 import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
+import static org.signserver.common.SignServerConstants.TOKEN_ENTRY_FIELDS_ALIAS;
+import static org.signserver.common.SignServerConstants.TOKEN_ENTRY_FIELDS_KEY_ALIAS;
 
 /**
  * Class implementing the Admin WS interface.
@@ -1222,6 +1224,9 @@ public class AdminWS {
             final QueryCriteria qc = QueryCriteria.create();
             
             for (QueryOrdering order : orderings) {
+                if (order.getColumn().equals(TOKEN_ENTRY_FIELDS_ALIAS)) {
+                    order.setColumn(TOKEN_ENTRY_FIELDS_KEY_ALIAS);
+                }
                 qc.add(new Order(order.getColumn(), Order.Value.valueOf(order.getOrder().name())));
             }
             

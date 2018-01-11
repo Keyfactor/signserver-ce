@@ -40,6 +40,7 @@ import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.server.cryptotokens.TokenEntry;
 import org.signserver.server.cryptotokens.TokenSearchResults;
+import static org.signserver.common.SignServerConstants.TOKEN_ENTRY_FIELDS_ALIAS;
 
 /**
  * Command for printing key aliases in a crypto token and optionally other
@@ -101,7 +102,7 @@ public class QueryTokenEntriesCommand extends AbstractAdminCommand {
         
         // allowed fields
         allowedFields = new HashSet<>();
-        allowedFields.add("keyAlias"); // TODO: Defined in CryptoTokenHelper.TokenEntryFields
+        allowedFields.add(TOKEN_ENTRY_FIELDS_ALIAS); // TODO: Defined in CryptoTokenHelper.TokenEntryFields
     }
     
     @Override
@@ -110,9 +111,9 @@ public class QueryTokenEntriesCommand extends AbstractAdminCommand {
                 + "<field> is a field name from the token: alias\n"
                 + "<op> is a relational operator: EQ, NEQ or LIKE\n"
                 + "Example: signserver querytokenentries -token CryptoTokenHSM -from 0 -limit 10\n"
-                + "Example: signserver querytokenentries -token CryptoTokenHSM -criteria \"keyAlias EQ key123\n"
-                + "Example: signserver querytokenentries -token CryptoTokenHSM -from 0 -limit 10 -criteria \"keyAlias NEQ key1\" -criteria \"keyAlias NEQ key4\"\n"
-                + "Example: signserver querytokenentries -token CryptoTokenHSM -criteria \"keyAlias LIKE key%\n\n";
+                + "Example: signserver querytokenentries -token CryptoTokenHSM -criteria \"alias EQ key123\n"
+                + "Example: signserver querytokenentries -token CryptoTokenHSM -from 0 -limit 10 -criteria \"alias NEQ key1\" -criteria \"alias NEQ key4\"\n"
+                + "Example: signserver querytokenentries -token CryptoTokenHSM -criteria \"alias LIKE key%\n\n";
     }
     
     @Override

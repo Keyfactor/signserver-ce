@@ -16,7 +16,7 @@
 "Jaxen";                      "BSD";                                           "http://jaxen.codehaus.org";                            "Dependency of OpenXML4J.";            "No.";
 "JFreeChart";                 "LGPLv2.1+";                                     "http://jfree.org";                                     "Used for plotting diagrams in performance test.";  "No.";
 "JNA";                        "Apache 2.0";                                    "https://github.com/java-native-access/jna";            "Dependency of JackNJI11" ;            "No." ;
-"jnr-ffi";                    "Apache 2.0";                                    "https://github.com/jnr/jnr-ffi";                       "Dependency of JackNJI11" "No." ;      ;
+"jnr-ffi";                    "Apache 2.0";                                    "https://github.com/jnr/jnr-ffi";                       "Dependency of JackNJI11";             "No." ;
 "Jsign";                      "Apache 2.0";                                    "https://ebourg.github.io/jsign";                       "Used by MSAuthCodeSigner to sign Portable Executables";  "Yes, support for overriding timestamp client implementation. Various minor improvments. Support for using newer versions of Bouncy Castle (1.54). Patches has been contributed to upstream.";
 "JUnit";                      "Eclipse Public License";                        "http://junit.org";                                     "Core dependency used for automated testing.";  "No.";
 "Log4j";                      "Apache 2.0";                                    "http://logging.apache.org/log4j";                      "Core dependency used for producing logs." ;  "No.";

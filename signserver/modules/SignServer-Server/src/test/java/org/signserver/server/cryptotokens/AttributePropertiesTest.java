@@ -30,7 +30,7 @@ import org.pkcs11.jacknji11.CKA;
  */
 public class AttributePropertiesTest {
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(AllowedMechanismsTest.class);
+    private static final Logger LOG = Logger.getLogger(AttributePropertiesTest.class);
 
     /**
      * Tests parsing from worker properties with one property in hex.

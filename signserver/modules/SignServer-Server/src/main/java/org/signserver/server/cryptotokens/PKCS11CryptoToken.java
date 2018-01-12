@@ -95,7 +95,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
 
     private AttributeProperties attributeProperties;
 
-    public PKCS11CryptoToken() throws InstantiationException {
+    public PKCS11CryptoToken() {
     }
 
     private String keyAlias;

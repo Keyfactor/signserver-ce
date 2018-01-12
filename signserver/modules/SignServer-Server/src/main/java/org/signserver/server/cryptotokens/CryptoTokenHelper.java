@@ -91,9 +91,6 @@ import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
 import org.signserver.server.IServices;
 import org.signserver.server.KeyUsageCounterHash;
-import static org.signserver.server.cryptotokens.CryptoTokenHelper.PROPERTY_SELFSIGNED_DN;
-import static org.signserver.server.cryptotokens.CryptoTokenHelper.PROPERTY_SELFSIGNED_SIGNATUREALGORITHM;
-import static org.signserver.server.cryptotokens.CryptoTokenHelper.PROPERTY_SELFSIGNED_VALIDITY;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounter;
 
@@ -481,7 +478,7 @@ public class CryptoTokenHelper {
      * @return True if the certificate looks like a dummy certificate DN
      */
     public static boolean isDummyCertificateDN(final String dn) {
-        return dn.contains(CryptoTokenHelper.SUBJECT_DUMMY)
+        return dn.contains(SUBJECT_DUMMY)
                     || (dn.contains(CESECORE_SUBJECT_DN_6_8))
                     || (dn.contains(CESECORE_SUBJECT_DUMMY_CN) && dn.contains(CESECORE_SUBJECT_DUMMY_L) && dn.contains(CESECORE_SUBJECT_DUMMY_C));
     }
@@ -504,7 +501,7 @@ public class CryptoTokenHelper {
     }
     
     private static String getDummyCertificateDN(String commonName) {
-        return "CN=" + commonName + ", " + CryptoTokenHelper.SUBJECT_DUMMY + ", C=SE";
+        return "CN=" + commonName + ", " + SUBJECT_DUMMY + ", C=SE";
     }
     
     private static X509Certificate getSelfCertificate (String myname,
@@ -618,10 +615,10 @@ public class CryptoTokenHelper {
 
                                 // Modifiable
                                 if (key == null) {
-                                    info.put(CryptoTokenHelper.TOKEN_ENTRY_MODIFIABLE, "Error: " + keyError);
+                                    info.put(TOKEN_ENTRY_MODIFIABLE, "Error: " + keyError);
                                 } else {
                                     final boolean modifiable = p11.isKeyModifiable(key, providerName);
-                                    info.put(CryptoTokenHelper.TOKEN_ENTRY_MODIFIABLE, String.valueOf(modifiable));
+                                    info.put(TOKEN_ENTRY_MODIFIABLE, String.valueOf(modifiable));
                                 }
                                 
                                 // Security Info
@@ -629,9 +626,9 @@ public class CryptoTokenHelper {
                                     try {
                                         final StringBuilder sb = new StringBuilder();
                                         p11.securityInfo(key, providerName, sb);
-                                        info.put(CryptoTokenHelper.TOKEN_ENTRY_PKCS11_ATTRIBUTES, sb.toString().replace("  ", "\n"));
+                                        info.put(TOKEN_ENTRY_PKCS11_ATTRIBUTES, sb.toString().replace("  ", "\n"));
                                     } catch (P11RuntimeException ex) {
-                                        info.put(CryptoTokenHelper.TOKEN_ENTRY_PKCS11_ATTRIBUTES, "Error: " + ex.getMessage());
+                                        info.put(TOKEN_ENTRY_PKCS11_ATTRIBUTES, "Error: " + ex.getMessage());
                                         if (LOG.isDebugEnabled()) {
                                             LOG.debug("Unable to query security info for key", ex);
                                         }

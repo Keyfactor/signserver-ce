@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1099,28 +1123,56 @@
                                         <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                                                      <li><a href="SignServer_User_Interfaces.html">SignServer User Interfaces</a></li>
                                                             </ul>
-</div>            <h1 id="src-9798082"> <span>Administration CLI</span></h1>
+</div>            <h1 id="src-15859751"> <span>Administration CLI</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The SignServer Administration CLI (AdminCLI) is one of the available interfaces to administrate SignServer. It supports configuration of workers and associated key management as well as querying the audit log and archive.    </p>
-    <p  >Other options for administration includes the <a   href="Administration_GUI.html">Administration GUI</a>, the <a   href="Administration_Web.html">Administration Web</a> and the <a   href="#src-9798082_id-.AdministrationCLIv4.2.0-Administration_Web_Services">Administration Web Services</a> interfaces.    </p>
-    <p  >The SignServer administration command line interface (Admin CLI) is started using bin/signserver (or bin/signserver.cmd for Windows).    </p>
+    <p  >Other options for administration includes the <a   href="Administration_GUI.html">Administration GUI</a>, the <a   href="Administration_Web.html">Administration Web</a> and the <a   href="#src-15859751_id-.AdministrationCLIv4.3.0-Administration_Web_Services">Administration Web Services</a> interfaces.    </p>
+    <p  >The SignServer administration command line interface (Admin CLI) is started using <tt class=" ">bin/signserver</tt> (or <tt class=" ">bin/signserver.cmd</tt> for Windows).    </p>
     <p  >Every worker is identified by an ID and an optional name that can be used in all CLI commands.    </p>
-    <p  >It is possible to do configuration of a worker while it's in production. All configuration commands are cached until a reload command is issued and the configuration becomes active.    </p>
-    <div class="section section-1" id="src-9798082_id-.AdministrationCLIv4.2.0-GeneralCommands">
+    <p  >You can configure a worker while it is in production since all configuration commands are cached until a reload command is issued and the configuration becomes active.    </p>
+    <p  >The following describes the SignServer Administration CLI (AdminCLI) commands:    </p>
+    <p  >    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-15859751_id-.AdministrationCLIv4.3.0-GeneralCommands">General Commands</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-15859751_id-.AdministrationCLIv4.3.0-AuthorizationRelated">Authorization Related</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-15859751_id-.AdministrationCLIv4.3.0-DatabaseRelated">Database Related</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-15859751_id-.AdministrationCLIv4.3.0-ArchiveRelated">Archive Related</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-15859751_id-.AdministrationCLIv4.3.0-AdministratorsRelated">Administrators Related</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-15859751_id-.AdministrationCLIv4.3.0-AuditorsRelated">Auditors Related</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-15859751_id-.AdministrationCLIv4.3.0-ArchiveAuditorsRelated">Archive Auditors Related</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-15859751_id-.AdministrationCLIv4.3.0-PeerSystemsRelated">Peer Systems Related</a>    </p>
+</li></ul>    <div class="section section-1" id="src-15859751_id-.AdministrationCLIv4.3.0-GeneralCommands">
         <h1 class="heading "><span>General Commands</span></h1>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">getstatus:</strong><br/>Returns the status of the given worker, it says if its crypto token is active or not and the loaded 'active' configuration. It is possible to get a <i class=" ">brief</i> summary or a <i class=" ">complete</i> listing for one worker or all configured workers. If all workers are displayed will also all the global configuration parameters be displayed.    </p>
-</li><li class=" ">    <p  ><strong class=" ">getconfig:</strong><br/>Returns the current worker or global configuration depending on options.<br/>For worker configuration observe that this configuration might not have been activated yet, not until a <i class=" ">reload</i> command is issued.    </p>
-</li><li class=" ">    <p  ><strong class=" ">setproperty:</strong><br/>Sets a custom property used by the worker or crypto token, see reference for the given Worker and CryptoToken for available properties.    </p>
-</li><li class=" ">    <p  ><strong class=" ">getproperty:</strong><br/>List the value of a worker or global property.<br/>Usage:    </p>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-getstatus">
+        <h2 class="heading "><span>getstatus</span></h2>
+    <p  >Returns the status of the given worker, stating if its crypto token is active or not, and the loaded 'active' configuration. It is possible to get a <i class=" ">brief</i> summary or a <i class=" ">complete</i> listing for one worker or all configured workers. If all workers are displayed, all the global configuration parameters will also be displayed.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-getconfig">
+        <h2 class="heading "><span>getconfig</span></h2>
+    <p  >Returns the current worker or global configuration depending on options. Note that for worker configuration, this configuration might be inactive until a <tt class=" ">reload</tt> command is issued.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-setproperty">
+        <h2 class="heading "><span>setproperty</span></h2>
+    <p  >Sets a custom property used by the worker or crypto token. For available properties, refer to the respective section in the <a   href="SignServer_Reference.html">SignServer Reference</a> for the given Worker and CryptoToken.    </p>
+    <p  >    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-getproperty">
+        <h2 class="heading "><span>getproperty</span></h2>
+    <p  >List the value of a worker or global property.    </p>
+    <p  >Usage:    </p>
+    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">signserver getproperty &lt;</code><code class="keyword">signerid</code><code class="plain"> | signerName | global | node&gt; &lt;</code><code class="keyword">propertykey</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">signserver getproperty &lt;signerid | signerName | global | node&gt; &lt;propertykey&gt;</code></div>
 </div>
     </div>
-</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">setproperties:</strong><br/>Command used to batch a set of properties, both for the global and worker configuration. It can be used to configure a Signer in a test environment, dump all the properties and upload it into production.<br/>It reads all the configuration properties form a property file and depending on the contents of the key it sets the given property. All properties will be set according to the following defined rule set.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-setproperties">
+        <h2 class="heading "><span>setproperties</span></h2>
+    <p  >Used to batch a set of properties, both for the global and worker configuration. The command can be used to configure a Signer in a test environment, dump all the properties and upload it into production.    </p>
+    <p  >The <tt class=" ">setproperties</tt> command reads all the configuration properties form a property file, and depending on the contents of the key, it then sets the given property. All properties are set according to the following defined rule set.    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
                     <colgroup>
@@ -1140,7 +1192,7 @@
         <p  >Properties starting with id&lt;num&gt;.    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Will set the property to the value of the given ID to the worker with the given id.    </p>
+        <p  >Sets the property to the value of the given ID to the worker with the given id.    </p>
             </td>
         </tr>
     <tr>
@@ -1148,7 +1200,7 @@
         <p  >Properties starting with name&lt;name&gt;.    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Will set the property to a worker with the given name. (If the name doesn't exists a unique ID will be generated and assigned).    </p>
+        <p  >Sets the property to a worker with the given name. If the name does not exists, a unique ID will be generated and assigned.    </p>
             </td>
         </tr>
     <tr>
@@ -1156,7 +1208,7 @@
         <p  >Property keys containing GENID&lt;NUM&gt;, example WORKERGENID1 or GLOB. WORKERGENID1    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The SignServer will find a free unique ID and assign substitute all GENID&lt;num&gt; with this id.    </p>
+        <p  >The SignServer will find a free unique ID and assign substitute all GENID&lt;num&gt; with this ID.    </p>
             </td>
         </tr>
     <tr>
@@ -1164,7 +1216,7 @@
         <p  >Properties starting with glob.    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Will set a global property with global scope.    </p>
+        <p  >Sets a global property with global scope.    </p>
             </td>
         </tr>
     <tr>
@@ -1172,7 +1224,7 @@
         <p  >Properties starting with node.    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Will set a global property with node scope.    </p>
+        <p  >Sets a global property with node scope.    </p>
             </td>
         </tr>
     <tr>
@@ -1180,112 +1232,389 @@
         <p  >Properties starting with -&lt;other prefix&gt;&lt;value&gt;    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Will remove the property, either worker or global.    </p>
+        <p  >Removes the property, either worker or global.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
-    <p  >See the directory 'sample-configs' for examples.    </p>
-</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">removeproperty:</strong><br/>Removes a configured property    </p>
-</li><li class=" ">    <p  ><strong class=" ">dumpproperties:</strong><br/>This tool will dump all configured properties for one or all workers in the system into a property file. If the configuration for one worker is dumped it can be used to transfer the configuration from one installation to another. If all configurations is dumped, it can be used as a backup tool.    </p>
-</li><li class=" ">    <p  ><strong class=" ">uploadsignercertificate:</strong><br/>Used to upload the certificate when the worker only needs the actual signing certificate and not the entire chain.    </p>
-</li><li class=" ">    <p  ><strong class=" ">uploadsignercertificatechain:</strong><br/>Used when uploading a complete certificate chain to the worker. Which command that is supposed to be used is depending on the worker and crypto token used.    </p>
-</li><li class=" ">    <p  ><strong class=" ">importcertificatechain:</strong><br/>Used to import a certificate chain into a crypto token. It takes a worker ID of the crypto worker (or a worker ID of a worker with the crypto token configured in the legacy way) and a path pointing to a file containing the certificate chain and a key alias to import to. This is currently supported by the PKCS11 and keystore crypto token implementations.    </p>
-</li><li class=" ">    <p  ><strong class=" ">generatecertreq:</strong><br/>Used to generate a certificate request for a worker to be signed by a certificate authority. It takes distinguished name and signature algorithm as parameters and writes the request in PEM format to file. An optional key alias can be specified to generate a request given a specific key alias from the crypto token.    </p>
-</li><li class=" ">    <p  ><strong class=" ">activatecryptotoken:</strong><br/>Used to activate crypto tokens. Authentication code is usually the PIN used to unlock the keys on the HSM. Not used if the token is set to auto-activation.    </p>
-</li><li class=" ">    <p  ><strong class=" ">deactivatecryptotoken:</strong><br/>Brings a crypto token off-line. Not used if token is set to auto-activation.    </p>
-</li></ul>    <div class="section section-2" id="src-9798082_id-.AdministrationCLIv4.2.0-">
-        <h2 class="heading "><span></span></h2>
+    <p  >For examples, see the directory <tt class=" ">sample-configs</tt>.    </p>
     </div>
-    <div class="section section-2" id="src-9798082_id-.AdministrationCLIv4.2.0-AuthorizationRelated">
-        <h2 class="heading "><span>Authorization Related</span></h2>
-    <p  >These commands are used to configure the internal client certificate authorization when it is turned on. It controls which clients that is authorized to request a processable worker.    </p>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">addauthorizedclient:</strong><br/>Adds a client certificate to a processable workers list of acceptable clients using this worker. Specify certificate serial number in hex and the Issuer DN of the client certificate. If DN components contains commas, these needs to be escaped with backslashes. Alternatively a certificate file (PEM or DER format) can be specified, from which the serial number and issuer DN is fetched.    </p>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-removeproperty">
+        <h2 class="heading "><span>removeproperty</span></h2>
+    <p  >Removes a configured property.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-dumpproperties">
+        <h2 class="heading "><span>dumpproperties</span></h2>
+    <p  >Dumps all configured properties for one or all workers in the system into a property file. If the configuration for one worker is dumped, the <tt class=" ">dumpproperties</tt> tool can be used to transfer the configuration from one installation to another. If all configurations are dumped, it can be used as a backup tool.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-uploadsignercertificate">
+        <h2 class="heading "><span>uploadsignercertificate</span></h2>
+    <p  >Used to upload the certificate when the worker only needs the actual signing certificate and not the entire chain.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-uploadsignercertificatechain">
+        <h2 class="heading "><span>uploadsignercertificatechain</span></h2>
+    <p  >Used when uploading a complete certificate chain to the worker.    </p>
+    <p  >Note that the correct command to use for upload depends on the worker and crypto token used.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-importcertificatechain">
+        <h2 class="heading "><span>importcertificatechain</span></h2>
+    <p  >Used to import a certificate chain into a crypto token. It takes a worker ID of the crypto worker (or a worker ID of a worker with the crypto token configured in the legacy way), and a path pointing to a file containing the certificate chain and a key alias to import to. Currently supported by the PKCS11 and keystore crypto token implementations.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-generatecertreq">
+        <h2 class="heading "><span>generatecertreq</span></h2>
+    <p  >Used to generate a certificate request for a worker to be signed by a certificate authority. The command takes distinguished name and signature algorithm as parameters, and writes the request in PEM format to file. An optional key alias can be specified to generate a request given a specific key alias from the crypto token.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-activatecryptotoken">
+        <h2 class="heading "><span>activatecryptotoken</span></h2>
+    <p  >Used to activate crypto tokens. Authentication code is usually the PIN used to unlock the keys on the HSM. Not used if the token is set to auto-activation.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-deactivatecryptotoken">
+        <h2 class="heading "><span>deactivatecryptotoken</span></h2>
+    <p  >Brings a crypto token off-line. Not used if token is set to auto-activation.    </p>
+    <p  >    </p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-15859751_id-.AdministrationCLIv4.3.0-AuthorizationRelated">
+        <h1 class="heading "><span>Authorization Related</span></h1>
+    <p  >Authorization related commands are used to configure the internal client certificate authorization when enabled, and controls the clients authorized to request a processable worker.    </p>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-addauthorizedclient">
+        <h2 class="heading "><span>addauthorizedclient</span></h2>
+    <p  >Adds a client certificate to a processable workers list of acceptable clients using this worker. Specify certificate serial number in hex and the Issuer DN of the client certificate. If DN components contains commas, these need to be escaped with backslashes. Alternatively, a certificate file (PEM or DER format) can be specified, from which the serial number and issuer DN is fetched.    </p>
+    <p  >Usage example 1:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">signserver addauthorizedclient 1 EF34242D2324 </code><code class="string">"CN=Test Root CA"</code></div>
+</div>
+    </div>
+    <p  >Usage example 2:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">signserver addauthorizedclient 1 EF3456789ABC </code><code class="string">"CN=Client,O=Test Organization,C=SE"</code></div>
+</div>
+    </div>
+    <p  >Usage example 3:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">signserver addauthorizedclient 1 client.pem</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-removeauthorizedclient">
+        <h2 class="heading "><span>removeauthorizedclient</span></h2>
+    <p  >Removes added client certificate entries.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-listauthorizedclients">
+        <h2 class="heading "><span>listauthorizedclients</span></h2>
+    <p  >Displays the current list of acceptable clients.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-renewsigner">
+        <h2 class="heading "><span>renewsigner</span></h2>
+    <p  >Sends a request for renewal of the specified worker to the specified renewal worker. If the authcode parameter is omitted, the command will renew the certificate without an authcode, assuming the crypto token is auto-activated, or the worker is using a separate crypto worker (recommended). To use the previous behavior of prompting for the authcode, specify the <tt class=" ">-authprompt</tt> option. When the authcode is not passed as a parameter or prompted for, an explicit activation of the token will not be performed. For more information, see <a   href="RenewalWorker.html">RenewalWorker</a>.    </p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-15859751_id-.AdministrationCLIv4.3.0-DatabaseRelated">
+        <h1 class="heading "><span>Database Related</span></h1>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-resync">
+        <h2 class="heading "><span>resync</span></h2>
+    <p  >The <tt class=" ">resync</tt> command is used if a SignServer had a complete database failure. When this happens, the Global Configuration switches to Off-line mode and it is not possible for the nodes to communicate internally and the Global Configurations will no longer be in sync. When the database is up again, the <tt class=" ">resync</tt> command can be sent to the node that has the most valid Global Configuration to write it to the database. After the resynchronization is performed, the Global Configuration will re-enter On-line mode.    </p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-15859751_id-.AdministrationCLIv4.3.0-ArchiveRelated">
+        <h1 class="heading "><span>Archive Related</span></h1>
+    <p  >The archive commands can be used for processable workers with archiving enabled to find specific archived responses. Whether a worker or Archiver supports being queried using the archive commands, is governed by their respective implementation. For Archivers other than the default <strong class=" ">OldDatabaseArchiver</strong> and <strong class=" ">Base64DatabaseArchiver</strong>, querying might have to be performed directly in a database, filesystem, or by some custom application.    </p>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-archivefindfromarchiveid">
+        <h2 class="heading "><span>archive findfromarchiveid</span></h2>
+    <p  >Used to extract archived data from database identified by the archive ID. The ID depends on the worker. For example, in case of the TSA, the TimeStampInfo serial number is used. The data is stored with the same file title as the archive ID, and with the file extension depending on the type of item, for example <tt class=" ">.request</tt> or <tt class=" ">.response</tt>.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-archivefindfromrequestip">
+        <h2 class="heading "><span>archive findfromrequestip</span></h2>
+    <p  >Used to extract all archived data requested from a specified IP address. All data is stored as separate files with the archive ID as file title, and the file extension depending on the type of item.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-archivefindfromrequestcert">
+        <h2 class="heading "><span>archive findfromrequestcert</span></h2>
+    <p  >Used to extract all archived data requested from a client by its specified certificate serial number and issuer DN. All data is stored as separate files with the archive ID as file title and the file extension depending on the type of item.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-archivequery">
+        <h2 class="heading "><span>archive query</span></h2>
+    <p  >Used to query contents of the archive. Actual archived data is not fetched by this command.    </p>
     <p  >Usage:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">Example 1: signserver addauthorizedclient 1 EF34242D2324 "CN=Test Root CA"</code></div>
-<div class="line"><code class="plain">Example 2: signserver addauthorizedclient 1 EF3456789ABC "CN=Client,O=Test Organization,C=SE"</code></div>
-<div class="line"><code class="plain">Example 3: signserver addauthorizedclient 1 client.pem</code></div>
+<div class="line"><code class="plain">signserver archive query -limit &lt;number&gt; [-criteria  </code><code class="string">"&lt;field&gt; &lt;op&gt; &lt;value&gt;"</code><code class="plain"> [-criteria...]] [-from &lt;index&gt;] [-header] [-request|-response]</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  ><strong class=" ">removeauthorizedclient:</strong><br/>Removes added client certificate entries.    </p>
-</li><li class=" ">    <p  ><strong class=" ">listauthorizedclients:</strong><br/>Displays the current list of acceptable clients.    </p>
-</li><li class=" ">    <p  ><strong class=" ">renewsigner:</strong><br/>Sends a request for renewal of the specified worker to the specified renewal worker. If the authcode parameter is omitted the command will renew the certificate without an authcode, assuming the crypto token is auto-activated or the worker is using a separate crypto worker (recommended). To get the old behaviour of prompting for the authcode, specify the -authprompt option. When the authcode is not passed as a parameter or prompted for, an explicit activation of the token will not be performed. See also the section about the <a   href="RenewalWorker.html">RenewalWorker</a>.    </p>
-</li></ul>    </div>
-    <div class="section section-2" id="src-9798082_id-.AdministrationCLIv4.2.0-DatabaseRelated">
-        <h2 class="heading "><span>Database Related</span></h2>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">resync:<br/></strong>The 'resync' command is used after a SignServer had a complete database failure. When this happens will the Global Configuration become in 'Off-line' mode and it's not possible for the nodes to communicate internally and the Global Configurations will not be in sync any more. After the database is up again can this command be sent to the node that have the most valid Global Configuration and write it to the database. After this will the Global Configuration be in 'On-line' mode again.    </p>
-</li></ul>    </div>
-    <div class="section section-2" id="src-9798082_id-.AdministrationCLIv4.2.0-ArchiveRelated">
-        <h2 class="heading "><span>Archive Related</span></h2>
-    <p  >This commands can be used for processable workers that have archiving turned on. They are used to find specific archived responses. It's up to the implementation of the worker if it supports archiving or not and it is up to the chosen Archiver if it archives the data in way that it can be queried using this commands. For Archivers other than the default &quot;OldDatabaseArchiver&quot; and Base64DatabaseArchiver querying might have to be done directly in a database, filesystem or by some custom application.    </p>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">archive findfromarchiveid:</strong> Command used to extract archived data from database identified by the archive Id.<br/>The Id depends on the worker, in case of the TSA is the TimeStampInfo serial number used. The data is stored with the same file title as the archive ID and with the file extension depending on the type of item, for instance &quot;.request&quot; or &quot;.response&quot;.    </p>
-</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">archive findfromrequestip:</strong> Used to extract all archived data requested from a specified IP address. All data is stored as separate files with the archive ID as file title and the file extension depending on the type of item.    </p>
-</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">archive findfromrequestcert:</strong> Used to extract all archived data requested from a client by specified it's certificates serial number and issuer DN. All data is stored as separate files with the archive ID as file title and the file extension depending on the type of item.    </p>
-</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">archive query:</strong> Used to query contents of the archive. Actual archived data is not fetched by this command.<br/>Usage:    </p>
+    <p  ><i class=" "><br/></i>    </p>
+    <div  class="tablewrap">
+        <table class="confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Option    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Description    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >&lt;field&gt;    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Field name from the archive: <strong class=" ">archiveId</strong>, <strong class=" ">requestCertSerialNumber</strong>, <strong class=" ">requestIP</strong>, <strong class=" ">requestIssuerDN</strong>, <strong class=" ">signerid</strong>, <strong class=" ">time</strong>, <strong class=" ">type</strong>.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >&lt;op&gt;    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Relational operator: <strong class=" ">GT</strong>, <strong class=" ">GE</strong>, <strong class=" ">LT</strong>, <strong class=" ">LE</strong>, <strong class=" ">EQ</strong>, <strong class=" ">NEQ</strong>, <strong class=" ">LIKE,</strong><strong class=" ">NULL</strong>, <strong class=" ">NOTNULL</strong>.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-request    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Shows only entries for requests.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-response    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Shows only entries for responses.    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <p  >Examples:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">signserver archive query -limit &lt;</code><code class="keyword">number</code><code class="plain">&gt; [-criteria  "&lt;</code><code class="keyword">field</code><code class="plain">&gt; &lt;</code><code class="keyword">op</code><code class="plain">&gt; &lt;</code><code class="keyword">value</code><code class="plain">&gt;" [-criteria...]] [-from &lt;</code><code class="keyword">index</code><code class="plain">&gt;] [-header] [-request|-response]</code></div>
+<div class="line"><code class="plain">signserver archive query -limit 10 -criteria </code><code class="string">"signerid EQ 1"</code></div>
+<div class="line"><code class="plain">signserver archive query -limit 10 -criteria </code><code class="string">"signerid EQ 1"</code><code class="plain"> -request</code></div>
+<div class="line"><code class="plain">signserver archive query -limit 10 -criteria </code><code class="string">"time GT 1359623137000"</code><code class="plain"> -criteria "requestIP EQ 127.0.0.1</code></div>
+<div class="line"><code class="plain">signserver archive query -limit 10 -criteria </code><code class="string">"signerid EQ 1"</code><code class="plain"> -outpath </code><code class="plain">/tmp/out</code><code class="plain">\n\n"</code></div>
 </div>
     </div>
-    <p  ><i class=" ">&lt;field&gt;</i> is a field name from the archive: <strong class=" ">archiveId</strong>, <strong class=" ">requestCertSerialNumber</strong>, <strong class=" ">requestIP</strong>, <strong class=" ">requestIssuerDN</strong>, <strong class=" ">signerid</strong>, <strong class=" ">time</strong>, <strong class=" ">type</strong>.<br/><i class=" ">&lt;op&gt;</i> is a relational operator: <strong class=" ">GT</strong>, <strong class=" ">GE</strong>, <strong class=" ">LT</strong>, <strong class=" ">LE</strong>, <strong class=" ">EQ</strong>, <strong class=" ">NEQ</strong>, <strong class=" ">LIKE,</strong><strong class=" ">NULL</strong>, <strong class=" ">NOTNULL</strong>.<br/><i class=" ">-request</i> shows only entries for requests<br/><i class=" ">-response</i> shows only entries for responses<br/>Examples:    </p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-15859751_id-.AdministrationCLIv4.3.0-AdministratorsRelated">
+        <h1 class="heading "><span>Administrators Related</span></h1>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-wsadmins-list">
+        <h2 class="heading "><span>wsadmins -list</span></h2>
+    <p  >Lists administrator certificates (certificate serial number and issuer DN) for administrators authorized to use the Admin Web Service interface to administrate SignServer.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-wsadmins-add">
+        <h2 class="heading "><span>wsadmins -add</span></h2>
+    <p  >Authorizes an administrator to use the Admin Web Service interface by certificate serial number (in hexadecimal) and issuer DN with space after each comma separating DN components. If DN components contains commas, these needs to be escaped with backslashes.    </p>
+    <p  >The following displays how to enter the issuer DN when using a certificate issued from EJBCA with the default (as specified by EJBCA) LDAP DN order:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">signserver archive query -limit 10 -criteria "signerid EQ 1"</code></div>
-<div class="line"><code class="plain">signserver archive query -limit 10 -criteria "signerid EQ 1" -request</code></div>
-<div class="line"><code class="plain">signserver archive query -limit 10 -criteria "time GT 1359623137000" -criteria "requestIP EQ 127.0.0.1</code></div>
-<div class="line"><code class="plain">signserver archive query -limit 10 -criteria "signerid EQ 1" -outpath /tmp/out\n\n"</code></div>
+<div class="line"><code class="plain">C=SE, O=TestOrganization, CN=IssuingCA</code></div>
 </div>
     </div>
-</li></ul>    </div>
-    <div class="section section-2" id="src-9798082_id-.AdministrationCLIv4.2.0-AdministratorsRelated">
-        <h2 class="heading "><span>Administrators Related</span></h2>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">wsadmins -list:</strong>    </p>
-</li></ul>    <p  >Lists administrator certificates (certificate serial number and issuer DN) for administrators authorized to use the Admin Web Service interface to administrate SignServer.    </p>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">wsadmins -add:</strong>    </p>
-</li></ul>    <p  >Authorizes an administrator to use the Admin Web Service interface by certificate serialnumber (in hexadecimal) and issuer DN with space after each comma separating DN components. If DN components contains commas, these needs to be escaped with backslashes.    </p>
-    <p  >An example on how to enter the issuer DN when using a certificate issued from EJBCA with the default (as specified by EJBCA) LDAP DN order:    </p>
-<pre class="prettyprint ">C=SE, O=TestOrganization, CN=IssuingCA</pre>    <p  >An example using escaped DN components    </p>
-<pre class="prettyprint ">C=SE, O=TestOrganization\, The, CN=IssuingCA\, The</pre>    <p  >This is the reversed order compared to how the issuer DN is stored in the certificate.    </p>
-    <p  >An example on how to enter the issuer DN when using a certificate issued from EJBCA with the Use LDAP DN order option disabled:    </p>
-<pre class="prettyprint ">CN=ReverseIssuingCA, O=TestOrganization, C=SE</pre>    <p  >Alternatively a certificate file can be specified, from which the serial number and issuer DN will be taken.    </p>
-    <p  >Samples:    </p>
-<pre class="prettyprint ">Example 1: signserver wsadmins -add -certserialno 123ABCDEF -issuerdn &quot;CN=Neo Morpheus, C=SE&quot;<br/>Example 2: signserver wsadmins -add -cert wsadmin.pem</pre><ul class=" "><li class=" ">    <p  ><strong class=" ">wsadmins -remove: <br/></strong>Removes an administrator from the list of authorized administrators.    </p>
-</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">wsadmins -allowany:<br/></strong>Sets whether any administrator with a certificate accepted by the web server/proxy is authorized or not. When set (true) it overrides the WSADMINS global property. Takes an optional boolean parameter, if left out sets to true (allow all). This can be used for initial setup.    </p>
-</li></ul>    </div>
-    <div class="section section-2" id="src-9798082_id-.AdministrationCLIv4.2.0-AuditorsRelated">
-        <h2 class="heading "><span>Auditors Related</span></h2>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">wsauditors -list:<br/></strong>Lists auditor certificates (certificate serial number and issuer DN) for administrators authorized to use the Admin Web Service interface to query the audit log of SignServer.    </p>
-</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">wsauditors -add:<br/></strong>Authorizes an auditor to use the Admin Web Service interface by certificate serialnumber (given in hexadecimal) and issuer DN.    </p>
-</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">wsauditors -remove:<br/></strong>Removes an auditor from the list of authorized administrators.    </p>
-</li></ul>    </div>
-    <div class="section section-2" id="src-9798082_id-.AdministrationCLIv4.2.0-ArchiveAuditorsRelated">
-        <h2 class="heading "><span>Archive Auditors Related</span></h2>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">wsarchiveauditors -list: <br/></strong>Lists archive auditor certificates (certificate serial number and issuer DN) for auditors authorized to use the Admin Web Service interface to query the archive of SignServer.    </p>
-</li><li class=" ">    <p  ><strong class=" ">wsarchiveauditors -add: <br/></strong>Authorizes an auditor, by specifying a certificate serial number (in hexadecimal) and issuer DN, to use the Admin Web Service interface for querying the archive.    </p>
-</li><li class=" ">    <p  ><strong class=" ">wsarchiveauditors -remove: <br/></strong>Removes an auditor from the list of authorized archive auditors.    </p>
-</li><li class=" ">    <p  ><strong class=" ">auditlog -query: <br/></strong>Query the CESeCore audit log.<br/>Usage:    </p>
+    <p  >The following displays using escaped DN components:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">signserver auditlog -query -limit &lt;</code><code class="keyword">number</code><code class="plain">&gt; [-criteria "&lt;</code><code class="keyword">field</code><code class="plain">&gt; &lt;</code><code class="keyword">op</code><code class="plain">&gt; &lt;</code><code class="keyword">value</code><code class="plain">&gt;" [-criteria...]] [-from &lt;</code><code class="keyword">index</code><code class="plain">&gt;] [-header]</code></div>
+<div class="line"><code class="plain">C=SE, O=TestOrganization\, The, CN=IssuingCA\, Th</code></div>
 </div>
     </div>
-    <p  ><i class=" ">-limit</i> sets the maximum number of rows matched, this option is required to avoid putting too much load on the server.<br/><i class=" ">&lt;field&gt;</i> is a field name from the audit log: <strong class=" ">additionalDetails</strong>, <strong class=" ">authToken</strong>, <strong class=" ">customId</strong>, <strong class=" ">eventStatus</strong>, <strong class=" ">eventType</strong>, <strong class=" ">module</strong>, <strong class=" ">nodeId</strong>, <strong class=" ">searchDetail1</strong>, <strong class=" ">searchDetail2</strong>, <strong class=" ">sequenceNumber</strong>, <strong class=" ">service</strong>, <strong class=" ">timeStamp</strong>.<br/><i class=" ">&lt;op&gt;</i> is a relational operator: <strong class=" ">GT</strong>, <strong class=" ">GE</strong>, <strong class=" ">LT,</strong><strong class=" ">LE</strong>, <strong class=" ">EQ</strong>, <strong class=" ">NEQ, LIKE,</strong><strong class=" ">NULL</strong>, <strong class=" ">NOTNULL</strong>.<br/>When given the -header option, a column header is outputted before the results.<br/>If <strong class=" ">databaseprotection.enableverify</strong> is enabled at the server side the signature of each row displayed are verified. If the verification fails for any of the rows matching the search criteria, an error message is displayed. The error message contains information about the first row that failed.    </p>
-</li><li class=" ">    <p  ><strong class=" ">querytokenentries: <br/></strong>Queries the entries (key alias, certificates etc) in a CryptoToken. If no limit is given all entries are queried and printed (10 at a time). You can specify to start query from an index in the result. Search conditions can be added to only search for entries with certain key aliases.<br/>Usage:    </p>
+    <p  >Note that the order is reversed, compared to how the issuer DN is stored in the certificate.    </p>
+    <p  >The following displays how to enter the issuer DN when using a certificate issued from EJBCA with the Use LDAP DN order option disabled:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">signserver querytokenentries -token &lt;</code><code class="keyword">id</code><code class="plain"> or name&gt; -limit &lt;</code><code class="keyword">number</code><code class="plain">&gt; [-criteria  "&lt;</code><code class="keyword">field</code><code class="plain">&gt; &lt;</code><code class="keyword">op</code><code class="plain">&gt; &lt;</code><code class="keyword">value</code><code class="plain">&gt;" [-criteria...]] [-from &lt;</code><code class="keyword">index</code><code class="plain">&gt;] [-v]</code></div>
+<div class="line"><code class="plain">CN=ReverseIssuingCA, O=TestOrganization, C=S</code></div>
 </div>
     </div>
-    <p  ><i class=" ">-limit</i> sets the maximum number of rows matched, this option is required to avoid putting too much load on the server.<br/><i class=" ">&lt;field&gt;</i> is a field name from the token: <strong class=" ">alias</strong>.<br/><i class=" ">&lt;op&gt;</i> is a relational operator: <strong class=" ">EQ</strong>, <strong class=" ">NEQ</strong> or <strong class=" ">LIKE</strong>.<br/><i class=" ">-v</i> means verbose and if given outputs also entry type as well as any certificates or additional information available in each entry    </p>
-</li></ul>    </div>
-    <div class="section section-2" id="src-9798082_id-.AdministrationCLIv4.2.0-PeerSystemsRelated">
-        <h2 class="heading "><span>Peer Systems Related</span></h2>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">wspeersystems -list:<br/></strong>Lists certificates (certificate serial number and issuer DN) for peer systems (i.e. EJBCA) authorized to use the <a   href="Peer_Systems.html">Peer Systems</a> interface to query available key bindings and perform certificate renewal/rekeying.    </p>
-</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">wspeersystems -add:<br/></strong>Authorizes a peer system to use the Peer Systems interface by certificate serial number (given in hexadecimal) and issuer DN.    </p>
-</li><li class=" ">    <p  ><strong class=" ">wspeersystems -remove:</strong><br/>Removes a peer system from the list of authorized peer systems.    </p>
-</li></ul>    <p  >    </p>
+    <p  >Alternatively, a certificate file can be specified from which the serial number and issuer DN will be taken.    </p>
+    <p  >Usage example 1:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">signserver wsadmins -add -certserialno 123ABCDEF -issuerdn </code><code class="string">"CN=Neo Morpheus, C=SE"</code></div>
+</div>
+    </div>
+    <p  >    </p>
+    <p  >Usage example 2:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">signserver wsadmins -add -cert wsadmin.pe</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-wsadmins-remove">
+        <h2 class="heading "><span>wsadmins -remove</span></h2>
+    <p  >Removes an administrator from the list of authorized administrators.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-wsadmins-allowany">
+        <h2 class="heading "><span>wsadmins -allowany</span></h2>
+    <p  >Specifies whether any administrator with a certificate accepted by the web server/proxy is authorized or not. When set (true) it overrides the WSADMINS global property. Takes an optional boolean parameter, if left out sets to true (allow all). This can be used for initial setup.    </p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-15859751_id-.AdministrationCLIv4.3.0-AuditorsRelated">
+        <h1 class="heading "><span>Auditors Related</span></h1>
+    <div class="section section-2" id="src-15859751_safe-id-aWQtLkFkbWluaXN0cmF0aW9uQ0xJdjQuMy4wLXdzYXVkaXRvcnMtbGlzdDo">
+        <h2 class="heading "><span>wsauditors -list:</span></h2>
+    <p  >Lists auditor certificates (certificate serial number and issuer DN) for administrators authorized to use the Admin Web Service interface to query the audit log of SignServer.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_safe-id-aWQtLkFkbWluaXN0cmF0aW9uQ0xJdjQuMy4wLXdzYXVkaXRvcnMtYWRkOg">
+        <h2 class="heading "><span>wsauditors -add:</span></h2>
+    <p  >Authorizes an auditor to use the Admin Web Service interface by certificate serial number (given in hexadecimal) and issuer DN.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-wsauditors-remove">
+        <h2 class="heading "><span>wsauditors -remove</span></h2>
+    <p  >Removes an auditor from the list of authorized administrators.    </p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-15859751_id-.AdministrationCLIv4.3.0-ArchiveAuditorsRelated">
+        <h1 class="heading "><span>Archive Auditors Related</span></h1>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-wsarchiveauditors-list">
+        <h2 class="heading "><span>wsarchiveauditors -list</span></h2>
+    <p  >Lists archive auditor certificates (certificate serial number and issuer DN) for auditors authorized to use the Admin Web Service interface to query the archive of SignServer.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-wsarchiveauditors-add">
+        <h2 class="heading "><span>wsarchiveauditors -add</span></h2>
+    <p  >Authorizes an auditor, by specifying a certificate serial number (in hexadecimal) and issuer DN, to use the Admin Web Service interface for querying the archive.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-wsarchiveauditors-remove">
+        <h2 class="heading "><span>wsarchiveauditors -remove</span></h2>
+    <p  >Removes an auditor from the list of authorized archive auditors.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-auditlog-query">
+        <h2 class="heading "><span>auditlog -query</span></h2>
+    <p  >Query the CESeCore audit log.    </p>
+    <p  >Usage:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">signserver auditlog -query -limit &lt;number&gt; [-criteria </code><code class="string">"&lt;field&gt; &lt;op&gt; &lt;value&gt;"</code><code class="plain"> [-criteria...]] [-from &lt;index&gt;] [-header]</code></div>
+</div>
+    </div>
+    <div  class="tablewrap">
+        <table class="confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Option    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Description    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-limit    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Sets the maximum number of rows matched. Required to avoid putting too much load on the server.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >&lt;field&gt;    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Field name from the audit log: <strong class=" ">additionalDetails</strong>, <strong class=" ">authToken</strong>, <strong class=" ">customId</strong>, <strong class=" ">eventStatus</strong>, <strong class=" ">eventType</strong>, <strong class=" ">module</strong>, <strong class=" ">nodeId</strong>, <strong class=" ">searchDetail1</strong>, <strong class=" ">searchDetail2</strong>, <strong class=" ">sequenceNumber</strong>, <strong class=" ">service</strong>, <strong class=" ">timeStamp</strong>.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >&lt;op&gt;    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Relational operator: <strong class=" ">GT</strong>, <strong class=" ">GE</strong>, <strong class=" ">LT,</strong><strong class=" ">LE</strong>, <strong class=" ">EQ</strong>, <strong class=" ">NEQ, LIKE,</strong><strong class=" ">NULL</strong>, <strong class=" ">NOTNULL</strong>.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-header    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Outputs a column header before the results.    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <p  >Note that if <strong class=" ">databaseprotection.enableverify</strong> is enabled at the server side, the signature of each row displayed is verified. If the verification fails for any of the rows matching the search criteria, an error message is displayed. The error message contains information about the first row that failed.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-querytokenentries">
+        <h2 class="heading "><span>querytokenentries</span></h2>
+    <p  >Queries the entries (key alias, certificates etc) in a CryptoToken. If no limit is given, all entries are queried and printed (10 at a time). You can specify to start query from an index in the result. Search conditions can be added to only search for entries with certain key aliases.<br/>Usage:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">signserver querytokenentries -token &lt;</code><code class="functions">id</code><code class="plain"> or name&gt; -limit &lt;number&gt; [-criteria  </code><code class="string">"&lt;field&gt; &lt;op&gt; &lt;value&gt;"</code><code class="plain"> [-criteria...]] [-from &lt;index&gt;] [-</code><code class="functions">v</code><code class="plain">]</code></div>
+</div>
+    </div>
+    <div  class="tablewrap">
+        <table class="confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Option    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Description    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-limit    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Sets the maximum number of rows matched. Required to avoid putting too much load on the server.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >&lt;field&gt;    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Field name from the token: <strong class=" ">alias</strong>.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >&lt;op&gt;    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Relational operator: <strong class=" ">EQ</strong>, <strong class=" ">NEQ</strong> or <strong class=" ">LIKE</strong>.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-v    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Means verbose and if given, the output also includes type, as well as any certificates or additional information available in each entry.    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-15859751_id-.AdministrationCLIv4.3.0-PeerSystemsRelated">
+        <h1 class="heading "><span>Peer Systems Related</span></h1>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-wspeersystems-list">
+        <h2 class="heading "><span>wspeersystems -list</span></h2>
+    <p  >Lists certificates (certificate serial number and issuer DN) for peer systems (i.e. EJBCA) authorized to use the <a   href="Peer_Systems.html">Peer Systems</a> interface to query available key bindings and perform certificate renewal/rekeying.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-wspeersystems-add">
+        <h2 class="heading "><span>wspeersystems -add</span></h2>
+    <p  >Authorizes a peer system to use the Peer Systems interface by certificate serial number (given in hexadecimal) and issuer DN.    </p>
+    </div>
+    <div class="section section-2" id="src-15859751_id-.AdministrationCLIv4.3.0-wspeersystems-remove">
+        <h2 class="heading "><span>wspeersystems -remove</span></h2>
+    <p  >Removes a peer system from the list of authorized peer systems.    </p>
+    <p  >    </p>
     </div>
     </div>
         </div>

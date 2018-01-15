@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1100,7 +1124,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Components.html">SignServer Components</a></li>
                                                                                      <li><a href="CryptoTokens.html">CryptoTokens</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277633"> <span>General properties</span></h1>
+</div>            <h1 id="src-11574109"> <span>General properties</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1124,7 +1148,7 @@
         <p  >SIGNERTOKEN.CLASSPATH    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Global configuration property for the fully qualified class name of the Crypto token implementation to use. See below for available Crypto tokens.    </p>
+        <p  >Global configuration property for the fully qualified class name of the Crypto token implementation to use. See the following sections for available Crypto tokens.    </p>
             </td>
         </tr>
     <tr>
@@ -1132,7 +1156,7 @@
         <p  >KEYALG    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key algorithm to use when generating new keys (Only for Crypto tokens supporting key generation).    </p>
+        <p  >Key algorithm to use when generating new keys. Only for Crypto tokens supporting key generation.    </p>
             </td>
         </tr>
     <tr>
@@ -1140,7 +1164,7 @@
         <p  >KEYSPEC    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key specification to use when generating new keys (Only for Crypto tokens supporting key generation).    </p>
+        <p  >Key specification to use when generating new keys. Only for Crypto tokens supporting key generation.    </p>
             </td>
         </tr>
     <tr>
@@ -1148,7 +1172,7 @@
         <p  >KEYGENERATIONLIMIT    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Limit for the maximum number of keys allowed to be generated. If set and set to 0 or a positive value, key generation is not allowed if the current number of keys equals to or is larger than this value (Default: &quot;&quot; = no limit).    </p>
+        <p  >Limit for the maximum number of keys allowed to be generated. If set and set to 0 or a positive value, key generation is not allowed if the current number of keys equals to or is larger than this value. Default: &quot;&quot; = no limit.    </p>
             </td>
         </tr>
     <tr>
@@ -1156,7 +1180,9 @@
         <p  >SELFSIGNED_DN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Distinguished Name (DN) to use as issuer and subject DN in the self-signed certificate instead of the default one. Note: This property can be set on the worker that is going to use the key so that different options can be used for different workers.    </p>
+        <p  >Distinguished Name (DN) to use as issuer and subject DN in the self-signed certificate instead of the default one.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ This property can be set on the worker that is going to use the key so that different options can be used for different workers.    </p>
             </td>
         </tr>
     <tr>
@@ -1164,7 +1190,9 @@
         <p  >SELFSIGNED_SIGNATUREALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Signature algorithm to use in the self-signed certificate instead of the default &quot;SHA1withRSA&quot;. Note: This property can be set on the worker that is going to use the key so that different options can be used for different workers.    </p>
+        <p  >Signature algorithm to use in the self-signed certificate instead of the default &quot;SHA1withRSA&quot;.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ This property can be set on the worker that is going to use the key, so that different options can be used for different workers.    </p>
             </td>
         </tr>
     <tr>
@@ -1172,11 +1200,15 @@
         <p  >SELFSIGNED_VALIDITY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Validity time (in seconds) to use in the self-signed certificate instead of the default of about 30 years. Note: This property can be set on the worker that is going to use the key so that different options can be used for different workers.    </p>
+        <p  >Validity time (in seconds) to use in the self-signed certificate instead of the default of about 30 years.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ This property can be set on the worker that is going to use the key, so that different options can be used for different workers.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
+    <p  >    </p>
+    <p  >    </p>
         </div>
 
     </article>

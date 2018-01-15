@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1102,16 +1126,16 @@
                                                                                                          <li class="shortcut"><a href="Workers_Page.html">Workers Page</a></li>
                                                                                      <li><a href="Worker_Page.html">Worker Page</a></li>
                                                             </ul>
-</div>            <h1 id="src-5282769"> <span>Worker Crypto Token Page</span></h1>
+</div>            <h1 id="src-16221521"> <span>Worker Crypto Token Page</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >For workers having a crypto token this page displays the key entries in the token and offers actions for manage the entries.    </p>
-    <div class="section section-1" id="src-5282769_id-.WorkerCryptoTokenPagev4.1.0-Entries">
+    <p  >For workers having a crypto token, this page displays the key entries in the token and offers actions for managing the entries.    </p>
+    <div class="section section-1" id="src-16221521_id-.WorkerCryptoTokenPagev4.3.0-Entries">
         <h1 class="heading "><span>Entries</span></h1>
     <div  class="tablewrap">
-        <table class="confluenceTable">
+        <table class="wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />
@@ -1130,9 +1154,9 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Key alias of the entry.    </p>
-    <p  >Clicking the link displays details for the token entry:    </p>
+    <p  >Clicking the link displays details for the token entry. The fields displayed depend on the crypto token implementation and type of key entry. Examples of fields displayed:    </p>
     <div  class="tablewrap">
-        <table class="confluenceTable">
+        <table class="wrapped confluenceTable">
         <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Alias    </p>
@@ -1146,7 +1170,9 @@
         <p  >Type    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >PRIVATEKEY_ENTRY for private keys (asymmetric keys),<br/>SECUREKEY_ENTRY for secret keys (symmetric keys) and<br/>TRUSTED_ENTRY for trusted certificate entries.    </p>
+        <p  >PRIVATEKEY_ENTRY for private keys (asymmetric keys),    </p>
+    <p  >SECUREKEY_ENTRY for secret keys (symmetric keys), and    </p>
+    <p  >TRUSTED_ENTRY for trusted certificate entries.    </p>
             </td>
         </tr>
     <tr>
@@ -1163,7 +1189,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Subject DN for the certificate in the token.    </p>
-    <p  >Clicking the link <strong class=" ">View</strong> displays the <a   href="Worker_Certificate_Details_Page.html">certificate details page</a>.    </p>
+    <p  >Clicking the link <strong class=" ">View</strong> displays the <a   href="Worker_Certificate_Details_Page.html">Worker Certificate Details Page</a>.    </p>
             </td>
         </tr>
     <tr>
@@ -1171,7 +1197,15 @@
         <p  >Key Specification    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key length for RSA and DSA keys or curve for ECDSA keys.    </p>
+        <p  >Key length for RSA and DSA keys, or curve for ECDSA keys.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Signings    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Number of signatures created using the key.    </p>
             </td>
         </tr>
     <tr>
@@ -1179,7 +1213,7 @@
         <p  >Public Exponent    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The public exponent (in decimal) for RSA keys.    </p>
+        <p  >Public exponent (in decimal) for RSA keys.    </p>
             </td>
         </tr>
     <tr>
@@ -1187,7 +1221,41 @@
         <p  >Key Algorithm    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The key algorithm such as <i class=" ">RSA</i>, <i class=" ">DSA</i> or <i class=" ">ECDSA</i>.    </p>
+        <p  >Key algorithm such as <strong class=" ">RSA, DSA</strong> or <strong class=" ">ECDSA.</strong>    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >PKCS#11 Attributes    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >List of some of the potentially relevant PKCS#11 attributes and their values for the private key object.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Modifiable    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >True if the CKA_MODIFIABLE attribute is specified for the private key object.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Wrapping Key    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Key alias of the secret/symmetric wrapping key in the token that should be used to wrap and unwrap keys.    </p>
+    <p  >Refer <strong class=" ">DEFAULTKEY</strong> worker property under <a   href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a> and <a   href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a> page.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Wrapping Cipher    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >PKCS#11 mechanism name of cipher algorithm used to wrap the keys by secret/symmetric key. Example: <strong class=" ">CKM_AES_CBC_PAD</strong>    </p>
+    <p  >Refer <strong class=" ">WRAPPING_CIPHER_ALGORITHM</strong> worker property under under <a   href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a> and <a   href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a> page.    </p>
             </td>
         </tr>
 </tbody>        </table>
@@ -1199,7 +1267,7 @@
         <p  >Type    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Asymmetric, symmetric or trusted entry.    </p>
+        <p  >Combination of key algorithm and key specification. Example: <strong class=" ">RSA 2048.</strong>    </p>
             </td>
         </tr>
     <tr>
@@ -1213,10 +1281,10 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5282769_id-.WorkerCryptoTokenPagev4.1.0-EntriesActions">
+    <div class="section section-1" id="src-16221521_id-.WorkerCryptoTokenPagev4.3.0-EntriesActions">
         <h1 class="heading "><span>Entries Actions</span></h1>
     <div  class="tablewrap">
-        <table class="confluenceTable">
+        <table class="wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />
@@ -1243,7 +1311,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Opens the crypto token test key page for the selected entries.    </p>
-    <p  >Click the <strong class=" ">Test</strong> button to perform the signing test. The results are displayed for each entry in the <i class=" ">Result</i> column.    </p>
+    <p  >Click <strong class=" ">Test</strong> to perform the signing test. The results are displayed for each entry in the <strong class=" ">Result</strong> column.    </p>
             </td>
         </tr>
     <tr>
@@ -1268,13 +1336,13 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Opens the crypto token key removal page for the selected entries.    </p>
-    <p  >Click the <strong class=" ">Destroy key(s)</strong> button to confirm the removal of the selected keys.    </p>
+    <p  >Click <strong class=" ">Destroy key(s)</strong> to confirm the removal of the selected keys.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5282769_id-.WorkerCryptoTokenPagev4.1.0-WorkerActions">
+    <div class="section section-1" id="src-16221521_id-.WorkerCryptoTokenPagev4.3.0-WorkerActions">
         <h1 class="heading "><span>Worker Actions</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">

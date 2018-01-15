@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1100,21 +1124,23 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="Other_Workers.html">Other Workers</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277603"> <span>RenewalWorker</span></h1>
+</div>            <h1 id="src-11574089"> <span>RenewalWorker</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div class="section section-1" id="src-5277603_id-.RenewalWorkerv4.1.0-Overview">
-        <h1 class="heading "><span>Overview</span></h1>
-    <p  >The RenewalWorker can be used for generation a new key-pair and renewing a worker's certificate from EJBCA using web services (WS). The RenewalWorker should be configured with its own CryptoToken and an SSL client authentication certificate with permissions set up in EJBCA to issue certificates. Some properties are configured for the RenewalWorker such as the EJBCA WS endpoint URL and truststore details, other properties should be set on the worker that should be renewed (the renewee) and some arguments are provided when the worker is invoked.    </p>
-    <p  >Known limitation: It might not be possible to have multiple renewal workers using different crypto tokens because the keys and certificates used by the TLS connection for the web service is setup globally.    </p>
     <p  >Fully qualified class name: <strong class=" ">org.signserver.module.renewal.worker.RenewalWorker</strong>.    </p>
+    <div class="section section-1" id="src-11574089_id-.RenewalWorkerv4.2.1-Overview">
+        <h1 class="heading "><span>Overview</span></h1>
+    <p  >The RenewalWorker can be used for generating a new key-pair and renewing a worker's certificate from EJBCA using web services (WS). The RenewalWorker should be configured with its own CryptoToken and an SSL client authentication certificate with permissions set up in EJBCA to issue certificates. Some properties are configured for the RenewalWorker, such as the EJBCA WS endpoint URL and truststore details, and other properties should be set on the worker to be renewed (the renewee) and some arguments are provided when the worker is invoked.    </p>
+    <p  >Note the known limitation that it might not be possible to have multiple renewal workers using different crypto tokens, since the keys and certificates used by the TLS connection for the web service is setup globally.    </p>
     </div>
-    <div class="section section-1" id="src-5277603_id-.RenewalWorkerv4.1.0-Requestingtheworker">
+    <div class="section section-1" id="src-11574089_id-.RenewalWorkerv4.2.1-Requestingtheworker">
         <h1 class="heading "><span>Requesting the worker</span></h1>
-    <p  >After setting up an RenewalWorker and installing its certificate signers (and other workers), can easily be renewed using the SignServer AdminGUI. See Renew Signer dialog. As the RenewalWorker is a worker it can also be invoked using the normal client APIs. Using the demo web pages: Generic Signing Demo:    </p>
-    <p  >Sign by Direct Input<br/>Worker name: MyRenewalWorker    </p>
+    <p  >After setting up a RenewalWorker and installing its certificate, signers (and other workers) can easily be renewed using the SignServer AdminGUI. See Renew signer dialog in <a   href="Administration_GUI.html">Administration GUI</a>.    </p>
+    <p  >As the RenewalWorker is a worker, it can also be invoked using the normal client APIs.    </p>
+    <p  ><strong class=" ">Using the client web pages</strong>:    </p>
+    <p  >Go to the Generic Signing Demo page, Sign by Direct Input, and specify Worker name: MyRenewalWorker.    </p>
     <p  >Data:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1122,30 +1148,31 @@
 <div class="line"><code class="plain">AUTHCODE=foo123</code></div>
 </div>
     </div>
-    <p  >    </p>
-    <p  >Using the Client CLI:    </p>
+    <p  ><strong class=" ">Using the Client CLI</strong>:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">bin/signclient signdocument -workername MyRenewalWorker -data "WORKER=MySigner</code></div>
 <div class="line"><code class="plain">AUTHCODE=foo123"</code></div>
 </div>
     </div>
-    <p  >(Notice that the command is on two lines)    </p>
-    <p  >The renewal can also be initiated from the Admin CLI:    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ Note that the command is on two lines.    </p>
+    <p  ><strong class=" ">Using the Admin CLI to initiate the renewal</strong>:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">bin/signserver renewsigner MySigner -renewalworker MyRenewalWorker -authcode foo123</code></div>
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-5277603_id-.RenewalWorkerv4.1.0-RenewalWorkeroperations">
+    <div class="section section-1" id="src-11574089_id-.RenewalWorkerv4.2.1-RenewalWorkeroperations">
         <h1 class="heading "><span>RenewalWorker operations</span></h1>
-    <p  >The RenewalWorker starts by generating a new key-pair (unless an NEXTCERTSIGNKEY is already set for the renewee or the request property FORDEFAULTKEY=true is set in the request). The HSM/keystore password needs to be submitted as part of the request (AUTHCODE request property) to generate a new key-pair. After the key-pair has been generated and tested successfully the key alias is set as the NEXTCERTSIGNKEY property. A certificate signing request is created for the key and the worker sends the request to EJBCA to issue a certificate for the configured end entity. After receiving the certificate and certificate chain they are installed for the worker and the DEFAULTKEY property is updated with the value from NEXTCERTSIGNKEY and that property is removed.    </p>
+    <p  >The RenewalWorker starts by generating a new key-pair. That is, unless a NEXTCERTSIGNKEY is already set for the renewee, or if the request property FORDEFAULTKEY=true is set in the request. The HSM/keystore password needs to be submitted as part of the request (AUTHCODE request property) to generate a new key-pair.    </p>
+    <p  >When the key-pair has been generated and tested successfully, the key alias is set as the NEXTCERTSIGNKEY property. A certificate signing request is created for the key, and the worker sends the request to EJBCA to issue a certificate for the configured end entity. After receiving the certificate and certificate chain, they are installed for the worker and the DEFAULTKEY property is updated with the value from the NEXTCERTSIGNKEY property, and this property is then removed.    </p>
     </div>
-    <div class="section section-1" id="src-5277603_id-.RenewalWorkerv4.1.0-WorkerProperties">
+    <div class="section section-1" id="src-11574089_id-.RenewalWorkerv4.2.1-WorkerProperties">
         <h1 class="heading "><span>Worker Properties</span></h1>
     <div  class="tablewrap">
-        <table class="confluenceTable scroll-table-layout">
+        <table class="wrapped confluenceTable scroll-table-layout">
                     <colgroup>
                                     <col  width="30%"/>
                                     <col  width="70%"/>
@@ -1179,7 +1206,7 @@
         <p  >TRUSTSTOREVALUE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Keystore containing the CA's SSL server certificate as a trusted entry. Used instead of TRUSTSTOREPATH. If this property is not specified, TRUSTSTOREPATH must be set. If TRUSTSTORETYPE is not PEM the keystore is stored in the property in base64 encoding.    </p>
+        <p  >Keystore containing the CA's SSL server certificate as a trusted entry. Used instead of TRUSTSTOREPATH. If this property is not specified, TRUSTSTOREPATH must be set. If TRUSTSTORETYPE is not PEM, the keystore is stored in the property in base64 encoding.    </p>
             </td>
         </tr>
     <tr>
@@ -1217,10 +1244,10 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5277603_id-.RenewalWorkerv4.1.0-Propertiesofrenewee">
+    <div class="section section-1" id="src-11574089_id-.RenewalWorkerv4.2.1-Propertiesofrenewee">
         <h1 class="heading "><span>Properties of renewee</span></h1>
     <div  class="tablewrap">
-        <table class="confluenceTable scroll-table-layout">
+        <table class="wrapped confluenceTable scroll-table-layout">
                     <colgroup>
                                     <col  width="30%"/>
                                     <col  width="70%"/>
@@ -1238,7 +1265,7 @@
         <p  >RENEWENDENTITY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Name of the existing end entity in EJBCA    </p>
+        <p  >Name of the existing end entity in EJBCA.    </p>
             </td>
         </tr>
     <tr>
@@ -1254,7 +1281,7 @@
         <p  >SIGNATUREALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Signature algorithm to use when signing the certificate signing request (PKCS#10)    </p>
+        <p  >Signature algorithm to use when signing the certificate signing request (PKCS#10).    </p>
             </td>
         </tr>
     <tr>
@@ -1262,7 +1289,7 @@
         <p  >KEYALG    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Algorithm for the key generation. Examples: RSA, DSA or ECDSA    </p>
+        <p  >Algorithm for the key generation. Examples: RSA, DSA or ECDSA.    </p>
             </td>
         </tr>
     <tr>
@@ -1270,7 +1297,7 @@
         <p  >KEYSPEC    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key length (for RSA or DSA) or curve name (for ECDSA). Examples: 2048, 4096, secp256r1    </p>
+        <p  >Key length (for RSA or DSA) or curve name (for ECDSA). Examples: 2048, 4096, secp256r1.    </p>
             </td>
         </tr>
     <tr>
@@ -1278,7 +1305,7 @@
         <p  >EXPLICITECC    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >True if explicit domain parameters should be used instead of NamedCurves. Default: false    </p>
+        <p  >True if explicit domain parameters should be used instead of NamedCurves. Default: false.    </p>
             </td>
         </tr>
     <tr>
@@ -1302,24 +1329,94 @@
         <p  >NEXTCERTSIGNKEY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key alias for the next existing key. If this property exists a new key-pair will not be generated. The worker will update/remove this property.    </p>
+        <p  >Key alias for the next existing key. If this property exists, a new key-pair will not be generated. The worker will update/remove this property.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5277603_id-.RenewalWorkerv4.1.0-RequestProperties">
+    <div class="section section-1" id="src-11574089_id-.RenewalWorkerv4.2.1-RequestProperties">
         <h1 class="heading "><span>Request Properties</span></h1>
-    <p  >WORKER = Name of the worker that should be renewed.<br/>AUTHCODE = HSM/keystore password for activation.<br/>FORDEFAULTKEY = If the current key should be used instead of the next key or a new key. (Optional, default: false)    </p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Property    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Description    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >WORKER    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Name of the worker that should be renewed.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >AUTHCODE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >HSM/keystore password for activation.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >FORDEFAULTKEY    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >If the current key should be used instead of the next key or a new key. (Optional, default: false)    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
     </div>
-    <div class="section section-1" id="src-5277603_id-.RenewalWorkerv4.1.0-ResponseProperties">
+    <div class="section section-1" id="src-11574089_id-.RenewalWorkerv4.2.1-ResponseProperties">
         <h1 class="heading "><span>Response Properties</span></h1>
-    <p  >RESULT = &quot;OK&quot; if the renewal succeeded otherwise &quot;FAILURE&quot;.<br/>MESSAGE = Error message if any.    </p>
-    </div>
-    <div class="section section-1" id="src-5277603_id-.RenewalWorkerv4.1.0-Renewalmodes">
-        <h1 class="heading "><span>Renewal modes</span></h1>
     <div  class="tablewrap">
         <table class="confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Property    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Description    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >RESULT    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  ><strong class=" ">OK</strong> if the renewal succeeded otherwise <strong class=" ">FAILURE</strong>.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >MESSAGE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Error message if any.    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    <div class="section section-1" id="src-11574089_id-.RenewalWorkerv4.2.1-Renewalmodes">
+        <h1 class="heading "><span>Renewal modes</span></h1>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />

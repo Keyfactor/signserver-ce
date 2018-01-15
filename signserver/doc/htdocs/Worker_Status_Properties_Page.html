@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1102,13 +1126,13 @@
                                                                                                          <li class="shortcut"><a href="Workers_Page.html">Workers Page</a></li>
                                                                                      <li><a href="Worker_Page.html">Worker Page</a></li>
                                                             </ul>
-</div>            <h1 id="src-5282760"> <span>Worker Status Properties Page</span></h1>
+</div>            <h1 id="src-16221190"> <span>Worker Status Properties Page</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >Displays the status of a worker in properties form and offers the ability to inspect the certificates.    </p>
-    <div class="section section-1" id="src-5282760_id-.WorkerStatusPropertiesPagev4.1.0-Information">
+    <div class="section section-1" id="src-16221190_id-.WorkerStatusPropertiesPagev4.3.0-Information">
         <h1 class="heading "><span>Information</span></h1>
     <div  class="tablewrap">
         <table class="relative-table wrapped confluenceTable">
@@ -1130,6 +1154,22 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Worker ID of the worker.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Name    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Name of the worker.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Worker Status    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >&quot;<i class=" ">Active</i>&quot; or &quot;<i class=" ">Offline</i>&quot; depending on if the configuration is correct and that the token is active. &quot;Disabled&quot; if <strong class=" ">DISABLED</strong> property is set to <strong class=" ">TRUE</strong>    </p>
             </td>
         </tr>
     <tr>
@@ -1177,10 +1217,10 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5282760_id-.WorkerStatusPropertiesPagev4.1.0-WorkerActions">
+    <div class="section section-1" id="src-16221190_id-.WorkerStatusPropertiesPagev4.3.0-WorkerActions">
         <h1 class="heading "><span>Worker Actions</span></h1>
     <div  class="tablewrap">
-        <table class="confluenceTable">
+        <table class="wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />

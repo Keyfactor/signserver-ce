@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link current" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1097,81 +1121,250 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Integration.html">SignServer Integration</a></li>
                                                             </ul>
-</div>            <h1 id="src-5284099"> <span>Apache HTTP Server as Reverse Proxy</span></h1>
+</div>            <h1 id="src-16221681"> <span>Apache HTTP Server as Reverse Proxy</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >This section will show you examples on how the Apache Web Server (version 2.2.20) can be used as a proxy in front of SignServer. This guide is only informative, you should also always consult the current Apache documentation for the modules used. The proxy could be used for multiple reasons including:    </p>
-<ul class=" "><li class=" ">    <p  >Use standard ports (80, 443) instead of unprivileged ports used by the application server    </p>
-</li><li class=" ">    <p  >Making workers accessible through more nice looking URLs.<br/>For example &quot;<a  class="external-link" href="http://tsa.example.com">http://tsa.example.com</a>&quot; instead of &quot;<a  class="external-link" href="http://example.com:8080/signserver/tsa?workerName=TimeStampSigner1">http://example.com:8080/signserver/tsa?workerName=TimeStampSigner1</a>&quot;    </p>
-</li><li class=" ">    <p  >Use any of the access control and authentication mechanism available in Apache    </p>
-</li><li class=" ">    <p  >Redirect HTTP traffic to HTTPS    </p>
-</li><li class=" ">    <p  >Only accepting requests to specified locations    </p>
-</li></ul>    <p  >As the requests should go through the proxy you will probably want to configure the application server to only listen to localhost and/or use a firewall blocking the application server ports from external requests. To configure JBoss to only listen to localhost set the following properties in signserver_deploy.properties:    </p>
-<pre class="prettyprint ">httpsserver.bindaddress.pubhttp=127.0.0.1<br/>httpsserver.bindaddress.pubhttps=127.0.0.1<br/>httpsserver.bindaddress.privhttps=127.0.0.1</pre>    <p  >Install the Apache web server and enable required modules (the following commands are for Ubuntu but should be similar in other distributions as well):    </p>
-<pre class="prettyprint ">$ sudo apt-get install apache2<br/>$ cd /etc/apache2/mods-enabled/<br/>$ sudo ln -s ../mods-available/proxy.load proxy.load<br/>$ sudo ln -s ../mods-available/proxy_http.load proxy_http.load<br/>$ sudo ln -s ../mods-available/proxy_ajp.load proxy_ajp.load<br/>$ sudo ln -s ../mods-available/proxy_balancer.load proxy_balancer.load<br/>$ sudo ln -s ../mods-available/rewrite.load rewrite.load<br/>$ sudo ln -s ../mods-available/ssl.load ssl.load</pre>    <p  >    </p>
-    <div class="section section-1" id="src-5284099_safe-id-aWQtLkFwYWNoZUhUVFBTZXJ2ZXJhc1JldmVyc2VQcm94eXY0LjEuMC1FeGFtcGxlOlJld3JpdGVVUkxzZm9yVFNBKHVzaW5nbW9kX3Byb3h5YW5kbW9kX3Jld3JpdGUp">
+    <p  >This section contains examples of how the Apache Web Server (version 2.2.20) can be used as a proxy in front of SignServer. The guide is only informative, please consult the current Apache documentation for the modules used.    </p>
+    <p  >The proxy can for example be used to:    </p>
+<ul class=" "><li class=" ">    <p  >Use standard ports (80, 443) instead of unprivileged ports used by the application server.    </p>
+</li><li class=" ">    <p  >Make workers accessible through more nice looking URLs. For example, &quot;http://tsa.example.com&quot; instead of &quot;http://example.com:8080/signserver/tsa?workerName=TimeStampSigner1&quot;.    </p>
+</li><li class=" ">    <p  >Usie any of the access control and authentication mechanism available in Apache.    </p>
+</li><li class=" ">    <p  >Redirect HTTP traffic to HTTPS.    </p>
+</li><li class=" ">    <p  >Only accept requests to specified locations.    </p>
+</li></ul>    <p  >Since the requests should go through the proxy, it is recommended to configure the application server to only listen to localhost, and/or use a firewall blocking the application server ports from external requests. To configure JBoss to only listen to localhost, set the following properties in <tt class=" ">signserver_deploy.properties</tt>:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">httpsserver.bindaddress.pubhttp=127.0.0.1</code></div>
+<div class="line"><code class="plain">httpsserver.bindaddress.pubhttps=127.0.0.1</code></div>
+<div class="line"><code class="plain">httpsserver.bindaddress.privhttps=127.0.0.1</code></div>
+</div>
+    </div>
+    <p  >Install the Apache web server and enable required modules (the following commands are for Ubuntu but should be similar in other distributions as well):    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> apt-get </code><code class="functions">install</code><code class="plain"> apache2</code></div>
+<div class="line"><code class="plain">$ </code><code class="functions">cd</code><code class="plain"> </code><code class="plain">/etc/apache2/mods-enabled/</code></div>
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> </code><code class="functions">ln</code><code class="plain"> -s ..</code><code class="plain">/mods-available/proxy</code><code class="plain">.load proxy.load</code></div>
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> </code><code class="functions">ln</code><code class="plain"> -s ..</code><code class="plain">/mods-available/proxy_http</code><code class="plain">.load proxy_http.load</code></div>
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> </code><code class="functions">ln</code><code class="plain"> -s ..</code><code class="plain">/mods-available/proxy_ajp</code><code class="plain">.load proxy_ajp.load</code></div>
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> </code><code class="functions">ln</code><code class="plain"> -s ..</code><code class="plain">/mods-available/proxy_balancer</code><code class="plain">.load proxy_balancer.load</code></div>
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> </code><code class="functions">ln</code><code class="plain"> -s ..</code><code class="plain">/mods-available/rewrite</code><code class="plain">.load rewrite.load</code></div>
+<div class="line"><code class="plain">$ </code><code class="functions">sudo</code><code class="plain"> </code><code class="functions">ln</code><code class="plain"> -s ..</code><code class="plain">/mods-available/ssl</code><code class="plain">.load ssl.load</code></div>
+</div>
+    </div>
+    <p  >    </p>
+    <div class="section section-1" id="src-16221681_safe-id-aWQtLkFwYWNoZUhUVFBTZXJ2ZXJhc1JldmVyc2VQcm94eXY0LjMuMC1FeGFtcGxlOlJld3JpdGVVUkxzZm9yVFNBKHVzaW5nbW9kX3Byb3h5YW5kbW9kX3Jld3JpdGUp">
         <h1 class="heading "><span>Example: Rewrite URLs for TSA (using mod_proxy and mod_rewrite)</span></h1>
-    <p  >A sample configuration how to fix up nice URLs for time-stamping so that you can point your TSA clients to <a  class="external-link" href="http://tsa.example.com/">http://tsa.example.com/</a> instead of <a  class="external-link" href="http://tsa.example.com:8080/signserver/process?workerName=TimeStampSigner1">http://tsa.example.com:8080/signserver/process?workerName=TimeStampSigner1</a>.<br/>This configuration combines mod_proxy with mod_rewrite to be able to set the workerName or workerId, so you can have different TSAs available on different URLs.    </p>
-<pre class="prettyprint ">&lt;VirtualHost tsa.example.com:80&gt;<br/>    ServerName tsa.example.com<br/>    ServerAlias tsa.example.com<br/>    CustomLog /var/log/apache2/access.log combined<br/><br/>    RewriteEngine on<br/>    RewriteLogLevel 5<br/>    RewriteLog &quot;/var/log/apache2/rewrite.log<br/>    RewriteRule ^/$ /?workerName=TimeStampSigner1 [PT]<br/><br/>    ProxyRequests Off<br/>    &lt;Proxy *&gt;<br/>        Order deny,allow<br/>        Allow from all<br/>    &lt;/Proxy&gt;<br/>    ProxyPass / http://127.0.0.1:8080/signserver/process<br/>    ProxyPassReverse / http://127.0.0.1:8080/signserver/process<br/>&lt;/VirtualHost&gt;</pre>    <p  >    </p>
+    <p  >The following sample configuration allows rendering nice URLs for time-stamping so that you can point your TSA clients to <tt class=" ">http://tsa.example.com/</tt> instead of <tt class=" ">http://tsa.example.com:8080/signserver/process?workerName=TimeStampSigner1</tt>.    </p>
+    <p  >This configuration combines <tt class=" ">mod_proxy</tt> with <tt class=" ">mod_rewrite</tt> to enable setting the workerName or workerId, allowing different TSAs available on different URLs.    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">&lt;VirtualHost tsa.example.com:</code><code class="value">80</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">    ServerName tsa.example.com</code></div>
+<div class="line"><code class="plain">    ServerAlias tsa.example.com</code></div>
+<div class="line"><code class="plain">    CustomLog /var/log/apache2/access.log combined</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    RewriteEngine on</code></div>
+<div class="line"><code class="plain">    RewriteLogLevel </code><code class="value">5</code></div>
+<div class="line"><code class="plain">    RewriteLog "/var/log/apache2/rewrite.log</code></div>
+<div class="line"><code class="plain">    RewriteRule ^/$ /?workerName=TimeStampSigner1 [PT]</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    ProxyRequests Off</code></div>
+<div class="line"><code class="plain">    &lt;Proxy *&gt;</code></div>
+<div class="line"><code class="plain">        Order deny,allow</code></div>
+<div class="line"><code class="plain">        Allow from all</code></div>
+<div class="line"><code class="plain">    &lt;/Proxy&gt;</code></div>
+<div class="line"><code class="plain">    ProxyPass / http:</code><code class="comments">//127.0.0.1:8080/signserver/process</code></div>
+<div class="line"><code class="plain">    ProxyPassReverse / http:</code><code class="comments">//127.0.0.1:8080/signserver/process</code></div>
+<div class="line"><code class="plain">&lt;/VirtualHost&gt;</code></div>
+</div>
     </div>
-    <div class="section section-1" id="src-5284099_safe-id-aWQtLkFwYWNoZUhUVFBTZXJ2ZXJhc1JldmVyc2VQcm94eXY0LjEuMC1FeGFtcGxlOlJld3JpdGVVUkxzYW5kcmVkaXJlY3R0b0hUVFBTKHVzaW5nQUpQKQ">
+    </div>
+    <div class="section section-1" id="src-16221681_safe-id-aWQtLkFwYWNoZUhUVFBTZXJ2ZXJhc1JldmVyc2VQcm94eXY0LjMuMC1FeGFtcGxlOlJld3JpdGVVUkxzYW5kcmVkaXJlY3R0b0hUVFBTKHVzaW5nQUpQKQ">
         <h1 class="heading "><span>Example: Rewrite URLs and redirect to HTTPS (using AJP)</span></h1>
-    <p  >The following example configures three virtual hosts. The first <a  class="external-link" href="http://signserver.example.com">signserver.example.com</a>:80 just redirects all requests to use HTTPS and thus the virtual host <a  class="external-link" href="http://signserver.example.com">signserver.example.com</a>:443. The second virtual host is configured to proxy requests to the /signserver path on the application server using the AJP protocol. It is also configured to use HTTPS with a server certificate. The last virtual hosts <a  class="external-link" href="http://auth.signserver.example.com">auth.signserver.example.com</a> using an additonal IP address is configured to require client certificate authentication.    </p>
-    <p  >Notice: Some application servers (i.e. JBoss 4) might have problems writing the correct port number in the endpoint URL in the web services WSDL file when using a proxy (i.e. writing 8443 instead of 443).    </p>
-<pre class="prettyprint ">&lt;VirtualHost signserver.example.com:80&gt;<br/>    ServerName signserver.example.com<br/>    ServerAlias signserver.example.com<br/><br/>    RewriteEngine On<br/>    RewriteCond %{HTTPS} off<br/>    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}<br/><br/>    # Configure log<br/>    LogLevel warn<br/>    ErrorLog /var/log/apache2/error.log<br/>    CustomLog /var/log/apache2/access.log combined<br/><br/>&lt;/VirtualHost&gt;<br/><br/>&lt;VirtualHost signserver.example.com:443&gt;<br/>    ServerName signserver.example.com<br/>    ServerAlias signserver.example.com<br/><br/>    ProxyRequests Off<br/>    &lt;Proxy balancer://mycluster-3&gt;<br/>        BalancerMember ajp://localhost:8009/signserver<br/>    &lt;/Proxy&gt;<br/>    ProxyPass / balancer://mycluster-3/<br/><br/>    RewriteEngine   On<br/><br/>    # Treat requests to / and /signserver/ as the same for web services endpoints to work.<br/>    RewriteCond     %{THE_REQUEST}  /signserver/<br/>    RewriteRule     ^/signserver/(.*)$ /$1 [PT]<br/><br/>    # Configure secure SSL for this server using SSL certificate generated by EJBCA<br/>    SSLEngine on<br/>    SSLCipherSuite HIGH<br/>    SSLProtocol all -SSLv2<br/>    SSLCertificateFile /home/markus/Documents/PrimeKey/MarkusCA/example.com/signserver.example.com-cert.pem<br/>    SSLCertificateKeyFile /home/markus/Documents/PrimeKey/MarkusCA/example.com/signserver.example.com-key.pem<br/><br/>    # Configure log<br/>    LogLevel warn<br/>    ErrorLog /var/log/apache2/error.log<br/>    CustomLog /var/log/apache2/access.log combined<br/>&lt;/VirtualHost&gt;<br/><br/># Note: auth.signserver.example.com must have a different IP address<br/>&lt;VirtualHost auth.signserver.example.com:443&gt;<br/>    ServerName auth.signserver.example.com<br/>    ServerAlias auth.signserver.example.com<br/><br/>    ProxyRequests Off<br/>    &lt;Proxy balancer://mycluster-4&gt;<br/>        BalancerMember ajp://localhost:8009/signserver<br/>    &lt;/Proxy&gt;<br/>    ProxyPass / balancer://mycluster-4/<br/><br/>    RewriteEngine   On<br/>    # Treat requests to / and /signserver/ as the same for web services endpoints to work.<br/>    RewriteCond     %{THE_REQUEST}  /signserver/<br/>    RewriteRule     ^/signserver/(.*)$ /$1 [PT]<br/><br/>    # Configure secure SSL for this server using SSL certificate generated by EJBCA<br/>    SSLEngine on<br/>    SSLCipherSuite HIGH<br/>    SSLProtocol all -SSLv2<br/>    SSLCertificateFile /home/markus/Documents/PrimeKey/MarkusCA/example.com/auth.signserver.example.com-cert.pem<br/>    SSLCertificateKeyFile /home/markus/Documents/PrimeKey/MarkusCA/example.com/auth.signserver.example.com-key.pem<br/><br/>    SSLVerifyClient require<br/>    SSLVerifyDepth 1<br/>    SSLCACertificateFile /home/markus/Documents/PrimeKey/MarkusCA/example.com/truststore.pem<br/><br/>    # Configure log<br/>    LogLevel warn<br/>    ErrorLog /var/log/apache2/error.log<br/>    CustomLog /var/log/apache2/access.log combined<br/>&lt;/VirtualHost&gt;</pre>    <p  >    </p>
+    <p  >The following example configures three virtual hosts.    </p>
+    <p  >The first <tt class=" ">signserver.example.com:80</tt> redirects all requests to use HTTPS and thus the virtual host <tt class=" ">signserver.example.com:443</tt>.    </p>
+    <p  >The second virtual host is configured to proxy requests to the <tt class=" ">/signserver</tt> path on the application server using the AJP protocol. It is also configured to use HTTPS with a server certificate.    </p>
+    <p  >The last virtual hosts <tt class=" ">auth.signserver.example.com</tt> using an additional IP address is configured to require client certificate authentication.    </p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+    <p  >Some application servers (for example, JBoss 4) might have problems writing the correct port number in the endpoint URL in the web services WSDL file when using a proxy (that is, writing 8443 instead of 443).    </p>
+        </div>
     </div>
-    <div class="section section-1" id="src-5284099_safe-id-aWQtLkFwYWNoZUhUVFBTZXJ2ZXJhc1JldmVyc2VQcm94eXY0LjEuMC1FeGFtcGxlOkdyYW50aW5nYWNjZXNzdG9zcGVjaWZpY3dvcmtlcnNvbmx5">
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">&lt;VirtualHost signserver.example.com:</code><code class="value">80</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">    ServerName signserver.example.com</code></div>
+<div class="line"><code class="plain">    ServerAlias signserver.example.com</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    RewriteEngine On</code></div>
+<div class="line"><code class="plain">    RewriteCond %{HTTPS} off</code></div>
+<div class="line"><code class="plain">    RewriteRule (.*) https:</code><code class="comments">//%{HTTP_HOST}%{REQUEST_URI}</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    # Configure log</code></div>
+<div class="line"><code class="plain">    LogLevel warn</code></div>
+<div class="line"><code class="plain">    ErrorLog /var/log/apache2/error.log</code></div>
+<div class="line"><code class="plain">    CustomLog /var/log/apache2/access.log combined</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">&lt;/VirtualHost&gt;</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">&lt;VirtualHost signserver.example.com:</code><code class="value">443</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">    ServerName signserver.example.com</code></div>
+<div class="line"><code class="plain">    ServerAlias signserver.example.com</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    ProxyRequests Off</code></div>
+<div class="line"><code class="plain">    &lt;Proxy balancer:</code><code class="comments">//mycluster-3&gt;</code></div>
+<div class="line"><code class="plain">        BalancerMember ajp:</code><code class="comments">//localhost:8009/signserver</code></div>
+<div class="line"><code class="plain">    &lt;/Proxy&gt;</code></div>
+<div class="line"><code class="plain">    ProxyPass / balancer:</code><code class="comments">//mycluster-3/</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    RewriteEngine   On</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    # Treat requests to / and /signserver/ as the same </code><code class="keyword">for</code><code class="plain"> web services endpoints to work.</code></div>
+<div class="line"><code class="plain">    RewriteCond     %{THE_REQUEST}  /signserver/</code></div>
+<div class="line"><code class="plain">    RewriteRule     ^/signserver/(.*)$ /$</code><code class="value">1</code><code class="plain"> [PT]</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    # Configure secure SSL </code><code class="keyword">for</code><code class="plain"> </code><code class="keyword">this</code><code class="plain"> server using SSL certificate generated by EJBCA</code></div>
+<div class="line"><code class="plain">    SSLEngine on</code></div>
+<div class="line"><code class="plain">    SSLCipherSuite HIGH</code></div>
+<div class="line"><code class="plain">    SSLProtocol all -SSLv2</code></div>
+<div class="line"><code class="plain">    SSLCertificateFile /home/markus/Documents/PrimeKey/MarkusCA/example.com/signserver.example.com-cert.pem</code></div>
+<div class="line"><code class="plain">    SSLCertificateKeyFile /home/markus/Documents/PrimeKey/MarkusCA/example.com/signserver.example.com-key.pem</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    # Configure log</code></div>
+<div class="line"><code class="plain">    LogLevel warn</code></div>
+<div class="line"><code class="plain">    ErrorLog /var/log/apache2/error.log</code></div>
+<div class="line"><code class="plain">    CustomLog /var/log/apache2/access.log combined</code></div>
+<div class="line"><code class="plain">&lt;/VirtualHost&gt;</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Note: auth.signserver.example.com must have a different IP address</code></div>
+<div class="line"><code class="plain">&lt;VirtualHost auth.signserver.example.com:</code><code class="value">443</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">    ServerName auth.signserver.example.com</code></div>
+<div class="line"><code class="plain">    ServerAlias auth.signserver.example.com</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    ProxyRequests Off</code></div>
+<div class="line"><code class="plain">    &lt;Proxy balancer:</code><code class="comments">//mycluster-4&gt;</code></div>
+<div class="line"><code class="plain">        BalancerMember ajp:</code><code class="comments">//localhost:8009/signserver</code></div>
+<div class="line"><code class="plain">    &lt;/Proxy&gt;</code></div>
+<div class="line"><code class="plain">    ProxyPass / balancer:</code><code class="comments">//mycluster-4/</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    RewriteEngine   On</code></div>
+<div class="line"><code class="plain">    # Treat requests to / and /signserver/ as the same </code><code class="keyword">for</code><code class="plain"> web services endpoints to work.</code></div>
+<div class="line"><code class="plain">    RewriteCond     %{THE_REQUEST}  /signserver/</code></div>
+<div class="line"><code class="plain">    RewriteRule     ^/signserver/(.*)$ /$</code><code class="value">1</code><code class="plain"> [PT]</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    # Configure secure SSL </code><code class="keyword">for</code><code class="plain"> </code><code class="keyword">this</code><code class="plain"> server using SSL certificate generated by EJBCA</code></div>
+<div class="line"><code class="plain">    SSLEngine on</code></div>
+<div class="line"><code class="plain">    SSLCipherSuite HIGH</code></div>
+<div class="line"><code class="plain">    SSLProtocol all -SSLv2</code></div>
+<div class="line"><code class="plain">    SSLCertificateFile /home/markus/Documents/PrimeKey/MarkusCA/example.com/auth.signserver.example.com-cert.pem</code></div>
+<div class="line"><code class="plain">    SSLCertificateKeyFile /home/markus/Documents/PrimeKey/MarkusCA/example.com/auth.signserver.example.com-key.pem</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    SSLVerifyClient require</code></div>
+<div class="line"><code class="plain">    SSLVerifyDepth </code><code class="value">1</code></div>
+<div class="line"><code class="plain">    SSLCACertificateFile /home/markus/Documents/PrimeKey/MarkusCA/example.com/truststore.pem</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    # Configure log</code></div>
+<div class="line"><code class="plain">    LogLevel warn</code></div>
+<div class="line"><code class="plain">    ErrorLog /var/log/apache2/error.log</code></div>
+<div class="line"><code class="plain">    CustomLog /var/log/apache2/access.log combined</code></div>
+<div class="line"><code class="plain">&lt;/VirtualHost&gt;</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-16221681_safe-id-aWQtLkFwYWNoZUhUVFBTZXJ2ZXJhc1JldmVyc2VQcm94eXY0LjMuMC1FeGFtcGxlOkdyYW50aW5nYWNjZXNzdG9zcGVjaWZpY3dvcmtlcnNvbmx5">
         <h1 class="heading "><span>Example: Granting access to specific workers only</span></h1>
-    <p  >This example shows how it is possible to limit access to only specified resources.    </p>
-    <p  >If you are going to grant different users access to different workers always remember to first deny access from the root location. The reason is that there are other ways to access a worker than the &quot;/worker/*&quot; or &quot;/sodworker/*&quot; pattern. For instance /process, /tsa, /pdf and /sod etc as well as using the web services interfaces /signserverws, /SignServerWSService, /validationws, /ValidationWSService and /ClientWSService all can be used to invoke <strong class=" ">any</strong> worker.    </p>
-    <p  >If you instead relay on SignServer to do the authentication/authorization it could still be good from a security point to only grant access to the locations you intend to use. In that case you would probably want to also give access to the web services interfaces, /worker and /process etc.    </p>
-    <p  >Also remember if you are proxying from multiple virtual hosts (i.e. if you have one with and one without client authentication as in the example above) that you might want to add the access restrictions to all of them.    </p>
-<pre class="prettyprint ">    ...<br/>    # First, deny access globally and then only give access to resources explicitly<br/>    &lt;Location /&gt;<br/>    	Order Deny,Allow<br/>    	Deny from all<br/>    &lt;/Location&gt;<br/><br/>    # Allow index page<br/>    &lt;LocationMatch &quot;^/$&quot;&gt;<br/>	Order Allow,Deny<br/>	Allow from all<br/>    &lt;/LocationMatch&gt;<br/><br/>    # Allow demo web pages<br/>    &lt;Location /demo/&gt;<br/>	Order Allow,Deny<br/>	Allow from all<br/>    &lt;/Location&gt;<br/><br/>    # Allow documentation<br/>    &lt;Location /doc/&gt;<br/>	Order Allow,Deny<br/>	Allow from all<br/>    &lt;/Location&gt;<br/><br/>    # Allow web page resources<br/>    &lt;LocationMatch &quot;\.(css|js|jpg|png)$&quot;&gt;<br/>	Order Allow,Deny<br/>	Allow from all<br/>    &lt;/LocationMatch&gt;<br/>    <br/>    # Allow the Admin interface<br/>    &lt;Location /AdminWSService/&gt;<br/>	Order Allow,Deny<br/>	Allow from all<br/>    &lt;/Location&gt;<br/><br/>    # Grant everybody access to the XMLSigner<br/>    &lt;Location /worker/XMLSigner&gt;<br/>	Order Allow,Deny<br/>	Allow from all<br/>    &lt;/Location&gt;<br/>                        <br/>    # Grant everybody access to the MRTDSODSigner<br/>    &lt;Location /sodworker/MRTDSODSigner&gt;<br/>        Order Allow,Deny<br/>        Allow from all<br/>    &lt;/Location&gt;<br/><br/>    # Grant valid users access to the CMSSigner<br/>    &lt;Location /worker/CMSSigner&gt;<br/>	Order Allow,Deny<br/>        Allow from all<br/>        AuthType Basic<br/>        AuthName &quot;Restricted CMSSigner access&quot;<br/>    	AuthUserFile /home/markus/.htpasswd<br/>    	Require valid-user<br/>    &lt;/Location&gt;<br/>    ...</pre>    </div>
-    <div class="section section-1" id="src-5284099_id-.ApacheHTTPServerasReverseProxyv4.1.0-AdditionalConfiguration">
-        <h1 class="heading "><span>Additional Configuration</span></h1>
-    <div class="section section-2" id="src-5284099_id-.ApacheHTTPServerasReverseProxyv4.1.0-CustomPrivateHTTPSport">
-        <h2 class="heading "><span>Custom Private HTTPS port</span></h2>
-    <p  >If for instance a reverse proxy is used to change the ports used by SignServer the links in the Administration Web interface might not be correct (i.e. if the standard port 443 is used instead of 8443). In that case this can be configured in conf/signserver_deploy.properties:    </p>
-    <div  class="tablewrap">
-        <table class="confluenceTable">
-                    <colgroup>
-                                    <col />
-                            </colgroup>
-        <thead class=" ">    <tr>
-            <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Sample Property    </p>
-            </td>
-        </tr>
-</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >httpserver.external.privhttps=443    </p>
-            </td>
-        </tr>
-</tbody>        </table>
-            </div>
+    <p  >This example shows how to limit access to specified resources only.    </p>
+    <p  >If you are going to grant different users access to different workers, always remember to first deny access from the root location since there are other ways to access a worker than the &quot;/worker/*&quot; or &quot;/sodworker/*&quot; pattern. For instance, /process, /tsa, /pdf and /sod etc, as well as using the web services interfaces /signserverws, /SignServerWSService, /validationws, /ValidationWSService, and /ClientWSService, all can be used to invoke <strong class=" ">any</strong> worker.    </p>
+    <p  >If you instead relay on SignServer to do the authentication/authorization, it is recommended to only grant access to the locations you intend to use. In that case you will probably want to also give access to the web services interfaces, /worker and /process etc.    </p>
+    <p  >Also remember that if you are proxying from multiple virtual hosts (for example, if you have one with and one without client authentication as in the example above), you might want to add the access restrictions to all of them.    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain"> ...</code></div>
+<div class="line"><code class="plain">    # First, deny access globally and then only give access to resources explicitly</code></div>
+<div class="line"><code class="plain">    &lt;Location /&gt;</code></div>
+<div class="line"><code class="plain">    	Order Deny,Allow</code></div>
+<div class="line"><code class="plain">    	Deny from all</code></div>
+<div class="line"><code class="plain">    &lt;/Location&gt;</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    # Allow index page</code></div>
+<div class="line"><code class="plain">    &lt;LocationMatch </code><code class="string">"^/$"</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">	Order Allow,Deny</code></div>
+<div class="line"><code class="plain">	Allow from all</code></div>
+<div class="line"><code class="plain">    &lt;/LocationMatch&gt;</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    # Allow demo web pages</code></div>
+<div class="line"><code class="plain">    &lt;Location /demo/&gt;</code></div>
+<div class="line"><code class="plain">	Order Allow,Deny</code></div>
+<div class="line"><code class="plain">	Allow from all</code></div>
+<div class="line"><code class="plain">    &lt;/Location&gt;</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    # Allow documentation</code></div>
+<div class="line"><code class="plain">    &lt;Location /doc/&gt;</code></div>
+<div class="line"><code class="plain">	Order Allow,Deny</code></div>
+<div class="line"><code class="plain">	Allow from all</code></div>
+<div class="line"><code class="plain">    &lt;/Location&gt;</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    # Allow web page resources</code></div>
+<div class="line"><code class="plain">    &lt;LocationMatch </code><code class="string">"\.(css|js|jpg|png)$"</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">	Order Allow,Deny</code></div>
+<div class="line"><code class="plain">	Allow from all</code></div>
+<div class="line"><code class="plain">    &lt;/LocationMatch&gt;</code></div>
+<div class="line"><code class="plain">    </code></div>
+<div class="line"><code class="plain">    # Allow the Admin </code><code class="keyword">interface</code></div>
+<div class="line"><code class="plain">    &lt;Location /AdminWSService/&gt;</code></div>
+<div class="line"><code class="plain">	Order Allow,Deny</code></div>
+<div class="line"><code class="plain">	Allow from all</code></div>
+<div class="line"><code class="plain">    &lt;/Location&gt;</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    # Grant everybody access to the XMLSigner</code></div>
+<div class="line"><code class="plain">    &lt;Location /worker/XMLSigner&gt;</code></div>
+<div class="line"><code class="plain">	Order Allow,Deny</code></div>
+<div class="line"><code class="plain">	Allow from all</code></div>
+<div class="line"><code class="plain">    &lt;/Location&gt;</code></div>
+<div class="line"><code class="plain">                        </code></div>
+<div class="line"><code class="plain">    # Grant everybody access to the MRTDSODSigner</code></div>
+<div class="line"><code class="plain">    &lt;Location /sodworker/MRTDSODSigner&gt;</code></div>
+<div class="line"><code class="plain">        Order Allow,Deny</code></div>
+<div class="line"><code class="plain">        Allow from all</code></div>
+<div class="line"><code class="plain">    &lt;/Location&gt;</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    # Grant valid users access to the CMSSigner</code></div>
+<div class="line"><code class="plain">    &lt;Location /worker/CMSSigner&gt;</code></div>
+<div class="line"><code class="plain">	Order Allow,Deny</code></div>
+<div class="line"><code class="plain">        Allow from all</code></div>
+<div class="line"><code class="plain">        AuthType Basic</code></div>
+<div class="line"><code class="plain">        AuthName </code><code class="string">"Restricted CMSSigner access"</code></div>
+<div class="line"><code class="plain">    	AuthUserFile /home/markus/.htpasswd</code></div>
+<div class="line"><code class="plain">    	Require valid-user</code></div>
+<div class="line"><code class="plain">    &lt;/Location&gt;</code></div>
+<div class="line"><code class="plain">    ...</code></div>
+</div>
     </div>
-    <div class="section section-2" id="src-5284099_id-.ApacheHTTPServerasReverseProxyv4.1.0-CustomContextRoot">
+    </div>
+    <div class="section section-1" id="src-16221681_id-.ApacheHTTPServerasReverseProxyv4.3.0-AdditionalConfiguration">
+        <h1 class="heading "><span>Additional Configuration</span></h1>
+    <div class="section section-2" id="src-16221681_id-.ApacheHTTPServerasReverseProxyv4.3.0-CustomPrivateHTTPSport">
+        <h2 class="heading "><span>Custom Private HTTPS port</span></h2>
+    <p  >For example, if a reverse proxy is used to change the ports used by SignServer, the links in the Administration Web interface might not be correct (for example, if the standard port 443 is used instead of 8443). In that case, configure the following in conf/signserver_deploy.properties:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">httpserver.external.privhttps=</code><code class="value">443</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-2" id="src-16221681_id-.ApacheHTTPServerasReverseProxyv4.3.0-CustomContextRoot">
         <h2 class="heading "><span>Custom Context Root</span></h2>
-    <p  >With a reverse proxy it is also possible to use a different beginning of the URL for accessing SignServer than the default &quot;/signserver&quot;. If for example the reverse proxy instead serves SignServer under &quot;/myservice/signserver&quot; this might have to be configured in conf/signserver_deploy.properties so that the URLs in the Administration Web interface as well as the Web Services endpoints works as expected:    </p>
-    <div  class="tablewrap">
-        <table class="confluenceTable">
-                    <colgroup>
-                                    <col />
-                            </colgroup>
-        <thead class=" ">    <tr>
-            <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Sample Property    </p>
-            </td>
-        </tr>
-</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >httpserver.context.root=/myservice/signserver    </p>
-            </td>
-        </tr>
-</tbody>        </table>
-            </div>
+    <p  >With a reverse proxy, it is also possible to use a different beginning of the URL for accessing SignServer than the default &quot;/signserver&quot;. If for example the reverse proxy instead serves SignServer under &quot;/myservice/signserver&quot; this might have to be configured in <tt class=" ">conf/signserver_deploy.properties</tt> so that the URLs in the Administration Web interface, as well as the Web Services endpoints, work as expected:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">httpserver.context.root=/myservice/signserver</code></div>
+</div>
+    </div>
+    <p  >    </p>
     </div>
     </div>
         </div>
@@ -1191,7 +1384,7 @@
             </svg>
             <span>Legacy Interfaces</span>
         </a>
-                <a href="SignServer_Reference.html" class="ht-post-nav-next">
+                <a href="Stresstest_CLI.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1200,7 +1393,7 @@
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Reference</span>
+            <span>Stresstest CLI</span>
         </a>
     </nav>    
             

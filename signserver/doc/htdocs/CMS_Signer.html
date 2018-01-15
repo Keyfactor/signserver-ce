@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1100,17 +1124,17 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-11567775"> <span>CMS Signer</span></h1>
+</div>            <h1 id="src-16221226"> <span>CMS Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The CMS signer has the fully qualified class name: <strong class=" ">org.signserver.module.cmssigner.CMSSigner</strong>.    </p>
-    <div class="section section-1" id="src-11567775_id-.CMSSignerv4.2.0-Overview">
+    <div class="section section-1" id="src-16221226_id-.CMSSignerv4.3.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
-    <p  >The CMS signer can sign arbitrary data and produces a CMS (RFC 3852) SignedData structure in binary format with or without the content encapsulated.<br/>Currently the signer certificate is always included.    </p>
+    <p  >The CMS signer can sign arbitrary data and produces a CMS (RFC 3852) SignedData structure in binary format with or without the content encapsulated. Currently the signer certificate is always included.    </p>
     </div>
-    <div class="section section-1" id="src-11567775_id-.CMSSignerv4.2.0-AvailableProperties">
+    <div class="section section-1" id="src-16221226_id-.CMSSignerv4.3.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1131,7 +1155,7 @@
         <p  >SIGNATUREALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Property specifying the algorithm used to sign the data (default: depending on the signing key: <strong class=" ">SHA1withDSA</strong> for DSA keys, <strong class=" ">SHA1withECDSA</strong> for ECDSA keys, otherwise <strong class=" ">SHA1withRSA</strong>)    </p>
+        <p  >Property specifying the algorithm used to sign the data. Default: depending on the signing key: <strong class=" ">SHA256withDSA</strong> for DSA keys, <strong class=" ">SHA256withECDSA</strong> for ECDSA keys, otherwise <strong class=" ">SHA256withRSA</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1139,7 +1163,7 @@
         <p  >DETACHEDSIGNATURE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Property specifying if a detached signature (a.k.a. &quot;external signature&quot;) should be used. That is a signature where the content is not included/encapsulated. Default is false.    </p>
+        <p  >Property specifying if a detached signature (&quot;external signature&quot;) should be used. Thus a signature where the content is not included/encapsulated. Default: <strong class=" ">false</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1147,7 +1171,7 @@
         <p  >ALLOW_DETACHEDSIGNATURE_OVERRIDE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Property specifying if the requestor can request an other value for <strong class=" ">DETACHEDSIGNATURE</strong> than what is configured. Default is false.<br/>If set to true a request could include a metadata property with an other value for DETACHEDSIGNATURE.    </p>
+        <p  >Property specifying if the requestor can request an other value for <strong class=" ">DETACHEDSIGNATURE</strong> than what is configured. Default: <strong class=" ">false</strong>.<br/>If set to <strong class=" ">true,</strong> a request could include a metadata property with an other value for DETACHEDSIGNATURE.    </p>
             </td>
         </tr>
     <tr>
@@ -1155,7 +1179,7 @@
         <p  >CLIENTSIDEHASHING    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Property specifying if the request data should be considered to be a pre-computed (by the requesting client) hash. If this is set to to true, <strong class=" ">ACCEPTED_HASH_DIGEST_ALGORITHMS</strong> must be defined. Default is false.    </p>
+        <p  >Property specifying if the request data should be considered to be a pre-computed (by the requesting client) hash. If this is set to to true, <strong class=" ">ACCEPTED_HASH_DIGEST_ALGORITHMS</strong> must be defined. Default: <strong class=" ">false</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1163,7 +1187,7 @@
         <p  >ALLOW_CLIENTSIDEHASHING_OVERRIDE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Property specifying if the request is allowed to override the behaviour defined via <strong class=" ">CLIENTSIDEHASHING</strong> as to if the request data is to be considered the actual data to be signed or a pre-computed hash.    </p>
+        <p  >Property specifying if the request is allowed to override the behavior defined via <strong class=" ">CLIENTSIDEHASHING</strong> as to if the request data is to be considered the actual data to be signed or a pre-computed hash. Default: <strong class=" ">false</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1171,8 +1195,8 @@
         <p  >ACCEPTED_HASH_DIGEST_ALGORITHMS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Comma-separated list of accepted hash digest algorithms. When a request is consisiting of a pre-computed hash, the requested digest algorithm must be among the values specified in this property.    </p>
-    <p  >The property doesn't have a default value, and must be specified if client-side hashing is set as the default, or if overriding via the request is allowed.    </p>
+        <p  >Comma-separated list of accepted hash digest algorithms. When a request is consisting of a pre-computed hash, the requested digest algorithm must be among the values specified in this property.    </p>
+    <p  >The property does not have a default value, and must be specified if client-side hashing is set as the default, or if overriding via the request is allowed.    </p>
             </td>
         </tr>
     <tr>
@@ -1180,7 +1204,9 @@
         <p  >DER_RE_ENCODE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Property specifying if the resulting data structure should be parsed and re-encoded using DER encoding. Note that this option is performed in memory and thus does not support large files. Default is false.    </p>
+        <p  >Property specifying if the resulting data structure should be parsed and re-encoded using DER encoding. Default: <strong class=" ">false</strong>.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ This option is performed in memory and thus does not support large files.    </p>
             </td>
         </tr>
     <tr>
@@ -1196,7 +1222,7 @@
         <p  >ALLOW_CONTENTOID_OVERRIDE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Property specifying if the content OID to use in the signedData object should be allowed to be overridden by request metadata (CONTENTOID request parameter). Default is false.    </p>
+        <p  >Property specifying if the content OID to use in the signedData object should be allowed to be overridden by request metadata (CONTENTOID request parameter). Default: <strong class=" ">false</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1204,8 +1230,9 @@
         <p  >DIRECTSIGNATURE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Property specifying that the signature should be calculated directly over the content and not over signed attributes. Thus the signature would not contain any signed attributes if this property is set to true. Default is false.    </p>
-    <p  >Setting this to true is not allowed when CLIENTSIDEHASHING or ALLOW_CLIENTSIDEHASHING_OVERRIDE is configured.    </p>
+        <p  >Property specifying that the signature should be calculated directly over the content and not over signed attributes. Thus the signature would not contain any signed attributes if this property is set to true. Default: <strong class=" ">false</strong>.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ Setting this to true is not allowed when CLIENTSIDEHASHING or ALLOW_CLIENTSIDEHASHING_OVERRIDE is configured.    </p>
             </td>
         </tr>
     <tr>
@@ -1213,7 +1240,7 @@
         <p  >DO_LOGREQUEST_DIGEST    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If a digest of the request should be computed and logged (Optional, default: false).    </p>
+        <p  >If a digest of the request should be computed and logged. Optional, default: <strong class=" ">false.</strong>    </p>
             </td>
         </tr>
     <tr>
@@ -1221,7 +1248,7 @@
         <p  >LOGREQUEST_DIGESTALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Algorithm used to create the message digest (hash) of the request document to put in the log (default: SHA256).    </p>
+        <p  >Algorithm used to create the message digest (hash) of the request document to put in the log. Default: <strong class=" ">SHA256</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1229,7 +1256,7 @@
         <p  >DO_LOGRESPONSE_DIGEST    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If a digest of the response should be computed and logged (Optional, default: false).    </p>
+        <p  >If a digest of the response should be computed and logged. Optional, default: <strong class=" ">false</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1237,13 +1264,13 @@
         <p  >LOGRESPONSE_DIGESTALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Algorithm used to create the message digest (hash) of the response document to put in the log (default: SHA256).    </p>
+        <p  >Algorithm used to create the message digest (hash) of the response document to put in the log. Default: <strong class=" ">SHA256</strong>.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-11567775_id-.CMSSignerv4.2.0-Requestparameters">
+    <div class="section section-1" id="src-16221226_id-.CMSSignerv4.3.0-Requestparameters">
         <h1 class="heading "><span>Request parameters</span></h1>
     <p  >The following meta data parameters can be specified in a request    </p>
     <div  class="tablewrap">
@@ -1288,9 +1315,9 @@
             </div>
     <p  >    </p>
     </div>
-    <div class="section section-1" id="src-11567775_id-.CMSSignerv4.2.0-Signingapre-computedhash">
+    <div class="section section-1" id="src-16221226_id-.CMSSignerv4.3.0-Signingapre-computedhash">
         <h1 class="heading "><span>Signing a pre-computed hash</span></h1>
-    <p  >See also the <a   href="Client-Side_Hashing.html">Client Side Hashing</a> page for the background and how to use this mode with CMS signatures.    </p>
+    <p  >For background and information on how to use this mode with CMS signatures, see <a   href="Client-Side_Hashing.html">Client Side Hashing</a>.    </p>
     <p  >    </p>
     </div>
         </div>

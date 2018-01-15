@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1099,69 +1123,65 @@
                                         <li class="shortcut"><a href="SignServer_Operations.html">SignServer Operations</a></li>
                                                                                      <li><a href="Worker_Setup.html">Worker Setup</a></li>
                                                             </ul>
-</div>            <h1 id="src-5282865"> <span>Quick Start Demo Setup using Administration Web</span></h1>
+</div>            <h1 id="src-11573803"> <span>Quick Start Demo Setup using Administration Web</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: This is a SignServer Enterprise Edition (EE) feature.    </p>
-        </div>
-    </div>
-    <p  >This is a quick start guide to quickly get you setup with a crypto token and sample signers for testing and demonstration purposes.    </p>
-    <div class="section section-1" id="src-5282865_id-.QuickStartDemoSetupusingAdministrationWebv4.1.0-SetupaSampleCryptoToken">
+    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
+    <p  >This quick start guide describes how to use the SignServer Administration Web (AdminWeb) to setup a crypto token and sample signers for testing and demonstration purposes:    </p>
+    <p  >    </p>
+<ul class="toc-indentation "></ul>    <div class="section section-1" id="src-11573803_id-.QuickStartDemoSetupusingAdministrationWebv4.2.1-SetupaSampleCryptoToken">
         <h1 class="heading "><span>Setup a Sample Crypto Token</span></h1>
-    <p  >Log in to the administration web (<a  class="external-link" href="https://localhost:8443/signserver/adminweb">https://localhost:8443/signserver/adminweb</a> when running SignServer locally).    </p>
-    <p  >Click <strong class=" ">Workers</strong> in the top menu.    </p>
-    <p  >Click the link <strong class=" ">Add&hellip;</strong> below the workers list.    </p>
-    <p  >Click the <strong class=" ">From Template</strong> button. In the drop-down, select &ldquo;<i class=" ">keystore-crypto.properties</i>&rdquo; and click on button <strong class=" ">Next</strong>.    </p>
-    <p  >In the configuration text view, change the value for &ldquo;<i class=" ">WORKERGENID1.KEYSTOREPATH</i>&rdquo; so that the path corresponds to your SignServer installation (for example: &rdquo;WORKERGENID1.KEYSTOREPATH=/home/username/signserver/res/test/dss10/dss10_keystore.p12&rdquo;). Click the <strong class=" ">Apply</strong> button.    </p>
-    </div>
-    <div class="section section-1" id="src-5282865_id-.QuickStartDemoSetupusingAdministrationWebv4.1.0-SetupaSamplePDFSigner">
+    <p  >To setup a sample crypto token, do the following:    </p>
+<ol class=" "><li class=" ">    <p  >Log in to the Administration Web. For example <a  class="external-link" href="https://localhost:8443/signserver/adminweb">https://localhost:8443/signserver/adminweb</a> when running SignServer locally.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">Workers</strong> in the top menu.    </p>
+</li><li class=" ">    <p  >Click the link <strong class=" ">Add&hellip;</strong> below the workers list.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">From Template</strong>, select <i class=" ">keystore-crypto.properties</i> in the list menu, and click <strong class=" ">Next</strong>.    </p>
+</li><li class=" ">    <p  >In the configuration text view, change the value for &ldquo;<i class=" ">WORKERGENID1.KEYSTOREPATH</i>&rdquo; so that the path corresponds to your SignServer installation, for example: WORKERGENID1.KEYSTOREPATH=/home/username/signserver/res/test/dss10/dss10_keystore.p12. Click <strong class=" ">Apply</strong>.    </p>
+</li></ol>    </div>
+    <div class="section section-1" id="src-11573803_id-.QuickStartDemoSetupusingAdministrationWebv4.2.1-SetupaSamplePDFSigner">
         <h1 class="heading "><span>Setup a Sample PDF Signer</span></h1>
-    <p  >Click the link <strong class=" ">Add&hellip;</strong> below the workers list.    </p>
-    <p  >Click the <strong class=" ">From Template</strong> button.    </p>
-    <p  >In the drop-down, select &ldquo;<i class=" ">pdfsigner.properties</i>&rdquo; and click on button <strong class=" ">Next</strong>.    </p>
-    <p  >Click the <strong class=" ">Apply</strong> button.    </p>
-    <p  >Activate the new signer by clicking the link to the new signer in the workers list, then clicking the <strong class=" ">Activate</strong> button.    </p>
-    <p  >Input the key store PIN code for the crypto token set up above (the PIN for the sample key store used is &ldquo;<i class=" ">foo123</i>&rdquo;).    </p>
-    <p  >Click the <strong class=" ">Activate</strong> button.    </p>
-    <p  >The sample PDF signer can now be used, i.e. by using the &ldquo;Signing and Validation&rdquo; demo page by visiting the PDF upload demo page (<a  class="external-link" href="https://localhost:8443/signserver/demo/pdfsign.jsp%29.">https://localhost:8443/signserver/demo/pdfsign.jsp).</a>    </p>
+    <p  >To setup a sample PDF signer, do the following:    </p>
+<ol class=" "><li class=" ">    <p  >Click the link <strong class=" ">Add&hellip;</strong> below the workers list.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">From Template</strong>, select <i class=" ">pdfsigner.properties</i> in the list menu, and click <strong class=" ">Next</strong>.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">Apply</strong>.    </p>
+</li><li class=" ">    <p  >To activate the new signer, select the link to the new signer in the workers list, and then click <strong class=" ">Activate</strong>.    </p>
+</li><li class=" ">    <p  >Enter the key store PIN code for the crypto token set up above. The PIN for the sample key store used is &ldquo;<i class=" ">foo123</i>&rdquo;.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">Activate</strong>.    </p>
+</li></ol>    <p  >The sample PDF signer can now be used, for example using the <strong class=" ">Signing and Validation</strong> demo page on the PDF upload demo page: <a  class="external-link" href="https://localhost:8443/signserver/demo/pdfsign.jsp%29.">https://localhost:8443/signserver/demo/pdfsign.jsp.</a>    </p>
     </div>
-    <div class="section section-1" id="src-5282865_id-.QuickStartDemoSetupusingAdministrationWebv4.1.0-SetupaSampleTime-stampSigner">
+    <div class="section section-1" id="src-11573803_id-.QuickStartDemoSetupusingAdministrationWebv4.2.1-SetupaSampleTime-stampSigner">
         <h1 class="heading "><span>Setup a Sample Time-stamp Signer</span></h1>
-    <p  >Follow the instructions for the PDF sample, but choose the &ldquo;<i class=" ">timestamp.properties</i>&rdquo; template. This sample is using a pre-configured entry in the sample key store containing a key-pair with an associated suitable signer certificate for time-stamping (with the required extended key usage extension marked as critical).    </p>
+    <p  >Follow the steps described in <a   href="#src-11573803_id-.QuickStartDemoSetupusingAdministrationWebv4.2.1-SetupaSamplePDFSigner">Setup a Sample PDF Signer</a>, but select the template <i class=" ">timestamp.properties</i> in. This sample is using a pre-configured entry in the sample key store containing a key-pair with an associated suitable signer certificate for time-stamping (with the required extended key usage extension marked as critical).    </p>
     </div>
-    <div class="section section-1" id="src-5282865_safe-id-aWQtLlF1aWNrU3RhcnREZW1vU2V0dXB1c2luZ0FkbWluaXN0cmF0aW9uV2VidjQuMS4wLVNldHVwYVNhbXBsZUhTTShQS0NTIzExKUNyeXB0b1Rva2Vu">
+    <div class="section section-1" id="src-11573803_safe-id-aWQtLlF1aWNrU3RhcnREZW1vU2V0dXB1c2luZ0FkbWluaXN0cmF0aW9uV2VidjQuMi4xLVNldHVwYVNhbXBsZUhTTShQS0NTIzExKUNyeXB0b1Rva2Vu">
         <h1 class="heading "><span>Setup a Sample HSM (PKCS#11) Crypto Token</span></h1>
-    <p  >Follow the instructions for setting a keystore-based crypto token above but select &ldquo;<i class=" ">pkcs11-cryptotoken.properties</i>&rdquo; in the dropdown menu.    </p>
-    <p  >Click button <strong class=" ">Next</strong>.    </p>
-    <p  >In the configuration text area, modify the property &ldquo;WORKERGENID1.LIBRARYNAME&rdquo; to use the library name corresponding to the library used by your HSM vendor.    </p>
-    <p  >For testing purposes the value for &ldquo;SoftHSM&rdquo; can be commented (and the previously set value commented out, using the # comment mark). SoftHSM should be available on most GNU/Linux-based operating systems. If needed the values for slot numbers can be edited to correspond to a configured slot in the HSM.    </p>
-    <p  >Generate a new key-pair by clicking the <strong class=" ">Renew key&hellip;</strong> button and enter the key algorithms (such as &ldquo;<i class=" ">RSA</i>&rdquo; or &ldquo;<i class=" ">ECDSA</i>&rdquo; and a suitable key specification, i.e. &ldquo;<i class=" ">2048</i>&rdquo; for RSA or &ldquo;<i class=" ">prime256v1</i>&rdquo; for ECDSA) and a new key alias for the key.    </p>
-    <p  >Generate a certificate request (CSR) for a signer by clicking the <strong class=" ">Generate CSR</strong> button, enter the key alias of the newly-generated key. Click the &ldquo;<strong class=" ">&lt;</strong>&rdquo; button to enter select the key alias. Enter the signature algorithm, for example &ldquo;<i class=" ">SHA256withRSA</i>&rdquo; and a distinguished name (DN) for signing certificate (for example &ldquo;<i class=" ">CN=testsigner</i>&rdquo;).    </p>
-    <p  >Click the <strong class=" ">Generate</strong> button and then click the <strong class=" ">Download</strong> button below result and save the resulting CSR (.p10 file).    </p>
-    <p  >Issue a signer certificate for your new signer using your CA and this CSR. Be sure to issue an appropriate certificate when setting up a time-stamp signer or code signer (such as Java JAR signer or MS Authenticode signer) using the correct certificate extensions.    </p>
+    <p  >To setup a sample HSM crypto token, do the following:    </p>
+<ol class=" "><li class=" ">    <p  >Follow the steps 1-4 in <a   href="#src-11573803_id-.QuickStartDemoSetupusingAdministrationWebv4.2.1-SetupaSampleCryptoToken">Setup a Sample Crypto Token</a> for setting a keystore-based crypto token, but select the template <i class=" ">pkcs11-cryptotoken.properties</i> in the <strong class=" ">From Template</strong> list menu.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">Next</strong>.    </p>
+</li><li class=" ">    <p  >In the configuration text area, modify the property &ldquo;WORKERGENID1.LIBRARYNAME&rdquo; to use the library name corresponding to the library used by your HSM vendor.    </p>
+</li><li class=" ">    <p  >For testing purposes, the value for &ldquo;SoftHSM&rdquo; can be commented (and the previously set value commented out, using the # comment mark). SoftHSM should be available on most GNU/Linux-based operating systems. If required, the values for slot numbers can be edited to correspond to a configured slot in the HSM.    </p>
+</li><li class=" ">    <p  >Generate a new key-pair: Click <strong class=" ">Renew key&hellip;</strong> and enter the key algorithms (for example <i class=" ">RSA</i> or <i class=" ">ECDSA,</i> and a suitable key specification, i.e. <i class=" ">2048</i> for RSA, or <i class=" ">prime256v1</i> for ECDSA), and a new key alias for the key.    </p>
+</li><li class=" ">    <p  >Generate a Certificate Signing Request (CSR) for a signer: Click <strong class=" ">Generate CSR</strong>, and enter the key alias of the newly-generated key. Click the &ldquo;<strong class=" ">&lt;</strong>&rdquo; button to enter the key alias. Enter the signature algorithm, for example <i class=" ">SHA256withRSA</i> and a distinguished name (DN) for signing certificate (for example <i class=" ">CN=testsigner</i>.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">Generate</strong>, and click <strong class=" ">Download</strong> below the result, and then save the resulting CSR (.p10 file).    </p>
+</li><li class=" ">    <p  >Issue a signer certificate for your new signer using your CA and this CSR.    </p>
+</li></ol>    <p  >Ensure to issue an appropriate certificate when setting up a time-stamp signer or code signer (such as Java JAR signer or MS Authenticode signer), using the correct certificate extensions.    </p>
     </div>
-    <div class="section section-1" id="src-5282865_id-.QuickStartDemoSetupusingAdministrationWebv4.1.0-SetupaSampleSignerusinganHSMCryptoToken">
+    <div class="section section-1" id="src-11573803_id-.QuickStartDemoSetupusingAdministrationWebv4.2.1-SetupaSampleSignerusinganHSMCryptoToken">
         <h1 class="heading "><span>Setup a Sample Signer using an HSM Crypto Token</span></h1>
-    <p  >Follow the sample setup above for a PDF signer.    </p>
-    <p  >Before applying the settings, edit the signer settings in the configuration text area and change the &ldquo;WORKERGENID1.CRYPTOTOKEN&rdquo; setting to use the commented-out sample using PKCS#11 crypto token, &ldquo;<i class=" ">CryptoTokenP11</i>&rdquo;, this will match the crypto token set up using the above template.    </p>
-    <p  >Set the <i class=" ">DEFAULTKEY</i> worker property by selecting the new signer, click the <strong class=" ">Configuration</strong> button. Click on the <strong class=" ">Edit</strong> link in the table row for the <i class=" ">DEFAULTKEY</i> property.    </p>
-    <p  >Enter the key alias for the new key generated in the HSM into the &ldquo;Value&rdquo; text area.    </p>
-    <p  >Click the <strong class=" ">Submit</strong> button.    </p>
-    <p  >Install the signer certificate chain as issued by your CA by clicking the link to your PKCS#11 crypto worker in the workers list.    </p>
-    <p  >Click the <strong class=" ">Install certificates</strong> button.    </p>
-    <p  >Click the &ldquo;<strong class=" ">&gt;</strong>&rdquo; button to select your key generated before.    </p>
-    <p  >Click on the <strong class=" ">Browse&hellip;</strong> button.    </p>
-    <p  >Select your issued certificate chain.    </p>
-    <p  >Select the <strong class=" ">Install in token</strong> checkbox.    </p>
-    <p  >Click the button <strong class=" ">Install</strong>.    </p>
-    <p  >Activate the new signer by clicking the link to the new signer in the workers list, then clicking the <strong class=" ">Activate</strong> button.    </p>
-    <p  >Input the HSM slot PIN.    </p>
-    <p  >Click the <strong class=" ">Activate</strong> button.    </p>
+    <p  >To setup a sample signer using an HSM crypto token, do the following:    </p>
+<ol class=" "><li class=" ">    <p  >Follow the steps described in <a   href="#src-11573803_id-.QuickStartDemoSetupusingAdministrationWebv4.2.1-SetupaSamplePDFSigner">Setup a Sample PDF Signer</a>, but before applying the settings, edit the signer settings in the configuration text area and change the &ldquo;WORKERGENID1.CRYPTOTOKEN&rdquo; setting to use the commented-out sample using PKCS#11 crypto token, <i class=" ">CryptoTokenP11</i>, to match the crypto token set up using the above template.    </p>
+</li><li class=" ">    <p  >Set the <i class=" ">DEFAULTKEY</i> worker property by selecting the new signer, click <strong class=" ">Configuration</strong>, and then click the <strong class=" ">Edit</strong> link in the table row for the <i class=" ">DEFAULTKEY</i> property.    </p>
+</li><li class=" ">    <p  >Enter the key alias for the new key generated in the HSM into the <strong class=" ">Value</strong> text area and click <strong class=" ">Submit</strong>.    </p>
+</li><li class=" ">    <p  >Install the signer certificate chain as issued by your CA: click the link to your PKCS#11 crypto worker in the workers list, and click <strong class=" ">Install certificates</strong>.    </p>
+</li><li class=" ">    <p  >Click the &ldquo;<strong class=" ">&gt;</strong>&rdquo; button to select your key generated previously.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">Browse</strong> and select<strong class=" "> </strong>your issued certificate chain.    </p>
+</li><li class=" ">    <p  >Select <strong class=" ">Install in token</strong> and click <strong class=" ">Install</strong>.    </p>
+</li><li class=" ">    <p  >To activate the new signer, select the link to the new signer in the workers list, and click <strong class=" ">Activate</strong>.    </p>
+</li><li class=" ">    <p  >Enter the HSM slot PIN and click <strong class=" ">Activate</strong>.    </p>
+</li></ol>    <p  >    </p>
     <p  >    </p>
     </div>
         </div>

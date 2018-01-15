@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link current" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1097,18 +1121,18 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                             </ul>
-</div>            <h1 id="src-11570663"> <span>Client-Side Hashing</span></h1>
+</div>            <h1 id="src-11572500"> <span>Client-Side Hashing</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >This page describes the various options for having the hashing performed at the client-side instead of doing all the steps in the signing at the server-side. This is also sometimes referred to as &quot;hash signing&quot;.    </p>
+    <p  >This describes the various options for having the hashing performed at the client-side instead of doing all the steps in the signing at the server-side. This is also sometimes referred to as &quot;hash signing&quot;.    </p>
     <p  >The main benefit is that the original file does not have to be sent to the server.    </p>
-    <div class="section section-1" id="src-11570663_id-.Client-SideHashingv4.2.0-CMSDetachedSignatures">
+    <div class="section section-1" id="src-11572500_id-.Client-SideHashingv4.2.1-CMSDetachedSignatures">
         <h1 class="heading "><span>CMS Detached Signatures</span></h1>
-    <p  >With detached signatures the signature can be placed in a separate file next to the original file and the thus the original file does not have to be updated. Also with CMS signatures what is covered by the signature is a set of attributes (unless it is a direct signature) where one of the attributes is called messageDigest which is the hash of the original file. This means that in order to create a CMS detached signature it is enough to get the hash of the original file as input.    </p>
-    <p  >The <a   href="CMS_Signer.html">CMS Signer</a> is for instance configured to accept a hash as input by setting CLIENTSIDEHASHING=TRUE or by allowing the client to specify if the input is the original file or a hash of it by configuring ALLOW_CLIENTSIDEHASHING_OVERRIDE=TRUE.    </p>
-    <p  >When the client sends the request it also needs to provide the following properties as request metadata:    </p>
+    <p  >Detached signatures allow the signature to be placed in a separate file next to the original file, and thus the original file does not have to be updated. With CMS signatures, what is covered by the signature is a set of attributes (unless it is a direct signature) where one of the attributes is called messageDigest, which is the hash of the original file. This means that in order to create a CMS detached signature, it is sufficient to get the hash of the original file as input.    </p>
+    <p  >The <a   href="CMS_Signer.html">CMS Signer</a> is for instance configured to accept a hash as input by setting CLIENTSIDEHASHING=TRUE, or by allowing the client to specify if the input is the original file or a hash of it, by configuring ALLOW_CLIENTSIDEHASHING_OVERRIDE=TRUE.    </p>
+    <p  >When the client sends the request, the following properties need to be provided as request metadata:    </p>
 <ul class=" "><li class=" "><pre class=" ">USING_CLIENTSUPPLIED_HASH=true</pre></li><li class=" "><pre class=" ">CLIENTSIDE_HASHDIGESTALGORITHM=SHA-256</pre></li></ul>    <p  >where SHA-256 should be replaced with the name of the hash algorithm used to digest the data. The algorithm must be one of those configured in signer with the ACCEPTED_HASH_DIGEST_ALGORITHM property.    </p>
     <p  >The following commands can be used to create a detached CMS signature using this mode with a CMSSigner set up to default to consider requests as client-side computed hash (using the CLIENTSIDEHASHING property) (assuming a GNU/Linux, or Unix-like system is used):    </p>
     <div  class="confbox programlisting">
@@ -1120,23 +1144,30 @@
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-11570663_id-.Client-SideHashingv4.2.0-PlainSignatures">
+    <div class="section section-1" id="src-11572500_id-.Client-SideHashingv4.2.1-PlainSignatures">
         <h1 class="heading "><span>Plain Signatures</span></h1>
-    <p  >For plain signatures (as produced by the <a   href="Plain_Signer.html">Plain Signer</a>), normally the whole file is sent to the signer and returned is the small signature. However, as even the plain signature schemes involves an hash operation it can be possible to perform that on the client side.    </p>
-    <p  >For the Plain Signer, this can be achieved by configuring the signer with a signature algorithm with the word NONE instead of the name of the hash. For example: &quot;NONEwithRSA&quot; or &quot;NONEwithECDSA&quot;. But be aware that the input to the signer has to be in a particular format for the final signature to be correct. See RFC#3447 for details.    </p>
-    <p  >    </p>
+    <p  >For plain signatures (as produced by the <a   href="Plain_Signer.html">Plain Signer</a>), generally the whole file is sent to the signer and returned is the small signature. However, as the plain signature schemes involves a hash operation, it is be possible to perform that on the client side.    </p>
+    <p  >For the Plain Signer, this can be achieved by configuring the signer with a signature algorithm with the word NONE instead of the name of the hash. For example: &quot;NONEwithRSA&quot; or &quot;NONEwithECDSA&quot;. Note that the input to the signer has to be in a particular format when using the &quot;NONEwithRSA&quot; algorithm for the final signature to be correct. See RFC#3447 for details.    </p>
+    <div class="section section-2" id="src-11572500_safe-id-aWQtLkNsaWVudC1TaWRlSGFzaGluZ3Y0LjIuMS1TYW1wbGVVc2FnZSh3aXRoTk9ORXdpdGhFQ0RTQWFsZ29yaXRobSk">
+        <h2 class="heading "><span>Sample Usage (with NONEwithECDSA algorithm)</span></h2>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">openssl x509 -in PlainSigner-certificate.pem -noout -pubkey &gt; plainsigner-pubkey.pem</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">openssl dgst -sha256 -out pre-computed-hash.bin -binary sample.txt</code></div>
+<div class="line"><code class="plain">bin/signclient signdocument -workername PlainSigner -infile pre-computed-hash.bin -outfile sample.sig</code></div>
+<div class="line"><code class="plain">openssl dgst -signature sample.sig -verify plainsigner-pubkey.pem -SHA256 sample.txt</code></div>
+</div>
     </div>
-    <div class="section section-1" id="src-11570663_id-.Client-SideHashingv4.2.0-EmbeddedSignatureFormats">
+    </div>
+    </div>
+    <div class="section section-1" id="src-11572500_id-.Client-SideHashingv4.2.1-EmbeddedSignatureFormats">
         <h1 class="heading "><span>Embedded Signature Formats</span></h1>
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: This is a SignServer Enterprise Edition (EE) feature.    </p>
-        </div>
-    </div>
-    <p  >For signature formats where the signature is to be placed within the original document some more logic has to be implemented on the client-side in order to, typically, first prepare the document for signing, compute the digest and send it to the server and then in the end embedding the signature within the file.    </p>
-    <p  >On the client-side we have implemented support this &quot;client-side hashing and construction&quot; for Authenticode signing of Portable Executable (PE) files (i.e. EXE, .DLL,..), Windows Installer files (.MSI) and for Java Archives (.JAR,.APK,..) in the <a   href="Client_CLI.html">SignClient</a> signdocument command. In the future it can also be possible to add support for other file types such as PDF.    </p>
-    <p  >On the server-side what is needed is typically a CMS Signer but both Authenticode and JAR signing are producing slightly different variants of the CMS signatures so for that reason there are different implementations to use. For Authenticode there is the <a   href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a> and for JAR signing the <a   href="JArchive_CMS_Signer.html">JArchive CMS Signer</a>.    </p>
+    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
+    <p  >For signature formats where the signature is to be placed within the original document, additional logic has to be implemented on the client-side in order to, typically, first prepare the document for signing, compute the digest and send it to the server, and then finally embed the signature within the file.    </p>
+    <p  >On the client-side, support has been implemented for &quot;client-side hashing and construction&quot; for Authenticode signing of Portable Executable (PE) files (i.e. EXE, .DLL,..), Windows Installer files (.MSI), and for Java Archives (.JAR,.APK,..) in the <a   href="Client_CLI.html">SignClient</a> signdocument command. Support for other file types such as PDF may also be implemented.    </p>
+    <p  >On the server-side, typically a CMS Signer is needed but since Authenticode and JAR signing are producing slightly different variants of the CMS signatures, different implementations are available for use. For Authenticode, there is the <a   href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a>, and for JAR signing the <a   href="JArchive_CMS_Signer.html">JArchive CMS Signer</a>.    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
                     <colgroup>
@@ -1177,10 +1208,10 @@
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >-extraoption KEEPSIGNATURES=    </p>
+        <p  >-extraoption KEEPSIGNATURE=    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Only for signing JAR files. See KEEPSIGNATURES in <a   href="JArchive_Signer.html">JArchive Signer</a> configuration.    </p>
+        <p  >Only for signing JAR files. For more information on the property KEEPSIGNATURE, see <a   href="JArchive_Signer.html">JArchive Signer</a>.    </p>
             </td>
         </tr>
     <tr>
@@ -1188,7 +1219,7 @@
         <p  >-extraoption REPLACESIGNATURE=    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Only for signing JAR files. See REPLACESIGNATURE in <a   href="JArchive_Signer.html">JArchive Signer</a> configuration.    </p>
+        <p  >Only for signing JAR files. For more information on the property REPLACESIGNATURE, see <a   href="JArchive_Signer.html">JArchive Signer</a>.    </p>
             </td>
         </tr>
     <tr>
@@ -1196,7 +1227,7 @@
         <p  >-extraoption SIGNATURE_NAME_VALUE=    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Only for signing JAR files. See SIGNATURE_NAME_VALUE in <a   href="JArchive_Signer.html">JArchive Signer</a> configuration.    </p>
+        <p  >Only for signing JAR files. For more information on the property SIGNATURE_NAME_VALUE, see <a   href="JArchive_Signer.html">JArchive Signer</a>.    </p>
             </td>
         </tr>
     <tr>
@@ -1204,13 +1235,12 @@
         <p  >-extraoption ZIPALIGN=    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Only for signing JAR files. See ZIPALIGN in <a   href="JArchive_Signer.html">JArchive Signer</a> configuration.    </p>
+        <p  >Only for signing JAR files. For more information on the property ZIPALIGN, see <a   href="JArchive_Signer.html">JArchive Signer</a>.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
-    <p  >    </p>
-    <div class="section section-2" id="src-11570663_id-.Client-SideHashingv4.2.0-SampleUsages">
+    <div class="section section-2" id="src-11572500_id-.Client-SideHashingv4.2.1-SampleUsages">
         <h2 class="heading "><span>Sample Usages</span></h2>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1246,7 +1276,18 @@
             </svg>
             <span>Peer Systems</span>
         </a>
-        </nav>    
+                <a href="Key_Wrapping.html" class="ht-post-nav-next">
+            <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="ht-icon-next" sketch:type="MSArtboardGroup">
+                    <path fill="#000000" d="M16,8 L16,6 L6,6 L6,16 L8,16 L8,8 L16,8 Z" id="Rectangle-2"
+                          sketch:type="MSShapeGroup"
+                          transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
+                </g>
+            </svg>
+            <span>Key Wrapping</span>
+        </a>
+    </nav>    
             
             <article id="html-search-results" class="ht-content" style="display: none;">
             <header class="ht-content-header">

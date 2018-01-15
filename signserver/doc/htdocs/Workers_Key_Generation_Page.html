@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1101,7 +1125,7 @@
                                                                                                          <li class="shortcut"><a href="Administration_Web.html">Administration Web</a></li>
                                                                                      <li><a href="Workers_Page.html">Workers Page</a></li>
                                                             </ul>
-</div>            <h1 id="src-5282301"> <span>Workers Key Generation Page</span></h1>
+</div>            <h1 id="src-16220168"> <span>Workers Key Generation Page</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1109,7 +1133,7 @@
     <p  >A new key-pair can be generated and its name stored as the next key in the configuration.    </p>
     <p  >Make sure each worker that should have a new key pair generated has its check box selected.    </p>
     <p  >Work from left to right for each worker and fill in the required information.    </p>
-    <div class="section section-1" id="src-5282301_id-.WorkersKeyGenerationPagev4.1.0-RenewKeys">
+    <div class="section section-1" id="src-16220168_id-.WorkersKeyGenerationPagev4.3.0-RenewKeys">
         <h1 class="heading "><span>Renew Keys</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1149,8 +1173,11 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Name of the key algorithm to use for the new key.    </p>
-    <p  >Examples: RSA, DSA, ECDSA    </p>
+    <p  >Examples: RSA, DSA, ECDSA, AES    </p>
     <p  >The value is already filled in if the worker has a KEYALG property specified.    </p>
+    <p  >    </p>
+    <p  >Note: While generating secret key if provided algorithm name is not part of predefined list of known secret key algorithms, algorithm name should be prefixed with &quot;SEC:&quot;. Example: <strong class=" ">SEC:Blowfish</strong>. Currently known secret key list contains AES and DES algorithms.    </p>
+    <p  >If worker references <a   href="JackNJI11CryptoToken.html"><strong class=" ">JackNJ11CryptoToken</strong></a>, it is possible to provide algorithm name as long or hexadecimal constant value also.    </p>
             </td>
         </tr>
     <tr>
@@ -1175,7 +1202,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5282301_id-.WorkersKeyGenerationPagev4.1.0-Actions">
+    <div class="section section-1" id="src-16220168_id-.WorkersKeyGenerationPagev4.3.0-Actions">
         <h1 class="heading "><span>Actions</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">

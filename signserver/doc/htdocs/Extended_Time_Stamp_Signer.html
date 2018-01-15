@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1100,27 +1124,22 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277299"> <span>Extended Time Stamp Signer</span></h1>
+</div>            <h1 id="src-11573713"> <span>Extended Time Stamp Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note that this is a SignServer Enterprise Edition (EE) feature.    </p>
-        </div>
-    </div>
     <p  >    </p>
-    <p  >The extended time stamp signer has the class name: <strong class=" ">org.signserver.module.tsa.ExtendedTimeStampSigner</strong>.    </p>
-    <div class="section section-1" id="src-5277299_id-.ExtendedTimeStampSignerv4.1.0-Overview">
+    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
+    <p  >The signer has the class name: <strong class=" ">org.signserver.module.tsa.ExtendedTimeStampSigner</strong>.    </p>
+    <div class="section section-1" id="src-11573713_id-.ExtendedTimeStampSignerv4.2.1-Overview">
         <h1 class="heading "><span>Overview</span></h1>
-    <p  >The extended time stamp signer, in addition to all features provided by the regular time stamp signer, also supports including the qualified time stamp extension, as required by EU regulation 910/2014 specification.    </p>
+    <p  >The Extended Time Stamp signer, in addition to all features provided by the regular <a   href="Time_Stamp_Signer.html">Time Stamp Signer</a>, also supports including the qualified time stamp extension, as required by EU regulation 910/2014 specification.    </p>
     </div>
-    <div class="section section-1" id="src-5277299_id-.ExtendedTimeStampSignerv4.1.0-AvailableProperties">
+    <div class="section section-1" id="src-11573713_id-.ExtendedTimeStampSignerv4.2.1-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
-        <table class="confluenceTable">
+        <table class="wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />
@@ -1135,10 +1154,10 @@
         </tr>
 </thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">INCLUDE_QC_EXTENSION</strong>    </p>
+        <p  >INCLUDE_QC_EXTENSION    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Set this to true to enable including the qualified time stamping extension (default: false)    </p>
+        <p  >Set this to true to enable including the qualified time stamping extension. Default: false.    </p>
             </td>
         </tr>
 </tbody>        </table>

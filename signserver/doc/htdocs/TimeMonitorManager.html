@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1100,27 +1124,23 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="Other_Workers.html">Other Workers</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277612"> <span>TimeMonitorManager</span></h1>
+</div>            <h1 id="src-11573650"> <span>TimeMonitorManager</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div  class="confbox admonition admonition-note">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >The <strong class=" ">TimeMonitorManager</strong> is an Enterprise Edition feature.    </p>
-        </div>
-    </div>
+    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
     <p  >Fully qualified class name: <strong class=" ">org.signserver.module.timemonitormanager.TimeMonitorManager</strong>.    </p>
-    <div class="section section-1" id="src-5277612_id-.TimeMonitorManagerv4.1.0-Overview">
+    <div class="section section-1" id="src-11573650_id-.TimeMonitorManagerv4.2.1-Overview">
         <h1 class="heading "><span>Overview</span></h1>
-    <p  >Similar to the StatusPropertiesWorker, the TimeMonitorManager also supports setting status properties in the status repository. In addition the TimeMonitorManager also supports dynamic configuration of the TimeMonitor as well as gives a complete view of the state of the TimeMonitor.    </p>
+    <p  >Similar to the StatusPropertiesWorker, the TimeMonitorManager also supports setting status properties in the status repository. Additionally, the TimeMonitorManager supports dynamic configuration of the TimeMonitor and also gives a complete view of the state of the TimeMonitor.    </p>
     </div>
-    <div class="section section-1" id="src-5277612_id-.TimeMonitorManagerv4.1.0-WorkerProperties">
+    <div class="section section-1" id="src-11573650_id-.TimeMonitorManagerv4.2.1-WorkerProperties">
         <h1 class="heading "><span>Worker Properties</span></h1>
-    <p  >All worker properties starting with either &quot;TIMEMONITOR.&quot; or &quot;TIMESERVER.&quot; are sent to the TimeMonitor if it asks for it.<br/>See the SignServer TimeMonitor manual for the list of available properties.    </p>
+    <p  >All worker properties starting with either &quot;TIMEMONITOR.&quot; or &quot;TIMESERVER.&quot; are sent to the TimeMonitor if it asks for it. For information on available properties, refer to the SignServer TimeMonitor Manual.    </p>
     </div>
-    <div class="section section-1" id="src-5277612_id-.TimeMonitorManagerv4.1.0-RequestProperties">
+    <div class="section section-1" id="src-11573650_id-.TimeMonitorManagerv4.2.1-RequestProperties">
         <h1 class="heading "><span>Request Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1155,7 +1175,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5277612_id-.TimeMonitorManagerv4.1.0-ResponseProperties">
+    <div class="section section-1" id="src-11573650_id-.TimeMonitorManagerv4.2.1-ResponseProperties">
         <h1 class="heading "><span>Response Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1182,29 +1202,30 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5277612_id-.TimeMonitorManagerv4.1.0-Statusoutput">
+    <div class="section section-1" id="src-11573650_id-.TimeMonitorManagerv4.2.1-Statusoutput">
         <h1 class="heading "><span>Status output</span></h1>
-    <p  >Much information about the state of the TimeMonitor is available in the getstatus output of the TimeMonitorManager:    </p>
+    <p  >Detailed information about the state of the TimeMonitor is available in the getstatus output of the TimeMonitorManager:    </p>
 <ul class=" "><li class=" ">    <p  >Time monitor: Indicates if the application is detected to be 'Running', 'Disabled', 'Not running?' or 'Unavailabe'. The state is determined by if the manager has seen an update from the TimeMonitor before the status properties are starting to expire.    </p>
 </li><li class=" ">    <p  >Last update: The last time the TimeMonitor contacted the manager.    </p>
 </li><li class=" ">    <p  >Current time: Current time of the server.    </p>
 </li><li class=" ">    <p  >Time state: The last time state from the TimeMonitor.    </p>
 </li><li class=" ">    <p  >Report state: The last report state from the TimeMonitor.    </p>
 </li><li class=" ">    <p  >Leap state: The last leap state from the TimeMonitor.    </p>
-</li><li class=" ">    <p  >Configuration: Either 'out of sync' or 'up to date' depending on if the current configuration has been read by the TimeMonitor or not. After changing a property in the TimeMonitorManager it is normal that the cofiguration is marked as 'out of sync' until the TimeMonitor fetches it.    </p>
+</li><li class=" ">    <p  >Configuration: Either 'out of sync' or 'up to date' depending on if the current configuration has been read by the TimeMonitor or not. After changing a property in the TimeMonitorManager it is normal that the configuration is marked as 'out of sync' until the TimeMonitor fetches it.    </p>
 </li><li class=" ">    <p  >Status properties values: Prints the current value and possibly the expiration time for the TIMESOURCE0_INSYNC and LEAPSECOND status properties.    </p>
 </li><li class=" ">    <p  >Timings: Prints the current time values from the TimeMonitor.    </p>
 </li><li class=" ">    <p  >Configuration: Prints the configuration values in the manager (not necessarily read by the TimeMonitor yet).    </p>
 </li><li class=" ">    <p  >Last TimeMonitor log entries: Prints the last log entries obtained from the last update from the TimeMonitor.    </p>
-</li></ul>    <div class="section section-2" id="src-5277612_id-.TimeMonitorManagerv4.1.0-Sampleoutput">
+</li></ul>    <div class="section section-2" id="src-11573650_id-.TimeMonitorManagerv4.2.1-Sampleoutput">
         <h2 class="heading "><span>Sample output</span></h2>
+    <p  >The following displays an example status output:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">Status of Worker with ID 300 (TimeMonitorManager) is:</code></div>
 <div class="line"><code class="plain"> Worker status : Active</code></div>
 <div class="line"><code class="plain"> Time monitor : Running</code></div>
-<div class="line"><code class="plain"> Last update : 2014-08-26 11:43:39,176</code></div>
-<div class="line"><code class="plain"> Current time : 2014-08-26 11:43:39,580</code></div>
+<div class="line"><code class="plain"> Last update : 2017-08-26 11:43:39,176</code></div>
+<div class="line"><code class="plain"> Current time : 2017-08-26 11:43:39,580</code></div>
 <div class="line"><code class="plain"> Time state : INSYNC</code></div>
 <div class="line"><code class="plain"> Report state : REPORTED</code></div>
 <div class="line"><code class="plain"> Leap state : NONE</code></div>

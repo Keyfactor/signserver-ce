@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1097,85 +1121,90 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Operations.html">SignServer Operations</a></li>
                                                             </ul>
-</div>            <h1 id="src-5288346"> <span>Certificate Renewals Using Peer Systems</span></h1>
+</div>            <h1 id="src-11573787"> <span>Certificate Renewals Using Peer Systems</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: This is a SignServer Enterprise Edition (EE) feature.    </p>
-        </div>
-    </div>
-    <p  >This section gives step by step instructions for how to setup and use peer systems for certificate renewals or rekeying. For the background and all the details see the <a   href="Peer_Systems.html">Peer Systems</a> section in the Reference Guide.    </p>
-    <div class="section section-1" id="src-5288346_id-.CertificateRenewalsUsingPeerSystemsv4.2.0-InitialSetup">
+    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
+    <p  >This section provides instructions for how to setup and use peer systems for certificate renewals or rekeying:    </p>
+    <p  >    </p>
+<ul class="toc-indentation "></ul>    <p  >For background and more information, see <a   href="Peer_Systems.html">Peer Systems</a> in the SignServer Reference section.    </p>
+    <div class="section section-1" id="src-11573787_id-.CertificateRenewalsUsingPeerSystemsv4.2.1-InitialSetup">
         <h1 class="heading "><span>Initial Setup</span></h1>
-    <div class="section section-2" id="src-5288346_id-.CertificateRenewalsUsingPeerSystemsv4.2.0-ConfiguringEJBCAforOutgoingPeerConnections">
+    <div class="section section-2" id="src-11573787_id-.CertificateRenewalsUsingPeerSystemsv4.2.1-ConfiguringEJBCAforOutgoingPeerConnections">
         <h2 class="heading "><span>Configuring EJBCA for Outgoing Peer Connections</span></h2>
-    <p  >See the EJBCA Admin Guide page &quot;Peer Systems (Enterprise Only)&quot; or similar for how to setup Peer Connectors for outgoing connections.    </p>
-    <p  >Roughly what is needed at the EJBCA side is:    </p>
+    <p  >For information on how to setup Peer Connectors for outgoing connections, refer to the EJBCA Admin Guide <a  class="external-link" href="https://www.ejbca.org/docs/adminguide.html#Peer%20Systems%20(Enterprise%20only)">Peer Systems</a> section of the <a  class="external-link" href="http://ejbca.org">ejbca.org</a> documentation.    </p>
+    <p  >The following is required at the EJBCA side is:    </p>
 <ul class=" "><li class=" ">    <p  >An AuthenticationKeyBinding with a TLS client certificate and key-pair to use for authentication towards SignServer.    </p>
 </li><li class=" ">    <p  >Allowing outgoing connections checked.    </p>
-</li><li class=" ">    <p  >An enabled Peer Connector configured to use the AuthenticationKeyBinding and the URL of the peers endpoint in SignServer, i.e. &quot;https://example.com:8443/signserver/peer/v1&quot;.    </p>
-</li></ul>    <p  >When all that is done, the next step is to test connecting to SignServer.    </p>
-    <p  >On the EJBCA Peer Systems page click the Ping button. At this point there will likely be an error message like &quot;Unable to connect to peer. Unauthorized&quot; as the SignServer side has not yet been configured to allow the connection. Now proceed to configure the SignServer side before re-trying the Ping.    </p>
+</li><li class=" ">    <p  >An enabled Peer Connector configured to use the AuthenticationKeyBinding and the URL of the peers endpoint in SignServer, that is &quot;https://example.com:8443/signserver/peer/v1&quot;.    </p>
+</li></ul>    <p  >Now test to connect to SignServer before configuring the SignServer side. On the EJBCA Peer Systems page, click <strong class=" ">Ping</strong>. At this point there will likely be an error message like &quot;Unable to connect to peer. Unauthorized&quot; as the SignServer side has not yet been configured to allow the connection. Now proceed to configure the SignServer side before re-trying the Ping.    </p>
     </div>
-    <div class="section section-2" id="src-5288346_id-.CertificateRenewalsUsingPeerSystemsv4.2.0-ConfiguringSignServerforIncomingPeerConnectionsusingAdminWeb">
-        <h2 class="heading "><span>Configuring SignServer for Incoming Peer Connections using Admin Web</span></h2>
+    <div class="section section-2" id="src-11573787_id-.CertificateRenewalsUsingPeerSystemsv4.2.1-ConfiguringSignServerforIncomingPeerConnections">
+        <h2 class="heading "><span>Configuring SignServer for Incoming Peer Connections</span></h2>
+    <p  >Configure SignServer for incoming Per Connections either using the Admin Web or the Admin CLI:    </p>
+<ul class=" "><li class=" ">    <p  ><a   href="#src-11573787_id-.CertificateRenewalsUsingPeerSystemsv4.2.1-ConfiguringSignServerforIncomingPeerConnectionsusingAdminWeb">Configuring SignServer for Incoming Peer Connections using Admin Web</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-11573787_id-.CertificateRenewalsUsingPeerSystemsv4.2.1-ConfiguringSignServerforIncomingPeerConnectionsusingAdminCLI">Configuring SignServer for Incoming Peer Connections using Admin CLI</a>    </p>
+</li></ul>    <div class="section section-3" id="src-11573787_id-.CertificateRenewalsUsingPeerSystemsv4.2.1-ConfiguringSignServerforIncomingPeerConnectionsusingAdminWeb">
+        <h3 class="heading "><span>Configuring SignServer for Incoming Peer Connections using Admin Web</span></h3>
+    <p  >To configure SignServer for incoming Peer Connections the Admin Web, do the following:    </p>
 <ol class=" "><li class=" ">    <p  >In the <a   href="Administration_Web.html">SignServer Administration Web</a> got to the <a   href="Administrators_Page.html">Administrators page</a>.    </p>
-</li><li class=" ">    <p  >There should now be a line under <i class=" ">Incoming Connections</i> created when the ping request was sent from EJBCA. If the client certificate of the incoming request does not already match an authorization rule there will be a link <strong class=" ">Add Authorization...</strong> to click. If, on the other hand there was already an existing rule there would instead be a <strong class=" ">Modify Authorization</strong> button to click.    </p>
-</li><li class=" ">    <p  >Make sure the rule has the <strong class=" ">Peer System</strong> role selected and save the rule.    </p>
-</li><li class=" ">    <p  >Now under Incoming Connections the connection should say <i class=" ">Yes</i> in the <i class=" ">Authorized</i> column.    </p>
-</li></ol>    <p  >Now this time when sending a ping request from EJBCA there should not be any error message.    </p>
+</li><li class=" ">    <p  >Under <strong class=" ">Incoming Connections</strong>, a row should have been created when the ping request was sent from EJBCA.<br/>If the client certificate of the incoming request does not already match an authorization rule, an <strong class=" ">Add Authorization</strong> link is available to for selection.<br/>If, on the other hand, an existing rule already existed, a <strong class=" ">Modify Authorization</strong> button is available.    </p>
+</li><li class=" ">    <p  >Make sure the rule has the <strong class=" ">Peer System</strong> role selected, and save the rule.    </p>
+</li><li class=" ">    <p  >Under <strong class=" ">Incoming Connections</strong>, the <strong class=" ">Authorized</strong> column should display <strong class=" ">Yes</strong> for the connection.    </p>
+</li></ol>    <p  >You can now send another ping request from EJBCA that should not display an error message.    </p>
     </div>
-    <div class="section section-2" id="src-5288346_id-.CertificateRenewalsUsingPeerSystemsv4.2.0-ConfiguringSignServerforIncomingPeerConnectionsusingAdminCLI">
-        <h2 class="heading "><span>Configuring SignServer for Incoming Peer Connections using Admin CLI</span></h2>
-<ol class=" "><li class=" ">    <p  >Using the <a   href="Administration_CLI.html">SignServer Administration CLI</a> set the global configuration property PEERS_INCOMING_ENABLED:    </p>
+    <div class="section section-3" id="src-11573787_id-.CertificateRenewalsUsingPeerSystemsv4.2.1-ConfiguringSignServerforIncomingPeerConnectionsusingAdminCLI">
+        <h3 class="heading "><span>Configuring SignServer for Incoming Peer Connections using Admin CLI</span></h3>
+    <p  >To configure SignServer for incoming Peer Connections the Admin CLI, do the following:    </p>
+<ol class=" "><li class=" ">    <p  >Using the <a   href="Administration_CLI.html">SignServer Administration CLI</a>, set the global configuration property PEERS_INCOMING_ENABLED:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">$ bin/signserver setproperty global PEERS_INCOMING_ENABLED </code><code class="keyword">true</code></div>
 <div class="line"><code class="plain">$ bin/signserver reload all</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >Check the server log for the error message created when the ping request from EJBCA was denied. It would look something like this:    </p>
+</li><li class=" ">    <p  >Check the server log for the error message created when the ping request from EJBCA was denied. It looks something like this:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">Denied peer access to 4fe9278255cba7b issuer: </code><code class="string">'C=SE, O=SignServer, OU=Testing, CN=DSS Sub CA 11'</code></div>
 </div>
     </div>
-    <p  >This is the serial number and issuer DN to that should be added to the authorization rules.<br/>Note: SignServer is very picky with the formatting of the serial number and issuer DN. It is recommended to always copy the values from the log to get the right format.    </p>
-</li><li class=" ">    <p  >Using the certificate serial number and issue DN exactly as it was written in the log, run the command to add the authorization rule:    </p>
+    <p  >The error message contains the certificate serial number and issuer DN that should be added to the authorization rules.<br/><br/>Note that it is important to preserve the format of the serial number and issuer DN, and it is therefore recommended to copy the values from the log.    </p>
+</li><li class=" ">    <p  >Using the certificate serial number and issue DN exactly as it is written in the log, run the follwoing command to add the authorization rule:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">bin/signserver wspeersystems -add -certserialno 4fe9278255cba7b -issuerdn </code><code class="string">"C=SE, O=SignServer, OU=Testing, CN=DSS Sub CA 11"</code></div>
 </div>
     </div>
-</li></ol>    <p  >Now this time when sending a ping request from EJBCA there should not be any error message.    </p>
+</li></ol>    <p  >You can now send another ping request from EJBCA that should not display an error message.    </p>
     </div>
-    <div class="section section-2" id="src-5288346_id-.CertificateRenewalsUsingPeerSystemsv4.2.0-ExposingWorkersasKeyBindings">
+    </div>
+    <div class="section section-2" id="src-11573787_id-.CertificateRenewalsUsingPeerSystemsv4.2.1-ExposingWorkersasKeyBindings">
         <h2 class="heading "><span>Exposing Workers as Key Bindings</span></h2>
-    <p  >In EJBCA, click the <strong class=" ">Manage</strong> button on the configured <i class=" ">Peer System</i> and then on the <strong class=" ">Remote Key Bindings</strong> tag. Please, refer to the EJBCA manual for the exact instructions for your version of EJBCA.    </p>
-    <p  >The list should then display all remote key bindings found or a message like &quot;No authorized remote Internal Key Bindings found&quot;. At this stage the list might be empty or at least not show any of the workers from SignServer.    </p>
-    <p  >In order to have the worker listed as a key binding in EJBCA, edit the worker adding the worker property <i class=" ">PEERS_VISIBLE</i> with the value &quot;true&quot;. Then after refreshing the page in EJBCA the worker should be in the list.    </p>
+    <p  >In EJBCA, click <strong class=" ">Manage</strong> on the configured <strong class=" ">Peer System</strong> and then select the <strong class=" ">Remote Key Bindings</strong> tag. Refer to the EJBCA Manual for instructions relevant for your version of EJBCA.    </p>
+    <p  >The list should display all remote key bindings found, or a message like &quot;No authorized remote Internal Key Bindings found&quot;. Note that the list might at this stage be empty, or not show any of the workers from SignServer. To display the worker listed as a key binding in EJBCA, edit the worker by adding the worker property <strong class=" ">PEERS_VISIBLE</strong> with the value <strong class=" ">true.</strong> Then refresh the page in EJBCA to list the worker.    </p>
     </div>
-    <div class="section section-2" id="src-5288346_id-.CertificateRenewalsUsingPeerSystemsv4.2.0-IssuingtheFirstCertificate">
+    <div class="section section-2" id="src-11573787_id-.CertificateRenewalsUsingPeerSystemsv4.2.1-IssuingtheFirstCertificate">
         <h2 class="heading "><span>Issuing the First Certificate</span></h2>
-    <p  >Before issuing a certificate make sure the worker has a key-pair configured. If the configured key alias (the DEFAULTKEY property value) does not yet exist this might be seen in EJBCA as a disabled/grayed out <i class=" ">Remote key pair</i>. If that is the case first generate the key-pair.    </p>
-    <p  >In EJBCA, in order to issue a certificate there must first be an end entity configured. Then there will be a text field or some way of choosing to use this end entity for the remote key binding before clicking the <strong class=" ">Issue signing certificate</strong> button (or similar).    </p>
-    <p  >Clicking the button the following will happen:    </p>
-<ol class=" "><li class=" ">    <p  >EJBCA will contact SignServer over the Peer Connector and ask it for a certificate signing request (CSR).    </p>
-</li><li class=" ">    <p  >SignServer will generate the CSR and return it to EJBCA.    </p>
-</li><li class=" ">    <p  >EJBCA will process the request, issue the certificate and send it to SignServer.    </p>
-</li><li class=" ">    <p  >SignServer will install the certificate to the worker and also add the worker property PEERS_ISSUED=true to indicate that the certificate was issued by a peer.    </p>
-</li><li class=" ">    <p  >The new certificate(s) can now be seen when looking at the worker's status and in EJBCA the remote key binding will now show the <i class=" ">Bound certificate</i> and the button will now instead be called Renew.    </p>
-</li></ol>    <p  >The algorithm used for signing the CSR as well as subject DN to include etc was using the default values. To choose other values see the available worker properties in the Reference Guide on the <a   href="Peer_Systems.html">Peer Systems</a> page.    </p>
+    <p  >Prior to issuing a certificate, ensure that the worker has a key-pair configured. If the configured key alias (the DEFAULTKEY property value) does not yet exist, the <strong class=" ">Remote key pair</strong> might be disabled/grayed out in EJBCA. If this is the case, first generate the key-pair.    </p>
+    <p  >EJBCA requires an end entity to be configured, in order to issue a certificate. Then there will be a text field or some way of choosing to use this end entity for the remote key binding, before clicking the <strong class=" ">Issue signing certificate</strong> button (or similar).    </p>
+    <p  >Selecting to issue signing certificate, the following will happen:    </p>
+<ol class=" "><li class=" ">    <p  >EJBCA contacts SignServer over the Peer Connector and asks for a certificate signing request (CSR).    </p>
+</li><li class=" ">    <p  >SignServer generates the CSR and returns it to EJBCA.    </p>
+</li><li class=" ">    <p  >EJBCA processes the request, issues the certificate, and sends it to SignServer.    </p>
+</li><li class=" ">    <p  >SignServer installs the certificate to the worker and also adds the worker property PEERS_ISSUED=true to indicate that the certificate was issued by a peer.    </p>
+</li><li class=" ">    <p  >The new certificate(s) can now be seen when looking at the worker's status. In EJBCA, the remote key binding will now show the <strong class=" ">Bound</strong> <strong class=" ">certificate</strong> and the button will now instead be named <strong class=" ">Renew.</strong>    </p>
+</li></ol>    <p  >The algorithm used for signing the CSR as well as subject DN to include etc was using the default values. To choose other values, see information on available worker properties on the <a   href="Peer_Systems.html">Peer Systems</a> page.    </p>
     </div>
     </div>
-    <div class="section section-1" id="src-5288346_safe-id-aWQtLkNlcnRpZmljYXRlUmVuZXdhbHNVc2luZ1BlZXJTeXN0ZW1zdjQuMi4wLVN1YnNlcXVlbnRSZW5ld2Fscy9SZWtleWluZ3M">
+    <div class="section section-1" id="src-11573787_safe-id-aWQtLkNlcnRpZmljYXRlUmVuZXdhbHNVc2luZ1BlZXJTeXN0ZW1zdjQuMi4xLVN1YnNlcXVlbnRSZW5ld2Fscy9SZWtleWluZ3M">
         <h1 class="heading "><span>Subsequent Renewals/Rekeyings</span></h1>
-    <p  >The next time it is time to renew or rekey a worker's certificate everything should already have been set-up as part of the previous steps and in EJBCA the <strong class=" ">Renew</strong> button should be available.    </p>
+    <p  >The next time it is time to renew or rekey a worker's certificate, everything should already have been set-up as part of the previous steps and in EJBCA the <strong class=" ">Renew</strong> button should be available.    </p>
     <p  >In order to also generate a new key-pair (i.e. to rekey), select the key pair in EJBCA to be rekeyed.    </p>
+    <p  >    </p>
     </div>
         </div>
 
@@ -1194,7 +1223,7 @@
             </svg>
             <span>Quick Start Demo Setup using Administration Web</span>
         </a>
-                <a href="Troubleshooting.html" class="ht-post-nav-next">
+                <a href="Setting_up_Key_Wrapping.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1203,7 +1232,7 @@
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Troubleshooting</span>
+            <span>Setting up Key Wrapping</span>
         </a>
     </nav>    
             

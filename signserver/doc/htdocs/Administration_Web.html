@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1099,32 +1123,26 @@
                                         <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                                                      <li><a href="SignServer_User_Interfaces.html">SignServer User Interfaces</a></li>
                                                             </ul>
-</div>            <h1 id="src-5282201"> <span>Administration Web</span></h1>
+</div>            <h1 id="src-11573690"> <span>Administration Web</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: This is a SignServer Enterprise Edition (EE) feature.    </p>
-        </div>
-    </div>
+    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
     <p  >    </p>
     <p  >The SignServer Administration Web (AdminWeb) is one of the available interfaces to administrate SignServer. It supports configuration of workers and associated key management as well as querying the audit log and archive.    </p>
-    <p  >Other options for administration includes the <a   href="Administration_GUI.html">Administration GUI</a>, the <a   href="Administration_CLI.html">Administration CLI</a> and the <a   href="#src-5282201_id-.AdministrationWebv4.1.0-Administration_Web_Services">Administration Web Services</a> interfaces.    </p>
-    <p  >    </p>
-    <div class="section section-1" id="src-5282201_id-.AdministrationWebv4.1.0-Access">
+    <p  >Other options for administration includes the <a   href="Administration_GUI.html">Administration GUI</a>, the <a   href="Administration_CLI.html">Administration CLI</a> and the <a   href="#src-11573690_id-.AdministrationWebv4.2.1-Administration_Web_Services">Administration Web Services</a> interfaces.    </p>
+    <div class="section section-1" id="src-11573690_id-.AdministrationWebv4.2.1-Access">
         <h1 class="heading "><span>Access</span></h1>
-    <p  >The interface can be access using a web browser on the default location <i class=" ">/signserver/adminweb/</i>.    </p>
-    <p  >HTTPS with client certificate authentication is required. Following the <a   href="SignServer_Installation.html">Installation Guide</a> that would mean using port <i class=" ">8443</i> which is then set up to require client certificate.    </p>
-    <p  >For a local installation the address would typically be: <a  class="external-link" href="https://localhost:8443/signserver/adminweb/.">https://localhost:8443/signserver/adminweb/</a>    </p>
-    <p  >    </p>
+    <p  >The SignServer AdminWeb interface can be accessed using a web browser on the default location: <i class=" ">/signserver/adminweb/</i>.    </p>
+    <p  >HTTPS with client certificate authentication is required and following the <a   href="SignServer_Installation.html">Installation Guide</a> that would mean using port <i class=" ">8443</i> which is then set up to require client certificate.    </p>
+    <p  >For a local installation, the address would typically be: <a  class="external-link" href="https://localhost:8443/signserver/adminweb/.">https://localhost:8443/signserver/adminweb/</a>    </p>
     </div>
-    <div class="section section-1" id="src-5282201_id-.AdministrationWebv4.1.0-UserInterfaceLanguage">
+    <div class="section section-1" id="src-11573690_id-.AdministrationWebv4.2.1-UserInterfaceLanguage">
         <h1 class="heading "><span>User Interface Language</span></h1>
     <p  >The AdminWeb can be translated into different languages and if supported will use the language preferred by the web browser. The preferred languages can normally be configured in the web browser or the operating system.    </p>
-    <p  >For instructions on translating SignServer into new languages see the <a   href="Internationalization.html">Internationalization</a> chapter.    </p>
+    <p  >For instructions on translating SignServer to new languages, see <a   href="Internationalization.html">Internationalization</a>.    </p>
     <p  >    </p>
     </div>
         </div>

@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1100,13 +1124,13 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277306"> <span>PDF Signer</span></h1>
+</div>            <h1 id="src-16221254"> <span>PDF Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The PDF signer has the class name: <strong class=" ">org.signserver.module.PDFSigner</strong>.    </p>
-    <div class="section section-1" id="src-5277306_id-.PDFSignerv4.1.0-Overview">
+    <div class="section section-1" id="src-16221254_id-.PDFSignerv4.3.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The main purpose of the PDF signer is to add digital signatures to PDF documents.<br/>The signer supports the addition of visible or invisible signatures. Both visible and invisible signatures serve the same purpose of signing document, and technically are equivalent in that sense. The difference is that when visible signature is applied to a document, signature image (in shape of rectangle) is placed at the specified place in the document, clicking on which will allow seeing properties of the signature (Adobe Acrobat Reader).    </p>
     <p  >On the other hand when invisible signature is applied, signature properties are accessed through menu items. For visible signatures properties such as : custom signature image, signature rectangle, page at which signature rectangle to be drawn and others can be specified (see Available Properties below)    </p>
@@ -1114,18 +1138,17 @@
     <p  >Also CRL or OCSP Response of the signer's certificate can be embedded inside the signature package. Embedding CRL or OCSP response with the package will help validate signature even after the signer's certificate is expired. (Though it will not totally guarantee the long term signature preservation. Topic of long term signature preservation for archival purposes is a large one and is discussed to be implemented in future versions of SignServer).    </p>
     <p  >The PDF Signer can also be configured to enforce that certain PDF permissions are not available in the signed document and/or that certain permissions should be removed.    </p>
     </div>
-    <div class="section section-1" id="src-5277306_id-.PDFSignerv4.1.0-PDFpasswords">
+    <div class="section section-1" id="src-16221254_id-.PDFSignerv4.3.0-PDFpasswords">
         <h1 class="heading "><span>PDF passwords</span></h1>
-    <p  >PDF documents can optionally be protected by a password.    </p>
-    <p  >There are two different types of passwords:    </p>
-<ul class=" "><li class=" ">    <p  >User password:<br/>Also sometimes referred to as &quot;open password&quot; or &quot;document password&quot;. It can be used for reading an encrypted document.    </p>
-</li><li class=" ">    <p  >Owner password:<br/>Also sometimes referred to as &quot;permission password&quot; or &quot;security restriction password&quot;. It can be used for reading an encrypted document and making changes to a document that has permissions.    </p>
+    <p  >PDF documents can optionally be protected by a password. There are two different types of passwords:    </p>
+<ul class=" "><li class=" ">    <p  >User password: Also sometimes referred to as &quot;open password&quot; or &quot;document password&quot;. Can be used for reading an encrypted document.    </p>
+</li><li class=" ">    <p  >Owner password: Also sometimes referred to as &quot;permission password&quot; or &quot;security restriction password&quot;. It can be used for reading an encrypted document and making changes to a document that has permissions.    </p>
 </li></ul>    <p  >If a document is protected by an Owner password, it has to be supplied with the request for SignServer to sign the document. If the document is protected by a User password, either the User password or the Owner password has to be supplied with the request for SignServer to sign the document.    </p>
     </div>
-    <div class="section section-1" id="src-5277306_id-.PDFSignerv4.1.0-PDFSignerRequests">
+    <div class="section section-1" id="src-16221254_id-.PDFSignerv4.3.0-PDFSignerRequests">
         <h1 class="heading "><span>PDFSigner Requests</span></h1>
     <p  >PDF signing requests can be served using either web services or the web server interface (HTTP). See Integration for general information about the different interfaces.<br/>For the web server interface the GenericProcessServlet can be used. The PDFSigner supports the extra request field &quot;pdfPassword&quot; letting the client supply a PDF password to be used for opening the PDF for signing (not required unless the PDF is already password protected).<br/>For the old web services interface the request should contain an encoded GenericProcessesRequest and the response will be an GenericProcessResponse. It is possible to supply a PDF password by including it in the requestMetaData with the key &quot;pdfPassword&quot;.    </p>
-    <div class="section section-2" id="src-5277306_id-.PDFSignerv4.1.0-WorkerProperties">
+    <div class="section section-2" id="src-16221254_id-.PDFSignerv4.3.0-WorkerProperties">
         <h2 class="heading "><span>Worker Properties</span></h2>
     <p  >The following properties can be configured with the signer:    </p>
     <div  class="tablewrap">
@@ -1163,7 +1186,7 @@
         <p  >ADD_VISIBLE_SIGNATURE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Setting that control whether signature to be added should be visible or invisible.<br/>Possible values: True or False.<br/>Default: &quot;False&quot;    </p>
+        <p  >Setting that control whether signature to be added should be visible or invisible.<br/>Possible values: True or False.<br/>Default: <strong class=" ">False</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1171,7 +1194,11 @@
         <p  >VISIBLE_SIGNATURE_PAGE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Specifies the page on which the visible signature will be drawn. This property is ignored if ADD_VISIBLE_SIGNATURE is set to False.<br/>Possible values:<br/>&quot;First&quot; : signature drawn on first page of the document,<br/>&quot;Last&quot; : signature drawn on last page of the document,<br/>page_number : signature is drawn on a page specified by numeric argument. If specified page number exceeds page count of the document ,signature is drawn on last page. If page_number specified is not numeric (or negative number) the signature will be drawn on first page<br/>Default: &quot;First&quot;.    </p>
+        <p  >Specifies the page on which the visible signature will be drawn. This property is ignored if ADD_VISIBLE_SIGNATURE is set to <strong class=" ">False.</strong> Possible values:    </p>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">First</strong>: Signature drawn on first page of the document.    </p>
+</li><li class=" ">    <p  ><strong class=" ">Last</strong>: Signature drawn on last page of the document,    </p>
+</li><li class=" ">    <p  ><strong class=" ">page_number</strong>: Signature is drawn on a page specified by numeric argument. If the specified page number exceeds the page count of the document, the signature is drawn on the last page. If the page_number specified is not numeric (or negative number), the signature will be drawn on the first page.    </p>
+</li></ul>    <p  >Default: <strong class=" ">First</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1179,7 +1206,7 @@
         <p  >VISIBLE_SIGNATURE_RECTANGLE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Specifies the rectangle signature is going to be drawn in.<br/>This property is ignored if ADD_VISIBLE_SIGNATURE is set to False. Syntax is : (<i class=" ">llx</i>,<i class=" ">lly</i>,<i class=" ">urx</i>,<i class=" ">ury</i>).<br/><br/>llx =left lower x coordinate,<br/>lly=left lower y coordinate,<br/>urx =upper right x coordinate,<br/>ury = upper right y coordinate    </p>
+        <p  >Specifies the rectangle signature is going to be drawn in.<br/>This property is ignored if ADD_VISIBLE_SIGNATURE is set to False. Syntax is: (<i class=" ">llx</i>,<i class=" ">lly</i>,<i class=" ">urx</i>,<i class=" ">ury</i>).<br/>llx =left lower x coordinate,<br/>lly=left lower y coordinate,<br/>urx =upper right x coordinate,<br/>ury = upper right y coordinate    </p>
     <p  >Default: &quot;400,700,500,800&quot;.    </p>
             </td>
         </tr>
@@ -1188,26 +1215,14 @@
         <p  >VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 &amp; VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If we want the visible signature to contain custom image, specify image as base64 encoded byte array. Alternatively custom image can be specified by giving a path to image on file system.    </p>
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: if specifying a path to an image &quot;\&quot; should be escaped (thus C:\photo.jpg =&gt; &quot;C:\\photo.jpg&quot;)    </p>
-        </div>
-    </div>
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: if specifying image as base64 encoded byte array &quot;=&quot; should be escaped (this &quot;BBCXMI==&quot; =&gt; &quot;BBCXMI\=\=&quot;)    </p>
-        </div>
-    </div>
-    <p  >If both of these properties are set then VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 will take priority.<br/>If we do not want this feature then do not set these properties.<br/>Default: not set (no custom image).<br/>These properties are ignored if ADD_VISIBLE_SIGNATURE is set to False.    </p>
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: in clustered environment it is more manageable and advised to specify image as base64 string, since image data will be stored in central database. Otherwise each node should contain copy of the image, and each image managed separately (e.g. on image updates, or insertion of new image for different worker)    </p>
-        </div>
-    </div>
+        <p  >If we want the visible signature to contain custom image, specify image as base64 encoded byte array. Alternatively, the custom image can be specified by giving a path to image on file system.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ If specifying a path to an image, &quot;\&quot; should be escaped (thus C:\photo.jpg =&gt; &quot;C:\\photo.jpg&quot;).    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ If specifying image as base64 encoded byte array, &quot;=&quot; should be escaped (thus &quot;BBCXMI==&quot; =&gt; &quot;BBCXMI\=\=&quot;).    </p>
+    <p  >If both of properties are set, VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 will take priority. To disable the feature, do not set the properties.<br/>Default: not set (no custom image).<br/>These properties are ignored if ADD_VISIBLE_SIGNATURE is set to False.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ Note that in a clustered environment, it is advised to specify image as base64 string, since image data will be stored in a central database. Otherwise, each node should contain copy of the image, and each image managed separately (e.g. on image updates, or insertion of new image for different worker).    </p>
             </td>
         </tr>
     <tr>
@@ -1215,7 +1230,7 @@
         <p  >VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If we want our custom image to be resized to specified rectangle (set by VISIBLE_SIGNATURE_RECTANGLE) then set to True. If set to True image might look different that original (as an effect of resizing). If set to False the rectangle drawn will be resized to specified image's sizes.<br/>If set to False llx and lly coordinates specified by VISIBLE_SIGNATURE_RECTANGLE property will be used for drawing rectangle (urx and ury will be calculated from specified image's size).<br/>This property is ignored if ADD_VISIBLE_SIGNATURE is set to False or if custom image to use is not specified.<br/>Possible values: True, False.<br/>Default: &quot;True&quot;.    </p>
+        <p  >If we want our custom image to be resized to specified rectangle (set by VISIBLE_SIGNATURE_RECTANGLE), then set to True. If set to True, the image might look different than the original (as an effect of resizing). If set to False, the rectangle drawn will be resized to specified image's sizes.<br/>If set to False, the llx and lly coordinates specified by the VISIBLE_SIGNATURE_RECTANGLE property will be used for drawing the rectangle (urx and ury will be calculated from specified image's size).<br/>This property is ignored if ADD_VISIBLE_SIGNATURE is set to False, or if custom image to use is not specified. Possible values: True, False.<br/>Default: <strong class=" ">True</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1228,44 +1243,28 @@
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_URL    </p>
+        <p  >TSA_URL<span id="src-16221254_id-.PDFSignerv4.3.0-TSA_URL"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If we want to timestamp document signature, specify timestamp authority URL.<br/>This will cause time stamp requests to be issued via HTTP requests. Under high load this can lead to thread deadlocks in the application server if using a localhost URL (using a time stamp signer running in the same server). In this case, use the internal mechanism described below).<br/>If we do not want to timestamp document signature, do not set property.    </p>
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: if path contains characters &quot;\&quot; or &quot;=&quot; , these characters should be escaped (thus &quot;\&quot; = &quot;\\&quot;, &quot;=&quot; =&gt;&quot;\=&quot;)    </p>
-        </div>
-    </div>
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: this property can not be set at the same time as TSA_WORKER (see below).    </p>
-        </div>
-    </div>
+        <p  >If we want to timestamp document signature, specify timestamp authority URL.<br/>This will cause time stamp requests to be issued via HTTP requests. Under high load, this can lead to thread deadlocks in the application server if using a localhost URL (using a time stamp signer running in the same server). In this case, use the internal mechanism described below). To not timestamp document signature, do not set the property.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ iI path contains characters &quot;\&quot; or &quot;=&quot; , these characters should be escaped (thus &quot;\&quot; = &quot;\\&quot;, &quot;=&quot; =&gt;&quot;\=&quot;).    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ Cannot be set at the same time as <a   href="#src-16221254_id-.PDFSignerv4.3.0-TSA_WORKER">TSA_WORKER</a>.    </p>
     <p  >Default: not set (no timestamping).    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_WORKER    </p>
+        <p  >TSA_WORKER<span id="src-16221254_id-.PDFSignerv4.3.0-TSA_WORKER"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Specify a worker ID or worker name for a time stamp signer<br/>This will use internal calls and can only be used for a time stamp authority running in the same SignServer instance.    </p>
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: use this option instead of TSA_URL when using a time stamp signer running in the same SignServer instance to avoid thread deadlocks under high load.    </p>
-        </div>
-    </div>
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: this property can not be set at the same time as TSA_URL (see above).    </p>
-        </div>
-    </div>
-    <p  >Default: not set (no timestamping).    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ Use instead of TSA_URL when using a time stamp signer running in the same SignServer instance to avoid thread deadlocks under high load.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ Cannot be set at the same time as <a   href="#src-16221254_id-.PDFSignerv4.3.0-TSA_URL">TSA_URL</a>.    </p>
+    <p  >Default: Not set (no timestamping).    </p>
             </td>
         </tr>
     <tr>
@@ -1281,20 +1280,11 @@
         <p  >EMBED_OCSP_RESPONSE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If we want to embed the OCSP response for the signer certificate inside the signature package set to True, otherwise set to False.    </p>
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: issuer certificate (of signing certificate) should be in certificate chain.    </p>
-        </div>
-    </div>
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: OCSP responses must contain a nextUpdate field in order for off-line validation to work with Adobe Reader. For EJBCA OCSP Responder see configuration of ocsp.untilNextUpdate in ocsp.properties.    </p>
-        </div>
-    </div>
-    <p  >Default: &quot;False&quot;.    </p>
+        <p  >To embed the OCSP response for the signer certificate inside the signature package, set to <strong class=" ">True,</strong> otherwise set to <strong class=" ">False</strong>.    </p>
+    <p  ><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+</strong> Issuer certificate (of signing certificate) should be in certificate chain.<br/>    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ OCSP responses must contain a nextUpdate field in order for off-line validation to work with Adobe Reader. For EJBCA OCSP Responder, see configuration of ocsp.untilNextUpdate in ocsp.properties.    </p>
+    <p  >Default: <strong class=" ">False</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1302,7 +1292,7 @@
         <p  >ARCHIVETODISK    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If we want the produced signed document to be stored in the local file system set this property to true and add the ARCHIVETODISK_PATH_BASE property explained below.<br/>Default: &quot;False&quot;.    </p>
+        <p  >If we want the produced signed document to be stored in the local file system set this property to true and add the ARCHIVETODISK_PATH_BASE property explained below.<br/>Default: <strong class=" ">False</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1310,7 +1300,7 @@
         <p  >ARCHIVETODISK_PATH_BASE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The file path to the folder to store the signed documents in.<br/>Required if ARCHIVETODISK is True.    </p>
+        <p  >The file path to the folder to store the signed documents in.<br/>Required if ARCHIVETODISK is <strong class=" ">True.</strong>    </p>
             </td>
         </tr>
     <tr>
@@ -1319,13 +1309,13 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Pattern used for creating sub-folders under the ARCHIVETODISK_PATH_BASE folder.<br/>Current date can be put in by adding ${DATE:yyyy} where yyyy can be replaced be the same syntax as defined in the class java.text.SimpleDateFormat. Other fields are:    </p>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">${WORKERID}</strong><br/>ID of the worker processing the request.    </p>
-</li><li class=" ">    <p  ><strong class=" ">${WORKERNAME}</strong><br/>Name of the worker processing the request.    </p>
-</li><li class=" ">    <p  ><strong class=" ">${REMOTEIP}</strong><br/>IP address of requestor.    </p>
-</li><li class=" ">    <p  ><strong class=" ">${REQUESTID}</strong><br/>ID of the request (number).    </p>
-</li><li class=" ">    <p  ><strong class=" ">${TRANSACTIONID}</strong><br/>Transaction ID of the request (number and dashes)    </p>
-</li><li class=" ">    <p  ><strong class=" ">${USERNAME}</strong><br/>User name if username/password authentication has been used.    </p>
-</li><li class=" ">    <p  ><strong class=" ">${CUSTOMHEADER1}</strong><br/>Value of the custom HTTP request header <i class=" ">X-SignServer-Custom-1</i>.    </p>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">${WORKERID}</strong>: ID of the worker processing the request.    </p>
+</li><li class=" ">    <p  ><strong class=" ">${WORKERNAME}</strong>: Name of the worker processing the request.    </p>
+</li><li class=" ">    <p  ><strong class=" ">${REMOTEIP}</strong>: IP address of requestor.    </p>
+</li><li class=" ">    <p  ><strong class=" ">${REQUESTID}</strong>: ID of the request (number).    </p>
+</li><li class=" ">    <p  ><strong class=" ">${TRANSACTIONID}</strong>: Transaction ID of the request (number and dashes).    </p>
+</li><li class=" ">    <p  ><strong class=" ">${USERNAME}</strong>: User name if username/password authentication has been used.    </p>
+</li><li class=" ">    <p  ><strong class=" ">${CUSTOMHEADER1}</strong>: Value of the custom HTTP request header <i class=" ">X-SignServer-Custom-1</i>.    </p>
 </li></ul>    <p  >Default: &quot;${DATE:yyyy/MM/dd}&quot;.    </p>
             </td>
         </tr>
@@ -1342,7 +1332,7 @@
         <p  >REFUSE_DOUBLE_INDIRECT_OBJECTS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >True if PDF documents containing multiple indirect objects with the same name should be refused. Used to mitigate a collision signature vulnerability described in <a  class="external-link" href="http://pdfsig-collision.florz.de/">http://pdfsig-collision.florz.de/</a>.    </p>
+        <p  >True if PDF documents containing multiple indirect objects with the same name should be refused. Used to mitigate a collision signature vulnerability described in <a  class="external-link" href="http://pdfsig-collision.florz.de/">http://pdfsig-collision.florz.de/</a>. Default: <strong class=" ">False</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1359,7 +1349,7 @@
 </li><li class=" ">    <p  >ALLOW_SCREENREADERS<br/>Extract text and graphics (in support of accessibility to users with disabilities or for other purposes).    </p>
 </li><li class=" ">    <p  >ALLOW_ASSEMBLY<br/>Assemble the document (insert, rotate, or delete pages and create bookmarks or thumbnail images), even if ALLOW_MODIFY_CONTENTS is not set.    </p>
 </li><li class=" ">    <p  >ALLOW_DEGRADED_PRINTING<br/>Print the document (possibly not at the high-est quality level, depending on whether ALLOW_PRINTING is also set).    </p>
-</li></ul>    <p  >Default: unset/empty (no permissions are rejected)    </p>
+</li></ul>    <p  >Default: Unset/empty (no permissions are rejected)    </p>
             </td>
         </tr>
     <tr>
@@ -1367,7 +1357,10 @@
         <p  >SET_PERMISSIONS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Replace the current permissions (if any) with the permissions specified in this comma separated list of permissions.<br/>Available permissions: The same permission names as for the property REJECT_PERMISSIONS.<br/>This property can not be specified if REMOVE_PERMISSIONS is used.<br/>Notice 1: This property and the REMOVE_PERMISSIONS property only sets the permissions setting in the document. All permissions might not be enforced by the PDF reader and some permissions even though specified by this property to be allowed might not be allowed when opening the final document (i.e. if that would invalidate the signature and/or certification).<br/>Notice 2: If the document is not already protected by an owner password and the SET_OWNERPASSWORD is not specified a random password will be used as owner password.<br/>Default: unset (permissions are not set by this property)    </p>
+        <p  >Replace the current permissions (if any) with the permissions specified in this comma separated list of permissions. Available permissions: The same permission names as for the property REJECT_PERMISSIONS.<br/>    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ This property cannot be specified if REMOVE_PERMISSIONS is used.<br/>    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ This property and the REMOVE_PERMISSIONS property only sets the permissions setting in the document. All permissions might not be enforced by the PDF reader, and some permissions specified to be allowed by this property, might not be allowed when opening the final document (i.e. if that would invalidate the signature and/or certification).<br/>    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ If the document is not already protected by an owner password and the SET_OWNERPASSWORD is not specified, a random password will be used as owner password.<br/>Default: Unset (permissions are not set by this property)    </p>
             </td>
         </tr>
     <tr>
@@ -1375,7 +1368,9 @@
         <p  >REMOVE_PERMISSIONS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Remove all permissions specified in this comma separated list from the document.<br/>Available permissions: The same permission names as for the property REJECT_PERMISSIONS.<br/>This property can not be specified if SET_PERMISSIONS is used.<br/>Notice: This property only removes the permissions listed even if some permissions (i.e. ALLOW_PRINTING) by the standard gives more permissions (i.e. also ALLOW_DEGRADED_PRINTING). To remove all permissions to print remove both ALLOW_PRINTING and ALLOW_DEGRADED_PRINTING. To still have ALLOW_DEGRADED_PRINTING it is possible to specify to only remove ALLOW_PRINTING.<br/>See also Notice 1 and Notice 2 for REMOVE_PERMISSIONS which also applies to this setting.<br/>Removing only ALLOW_DEGRADED_PRINTING has no effect as degraded printing is implicitly allowed if printing is allowed.<br/>Default: unset/empty (no permissions are removed)    </p>
+        <p  >Remove all permissions specified in this comma separated list from the document. Available permissions: The same permission names as for the property REJECT_PERMISSIONS.<br/>This property can not be specified if SET_PERMISSIONS is used.<br/>    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ This property only removes the permissions listed even if some permissions (i.e. ALLOW_PRINTING) by the standard gives more permissions (i.e. also ALLOW_DEGRADED_PRINTING). To remove all permissions to print remove both ALLOW_PRINTING and ALLOW_DEGRADED_PRINTING. To still have ALLOW_DEGRADED_PRINTING it is possible to specify to only remove ALLOW_PRINTING.<br/>See     <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ notes for REMOVE_PERMISSIONS which also applies to this setting.<br/>Removing only ALLOW_DEGRADED_PRINTING has no effect, as degraded printing is implicitly allowed if printing is allowed.<br/>Default: Unset/empty (no permissions are removed)    </p>
             </td>
         </tr>
     <tr>
@@ -1391,7 +1386,7 @@
         <p  >DIGESTALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Sets the hash algorithm used for the message digest and signature hash.<br/>Setting this property will also imply a minimum PDF version depending on the hash used. The resulting PDF will be upgraded to this version if it's higher than the version used in the original PDF. Since upgrading the version requires re-creating the file (i.e. not appending the new signature) this is not supported on already signed document (i.e. using a hash algorithm requiring a higher version than the original document). Attempting to sign such a document will result in a failure.    </p>
+        <p  >Sets the hash algorithm used for the message digest and signature hash.<br/>Setting this property will also imply a minimum PDF version depending on the hash used. The resulting PDF will be upgraded to this version if it is higher than the version used in the original PDF. Since upgrading the version requires re-creating the file (i.e. not appending the new signature), it is not supported on an already signed document (i.e. using a hash algorithm requiring a higher version than the original document). Attempting to sign such a document will result in a failure.    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
         <thead class=" ">    <tr>
@@ -1444,7 +1439,7 @@
         </tr>
 </tbody>        </table>
             </div>
-    <p  >Default setting is SHA1.    </p>
+    <p  >Default setting is SHA256.    </p>
             </td>
         </tr>
 </tbody>        </table>

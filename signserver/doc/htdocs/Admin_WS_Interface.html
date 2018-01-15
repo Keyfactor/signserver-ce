@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1097,34 +1121,51 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Integration.html">SignServer Integration</a></li>
                                                             </ul>
-</div>            <h1 id="src-5284096"> <span>Admin WS Interface</span></h1>
+</div>            <h1 id="src-16221689"> <span>Admin WS Interface</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  ><span id="src-5284096_Administration_Web_Service"></span>The SignServer Administration Web Services can be used for remote administration of SignServer over client authenticated HTTPS. Access is granted based on a list of certificate serial number and issuer distinguished name pairs. Currently there is only one access level and all administrators granted access will be able to perform all operations.    </p>
-    <p  >The WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/AdminWSService/AdminWS?wsdl    </p>
-    <p  >Authorizing administrators can be done using the Admin CLI command &quot;wsadmins&quot;.    </p>
+    <p  >The SignServer Administration Web Services can be used for remote administration of SignServer over client authenticated HTTPS.    </p>
+    <p  >Access is granted based on a list of certificate serial number and issuer distinguished name pairs. Currently there is only one access level and all administrators granted access will be able to perform all operations.    </p>
+    <p  >The WSDL file is located at the following URL: http://&lt;hostname&gt;:8080/signserver/AdminWSService/AdminWS?wsdl.    </p>
+    <p  >To authorize administrators using the Admin CLI, use the <tt class=" ">wsadmins</tt> command:    </p>
     <div  class="confbox programlisting">
-                    <div class="title">bin/signserver wsadmins</div>
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="bin/signserver wsadmins">
-<div class="line"><code class="plain">Usage: signserver wsadmins -add -certserialno &lt;certificate serial number (in hex)&gt; -issuerdn &lt;issuer DN&gt;</code></div>
-<div class="line"><code class="plain">Usage: signserver wsadmins -add -cert &lt;PEM or DER file&gt;</code></div>
-<div class="line"><code class="plain">Usage: signserver wsadmins -remove -certserialno &lt;certificate serial number (in hex)&gt; -issuerdn &lt;issuer DN&gt;</code></div>
-<div class="line"><code class="plain">Usage: signserver wsadmins -list</code></div>
-<div class="line"><code class="plain">Usage: signserver wsadmins -allowany [</code><code class="keyword">true</code><code class="plain">|</code><code class="keyword">false</code><code class="plain">]</code></div>
-<div class="line"><code class="plain">Example </code><code class="value">1</code><code class="plain">: signserver wsadmins -add -certserialno 123ABCDEF -issuerdn </code><code class="string">"CN=Neo Morpheus, C=SE"</code></div>
-<div class="line"><code class="plain">Example </code><code class="value">2</code><code class="plain">: signserver wsadmins -add -cert wsadmin.pem</code></div>
-<div class="line"><code class="plain">Example </code><code class="value">3</code><code class="plain">: signserver wsadmins -remove -certserialno 123ABCDEF -issuerdn </code><code class="string">"CN=Neo Morpheus, C=SE"</code></div>
-<div class="line"><code class="plain">Example </code><code class="value">4</code><code class="plain">: signserver wsadmins -list</code></div>
-<div class="line"><code class="plain">Example </code><code class="value">5</code><code class="plain">: signserver wsadmins -allowany</code></div>
-<div class="line"><code class="plain">Example </code><code class="value">6</code><code class="plain">: signserver wsadmins -allowany </code><code class="keyword">false</code></div>
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">bin</code><code class="plain">/signserver</code><code class="plain"> wsadmins</code></div>
 </div>
     </div>
-    <p  >Notice that the certificate serial number should be entered as the hexadecimal representation (leading zeros and upper/lowercase is not significant). Also notice that the issuer DN currently should be entered in the reversed order and with spaces after each component. In the example above the issuer DN from the certificate actually is &quot;CN=Neo Morpheus, C=SE&quot;.    </p>
+    <p  >Usage:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">Usage: signserver wsadmins -add -certserialno &lt;certificate serial number (</code><code class="keyword">in</code><code class="plain"> hex)&gt; -issuerdn &lt;issuer DN&gt;</code></div>
+<div class="line"><code class="plain">Usage: signserver wsadmins -add -cert &lt;PEM or DER </code><code class="functions">file</code><code class="plain">&gt;</code></div>
+<div class="line"><code class="plain">Usage: signserver wsadmins -remove -certserialno &lt;certificate serial number (</code><code class="keyword">in</code><code class="plain"> hex)&gt; -issuerdn &lt;issuer DN&gt;</code></div>
+<div class="line"><code class="plain">Usage: signserver wsadmins -list</code></div>
+<div class="line"><code class="plain">Usage: signserver wsadmins -allowany [</code><code class="functions">true</code><code class="plain">|</code><code class="functions">false</code><code class="plain">]</code></div>
+<div class="line"><code class="plain">Example 1: signserver wsadmins -add -certserialno 123ABCDEF -issuerdn </code><code class="string">"CN=Neo Morpheus, C=SE"</code></div>
+<div class="line"><code class="plain">Example 2: signserver wsadmins -add -cert wsadmin.pem</code></div>
+<div class="line"><code class="plain">Example 3: signserver wsadmins -remove -certserialno 123ABCDEF -issuerdn </code><code class="string">"CN=Neo Morpheus, C=SE"</code></div>
+<div class="line"><code class="plain">Example 4: signserver wsadmins -list</code></div>
+<div class="line"><code class="plain">Example 5: signserver wsadmins -allowany</code></div>
+<div class="line"><code class="plain">Example 6: signserver wsadmins -allowany </code><code class="functions">false</code></div>
+</div>
+    </div>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+    <p  >The certificate serial number should be entered as the hexadecimal representation (leading zeros and upper/lowercase is not significant).    </p>
+    <p  >The issuer DN currently should be entered in the reversed order and with spaces after each component. In the example above, the issuer DN from the certificate actually is &quot;CN=Neo Morpheus, C=SE&quot;.    </p>
+        </div>
+    </div>
     <p  >An administrator can also be added by supplying a client certificate as an argument. The serial number and issuer DN is then taken from that certificate.    </p>
-    <p  >To troubleshoot an &quot;Administrator not authorized to resource&quot; see the logs for how SignServer interprets the serialnumber and subject DN. Example:    </p>
-<pre class=" ">19:00:33,946 INFO  [AdminWS] ADMIN OPERATION; subjectDN=C=SE, O=Markus Organization, OU=Internal Testing 1, CN=External RA Admin 1; serialNumber=4a3442e98e3ce428; issuerDN=C=SE, O=Markus Organization, OU=Internal Testing 1, CN=MarkusAdminCA1; authorized=false; operation=getWorkers; arguments=</pre>        </div>
+    <p  >To troubleshoot an &quot;Administrator not authorized to resource&quot;, refer to the logs for how SignServer interprets the serialnumber and subject DN. Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="value">19</code><code class="plain">:</code><code class="value">00</code><code class="plain">:</code><code class="value">33</code><code class="plain">,</code><code class="value">946</code><code class="plain"> INFO  [AdminWS] ADMIN OPERATION; subjectDN=C=SE, O=Markus Organization, OU=Internal Testing </code><code class="value">1</code><code class="plain">, CN=External RA Admin </code><code class="value">1</code><code class="plain">; serialNumber=4a3442e98e3ce428; issuerDN=C=SE, O=Markus Organization, OU=Internal Testing </code><code class="value">1</code><code class="plain">, CN=MarkusAdminCA1; authorized=</code><code class="keyword">false</code><code class="plain">; operation=getWorkers; arguments=                 </code></div>
+</div>
+    </div>
+        </div>
 
     </article>
 

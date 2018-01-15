@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1100,23 +1124,22 @@
                                                                                                          <li class="shortcut"><a href="SignServer_User_Interfaces.html">SignServer User Interfaces</a></li>
                                                                                      <li><a href="Administration_Web.html">Administration Web</a></li>
                                                             </ul>
-</div>            <h1 id="src-5282275"> <span>Archive Page</span></h1>
+</div>            <h1 id="src-11573927"> <span>Archive Page</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
+    <p  >Allows querying the archive.    </p>
     <div  class="confbox admonition admonition-info">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
                 <div class="admonition-body">
-    <p  >Access to the Archive is only granted to administrators that has been explicitly granted the Archive Auditor role. See the <a   href="Administrators_Page.html">Administrators Page</a> for how to do that.    </p>
+    <p  >Access to the Audit log is only granted to administrators explicitly granted the Auditor role. For more information, see <a   href="Administrators_Page.html">Administrators Page.</a>    </p>
         </div>
     </div>
-    <p  >Allows querying of the archive.    </p>
-    <p  >    </p>
-    <div class="section section-1" id="src-5282275_id-.ArchivePagev4.1.0-SearchResults">
+    <div class="section section-1" id="src-11573927_id-.ArchivePagev4.2.1-SearchResults">
         <h1 class="heading "><span>Search Results</span></h1>
-    <p  >The table displays the currently filtered out search result. See the <a   href="OldDatabaseArchiver.html">ArchiveData table </a>in the Reference Guide for details on the different columns.    </p>
-    <div class="section section-2" id="src-5282275_id-.ArchivePagev4.1.0-Actions">
+    <p  class="confluence-link">The table displays the currently filtered out search result. For more information on the different columns, see <a   href="OldDatabaseArchiver.html#src-11573934_id-.OldDatabaseArchiverv4.2.1-ArchiveDatatable">ArchiveData table in OldDatabaseArchiver</a>.    </p>
+    <div class="section section-2" id="src-11573927_id-.ArchivePagev4.2.1-Actions">
         <h2 class="heading "><span>Actions</span></h2>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1177,7 +1200,7 @@
         <p  >Entries per page    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The maximum number of archive rows displayed in a page.<br/>Use the <strong class=" ">Reload</strong> button after changing the value.    </p>
+        <p  >The maximum number of archive rows displayed in a page.<br/>Click <strong class=" ">Reload</strong> after changing the value.    </p>
             </td>
         </tr>
     <tr>
@@ -1200,7 +1223,7 @@
             </div>
     </div>
     </div>
-    <div class="section section-1" id="src-5282275_id-.ArchivePagev4.1.0-CurrentConditions">
+    <div class="section section-1" id="src-11573927_id-.ArchivePagev4.2.1-CurrentConditions">
         <h1 class="heading "><span>Current Conditions</span></h1>
     <p  >Lists the current search criteria and offer the ability to add additional ones.    </p>
     <div  class="tablewrap">
@@ -1231,85 +1254,17 @@
         <p  >Condition    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The operators available depends on the chosen column and could be any of:    </p>
-    <div  class="tablewrap">
-        <table class="wrapped confluenceTable">
-        <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Equals    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The column's value should be equal to the value provided.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Greater or equals    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The column's value should be equal to the value provided or be greater.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Greater than    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The column's value should be greater than the provided value.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Lesser or equals    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The column's value should be equal to the value provided or be lesser.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Lesser than    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The column's value should be lesser than the provided value.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Like    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The column's value should be 'like' to the value provided.    </p>
-    <p  >The '%' sign can be used as a wild card in the beginning and/or end to match on values containing the provided value.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Not Equals    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The column's value should be any other value than the provided.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Is not null    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The column's value should not be null.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Is null    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The column's value should be null.    </p>
-            </td>
-        </tr>
-</tbody>        </table>
-            </div>
-            </td>
+        <p  >The operators available depend on the chosen column. Possible values:    </p>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">Equals:</strong> The column's value should be equal to the value provided.    </p>
+</li><li class=" ">    <p  ><strong class=" ">Greater or equals</strong>: The column's value should be equal to the value provided or be <strong class=" ">greater.</strong>    </p>
+</li><li class=" ">    <p  ><strong class=" ">Greater than:</strong> The column's value should be greater than the provided value.    </p>
+</li><li class=" ">    <p  ><strong class=" ">Lesser or equals</strong>: The column's value should be equal to the value provided or be <strong class=" ">lesser.</strong>    </p>
+</li><li class=" ">    <p  ><strong class=" ">Lesser than:</strong> The column's value should be lesser than the provided <strong class=" ">value.</strong>    </p>
+</li><li class=" ">    <p  ><strong class=" ">Like:</strong> The column's value should be 'like' to the value provided.<br/>The <strong class=" ">%</strong> sign can be used as a wild card in the beginning and/or end to match on values containing the provided value.    </p>
+</li><li class=" ">    <p  ><strong class=" ">Not Equals</strong>: The column's value should be any other value than the provided.    </p>
+</li><li class=" ">    <p  ><strong class=" ">Is not null</strong>: The column's value should not be null.    </p>
+</li><li class=" ">    <p  ><strong class=" ">Is null</strong>: The column's value should be null.    </p>
+</li></ul>            </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
@@ -1321,7 +1276,7 @@
         </tr>
 </tbody>        </table>
             </div>
-    <p  >Use the <strong class=" ">Reload</strong> button after changing the search criteria to see the new search result.    </p>
+    <p  >Click <strong class=" ">Reload</strong> after changing the search criteria to view the new search result.    </p>
     <p  >    </p>
     </div>
         </div>

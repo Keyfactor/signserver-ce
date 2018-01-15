@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1099,84 +1123,259 @@
                                         <li class="shortcut"><a href="SignServer_Operations.html">SignServer Operations</a></li>
                                                                                      <li><a href="Worker_Setup.html">Worker Setup</a></li>
                                                             </ul>
-</div>            <h1 id="src-5282873"> <span>Quick Start Demo Setup using Administration CLI</span></h1>
+</div>            <h1 id="src-11572107"> <span>Quick Start Demo Setup using Administration CLI</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >This is a quick start guide to quickly get you setup with a crypto token and a set of workers/signers for testing and demonstration purposes.    </p>
-    <div class="section section-1" id="src-5282873_id-.QuickStartDemoSetupusingAdministrationCLIv4.1.0-Setupasamplecryptotoken">
-        <h1 class="heading "><span>Setup a sample crypto token</span></h1>
-    <p  >Set up a crypto token called CryptoTokenP12 which uses a keystore-based token:    </p>
-<pre class="prettyprint ">$ bin/signserver setproperties doc/sample-configs/keystore-crypto.properties</pre>    <p  >Activate the configuration using the assigned worker ID that was printed (for instance 1):    </p>
-    <p  class="prettyprint">$ bin/signserver reload 1<span id="src-5282873_Add_sample_workers"></span>    </p>
+    <p  >This quick start guide describes how to use the SignServer Administration CLI (AdminCLI) to setup a crypto token and a set of workers/signers for testing and demonstration purposes:    </p>
+    <p  >    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-11572107_id-.QuickStartDemoSetupusingAdministrationCLIv4.2.1-SetupaSampleCryptoToken">Setup a Sample Crypto Token</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-11572107_id-.QuickStartDemoSetupusingAdministrationCLIv4.2.1-SetupSampleWorkers">Setup Sample Workers</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-11572107_id-.QuickStartDemoSetupusingAdministrationCLIv4.2.1-SetupaSampleTime-stampSigner">Setup a Sample Time-stamp Signer</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-11572107_id-.QuickStartDemoSetupusingAdministrationCLIv4.2.1-SetupaSamplePDFSigner">Setup a Sample PDF Signer</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-11572107_id-.QuickStartDemoSetupusingAdministrationCLIv4.2.1-SetupaSampleXMLvalidator">Setup a Sample XML validator</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-11572107_id-.QuickStartDemoSetupusingAdministrationCLIv4.2.1-SetupaSampleMRTDSODSigner">Setup a Sample MRTD SOD Signer</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-11572107_id-.QuickStartDemoSetupusingAdministrationCLIv4.2.1-SetupaProductionConfigurationwithHSM">Setup a Production Configuration with HSM</a>    </p>
+</li></ul>    <div class="section section-1" id="src-11572107_id-.QuickStartDemoSetupusingAdministrationCLIv4.2.1-SetupaSampleCryptoToken">
+        <h1 class="heading "><span>Setup a Sample Crypto Token</span></h1>
+    <p  >To setup a sample crypto token, do the following:    </p>
+<ol class=" "><li class=" ">    <p  >Set up a crypto token called CryptoTokenP12 which uses a keystore-based token:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/keystore-crypto.properties</code></div>
+</div>
     </div>
-    <div class="section section-1" id="src-5282873_id-.QuickStartDemoSetupusingAdministrationCLIv4.1.0-Addsampleworkers">
-        <h1 class="heading prettyprint"><span>Add sample workers</span></h1>
-    <p  >Workers can then be set up using the setproperties followed by the reload command. Sample configurations are available in doc/sample-configs which by default uses the sample crypto token:    </p>
-<pre class="prettyprint ">$ bin/signserver setproperties doc/sample-configs/CONFIGURATION.properties</pre>    <p  >Activate the configuration using the assigned worker ID that was printed (for instance 2):    </p>
-<pre class="prettyprint ">$ bin/signserver reload 2</pre>    <p  >See the following section for some example for specific workers.    </p>
+</li><li class=" ">    <p  >Activate the configuration using the assigned worker ID that was printed (for example, 1):    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver reload </code><code class="value">1</code></div>
+</div>
+    </div>
+</li></ol>    <p  >    </p>
+    </div>
+    <div class="section section-1" id="src-11572107_id-.QuickStartDemoSetupusingAdministrationCLIv4.2.1-SetupSampleWorkers">
+        <h1 class="heading prettyprint"><span>Setup Sample Workers</span></h1>
+    <p  >Workers can then be set up using the <tt class=" ">setproperties</tt> followed by the <tt class=" ">reload</tt> command.    </p>
+<ol class=" "><li class=" ">    <p  >Sample configurations are available in doc/sample-configs which by default uses the sample crypto token:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/CONFIGURATION.properties</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >Activate the configuration using the assigned worker ID that was printed (for example, 2):    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver reload </code><code class="value">2</code></div>
+</div>
+    </div>
+</li></ol>    <p  >See the following section for examples for specific workers.    </p>
     <p  >    </p>
     </div>
-    <div class="section section-1" id="src-5282873_id-.QuickStartDemoSetupusingAdministrationCLIv4.1.0-QuickstartdemoTimestampsigner">
-        <h1 class="heading "><span>Quick start demo Timestamp signer</span></h1>
-    <p  >This is a quick start guide to quickly get you setup with a demo Time Stamp service (TSA according to RFC3161). It will let you quickly get a feeling how the structure of the SignServer works, so you can move on to more advanced features described in the manual.    </p>
-<ol class=" "><li class=" ">    <p  >Make sure the tsa module is built in by setting module.tsa.enabled=true and module.tsa.include=true in signserver_deploy.properties before building and deploying SignServer. Alternativly, set includemodulesinbuild=true to have all modules built in.    </p>
+    <div class="section section-1" id="src-11572107_id-.QuickStartDemoSetupusingAdministrationCLIv4.2.1-SetupaSampleTime-stampSigner">
+        <h1 class="heading "><span>Setup a Sample Time-stamp Signer</span></h1>
+    <p  >Follow the steps below to setup a demo Time Stamp service (TSA according to RFC3161) and get an understanding of the structure of SignServer works:    </p>
+<ol class=" "><li class=" ">    <p  >Make sure that the TSA module is built in by setting <tt class=" ">module.tsa.enabled=true</tt> and <tt class=" ">module.tsa.include=true</tt> in <strong class=" ">signserver_deploy.properties</strong> before building and deploying SignServer. Alternatively, set i<tt class=" ">ncludemodulesinbuild=true</tt> to have all modules built in.    </p>
 </li><li class=" ">    <p  >Setup the keystore crypto token (if not already done) and activate it with its ID:    </p>
-<pre class="prettyprint ">$ bin/signserver setproperties doc/sample-configs/keystore-crypto.properties</pre>    <p  >Update the crypto token's KEYSTOREPATH property to point to a PKCS#12 keystore containing keys and<br/>certificate suitable for timestamp signing (the sample keystore in res/test/dss10/dss10_tssigner1.p12 can be used).<br/>Update the keystore password and set the crypto token's default key.    </p>
-<pre class="prettyprint ">$ bin/signserver setproperty 1 KEYSTOREPATH $SIGNSERVER_HOME/res/test/dss10/dss10_tssigner1.p12<br/>$ bin/signserver setproperty 1 KEYSTOREPASSWORD foo123<br/>$ bin/signserver setproperty 1 DEFAULTKEY &quot;TS Signer 1&quot;<br/>$ bin/signserver reload 1</pre></li><li class=" ">    <p  >Load the Timestamp demo configuration and notice the generated worker ID (in this example 2):    </p>
-<pre class="prettyprint ">$ bin/signserver setproperties doc/sample-configs/timestamp.properties</pre></li><li class=" ">    <p  >Activate the configuration with:    </p>
-<pre class="prettyprint ">$ bin/signserver reload 2</pre></li><li class=" ">    <p  >You can check the status and configuration with:    </p>
-<pre class="prettyprint ">$ bin/signserver getstatus complete all</pre></li><li class=" ">    <p  >Run the test client to see that everything is up:    </p>
-<pre class="prettyprint ">$ bin/signclient timestamp http://localhost:8080/signserver/process?workerName=TimeStampSigner</pre>    <p  >The message &quot;TimeStampRequest validated&quot; should appear once a second. Also check JBOSS_HOME/standalone/log/server.log or GLASSFISH_HOME/domains/domain1/logs/server.log that successful messages appear.    </p>
-</li></ol>    </div>
-    <div class="section section-1" id="src-5282873_id-.QuickStartDemoSetupusingAdministrationCLIv4.1.0-QuickstartdemoPDFsigner">
-        <h1 class="heading "><span>Quick start demo PDF signer</span></h1>
-    <p  >To install the PDF signer you can issue the following commands (either instead of the TSA or in addition to the TSA).    </p>
-<ol class=" "><li class=" ">    <p  >Make sure the pdfsigner module is built in by setting module.pdfsigner.enabled=true and module.pdfsigner.include=true in signserver_deploy.properties before building and deploying SignServer. Alternativly, set includemodulesinbuild=true to have all modules built in.    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/keystore-crypto.properties</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  class="prettyprint">Update the crypto token's KEYSTOREPATH property to point to a PKCS#12 keystore containing keys and certificate suitable for timestamp signing (the sample keystore in res/test/dss10/dss10_keystore.p12 can be used).<br/>Update the keystore password and set the crypto token's default key:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver setproperty </code><code class="value">1</code><code class="plain"> KEYSTOREPATH $SIGNSERVER_HOME/res/test/dss10/dss10_keystore.p12</code></div>
+<div class="line"><code class="plain">$ bin/signserver setproperty </code><code class="value">1</code><code class="plain"> KEYSTOREPASSWORD foo123</code></div>
+<div class="line"><code class="plain">$ bin/signserver setproperty </code><code class="value">1</code><code class="plain"> DEFAULTKEY </code><code class="string">"ts00003"</code></div>
+<div class="line"><code class="plain">$ bin/signserver reload </code><code class="value">1</code></div>
+</div>
+    </div>
+    <p  class="prettyprint">    </p>
+</li><li class=" ">    <p  >Load the Timestamp demo configuration and notice the generated worker ID (in this example 2):    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/timestamp.properties</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >Activate the configuration:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver reload </code><code class="value">2</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >Check the status and configuration:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver getstatus complete all</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >Run the test client to confirm that the setup is successful:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signclient timestamp http:</code><code class="comments">//localhost:8080/signserver/process?workerName=TimeStampSigner</code></div>
+</div>
+    </div>
+</li></ol>    <p  >The message &quot;TimeStampRequest validated&quot; should appear once a second. Also check that successful messages appear in JBOSS_HOME/standalone/log/server.log or GLASSFISH_HOME/domains/domain1/logs/server.log.    </p>
+    </div>
+    <div class="section section-1" id="src-11572107_id-.QuickStartDemoSetupusingAdministrationCLIv4.2.1-SetupaSamplePDFSigner">
+        <h1 class="heading "><span>Setup a Sample PDF Signer</span></h1>
+    <p  >To install the PDF signer, issue the following commands (either instead of the TSA, or in addition to the TSA):    </p>
+<ol class=" "><li class=" ">    <p  >Make sure the pdfsigner module is built in by setting <tt class=" ">module.pdfsigner.enabled=true</tt> and <tt class=" ">module.pdfsigner.include=true</tt> in <strong class=" ">signserver_deploy.properties</strong> before building and deploying SignServer. Alternatively, set <tt class=" ">includemodulesinbuild=true</tt> to have all modules built in.    </p>
 </li><li class=" ">    <p  >Setup the keystore crypto token (if not already done) and activate it with its ID:    </p>
-<pre class="prettyprint ">$ bin/signserver setproperties doc/sample-configs/keystore-crypto.properties</pre>    <p  >Update the crypto token's KEYSTOREPATH property to point to a PKCS#12 keystore containing keys and<br/>certificate suitable for document signing (the sample keystore in res/test/dss10/dss10_signer1.p12 can be used).<br/>Update the keystore password and set the crypto token's default key.    </p>
-<pre class="prettyprint ">$ bin/signserver setproperty 1 KEYSTOREPATH $SIGNSERVER_HOME/res/test/dss10/dss10_signer1.p12<br/>$ bin/signserver setproperty 1 KEYSTOREPASSWORD foo123<br/>$ bin/signserver setproperty 1 DEFAULTKEY &quot;Signer 1&quot;<br/>$ bin/signserver reload 1</pre></li><li class=" ">    <p  >Load the PDF signer demo configuration and notice the generated worker ID (in this example 3):    </p>
-<pre class="prettyprint ">$ bin/signserver setproperties doc/sample-configs/pdfsigner.properties</pre></li><li class=" ">    <p  >Activate the configuration with:    </p>
-<pre class="prettyprint ">$ bin/signserver reload 3</pre></li><li class=" ">    <p  >You can check the status and configuration with:    </p>
-<pre class="prettyprint ">$ bin/signserver getstatus complete all</pre></li></ol>    <p  >You can now access the URL <a  class="external-link" href="http://localhost:8080/signserver/demo/pdfsign.jsp">http://localhost:8080/signserver/demo/pdfsign.jsp</a> with your web browser to get PDF documents signed.    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/keystore-crypto.properties</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >Update the crypto token's KEYSTOREPATH property to point to a PKCS#12 keystore containing keys and certificate suitable for document signing (the sample keystore in res/test/dss10/dss10_keystore.p12 can be used).<br/>Update the keystore password and set the crypto token's default key.    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver setproperty </code><code class="value">1</code><code class="plain"> KEYSTOREPATH $SIGNSERVER_HOME/res/test/dss10/dss10_keystore.p12</code></div>
+<div class="line"><code class="plain">$ bin/signserver setproperty </code><code class="value">1</code><code class="plain"> KEYSTOREPASSWORD foo123</code></div>
+<div class="line"><code class="plain">$ bin/signserver setproperty </code><code class="value">1</code><code class="plain"> DEFAULTKEY </code><code class="string">"signer00003"</code></div>
+<div class="line"><code class="plain">$ bin/signserver reload </code><code class="value">1</code></div>
+</div>
+    </div>
+    <p  >    </p>
+</li><li class=" ">    <p  >Load the PDF signer demo configuration and notice the generated worker ID (in this example 3):    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/pdfsigner.properties</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >Activate the configuration:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain" /></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >Check the status and configuration:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver getstatus complete all</code></div>
+</div>
+    </div>
+</li></ol>    <p  >You can now access the URL <a  class="external-link" href="http://localhost:8080/signserver/demo/pdfsign.jsp">http://localhost:8080/signserver/demo/pdfsign.jsp</a> with your web browser to get PDF documents signed.    </p>
     <p  >    </p>
     </div>
-    <div class="section section-1" id="src-5282873_id-.QuickStartDemoSetupusingAdministrationCLIv4.1.0-QuickstartdemoXMLvalidator">
-        <h1 class="heading "><span>Quick start demo XML validator</span></h1>
+    <div class="section section-1" id="src-11572107_id-.QuickStartDemoSetupusingAdministrationCLIv4.2.1-SetupaSampleXMLvalidator">
+        <h1 class="heading "><span>Setup a Sample XML validator</span></h1>
     <p  >An XML validator validates the signature of an XML document. It uses a certificate validation service worker for validating the certificate so that worker has to be configured first.    </p>
-    <p  >To install a certificate validation service worker issue the following commands:    </p>
-<ol class=" "><li class=" ">    <p  >Load the configuration and notice the worker ID (in this example: 6):    </p>
-<pre class="prettyprint ">$ bin/signserver setproperties doc/sample-configs/validator_dummy.properties</pre></li><li class=" ">    <p  >Activate the configuration with:    </p>
-<pre class="prettyprint ">$ bin/signserver reload 6</pre></li><li class=" ">    <p  >The status of the Worker can now be viewed with:    </p>
-<pre class="prettyprint ">$ bin/signserver getstatus complete CertValidationWorker</pre></li></ol>    <p  >Then to install the XML validator you can issue the following commands:    </p>
-<ol class=" "><li class=" ">    <p  >Make sure the xmlvalidator module is built in by setting module.xmlvalidator.enabled=true and module.xmlvalidator.include=true in signserver_deploy.properties before building and deploying SignServer. Alternativly, set includemodulesinbuild=true to have all modules built in.    </p>
-</li><li class=" ">    <p  >Load the XML validator demo configuration and notice the generated worker ID (in this example 7): $ bin/signserver setproperties doc/sample-configs/xmlvalidator.properties    </p>
-</li><li class=" ">    <p  >Verify the configuration with (notice that VALIDATIONSERVICEWORKER is set to &quot;CertValidationWorker&quot;):    </p>
-<pre class="prettyprint ">$ bin/signserver getconfig 7</pre></li><li class=" ">    <p  >Activate the configuration with:    </p>
-<pre class="prettyprint ">$ bin/signserver reload 7</pre></li><li class=" ">    <p  >The status of the Validator can now be viewed with:    </p>
-<pre class="prettyprint ">$ bin/signserver getstatus complete DemoXMLValidator</pre></li></ol>    <p  >Now the SignServer APIs can be used to request XML documents to be validated by the DemoXMLValidator worker.    </p>
+    <p  >To install a certificate validation service worker, issue the following commands:    </p>
+<ol class=" "><li class=" ">    <p  >Load the configuration and notice the worker ID (in this example, 6):    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/validator_dummy.properties</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >Activate the configuration:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver reload </code><code class="value">6</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >The status of the Worker can now be viewed with:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver getstatus complete CertValidationWorker</code></div>
+</div>
+    </div>
+</li></ol>    <p  >Then, to install the XML validator, issue the following commands:    </p>
+<ol class=" "><li class=" ">    <p  >Make sure the xmlvalidator module is built in by setting <tt class=" ">module.xmlvalidator.enabled=true</tt> and <tt class=" ">module.xmlvalidator.include=true</tt> in <strong class=" ">signserver_deploy.properties</strong> before building and deploying SignServer. Alternatively, set <tt class=" ">includemodulesinbuild=true</tt> to have all modules built in.    </p>
+</li><li class=" ">    <p  >Load the XML validator demo configuration and note the generated worker ID (in this example 7):    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain"> $ bin/signserver setproperties doc/sample-configs/xmlvalidator.properties</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >Verify the configuration: Note that <tt class=" ">VALIDATIONSERVICEWORKER</tt> is set to &quot;CertValidationWorker&quot;.    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver getconfig </code><code class="value">7</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >Activate the configuration with:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver reload </code><code class="value">7</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >The status of the Validator can now be viewed with:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver getstatus complete DemoXMLValidator</code></div>
+</div>
+    </div>
+</li></ol>    <p  >Now the SignServer APIs can be used to request XML documents to be validated by the DemoXMLValidator worker. For more information, see    </p>
     <p  >    </p>
     </div>
-    <div class="section section-1" id="src-5282873_id-.QuickStartDemoSetupusingAdministrationCLIv4.1.0-QuickstartdemoMRTDSODsigner">
-        <h1 class="heading "><span>Quick start demo MRTD SOD signer</span></h1>
-    <p  >The MRTD SOD signer takes as input data group hashes and creates a signed SO(d). This means that the signserver will function as a Document Signer for ePassports.    </p>
-    <p  >To install the MRTD SOD signer you can issue the following commands:    </p>
-<ol class=" "><li class=" ">    <p  >Make sure the mrtdsodsigner module is built in by setting module.mrtdsodsigner.enabled=true and module.mrtdsodsigner.include=true in signserver_deploy.properties before building and deploying SignServer. Alternativly, set includemodulesinbuild=true to have all modules built in.    </p>
+    <div class="section section-1" id="src-11572107_id-.QuickStartDemoSetupusingAdministrationCLIv4.2.1-SetupaSampleMRTDSODSigner">
+        <h1 class="heading "><span>Setup a Sample MRTD SOD Signer</span></h1>
+    <p  >The MRTD SOD signer takes data group hashes as input and creates a signed SO(d), allowing SignServer to function as a Document Signer for ePassports.    </p>
+    <p  >To install the MRTD SOD signer, issue the following commands:    </p>
+<ol class=" "><li class=" ">    <p  >Make sure the mrtdsodsigner module is built in by setting <tt class=" ">module.mrtdsodsigner.enabled=true</tt> and <tt class=" ">module.mrtdsodsigner.include=true</tt> in s<strong class=" ">ignserver_deploy.properties</strong> before building and deploying SignServer. Alternatively, set i<tt class=" ">ncludemodulesinbuild=true</tt> to have all modules built in.    </p>
 </li><li class=" ">    <p  >Setup the soft crypto token (if not already done) and activate it with its ID:    </p>
-<pre class="prettyprint ">$ bin/signserver setproperties doc/sample-configs/keystore-crypto.properties<br/>$ bin/signserver reload 1</pre></li><li class=" ">    <p  >Load the MRTD SOD signer demo configuration and notice the generated worker ID (in this example 8):    </p>
-<pre class="prettyprint ">$ bin/signserver setproperties doc/sample-configs/mrtdsodsigner.properties</pre></li><li class=" ">    <p  >Activate the configuration with:    </p>
-<pre class="prettyprint ">$ bin/signserver reload 8</pre></li><li class=" ">    <p  >The status of the signer can now be viewed with:    </p>
-<pre class="prettyprint ">$ bin/signserver getstatus complete mrtdsodsigner</pre></li></ol>    <p  >Now the SignServer APIs can be used to send MRTD SOD sign requests the MRTDSODSigner.<br/>Also you can use the HTML page <a  class="external-link" href="http://localhost:8080/signserver/demo/mrtdsodsign.jsp">http://localhost:8080/signserver/demo/mrtdsodsign.jsp</a> to enter requests and get the SOd back. This HTML form also functions as a sample to show how you can make HTTP requests from the personalisation system to the Document Signer.    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/keystore-crypto.properties</code></div>
+<div class="line"><code class="plain">$ bin/signserver reload </code><code class="value">1</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >Load the MRTD SOD signer demo configuration and notice the generated worker ID (in this example 8):    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/mrtdsodsigner.properties</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >Activate the configuration:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver reload </code><code class="value">8</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >The status of the signer can now be viewed with:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin/signserver getstatus complete mrtdsodsigner</code></div>
+</div>
+    </div>
+</li></ol>    <p  >The SignServer APIs can now be used to send MRTD SOD sign requests the MRTDSODSigner. Additionally, you can use the HTML page <a  class="external-link" href="http://localhost:8080/signserver/demo/mrtdsodsign.jsp">http://localhost:8080/signserver/demo/mrtdsodsign.jsp</a> to enter requests and get the SOd back. This HTML form also functions as a sample to show how you can make HTTP requests from the personalization system to the Document Signer.    </p>
     <p  >    </p>
     </div>
-    <div class="section section-1" id="src-5282873_id-.QuickStartDemoSetupusingAdministrationCLIv4.1.0-ProductionconfigurationwithHSM">
-        <h1 class="heading "><span>Production configuration with HSM</span></h1>
-    <p  >To install a production signer using an HSM instead of the CryptoTokenP12, make a copy of doc/sample-configs/pkcs11-crypto.properties and configure the necessary properties for the HSM and apply that file using setproperties and reload with its worker ID.<br/>(note after changing properties in the file it needs to be loaded again with setproperties)    </p>
-    <p  >Now when configuring a worker make sure to have the worker property CRYPTOTOKEN=CryptoTokenP11.    </p>
-    <p  >Before starting with an HSM installation you should read the about the PKCS11CryptoToken in the plugins section of the manual.    </p>
-<pre class="prettyprint ">bin/signserver setproperties doc/sample-configs/pkcs11-crypto.properties<br/>bin/signserver reload 9<br/>bin/signserver setproperties doc/sample-configs/mrtdsodsigner.properties<br/>bin/signserver setproperty 10 CRYPTOTOKEN CryptoTokenP11<br/>bin/signserver reload 10<br/>bin/signserver activatecryptotoken 9 tokenpin<br/>bin/signserver generatecertreq 9 &quot;C=SE,CN=MRTD SOD Signer&quot; SHA256WithRSA mrtdsodsigner.req</pre>    <p  >Where 9 is the workerId that you got when running the 'setproperties' command for the pkcs11 crypto token.<br/>Tokenpin is the password for the HSM slot configured in the properties file.<br/>This will create a certificate request that you can get signed by your CA. When you have received the response you can import it and the CA certficate. If you have the returned signer certificate as cert.pem and the CA certificate as cacert.pem, then:    </p>
-<pre class="prettyprint ">cat cert.pem cacert.pem &gt; certchain.pem<br/>bin/signserver uploadsignercertificate 10 glob cert.pem<br/>bin/signserver uploadsignercertificatechain 10 glob certchain.pem<br/>bin/signserver reload 9</pre>    <p  >Hint: you can use EJBCA to create keys on a PKCS#11 HSM using clientToolBox.<br/>ejbcaClientToolBox.sh PKCS11HSMKeyTool generate /opt/ETcpsdk/lib/linux-x86_64/libcryptoki.so 2048 DSSignKey 5    </p>
+    <div class="section section-1" id="src-11572107_id-.QuickStartDemoSetupusingAdministrationCLIv4.2.1-SetupaProductionConfigurationwithHSM">
+        <h1 class="heading "><span>Setup a Production Configuration with HSM</span></h1>
+    <p  >To install a production signer using an HSM instead of the CryptoTokenP12, make a copy of doc/sample-configs/pkcs11-crypto.properties and configure the necessary properties for the HSM and apply that file using setproperties and reload with its worker ID. Note that you need to reload the file using setproperties after changing properties in the file.    </p>
+    <p  >Before starting with an HSM installation, you are recommended to read the <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a> page.    </p>
+    <p  >When configuring a worker, make sure to have the worker property <tt class=" ">CRYPTOTOKEN=CryptoTokenP11</tt>:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">bin/signserver setproperties doc/sample-configs/pkcs11-crypto.properties</code></div>
+<div class="line"><code class="plain">bin/signserver reload </code><code class="value">9</code></div>
+<div class="line"><code class="plain">bin/signserver setproperties doc/sample-configs/mrtdsodsigner.properties</code></div>
+<div class="line"><code class="plain">bin/signserver setproperty </code><code class="value">10</code><code class="plain"> CRYPTOTOKEN CryptoTokenP11</code></div>
+<div class="line"><code class="plain">bin/signserver reload </code><code class="value">10</code></div>
+<div class="line"><code class="plain">bin/signserver activatecryptotoken </code><code class="value">9</code><code class="plain"> tokenpin</code></div>
+<div class="line"><code class="plain">bin/signserver generatecertreq </code><code class="value">9</code><code class="plain"> </code><code class="string">"C=SE,CN=MRTD SOD Signer"</code><code class="plain"> SHA256WithRSA mrtdsodsigner.req</code></div>
+</div>
+    </div>
+    <p  >where 9 is the workerId that you got when running the <tt class=" ">setproperties</tt> command for the pkcs11 crypto token.<br/>where tokenpin is the password for the HSM slot configured in the properties file.<br/><br/>This will create a certificate request that you can get signed by your CA. When you have received the response, you can import it and the CA certificate. If you have the returned signer certificate as cert.pem and the CA certificate as cacert.pem, then:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">cat cert.pem cacert.pem &gt; certchain.pem</code></div>
+<div class="line"><code class="plain">bin/signserver uploadsignercertificate </code><code class="value">10</code><code class="plain"> glob cert.pem</code></div>
+<div class="line"><code class="plain">bin/signserver uploadsignercertificatechain </code><code class="value">10</code><code class="plain"> glob certchain.pem</code></div>
+<div class="line"><code class="plain">bin/signserver reload </code><code class="value">9</code></div>
+</div>
+    </div>
+    <p  >    </p>
+    <p  >Note that you can use the EJBCA tool Client Toolbox to create keys on a PKCS#11 HSM:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">ejbcaClientToolBox.sh PKCS11HSMKeyTool generate /opt/ETcpsdk/lib/linux-x86_64/libcryptoki.so </code><code class="value">2048</code><code class="plain"> DSSignKey </code><code class="value">5</code></div>
+</div>
+    </div>
+    <p  >For more information, refer to the <a  class="external-link" href="https://www.ejbca.org/docs/userguide.html#EJBCA%20client%20toolbox">EJBCA client toolbox</a> section of the ejbca.org documentation.    </p>
     <p  >    </p>
     </div>
         </div>

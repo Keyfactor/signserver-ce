@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1099,31 +1123,35 @@
                                         <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                                                      <li><a href="Logging.html">Logging</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277949"> <span>CESeCore Security Events Logger</span></h1>
+</div>            <h1 id="src-16221419"> <span>CESeCore Security Events Logger</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The default logging implementation, <strong class=" ">org.signserver.server.log.SignServerLog4jDevice</strong> uses Log4J and a similar logging format as the old SystemLogger.    </p>
-    <div class="section section-1" id="src-5277949_id-.CESeCoreSecurityEventsLoggerv4.1.0-Signedlog">
+    <div class="section section-1" id="src-16221419_id-.CESeCoreSecurityEventsLoggerv4.3.0-Signedlog">
         <h1 class="heading "><span>Signed log</span></h1>
     <p  >    </p>
-    <div  class="confbox admonition admonition-note">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >This is a SignServer Enterprise Edition (EE) feature.    </p>
-        </div>
-    </div>
-    <p  >An example configuration for CESeCore is provided in <strong class=" ">conf/cesecore.properties.sample</strong>.    </p>
+    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.An example configuration for CESeCore is provided in <strong class=" ">conf/cesecore.properties.sample</strong>.    </p>
     <p  >To enable signed audit logs, configure<strong class=" "> conf/databaseprotection.properties</strong> (see conf/databaseprotection.properties.sample).    </p>
-    <p  >Also, set the following which enables signing of the AuditRecordData table as well as verification of the log entries queried using for instance the CLI or GUI:    </p>
+    <p  >Also, set the following to enable signing of the AuditRecordData table as well as verification of the log entries queried using for instance the CLI or GUI:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">databaseprotection.enablesign.AuditRecordData = true</code></div>
 <div class="line"><code class="plain">databaseprotection.enableverify.AuditRecordData = true</code></div>
 </div>
     </div>
-    <p  >Configure a key-pair to use for signing and verification of the log with something similar to this:    </p>
+    <p  >If <strong class=" ">enableverify</strong> is set to <i class=" ">true</i>, all individual log entries that are displayed using CLI, GUI or over web services are verified at the server side and in case of inconsistent signatures an error message is displayed. This verification will not discover missing log entries. To verify the complete log for all nodes as well as detect gaps in the sequence numbering, run the <a   href="Database_CLI.html">Database CLI</a>.    </p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+    <p  >Each SignServer node writing to the audit log needs to use different node IDs. By default, the hostname is used. If multiple instances are running from the same host, set the node ID manually in <strong class=" ">conf/cesecore.properties</strong> as <i class=" ">cluster.nodeid</i>.    </p>
+        </div>
+    </div>
+    <p  >If signing and/or verification is enabled one or more crypto tokens needs to be configured.    </p>
+    <div class="section section-2" id="src-16221419_safe-id-aWQtLkNFU2VDb3JlU2VjdXJpdHlFdmVudHNMb2dnZXJ2NC4zLjAtUEtDUyMxMUV4YW1wbGV1c2luZ0RlZmF1bHRQcm92aWRlcg">
+        <h2 class="heading "><span>PKCS#11 Example using Default Provider</span></h2>
+    <p  >It is recommended to use the same type of PKCS#11 provider for database protection as the other signers are also using. If the signers are using the <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a> the below crypto token called org.cesecore.keys.token.PKCS11CryptoToken should be used:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">databaseprotection.keyid = 400</code></div>
@@ -1136,16 +1164,30 @@
 <div class="line"><code class="plain">databaseprotection.version.0 = 2</code></div>
 </div>
     </div>
-    <div  class="confbox admonition admonition-note">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Each SignServer node writing to the audit log needs to use different node IDs. By default the hostname is used. If multiple instances are running from the same host set the node ID manually in <strong class=" ">conf/cesecore.properties</strong> as <i class=" ">cluster.nodeid</i>.    </p>
-        </div>
+    <p  >    </p>
     </div>
-    <p  class="prettyprint">If <strong class=" ">enableverify</strong> is set to <i class=" ">true</i>, all individual log entries that are displayed using CLI, GUI or over web services are verified at the server side and in case of inconsistent signatures an error message is displayed. This verification will not discover missing log entries. To verify the complete log for all nodes as well as detect gaps in the sequence numbering, run the <a   href="Database_CLI.html">Database CLI</a>.    </p>
+    <div class="section section-2" id="src-16221419_safe-id-aWQtLkNFU2VDb3JlU2VjdXJpdHlFdmVudHNMb2dnZXJ2NC4zLjAtUEtDUyMxMUV4YW1wbGV1c2luZ0phY2tOSkkxMVByb3ZpZGVy">
+        <h2 class="heading prettyprint"><span>PKCS#11 Example using JackNJI11 Provider</span></h2>
+    <p  >It is recommended to use the same type of PKCS#11 provider for database protection as the other signers are also using. If the signers are using the <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a> the below crypto token called     <span style="color: #000000;">
+org.signserver.p11ng.common.cryptotoken.JackNJI11DatabaseProtectionCryptoToken    </span>
+ should be used:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">databaseprotection.keyid = 400</code></div>
+<div class="line"><code class="plain">databaseprotection.keyid.0 = 400</code></div>
+<div class="line"><code class="plain">databaseprotection.keylabel.0 = testkey0</code></div>
+<div class="line"><code class="plain">databaseprotection.classname.0 = org.signserver.p11ng.common.cryptotoken.JackNJI11DatabaseProtectionCryptoToken</code></div>
+<div class="line"><code class="plain">databaseprotection.properties.0 = SHAREDLIBRARYNAME=Utimaco, SLOTLABELTYPE=SLOT_NUMBER, SLOTLABELVALUE=1, pin=userpin1</code></div>
+<div class="line"><code class="plain">databaseprotection.data.0 =</code></div>
+<div class="line"><code class="plain">databaseprotection.tokenpin.0 = userpin1</code></div>
+<div class="line"><code class="plain">databaseprotection.version.0 = 2</code></div>
+<div class="line"><code class="plain">databaseprotection.sigalg.2 = SHA256WithRSA</code></div>
+</div>
     </div>
-    <div class="section section-1" id="src-5277949_id-.CESeCoreSecurityEventsLoggerv4.1.0-AuditRecordDatatableAuditRecordData_table">
-        <h1 class="heading "><span id="src-5277949_id-.CESeCoreSecurityEventsLoggerv4.1.0-AuditRecordData_table" class="confluence-anchor-link"></span><span>AuditRecordData table</span></h1>
+    </div>
+    </div>
+    <div class="section section-1" id="src-16221419_id-.CESeCoreSecurityEventsLoggerv4.3.0-AuditRecordDatatableAuditRecordData_table">
+        <h1 class="heading "><span id="src-16221419_id-.CESeCoreSecurityEventsLoggerv4.3.0-AuditRecordData_table" class="confluence-anchor-link"></span><span>AuditRecordData table</span></h1>
     <p  >The exact database table structure is described in the SQL scripts available under doc/sql-scripts/.    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1175,7 +1217,6 @@
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Time stamp (number of milliseconds since January 1, 1970, 00:00:00 GMT).    </p>
     <p  >Example:    </p>
-    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">1359550503607</code></div>
@@ -1277,8 +1318,6 @@
 <div class="line"><code class="plain">Client User</code></div>
 </div>
     </div>
-    <p  >    </p>
-    <p  >    </p>
             </td>
         </tr>
     <tr>
@@ -1292,7 +1331,6 @@
         <p  >Information about which administrator performed the operation.    </p>
     <p  >Certificate serial number for the administrator performing the operation (if available).    </p>
     <p  >Example:    </p>
-    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">4a3442e98e3ce428</code></div>
@@ -1311,7 +1349,6 @@
         <p  >Information about which administrator performed the operation.    </p>
     <p  >Issuer DN from the administrator's certificate (if available).    </p>
     <p  >Example:    </p>
-    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">C=SE, O=My Organization, CN=AdminCA1</code></div>
@@ -1329,7 +1366,12 @@
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >ID of worker involved in the operation (if any).    </p>
     <p  >Example:    </p>
-<pre class=" ">71</pre>            </td>
+    <div  class="confbox programlisting">
+                <div class="content">
+        <pre><code>71</code></pre>
+        </div>
+    </div>
+            </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
@@ -1341,7 +1383,6 @@
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >ID of the node (typically the hostname if not explicitly specified).    </p>
     <p  >Example:    </p>
-    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">dsstsa1.example.com</code></div>
@@ -1359,7 +1400,6 @@
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Additional key-value pairs with information about the operation encoded with Java XML serialization.    </p>
     <p  >Example:    </p>
-    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">&lt;?</code><code class="keyword">xml</code><code class="plain"> </code><code class="color1">version</code><code class="plain">=</code><code class="string">"1.0"</code><code class="plain"> </code><code class="color1">encoding</code><code class="plain">=</code><code class="string">"UTF-8"</code><code class="plain">?&gt;</code></div>
@@ -1398,9 +1438,8 @@
         <p  >rowProtection    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Contains information about wich key-pair and signature algorithm that has been used and the actual signature value (if the row is signed).    </p>
+        <p  >Contains information about key-pair and signature algorithm used, and the actual signature value (if the row is signed).    </p>
     <p  >Example:    </p>
-    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">1:2:400:079b6c2d89671702077b1802ff221cd7c6d71804ea3771b7d5f7cd1...</code></div>
@@ -1410,7 +1449,7 @@
         </tr>
 </tbody>        </table>
             </div>
-    </div>
+<pre class=" "><br/></pre>    </div>
         </div>
 
     </article>

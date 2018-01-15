@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.3.0</p>
                 </div>
             </header>
 
@@ -180,6 +180,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link current" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -225,6 +229,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -579,6 +587,10 @@
         <a class="ht-nav-page-link" href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -637,6 +649,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
                             </ul>
@@ -1059,6 +1079,10 @@
         <a class="ht-nav-page-link" href="Client-Side_Hashing.html">Client-Side Hashing</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
+
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1097,56 +1121,94 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Operations.html">SignServer Operations</a></li>
                                                             </ul>
-</div>            <h1 id="src-5282181"> <span>Troubleshooting</span></h1>
+</div>            <h1 id="src-16220240"> <span>Troubleshooting</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div class="section section-1" id="src-5282181_id-.Troubleshootingv4.1.0-GeneralIssues">
+    <p  >    <span style="color: #000000;">
+This section lists common errors and the steps needed to troubleshoot them:    </span>
+    </p>
+    <p  >    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-16220240_id-.Troubleshootingv4.3.0-GeneralIssues">General Issues</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-16220240_id-.Troubleshootingv4.3.0-Transactionrolledbackerror">Transaction rolled back error</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="#src-16220240_id-.Troubleshootingv4.3.0-AdminGUIIssues">Admin GUI Issues</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-16220240_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y0LjMuMC1BZG1pbkdVSWxvZ2ludXNpbmdzbWFydGNhcmRmYWlsc29uNjQtYml0KHg4Nl82NCl2ZXJzaW9ub2ZXaW5kb3dz">AdminGUI login using smartcard fails on 64-bit (x86_64) version of Windows</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-16220240_id-.Troubleshootingv4.3.0-AdminGUIloginusingsmartcardfailsifpathtoDLLcontainsparenthesis">AdminGUI login using smartcard fails if path to DLL contains parenthesis</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-16220240_id-.Troubleshootingv4.3.0-IPv6dualstackcangivepermissiondeniedwhentryingtoconnectfromAdminGUI">IPv6 dualstack can give permission denied when trying to connect from AdminGUI</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-16220240_id-.Troubleshootingv4.3.0-AdminGUIloginusingsmartcardfailswithsomecards">AdminGUI login using smartcard fails with some cards</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="#src-16220240_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y0LjMuMC1QMTFORy9KYWNrTkpJMTFJc3N1ZXM">P11NG / JackNJI11 Issues</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-16220240_id-.Troubleshootingv4.3.0-UnsatisfiedLinkError">UnsatisfiedLinkError</a>    </p>
+</li></ul></li></ul>    <div class="section section-1" id="src-16220240_id-.Troubleshootingv4.3.0-GeneralIssues">
         <h1 class="heading "><span>General Issues</span></h1>
-    <div class="section section-2" id="src-5282181_id-.Troubleshootingv4.1.0-Transactionrolledbackerror">
+    <div class="section section-2" id="src-16220240_id-.Troubleshootingv4.3.0-Transactionrolledbackerror">
         <h2 class="heading "><span>Transaction rolled back error</span></h2>
-    <p  >A transaction timeout can happen for requests that are taking longer time to finish then what is configured for database transactions in the application server.    </p>
-    <p  >Typical errors in the log can show up similar to the following:    </p>
+    <p  >A transaction timeout can occur for requests that are taking longer time to finish than what is configured for database transactions in the application server.    </p>
+    <p  >Example of errors displayed in the log:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="value">13</code><code class="plain">:</code><code class="value">21</code><code class="plain">:</code><code class="value">17</code><code class="plain">,</code><code class="value">483</code><code class="plain"> ERROR [org.jboss.as.ejb3.invocation] (http-/</code><code class="value">0.0</code><code class="plain">.</code><code class="value">0.0</code><code class="plain">:</code><code class="value">8443</code><code class="plain">-</code><code class="value">1</code><code class="plain">) JBAS014134: EJB Invocation failed on component ProcessSessionBean </code><code class="keyword">for</code><code class="plain"> method </code><code class="keyword">public</code><code class="plain"> </code><code class="keyword">abstract</code><code class="plain"> org.signserver.common.data.Response org.signserver.ejb.interfaces.ProcessSessionLocal.process(org.signserver.server.log.AdminInfo,org.signserver.common.WorkerIdentifier,org.signserver.common.data.Request,org.signserver.common.RequestContext) </code><code class="keyword">throws</code><code class="plain"> org.signserver.common.IllegalRequestException,org.signserver.common.CryptoTokenOfflineException,org.signserver.common.SignServerException: javax.ejb.EJBTransactionRolledbackException: Transaction rolled back</code></div>
+<div class="line"><code class="plain">13:21:17,483 ERROR [org.jboss.as.ejb3.invocation] (http-/0.0.0.0:8443-1) JBAS014134: EJB Invocation failed on component ProcessSessionBean for method public abstract org.signserver.common.data.Response org.signserver.ejb.interfaces.ProcessSessionLocal.process(org.signserver.server.log.AdminInfo,org.signserver.common.WorkerIdentifier,org.signserver.common.data.Request,org.signserver.common.RequestContext) throws org.signserver.common.IllegalRequestException,org.signserver.common.CryptoTokenOfflineException,org.signserver.common.SignServerException: javax.ejb.EJBTransactionRolledbackException: Transaction rolled back</code></div>
 <div class="line"><code class="plain">...</code></div>
-<div class="line"><code class="plain">Caused by: javax.transaction.RollbackException: JBAS014585: Transaction </code><code class="string">'TransactionImple &lt; ac, BasicAction: 0:ffff7f000001:672b819:5911a12e:f8 status: ActionStatus.ABORTED &gt;'</code><code class="plain"> was already rolled back</code></div>
-<div class="line"><code class="plain">    at org.jboss.as.ejb3.tx.CMTTxInterceptor.endTransaction(CMTTxInterceptor.java:</code><code class="value">99</code><code class="plain">) [jboss-as-ejb3-</code><code class="value">7.5</code><code class="plain">.</code><code class="value">0</code><code class="plain">.Final-redhat-</code><code class="value">21</code><code class="plain">.jar:</code><code class="value">7.5</code><code class="plain">.</code><code class="value">0</code><code class="plain">.Final-redhat-</code><code class="value">21</code><code class="plain">]</code></div>
-<div class="line"><code class="plain">    ... </code><code class="value">100</code><code class="plain"> more</code></div>
+<div class="line"><code class="plain">Caused by: javax.transaction.RollbackException: JBAS014585: Transaction 'TransactionImple &lt; ac, BasicAction: 0:ffff7f000001:672b819:5911a12e:f8 status: ActionStatus.ABORTED &gt;' was already rolled back</code></div>
+<div class="line"><code class="plain">    at org.jboss.as.ejb3.tx.CMTTxInterceptor.endTransaction(CMTTxInterceptor.java:99) [jboss-as-ejb3-7.5.0.Final-redhat-21.jar:7.5.0.Final-redhat-21]</code></div>
+<div class="line"><code class="plain">    ... 100 more</code></div>
 </div>
     </div>
-    <p  >Possible reasons include, large file uploads/downloads and/or slow network connections, slow HSM connection or HSM or that contacting external servers takes long time (i.e. CRL/OCSP fetching or time-stamping etc).    </p>
-    <p  ><strong class=" ">Solutions:</strong>    </p>
-<ul class=" "><li class=" ">    <p  >Database transactions are not required if the worker is not configured to be accessing the database so disabling the <a   href="Limiting_the_number_of_signatures.html">key usage counter</a> as well as not using any <a   href="Archiving.html">Archiver</a> would resolve this issue.    </p>
-</li><li class=" ">    <p  >Alternatively if the <a   href="Limiting_the_number_of_signatures.html">key usage counter</a> or an <a   href="Archiving.html">Archiver</a> must be used the application server could instead reconfigured with a higher value for the transaction timeout.    </p>
+    <p  >Possible reasons include, large file uploads and/or downloads, and/or slow network connections, slow HSM connection or HSM, or that contacting external servers takes long time (CRL/OCSP fetching or time-stamping etc).    </p>
+    <div class="section section-3" id="src-16220240_id-.Troubleshootingv4.3.0-Solutions">
+        <h3 class="heading "><span>Solutions</span></h3>
+<ul class=" "><li class=" ">    <p  >Since database transactions are not required if the worker is not configured to access the database, disabling the key usage counter, and not using any archivers will resolve this issue. For more information, see <a   href="Limiting_the_number_of_signatures.html">Limiting the number of signatures</a> and <a   href="Archiving.html">Archiving</a>.    </p>
+</li><li class=" ">    <p  >Alternatively, if the key usage counter or an Archiver must be used, reconfigure the application server with a higher value for the transaction timeout. For more information, see <a   href="Limiting_the_number_of_signatures.html">Limiting the number of signatures</a> and <a   href="Archiving.html">Archiving</a>.    </p>
 </li></ul>    </div>
     </div>
-    <div class="section section-1" id="src-5282181_id-.Troubleshootingv4.1.0-AdminGUIIssues">
+    </div>
+    <div class="section section-1" id="src-16220240_id-.Troubleshootingv4.3.0-AdminGUIIssues">
         <h1 class="heading "><span>Admin GUI Issues</span></h1>
-    <div class="section section-2" id="src-5282181_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y0LjEuMC1BZG1pbkdVSWxvZ2ludXNpbmdzbWFydGNhcmRmYWlsc29uNjQtYml0KHg4Nl82NCl2ZXJzaW9ub2ZXaW5kb3dz">
+    <div class="section section-2" id="src-16220240_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y0LjMuMC1BZG1pbkdVSWxvZ2ludXNpbmdzbWFydGNhcmRmYWlsc29uNjQtYml0KHg4Nl82NCl2ZXJzaW9ub2ZXaW5kb3dz">
         <h2 class="heading "><span>AdminGUI login using smartcard fails on 64-bit (x86_64) version of Windows</span></h2>
-    <p  >The 64-bit version of Oracle Java does not support PKCS#11. A 32-bit version of Java and the PKCS#11 shared library should be used instead on that platform.    </p>
+    <p  >The 64-bit version of Oracle Java does not support PKCS#11. On Windows, use a 32-bit version of Java and the PKCS#11 shared library.    </p>
     </div>
-    <div class="section section-2" id="src-5282181_id-.Troubleshootingv4.1.0-AdminGUIloginusingsmartcardfailsifpathtoDLLcontainsparenthesis">
+    <div class="section section-2" id="src-16220240_id-.Troubleshootingv4.3.0-AdminGUIloginusingsmartcardfailsifpathtoDLLcontainsparenthesis">
         <h2 class="heading "><span>AdminGUI login using smartcard fails if path to DLL contains parenthesis</span></h2>
-    <p  >For instance the following path would cause problem: c:\program files (x86)\middleware\pkcs11.dll<br/>The problem is Java <a  class="external-link" href="http://bugs.java.com/bugdatabase/view_bug.do?bug_id=7196009">bug 7196009</a>.<br/>Until this has been fixed you will need to install the middleware (PKCS#11/smartcard library) to a path without parenthesis.    </p>
+    <p  >On versions prior to JDK 7u80 and 8 b91, the Java bug <a  class="external-link" href="https://bugs.java.com/bugdatabase/view_bug.do?bug_id=7196009">JDK-7196009</a> will cause issues with configuration paths containing parenthesis, for example:<tt class=" "> c:\program files (x86)\middleware\pkcs11.dll</tt>.    </p>
+    <p  >As a workaround, make sure to install the middle-ware (PKCS#11/smartcard library) to a path not containing parenthesis.    </p>
     </div>
-    <div class="section section-2" id="src-5282181_id-.Troubleshootingv4.1.0-IPv6dualstackcangivepermissiondeniedwhentryingtoconnectfromAdminGUI">
+    <div class="section section-2" id="src-16220240_id-.Troubleshootingv4.3.0-IPv6dualstackcangivepermissiondeniedwhentryingtoconnectfromAdminGUI">
         <h2 class="heading "><span>IPv6 dualstack can give permission denied when trying to connect from AdminGUI</span></h2>
-    <p  >Trying to connect to SignServer over web services using the AdminGUI on Windows where both IPv4 and IPv6 is available can give &quot;permission denied&quot;.<br/>One workaround is to edit signserver-gui.cmd and adding the following to the command:<br/>-<a  class="external-link" href="http://Djava.net">Djava.net</a>.preferIPv4Stack=true    </p>
+    <p  >Connecting to SignServer over web services using the AdminGUI on Windows where both IPv4 and IPv6 is available, can give &quot;permission denied&quot;.    </p>
+    <p  >As a workaround, edit the <tt class=" ">signserver-gui.cmd</tt> and add the following to the command:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">-Djava.net.preferIPv4Stack=</code><code class="keyword">true</code></div>
+</div>
     </div>
-    <div class="section section-2" id="src-5282181_id-.Troubleshootingv4.1.0-AdminGUIloginusingsmartcardfailsmostofthetimewithsomecards">
-        <h2 class="heading "><span>AdminGUI login using smartcard fails most of the time with some cards</span></h2>
-    <p  >The card prompts for the PIN but then doesn't ask for which certificate to login with. Instead an error message with the text &quot;Received fatal alert: bad_certificate&quot; is displayed. This error message indicates that the server did not accept the provided certificate (ie, the issuer was not in the server's truststore). However, in this case the error could be because no certificate was possible to read from the card. This has been observed with some type of smart cards.    </p>
-    <p  >A workaround that has been working in those cases are:    </p>
+    </div>
+    <div class="section section-2" id="src-16220240_id-.Troubleshootingv4.3.0-AdminGUIloginusingsmartcardfailswithsomecards">
+        <h2 class="heading "><span>AdminGUI login using smartcard fails with some cards</span></h2>
+    <p  >The card prompts for the PIN but then does not ask for which certificate to login with. Instead, the following error message is shown: <i class=" ">Received fatal alert: bad_certificate</i>. The error message indicates that the server did not accept the provided certificate (ie, the issuer was not in the server's truststore). However, for certain types of smartcards, the issue is cased by inability to read certificate from the card.    </p>
+    <p  >The following workaround is proposed:    </p>
 <ol class=" "><li class=" ">    <p  >Start the GUI without the card inserted.    </p>
-</li><li class=" ">    <p  >Press Connect (without the card inserted).    </p>
-</li><li class=" ">    <p  >There will be an error message saying that &quot;slotListIndex is 0 but token has 0 slots&quot;. Just ignore it.    </p>
-</li><li class=" ">    <p  >Now insert the card and press Connect again.    </p>
-</li><li class=" ">    <p  >This time after the PIN prompt you are asked for which certificate to login with.    </p>
+</li><li class=" ">    <p  >Press <strong class=" ">Connect</strong> (without the card inserted).    </p>
+</li><li class=" ">    <p  >Ignore the error message <i class=" ">slotListIndex is 0 but token has 0 slots</i>.    </p>
+</li><li class=" ">    <p  >Insert the card and press <strong class=" ">Connect</strong> again.    </p>
+</li><li class=" ">    <p  >This time, after the PIN prompt you are asked for which certificate to login with.    </p>
 </li></ol>    <p  >    </p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-16220240_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y0LjMuMC1QMTFORy9KYWNrTkpJMTFJc3N1ZXM">
+        <h1 class="heading "><span>P11NG / JackNJI11 Issues</span></h1>
+    <div class="section section-2" id="src-16220240_id-.Troubleshootingv4.3.0-UnsatisfiedLinkError">
+        <h2 class="heading "><span>UnsatisfiedLinkError</span></h2>
+    <p  >There can be a conflict between the JNA implementation in SignServer and the one installed in the system. This can be seen as errors similar to the following:    </p>
+<ul class=" "><li class=" ">    <p  >java.lang.UnsatisfiedLinkError: com.sun.jna.Native.malloc(J)J    </p>
+</li><li class=" ">    <p  >java.lang.UnsatisfiedLinkError: Can't obtain static newInstance method for class com.sun.jna.Structure    </p>
+</li></ul>    <p  >Solution is to remove JNA from the system (i.e. apt-get remove libjna-java) or to run Java with:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">-Djava.library.path=</code></div>
+</div>
+    </div>
+    <p  >    </p>
     </div>
     </div>
         </div>
@@ -1155,7 +1217,7 @@
 
 
             <nav id="ht-post-nav">
-                <a href="Certificate_Renewals_Using_Peer_Systems.html" class="ht-post-nav-prev">
+                <a href="Setting_up_Key_Wrapping.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1164,7 +1226,7 @@
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Certificate Renewals Using Peer Systems</span>
+            <span>Setting up Key Wrapping</span>
         </a>
                 <a href="SignServer_Integration.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"

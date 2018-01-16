@@ -123,10 +123,18 @@ public class CryptoTokenHelper {
     public static final String PROPERTY_SELFSIGNED_VALIDITY = "SELFSIGNED_VALIDITY";
     public static final String PROPERTY_SELFSIGNED_SIGNATUREALGORITHM = "SELFSIGNED_SIGNATUREALGORITHM";
 
-    public static final String PROPERTY_ALLOWED_MECHANISMS = "ALLOWED_MECHANISMS";
+    public static final String INFO_KEY_SPECIFICATION = "Key specification";
+    public static final String INFO_KEY_ALGORITHM = "Key algorithm";
+    public static final String INFO_KEY_PUBLIC_EXPONENT = "Public exponent";
+    public static final String INFO_KEY_SIGNINGS = "Signings";
+    public static final String INFO_KEY_WRAPPING_KEY = "Wrapping Key";
+    public static final String INFO_KEY_WRAPPING_CIPHER = "Wrapping Cipher";
     
-    public static final String TOKEN_ENTRY_MODIFIABLE = "Modifiable";
-    public static final String TOKEN_ENTRY_PKCS11_ATTRIBUTES = "PKCS#11 Attributes";
+    public static final String INFO_KEY_MODIFIABLE = "Modifiable";
+    public static final String INFO_KEY_PKCS11_ATTRIBUTES = "PKCS#11 Attributes";
+    public static final String INFO_KEY_ALLOWED_MECHANISMS = "Allowed Mechanisms";
+
+    public static final String PROPERTY_ALLOWED_MECHANISMS = "ALLOWED_MECHANISMS";
     
     public static final String SECRET_KEY_PREFIX = "SEC:";
     public static final String CKM_SECRET_KEY_ALGO_SUFFIX = "_KEY_GEN";
@@ -589,7 +597,7 @@ public class CryptoTokenHelper {
                                     info.put(INFO_KEY_PUBLIC_EXPONENT,
                                             rsaKey.getPublicExponent().toString(10));
                                 }
-                                info.put(NO_OF_SIGNINGS, String.valueOf(getNoOfSignings(pubKey, services)));
+                                info.put(INFO_KEY_SIGNINGS, String.valueOf(getNoOfSignings(pubKey, services)));
                             }
                             try {
                                 entry.setParsedChain(chain);
@@ -615,10 +623,10 @@ public class CryptoTokenHelper {
 
                                 // Modifiable
                                 if (key == null) {
-                                    info.put(TOKEN_ENTRY_MODIFIABLE, "Error: " + keyError);
+                                    info.put(INFO_KEY_MODIFIABLE, "Error: " + keyError);
                                 } else {
                                     final boolean modifiable = p11.isKeyModifiable(key, providerName);
-                                    info.put(TOKEN_ENTRY_MODIFIABLE, String.valueOf(modifiable));
+                                    info.put(INFO_KEY_MODIFIABLE, String.valueOf(modifiable));
                                 }
                                 
                                 // Security Info
@@ -626,9 +634,9 @@ public class CryptoTokenHelper {
                                     try {
                                         final StringBuilder sb = new StringBuilder();
                                         p11.securityInfo(key, providerName, sb);
-                                        info.put(TOKEN_ENTRY_PKCS11_ATTRIBUTES, sb.toString().replace("  ", "\n"));
+                                        info.put(INFO_KEY_PKCS11_ATTRIBUTES, sb.toString().replace("  ", "\n"));
                                     } catch (P11RuntimeException ex) {
-                                        info.put(TOKEN_ENTRY_PKCS11_ATTRIBUTES, "Error: " + ex.getMessage());
+                                        info.put(INFO_KEY_PKCS11_ATTRIBUTES, "Error: " + ex.getMessage());
                                         if (LOG.isDebugEnabled()) {
                                             LOG.debug("Unable to query security info for key", ex);
                                         }
@@ -650,7 +658,7 @@ public class CryptoTokenHelper {
                             } catch (CertificateEncodingException ex) {
                                 LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
                             }
-                            info.put(NO_OF_SIGNINGS, String.valueOf(getNoOfSignings(certificate.getPublicKey(), services)));
+                            info.put(INFO_KEY_SIGNINGS, String.valueOf(getNoOfSignings(certificate.getPublicKey(), services)));
                             info.put(INFO_KEY_ALGORITHM, "Certificate");
                             info.put(INFO_KEY_SPECIFICATION, "n/a"); // Key specification is not applicable for trusted entries 
                         } else if (TokenEntry.TYPE_SECRETKEY_ENTRY.equals(type)) {
@@ -688,12 +696,6 @@ public class CryptoTokenHelper {
         }
         return result;
     }
-    public static final String INFO_KEY_SPECIFICATION = "Key specification";
-    public static final String INFO_KEY_ALGORITHM = "Key algorithm";
-    public static final String INFO_KEY_PUBLIC_EXPONENT = "Public exponent";
-    public static final String NO_OF_SIGNINGS = "Signings";
-    public static final String WRAPPING_KEY = "Wrapping Key";
-    public static final String WRAPPING_CIPHER = "Wrapping Cipher";
     
     private static boolean shouldBeIncluded(TokenEntry tokenEntry, QueryCriteria qc) throws QueryException {
         final List<Elem> terms = new ArrayList<>();

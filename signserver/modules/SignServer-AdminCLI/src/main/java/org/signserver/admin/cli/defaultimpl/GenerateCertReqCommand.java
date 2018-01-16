@@ -30,12 +30,12 @@ import org.signserver.common.WorkerIdentifier;
 public class GenerateCertReqCommand extends AbstractAdminCommand {
 
     private static final String HELP = "Usage: signserver generatecertreq <workerid> <dn> <signature algorithm>  <cert-req-filename> [-explicitecc] [-alias <key alias>|-nextkey]\n"
-            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem\n"
-            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithRSA\" /home/user/certtreq.pem -nextkey\n"
-            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\" \"SHA1WithRSA\" /home/user/certreq.pem -alias user1\n"
-            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithECDSA\" /home/user/certreq.pem -explicitecc\n"
-            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA1WithECDSA\" /home/user/certreq.pem -explicitecc -nextkey\n"
-            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\" \"SHA1WithECDSA\" /home/user/certreq.pem -explicitecc -alias user1\n\n";
+            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA256WithRSA\" /home/user/certtreq.pem\n"
+            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA256WithRSA\" /home/user/certtreq.pem -nextkey\n"
+            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\" \"SHA256WithRSA\" /home/user/certreq.pem -alias user1\n"
+            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA256WithECDSA\" /home/user/certreq.pem -explicitecc\n"
+            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\"  \"SHA256WithECDSA\" /home/user/certreq.pem -explicitecc -nextkey\n"
+            + "Example: signserver generatecertreq 1 \"CN=TestCertReq\" \"SHA256WithECDSA\" /home/user/certreq.pem -explicitecc -alias user1\n\n";
     private static final String FAIL = "Error: No worker with the given name could be found";
     private static final String SUCCESS = "PKCS10 Request successfully written to file ";
 

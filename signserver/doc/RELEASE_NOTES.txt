@@ -1,3 +1,10 @@
+SignServer 4.3.0
+----------------
+
+Notice:
+ - Default values for digest and signature algorithms have now changed to use SHA-256.
+
+
 SignServer 4.2.0
 ----------------
 

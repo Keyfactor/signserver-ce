@@ -12,10 +12,15 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.SecureRandom;
+import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.security.spec.ECGenParameterSpec;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,6 +31,7 @@ import java.util.TreeMap;
 import javax.persistence.EntityManager;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.ECKeyUtil;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.CertTools;
@@ -532,6 +538,43 @@ public class BaseProcessableTest extends TestCase {
         }
     }
     
+    /**
+     * Tests the publicKeyEquals method and especially that it works with explicit ECC parameters.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testPublicKeyEquals() throws Exception {
+        LOG.info("testPublicKeyEquals");
+        
+        BaseProcessable instance = new BaseProcessable() {
+            @Override
+            public Response processData(Request signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        };
+
+        Security.addProvider(new BouncyCastleProvider());
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance("ECDSA", "BC");
+        kpg.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom());
+        
+        PublicKey key1 = kpg.generateKeyPair().getPublic();
+        PublicKey key1ex = ECKeyUtil.publicToExplicitParameters(key1, "BC");
+        PublicKey key2 = kpg.generateKeyPair().getPublic();
+        
+        kpg = KeyPairGenerator.getInstance("RSA", "BC");
+        kpg.initialize(2048, new SecureRandom());
+        
+        PublicKey key3 = kpg.generateKeyPair().getPublic();
+        
+        assertTrue("key1 == key1", instance.publicKeyEquals(key1, key1));
+        assertTrue("key1 == key1ex", instance.publicKeyEquals(key1, key1ex));
+        assertTrue("key1ex == key1ex", instance.publicKeyEquals(key1ex, key1ex));
+        assertFalse("key1 != key2", instance.publicKeyEquals(key1, key2));
+        assertFalse("key2 != key1", instance.publicKeyEquals(key2, key1));
+        assertFalse("key1 != key3", instance.publicKeyEquals(key1, key3));
+        assertFalse("key3 != key1", instance.publicKeyEquals(key3, key1));
+    }
+
     /** CryptoToken only holding its properties and offering a way to access them. */
     private static class MockedCryptoToken extends NullCryptoToken {
 

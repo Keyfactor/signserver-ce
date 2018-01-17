@@ -698,14 +698,14 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
             File outFile2 = new File(outDir.getRoot().getAbsolutePath(), "doc2.xml");
             assertTrue("Output file1 exists: ", !outFile1.exists());
             assertTrue("Output file2 exists: ", !outFile2.exists());
-            // input files with original names have been renamed so should not be present
-            assertTrue("Input file1 exists: ", !file1.exists());
-            assertTrue("Input file2 exists: ", !file2.exists());
-            // input file with new names (.failed) should be present
+            // input files with original names should be present
+            assertTrue("Input file1 not exists: ", file1.exists());
+            assertTrue("Input file2 not exists: ", file2.exists());
+            // input file with new names (.failed) should not be present
             File renamedFile1 = new File(inDir.getRoot().getAbsolutePath(), "doc1.xml.failed");
             File renamedFile2 = new File(inDir.getRoot().getAbsolutePath(), "doc2.xml.failed");
-            assertTrue("Failed Input file1 not exists: ", renamedFile1.exists());
-            assertTrue("Failed Input file2 not exists: ", renamedFile2.exists());
+            assertTrue("Renamed Input file1 exists: ", !renamedFile1.exists());
+            assertTrue("Renamed Input file2 exists: ", !renamedFile2.exists());
         } finally {
             inDir.delete();
             outDir.delete();

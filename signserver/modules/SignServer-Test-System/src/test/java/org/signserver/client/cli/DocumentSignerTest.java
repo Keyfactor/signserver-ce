@@ -775,9 +775,6 @@ public class DocumentSignerTest extends ModulesTestCase {
             assertTrue("Output file exists: ", outFile != null && !outFile.exists());
             // input file should be present
             assertTrue("Input file not exists: ", inFile != null && inFile.exists());
-            renamedFile = new File(inFile.getAbsolutePath() + ".failed");
-            // input file with failed extension should not be present since input file is not touched/renamed when inFile flag is specified 
-            assertTrue("Renamed Input file exists: ", !renamedFile.exists());
         } finally {
             if (inFile != null) {
                 FileUtils.deleteQuietly(inFile);

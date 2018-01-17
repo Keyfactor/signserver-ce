@@ -21,7 +21,6 @@ import java.security.cert.CertStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -287,8 +286,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                         LOG.debug("Signer " + workerId + ": Key not configured or not available");
                     }
                     result.add("Key not configured or not available");
-                } else if (Arrays.equals(certificate.getPublicKey().getEncoded(),
-                        publicKeyInToken.getEncoded())) {
+                } else if (publicKeyEquals(publicKeyInToken, certificate.getPublicKey())) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Signer " + workerId + ": Certificate matches key");
                     }
@@ -359,7 +357,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
 
         return result;
     }
-
+    
     protected Store getCertStoreWithChain(Certificate signingCert, List<Certificate> signingCertificateChain) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CryptoTokenOfflineException, CertStoreException, CertificateEncodingException, IOException {
         if (signingCertificateChain == null) {
             throw new CryptoTokenOfflineException("Certificate chain not available");

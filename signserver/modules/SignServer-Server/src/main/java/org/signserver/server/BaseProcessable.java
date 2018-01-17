@@ -17,6 +17,8 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +33,7 @@ import java.util.Properties;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.ECKeyUtil;
 import org.bouncycastle.util.encoders.Hex;
 import org.cesecore.keybind.CertificateImportException;
 import org.cesecore.util.CertTools;
@@ -217,8 +220,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 ICryptoInstance instance = null;
                 try {
                     instance = acquireDefaultCryptoInstance(context);
-                    if (Arrays.equals(certFromConfig.getPublicKey().getEncoded(),
-                        instance.getPublicKey().getEncoded())) {
+                    if (publicKeyEquals(instance.getPublicKey(), certFromConfig.getPublicKey())) {
                         log.info("Activate: Signer " + workerId
                             + ": Certificate matches key");
                     } else {
@@ -892,4 +894,34 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         return results;
     }
 
+    /**
+     * Compares the first public key to the second public key.
+     * Note: The first key might be without explicit ECC parameters and in that case the method tries to convert it.
+     * @param keyInToken public key potentially without explicit ECC parameters
+     * @param keyFromCertificate public key potentially with explicit ECC parameters
+     * @return True if the first public key equals the second one or if the first public key equals the second one after converting the first to
+     * use explicit ECC parameters
+     */
+    protected boolean publicKeyEquals(PublicKey keyInToken, PublicKey keyFromCertificate) {
+        final byte[] certKeyEncoded = keyFromCertificate.getEncoded();
+        boolean result = Arrays.equals(keyInToken.getEncoded(), certKeyEncoded);
+
+        // It could be one with explicit ECC parameters
+        if (!result && keyFromCertificate.getAlgorithm().contains("EC")) {
+            if (log.isDebugEnabled()) {
+                log.debug("Trying to convert to key with explicit ECC parameters");
+            }
+
+            final PublicKey explicitKeyInToken;
+            try {
+                explicitKeyInToken = ECKeyUtil.publicToExplicitParameters(keyInToken, "BC");
+                result = Arrays.equals(explicitKeyInToken.getEncoded(), certKeyEncoded);
+            } catch (IllegalArgumentException | NoSuchAlgorithmException | NoSuchProviderException ex) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Unable to convert ECC key to explicit parameters", ex);
+                }
+            }
+        }
+        return result;
+    }
 }

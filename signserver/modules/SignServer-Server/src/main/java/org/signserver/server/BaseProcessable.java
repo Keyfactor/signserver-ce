@@ -907,7 +907,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         boolean result = Arrays.equals(keyInToken.getEncoded(), certKeyEncoded);
 
         // It could be one with explicit ECC parameters
-        if (!result && keyFromCertificate.getAlgorithm().contains("EC")) {
+        if (!result && keyInToken.getAlgorithm().contains("EC")) {
             if (log.isDebugEnabled()) {
                 log.debug("Trying to convert to key with explicit ECC parameters");
             }

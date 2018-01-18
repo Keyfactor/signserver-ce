@@ -30,6 +30,9 @@ import org.signserver.testutils.ModulesTestCase;
  * These tests can be disabled by setting the test.openssl.enabled test
  * configuration parameter to false for test environments where the openssl
  * CLI tool is not available.
+ * OpenSSL doesn't support RFC#5816, so for the time being run these tests
+ * with CERTIFICATE_DIGEST_ALGORITHM=SHA1.
+ * https://github.com/openssl/openssl/issues/2119
  * 
  * @author Marcus Lundblad
  * @version $Id$

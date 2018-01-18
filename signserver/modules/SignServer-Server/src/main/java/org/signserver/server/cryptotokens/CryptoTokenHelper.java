@@ -665,11 +665,13 @@ public class CryptoTokenHelper {
                             try {
                                 SecretKey secretKey = (SecretKey) keyStore.getKey(keyAlias, authCode);
 
-                                String secretKeyAlgo = secretKey.getAlgorithm();
-                                if (secretKeyAlgo.equals("1.3.14.3.2.7")) {
-                                    secretKeyAlgo = "DES";
+                                if (secretKey != null) {
+                                    String secretKeyAlgo = secretKey.getAlgorithm();
+                                    if (secretKeyAlgo.equals("1.3.14.3.2.7")) {
+                                        secretKeyAlgo = "DES";
+                                    }
+                                    info.put(INFO_KEY_ALGORITHM, secretKeyAlgo);
                                 }
-                                info.put(INFO_KEY_ALGORITHM, secretKeyAlgo);
                                 info.put(INFO_KEY_SPECIFICATION, "n/a");
                                 final Certificate[] chain = new Certificate[0];
                                 try {

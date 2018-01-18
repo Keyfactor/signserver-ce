@@ -1,3 +1,53 @@
+SignServer 4.2.1, 2018-01-25
+----------------------------
+
+** Bug
+    * [DSS-1069] - MRTD SOD Signer gives bad error on incorrect signature algorithm
+    * [DSS-1105] - XAdES unit test leaves temporary files
+    * [DSS-1361] - NPE on empty CRL
+    * [DSS-1371] - Exception on incorrect input to the signdatagroups command
+    * [DSS-1378] - Worker properties not prefixed with worker ID in sample config
+    * [DSS-1382] - Some signers not refusing to sign if misconfigured
+    * [DSS-1400] - Issuer DN not displayed for authorized clients in the status output
+    * [DSS-1403] - Incorrect property name for clientcli.dist.file in sample signserver_deploy.properties
+    * [DSS-1420] - SignClient leaves failed responses in the output directory
+    * [DSS-1424] - OpenSSL ts command does not like our sample time-stamp certificates
+    * [DSS-1442] - Change 'Selected Workers:' to 'Selected Workers' on Export Configuration
+    * [DSS-1447] - Empty fields under 'Generate Key' page result in ' Please, fill in all required fields'
+    * [DSS-1448] - Error message "database protection failed within the selected interval" should be displayed
+    * [DSS-1454] - Unused private methods left in KeystoreCryptoToken
+    * [DSS-1457] - Unit test failure during build on Windows
+    * [DSS-1458] - Application server path not printed by deploy command on Windows
+    * [DSS-1462] - TimeStamp Worker is not released before execution end of PDFSigner System Test case
+    * [DSS-1465] - MRTDSODSignerUnitTest uses incorrect dataGroup parameter 
+    * [DSS-1470] - Missing documentation how to enable first admin in admin web
+    * [DSS-1488] - Regression: Missing documentation for the performance test client in the manual
+    * [DSS-1535] - Importing admin certificate uses wrong issuer DN representation
+    * [DSS-1566] - Certificate doesn't match when cert request was using explict EC
+    * [DSS-1569] - Client CLI script on Windows misses EE features
+
+** New Feature
+    * [DSS-579] - Support for archiving requests also for other signers than the time-stamp signer
+    * [DSS-1412] - Include the performance test tool in Client CLI bundle
+    * [DSS-1474] - Add sample configuration file for the extended CMS signer
+    * [DSS-1499] - Make sure that a signature algorithm supported by the HSM is used for test signing
+
+** Task
+    * [DSS-1139] - Test SignServer with WildFly 10 and JBoss EAP 7 and Java 8
+    * [DSS-1570] - Update copyright year for 2018
+
+** Improvement
+    * [DSS-1329] - Write out key spec instead of just "asymmetric" for key entries
+    * [DSS-1377] - Make sure empty worker property values are treated as unset property
+    * [DSS-1427] - Reject client supplied hashes of the wrong length
+    * [DSS-1431] - Update quick start time-stamp demo setup to use the proper keystore
+    * [DSS-1446] - Remove 'Cancel' Link from 'Remove Key(s)'  and change 'Done' button to a link
+    * [DSS-1450] - Document and add test case for Plain Signer with NONEwithRSA
+    * [DSS-1452] - Load current could be hidden when adding authorized peers
+    * [DSS-1460] - Update documentation about archiving of requests
+    * [DSS-1518] - Consistent use of notes in the SignServer Manual
+
+
 SignServer 4.2.0, 2017-10-25
 ----------------------------
 

@@ -5,6 +5,25 @@ Notice:
  - Default values for digest and signature algorithms have now changed to use SHA-256.
 
 
+SignServer 4.2.1
+----------------
+
+New features and improvements:
+- Use a signature algorithm supported by HSM for test signing
+- Tested with WildFly 10, JBoss EAP 7 and Java 8
+- Performance test tool included in Client CLI download bundle
+- Documentation improvements
+- 9 other features or improvements
+
+Bug fixes:
+ - SignClient on Windows was missing some new enterprise features
+ - Error after importing certificate using explicit ECC parameters
+ - Issuer DN issue in Admin Web when importing admin certificate
+ - Issuer DN not displayed for authorized clients in Admin Web
+ - Exception on empty CRL in PDF signer
+ - 18 other bug fixes
+
+
 SignServer 4.2.0
 ----------------
 

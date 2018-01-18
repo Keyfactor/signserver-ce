@@ -24,7 +24,9 @@ if not exist %JAR%  (
 )
 
 rem Optional JARs
-for /f "tokens=*" %%a in ('dir /b /s %SIGNSRV_HOME%\lib\SignServer-Client-ValidationCLI-*.jar') do set VALIDATIONCLI_JAR=%%a 
+set VALIDATIONCLI_JAR=
+set ENTERPRISE_JAR=
+for /f "tokens=*" %%a in ('dir /b /s %SIGNSRV_HOME%\lib\SignServer-Client-ValidationCLI-*.jar') do set VALIDATIONCLI_JAR=%%a
 for /f "tokens=*" %%a in ('dir /b /s %SIGNSRV_HOME%\lib\SignServer-ClientCLI-Enterprise-*.jar') do set ENTERPRISE_JAR=%%a
 set OPTIONAL_CLASSPATH=%VALIDATIONCLI_JAR%;%ENTERPRISE_JAR%;%EXTRA_CLASSPATH%
 

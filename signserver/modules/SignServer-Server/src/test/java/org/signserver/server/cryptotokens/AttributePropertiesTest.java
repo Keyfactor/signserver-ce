@@ -118,6 +118,40 @@ public class AttributePropertiesTest {
     }
     
     /**
+     * Tests parsing from worker properties with one property in literal form with false boolean value.
+     */
+    @Test
+    public void testFromWorkerProperties_booleanFalse() {
+        LOG.info(">testFromWorkerProperties_booleanFalse");
+        
+        Properties properties = new Properties();
+        properties.setProperty("ATTRIBUTE.PRIVATE.RSA.CKA_VERIFY", "FaLsE");
+        properties.setProperty("OTHER", "true");
+        properties.setProperty("ATTRIBUTES", "Attributes value");
+        properties.setProperty("ATTRIBUTE", "Attribute value");
+        
+        List<AttributeProperties.Attribute> expectedPrivateRsaAttributes = Arrays.asList(
+                new AttributeProperties.Attribute(CKA.VERIFY, Boolean.FALSE)
+        );
+
+        AttributeProperties attributes = AttributeProperties.fromWorkerProperties(properties);
+        assertEquals(expectedPrivateRsaAttributes.toString(), attributes.getPrivateTemplate("RSA").toString());
+    }
+    
+    /**
+     * Tests parsing from worker properties with one property in literal form.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testFromWorkerProperties_booleanIllegal() {
+        LOG.info(">testFromWorkerProperties_booleanIllegal");
+        
+        Properties properties = new Properties();
+        properties.setProperty("ATTRIBUTE.PRIVATE.RSA.CKA_VERIFY", "not-boolean");
+
+        AttributeProperties.fromWorkerProperties(properties);
+    }
+
+    /**
      * Tests parsing from worker properties with multiple properties.
      */
     @Test

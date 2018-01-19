@@ -119,7 +119,13 @@ public class AttributeProperties {
                 result = AllowedMechanisms.parse(value).toBinaryEncoding();
                 break;
             default:
-                result = Boolean.parseBoolean(value);
+                if ("TRUE".equalsIgnoreCase(value)) {
+                    result = true;
+                } else if ("FALSE".equalsIgnoreCase(value)) {
+                    result = false;
+                } else {
+                    throw new IllegalArgumentException("Not a boolean value: " + value);
+                }
         }
         return result;
     }

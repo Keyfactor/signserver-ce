@@ -54,6 +54,28 @@ public class AttributePropertiesTest {
     }
     
     /**
+     * Tests parsing from worker properties with one property in capital hex.
+     * (This is needed as worker properties in SignServer are all using capital letters)
+     */
+    @Test
+    public void testFromWorkerProperties_onePropertyCapitalHex() {
+        LOG.info(">testFromWorkerProperties_onePropertyCapitalHex");
+        
+        Properties properties = new Properties();
+        properties.setProperty("ATTRIBUTE.PUBLIC.RSA.0X0000010A", "true"); // CKA_VERIFY
+        properties.setProperty("OTHER", "true");
+        properties.setProperty("ATTRIBUTES", "Attributes value");
+        properties.setProperty("ATTRIBUTE", "Attribute value");
+        
+        List<AttributeProperties.Attribute> expectedPublicRsaAttributes = Arrays.asList(
+                new AttributeProperties.Attribute(CKA.VERIFY, Boolean.TRUE)
+        );
+
+        AttributeProperties attributes = AttributeProperties.fromWorkerProperties(properties);
+        assertEquals(expectedPublicRsaAttributes.toString(), attributes.getPublicTemplate("RSA").toString());
+    }
+    
+    /**
      * Tests parsing from worker properties with one property in decimal.
      */
     @Test

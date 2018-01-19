@@ -80,7 +80,7 @@ public class AttributeProperties {
 
                         final String attribute = keyAttribute.substring(keyType.length() + 1);
                         final long attributeId;
-                        if (attribute.startsWith("0x")) {
+                        if (attribute.startsWith("0x") || attribute.startsWith("0X")) {
                             attributeId = Long.parseLong(attribute.substring("0x".length()), 16);
                         } else if (attribute.startsWith("CKA_")) {
                             Long id = AttributeNames.longFromName(attribute.substring("CKA_".length()));

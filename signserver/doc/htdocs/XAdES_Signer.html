@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.2.1</p>
                 </div>
             </header>
 
@@ -225,6 +225,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -1100,17 +1104,17 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-11569813"> <span>XAdES Signer</span></h1>
+</div>            <h1 id="src-11573983"> <span>XAdES Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >Fully qualified class name: <strong class=" ">org.signserver.module.xades.signer.XAdESSigner</strong>    </p>
-    <div class="section section-1" id="src-11569813_id-.XAdESSignerv4.2.0-Overview">
+    <div class="section section-1" id="src-11573983_id-.XAdESSignerv4.2.1-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The XAdES Signer creates XML signatures according to the specified profile of XAdES.    </p>
     </div>
-    <div class="section section-1" id="src-11569813_id-.XAdESSignerv4.2.0-AvailableProperties">
+    <div class="section section-1" id="src-11573983_id-.XAdESSignerv4.2.1-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1131,7 +1135,7 @@
         <p  >XADESFORM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Which profile of XAdES to use. Currently BES and T is supported. Default: BES    </p>
+        <p  >Profile of XAdES to use. Currently BES and T is supported. Default: BES    </p>
             </td>
         </tr>
     <tr>
@@ -1139,7 +1143,7 @@
         <p  >COMMITMENT_TYPES    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >List of commitment types to be indicated in the signature. Multiple values can be given separated by &quot;,&quot;. See list below for valid values. Optionally the constant NONE can be used to explicitly state that no commitment types should be included (this constant can only be used alone). Optional. Default: no commitment types are included.    </p>
+        <p  >List of commitment types to be indicated in the signature. Multiple values can be given separated by &quot;,&quot;. See <a   href="#src-11573983_id-.XAdESSignerv4.2.1-CommitmentTypes">Commitment Types</a> for valid values. Optionally, the constant NONE can be used to explicitly state that no commitment types should be included (this constant can only be used alone). Optional. Default: no commitment types are included.    </p>
             </td>
         </tr>
     <tr>
@@ -1163,7 +1167,7 @@
         <p  >CLAIMED_ROLE_FROM_USERNAME    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If this is set to true, use the user name from the request (provided by an authorizer) as the value for claimed role. If there is no user name provided fall back to the value set by CLAIMED_USER. If this is set to true and CLAIMED_ROLE is not set and the request doesn't contain a user name, the request will result in an error. Optional. Default: false.    </p>
+        <p  >If set to true, use the user name from the request (provided by an authorizer) as the value for claimed role. If there is no user name provided, fall back to the value set by CLAIMED_USER. If this is set to true, and CLAIMED_ROLE is not set, and the request does not contain a user name, the request will result in an error. Optional. Default: false.    </p>
             </td>
         </tr>
     <tr>
@@ -1171,41 +1175,27 @@
         <p  >INCLUDE_CERTIFICATE_LEVELS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Number of certificate levels to include in the document's KeyInfo (also see the common properties above). Minimum and default value is 1 which includes only the signer certificate. The value 2 includes the signer certificate and its issuer. To include all certificates specify at least the same value as number of certificates in the certificate chain.    </p>
+        <p  >Number of certificate levels to include in the document's KeyInfo (also see <a   href="Common_Properties.html">Common Properties</a>). Minimum and default value is <strong class=" ">1</strong>, which includes only the signer certificate. The value <strong class=" ">2</strong> includes the signer certificate and its issuer. To include all certificates, specify at least the same value as number of certificates in the certificate chain.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_URL    </p>
+        <p  >TSA_URL<span id="src-11573983_id-.XAdESSignerv4.2.1-TSA_URL"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >URL of Time-Stamping Authority. Required if XADESFORM=T and TSA_WORKER not specified.    </p>
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: this property can not be set at the same time as TSA_WORKER (see below).    </p>
-        </div>
-    </div>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ Cannot be set at the same time as <a   href="#src-11573983_id-.XAdESSignerv4.2.1-TSA_WORKER">TSA_WORKER</a>.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_WORKER    </p>
+        <p  >TSA_WORKER<span id="src-11573983_id-.XAdESSignerv4.2.1-TSA_WORKER"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Specify a worker ID or worker name for a time stamp signer. Required if XADESFORM=T and TSA_URL not specified.<br/>This will use internal calls and can only be used for a time stamp authority running in the same SignServer instance.    </p>
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: Use this option instead of TSA_URL when using a time stamp signer running in the same SignServer instance to avoid thread deadlocks under high load.    </p>
-        </div>
-    </div>
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: This property can not be set at the same time as TSA_URL (see above).    </p>
-        </div>
-    </div>
+        <p  >Specify a worker ID or worker name for a time stamp signer. Required if XADESFORM=T and TSA_URL are not specified. This will use internal calls and can only be used for a time stamp authority running in the same SignServer instance.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ Use this option instead of TSA_URL when using a time stamp signer running in the same SignServer instance to avoid thread deadlocks under high load. Cannot be set at the same time as TSA_URL.    </p>
             </td>
         </tr>
     <tr>
@@ -1227,7 +1217,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-11569813_id-.XAdESSignerv4.2.0-CommitmentTypes">
+    <div class="section section-1" id="src-11573983_id-.XAdESSignerv4.2.1-CommitmentTypes">
         <h1 class="heading "><span>Commitment Types</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1248,7 +1238,7 @@
         <p  >NONE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Don't include any commitment type. This can not be used in conjunction with the other constants below    </p>
+        <p  >Do not include any commitment type. This cannot be used in conjunction with the other constants below.    </p>
             </td>
         </tr>
     <tr>
@@ -1256,7 +1246,7 @@
         <p  >PROOF_OF_APPROVAL    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Indicates that the signer has approved the content of the signed data object    </p>
+        <p  >Indicates that the signer has approved the content of the signed data object.    </p>
             </td>
         </tr>
     <tr>
@@ -1264,7 +1254,7 @@
         <p  >PROOF_OF_CREATION    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Indicates that the signer has created the signed data object (but not necessarily approved, nor sent it)    </p>
+        <p  >Indicates that the signer has created the signed data object (but not necessarily approved, nor sent it).    </p>
             </td>
         </tr>
     <tr>
@@ -1272,7 +1262,7 @@
         <p  >PROOF_OF_DELIVERY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Indicates that the TSP providing that indication has delivered a signed data object in a local store accessible to the recipient of the signed data object    </p>
+        <p  >Indicates that the TSP providing that indication has delivered a signed data object in a local store accessible to the recipient of the signed data object.    </p>
             </td>
         </tr>
     <tr>
@@ -1280,7 +1270,7 @@
         <p  >PROOF_OF_ORIGIN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Indicates that the signer recognizes to have created, approved and sent the signed data object    </p>
+        <p  >Indicates that the signer recognizes to have created, approved and sent the signed data object.    </p>
             </td>
         </tr>
     <tr>
@@ -1288,7 +1278,7 @@
         <p  >PROOF_OF_RECEIPT    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Indicates that signer recognizes to have received the content of the signed data object    </p>
+        <p  >Indicates that the signer recognizes to have received the content of the signed data object.    </p>
             </td>
         </tr>
     <tr>
@@ -1296,7 +1286,7 @@
         <p  >PROOF_OF_SENDER    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Indicates that the entity providing that indication has sent the signed data object (but not necessarily created it)    </p>
+        <p  >Indicates that the entity providing that indication has sent the signed data object (but not necessarily created it).    </p>
             </td>
         </tr>
 </tbody>        </table>
@@ -1346,7 +1336,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

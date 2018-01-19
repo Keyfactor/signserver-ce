@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.2.1</p>
                 </div>
             </header>
 
@@ -225,6 +225,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -1194,10 +1198,7 @@
 </li><li class=" ">    <p  ><strong class=" ">generatecertreq:</strong><br/>Used to generate a certificate request for a worker to be signed by a certificate authority. It takes distinguished name and signature algorithm as parameters and writes the request in PEM format to file. An optional key alias can be specified to generate a request given a specific key alias from the crypto token.    </p>
 </li><li class=" ">    <p  ><strong class=" ">activatecryptotoken:</strong><br/>Used to activate crypto tokens. Authentication code is usually the PIN used to unlock the keys on the HSM. Not used if the token is set to auto-activation.    </p>
 </li><li class=" ">    <p  ><strong class=" ">deactivatecryptotoken:</strong><br/>Brings a crypto token off-line. Not used if token is set to auto-activation.    </p>
-</li></ul>    <div class="section section-2" id="src-9798082_id-.AdministrationCLIv4.2.0-">
-        <h2 class="heading "><span></span></h2>
-    </div>
-    <div class="section section-2" id="src-9798082_id-.AdministrationCLIv4.2.0-AuthorizationRelated">
+</li></ul>    <div class="section section-2" id="src-9798082_id-.AdministrationCLIv4.2.0-AuthorizationRelated">
         <h2 class="heading "><span>Authorization Related</span></h2>
     <p  >These commands are used to configure the internal client certificate authorization when it is turned on. It controls which clients that is authorized to request a processable worker.    </p>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">addauthorizedclient:</strong><br/>Adds a client certificate to a processable workers list of acceptable clients using this worker. Specify certificate serial number in hex and the Issuer DN of the client certificate. If DN components contains commas, these needs to be escaped with backslashes. Alternatively a certificate file (PEM or DER format) can be specified, from which the serial number and issuer DN is fetched.    </p>
@@ -1332,7 +1333,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

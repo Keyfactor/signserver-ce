@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.2.1</p>
                 </div>
             </header>
 
@@ -225,6 +225,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -1097,20 +1101,19 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                             </ul>
-</div>            <h1 id="src-5282120"> <span>Deploy-time Configuration</span></h1>
+</div>            <h1 id="src-11573671"> <span>Deploy-time Configuration</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >Properties configured in conf/signserver_deploy.properties are used when deploying SignServer to the application server. Properties includes settings used by the deployment script to find the application server, what database type to use or other settings that should be included in the deployment of the application.    </p>
+    <p  >Properties configured in conf/signserver_deploy.properties are used when deploying SignServer to the application server. The properties include settings used by the deployment script to find the application server, the database type to use, and other settings included in the deployment of the application.    </p>
     <div  class="confbox admonition admonition-note">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
                 <div class="admonition-body">
-    <p  >For most changes in signserver_deploy.properties and databasprotection.properties to take affect the application needs to be deployed again with &quot;bin/ant deploy&quot;. It is not necessary to run &quot;bin/ant clean&quot; though.    </p>
+    <p  >To ensure that changes in signserver_deploy.properties and databasprotection.properties take affect, the application needs to be deployed again using <strong class=" ">bin/ant deploy</strong>. It is however not necessary to run <strong class=" ">bin/ant clean</strong>.    </p>
         </div>
     </div>
-    <p  >    </p>
-    <p  >See the sample configuration script conf/signserver_deploy.properties.sample for the available options and default values.    </p>
+    <p  >See the sample configuration script conf/signserver_deploy.properties.sample for available options and default values.    </p>
     <p  >    </p>
     <p  >    </p>
     <p  >    </p>
@@ -1158,7 +1161,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

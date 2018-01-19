@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.2.1</p>
                 </div>
             </header>
 
@@ -225,6 +225,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -1100,24 +1104,19 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-11568086"> <span>Extended CMS Signer</span></h1>
+</div>            <h1 id="src-11573701"> <span>Extended CMS Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: This is a SignServer Enterprise Edition (EE) feature.    </p>
-        </div>
-    </div>
     <p  >    </p>
-    <p  >The extended CMS signer has the fully qualified class name: <strong class=" ">org.signserver.module.extendedcmssigner.ExtendedCMSSigner</strong>.    </p>
-    <div class="section section-1" id="src-11568086_id-.ExtendedCMSSignerv4.2.0-Overview">
+    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
+    <p  >The signer has the fully qualified class name: <strong class=" ">org.signserver.module.extendedcmssigner.ExtendedCMSSigner</strong>.    </p>
+    <div class="section section-1" id="src-11573701_id-.ExtendedCMSSignerv4.2.1-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The extended CMS signer, in addition to all the features provided by the regular <a   href="CMS_Signer.html">CMS signer</a>, has support for timestamping.    </p>
     </div>
-    <div class="section section-1" id="src-11568086_id-.ExtendedCMSSignerv4.2.0-AvailableProperties">
+    <div class="section section-1" id="src-11573701_id-.ExtendedCMSSignerv4.2.1-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1138,7 +1137,7 @@
         <p  >TSA_WORKER    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Worker ID or name of internal timestamp signer in the same SignServer (Optional, default: none). This property can not be combined with TSA_URL.    </p>
+        <p  >Worker ID or name of internal timestamp signer in the same SignServer. Optional, default: none. This property cannot be combined with TSA_URL.    </p>
             </td>
         </tr>
     <tr>
@@ -1146,7 +1145,7 @@
         <p  >TSA_URL    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >URL of external timestamp authority (Optional, default: none). This property can not be combined with TSA_WORKER.    </p>
+        <p  >URL of external timestamp authority. Optional, default: none. This property cannot be combined with TSA_WORKER.    </p>
             </td>
         </tr>
     <tr>
@@ -1154,7 +1153,7 @@
         <p  >TSA_USERNAME    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Login username used if the TSA uses HTTP Basic Auth (Optional, default: none).    </p>
+        <p  >Login username used if the TSA uses HTTP Basic Auth. Optional, default: none.    </p>
             </td>
         </tr>
     <tr>
@@ -1162,7 +1161,7 @@
         <p  >TSA_PASSWORD    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Login password used if the TSA uses HTTP Basic Auth (Required if TSA_USERNAME specified, default: none).    </p>
+        <p  >Login password used if the TSA uses HTTP Basic Auth. Required if TSA_USERNAME is specified. Default: none.    </p>
             </td>
         </tr>
 </tbody>        </table>
@@ -1213,7 +1212,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.2.1</p>
                 </div>
             </header>
 
@@ -225,6 +225,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -1100,14 +1104,14 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="Common_configuration.html">Common configuration</a></li>
                                                             </ul>
-</div>            <h1 id="src-5287441"> <span>Limiting the number of signatures</span></h1>
+</div>            <h1 id="src-11573963"> <span>Limiting the number of signatures</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >By default SignServer keeps track of the number of signings performed with each key by holding counters in the database that are updated for each signing. The following worker properties controls the key usage counter:    </p>
+    <p  >By default SignServer keeps track of the number of signings performed with each key, by holding counters in the database that are updated for each signing. The following worker properties control the key usage counter:    </p>
     <div  class="tablewrap">
-        <table class="wrapped confluenceTable">
+        <table class="confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />
@@ -1125,13 +1129,10 @@
         <p  >KEYUSAGELIMIT    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Sets how many signatures that are allowed to be created with the same key by this worker (default is -1 = no limit).<br/>After the limit has been reached the worker is considered offline.    </p>
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note that the counter is per key and not per worker so if multiple workers share the same key they will all increment the counter.<br/>This also means that the worker is active again after it has gotten a new certificate/key.    </p>
-        </div>
-    </div>
+        <p  >Specifies the number of signatures allowed to be created with the same key by this worker. Default is <strong class=" ">-1</strong> = no limit.    </p>
+    <p  >After the limit has been reached, the worker is considered offline.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ Note that the counter is per key and not per worker. Thus, if multiple workers share the same key they will all increment the counter. This also means that the worker will be active again after it has gotten a new certificate/key.    </p>
             </td>
         </tr>
     <tr>
@@ -1139,12 +1140,13 @@
         <p  >DISABLEKEYUSAGECOUNTER    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >By default all key usages are counted but by specifying this as &quot;TRUE&quot; key usages performed by this worker will not be counted. Disabling the key usage counter can be a gain in performance as it will be less database transactions. However, if you have requirements on the number of allowed signings for one worker make sure to not use the same key with another worker for which the counter is disabled as those uses will then be missed.    </p>
+        <p  >By default, all key usages are counted, but by specifying this as <strong class=" ">TRUE,</strong> key usages performed by this worker will not be counted. Disabling the key usage counter can improve performance, as it means less database transaction. However, if you have requirements on the number of allowed signings for one worker, ensure not to use the same key with another worker for which the counter is disabled, as those uses will then be missed.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ The key usage counter cannot be disabled for a worker if KEYUSAGELIMIT is also specified.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
-    <p  >The key usage counter can not be disabled for a worker if KEYUSAGELIMIT is also specified.    </p>
     <p  >    </p>
         </div>
 
@@ -1190,7 +1192,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

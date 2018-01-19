@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.2.1</p>
                 </div>
             </header>
 
@@ -225,6 +225,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -1100,15 +1104,15 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Components.html">SignServer Components</a></li>
                                                                                      <li><a href="Archivers.html">Archivers</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277878"> <span>OldDatabaseArchiver</span></h1>
+</div>            <h1 id="src-11573934"> <span>OldDatabaseArchiver</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >The default archiver used if the the property <strong class=" ">ARCHIVE=</strong><i class=" ">true</i> is set or if the <strong class=" ">ARCHIVERS</strong> property contains its class name. This Archiver archives to the <strong class=" ">ArchiveData</strong> database table using the same datasource as SignServer uses for accessing the database for its configuration etc.    </p>
+    <p  >The default archiver used if the the property <strong class=" ">ARCHIVE=true</strong> is set, or if the <strong class=" ">ARCHIVERS</strong> property contains its class name. This Archiver archives to the <strong class=" ">ArchiveData</strong> database table using the same datasource as SignServer uses for accessing the database for its configuration etc.    </p>
     <p  >The data is stored in an XML encoded <strong class=" ">Base64PutHashMap</strong>. In the <strong class=" ">dataEncoding</strong> column, this format is indicated as <strong class=" ">DATA_ENCODING_XML</strong>.    </p>
     <p  >ARCHIVERS=<strong class=" ">org.signserver.server.archive.olddbarchiver.OldDatabaseArchiver</strong>    </p>
-    <div class="section section-1" id="src-5277878_id-.OldDatabaseArchiverv4.1.0-WorkerProperties">
+    <div class="section section-1" id="src-11573934_id-.OldDatabaseArchiverv4.2.1-WorkerProperties">
         <h1 class="heading "><span>Worker Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1129,14 +1133,17 @@
         <p  >ARCHIVERx.ARCHIVE_OF_TYPE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Where &quot;x&quot; is the index of the Archiver in the ARCHIVERS property. Determines what this Archiver should archive.    </p>
-    <p  >Alternatives are:    </p>
-<ul class=" "><li class=" ">    <p  >&quot;REQUEST&quot;,    </p>
-</li><li class=" ">    <p  >&quot;RESPONSE&quot;    </p>
-</li><li class=" ">    <p  >&quot;REQUEST_AND_RESPONSE&quot;.    </p>
-</li></ul>    <p  >Default is &quot;RESPONSE&quot;.    </p>
+        <p  >Where &quot;x&quot; is the index of the Archiver in the ARCHIVERS property. Determines what this Archiver should archive. Valid values:    </p>
+<ul class=" "><li class=" ">    <p  >REQUEST    </p>
+</li><li class=" ">    <p  >RESPONSE    </p>
+</li><li class=" ">    <p  >REQUEST_AND_RESPONSE    </p>
+</li></ul>    <p  >Default: RESPONSE.    </p>
     <p  >Example:    </p>
-<pre class=" ">ARCHIVER0.ARCHIVE_OF_TYPE=REQUEST_AND_RESPONSE</pre>    <p  >Currently archiving of requests is only supported by <strong class=" ">TimeStampSigner</strong> and <strong class=" ">MSAuthCodeTimeStampSigner</strong>.    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">ARCHIVER0.ARCHIVE_OF_TYPE=REQUEST_AND_RESPONSE </code></div>
+</div>
+    </div>
             </td>
         </tr>
     <tr>
@@ -1144,7 +1151,7 @@
         <p  >ARCHIVERx.USE_FORWARDED_ADDRESS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Where &quot;x&quot; is the index of the archiver in the <strong class=" ">ARCHIVERS</strong> property. If this property is set to <i class=" ">true</i>, IP addresses in the comma-separated list given in the <strong class=" ">X-Forwarded-For</strong> header is used as the remote IP stored in the archive in case this header is set, by default the last forwarded address is used. If the header is not included, the IP address the request comes from is used (the same behavior as when this property isn't set, or set to &quot;false&quot;). This is useful when running a proxy in front of SignServer, to record the original IP address of the client, instead of the proxy's IP address. Defaults to <i class=" ">false</i>.    </p>
+        <p  >Where &quot;x&quot; is the index of the archiver in the <strong class=" ">ARCHIVERS</strong> property. If this property is set to <strong class=" ">true,</strong> IP addresses in the comma-separated list given in the <strong class=" ">X-Forwarded-For</strong> header is used as the remote IP stored in the archive in case this header is set (by default the last forwarded address is used). If the header is not included, the IP address the request comes from, is used (the same behavior as when this property is not set, or set to <strong class=" ">false</strong>). This is useful when running a proxy in front of SignServer, to record the original IP address of the client, instead of the proxy's IP address. Default: <strong class=" ">false.</strong>    </p>
             </td>
         </tr>
     <tr>
@@ -1152,7 +1159,7 @@
         <p  >ARCHIVERx.MAX_FORWARDED_ADDRESSES    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Where &quot;x&quot; is the index of the archiver in the ARCHIVERS property. Sets the maximum number of forwarded addresses to add the remote IP in the archive, counted from the end. The addresses is listed in the order they appear in the header. The default value is 1 (only include the last address). This property is only used when <strong class=" ">USE_FORWARDED_ADDRESS</strong> is set to <i class=" ">true</i>.    </p>
+        <p  >Where &quot;x&quot; is the index of the archiver in the ARCHIVERS property. Sets the maximum number of forwarded addresses to add the remote IP in the archive, counted from the end. The addresses are listed in the order they appear in the header. Default: <strong class=" ">1</strong> (only include the last address). This property is only used when <strong class=" ">USE_FORWARDED_ADDRESS</strong> is set to <strong class=" ">true.</strong>    </p>
             </td>
         </tr>
     <tr>
@@ -1160,13 +1167,13 @@
         <p  >ARCHIVERx.INCLUDE_DIRECT_ADDRESS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Where &quot;x&quot; is the index of the archiver in the ARCHIVERS property. When both this property and <strong class=" ">USE_FORWARDED_ADDRESS</strong> is set to <i class=" ">true</i>, the host IP address (direct address) is added to the end of the list of forwarded addresses. This address is not taken into account for the number of forwarded addresses by <strong class=" ">MAX_FORWARDED_ADDRESSES</strong> above. The default is <i class=" ">false</i> (not included). This property is only used when <strong class=" ">USE_FORWARDED_ADDRESS</strong> is set to <i class=" ">true</i>.    </p>
+        <p  >Where &quot;x&quot; is the index of the archiver in the ARCHIVERS property. When both this property and <strong class=" ">USE_FORWARDED_ADDRESS</strong> is set to <strong class=" ">true,</strong> the host IP address (direct address) is added to the end of the list of forwarded addresses. This address is not taken into account for the number of forwarded addresses by <strong class=" ">MAX_FORWARDED_ADDRESSES</strong> above. Default: <strong class=" ">false</strong> (not included). This property is only used when <strong class=" ">USE_FORWARDED_ADDRESS</strong> is set to <strong class=" ">true.</strong>    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-5277878_id-.OldDatabaseArchiverv4.1.0-ArchiveDatatable">
-        <h2 class="heading "><span>ArchiveData table</span></h2>
+    <div class="section section-2" id="src-11573934_id-.OldDatabaseArchiverv4.2.1-ArchiveDatatableArchiveDatatable">
+        <h2 class="heading "><span id="src-11573934_id-.OldDatabaseArchiverv4.2.1-ArchiveDatatable" class="confluence-anchor-link"></span><span>ArchiveData table </span></h2>
     <p  >The exact database table structure is described in the SQL scripts available under doc/sql-scripts/.    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1203,16 +1210,17 @@
         <p  >archiveId    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Some identifier for the produced item.    </p>
-    <p  >For the <strong class=" ">TimeStampSigner</strong> this would be the Time stamp token serial number (in hex encoding). Other signers might use a hash of the request document and the transaction ID.    </p>
+        <p  >Identifier for the produced item.    </p>
+    <p  >For the <strong class=" ">TimeStampSigner, </strong>this would be the Time stamp token serial number (in hex encoding). Other signers might use a hash of the request document and the transaction ID.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >requestCertSerialnumber    </p>
+        <p  >requestCertSerialnumber<span id="src-11573934_id-.OldDatabaseArchiverv4.2.1-requestCertSerialnumber"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Serial number (in hex encoding) of the client certificate (if any) used by the client.<br/>Notice: This only indicates that the client certificate where used when establishing the connection to the web server and not wither the worker required a client certificate or not or if it did any additional checks if the authenticated client was authorized.    </p>
+        <p  >Serial number (in hex encoding) of the client certificate (if any) used by the client.<br/>    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ This only indicates that the client certificate was used when establishing the connection to the web server, and not wether the worker required a client certificate or not, nor if it checked if the authenticated client was authorized.    </p>
             </td>
         </tr>
     <tr>
@@ -1220,7 +1228,7 @@
         <p  >requestIP    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >By default IP address of the host connecting. When <strong class=" ">USE_FORWARDED_ADDRESS</strong> is set to <i class=" ">true</i> this contains a list of forwarded IP addresses from <strong class=" ">X-Forwarded-For</strong> optionally ending with the host address (when setting <strong class=" ">INCLUDE_DIRECT_ADDRESS</strong> to <i class=" ">true</i>).    </p>
+        <p  >By default IP address of the host connecting. When <strong class=" ">USE_FORWARDED_ADDRESS</strong> is set to <strong class=" ">true</strong>, this contains a list of forwarded IP addresses from <strong class=" ">X-Forwarded-For</strong> optionally ending with the host address (when setting <strong class=" ">INCLUDE_DIRECT_ADDRESS</strong> to <strong class=" ">true).</strong>    </p>
             </td>
         </tr>
     <tr>
@@ -1229,7 +1237,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Issuer DN (in string representation) of the issuer of the client certificate (if any) used by the client.    </p>
-    <p  >See also note about <strong class=" ">requestCertSerialnumber</strong>.    </p>
+    <p  >See also note about <a   href="#src-11573934_id-.OldDatabaseArchiverv4.2.1-requestCertSerialnumber">requestCertSerialnumber</a>.    </p>
             </td>
         </tr>
     <tr>
@@ -1253,7 +1261,7 @@
         <p  >type    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The type of archivable item. Currently this could be:<br/>0 - TYPE_RESPONSE<br/>1 - TYPE_REQUEST    </p>
+        <p  >The type of archivable item. Valid values:<br/>0 - TYPE_RESPONSE<br/>1 - TYPE_REQUEST    </p>
             </td>
         </tr>
     <tr>
@@ -1261,8 +1269,8 @@
         <p  >dataEncoding    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Type of encoding used for the archiveData. Currently this could be:<br/>NULL - DATA_ENCODING_XML<br/>0 - DATA_ENCODING_XML<br/>1 - DATA_ENCODING_BASE64    </p>
-    <p  >Where <strong class=" ">DATA_ENCODING_XML</strong> uses the <strong class=" ">Base64PutHashMap</strong> and <strong class=" ">DATA_ENCODING_BASE64</strong> uses a plain Base64 encoding of the binary data.    </p>
+        <p  >Type of encoding used for the archiveData. Valid values:<br/>NULL - DATA_ENCODING_XML<br/>0 - DATA_ENCODING_XML<br/>1 - DATA_ENCODING_BASE64    </p>
+    <p  >Where <strong class=" ">DATA_ENCODING_XML</strong> uses the <strong class=" ">Base64PutHashMap</strong>, and <strong class=" ">DATA_ENCODING_BASE64</strong> uses a plain Base64 encoding of the binary data.    </p>
             </td>
         </tr>
 </tbody>        </table>
@@ -1313,7 +1321,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

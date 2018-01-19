@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.2.1</p>
                 </div>
             </header>
 
@@ -225,6 +225,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -1097,59 +1101,51 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                             </ul>
-</div>            <h1 id="src-5288330"> <span>Peer Systems</span></h1>
+</div>            <h1 id="src-11573725"> <span>Peer Systems</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: This is a SignServer Enterprise Edition (EE) feature.    </p>
-        </div>
-    </div>
     <p  >    </p>
-    <p  >An SignServe instance can be setup to be the target of remote operations from an EJBCA instance. Connections are made using dual authenticated HTTPS. This is similar to how you use a client certificate to authenticate using the Admin GUI or Admin Web in order to manage a SignServer instance, but in this case the configured administrator is another EJBCA instance.    </p>
-    <p  >Normally the instance with higher security requirements (e.g. an EJBCA acting as CA) initiates connections to a system with lower security requirements (e.g. a SignServer instance but it can also be an EJBCA acting as VA or RA). Currently, SignServer only implements support for incoming peer connections.    </p>
-    <div class="section section-1" id="src-5288330_id-.PeerSystemsv4.2.0-PeerSystemsforCertificateRenewal">
+    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
+    <p  >A SignServer instance can be setup to be the target of remote operations from an EJBCA instance. Connections are made using dual authenticated HTTPS, similar to how you use a client certificate to authenticate using the Admin GUI or Admin Web to manage a SignServer instance. However, in this case the configured administrator is another EJBCA instance.    </p>
+    <p  >Generally, the instance with higher security requirements (for example, an EJBCA acting as CA) initiates connections to a system with lower security requirements (for example, a SignServer instance or an EJBCA acting as VA or RA). SignServer currently only implements support for incoming peer connections.    </p>
+    <div class="section section-1" id="src-11573725_id-.PeerSystemsv4.2.1-PeerSystemsforCertificateRenewal">
         <h1 class="heading "><span>Peer Systems for Certificate Renewal</span></h1>
-    <p  >SignServer can be configured to expose the worker's keys as remote key bindings in EJBCA and that way allow the EJBCA administrators to issue new certificates to workers in SignServer directly from within the EJBCA interface and without incoming network connections to the CA.    </p>
-    <p  >See the Operations Guide page <a   href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals using Peer Systems</a> for step-by step instructions on how to typically set up the systems for certificate renewal using peer systems.    </p>
-    <p  >Alternatively see the <a   href="RenewalWorker.html">Renewal Worker</a> which instead of Peer Systems uses the EJBCA web services interface but in that case connects in to the CA.    </p>
+    <p  >SignServer can be configured to expose the worker's keys as Remote Key Bindings in EJBCA. This allows the EJBCA administrators to issue new certificates to workers in SignServer directly from within the EJBCA interface, without incoming network connections to the CA.    </p>
+    <p  >For instructions on how to set up the systems for certificate renewal using peer systems, see <a   href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>. Alternatively, see <a   href="RenewalWorker.html">Renewal Worker</a>, which instead of Peer Systems uses the EJBCA web services interface and connects in to the CA.    </p>
     </div>
-    <div class="section section-1" id="src-5288330_id-.PeerSystemsv4.2.0-MappingSignServerWorkerstoRemoteKeyBindingsinEJBCA">
+    <div class="section section-1" id="src-11573725_id-.PeerSystemsv4.2.1-MappingSignServerWorkerstoRemoteKeyBindingsinEJBCA">
         <h1 class="heading "><span>Mapping SignServer Workers to Remote Key Bindings in EJBCA</span></h1>
-    <p  >EJBCA has the concept called Internal Key Bindings and when those are accessed over peer systems those are seen as Remote Key Bindings. SignServer does not explicitly have Internal Key Bindings but a worker having a key assigned to it could be seen from the EJBCA side as a Remote Key Binding. How that is done will be described below.    </p>
-    <div class="section section-2" id="src-5288330_id-.PeerSystemsv4.2.0-ListedKeyBindings">
+    <p  >EJBCA has a concept called Internal Key Bindings. When accessed over peer systems, Internal Key Bindings are seen as Remote Key Bindings. SignServer does not explicitly have Internal Key Bindings, but a worker having a key assigned to it could be seen from the EJBCA side as a Remote Key Binding. How this is done is described below.    </p>
+    <div class="section section-2" id="src-11573725_id-.PeerSystemsv4.2.1-ListedKeyBindings">
         <h2 class="heading "><span>Listed Key Bindings</span></h2>
-    <p  >All workers of worker type <i class=" ">PROCESSABLE</i> can be exposed as a remote key binding to EJBCA over peers if they have a crypto token either internally or by referencing one using the <i class=" ">CRYPTOTOKEN</i> worker property.    </p>
-    <p  >By setting the worker property PEERS_VISIBLE=true the worker will be considered when returning the list of key bindings to EJBCA.    </p>
+    <p  >All workers of worker type PROCESSABLE can be exposed as a remote key binding to EJBCA over peers, if they have a crypto token either internally or by referencing one using the CRYPTOTOKEN worker property.    </p>
+    <p  >By setting the worker property PEERS_VISIBLE=true, the worker will be considered when returning the list of key bindings to EJBCA.    </p>
     </div>
-    <div class="section section-2" id="src-5288330_id-.PeerSystemsv4.2.0-CertificateFingerprint">
+    <div class="section section-2" id="src-11573725_id-.PeerSystemsv4.2.1-CertificateFingerprint">
         <h2 class="heading "><span>Certificate Fingerprint</span></h2>
-    <p  >After a worker has been renewed over peers, the worker will have the property PEERS_ISSUED=true indicating that the current certificate is issued by the remote peer. This will cause SignServer to include the certificate fingerprint when exposing the remote internal key binding. The consequence on the EJBCA side is that if it was the issuer of the certificate the web GUI will display a link to the certificate and match it to an end entity but if that certificate is not available in the EJBCA database, it will not display the remote internal key binding at all as it is assumed the certificate is then managed by an other CA. For this reason the PEERS_ISSUED property is not set for new workers (or set to false) so that EJBCA will list it and the first certificate can be issued.    </p>
+    <p  >After a worker has been renewed over peers, the worker will have the property PEERS_ISSUED=true, indicating that the current certificate is issued by the remote peer. This makes SignServer include the certificate fingerprint when exposing the remote internal key binding. The consequence on the EJBCA side is that if it was the issuer of the certificate, the web GUI displays a link to the certificate and matches it to an end entity. However, if that certificate is not available in the EJBCA database, it will not display the remote internal key binding at all, as it is assumed that the certificate is managed by another CA. For this reason, the PEERS_ISSUED property is not set for new workers (or set to false), so that EJBCA will list it and the first certificate can be issued.    </p>
     </div>
-    <div class="section section-2" id="src-5288330_id-.PeerSystemsv4.2.0-OfflineCryptoToken">
+    <div class="section section-2" id="src-11573725_id-.PeerSystemsv4.2.1-OfflineCryptoToken">
         <h2 class="heading "><span>Offline Crypto Token</span></h2>
-    <p  >If the crypto token is offline or the configured key-pair is not available the remote key pair can be showed as disabled in EJBCA and Renew or issuance buttons could be disabled. In that case first make sure to generate and configure the key-pair at the SignServer side.    </p>
+    <p  >If the crypto token is offline or the configured key-pair is not available, the remote key-pair can be displayed as disabled in EJBCA, and Renew or issuance buttons can be unavailable. In that case, make sure to first generate and configure the key-pair at the SignServer side.    </p>
     </div>
-    <div class="section section-2" id="src-5288330_id-.PeerSystemsv4.2.0-SupportforEJBCABeforeVersions6.9">
+    <div class="section section-2" id="src-11573725_id-.PeerSystemsv4.2.1-SupportforEJBCABeforeVersions6.9">
         <h2 class="heading "><span>Support for EJBCA Before Versions 6.9</span></h2>
-    <p  >Before EJBCA 6.9 when renewing a certificate only the end entity certificate is received and not any CA certificates. One would then have to manually append the CA certificates to the SIGNERCERTIFICATECHAIN property of the worker after each renewal. But in order to avoid having to this every time manually the worker property PEERS_KEEPCHAIN can be set to true. In this mode only the end entity certificate is replaced and the CA certificates remain. This works assuming that the CA certificates has been added before and that the CA certificates that should be used with the new certificate is the same as before. If the issuing CA changes then the CA certificate(s) has to be manually updated.    </p>
-    <p  >    </p>
+    <p  >In EJBCA versions prior to 6.9, the default behavior when renewing a certificate was that only the end entity certificate is received and not any CA certificates. Consequently, you would have to manually append the CA certificates to the SIGNERCERTIFICATECHAIN property of the worker after each renewal. To avoid having to manually append the certificates, the worker property PEERS_KEEPCHAIN can be enabled to allow only the end entity certificate to be replaced, and the CA certificates to remain. This requires that the CA certificates are added beforehand and that the CA certificates used with the new certificate is the same as before. If the issuing CA changes, then the CA certificate(s) has to be manually updated.    </p>
     </div>
     </div>
-    <div class="section section-1" id="src-5288330_safe-id-aWQtLlBlZXJTeXN0ZW1zdjQuMi4wLUF1dGhlbnRpY2F0aW9uL0F1dGhvcml6YXRpb24">
+    <div class="section section-1" id="src-11573725_safe-id-aWQtLlBlZXJTeXN0ZW1zdjQuMi4xLUF1dGhlbnRpY2F0aW9uL0F1dGhvcml6YXRpb24">
         <h1 class="heading "><span>Authentication/Authorization</span></h1>
-    <p  >The incoming peer (i.e. the CA) needs to authenticate towards the application server using a TLS client certificate.    </p>
-    <p  >Further on, in order for the peer to be allowed to list key bindings and to perform operations, the certificate must be authorized to the <i class=" ">Peer System</i> role. For managing authorizations see the <a   href="Administrators_Page.html">Administrators Page</a> (for Admin Web) or the <i class=" ">wspeersystems</i> command in the <a   href="Administration_CLI.html">Administration CLI</a>.    </p>
-    <p  >Note that in the Admin Web it is possible to see incoming (i.e. ping) requests and easily add an authorization rule for it.    </p>
+    <p  >The incoming peer (the CA) needs to authenticate towards the application server using a TLS client certificate.    </p>
+    <p  >Additionally, in order for the peer to be allowed to list key bindings and to perform operations, the certificate must be authorized to the <strong class=" ">Peer System</strong> role. For information on managing authorizations, see <a   href="Administrators_Page.html">Administrators Page</a> (for Admin Web), or the <strong class=" ">wspeersystems</strong> command in the <a   href="Administration_CLI.html">Administration CLI</a>.    </p>
+    <p  >Note the Admin Web allows seeing incoming (i.e. ping) requests and adding an authorization rule for it.    </p>
     </div>
-    <div class="section section-1" id="src-5288330_id-.PeerSystemsv4.2.0-GlobalConfigurationProperties">
+    <div class="section section-1" id="src-11573725_id-.PeerSystemsv4.2.1-GlobalConfigurationProperties">
         <h1 class="heading "><span>Global Configuration Properties</span></h1>
-    <p  >    </p>
     <div  class="tablewrap">
-        <table class="relative-table confluenceTable">
+        <table class="relative-table wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />
@@ -1167,18 +1163,17 @@
         <p  >PEERS_INCOMING_ENABLED    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Set to true to allow incoming peer connections.    </p>
-    <p  >Note: in Admin Web there is a check box for this on the <a   href="Administrators_Page.html">Administrator Page</a>.    </p>
+        <p  >Set to true to allow incoming peer connections. Corresponds to the Admin Web <strong class=" ">Allow incoming connections</strong> option on the <a   href="Administrators_Page.html">Administrator Page</a>.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5288330_id-.PeerSystemsv4.2.0-WorkerProperties">
+    <div class="section section-1" id="src-11573725_id-.PeerSystemsv4.2.1-WorkerProperties">
         <h1 class="heading "><span>Worker Properties</span></h1>
     <p  >The following properties can be set on the workers that should be exposed as key binding to peer system(s).    </p>
     <div  class="tablewrap">
-        <table class="relative-table confluenceTable">
+        <table class="relative-table wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />
@@ -1196,8 +1191,7 @@
         <p  >PEERS_VISIBLE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Set to &quot;true&quot; to make the worker exposed as a internal key binding to all authorized peer systems.    </p>
-    <p  >Default: &quot;false&quot;.    </p>
+        <p  >Set to <strong class=" ">true</strong> to make the worker exposed as a internal key binding to all authorized peer systems. Default: <strong class=" ">false</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1206,9 +1200,9 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Indicates that the current key has been issued by the peer system.    </p>
-    <p  >With this property set to &quot;true&quot;, SignServer will include the fingerprint of the current certificate and EJBCA will only display the remote key binding if it has the issuer of the certificate. For that reason, before the worker has got its first certificate from the peer, this value should be &quot;false&quot; so that the key binding will be listed on the EJBCA side. Then after certificate has been issued, this property will automagically be changed to &quot;true&quot;.    </p>
-    <p  >Note: This property should normally not have to be changed manually.    </p>
-    <p  >Default: &quot;false&quot;.    </p>
+    <p  >When enabled, SignServer will include the fingerprint of the current certificate and EJBCA will only display the remote key binding if it has the issuer of the certificate. For that reason, before the worker has got its first certificate from the peer, this value should be <strong class=" ">false</strong> so that the key binding will be listed on the EJBCA side. After the certificate has been issued, the property will automatically be changed to <strong class=" ">true</strong>. Default: <strong class=" "><strong class=" ">false</strong>.<br/></strong>    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ This property should normally not have to be changed manually.    </p>
             </td>
         </tr>
     <tr>
@@ -1216,7 +1210,7 @@
         <p  >PEERS_KEEPCHAIN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If the EJBCA version is before 6.9 it will only provide the end entity certificate without the chain. In that case setting this property to &quot;true&quot; will make the current CA certificates in the chain stay and only the end entity certificate is replaced when renewing. This way the CA certificates will only have to be added manually the first time (assuming the CA certificates does not change).    </p>
+        <p  >If using an EJBCA version prior to 6.9, the end entity certificate will be provided without the chain. In that case, enabling this property makes the current CA certificates in the chain stay, and only the end entity certificate is replaced when renewing. Thus, the CA certificates will only have to be added manually the first time (assuming the CA certificates do not change).    </p>
             </td>
         </tr>
     <tr>
@@ -1224,8 +1218,7 @@
         <p  >DISABLED    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Disabling the worker by setting this to false will show the key binding as disabled to EJBCA.    </p>
-    <p  >Default: &quot;false&quot;.    </p>
+        <p  >Disabling the worker by setting this to false will show the key binding as disabled to EJBCA. Default: <strong class=" ">false</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1233,8 +1226,7 @@
         <p  >SIGNATUREALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The value of this property will be used as signature algorithm for signing the certificate signing request (CSR/PKCS#10) sent to the CA as part of the renewal.    </p>
-    <p  >Default: &quot;SHA256withRSA&quot;.    </p>
+        <p  >The value of this property will be used as signature algorithm for signing the certificate signing request (CSR/PKCS#10) sent to the CA as part of the renewal. Default: <strong class=" ">SHA256withRSA.</strong>    </p>
             </td>
         </tr>
     <tr>
@@ -1242,8 +1234,7 @@
         <p  >KEYALG    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The value of this property will be used as key algorithm when generating the next key-pair.    </p>
-    <p  >Default: &quot;RSA&quot;.    </p>
+        <p  >The value of this property will be used as key algorithm when generating the next key-pair. Default: <strong class=" ">RSA</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1251,7 +1242,7 @@
         <p  >KEYSPEC    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The value of this property will be used as key specification (i.e. bit length for RSA or curve name for ECDSA) when generating the next key-pair.<br/>Default: &quot;2048&quot;.    </p>
+        <p  >The value of this property will be used as key specification (i.e. bit length for RSA or curve name for ECDSA) when generating the next key-pair. Default: <strong class=" ">2048</strong>.    </p>
             </td>
         </tr>
     <tr>
@@ -1259,8 +1250,7 @@
         <p  >REQUESTDN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Subject DN to include in the certificate signing request (CSR/PKCS#10) sent to the CA as port of the renewal.    </p>
-    <p  >Default: CN=&lt;key alias&gt;.    </p>
+        <p  >Subject DN to include in the certificate signing request (CSR/PKCS#10) sent to the CA as port of the renewal. Default: <strong class=" ">CN=&lt;key alias&gt;</strong>.    </p>
             </td>
         </tr>
 </tbody>        </table>
@@ -1310,7 +1300,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

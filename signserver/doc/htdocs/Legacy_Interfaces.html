@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.2.1</p>
                 </div>
             </header>
 
@@ -225,6 +225,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -1097,41 +1101,71 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Integration.html">SignServer Integration</a></li>
                                                             </ul>
-</div>            <h1 id="src-5284090"> <span>Legacy Interfaces</span></h1>
+</div>            <h1 id="src-11574037"> <span>Legacy Interfaces</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div class="section section-1" id="src-5284090_id-.LegacyInterfacesv4.1.0-TheoldWebServicesinterface">
+    <div class="section section-1" id="src-11574037_id-.LegacyInterfacesv4.2.1-TheoldWebServicesinterface">
         <h1 class="heading "><span>The old Web Services interface</span></h1>
     <p  >The SignServerWS is the old web services interface now replaced by SignServer <a   href="Client_WS_Interface.html">ClientWS</a>. It was new to version 3.0 and at the time replaced the RMI-SSL interface from version 1.0 and 2.0 for two reasons, the RMI-SSL were based on a commercial library and it only worked for Java clients.    </p>
     <p  >The SignServerWS WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/signserverws/signserverws?wsdl    </p>
     <p  >The interface has two calls, the main one is 'process' which takes a collection of process request to a processable worker and returns a collection of process responses, the second one is getStatus that performs a health check of the node and returns an OK message if the node is healthy.    </p>
-    <p  ><strong class=" ">Notice:</strong> All though the SignServerWS interface uses web services the actual process data is base64 encoded byte arrays in a special binary format. You will have to lookup the Java source code for the exact format of the request and response data. An alternative is to instead use the much simpler <a   href="Client_HTTP_Interface.html">HTTP interface</a> or the newer <a   href="Client_WS_Interface.html">Client WS interface</a>.    </p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+    <p  >Although the SignServerWS interface uses web services, the actual process data is base64 encoded byte arrays in a special binary format. You will have to lookup the Java source code for the exact format of the request and response data. Alternatively, use the simpler <a   href="Client_HTTP_Interface.html">HTTP interface</a> or the newer <a   href="Client_WS_Interface.html">Client WS interface</a>.    </p>
+        </div>
+    </div>
     <p  >The getStatus call can be used to implement high-availability towards the client. The Java client API described in the next section have built in support for different high availability policies.    </p>
-    <p  >It's possible to turn off the WebService interface by disabling it in the build configuration.    </p>
+    <p  >It is possible to turn off the WebService interface by disabling it in the build configuration.    </p>
     <p  >This interface is only supported using HTTPS. The reason is that JBoss 4 does not rewrite the protocol part of the WSDL URL so we had to hard code it for it to work with HTTPS. For details about this see <a  class="external-link" href="https://jira.primekey.se/browse/DSS-327">DSS-327</a>.    </p>
     <p  >Since SignServer &gt;=3.2.1 it is possible to supply extra request data called RequestMetadata containing key/value pairs that can be used by the signers. For instance the PDFSigner uses this feature to let the client supply a PDF password.    </p>
-    <p  >    </p>
     </div>
-    <div class="section section-1" id="src-5284090_id-.LegacyInterfacesv4.1.0-JavaClientAPI">
+    <div class="section section-1" id="src-11574037_id-.LegacyInterfacesv4.2.1-JavaClientAPI">
         <h1 class="heading "><span>Java Client API</span></h1>
-    <p  >Built along with the WebService is a Java API that can be used by clients. It's available in the file lib/SignServer-Client-SignServerWS.jar (the old SignServerWS interface) and lib/SignServer-Client-ClientWS.jar (the ClientWS interface).<span id="src-5284090_SigningAndValidation_API"></span>    </p>
-    <div class="section section-2" id="src-5284090_id-.LegacyInterfacesv4.1.0-SigningAndValidationAPI">
+    <p  >Built along with the WebService is a Java API that can be used by clients. It's available in the file lib/SignServer-Client-SignServerWS.jar (the old SignServerWS interface) and lib/SignServer-Client-ClientWS.jar (the ClientWS interface).    </p>
+    <div class="section section-2" id="src-11574037_id-.LegacyInterfacesv4.2.1-SigningAndValidationAPI">
         <h2 class="heading "><span>SigningAndValidation API</span></h2>
     <p  >The SigningAndValidation API is a wrapper around the previous mentioned API in order to have a simplified interface that also is the same regardless if WebService or EJB Remote calls are used.    </p>
     <p  >To use the API include the file lib/SignServer-Client-SigningAndValidationAPI.jar.    </p>
-    <p  >    </p>
     </div>
-    <div class="section section-2" id="src-5284090_id-.LegacyInterfacesv4.1.0-SampleCode">
+    <div class="section section-2" id="src-11574037_id-.LegacyInterfacesv4.2.1-SampleCode">
         <h2 class="heading "><span>Sample Code</span></h2>
-    <p  >    </p>
-    <div class="section section-3" id="src-5284090_id-.LegacyInterfacesv4.1.0-SigningandvalidatinganXMLdocument">
-        <h3 class="heading "><span>Signing and validating an XML document</span></h3>
-<pre class="prettyprint ">try {<br/>    System.setProperty(&quot;javax.net.ssl.trustStore&quot;, &quot;p12/truststore.jks&quot;);<br/>    System.setProperty(&quot;javax.net.ssl.trustStorePassword&quot;, &quot;changeit&quot;);<br/>  <br/>    ISigningAndValidation signserver = new SigningAndValidationWS(&quot;localhost&quot;, 8442, true);<br/><br/>    // Document to sign<br/>    byte[] unsigned = &quot;&lt;document&gt;&lt;name&gt;Some content&lt;/name&gt;&lt;/document&gt;&quot;.getBytes();<br/>    byte[] signed;<br/><br/>    // Signing<br/>    GenericSignResponse signResp = signserver.sign(&quot;DemoXMLSigner&quot;, unsigned);<br/>    signed = signResp.getProcessedData();<br/>    System.out.println(&quot;Signed: &quot; + new String(signed));<br/><br/>    // Validating<br/>    GenericValidationResponse validateResp = signserver.validate(&quot;DemoXMLValidator&quot;, signed);<br/>    System.out.println(&quot;Valid: &quot; + validateResp.isValid());<br/><br/>    if(validateResp.getSignerCertificate() != null) {<br/>        if(validateResp.getSignerCertificate() instanceof X509Certificate) {<br/>            X509Certificate signerCert = (X509Certificate) validateResp.getSignerCertificate();<br/>            System.out.println(&quot;Signed by: &quot; + signerCert.getSubjectDN().getName());<br/>        }<br/>    }<br/>} catch (Exception ex) {<br/>    ex.printStackTrace();<br/>}                                   </pre><span id="src-5284090_Web_Server_Interface"></span>    <p  ><span id="src-5284090_clientcli"></span>    <span style="color: #000000;">
-    </span>
-    </p>
+    <p  >Signing and validating an XML document:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="keyword">try</code><code class="plain"> {</code></div>
+<div class="line"><code class="plain">    System.setProperty(</code><code class="string">"javax.net.ssl.trustStore"</code><code class="plain">, </code><code class="string">"p12/truststore.jks"</code><code class="plain">);</code></div>
+<div class="line"><code class="plain">    System.setProperty(</code><code class="string">"javax.net.ssl.trustStorePassword"</code><code class="plain">, </code><code class="string">"changeit"</code><code class="plain">);</code></div>
+<div class="line"><code class="plain">  </code></div>
+<div class="line"><code class="plain">    ISigningAndValidation signserver = </code><code class="keyword">new</code><code class="plain"> SigningAndValidationWS(</code><code class="string">"localhost"</code><code class="plain">, </code><code class="value">8442</code><code class="plain">, </code><code class="keyword">true</code><code class="plain">);</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    </code><code class="comments">// Document to sign</code></div>
+<div class="line"><code class="plain">    </code><code class="keyword">byte</code><code class="plain">[] unsigned = </code><code class="string">"&lt;document&gt;&lt;name&gt;Some content&lt;/name&gt;&lt;/document&gt;"</code><code class="plain">.getBytes();</code></div>
+<div class="line"><code class="plain">    </code><code class="keyword">byte</code><code class="plain">[] signed;</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    </code><code class="comments">// Signing</code></div>
+<div class="line"><code class="plain">    GenericSignResponse signResp = signserver.sign(</code><code class="string">"DemoXMLSigner"</code><code class="plain">, unsigned);</code></div>
+<div class="line"><code class="plain">    signed = signResp.getProcessedData();</code></div>
+<div class="line"><code class="plain">    System.out.println(</code><code class="string">"Signed: "</code><code class="plain"> + </code><code class="keyword">new</code><code class="plain"> String(signed));</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    </code><code class="comments">// Validating</code></div>
+<div class="line"><code class="plain">    GenericValidationResponse validateResp = signserver.validate(</code><code class="string">"DemoXMLValidator"</code><code class="plain">, signed);</code></div>
+<div class="line"><code class="plain">    System.out.println(</code><code class="string">"Valid: "</code><code class="plain"> + validateResp.isValid());</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">    </code><code class="keyword">if</code><code class="plain">(validateResp.getSignerCertificate() != </code><code class="keyword">null</code><code class="plain">) {</code></div>
+<div class="line"><code class="plain">        </code><code class="keyword">if</code><code class="plain">(validateResp.getSignerCertificate() </code><code class="keyword">instanceof</code><code class="plain"> X509Certificate) {</code></div>
+<div class="line"><code class="plain">            X509Certificate signerCert = (X509Certificate) validateResp.getSignerCertificate();</code></div>
+<div class="line"><code class="plain">            System.out.println(</code><code class="string">"Signed by: "</code><code class="plain"> + signerCert.getSubjectDN().getName());</code></div>
+<div class="line"><code class="plain">        }</code></div>
+<div class="line"><code class="plain">    }</code></div>
+<div class="line"><code class="plain">} </code><code class="keyword">catch</code><code class="plain"> (Exception ex) {</code></div>
+<div class="line"><code class="plain">    ex.printStackTrace();</code></div>
+<div class="line"><code class="plain">}                       </code></div>
+</div>
     </div>
+    <p  >    </p>
     </div>
     </div>
         </div>
@@ -1178,7 +1212,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

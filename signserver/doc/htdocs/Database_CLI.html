@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.2.1</p>
                 </div>
             </header>
 
@@ -225,6 +225,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -1099,43 +1103,38 @@
                                         <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                                                      <li><a href="SignServer_User_Interfaces.html">SignServer User Interfaces</a></li>
                                                             </ul>
-</div>            <h1 id="src-5282158"> <span>Database CLI</span></h1>
+</div>            <h1 id="src-11573668"> <span>Database CLI</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div  class="confbox admonition admonition-note">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >This is a SignServer Enterprise Edition (EE) feature.    </p>
-        </div>
-    </div>
+    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
+    <p  >    </p>
     <div  class="confbox admonition admonition-note">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
                 <div class="admonition-body">
     <p  >The SignServer Database CLI uses Java Persistence API (JPA) to connect to the SignServer database. The CLI is configured by the dbcli.* properties in signserver_cli.properties.    </p>
         </div>
     </div>
-    <p  >    </p>
     <p  >The CLI needs to have the JDBC driver of the selected database available on the classpath. This can be achieved by setting the OPTIONAL_CLASSPATH environment variable when calling the bin/signserver-db script or by putting the JAR under lib/ext/jdbc/ and calling it jdbc.jar. The last method is required to be able to run the JUnit tests.    </p>
     <p  >Sample usage:    </p>
-    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">bin/signserver-db audit</code></div>
 </div>
     </div>
-    <div class="section section-1" id="src-5282158_id-.DatabaseCLIv4.1.0-VerifyAuditlogCommand">
+    <div class="section section-1" id="src-11573668_id-.DatabaseCLIv4.2.1-VerifyAuditlogCommand">
         <h1 class="heading "><span>Verify Auditlog Command</span></h1>
+    <p  class="prettyprint">The command verifies logs from all nodes starting at sequence number 0, or only from the specified nodes and optional sequence number offsets.    </p>
     <p  class="prettyprint">Usage:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">verifylog -all verifylog [-node NODENAME[:OFFSET] ...]</code></div>
 </div>
     </div>
-    <p  >    </p>
-    <p  class="prettyprint">Verifies logs from all nodes starting at sequence number 0 or only from the specified nodes and optional sequence number offsets specified. If the nodename is suffixed with a colon and an number then the verification for that node is started from that sequence number. The JDBC connector of the database might have to be put on the classpath. See the example below.    </p>
-    <p  class="prettyprint">Examples    </p>
+    <p  class="prettyprint">If the nodename is suffixed with a colon and a number, then the verification for that node is started from that sequence number. The JDBC connector of the database might have to be put on the classpath, see the following example.    </p>
+    <p  class="prettyprint">Examples:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">signserver-db audit verifylog -all</code></div>
@@ -1143,44 +1142,51 @@
 <div class="line"><code class="plain">OPTIONAL_CLASSPATH=/usr/share/java/mysql-connector-java.jar signserver-db audit verifylog -all</code></div>
 </div>
     </div>
-    <p  >    </p>
     <p  >The command can be run to verify the signature of every entry in the auditlog as well as checking the sequence number in order to make sure that it does not contain any gaps.    </p>
     <p  >The keys used to verify the log are configured in <strong class=" ">conf/databaseprotection.properties</strong>.    </p>
     <p  >Sample output:    </p>
-<pre class="prettyprint ">2013-07-04 15:29:10,073 INFO  [VerifyLogCommand] The following nodes exists: [server1, server2]<br/>2013-07-04 15:29:10,074 INFO  [VerifyLogCommand] Start sequences: {server1=0, server2=0}<br/>2013-07-04 15:29:10,635 INFO  [SoftCryptoToken] Invalid authentication code. Token id=400.<br/>2013-07-04 15:29:10,716 INFO  [SoftCryptoToken] Activated Crypto Token with ID 400.<br/>2013-07-04 15:29:10,722 INFO  [VerifyLogCommand] Progress: node=server1 rowCount=3<br/>2013-07-04 15:29:10,722 INFO  [VerifyLogCommand] Last sequence number: 2<br/>2013-07-04 15:29:10,745 INFO  [VerifyLogCommand] Progress: node=server2 rowCount=11<br/>2013-07-04 15:29:10,745 INFO  [VerifyLogCommand] Last sequence number: 7<br/>2013-07-04 15:29:10,747 INFO  [VerifyLogCommand] Audit log validation completed in 0 seconds. 11 rows found. Errors: 0 Warnings: 0<br/>2013-07-04 15:29:10,747 INFO  [VerifyLogCommand] Verification finished with success<br/>2013-07-04 15:29:10,747 INFO  [VerifyLogCommand] Last sequences: {server1=2, server2=7}</pre>    <div class="section section-2" id="src-5282158_id-.DatabaseCLIv4.1.0-">
-        <h2 class="heading "><span></span></h2>
+    <div  class="confbox programlisting">
+                <div class="content">
+        <pre><code>2017-07-04 15:29:10,073 INFO  [VerifyLogCommand] The following nodes exists: [server1, server2]
+2017-07-04 15:29:10,074 INFO  [VerifyLogCommand] Start sequences: {server1=0, server2=0}
+2017-07-04 15:29:10,635 INFO  [SoftCryptoToken] Invalid authentication code. Token id=400.
+2017-07-04 15:29:10,716 INFO  [SoftCryptoToken] Activated Crypto Token with ID 400.
+2017-07-04 15:29:10,722 INFO  [VerifyLogCommand] Progress: node=server1 rowCount=3
+2017-07-04 15:29:10,722 INFO  [VerifyLogCommand] Last sequence number: 2
+2017-07-04 15:29:10,745 INFO  [VerifyLogCommand] Progress: node=server2 rowCount=11
+2017-07-04 15:29:10,745 INFO  [VerifyLogCommand] Last sequence number: 7
+2017-07-04 15:29:10,747 INFO  [VerifyLogCommand] Audit log validation completed in 0 seconds. 11 rows found. Errors: 0 Warnings: 0
+2017-07-04 15:29:10,747 INFO  [VerifyLogCommand] Verification finished with success
+2017-07-04 15:29:10,747 INFO  [VerifyLogCommand] Last sequences: {server1=2, server2=7}</code></pre>
+        </div>
     </div>
-    <div class="section section-2" id="src-5282158_id-.DatabaseCLIv4.1.0-Archivingoftheauditlog">
+    <div class="section section-2" id="src-11573668_id-.DatabaseCLIv4.2.1-Archivingoftheauditlog">
         <h2 class="heading "><span>Archiving of the audit log</span></h2>
-    <p  >As the Database CLI audit verifylog command checks for gabs in the sequence numbering entries from the audit log can not be archived/moved to other storage without special care. However since the command now supports the option to specify from which sequence number to start the verification the following scheme for archiving is proposed:    </p>
+    <p  >As the Database CLI audit verifylog command checks for gaps in the sequence numbering, entries from the audit log cannot be archived/moved to other storage without special care. However, since the command now supports the option to specify from which sequence number to start the verification, the following scheme for archiving is proposed:    </p>
 <ol class=" "><li class=" ">    <p  >Run the command to verify the complete log audit log:    </p>
-    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">audit verifylog -all</code></div>
 </div>
     </div>
-    <p  >Note down the last sequence number for each node. Ie:    </p>
-    <p  >    </p>
+    <p  >Note down the last sequence number for each node, for example:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">Last sequences: {server1=2, server2=7}</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >All entries from 0 up to the entry before the last can now be archived and removed from the database. In our example that would be entry 0 and 1 for node server1 and entries from 0 to 6 for node server2.    </p>
-</li><li class=" ">    <p  >The next time the log should be verified start the verification from the last sequence numbers:    </p>
-    <p  >    </p>
+</li><li class=" ">    <p  >All entries from 0 up to the entry before the last can now be archived and removed from the database. In the example, that would be entry <strong class=" ">0</strong> and <strong class=" ">1</strong> for node <strong class=" ">server1</strong> and entries from <strong class=" ">0</strong> to <strong class=" ">6</strong> for node <strong class=" ">server2.</strong>    </p>
+</li><li class=" ">    <p  >The next time the log should be verified, start the verification from the last sequence numbers:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">audit verifylog -node server1:2 -node server2:7</code></div>
 </div>
     </div>
-    <p  >Again, note down the last sequence number for each node and all entries up to the sequence number before the last for each node can now be archived.    </p>
-</li></ol>    <p  >    </p>
-    <div  class="confbox admonition admonition-note">
+    <p  >Again, note down the last sequence number for each node, and all entries up to the sequence number before the last for each node can now be archived.    </p>
+</li></ol>    <div  class="confbox admonition admonition-warning">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
                 <div class="admonition-body">
-    <p  >It is important to not remove the row with the last sequence number for any node as if the application is restarted the sequence numbering would than start again from 0 for that node.    </p>
+    <p  >It is important to not remove the row with the last sequence number for a node, as this would result in the sequence numbering starting again from 0 for that node, if the application is restarted.    </p>
         </div>
     </div>
     </div>
@@ -1229,7 +1235,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

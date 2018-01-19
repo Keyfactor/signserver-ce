@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.2.1</p>
                 </div>
             </header>
 
@@ -225,6 +225,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -1100,22 +1104,22 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Validation_Service_Framework.html">SignServer Validation Service Framework</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277514"> <span>DefaultValidationService</span></h1>
+</div>            <h1 id="src-11571001"> <span>DefaultValidationService</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div class="section section-1" id="src-5277514_id-.DefaultValidationServicev4.1.0-Overview">
+    <div class="section section-1" id="src-11571001_id-.DefaultValidationServicev4.2.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
-    <p  >The default validation service have a set of Validators. A validator is responsible to checking the validity against one or more issuers using for example CRL check or OCSP or just by checking some database. The Default Validation Service supports validations to be cached for some or all issuers for a specified amount of time. If not configured otherwise will the validation service use the <strong class=" ">DefaultX509CertTypeChecker</strong> that determines the certificate type from the key usage in the certificate.Key Encipherment and Digital Signature indicates a IDENTIFICATION type and Non-reputation and/or Digital Signature indicates ELECTRONIC_SIGNATURE. There exists a validation specific Web Service that can be used for platform independent client calls.The Web Service WSDL file is located at the URL <strong class=" ">http://&lt;hostname&gt;:8080/signserver/validationws/validationws?wsdl</strong> and it contains two calls one is 'isValid' that performs the validation check and the other is a getStatus call that checks the health of the node and its underlying systems. The last calls can be used by clients for monitoring or implementing redundancy.    </p>
+    <p  >The Default Validation Service has a set of Validators. A validator is responsible to checking the validity against one or more issuers using for example CRL check or OCSP, or just by checking a database. The Default Validation Service supports validations to be cached for some or all issuers for a specified amount of time. If not configured otherwise, the validation service uses the <strong class=" ">DefaultX509CertTypeChecker</strong> that determines the certificate type from the key usage in the certificate.Key Encipherment and Digital Signature indicates an IDENTIFICATION type and Non-reputation and/or Digital Signature indicates ELECTRONIC_SIGNATURE.The validation specific Web Service that can be used for platform independent client calls. The Web Service WSDL file is located at the URL <strong class=" ">http://&lt;hostname&gt;:8080/signserver/validationws/validationws?wsdl</strong> and it contains two calls one is 'isValid' that performs the validation check and the other is a getStatus call that checks the health of the node and its underlying systems. The last calls can be used by clients for monitoring or implementing redundancy.    </p>
     </div>
-    <div class="section section-1" id="src-5277514_id-.DefaultValidationServicev4.1.0-AvailableProperties">
+    <div class="section section-1" id="src-11571001_id-.DefaultValidationServicev4.2.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <p  >The following three types of properties can be configured with the DefaultValidationService:    </p>
 <ul class=" "><li class=" ">    <p  >general properties (that applies for the service and all configured validators)    </p>
 </li><li class=" ">    <p  >validator properties (that only applies for a specific validator)    </p>
 </li><li class=" ">    <p  >issuer properties (that only applies for an issuer configured in a specific validator).    </p>
-</li></ul>    <div class="section section-2" id="src-5277514_id-.DefaultValidationServicev4.1.0-GeneralProperties">
+</li></ul>    <div class="section section-2" id="src-11571001_id-.DefaultValidationServicev4.2.0-GeneralProperties">
         <h2 class="heading "><span>General Properties</span></h2>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1158,7 +1162,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-2" id="src-5277514_id-.DefaultValidationServicev4.1.0-Validatorproperties">
+    <div class="section section-2" id="src-11571001_id-.DefaultValidationServicev4.2.0-Validatorproperties">
         <h2 class="heading section"><span>Validator properties</span></h2>
     <p  >Validator properties is specified with the prefix of <i class=" ">validator&lt;validatorId&gt;</i>. or <i class=" ">val&lt;validatorId&gt;.</i> were validator Id should be an integer between 1 and 255. For instance, to specify the type of a validator with an ID of 1 then specify <i class=" ">val1.classpath=some.classpath.SomeClass</i>. This validator will be initialized with all its validator specific properties (with 'val&lt;id&gt;.' prefix removed) as well as the general ones.    </p>
     <div  class="tablewrap">
@@ -1257,7 +1261,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

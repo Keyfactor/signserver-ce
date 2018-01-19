@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.2.1</p>
                 </div>
             </header>
 
@@ -225,6 +225,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -1100,26 +1104,22 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277356"> <span>Master List Signer</span></h1>
+</div>            <h1 id="src-11573709"> <span>Master List Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: This is a SignServer Enterprise Edition (EE) feature.    </p>
-        </div>
-    </div>
-    <p  >The Master List signer has the fully qualified class name: <strong class=" ">org.signserver.module.masterlist.signer.MasterListSigner</strong>.    </p>
-    <div class="section section-1" id="src-5277356_id-.MasterListSignerv4.1.0-Overview">
+    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
+    <p  >The signer has the fully qualified class name: <strong class=" ">org.signserver.module.masterlist.signer.MasterListSigner</strong>.    </p>
+    <div class="section section-1" id="src-11573709_id-.MasterListSignerv4.2.1-Overview">
         <h1 class="heading "><span>Overview</span></h1>
-    <p  >Produces a signed list of CSCA certificates according to the ICAO specification MRTD TR CSCA countersigning and Master List issuance, version 1.0.<br/>As mandated by the specification, both the signer certificate and the CSCA certificates are included in the signature. The INCLUDE_CERTIFICATE_LEVELS property is thus not allowed.    </p>
+    <p  >The Master List signer produces a signed list of CSCA certificates according to the ICAO specification MRTD TR CSCA countersigning and Master List issuance, version 1.0. As mandated by the specification, both the signer certificate and the CSCA certificates are included in the signature. The INCLUDE_CERTIFICATE_LEVELS property is thus not allowed.    </p>
     </div>
-    <div class="section section-1" id="src-5277356_id-.MasterListSignerv4.1.0-AvailableProperties">
+    <div class="section section-1" id="src-11573709_id-.MasterListSignerv4.2.1-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
-        <table class="confluenceTable">
+        <table class="wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />
@@ -1137,7 +1137,7 @@
         <p  >SIGNATUREALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Property specifying the algorithm used to sign the data (default: depending on the signing key: SHA1withDSA for DSA keys, SHA1withECDSA for ECDSA keys, otherwise SHA1withRSA)    </p>
+        <p  >Specifying the algorithm used to sign the data. Default: depending on the signing key: SHA1withDSA for DSA keys, SHA1withECDSA for ECDSA keys, and otherwise SHA1withRSA.    </p>
             </td>
         </tr>
 </tbody>        </table>
@@ -1187,7 +1187,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.2.1</p>
                 </div>
             </header>
 
@@ -225,6 +225,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -1100,15 +1104,15 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-5285975"> <span>Time Stamp Signer</span></h1>
+</div>            <h1 id="src-11573979"> <span>Time Stamp Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >The time-stamp signer has the class name: org.signserver.server.signers.TimeStampSigner    </p>
-    <div class="section section-1" id="src-5285975_id-.TimeStampSignerv4.1.1-Overview">
+    <p  >The signer has the class name: <strong class=" ">org.signserver.server.signers.TimeStampSigner</strong>.    </p>
+    <div class="section section-1" id="src-11573979_id-.TimeStampSignerv4.2.1-Overview">
         <h1 class="heading "><span>Overview</span></h1>
-    <p  >The time stamp server generates time stamp tokens and have the support for the following options:    </p>
+    <p  >The time stamp server generates time stamp tokens and supports the following options:    </p>
 <ul class=" "><li class=" ">    <p  >Set of accepted policies    </p>
 </li><li class=" ">    <p  >Set of accepted algorithms    </p>
 </li><li class=" ">    <p  >Set of accepted extensions    </p>
@@ -1119,13 +1123,17 @@
 </li><li class=" ">    <p  >Ordering    </p>
 </li><li class=" ">    <p  >TSA name    </p>
 </li></ul>    <p  >Time-stamp requests are served through a HTTP(S) service at the URL:    </p>
-<pre class="prettyprint ">http://&lt;host name&gt;/signserver/process?workerId=&lt;worker Id&gt;</pre>    <p  >The time-stamp signer requires a time-stamp certificate with the extended key usage 'time-stamp' only. The extended key usage extension must be critical.    </p>
-    <p  >If the time-stamp request contains a nonce value this value will also be included in the time-stamp token.    </p>
+    <div  class="confbox programlisting">
+                <div class="content">
+        <pre><code>http://&lt;host name&gt;/signserver/process?workerId=&lt;worker Id&gt;</code></pre>
+        </div>
     </div>
-    <div class="section section-1" id="src-5285975_id-.TimeStampSignerv4.1.1-AvailableProperties">
+    <p  >The time-stamp signer requires a time-stamp certificate with the extended key usage <strong class=" ">time-stamp</strong> only. The extended key usage extension must be critical.    </p>
+    <p  >If the time-stamp request contains a nonce value, this value will also be included in the time-stamp token.    </p>
+    </div>
+    <div class="section section-1" id="src-11573979_id-.TimeStampSignerv4.2.1-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <p  >The following properties can be configured with the signer:    </p>
-    <p  >    </p>
     <div  class="tablewrap">
         <table class="relative-table wrapped confluenceTable">
                     <colgroup>
@@ -1142,7 +1150,7 @@
         </tr>
 </thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">TIMESOURCE</strong>    </p>
+        <p  >TIMESOURCE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Property containing the fully qualified name of the class implementing the ITimeSource that should be used (OPTIONAL). Below are the built-in TimeSourceS available:<br/><strong class=" ">org.signserver.server.LocalComputerTimeSource</strong><br/>This is the default TimeSource and uses the time from the local computer and always returns the time.    </p>
@@ -1153,7 +1161,7 @@
         <p  >&nbsp;    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">org.signserver.server.StatusReadingLocalComputerTimeSource</strong><br/>This TimeSource returns the time from the local computer but only if the status property <i class=" ">TIMESOURCE0_INSYNC</i> is not expired and returned as <i class=" ">true</i> from the Status Repository.    </p>
+        <p  ><strong class=" ">org.signserver.server.StatusReadingLocalComputerTimeSource</strong><br/>This TimeSource returns the time from the local computer but only if the status property TIMESOURCE0_INSYNC is not expired and returned as <strong class=" ">true</strong> from the Status Repository.    </p>
     <p  >Worker properties:    </p>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">LEAPSECOND_HANDLING</strong>: NONE, PAUSE or STOP. Default is NONE.    </p>
 <ul class=" "><li class=" ">    <p  ><i class=" ">NONE</i>: Leap seconds are not considered and time-stamp tokens are issued as usual.    </p>
@@ -1165,85 +1173,81 @@
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">SIGNATUREALGORITHM</strong>    </p>
+        <p  >SIGNATUREALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Property specifying the algorithm used to sign the timestamp (default: SHA1withRSA)    </p>
+        <p  >Property specifying the algorithm used to sign the timestamp. Default: SHA1withRSA.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">ACCEPTEDALGORITHMS</strong>    </p>
+        <p  >ACCEPTEDALGORITHMS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >A ';' separated string containing accepted algorithms, can be null if it shouldn't be used. (OPTIONAL, Strongly recommended)<br/>Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, RIPEMD128, RIPEMD160, RIPEMD256    </p>
+        <p  >A ';' separated string containing accepted algorithms. Can be null if it should not be used. OPTIONAL but strongly recommended. Supported Algorithms are: GOST3411, MD5, SHA1, SHA224, SHA256, SHA384, SHA512, RIPEMD128, RIPEMD160, RIPEMD256.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">ACCEPTEDPOLICIES</strong>    </p>
+        <p  >ACCEPTEDPOLICIES    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >A ';' separated string containing accepted policies.    </p>
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note that only policies listed in this property are allowed to be requested. If the property does not contain any policies then no policy can be requested. Requests not including any policy would use the default policy regardless of this property but requests explicitly requesting the default policy would still not be allowed unless it is listed in this property. If this property is used, ACCEPTANYPOLICY can not be set to true. (OPTIONAL, Recommended)    </p>
-        </div>
-    </div>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ Note that only policies listed in this property are allowed to be requested. If the property does not contain any policies, then no policy can be requested. Requests not including any policy will use the default policy regardless of this property, but requests explicitly requesting the default policy will still not be allowed unless listed in this property. If this property is used, ACCEPTANYPOLICY cannot be set to true. OPTIONAL, recommended.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">ACCEPTANYPOLICY</strong>    </p>
+        <p  >ACCEPTANYPOLICY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If set to true, allow any policy. If set to true, ACCEPTEDPOLICIES can not be set. Optionally this can be set to false or left empty when setting ACCEPTEDPOLICIES.    </p>
+        <p  >If set to true, allow any policy. If set to true, ACCEPTEDPOLICIES cannot be set. Optionally, this can be set to false or left empty when setting ACCEPTEDPOLICIES.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">ACCEPTEDEXTENSIONS</strong>    </p>
+        <p  >ACCEPTEDEXTENSIONS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >A ';' separated string containing accepted extensions, can be null if it shouldn't be used. (OPTIONAL)    </p>
+        <p  >A ';' separated string containing accepted extensions, can be null if it should not be used. OPTIONAL.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">DEFAULTTSAPOLICYOID</strong>    </p>
+        <p  >DEFAULTTSAPOLICYOID    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The default policy ID of the time stamp authority (REQUIRED, if no policy OID is specified in the request then will this value be used.)    </p>
+        <p  >The default policy ID of the time stamp authority. REQUIRED, if no policy OID is specified in the request, then will this value be used.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">ACCURACYMICROS</strong>    </p>
+        <p  >ACCURACYMICROS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Accuracy in micro seconds, Only decimal number format, only one of the accuracy properties should be set (OPTIONAL)    </p>
+        <p  >Accuracy in micro seconds, Only decimal number format, only one of the accuracy properties should be set. OPTIONAL.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">ACCURACYMILLIS</strong>    </p>
+        <p  >ACCURACYMILLIS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Accuracy in milliseconds, Only decimal number format, only one of the accuracy properties should be set (OPTIONAL)    </p>
+        <p  >Accuracy in milliseconds, Only decimal number format, only one of the accuracy properties should be set. OPTIONAL.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">ACCURACYSECONDS</strong>    </p>
+        <p  >ACCURACYSECONDS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Accuracy in seconds. Only decimal number format, only one of the accuracy properties should be set (OPTIONAL)    </p>
+        <p  >Accuracy in seconds. Only decimal number format, only one of the accuracy properties should be set. OPTIONAL.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">ORDERING</strong>    </p>
+        <p  >ORDERING    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >The ordering (OPTIONAL), default false. Only false is supported.    </p>
@@ -1251,47 +1255,47 @@
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">INCLUDEORDERING</strong>    </p>
+        <p  >INCLUDEORDERING    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If set to true, always include the ordering attribute, even when ORDERING is set to false. It is not allowed to set this to false when ORDERING is set to true, default is false. (OPTIONAL)    </p>
+        <p  >If set to true, always include the ordering attribute, even when ORDERING is set to false. It is not allowed to set this to false when ORDERING is set to true, default is false. OPTIONAL.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">TSA</strong>    </p>
+        <p  >TSA    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >General name of the Time Stamp Authority. (OPTIONAL)    </p>
+        <p  >General name of the Time Stamp Authority. OPTIONAL.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">TSA_FROM_CERT</strong>    </p>
+        <p  >TSA_FROM_CERT    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Setting this property to true sets the general name of the Time Stamp Authority to the subject DN of the signing certificate. This can not be set to true if the TSA property is set. (OPTIONAL) (the default is to not set the general name)    </p>
+        <p  >Setting this property to true sets the general name of the Time Stamp Authority to the subject DN of the signing certificate. This cannot be set to true if the TSA property is set. OPTIONAL, default is to not set the general name.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">REQUIREVALIDCHAIN</strong>    </p>
+        <p  >REQUIREVALIDCHAIN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Set to true to perform an extra check that the SIGNERCERTCHAIN only contains certificates in the chain of the signer certificate. (OPTIONAL), default false.    </p>
+        <p  >Set to true to perform an extra check that the SIGNERCERTCHAIN only contains certificates in the chain of the signer certificate. OPTIONAL, default false.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">MAXSERIALNUMBERLENGTH</strong>    </p>
+        <p  >MAXSERIALNUMBERLENGTH    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The maximum size (in bytes) used when generating serial numbers, must be between 8 and 20 (64 - 160 bits) (Default: 8) The generated serial number will always be positive (so the sign bit is always a zero).    </p>
+        <p  >The maximum size (in bytes) used when generating serial numbers, must be between 8 and 20 (64 - 160 bits) (Default: 8). The generated serial number will always be positive (so the sign bit is always a zero).    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">WORKERLOGGER</strong>    </p>
+        <p  >WORKERLOGGER    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >As for other workers this property can be used to specify which worker logger to use. By default the <a  class="external-link" href="file:///C:/Users/Per%20Grahn-M%C3%B6ller/AppData/Local/Temp/Temp1_signserver-htdocs-r7948-2017-01-17.zip/htdocs/manual/misc.html#DefaultTimeStampLogger">DefaultTimeStampLogger</a> is used.    </p>
@@ -1299,15 +1303,15 @@
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">INCLUDESTATUSSTRING</strong>    </p>
+        <p  >INCLUDESTATUSSTRING    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Specifies if the status string is to be included in the response. Setting this to true triggers a bug in some versions of OpenJDK's jarsigner utility, default is false. (OPTIONAL)    </p>
+        <p  >Specifies if the status string is to be included in the response. Setting this to true triggers a bug in some versions of OpenJDK's jarsigner utility, default is false. OPTIONAL.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">INCLUDE_CERTID_ISSUERSERIAL</strong>    </p>
+        <p  >INCLUDE_CERTID_ISSUERSERIAL    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Specifies if the signingCertificate (or signingCertificateV2) attribute's ESSCertID should include the issuer and serial number in addition to the certificate hash. Default is true.    </p>
@@ -1315,48 +1319,47 @@
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">INCLUDESIGNINGTIMEATTRIBUTE</strong>    </p>
+        <p  >INCLUDESIGNINGTIMEATTRIBUTE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Specifies if the signingTime signed CMS attribute should be included in the response, default is true. (OPTIONAL)    </p>
+        <p  >Specifies if the signingTime signed CMS attribute should be included in the response, default is true. OPTIONAL.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">INCLUDECMSALGORITHMPROTECTATTRIBUTE</strong>    </p>
+        <p  >INCLUDECMSALGORITHMPROTECTATTRIBUTE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Specifies if the cmsAlgorithmProtect (RFC#6211) signed attribute should be included in the response, default is true. (OPTIONAL)    </p>
+        <p  >Specifies if the cmsAlgorithmProtect (RFC#6211) signed attribute should be included in the response, default is true. OPTIONAL-    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">CERTIFICATE_DIGEST_ALGORITHM</strong>    </p>
+        <p  >CERTIFICATE_DIGEST_ALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Specifies the digest algorithm used for calculating the digest of the signing certificate.<br/>Supported values are: SHA1, SHA224, SHA256, SHA384, SHA512<br/>When using an algorithm other than SHA1, RFC 5816-compliant time stamps will be issued.<br/>To get the old behaviour (with the ESSCertID attribute instead of ESSCertIDv2), SHA1 must be set explicitly. Default: SHA256.    </p>
+        <p  >Specifies the digest algorithm used for calculating the digest of the signing certificate. Supported values are: SHA1, SHA224, SHA256, SHA384, SHA512.<br/>When using an algorithm other than SHA1, RFC 5816-compliant time stamps will be issued. To get the old behavior (with the ESSCertID attribute instead of ESSCertIDv2), SHA1 must be set explicitly. Default: SHA256.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">LEGACYENCODING</strong>    </p>
+        <p  >LEGACYENCODING    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Since SignServer 4.0 the encoding of the time-stamp tokens has changed. One consequence is that the order of the certificates in the output might not be the same as in the certificate chain due to the DER encoding and the fact that the certificates field is a set and thus not ordered. To restore the old behavior it is possible to set LEGACYENCODING=true. Default is false. (OPTIONAL)    </p>
+        <p  >As of SignServer 4.0, the encoding of the time-stamp tokens has changed. One consequence is that the order of the certificates in the output might not be the same as in the certificate chain due to the DER encoding and the fact that the certificates field is a set and thus not ordered. To restore the old behavior, set LEGACYENCODING=true. Default is false. OPTIONAL    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5285975_id-.TimeStampSignerv4.1.1-CertificateRequirements">
+    <div class="section section-1" id="src-11573979_id-.TimeStampSignerv4.2.1-CertificateRequirements">
         <h1 class="heading "><span>Certificate Requirements</span></h1>
 <ul class=" "><li class=" ">    <p  >Specifying a signer certificate is required as information from that certificate will be used to indicate which signer signed the time-stamp token.    </p>
 </li><li class=" ">    <p  >The signer certificate chain contains all certificates included in the token if the client requests the certificates.    </p>
-</li><li class=" ">    <p  >The signer certificate MUST be included in the configured certificate chain. Other certificates might also be included in the chain (typically intermediate CA certificates). However, if REQUIREVALIDCHAIN=true is specified only the signer certificate directly followed by its issuer and then the issuer's issuer and so on is allowed. All certificates will be verified if there is a certificate coming after it. No check is made that the last certificate is a root certificate as that certificate is usually not included.    </p>
+</li><li class=" ">    <p  >The signer certificate MUST be included in the configured certificate chain. Other certificates might also be included in the chain (typically intermediate CA certificates). However, if REQUIREVALIDCHAIN=true is specified, only the signer certificate, directly followed by its issuer and then the issuer's issuer and so on, is allowed. All certificates will be verified if there is a certificate coming after it. No check is made that the last certificate is a root certificate as that certificate is usually not included.    </p>
 </li><li class=" ">    <p  >A time-stamp signer certificate must have the extended key usage extension present and marked as critical.    </p>
 </li><li class=" ">    <p  >The extended key usage extension must contain the timeStamping key purpose ID and only that one.    </p>
 </li></ul>    <p  >    </p>
-    <p  >    </p>
     </div>
         </div>
 
@@ -1402,7 +1405,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.2.1</p>
                 </div>
             </header>
 
@@ -225,6 +225,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -1100,26 +1104,21 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-11568133"> <span>MS Authenticode CMS Signer</span></h1>
+</div>            <h1 id="src-11573717"> <span>MS Authenticode CMS Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: This is a SignServer Enterprise Edition (EE) feature.    </p>
-        </div>
-    </div>
     <p  >    </p>
-    <p  >The MS Authenticode CMS signer has the fully qualified class name: <strong class=" ">org.signserver.module.msauthcode.signer.MSAuthCodeCMSSigner</strong>.    </p>
-    <div class="section section-1" id="src-11568133_id-.MSAuthenticodeCMSSignerv4.2.0-Overview">
+    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
+    <p  >The signer has the fully qualified class name: <strong class=" ">org.signserver.module.msauthcode.signer.MSAuthCodeCMSSigner</strong>.    </p>
+    <div class="section section-1" id="src-11573717_id-.MSAuthenticodeCMSSignerv4.2.1-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The MS Authenticode CMS signer is special-purpose version of the extended CMS signer, producing Authenticode-compatible CMS signatures suitable for embedding into portable executables (.exe, .dll) and MSI installer packages. This is intended for use with client-side hashing, where a client does the hashing of the original file and requests this hash to be signed by SignServer, giving a resulting signature which is then inserted into the resulting output file by the client.    </p>
-    <p  >This signer has all the properties of <a   href="Extended_CMS_Signer.html">Extended CMS Signer</a>, and also the same Authenticode-specific properties as the MS Authenticode signer, however setting CONTENTOID or allowing overriding content OID (by setting ALLOW_CONTENTOID_OVERRIDE to true) is not supported (as the content OID will be set to be compatible with Authenticode specification).    </p>
-    <p  >The signdocument command can be used with <a   href="Client-Side_Hashing.html">Client-Side Hashing and construction</a> to sign a portable executable or MSI installer by hashing on the client-side, signing the hash server-side using this signer, and finally assembling the final signed binary or installer on the client-side.    </p>
+    <p  >This signer has all the properties of the <a   href="Extended_CMS_Signer.html">Extended CMS Signer</a>, and also the same Authenticode-specific properties as the <a   href="MS_Authenticode_Signer.html">MS Authenticode Signer</a>. Note however that setting CONTENTOID or allowing overriding content OID (by setting ALLOW_CONTENTOID_OVERRIDE to true) is not supported (as the content OID will be set to be compatible with Authenticode specification).    </p>
+    <p  >The signdocument command can be used with client-side hashing and construction to sign a portable executable or MSI installer by hashing on the client-side, signing the hash server-side using this signer, and finally assembling the final signed binary or installer on the client-side. For more information, see <a   href="Client-Side_Hashing.html">Client-Side Hashing</a>.    </p>
     </div>
-    <div class="section section-1" id="src-11568133_id-.MSAuthenticodeCMSSignerv4.2.0-AvailableProperties">
+    <div class="section section-1" id="src-11573717_id-.MSAuthenticodeCMSSignerv4.2.1-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1140,7 +1139,7 @@
         <p  >PROGRAM_NAME    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Program name to embed in the signature (Optional, default: none)    </p>
+        <p  >Program name to embed in the signature. Optional, default: none.    </p>
             </td>
         </tr>
     <tr>
@@ -1148,7 +1147,7 @@
         <p  >ALLOW_PROGRAM_NAME_OVERRIDE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If the requestor should be able to override the program name by supplying it as a request metadata property (Optional, default: false)    </p>
+        <p  >If the requestor should be able to override the program name by supplying it as a request metadata property. Optional, default: false.    </p>
             </td>
         </tr>
     <tr>
@@ -1156,7 +1155,7 @@
         <p  >PROGRAM_URL    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Program URL to embed in the signature (Optional, default: none)    </p>
+        <p  >Program URL to embed in the signature. Optional, default: none.    </p>
             </td>
         </tr>
     <tr>
@@ -1164,12 +1163,12 @@
         <p  >ALLOW_PROGRAM_URL_OVERRIDE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If the requestor should be able to override the program URL by supplying it as a request metadata property (Optional, default: false)    </p>
+        <p  >If the requestor should be able to override the program URL by supplying it as a request metadata property. Optional, default: false.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-11568133_id-.MSAuthenticodeCMSSignerv4.2.0-RequestProperties">
+    <div class="section section-2" id="src-11573717_id-.MSAuthenticodeCMSSignerv4.2.1-RequestProperties">
         <h2 class="heading "><span>Request Properties</span></h2>
     <p  >This worker can accept the following request metadata properties, given that they are configured to be allowed:    </p>
     <div  class="tablewrap">
@@ -1191,7 +1190,7 @@
         <p  >FILE_TYPE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The file type for which the signature should be used in, currenly the supported values are PE (for portable executables, such as Windows .exe and .dll files), or MSI (for Windows installers). This affects the layout of the content in the CMS structure. If not specified, PE is assumed.    </p>
+        <p  >The file type for which the signature should be used in. Currently supported values are PE (for portable executables, such as Windows .exe and .dll files), or MSI (for Windows installers). This affects the layout of the content in the CMS structure. If not specified, PE is assumed.    </p>
             </td>
         </tr>
     <tr>
@@ -1199,7 +1198,7 @@
         <p  >PROGRAM_NAME    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Program name text to use instead of the configured one (if any). Specifying an empty value removes the configured program name. Without ALLOW_PROGRAM_NAME_OVERRIDE configured in the worker request including this request property will not be allowed.    </p>
+        <p  >Program name text to use instead of the configured one (if any). Specifying an empty value removes the configured program name. Without ALLOW_PROGRAM_NAME_OVERRIDE configured in the worker request, including this request property will not be allowed.    </p>
             </td>
         </tr>
     <tr>
@@ -1207,7 +1206,7 @@
         <p  >PROGRAM_URL    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Program URL to use instead of the configured one (if any). Specifying an empty value removes the configured program URL. Without ALLOW_PROGRAM_URL_OVERRIDE configured in the worker request including this request property will not be allowed.    </p>
+        <p  >Program URL to use instead of the configured one (if any). Specifying an empty value removes the configured program URL. Without ALLOW_PROGRAM_URL_OVERRIDE configured in the worker request, including this request property will not be allowed.    </p>
             </td>
         </tr>
 </tbody>        </table>
@@ -1259,7 +1258,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

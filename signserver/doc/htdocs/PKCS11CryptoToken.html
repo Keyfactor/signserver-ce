@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.2.1</p>
                 </div>
             </header>
 
@@ -225,6 +225,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -1100,18 +1104,17 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Components.html">SignServer Components</a></li>
                                                                                      <li><a href="CryptoTokens.html">CryptoTokens</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277692"> <span>PKCS11CryptoToken</span></h1>
+</div>            <h1 id="src-11574114"> <span>PKCS11CryptoToken</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div class="section section-1" id="src-5277692_id-.PKCS11CryptoTokenv4.1.0-Overview">
+    <div class="section section-1" id="src-11574114_id-.PKCS11CryptoTokenv4.2.1-Overview">
         <h1 class="heading "><span>Overview</span></h1>
-    <p  >Using PKCS11 it's possible to use a HSM that has a PKCS11 module, such as Utimaco, nCipher, SafeNet or AEP KeyPer. SignServer uses the same underlying implementation of PKCS11 crypto tokens as EJBCA. To find out more about supported devices and get information how to configure them you can visit the HSM documentation at <a  class="external-link" href="http://ejbca.org/">EJBCA.org</a>.    </p>
-    <p  >The only thing that differs are the token labels strings, which you should use from below for SignServer. A very useful tool from EJBCA is the ClientToolBox. If you can generate and test PKCS11 keys using the clientToolBox, you can use them with SignServer.    </p>
+    <p  >PKCS11 allows using an HSM that has a PKCS11 module, such as Utimaco, nCipher, SafeNet or AEP KeyPer. SignServer uses the same underlying implementation of PKCS11 crypto tokens as EJBCA. For more information on supported devices and configuration, refer to the <a  class="external-link" href="https://www.ejbca.org/docs/adminguide.html#Hardware%20Security%20Modules%20(HSM)">Hardware Security Modules (HSM)</a> section of the ejbca.org documentation. The only thing that differs are the token labels strings, which you should use from below for SignServer. The EJBCA ClientToolBox tool can be used to generate and test PKCS11 keys to confirm that the keys can be used with SignServer. For more information, refer to the <a  class="external-link" href="https://www.ejbca.org/docs/userguide.html#EJBCA%20client%20toolbox">EJBCA client toolbox</a> section of the ejbca.org documentation.    </p>
     <p  >CRYPTOTOKEN_IMPLEMENTATION=<strong class=" ">org.signserver.server.cryptotokens.PKCS11CryptoToken</strong>    </p>
     </div>
-    <div class="section section-1" id="src-5277692_id-.PKCS11CryptoTokenv4.1.0-AvailableProperties">
+    <div class="section section-1" id="src-11574114_id-.PKCS11CryptoTokenv4.2.1-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1132,7 +1135,7 @@
         <p  >DEFAULTKEY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The key alias. (Required)    </p>
+        <p  >The key alias. Required.    </p>
             </td>
         </tr>
     <tr>
@@ -1140,7 +1143,7 @@
         <p  >NEXTCERTSIGNKEY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The next key to use. This property can be used to hold the name of the next key to use. Certificate signing requests (CSR) can be made for this key can while to the current key (DEFAULTKEY) is still in production. After uploading the new certificate the value of NEXTCERTSIGNKEY can be moved to DEFAULTKEY. (optional)    </p>
+        <p  >The next key to use. This property can be used to hold the name of the next key to use. Certificate signing requests (CSR) can be made for this key while to the current key (DEFAULTKEY) is still in production. After uploading the new certificate the value of NEXTCERTSIGNKEY can be moved to DEFAULTKEY. Optional.    </p>
             </td>
         </tr>
     <tr>
@@ -1148,7 +1151,7 @@
         <p  >PIN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Authentication code for activation. (Only required for auth-activation, otherwise the activatecryptotoken CLI command can be used)    </p>
+        <p  >Authentication code for activation. Only required for auth-activation, otherwise the activatecryptotoken CLI command can be used.    </p>
             </td>
         </tr>
     <tr>
@@ -1156,7 +1159,7 @@
         <p  >SHAREDLIBRARYNAME    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Name of pre-defined PKCS11 library to be used. The available libraries can be configured in signserver_deploy.properties. If the legacy SHAREDLIBRARY property is also defined, it must point to the same library on the file system. (Required, unless the old SHAREDLIBRARY is set)    </p>
+        <p  >Name of pre-defined PKCS11 library to be used. The available libraries can be configured in signserver_deploy.properties. If the legacy SHAREDLIBRARY property is also defined, it must point to the same library on the file system. Required, unless the old SHAREDLIBRARY is set.    </p>
             </td>
         </tr>
     <tr>
@@ -1164,7 +1167,9 @@
         <p  >SHAREDLIBRARY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Full path to the library containing the PKCS11 interface. From version 3.7.0 this must point to a file declared in signserver_deploy.properties (or using the built-in values). If this property is defined at the same time as SHAREDLIBRARYNAME they must point to the same library on the file system. NOTE: This property is deprecated.    </p>
+        <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ This property is deprecated.    </p>
+    <p  >Full path to the library containing the PKCS11 interface. From version 3.7.0 this must point to a file declared in signserver_deploy.properties (or using the built-in values). If this property is defined at the same time as SHAREDLIBRARYNAME they must point to the same library on the file system.    </p>
             </td>
         </tr>
     <tr>
@@ -1172,7 +1177,7 @@
         <p  >SLOTLABELTYPE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Indicates how the slot should be identified. Supported values are SLOT_NUMBER, SLOT_INDEX or SLOT_LABEL. (Required)    </p>
+        <p  >Indicates how the slot should be identified. Supported values are SLOT_NUMBER, SLOT_INDEX or SLOT_LABEL. Required.    </p>
             </td>
         </tr>
     <tr>
@@ -1180,11 +1185,11 @@
         <p  >SLOTLABELVALUE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The slot to use, identified with the type specified in SLOTLABELTYPE: (Required)    </p>
+        <p  >The slot to use, identified with the type specified in SLOTLABELTYPE:    </p>
 <ul class=" "><li class=" ">    <p  >SLOT_NUMBER is the number (ID) of the slot    </p>
 </li><li class=" ">    <p  >SLOT_INDEX is the zero-base index of the slot in the list of available slots as returned by the PKCS#11 provider    </p>
 </li><li class=" ">    <p  >SLOT_LABEL this is the label of the slot    </p>
-</li></ul>    <p  >These properties are not allowed if the legacy properties below are specified.    </p>
+</li></ul>    <p  >Required but not allowed if the legacy properties SLOT or SLOTLISTINDEX are specified.    </p>
             </td>
         </tr>
     <tr>
@@ -1200,7 +1205,7 @@
         <p  >ATTRIBUTESFILE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Path to file with PKCS#11 attributes used for key generation. (Optional, not allowed if ATTRIBUTES specified)    </p>
+        <p  >Path to file with PKCS#11 attributes used for key generation. Optional, not allowed if ATTRIBUTES is specified.    </p>
             </td>
         </tr>
     <tr>
@@ -1208,7 +1213,7 @@
         <p  >ATTRIBUTES    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >PKCS#11 attributes used for key generation specified directly in the property value. (Optional, not allowed if ATTRIBUTESFILE specified)    </p>
+        <p  >PKCS#11 attributes used for key generation specified directly in the property value. Optional, not allowed if ATTRIBUTESFILE is specified.    </p>
     <p  >Sample p11attributes.cfg:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1240,20 +1245,10 @@
 <div class="line"><code class="plain">}</code></div>
 </div>
     </div>
-    <div  class="confbox admonition admonition-note">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >The PKCS#11 attributes configuration is global per shared library. If specified in multiple workers only the configuration from the first worker loaded will be used. Changing the property might not take effect without restarting the application server.    </p>
-        </div>
-    </div>
-    <div  class="confbox admonition admonition-note">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >For a Thales nCipher 'module protected' slot (slot index 0), CKA_PRIVATE must be false for the CKO_PRIVATEKEY so the key can be used without a login otherwise the key generation will fail with a CKR_USER_NOT_LOGGED_IN PKCS#11 error.    </p>
-        </div>
-    </div>
-    <p  >    </p>
-    <p  >    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ The PKCS#11 attributes configuration is global per shared library. If specified in multiple workers, only the configuration from the first worker loaded will be used. Changing the property might not take effect without restarting the application server.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ For a Thales nCipher 'module protected' slot (slot index 0), CKA_PRIVATE must be false for the CKO_PRIVATEKEY to allow the key to be used without a login. Otherwise the key generation will fail with a CKR_USER_NOT_LOGGED_IN PKCS#11 error.    </p>
             </td>
         </tr>
     <tr>
@@ -1261,29 +1256,19 @@
         <p  >CACHE_PRIVATEKEY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >If set to true the private key and certificate is cached in the worker so that they are not queried for each signature. This could potentially improve performance in some environments, typically where network HSMs or HSM slots with many keys are used. (Default: false)    </p>
-    <div  class="confbox admonition admonition-note">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >This worker property is to be specified in the worker where the key to be used is specified by the DEFAULTKEY property. It is that key that will be cached locally in the worker. It is important to remember this if the crypto token is configured in a separate worker in which case this property should be specified in the worker that will be using the crypto token and not necessarily in the one having the crypto token configuration.    </p>
-        </div>
-    </div>
-    <div  class="confbox admonition admonition-note">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >When this option is used, the signer certificate is also cached if it is taken from the token and not overridden by specifying it in the configuration. This means that if the certificate in the token is changed the old certificate will still be used until the worker is reloaded which will clear the cache.    </p>
-        </div>
-    </div>
-    <p  >    </p>
-    <p  >    </p>
+        <p  >If set to true, the private key and certificate is cached in the worker so that they are not queried for each signature. This could potentially improve performance in some environments, typically where network HSMs or HSM slots with many keys are used. Default: false.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ This worker property is to be specified in the worker where the key to be used is specified by the DEFAULTKEY property. It is that key that will be cached locally in the worker. It is important to remember this if the crypto token is configured in a separate worker in which case this property should be specified in the worker that will be using the crypto token and not necessarily in the one having the crypto token configuration.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ When enabled, the signer certificate is also cached if taken from the token and not overridden by specifying it in the configuration. This means that if the certificate in the token is changed, the old certificate will still be used until the worker is reloaded, clearing the cache.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5277692_id-.PKCS11CryptoTokenv4.1.0-Defaultglobalproperties">
+    <div class="section section-1" id="src-11574114_id-.PKCS11CryptoTokenv4.2.1-Defaultglobalproperties">
         <h1 class="heading "><span>Default global properties </span></h1>
-    <p  >Some worker properties can instead by specified as default values in the global configuration so they does not have to be repeated in every worker. Individual workers can override the default global values (if any) by specifying the property as usual.    </p>
+    <p  >Certain worker properties can instead be specified as default values in the global configuration, to avoid having to repeat the propertied in every worker. Individual workers can override the default global values (if any), by specifying the property as usual.    </p>
     <p  >Global default values are specified as global values in the global configuration with the name prefixed with &quot;DEFAULT.&quot;. The following properties can currently be specified in the global configuration:    </p>
 <ul class=" "><li class=" ">    <p  >SHAREDLIBRARYNAME    </p>
 </li><li class=" ">    <p  >SHAREDLIBRARY    </p>
@@ -1294,18 +1279,70 @@
 </li><li class=" ">    <p  >ATTRIBUTES    </p>
 </li><li class=" ">    <p  >ATTRIBUTESFILE    </p>
 </li><li class=" ">    <p  >PIN    </p>
-</li></ul>    <div class="section section-2" id="src-5277692_id-.PKCS11CryptoTokenv4.1.0-Exampleusage">
+</li></ul>    <div class="section section-2" id="src-11574114_id-.PKCS11CryptoTokenv4.2.1-Exampleusage">
         <h2 class="heading "><span>Example usage </span></h2>
-    <p  >Edit (preferably a copy of) pkcs11-crypto.properties to match your PKCS#11 token. Run the following command to set up the token:    </p>
-<pre class=" ">bin/signserver setproperties pkcs11-crypto-configuragtion.properties</pre>    <p  >Reload the configuration using the ID that was printed (in this example 8):    </p>
-<pre class=" ">bin/signserver reload 8</pre>    <p  >Activate the crypto token by specifying the PIN code:    </p>
-<pre class=" ">bin/signserver activatecryptotoken 8</pre>    <p  >Unless your DEFAULTKEY worker property points to an existing key in the HSM the activation will look like it failed. Don't worry and instead continue creating a key that can be used for testing slot activation:<br/>Generate a keypair in the token to be used as test key:    </p>
-<pre class=" ">bin/signserver generatekey 8 -alias testkey1 -keyalg RSA -keyspec 2048</pre>    <p  >Set the key as test key:    </p>
-<pre class=" ">bin/signserver setproperty 8 DEFAULTKEY testkey1<br/>bin/signserver reload 8<br/>bin/signserver activatecryptotoken 8</pre>    <p  >Test the keypair:    </p>
-<pre class=" ">bin/signserver testkey 8</pre>    <p  >You also need a certificate for the signer. Generate a certificate request with the command:    </p>
-<pre class=" ">bin/signserver generatecertreq 8 &quot;CN=PKCS11 Signer token&quot; SHA1WithRSA /tmp/certreq.pem</pre>    <p  >Add a user in EJBCA with a certificate profile suitable for signing, and enroll for a &quot;Server Certificate&quot; using the public web pages.<br/>Create the certificate chain file with the command:    </p>
-<pre class=" ">cat /tmp/cert.pem /tmp/AdminCA1.pem &gt; /tmp/certchain.pem</pre>    <p  >The signer certificate must be first, and the root CA certificate last.<br/>The signer certificate should then be uploaded to the worker which should use it. Upload the signing certificate chain to the signer using the command:    </p>
-<pre class=" ">bin/signserver uploadsignercertificatechain 9 GLOB /tmp/certchain.pem bin/signserver reload 9</pre>    <p  >    </p>
+    <p  >Edit (preferably a copy of) pkcs11-crypto.properties to match your PKCS#11 token.    </p>
+    <p  >Run the following command to set up the token:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">bin/signserver setproperties pkcs11-crypto-configuragtion.properties</code></div>
+</div>
+    </div>
+    <p  >Reload the configuration using the printed ID (in this example 8):    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">bin/signserver reload </code><code class="value">8</code></div>
+</div>
+    </div>
+    <p  >Activate the crypto token by specifying the PIN code:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">bin/signserver activatecryptotoken </code><code class="value">8</code></div>
+</div>
+    </div>
+    <p  >Unless your DEFAULTKEY worker property points to an existing key in the HSM, the activation will look like it failed. Continue by creating a key that can be used for testing slot activation:    </p>
+    <p  >Generate a keypair in the token to be used as test key:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">bin/signserver generatekey </code><code class="value">8</code><code class="plain"> -alias testkey1 -keyalg RSA -keyspec </code><code class="value">2048</code></div>
+</div>
+    </div>
+    <p  >Set the key as test key:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">bin/signserver setproperty </code><code class="value">8</code><code class="plain"> DEFAULTKEY testkey1</code></div>
+<div class="line"><code class="plain">bin/signserver reload </code><code class="value">8</code></div>
+<div class="line"><code class="plain">bin/signserver activatecryptotoken </code><code class="value">8</code></div>
+</div>
+    </div>
+    <p  >Test the keypair:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">bin/signserver testkey </code><code class="value">8</code></div>
+</div>
+    </div>
+    <p  >You also need a certificate for the signer. Generate a certificate request with the command:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">bin/signserver generatecertreq </code><code class="value">8</code><code class="plain"> </code><code class="string">"CN=PKCS11 Signer token"</code><code class="plain"> SHA1WithRSA /tmp/certreq.pem</code></div>
+</div>
+    </div>
+    <p  >Add a user in EJBCA with a certificate profile suitable for signing, and enroll for a &quot;Server Certificate&quot; using the public web pages.    </p>
+    <p  >Create the certificate chain file with the command:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">cat /tmp/cert.pem /tmp/AdminCA1.pem &gt; /tmp/certchain.pem</code></div>
+</div>
+    </div>
+    <p  >The signer certificate must be first, and the root CA certificate last.    </p>
+    <p  >The signer certificate should then be uploaded to the worker which should use it.    </p>
+    <p  >Upload the signing certificate chain to the signer using the command:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">bin/signserver uploadsignercertificatechain </code><code class="value">9</code><code class="plain"> GLOB /tmp/certchain.pem bin/signserver reload </code><code class="value">9</code></div>
+</div>
+    </div>
+    <p  >    </p>
     </div>
     </div>
         </div>
@@ -1352,7 +1389,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

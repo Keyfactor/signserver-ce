@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.2.1</p>
                 </div>
             </header>
 
@@ -225,6 +225,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -1100,17 +1104,17 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277359"> <span>Plain Signer</span></h1>
+</div>            <h1 id="src-11572382"> <span>Plain Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The Plain signer has the fully qualified class name: <strong class=" ">org.signserver.module.cmssigner.PlainSigner</strong>    </p>
-    <div class="section section-1" id="src-5277359_id-.PlainSignerv4.1.0-Overview">
+    <div class="section section-1" id="src-11572382_id-.PlainSignerv4.2.1-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The Plain signer can sign arbitrary data and simply produces a signature in the format determined by the configured signature algorithm.    </p>
     </div>
-    <div class="section section-1" id="src-5277359_id-.PlainSignerv4.1.0-AvailableProperties">
+    <div class="section section-1" id="src-11572382_id-.PlainSignerv4.2.1-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1131,7 +1135,9 @@
         <p  >SIGNATUREALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Property specifying the algorithm used to sign the data (default: depending on the signing key: SHA1withDSA for DSA keys, SHA1withECDSA for ECDSA keys, otherwise SHA1withRSA)    </p>
+        <p  >Property specifying the algorithm used to sign the data. The default depends on the signing key: SHA1withDSA for DSA keys, SHA1withECDSA for ECDSA keys, and otherwise SHA1withRSA.    </p>
+    <p  >NONEwithRSA and NONEwithECDSA are also supported and these algorithms should be used when hash digest is supplied for signing not the data itself.    </p>
+    <p  >Note that when using the NONEwithRSA algorithm, input should be in a particular format. See RFC#3447 for details.    </p>
             </td>
         </tr>
     <tr>
@@ -1139,7 +1145,7 @@
         <p  >LOGREQUEST_DIGESTALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Property specifying the algorithm used to create the message digest (hash) of the request document to put in the log (default: SHA256).    </p>
+        <p  >Property specifying the algorithm used to create the message digest (hash) of the request document to put in the log. Default: SHA256.    </p>
             </td>
         </tr>
     <tr>
@@ -1147,12 +1153,12 @@
         <p  >DO_LOGREQUEST_DIGEST    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Property specifying if the message digest of the requested document should be put in the log (default: true).    </p>
+        <p  >Property specifying if the message digest of the requested document should be put in the log. Default: true.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-5277359_id-.PlainSignerv4.1.0-WorkerLogFields">
+    <div class="section section-2" id="src-11572382_id-.PlainSignerv4.2.1-WorkerLogFields">
         <h2 class="heading "><span>Worker Log Fields</span></h2>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1240,7 +1246,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.2.0</p>
+                    <p>Version: 4.2.1</p>
                 </div>
             </header>
 
@@ -225,6 +225,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
 
             </li>
                             </ul>
@@ -1100,34 +1104,43 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Timed_Services.html">SignServer Timed Services</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277573"> <span>RenewalTimedService</span></h1>
+</div>            <h1 id="src-11573780"> <span>RenewalTimedService</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Note: The RenewalTimedService is an Enterprise Edition feature.    </p>
-        </div>
-    </div>
+    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
     <p  >Fully qualified class name: <strong class=" ">org.signserver.module.renewal.service.RenewalTimedService</strong>    </p>
-    <div class="section section-1" id="src-5277573_id-.RenewalTimedServicev4.1.0-Overview">
+    <div class="section section-1" id="src-11573780_id-.RenewalTimedServicev4.2.1-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The RenewalTimedService is a timed service that can be used to periodically check the signing validity of workers and invoking the renewal worker if needed.    </p>
     </div>
-    <div class="section section-1" id="src-5277573_id-.RenewalTimedServicev4.1.0-Setup">
+    <div class="section section-1" id="src-11573780_id-.RenewalTimedServicev4.2.1-Setup">
         <h1 class="heading "><span>Setup</span></h1>
-    <p  >A typical setup with automatic renewal contains of at least 4 workers:    </p>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">The Crypto Worker</strong>:<br/>The worker holding the crypto token.<br/>Configured just as before but it is required to be a separate worker from the one that will be renewed in order for it to not get deactivated when the worker's configuration changes during the renewal.    </p>
-</li><li class=" ">    <p  ><strong class=" ">The renewee(s)</strong>:<br/>One or more workers which should be automatically renewed.<br/>Each renewee needs the RENEWWORKER property and can have additional properties:    </p>
+    <p  >A typical setup with automatic renewal contains at least the following workers.    </p>
+    <div class="section section-2" id="src-11573780_id-.RenewalTimedServicev4.2.1-CryptoWorker">
+        <h2 class="heading "><span>Crypto Worker</span></h2>
+    <p  >The worker holding the crypto token. Configured as usual, but needs to be separated from the worker that will be renewed, in order not to be deactivated when the worker's configuration changes during the renewal.    </p>
+    </div>
+    <div class="section section-2" id="src-11573780_safe-id-aWQtLlJlbmV3YWxUaW1lZFNlcnZpY2V2NC4yLjEtUmVuZXdlZShzKQ">
+        <h2 class="heading "><span>Renewee(s)</span></h2>
+    <p  >One or more workers that should be automatically renewed.    </p>
+    <p  >Each renewee requires the RENEWWORKER property, and can have additional properties:    </p>
 <ul class=" "><li class=" ">    <p  >Required property RENEWWORKER: Points out which Renewal worker to use.    </p>
-</li><li class=" ">    <p  >Optional property RENEW_FORDEFAULTKEY: If set to true the certificate request is sent for the current DEFAULTKEY and no key generation is performed. Default: false.    </p>
-</li><li class=" ">    <p  >Optional property RENEW_MINREMAININGSIGNINGVALIDITY: The minimum signing validity that must remain for the worker without it to be up for renewal. This value is expressed as a number of days, hours, minutes and milliseconds on the form &quot;*d *h *m *s *ms&quot;. Default: &quot;0d&quot;.    </p>
-</li></ul></li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">The Renewal worker</strong>:<br/>The worker performing the renewal.<br/>See the RenewalWorker for its configuration.    </p>
-</li><li class=" ">    <p  ><strong class=" ">The Renewal Timed service</strong>:<br/>The worker which runs periodically and checks if a worker needs renewal.<br/>Needs a property listing each worker to check and renew if needed.    </p>
+</li><li class=" ">    <p  >Optional property RENEW_FORDEFAULTKEY: If set to true, the certificate request is sent for the current DEFAULTKEY and no key generation is performed. Default: false.    </p>
+</li><li class=" ">    <p  >Optional property RENEW_MINREMAININGSIGNINGVALIDITY: The minimum signing validity that must remain for the worker without it to be up for renewal. This value is expressed as number of days, hours, minutes, and milliseconds in the format &quot;*d *h *m *s *ms&quot;. Default: &quot;0d&quot;.    </p>
 </li></ul>    </div>
-    <div class="section section-1" id="src-5277573_id-.RenewalTimedServicev4.1.0-AvailableProperties">
+    <div class="section section-2" id="src-11573780_id-.RenewalTimedServicev4.2.1-Renewalworker">
+        <h2 class="heading "><span>Renewal worker</span></h2>
+    <p  >The worker performing the renewal. For configuration information, see <a   href="RenewalWorker.html">RenewalWorker</a>.    </p>
+    </div>
+    <div class="section section-2" id="src-11573780_id-.RenewalTimedServicev4.2.1-TheRenewalTimedservice">
+        <h2 class="heading "><span>The Renewal Timed service</span></h2>
+    <p  >The worker that runs periodically and checks if a worker needs renewal. Requires a property listing each worker to check and renew if needed.    </p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-11573780_id-.RenewalTimedServicev4.2.1-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1148,19 +1161,20 @@
         <p  >WORKERS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Comma-separated list of workers to check the validity time for and request renewal for, if needed.    </p>
+        <p  >Comma-separated list of workers to check the validity time for, and request renewal for, if needed.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5277573_id-.RenewalTimedServicev4.1.0-Execution">
+    <div class="section section-1" id="src-11573780_id-.RenewalTimedServicev4.2.1-Execution">
         <h1 class="heading "><span>Execution</span></h1>
-    <p  >As all timed services the Renewal Timed Service is executed periodically.<br/>The service checks the configurations and certificates for all the configured workers and creates a list with renewal statuses for each worker.<br/>Then each worker in the list that is configured correctly and is up for renewal is renewed by sending a request for it to the Renewal worker.<br/>A note about crypto token activation:<br/>The workers that should be renewed most have their crypto tokens previously activated. Only activated workers configured with a certificate will be scheduled for renewal. This means that the worker needs to be renewed manually the first time to get its initial key and certificate. For the renewal service to work automatically the worker that is going to be renewad must use a separate worker (i.e. a CryptoWorker) for its crypto token. If the worker would have its own crypto token configuration the token would be deactivated during the renewal process.    </p>
+    <p  >Like all timed services, the Renewal Timed Service is executed periodically. The service checks the configurations and certificates for all the configured workers and creates a list with renewal statuses for each worker. Each worker in the list configured correctly and up for renewal is then renewed by sending a request for it to the Renewal worker.    </p>
+    <p  >For crypto token activation, note that the workers that should be renewed must have their crypto tokens previously activated. Since only activated workers configured with a certificate will be scheduled for renewal, the worker needs to be renewed manually the first time to get its initial key and certificate. For the renewal service to work automatically, the worker that is going to be renewed must use a separate worker (i.e. a CryptoWorker) for its crypto token. If the worker has its own crypto token configuration, the token will be deactivated during the renewal process.    </p>
     </div>
-    <div class="section section-1" id="src-5277573_id-.RenewalTimedServicev4.1.0-Troubleshooting">
+    <div class="section section-1" id="src-11573780_id-.RenewalTimedServicev4.2.1-Troubleshooting">
         <h1 class="heading "><span>Troubleshooting</span></h1>
-    <p  >The list of renewal statuses can be seen by looking at the services' complete status information:    </p>
+    <p  >The complete status information of the services list renewal statuses. For example:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">$ bin/signserver getstatus complete RenewalTimedService1</code></div>
@@ -1170,38 +1184,44 @@
 <div class="line"><code class="plain"> - CMSSigner (3): Renewal after: 2016-02-22 16:01:00,000 (on next run), without key generation, using renewal worker "RenewalWorker1".</code></div>
 </div>
     </div>
-    <p  >What we can see from the above example:    </p>
-<ul class=" "><li class=" ">    <p  >The service is configured to manage two workers and their names and worker ID are displayed.    </p>
+    <p  >The example shows that:    </p>
+<ul class=" "><li class=" ">    <p  >The service is configured to manage two workers, and their names and worker ID are displayed.    </p>
 </li><li class=" ">    <p  >Both workers have certificates configured and was active so the service will be able to determine after which date they need to be renewed.    </p>
-</li><li class=" ">    <p  >For the CMSSigner the renewal date has already passed and this is indicated by the text &quot;on next run&quot; showing that the renewal will take place as soon as the service runs.    </p>
+</li><li class=" ">    <p  >For the CMSSigner, the renewal date has already passed and this is indicated by the text &quot;on next run&quot; showing that the renewal will take place as soon as the service runs.    </p>
 </li><li class=" ">    <p  >We can assume that the CMSSigner is configured with the worker property &quot;RENEW_FORDEFAULTKEY=true&quot; as the status says &quot;without key generation&quot;.    </p>
-</li><li class=" ">    <p  >Finally we can see that both workers are configured with &quot;RENEWWORKER=RenewalWorker1&quot;.    </p>
+</li><li class=" ">    <p  >Both workers are configured with &quot;RENEWWORKER=RenewalWorker1&quot;.    </p>
 </li></ul>    </div>
-    <div class="section section-1" id="src-5277573_id-.RenewalTimedServicev4.1.0-Installingaservice">
+    <div class="section section-1" id="src-11573780_id-.RenewalTimedServicev4.2.1-Installingaservice">
         <h1 class="heading "><span>Installing a service</span></h1>
-    <p  >To install a service you use the same commands as for installing a worker:    </p>
-<pre class=" ">$ bin/signserver setproperties configuration.properties</pre>    <p  >Example:    </p>
+    <p  >To install a service, use the same commands as for installing a worker:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/signerstatusreport.properties</code></div>
+<div class="line"><code class="plain">$ bin</code><code class="plain">/signserver</code><code class="plain"> setproperties configuration.properties</code></div>
+</div>
+    </div>
+    <p  >Example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">$ bin</code><code class="plain">/signserver</code><code class="plain"> setproperties doc</code><code class="plain">/sample-configs/signerstatusreport</code><code class="plain">.properties</code></div>
 <div class="line"><code class="plain">===========================================</code></div>
 <div class="line"><code class="plain"> Executing Command on host : localhost</code></div>
 <div class="line"><code class="plain">===========================================</code></div>
-<div class="line"><code class="plain">Configuring properties as defined in the file : doc/sample-configs/signerstatusreport.properties</code></div>
-<div class="line"><code class="plain">Setting the property ACTIVE to TRUE for worker 2</code></div>
-<div class="line"><code class="plain">Setting the property INTERVAL to 10 for worker 2</code></div>
+<div class="line"><code class="plain">Configuring properties as defined </code><code class="keyword">in</code><code class="plain"> the </code><code class="functions">file</code><code class="plain"> : doc</code><code class="plain">/sample-configs/signerstatusreport</code><code class="plain">.properties</code></div>
+<div class="line"><code class="plain">Setting the property ACTIVE to TRUE </code><code class="keyword">for</code><code class="plain"> worker 2</code></div>
+<div class="line"><code class="plain">Setting the property INTERVAL to 10 </code><code class="keyword">for</code><code class="plain"> worker 2</code></div>
 <div class="line"><code class="plain">Setting the global property WORKER2.CLASSPATH to org.signserver.server.timedservices.SignerStatusReportTimedService with scope GLOB.</code></div>
-<div class="line"><code class="plain">Setting the property WORKERS to PDFSigner1 for worker 2</code></div>
-<div class="line"><code class="plain">Setting the property NAME to SignerStatusReporter for worker 2</code></div>
-<div class="line"><code class="plain">Setting the property OUTPUTFILE to /tmp/statusreport for worker 2</code></div>
-<div class="line"><code class="plain">$ bin/signserver reload 2</code></div>
+<div class="line"><code class="plain">Setting the property WORKERS to PDFSigner1 </code><code class="keyword">for</code><code class="plain"> worker 2</code></div>
+<div class="line"><code class="plain">Setting the property NAME to SignerStatusReporter </code><code class="keyword">for</code><code class="plain"> worker 2</code></div>
+<div class="line"><code class="plain">Setting the property OUTPUTFILE to </code><code class="plain">/tmp/statusreport</code><code class="plain"> </code><code class="keyword">for</code><code class="plain"> worker 2</code></div>
+<div class="line"><code class="plain">$ bin</code><code class="plain">/signserver</code><code class="plain"> reload 2</code></div>
 <div class="line"><code class="plain">===========================================</code></div>
 <div class="line"><code class="plain">Executing Command on host : localhost</code></div>
 <div class="line"><code class="plain">===========================================</code></div>
 <div class="line"><code class="plain">SignServer reloaded successfully</code></div>
-<div class="line"><code class="plain">Current configuration is now activated.</code></div>
+<div class="line"><code class="plain">Current configuration is now activated</code></div>
 </div>
     </div>
+    <p  >    </p>
     </div>
         </div>
 
@@ -1247,7 +1267,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

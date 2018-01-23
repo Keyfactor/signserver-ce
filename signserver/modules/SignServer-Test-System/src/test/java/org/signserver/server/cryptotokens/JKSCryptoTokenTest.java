@@ -43,6 +43,7 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import static org.signserver.server.cryptotokens.CryptoTokenHelper.SECRET_KEY_PREFIX;
+import org.signserver.testutils.ModulesTestCase;
 
 /**
  * JKS CryptoToken test uses JKS file on file system, The JKS keystore in the file uses a standard PKCS12 format.
@@ -68,17 +69,11 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
     private final File keystore; 
             
     static {
-        JAVA_VERSION = getJavaVersion();
+        JAVA_VERSION = ModulesTestCase.getJavaVersion();
     }
     
     public JKSCryptoTokenTest() throws FileNotFoundException {
         keystore = new File(getSignServerHome(), "res/test/samplejkskeystore.jks");
-    }
-    
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();        
     }
 
     private void setupCryptoTokenProperties(final int tokenId) throws Exception {        
@@ -198,5 +193,5 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
     @Override
     protected List<Certificate> getCertificateChain(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }       
+    }
 }

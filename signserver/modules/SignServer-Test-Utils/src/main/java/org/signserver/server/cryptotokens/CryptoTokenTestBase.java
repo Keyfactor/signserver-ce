@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
@@ -440,4 +442,8 @@ public abstract class CryptoTokenTestBase {
         assertEquals("right issuer", new JcaX509CertificateConverter().getCertificate(issuerCert).getSubjectX500Principal().getName(), ((X509Certificate) parsedChain[1]).getSubjectX500Principal().getName());
     }
     
+    protected File getSignServerHome() throws FileNotFoundException {
+        return testCase.getSignServerHome();
+    }
+
 }

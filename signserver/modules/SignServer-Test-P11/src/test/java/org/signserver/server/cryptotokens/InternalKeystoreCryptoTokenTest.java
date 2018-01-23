@@ -77,9 +77,7 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
     }
     
     @Before
-    @Override
     public void setUp() throws Exception {
-        super.setUp();
         SignServerUtil.installBCProvider();
     }
     

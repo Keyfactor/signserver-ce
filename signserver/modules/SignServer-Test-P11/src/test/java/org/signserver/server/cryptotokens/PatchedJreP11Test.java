@@ -62,24 +62,24 @@ public class PatchedJreP11Test {
     private final CryptoTokenTestBase base = new CryptoTokenTestBase() {
         @Override
         protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, SignServerException, AuthorizationDeniedException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
-            return getWorkerSession().searchTokenEntries(new WorkerIdentifier(CRYPTO_TOKEN), startIndex, max, qc, includeData, Collections.<String, Object>emptyMap());
+            return testCase.getWorkerSession().searchTokenEntries(new WorkerIdentifier(CRYPTO_TOKEN), startIndex, max, qc, includeData, Collections.<String, Object>emptyMap());
         }
 
         @Override
         protected void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException {
-            getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_TOKEN), keySpec, keySpec, alias, null);
+            testCase.getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_TOKEN), keySpec, keySpec, alias, null);
         }
 
         @Override
         protected boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
-            return getWorkerSession().removeKey(new WorkerIdentifier(CRYPTO_TOKEN), alias);
+            return testCase.getWorkerSession().removeKey(new WorkerIdentifier(CRYPTO_TOKEN), alias);
         }
 
         @Override
         protected void importCertificateChain(List<Certificate> chain, String alias)
                 throws CryptoTokenOfflineException, IllegalArgumentException,
                 CertificateException, CertificateEncodingException, OperationUnsupportedException {
-            getWorkerSession().importCertificateChain(new WorkerIdentifier(CRYPTO_TOKEN), getCertByteArrayList(chain), alias, null);
+            testCase.getWorkerSession().importCertificateChain(new WorkerIdentifier(CRYPTO_TOKEN), getCertByteArrayList(chain), alias, null);
         }
 
         private List<byte[]> getCertByteArrayList(final List<Certificate> chain) throws CertificateEncodingException {
@@ -97,13 +97,13 @@ public class PatchedJreP11Test {
                                                      final boolean explicitEccParameters,
                                                      final String alias)
                 throws CryptoTokenOfflineException, InvalidWorkerIdException {
-            return getWorkerSession().getCertificateRequest(new WorkerIdentifier(CRYPTO_TOKEN), req, explicitEccParameters, alias);
+            return testCase.getWorkerSession().getCertificateRequest(new WorkerIdentifier(CRYPTO_TOKEN), req, explicitEccParameters, alias);
         }
 
         @Override
         protected List<Certificate> getCertificateChain(String alias)
                 throws CryptoTokenOfflineException, InvalidWorkerIdException {
-            return getWorkerSession().getSignerCertificateChain(new WorkerIdentifier(CRYPTO_TOKEN), alias);
+            return testCase.getWorkerSession().getSignerCertificateChain(new WorkerIdentifier(CRYPTO_TOKEN), alias);
         }
     };
     

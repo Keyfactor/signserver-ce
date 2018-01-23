@@ -1,5 +1,4 @@
-
-package org.signserver.server.cryptotokens;/*************************************************************************
+/*************************************************************************
  *                                                                       *
  *  SignServer: The OpenSource Automated Signing Server                  *
  *                                                                       *
@@ -11,6 +10,7 @@ package org.signserver.server.cryptotokens;/************************************
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
+package org.signserver.server.cryptotokens;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
@@ -20,11 +20,14 @@ import java.security.cert.CertificateException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 import org.apache.log4j.Logger;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -61,19 +64,18 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     private final String existingKey1;
     private final String testSecretKeyAlias = "testSecretKey";
     
-    private final WorkerSessionRemote workerSession = getWorkerSession();
+    private final WorkerSessionRemote workerSession = testCase.getWorkerSession();
     
     public P11CryptoTokenTest() {
-        sharedLibraryName = getConfig().getProperty("test.p11.sharedLibraryName");
-        slot = getConfig().getProperty("test.p11.slot");
-        pin = getConfig().getProperty("test.p11.pin");
-        existingKey1 = getConfig().getProperty("test.p11.existingkey1");
+        sharedLibraryName = testCase.getConfig().getProperty("test.p11.sharedLibraryName");
+        slot = testCase.getConfig().getProperty("test.p11.slot");
+        pin = testCase.getConfig().getProperty("test.p11.pin");
+        existingKey1 = testCase.getConfig().getProperty("test.p11.existingkey1");
     }
     
     @Before
-    @Override
     public void setUp() throws Exception {
-        super.setUp();
+        Assume.assumeFalse("P11NG".equalsIgnoreCase(testCase.getConfig().getProperty("test.p11.provider")));
         SignServerUtil.installBCProvider();
     }
     
@@ -118,7 +120,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
             assertTrue("errors contains disabled: " + errors, errors.contains("Disabled"));
             assertFalse("errors not including marker: " + errors, errors.contains(marker));
         } finally {
-            removeWorker(CRYPTO_TOKEN);
+            testCase.removeWorker(CRYPTO_TOKEN);
         }
     }
 
@@ -130,7 +132,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
         
             searchTokenEntriesHelper(existingKey1);
         } finally {
-            removeWorker(CRYPTO_TOKEN);
+            testCase.removeWorker(CRYPTO_TOKEN);
         }
     }
     
@@ -142,7 +144,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
         
             importCertificateChainHelper(existingKey1);
         } finally {
-            removeWorker(CRYPTO_TOKEN);
+            testCase.removeWorker(CRYPTO_TOKEN);
         }
     }
 
@@ -154,7 +156,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
         
             exportCertificatesHelper(existingKey1);
         } finally {
-            removeWorker(CRYPTO_TOKEN);
+            testCase.removeWorker(CRYPTO_TOKEN);
         }
     }
     
@@ -168,7 +170,7 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
             findNewEntry(testSecretKeyAlias);
         } finally {
             destroyKey(testSecretKeyAlias);
-            removeWorker(CRYPTO_TOKEN);
+            testCase.removeWorker(CRYPTO_TOKEN);
         }
     }
 
@@ -213,29 +215,29 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
     private void findNewEntry(String alias) throws CryptoTokenOfflineException, OperationUnsupportedException, QueryException, AuthorizationDeniedException, InvalidWorkerIdException, InvalidAlgorithmParameterException, SignServerException, KeyStoreException, UnsupportedCryptoTokenParameter {
         TokenSearchResults searchResults = searchTokenEntries(0, 1, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), alias)), true);
         List<TokenEntry> entries = searchResults.getEntries();
-        assertEquals(1, entries.size());
+        testCase.assertEquals(1, entries.size());
     }
 
     @Override
     protected TokenSearchResults searchTokenEntries(int startIndex, int max, QueryCriteria qc, boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, SignServerException, AuthorizationDeniedException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
-        return getWorkerSession().searchTokenEntries(new WorkerIdentifier(CRYPTO_TOKEN), startIndex, max, qc, includeData, Collections.<String, Object>emptyMap());
+        return testCase.getWorkerSession().searchTokenEntries(new WorkerIdentifier(CRYPTO_TOKEN), startIndex, max, qc, includeData, Collections.<String, Object>emptyMap());
     }
 
     @Override
     protected void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException {
-        getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_TOKEN), keyType, keySpec, alias, null);
+        testCase.getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_TOKEN), keyType, keySpec, alias, null);
     }
 
     @Override
     protected boolean destroyKey(String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException, KeyStoreException {
-        return getWorkerSession().removeKey(new WorkerIdentifier(CRYPTO_TOKEN), alias);
+        return testCase.getWorkerSession().removeKey(new WorkerIdentifier(CRYPTO_TOKEN), alias);
     }
 
     @Override
     protected void importCertificateChain(List<Certificate> chain, String alias)
             throws CryptoTokenOfflineException, IllegalArgumentException,
             CertificateException, CertificateEncodingException, OperationUnsupportedException {
-        getWorkerSession().importCertificateChain(new WorkerIdentifier(CRYPTO_TOKEN), getCertByteArrayList(chain), alias, null);
+        testCase.getWorkerSession().importCertificateChain(new WorkerIdentifier(CRYPTO_TOKEN), getCertByteArrayList(chain), alias, null);
     }
     
     private List<byte[]> getCertByteArrayList(final List<Certificate> chain) throws CertificateEncodingException {
@@ -253,12 +255,12 @@ public class P11CryptoTokenTest extends CryptoTokenTestBase {
                                                  final boolean explicitEccParameters,
                                                  final String alias)
             throws CryptoTokenOfflineException, InvalidWorkerIdException {
-        return getWorkerSession().getCertificateRequest(new WorkerIdentifier(CRYPTO_TOKEN), req, explicitEccParameters, alias);
+        return testCase.getWorkerSession().getCertificateRequest(new WorkerIdentifier(CRYPTO_TOKEN), req, explicitEccParameters, alias);
     }
 
     @Override
     protected List<Certificate> getCertificateChain(String alias)
             throws CryptoTokenOfflineException, InvalidWorkerIdException {
-        return getWorkerSession().getSignerCertificateChain(new WorkerIdentifier(CRYPTO_TOKEN), alias);
+        return testCase.getWorkerSession().getSignerCertificateChain(new WorkerIdentifier(CRYPTO_TOKEN), alias);
     }
 }

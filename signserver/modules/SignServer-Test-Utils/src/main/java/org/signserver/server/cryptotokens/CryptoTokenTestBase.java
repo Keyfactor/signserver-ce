@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -55,6 +56,7 @@ import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.QueryException;
 import org.signserver.common.SignServerException;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
+import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -65,10 +67,12 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Markus Kilås
  * @version $Id$
  */
-public abstract class CryptoTokenTestBase extends ModulesTestCase {
+public abstract class CryptoTokenTestBase {
     
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(CryptoTokenTestBase.class);
+    
+    protected ModulesTestCase testCase = new ModulesTestCase();
     
     protected abstract TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData) 
             throws InvalidWorkerIdException, AuthorizationDeniedException, SignServerException, OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter;
@@ -124,8 +128,19 @@ public abstract class CryptoTokenTestBase extends ModulesTestCase {
 //        allowedFields.add(AuditRecordData.FIELD_TIMESTAMP);
 //    }
     public static final String FIELD_ALIAS = "alias";
+
+    protected Properties getConfig() {
+        return testCase.getConfig();
+    }
     
-    
+    protected WorkerSessionRemote getWorkerSession() {
+        return testCase.getWorkerSession();
+    }
+
+    protected void removeWorker(int workerId) throws Exception {
+        testCase.removeWorker(workerId);
+    }
+
     /**
      * TODO tests...
      * 

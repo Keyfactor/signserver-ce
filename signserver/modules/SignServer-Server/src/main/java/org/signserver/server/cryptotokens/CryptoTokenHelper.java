@@ -166,6 +166,7 @@ public class CryptoTokenHelper {
     private static final String CESECORE_SUBJECT_DUMMY_L = "L=around";
     private static final String CESECORE_SUBJECT_DUMMY_C = "C=US";
     private static final String CESECORE_SUBJECT_DN_6_8 = "CN=Dummy certificate created by a CESeCore application"; // Since ~6.8.0
+    public static final String SUBJECT_DUMMY_4_3_0 = "CN=Dummy cert for ";
     
     private static final String[] KNOWNSECRETKEYALGONAMES = {
         "AES",
@@ -487,8 +488,9 @@ public class CryptoTokenHelper {
      */
     public static boolean isDummyCertificateDN(final String dn) {
         return dn.contains(SUBJECT_DUMMY)
-                    || (dn.contains(CESECORE_SUBJECT_DN_6_8))
-                    || (dn.contains(CESECORE_SUBJECT_DUMMY_CN) && dn.contains(CESECORE_SUBJECT_DUMMY_L) && dn.contains(CESECORE_SUBJECT_DUMMY_C));
+                || (dn.contains(CESECORE_SUBJECT_DN_6_8))
+                || (dn.contains(CESECORE_SUBJECT_DUMMY_CN) && dn.contains(CESECORE_SUBJECT_DUMMY_L) && dn.contains(CESECORE_SUBJECT_DUMMY_C))
+                || dn.contains(SUBJECT_DUMMY_4_3_0);
     }
     
     /**

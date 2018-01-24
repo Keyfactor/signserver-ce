@@ -331,6 +331,7 @@ public class CryptoTokenHelperTest extends TestCase {
     public void testDummyCertificateDN() throws Exception {
         assertTrue("contains SignServer marker", CryptoTokenHelper.isDummyCertificateDN("CN=Anything, L=_SignServer_DUMMY_CERT_, O=anything"));
         assertTrue("is CESeCore DN", CryptoTokenHelper.isDummyCertificateDN("CN=some guy, L=around, C=US"));
+        assertTrue("Not a dummy certificate DN", CryptoTokenHelper.isDummyCertificateDN("CN=Dummy cert for testKey"));
         assertFalse("not SignServer", CryptoTokenHelper.isDummyCertificateDN("CN=Anything, O=anything"));
         assertFalse("not CESeCore DN", CryptoTokenHelper.isDummyCertificateDN("CN=other guy, L=around, C=US"));
         assertFalse("not CESeCore DN", CryptoTokenHelper.isDummyCertificateDN("CN=some guy, L=Stockholm, C=US"));

@@ -106,6 +106,8 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     private PKCS11Settings settings;
     
     private Integer keygenerationLimit;
+    
+    private KeyStoreDelegator keystoreDelegator;
 
     @Override
     public void init(int workerId, Properties props, org.signserver.server.IServices services) throws CryptoTokenInitializationFailureException {
@@ -348,6 +350,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     @Override
     public boolean deactivate(IServices services) throws CryptoTokenOfflineException {
         delegate.deactivate();
+        keystoreDelegator = null;
         return true;
     }
 
@@ -401,18 +404,28 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
 
     @Override
     public boolean removeKey(String alias, IServices services) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
-        return CryptoTokenHelper.removeKey(getKeyStore(), alias);
+        return CryptoTokenHelper.removeKey(getKeyStoreDelegator(), alias);
     }
 
     @Override
     public Collection<KeyTestResult> testKey(String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, KeyStoreException {
         final KeyStore keyStore = delegate.getActivatedKeyStore();
-        return CryptoTokenHelper.testKey(keyStore, alias, authCode, keyStore.getProvider().getName(), signatureAlgorithm);
+        return CryptoTokenHelper.testKey(getKeyStoreDelegator(), alias, authCode, keyStore.getProvider().getName(), signatureAlgorithm);
     }
 
     @Override
     public KeyStore getKeyStore() throws UnsupportedOperationException, CryptoTokenOfflineException, KeyStoreException {
         return delegate.getActivatedKeyStore();
+    }
+    
+    private KeyStoreDelegator getKeyStoreDelegator()
+            throws UnsupportedOperationException, CryptoTokenOfflineException,
+                   KeyStoreException {
+        if (keystoreDelegator == null) {
+            keystoreDelegator = new JavaKeyStoreDelegator(getKeyStore());
+        }
+        
+        return keystoreDelegator;
     }
 
     private void generateKeyPair(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
@@ -485,7 +498,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
 
             if (params != null) {
                 final KeyStore ks = delegate.getActivatedKeyStore();
-                CryptoTokenHelper.regenerateCertIfWanted(alias, authCode, params, ks, ks.getProvider().getName());
+                CryptoTokenHelper.regenerateCertIfWanted(alias, authCode, params, getKeyStoreDelegator(), ks.getProvider().getName());
             }
         } catch (InvalidAlgorithmParameterException | org.cesecore.keys.token.CryptoTokenOfflineException | CertificateException | IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | OperatorCreationException ex) {
             LOG.error(ex, ex);
@@ -555,7 +568,8 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
             final KeyStore keyStore = delegate.getActivatedKeyStore();
             final Key key = keyStore.getKey(alias, athenticationCode);
             
-            CryptoTokenHelper.ensureNewPublicKeyMatchesOld(keyStore, alias, certChain.get(0));
+            CryptoTokenHelper.ensureNewPublicKeyMatchesOld(getKeyStoreDelegator(),
+                                                           alias, certChain.get(0));
 
             keyStore.setKeyEntry(alias, key, athenticationCode,
                                  certChain.toArray(new Certificate[0]));
@@ -568,7 +582,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     @Override
     public TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, Map<String, Object> params, final IServices services) throws CryptoTokenOfflineException, QueryException {
         try {
-            return CryptoTokenHelper.searchTokenEntries(getKeyStore(), startIndex, max, qc, includeData, services, null);
+            return CryptoTokenHelper.searchTokenEntries(getKeyStoreDelegator(), startIndex, max, qc, includeData, services, null);
         } catch (KeyStoreException ex) {
             throw new CryptoTokenOfflineException(ex);
         }

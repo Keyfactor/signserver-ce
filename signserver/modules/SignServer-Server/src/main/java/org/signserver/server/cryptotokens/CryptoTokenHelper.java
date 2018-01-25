@@ -16,40 +16,32 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.KeyPair;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
-import java.security.ProviderException;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
-import java.security.UnrecoverableEntryException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.DSAKey;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.RSAKey;
-import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.PredicateUtils;
@@ -66,11 +58,7 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
-import org.cesecore.certificates.util.AlgorithmConstants;
-import org.cesecore.certificates.util.AlgorithmTools;
-import org.cesecore.keys.token.p11.PKCS11Utils;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
-import org.cesecore.keys.token.p11.exception.P11RuntimeException;
 import org.cesecore.util.CertTools;
 import org.cesecore.util.QueryParameterException;
 import org.cesecore.util.query.Elem;
@@ -242,7 +230,7 @@ public class CryptoTokenHelper {
      * @throws KeyStoreException for keystore related errors
      * @throws SignServerException if the keystore did not contain a key with the specified alias
      */
-    public static boolean removeKey(final KeyStore keyStore, final String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
+    public static boolean removeKey(final KeyStoreDelegator keyStore, final String alias) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
         if (keyStore == null) {
             throw new CryptoTokenOfflineException("Token offline");
         }
@@ -263,7 +251,7 @@ public class CryptoTokenHelper {
      * @return The results for each key found
      * @throws CryptoTokenOfflineException In case the key could not be used
      */
-    public static Collection<KeyTestResult> testKey(KeyStore keyStore, String alias, char[] authCode, String signatureProvider, String signatureAlgorithm) throws CryptoTokenOfflineException {
+    public static Collection<KeyTestResult> testKey(KeyStoreDelegator keyStore, String alias, char[] authCode, String signatureProvider, String signatureAlgorithm) throws CryptoTokenOfflineException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("testKey for alias: " + alias);
         }
@@ -543,155 +531,28 @@ public class CryptoTokenHelper {
         return new JcaX509CertificateConverter().getCertificate(cg.build(contentSigner));
     }
 
-    public static TokenSearchResults searchTokenEntries(final KeyStore keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, IServices services, char[] authCode) throws CryptoTokenOfflineException, QueryException {
+    public static TokenSearchResults searchTokenEntries(final KeyStoreDelegator keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, IServices services, char[] authCode) throws CryptoTokenOfflineException, QueryException {
         final TokenSearchResults result;
         try {
             final ArrayList<TokenEntry> tokenEntries = new ArrayList<>();
             final Enumeration<String> e = keyStore.aliases(); // We assume the order is the same for every call unless entries has been added or removed
-            
-            final long maxIndex = (long) startIndex + max;
-            for (int i = 0; i < maxIndex && e.hasMoreElements();) {
-                final String keyAlias = e.nextElement();
-                
-                final String type;
-                if (keyStore.entryInstanceOf(keyAlias, KeyStore.PrivateKeyEntry.class)) {
-                    type = TokenEntry.TYPE_PRIVATEKEY_ENTRY;
-                } else if (keyStore.entryInstanceOf(keyAlias, KeyStore.SecretKeyEntry.class)) {
-                    type = TokenEntry.TYPE_SECRETKEY_ENTRY;
-                } else if (keyStore.entryInstanceOf(keyAlias, KeyStore.TrustedCertificateEntry.class)) {
-                    type = TokenEntry.TYPE_TRUSTED_ENTRY;
-                }  else {
-                    type = null;
-                }
-                
-                TokenEntry entry = new TokenEntry(keyAlias, type);
+
+            final List<TokenEntry> entries = keyStore.getEntries(startIndex, max);
+            for (final TokenEntry entry : entries) {
+                final String keyAlias = entry.getAlias();
+                final String type = entry.getType();
                 
                 if (shouldBeIncluded(entry, qc)) {
-                    if (i < startIndex) {
-                        i++;
-                        continue;
-                    }
-
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("checking keyAlias: " + keyAlias);
                     }
 
                     // Add additional data
+                    
                     if (includeData) {
-                        Map<String, String> info = new HashMap<>();
-                        try {
-                            Date creationDate = keyStore.getCreationDate(keyAlias);
-                            entry.setCreationDate(creationDate);
-                        } catch (ProviderException ex) {} // NOPMD: We ignore if it is not supported
-
-                        if (TokenEntry.TYPE_PRIVATEKEY_ENTRY.equals(type)) {
-                            final Certificate[] chain = keyStore.getCertificateChain(keyAlias);
-                            if (chain.length > 0) {
-                                final PublicKey pubKey = chain[0].getPublicKey();
-                                final String keyAlgorithm =
-                                        AlgorithmTools.getKeyAlgorithm(pubKey);
-                                info.put(INFO_KEY_ALGORITHM, keyAlgorithm);
-                                info.put(INFO_KEY_SPECIFICATION,
-                                        AlgorithmTools.getKeySpecification(pubKey));
-                                if (AlgorithmConstants.KEYALGORITHM_RSA.equals(keyAlgorithm)) {
-                                    final RSAPublicKey rsaKey = (RSAPublicKey) pubKey;
-
-                                    info.put(INFO_KEY_PUBLIC_EXPONENT,
-                                            rsaKey.getPublicExponent().toString(10));
-                                }
-                                info.put(INFO_KEY_SIGNINGS, String.valueOf(getNoOfSignings(pubKey, services)));
-                            }
-                            try {
-                                entry.setParsedChain(chain);
-                            } catch (CertificateEncodingException ex) {
-                                info.put("Error", ex.getMessage());
-                                LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
-                            }
-                            
-                            if (isJREPatched()) {
-                                final PKCS11Utils p11 = PKCS11Utils.getInstance();
-                                
-                                Key key = null;
-                                String keyError = null;
-                                try {
-                                    key = keyStore.getKey(keyAlias, null);
-                                } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
-                                    keyError = ex.getMessage();
-                                    if (LOG.isDebugEnabled()) {
-                                        LOG.debug("Unable to get key to query P11 info", ex);
-                                    }
-                                }
-                                final String providerName = keyStore.getProvider().getName();
-
-                                // Modifiable
-                                if (key == null) {
-                                    info.put(INFO_KEY_MODIFIABLE, "Error: " + keyError);
-                                } else {
-                                    final boolean modifiable = p11.isKeyModifiable(key, providerName);
-                                    info.put(INFO_KEY_MODIFIABLE, String.valueOf(modifiable));
-                                }
-                                
-                                // Security Info
-                                if (key != null) {
-                                    try {
-                                        final StringBuilder sb = new StringBuilder();
-                                        p11.securityInfo(key, providerName, sb);
-                                        info.put(INFO_KEY_PKCS11_ATTRIBUTES, sb.toString().replace("  ", "\n"));
-                                    } catch (P11RuntimeException ex) {
-                                        info.put(INFO_KEY_PKCS11_ATTRIBUTES, "Error: " + ex.getMessage());
-                                        if (LOG.isDebugEnabled()) {
-                                            LOG.debug("Unable to query security info for key", ex);
-                                        }
-                                    }
-                                }
-                                
-                            }
-                        } else if (TokenEntry.TYPE_TRUSTED_ENTRY.equals(type)) {
-                            Certificate certificate = keyStore.getCertificate(keyAlias);
-                            try {
-                                entry.setParsedTrustedCertificate(certificate);
-                            } catch (CertificateEncodingException ex) {
-                                info.put("Error", ex.getMessage());
-                                LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
-                            }
-                            final Certificate[] chain = new Certificate[0];
-                            try {
-                                entry.setParsedChain(chain);
-                            } catch (CertificateEncodingException ex) {
-                                LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
-                            }
-                            info.put(INFO_KEY_SIGNINGS, String.valueOf(getNoOfSignings(certificate.getPublicKey(), services)));
-                            info.put(INFO_KEY_ALGORITHM, "Certificate");
-                            info.put(INFO_KEY_SPECIFICATION, "n/a"); // Key specification is not applicable for trusted entries 
-                        } else if (TokenEntry.TYPE_SECRETKEY_ENTRY.equals(type)) {
-                            try {
-                                SecretKey secretKey = (SecretKey) keyStore.getKey(keyAlias, authCode);
-
-                                if (secretKey != null) {
-                                    String secretKeyAlgo = secretKey.getAlgorithm();
-                                    if (secretKeyAlgo.equals("1.3.14.3.2.7")) {
-                                        secretKeyAlgo = "DES";
-                                    }
-                                    info.put(INFO_KEY_ALGORITHM, secretKeyAlgo);
-                                }
-                                info.put(INFO_KEY_SPECIFICATION, "n/a");
-                                final Certificate[] chain = new Certificate[0];
-                                try {
-                                    entry.setParsedChain(chain);
-                                } catch (CertificateEncodingException ex) {
-                                    LOG.error("Certificate could not be encoded for alias: " + keyAlias, ex);
-                                }
-                            } catch (NoSuchAlgorithmException | UnrecoverableEntryException ex) {
-                                info.put("Error", ex.getMessage());
-                                LOG.error("Unable to get secret key for alias: " + keyAlias, ex);
-                            }
-                        }
-                        entry.setInfo(info);
+                        keyStore.addAdditionalDataToEntry(entry, authCode, services);
                     }
                     tokenEntries.add(entry);
-
-                    // Increase index
-                    i++;
                 }
             }
             result = new TokenSearchResults(tokenEntries, e.hasMoreElements());
@@ -807,7 +668,7 @@ public class CryptoTokenHelper {
      * @throws KeyStoreException if the keystore has not been initialized
      * @throws CryptoTokenOfflineException in case the keys does not match
      */
-    public static void ensureNewPublicKeyMatchesOld(KeyStore keyStore, String alias, Certificate newCertificate) throws KeyStoreException, CryptoTokenOfflineException {
+    public static void ensureNewPublicKeyMatchesOld(KeyStoreDelegator keyStore, String alias, Certificate newCertificate) throws KeyStoreException, CryptoTokenOfflineException {
         Certificate oldCert = keyStore.getCertificate(alias);
         if (!oldCert.getPublicKey().equals(newCertificate.getPublicKey())) {
             throw new CryptoTokenOfflineException("New certificate public key does not match current one");
@@ -867,7 +728,7 @@ public class CryptoTokenHelper {
      * @see CryptoTokenHelper#PROPERTY_SELFSIGNED_SIGNATUREALGORITHM
      * @see CryptoTokenHelper#PROPERTY_SELFSIGNED_VALIDITY
      */
-    public static void regenerateCertIfWanted(final String alias, final char[] authCode, final Map<String, Object> params, final KeyStore keyStore, final String provider) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, OperatorCreationException, CertificateException {
+    public static void regenerateCertIfWanted(final String alias, final char[] authCode, final Map<String, Object> params, final KeyStoreDelegator keyStore, final String provider) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, OperatorCreationException, CertificateException {
         String dn = (String) params.get(PROPERTY_SELFSIGNED_DN);
         Long validity = (Long) params.get(PROPERTY_SELFSIGNED_VALIDITY);
         String signatureAlgorithm = (String) params.get(PROPERTY_SELFSIGNED_SIGNATUREALGORITHM);

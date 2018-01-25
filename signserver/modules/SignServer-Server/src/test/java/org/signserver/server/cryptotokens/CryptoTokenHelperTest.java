@@ -223,11 +223,12 @@ public class CryptoTokenHelperTest extends TestCase {
     public void testRegenerateCertIfWanted() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
         final KeyStore ks = createKeyStoreWithAnEntry();
+        final KeyStoreDelegator delegator = new JavaKeyStoreDelegator(ks);
         final X509Certificate certificate = (X509Certificate) ks.getCertificate(KEYALIAS);
         
         // Test with no parameters: should not change the cert
         final Map<String, Object> params = new HashMap<>();
-        CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params, ks, "BC");
+        CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params, delegator, "BC");
         X509Certificate certAfter = (X509Certificate) ks.getCertificate(KEYALIAS);
         assertEquals("Same issuer DN", certificate.getIssuerX500Principal().getName(), certAfter.getIssuerX500Principal().getName());
         assertEquals("Same subject DN", certificate.getSubjectX500Principal().getName(), certAfter.getSubjectX500Principal().getName());
@@ -241,7 +242,7 @@ public class CryptoTokenHelperTest extends TestCase {
         params.clear();
         final String expectedDN = "CN=New Name, O=New Organization, C=SE";
         params.put("SELFSIGNED_DN", expectedDN);
-        CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params, ks, "BC");
+        CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params, delegator, "BC");
         certAfter = (X509Certificate) ks.getCertificate(KEYALIAS);
         assertEquals("New issuer DN", new X500Principal(expectedDN).getName(), certAfter.getIssuerX500Principal().getName());
         assertEquals("New subject DN", new X500Principal(expectedDN).getName(), certAfter.getSubjectX500Principal().getName());
@@ -252,7 +253,7 @@ public class CryptoTokenHelperTest extends TestCase {
         params.clear();
         final String expectedSigAlg = "SHA256withRSA";
         params.put("SELFSIGNED_SIGNATUREALGORITHM", expectedSigAlg);
-        CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params, ks, "BC");
+        CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params, delegator, "BC");
         certAfter = (X509Certificate) ks.getCertificate(KEYALIAS);
         assertEquals("Same issuer DN", certificate.getIssuerX500Principal().getName(), certAfter.getIssuerX500Principal().getName());
         assertEquals("Same subject DN", certificate.getSubjectX500Principal().getName(), certAfter.getSubjectX500Principal().getName());
@@ -262,7 +263,7 @@ public class CryptoTokenHelperTest extends TestCase {
         // Custom validity
         params.clear();
         params.put("SELFSIGNED_VALIDITY", Long.valueOf(1 * 60 * 60)); // 1 hour
-        CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params, ks, "BC");
+        CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params,delegator, "BC");
         certAfter = (X509Certificate) ks.getCertificate(KEYALIAS);
         assertEquals("Same issuer DN", certificate.getIssuerX500Principal().getName(), certAfter.getIssuerX500Principal().getName());
         assertEquals("Same subject DN", certificate.getSubjectX500Principal().getName(), certAfter.getSubjectX500Principal().getName());
@@ -276,7 +277,7 @@ public class CryptoTokenHelperTest extends TestCase {
         final String expectedSigAlg2 = "SHA256withRSA";
         params.put("SELFSIGNED_SIGNATUREALGORITHM", expectedSigAlg2);
         params.put("SELFSIGNED_VALIDITY", Long.valueOf(2 * 60 * 60)); // 2 hour
-        CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params, ks, "BC");
+        CryptoTokenHelper.regenerateCertIfWanted(KEYALIAS, "foo123".toCharArray(), params, delegator, "BC");
         certAfter = (X509Certificate) ks.getCertificate(KEYALIAS);
         assertEquals("New issuer DN", new X500Principal(expectedDN2).getName(), certAfter.getIssuerX500Principal().getName());
         assertEquals("New subject DN", new X500Principal(expectedDN2).getName(), certAfter.getSubjectX500Principal().getName());

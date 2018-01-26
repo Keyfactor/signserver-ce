@@ -21,6 +21,7 @@ import java.util.List;
 import static junit.framework.TestCase.assertEquals;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
@@ -39,6 +40,10 @@ import org.signserver.ejb.interfaces.GlobalConfigurationSession;
  * @version $Id$
  */
 public class TokenEntriesCLITest extends ModulesTestCase {
+    
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(TokenEntriesCLITest.class);
+    
     private final CLITestHelper cli = getAdminCLI();
     
     protected final WorkerSession workerSession = getWorkerSession();
@@ -56,6 +61,7 @@ public class TokenEntriesCLITest extends ModulesTestCase {
      */
     @Test
     public void testNoArguments() throws Exception {
+        LOG.info("testNoArguments");
         // make sure an error message is printed if not setting the mandatory -token argument
         assertEquals("", CommandLineInterface.RETURN_INVALID_ARGUMENTS, cli.execute("querytokenentries"));
         assertPrinted("Should output error", cli.getOut(), "Missing required option: token");
@@ -67,6 +73,7 @@ public class TokenEntriesCLITest extends ModulesTestCase {
      */
     @Test
     public void testQueryOneKey() throws Exception {
+        LOG.info("testQueryOneKey");
         final int tokenId = 40301;
         final String testKeyAlias1 = "testKeyAlias1";
         final File ks = createEmptyKeystore();
@@ -98,6 +105,7 @@ public class TokenEntriesCLITest extends ModulesTestCase {
      */
     @Test
     public void testQueryMoreThan10Keys() throws Exception {
+        LOG.info("testQueryMoreThan10Keys");
         final int tokenId = 40302;
         final List<String> aliases = new ArrayList<> ();
         for (int i = 0; i < 13; i++) {

@@ -88,27 +88,25 @@ public class JavaKeyStoreDelegator implements KeyStoreDelegator {
         final List<TokenEntry> result = new LinkedList<>();
         
         final long maxIndex = (long) startIndex + max;
-        for (int i = 0; i < maxIndex && e.hasMoreElements();) {
+        for (int i = 0; i < maxIndex && e.hasMoreElements(); i++) {
             final String keyAlias = e.nextElement();
 
-            if (i < startIndex) {
-                continue;
+            if (i >= startIndex) {
+                final String type;
+                if (keystore.entryInstanceOf(keyAlias, KeyStore.PrivateKeyEntry.class)) {
+                    type = TokenEntry.TYPE_PRIVATEKEY_ENTRY;
+                } else if (keystore.entryInstanceOf(keyAlias, KeyStore.SecretKeyEntry.class)) {
+                    type = TokenEntry.TYPE_SECRETKEY_ENTRY;
+                } else if (keystore.entryInstanceOf(keyAlias, KeyStore.TrustedCertificateEntry.class)) {
+                    type = TokenEntry.TYPE_TRUSTED_ENTRY;
+                }  else {
+                    type = null;
+                }
+
+                TokenEntry entry = new TokenEntry(keyAlias, type);
+
+                result.add(entry);
             }
-
-            final String type;
-            if (keystore.entryInstanceOf(keyAlias, KeyStore.PrivateKeyEntry.class)) {
-                type = TokenEntry.TYPE_PRIVATEKEY_ENTRY;
-            } else if (keystore.entryInstanceOf(keyAlias, KeyStore.SecretKeyEntry.class)) {
-                type = TokenEntry.TYPE_SECRETKEY_ENTRY;
-            } else if (keystore.entryInstanceOf(keyAlias, KeyStore.TrustedCertificateEntry.class)) {
-                type = TokenEntry.TYPE_TRUSTED_ENTRY;
-            }  else {
-                type = null;
-            }
-
-            TokenEntry entry = new TokenEntry(keyAlias, type);
-
-            result.add(entry);
         }
         
         return result;

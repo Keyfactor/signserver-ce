@@ -535,9 +535,11 @@ public class CryptoTokenHelper {
         final TokenSearchResults result;
         try {
             final ArrayList<TokenEntry> tokenEntries = new ArrayList<>();
-            final Enumeration<String> e = keyStore.aliases(); // We assume the order is the same for every call unless entries has been added or removed
 
-            final List<TokenEntry> entries = keyStore.getEntries(startIndex, max);
+            // ask for one more element to "peek" to see if there's more
+            final List<TokenEntry> entries = keyStore.getEntries(startIndex, max + 1);
+            final boolean hasMore = entries.size() > max;
+            
             for (final TokenEntry entry : entries) {
                 final String keyAlias = entry.getAlias();
                 final String type = entry.getType();
@@ -555,7 +557,7 @@ public class CryptoTokenHelper {
                     tokenEntries.add(entry);
                 }
             }
-            result = new TokenSearchResults(tokenEntries, e.hasMoreElements());
+            result = new TokenSearchResults(tokenEntries, hasMore);
         } catch (KeyStoreException ex) {
             throw new CryptoTokenOfflineException(ex);
         }

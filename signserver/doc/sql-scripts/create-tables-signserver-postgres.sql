@@ -76,12 +76,12 @@ CREATE TABLE archivedata (
 --
 -- Table structure for table `KeyData`
 --
-CREATE TABLE `KeyData` (
-  `keyAlias` character varying(255) NOT NULL,
-  `wrappingKeyAlias` character varying(255) NOT NULL,
-  `wrappingCipher` bigint NOT NULL,
-  `keyData` text NOT NULL,
-  `certData` text NOT NULL 
+CREATE TABLE KeyData (
+  keyAlias character varying(255) NOT NULL,
+  wrappingKeyAlias character varying(255) NOT NULL,
+  wrappingCipher bigint NOT NULL,
+  keyData text NOT NULL,
+  certData text NOT NULL 
 ); 
 
 
@@ -138,6 +138,6 @@ ALTER TABLE ONLY signerconfigdata
 -- Name: keydata_pkey; Type: CONSTRAINT; Schema: public; Owner: signserver; Tablespace: 
 --
 
-ALTER TABLE ONLY keydata
-    ADD CONSTRAINT keyusagecounter_pkey PRIMARY KEY (keyAlias);
+ALTER TABLE ONLY KeyData
+    ADD CONSTRAINT keydata_pkey PRIMARY KEY (keyAlias);
 

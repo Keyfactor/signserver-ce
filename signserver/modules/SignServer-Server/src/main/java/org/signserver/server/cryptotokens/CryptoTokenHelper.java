@@ -536,28 +536,34 @@ public class CryptoTokenHelper {
         try {
             final ArrayList<TokenEntry> tokenEntries = new ArrayList<>();
 
-            // ask for one more element to "peek" to see if there's more
-            final List<TokenEntry> entries = keyStore.getEntries(startIndex, max + 1);
-            final boolean hasMore = entries.size() > max;
+            final List<TokenEntry> entries = keyStore.getEntries();
+            final List<TokenEntry> filteredEntries = new LinkedList<>();
             
             for (final TokenEntry entry : entries) {
-                final String keyAlias = entry.getAlias();
-                final String type = entry.getType();
-                
                 if (shouldBeIncluded(entry, qc)) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("checking keyAlias: " + keyAlias);
-                    }
-
-                    // Add additional data
-                    
-                    if (includeData) {
-                        keyStore.addAdditionalDataToEntry(entry, authCode, services);
-                    }
-                    tokenEntries.add(entry);
+                    filteredEntries.add(entry);
                 }
             }
-            result = new TokenSearchResults(tokenEntries, hasMore);
+            
+            final long maxIndex = (long) startIndex + max;
+            
+            for (int i = startIndex; i < maxIndex && i < filteredEntries.size(); i++) {
+                final TokenEntry entry = filteredEntries.get(i);
+                final String keyAlias = entry.getAlias();
+             
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("checking keyAlias: " + keyAlias);
+                }
+
+                // Add additional data
+
+                if (includeData) {
+                    keyStore.addAdditionalDataToEntry(entry, authCode, services);
+                }
+                tokenEntries.add(entry);
+            }
+
+            result = new TokenSearchResults(tokenEntries, filteredEntries.size() > maxIndex);
         } catch (KeyStoreException ex) {
             throw new CryptoTokenOfflineException(ex);
         }

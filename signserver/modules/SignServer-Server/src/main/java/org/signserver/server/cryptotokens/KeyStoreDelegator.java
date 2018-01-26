@@ -90,15 +90,12 @@ public interface KeyStoreDelegator {
             UnrecoverableKeyException;
     
     /**
-     * Get token entries in the given index range.
+     * Get token entries from the token.
      * 
-     * @param startIndex Index of first keystore entry to return
-     * @param max Maximum number of entries to return
      * @return List of token entries
      * @throws KeyStoreException 
      */
-    public List<TokenEntry> getEntries(int startIndex, int max)
-        throws KeyStoreException;
+    public List<TokenEntry> getEntries() throws KeyStoreException;
 
     /**
      * Get creation date of a keystore entry.

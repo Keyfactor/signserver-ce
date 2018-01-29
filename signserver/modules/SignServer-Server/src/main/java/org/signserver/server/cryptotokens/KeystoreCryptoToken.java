@@ -184,7 +184,8 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             this.authenticationCode = authenticationcode.toCharArray();
         }
         this.ks = getKeystore(keystoretype, keystorepath, authenticationCode, services);
-
+        this.delegator = new JavaKeyStoreDelegator(this.ks);
+        
         entries = new HashMap<>();
 
         Enumeration<String> e = ks.aliases();
@@ -330,18 +331,13 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             final char[] authCode,
             final IServices services) throws CryptoTokenOfflineException,
             KeyStoreException {
-        return CryptoTokenHelper.testKey(getKeyStoreDelegator(), alias, authenticationCode, "BC", signatureAlgorithm);
+        return CryptoTokenHelper.testKey(this.delegator, alias, authenticationCode, "BC", signatureAlgorithm);
     }
 
     @Override
     public TokenSearchResults searchTokenEntries(final int startIndex, final int max, QueryCriteria qc, boolean includeData, Map<String, Object> params, IServices services) 
             throws CryptoTokenOfflineException, QueryException {
-        try {
-            KeyStoreDelegator keyStoreDelegator = getKeyStoreDelegator();
-            return CryptoTokenHelper.searchTokenEntries(keyStoreDelegator, startIndex, max, qc, includeData, services, authenticationCode);
-        } catch (KeyStoreException ex) {
-            throw new CryptoTokenOfflineException(ex);
-        }
+        return CryptoTokenHelper.searchTokenEntries(this.delegator, startIndex, max, qc, includeData, services, authenticationCode);
     }
 
     private void generateKeyPair(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
@@ -374,7 +370,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             
             // TODO: Future optimization: we don't need to regenerate if we create it right from the beginning a few lines up!
             if (params != null) {
-                CryptoTokenHelper.regenerateCertIfWanted(alias, authenticationCode, params, getKeyStoreDelegator(), keystore.getProvider().getName());
+                CryptoTokenHelper.regenerateCertIfWanted(alias, authenticationCode, params, this.delegator, keystore.getProvider().getName());
             }
             
             final OutputStream os;
@@ -493,16 +489,6 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
         }
         return ks;
     }
-    
-    private KeyStoreDelegator getKeyStoreDelegator()
-            throws UnsupportedOperationException, CryptoTokenOfflineException,
-                   KeyStoreException {
-        if (delegator == null) {
-            delegator = new JavaKeyStoreDelegator(getKeyStore());
-        }
-        
-        return delegator;
-    }
 
     private KeyStore getKeystore(final String type, final String path,
             final char[] authCode, final IServices services) throws
@@ -551,9 +537,8 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
 
     @Override
     public boolean removeKey(final String alias, final IServices services) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
-        final KeyStoreDelegator keyStoreDelegator = getKeyStoreDelegator();
         final KeyStore keyStore = getKeyStore();
-        boolean result = CryptoTokenHelper.removeKey(keyStoreDelegator, alias);
+        boolean result = CryptoTokenHelper.removeKey(this.delegator, alias);
         if (result) {
             OutputStream out = null;
             try {
@@ -622,7 +607,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             final Key key =
                     keyStore.getKey(alias, authCode != null ? authCode : authenticationCode);
             
-            CryptoTokenHelper.ensureNewPublicKeyMatchesOld(getKeyStoreDelegator(), alias, certChain.get(0));
+            CryptoTokenHelper.ensureNewPublicKeyMatchesOld(this.delegator, alias, certChain.get(0));
             
             keyStore.setKeyEntry(alias, key,
                                  authCode != null ? authCode : authenticationCode,

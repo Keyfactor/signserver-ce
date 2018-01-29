@@ -284,6 +284,12 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
 
             delegate = new KeyStorePKCS11CryptoToken();
             delegate.init(props, null, workerId);
+            try {
+                keystoreDelegator = new JavaKeyStoreDelegator(delegate.getActivatedKeyStore());
+            } catch (CryptoTokenOfflineException ex) {
+                // don't initialize keystore delegator when not auto-activated
+            }
+                
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException | NumberFormatException ex) {
             LOG.error("Init failed", ex);
             throw new CryptoTokenInitializationFailureException(ex.getMessage());

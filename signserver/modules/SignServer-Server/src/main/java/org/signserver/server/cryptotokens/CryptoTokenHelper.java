@@ -159,6 +159,8 @@ public class CryptoTokenHelper {
     private static final String[] KNOWNSECRETKEYALGONAMES = {
         "AES",
         "DES"};
+    private static final String SECRET_KEY_ALGO_DESede = "DESede";
+    private static final String SECRET_KEY_ALGO_Triple_DES = "DES3";
         
     /**
      * A workaround for the feature in SignServer 2.0 that property keys are 
@@ -852,6 +854,11 @@ public class CryptoTokenHelper {
     public static long getProviderAlgoValue(String algorithm) {
         String providerAlgoName = algorithm + CKM_SECRET_KEY_ALGO_SUFFIX;
         Long longValue = MechanismNames.longFromName(providerAlgoName);
+
+        if (longValue == null && algorithm.equals(SECRET_KEY_ALGO_DESede)) {
+            longValue = MechanismNames.longFromName(SECRET_KEY_ALGO_Triple_DES + CKM_SECRET_KEY_ALGO_SUFFIX);
+        }
+        
         if (longValue != null) {
             return longValue;
         } else {

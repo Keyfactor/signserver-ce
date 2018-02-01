@@ -277,7 +277,7 @@ public class CryptoTokenHelper {
                         String publicKeyHash = null;
                         boolean success = false;
                         try {
-                            final Key key = keyStore.getKey(alias, authCode);
+                            final Key key = keyStore.getKey(keyAlias, authCode);
                             
                             if (!(key instanceof PrivateKey)) {
                                 if (key instanceof SecretKey) {

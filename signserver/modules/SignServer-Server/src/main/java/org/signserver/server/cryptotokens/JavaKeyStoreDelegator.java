@@ -61,10 +61,6 @@ public class JavaKeyStoreDelegator implements KeyStoreDelegator {
         keystore.deleteEntry(alias);
     }
 
-    @Override
-    public Enumeration<String> aliases() throws KeyStoreException {
-        return keystore.aliases();
-    }
 
     @Override
     public boolean isKeyEntry(String keyAlias) throws KeyStoreException {
@@ -109,15 +105,7 @@ public class JavaKeyStoreDelegator implements KeyStoreDelegator {
         return result;
     }
 
-    @Override
-    public Date getCreationDate(String keyAlias) throws KeyStoreException {
-        return keystore.getCreationDate(keyAlias);
-    }
 
-    @Override
-    public Certificate[] getCertificateChain(String keyAlias) throws KeyStoreException {
-        return keystore.getCertificateChain(keyAlias);
-    }
 
     @Override
     public void addAdditionalDataToEntry(final TokenEntry entry,

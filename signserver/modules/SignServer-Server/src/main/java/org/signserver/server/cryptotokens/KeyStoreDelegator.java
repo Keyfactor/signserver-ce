@@ -51,14 +51,6 @@ public interface KeyStoreDelegator {
     public void deleteEntry(String alias) throws KeyStoreException;
 
     /**
-     * Get an enumeration of available aliases in the keystore.
-     * 
-     * @return aliases
-     * @throws KeyStoreException 
-     */
-    public Enumeration<String> aliases() throws KeyStoreException;
-
-    /**
      * Determine if an entry is a key.
      * 
      * @param keyAlias
@@ -97,23 +89,6 @@ public interface KeyStoreDelegator {
      * @throws KeyStoreException 
      */
     public List<TokenEntry> getEntries() throws KeyStoreException;
-
-    /**
-     * Get creation date of a keystore entry.
-     * @param keyAlias of entry
-     * @return The date the given entry was created
-     * @throws KeyStoreException 
-     */
-    public Date getCreationDate(String keyAlias) throws KeyStoreException;
-
-    /**
-     * Get certificate chain associated with the given alias.
-     * 
-     * @param keyAlias
-     * @return certificate chain
-     * @throws KeyStoreException 
-     */
-    public Certificate[] getCertificateChain(String keyAlias) throws KeyStoreException;
     
     /**
      * Populate additional data for a token entry.
@@ -138,5 +113,4 @@ public interface KeyStoreDelegator {
      */
     public void setKeyEntry(String alias, PrivateKey key, char[] authCode, Certificate[] certificate)
             throws KeyStoreException;
-    
 }

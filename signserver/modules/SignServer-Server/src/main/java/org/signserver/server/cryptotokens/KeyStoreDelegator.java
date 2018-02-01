@@ -18,8 +18,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.server.IServices;

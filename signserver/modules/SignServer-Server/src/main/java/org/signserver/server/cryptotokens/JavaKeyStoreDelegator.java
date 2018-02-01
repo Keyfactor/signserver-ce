@@ -243,5 +243,4 @@ public class JavaKeyStoreDelegator implements KeyStoreDelegator {
                             Certificate[] certificate) throws KeyStoreException {
         keystore.setKeyEntry(alias, key, authCode, certificate);
     }
-    
 }

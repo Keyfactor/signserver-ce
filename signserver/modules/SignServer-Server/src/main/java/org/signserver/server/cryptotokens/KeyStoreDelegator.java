@@ -21,6 +21,7 @@ import java.security.cert.Certificate;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.server.IServices;
 
 /**
@@ -121,9 +122,10 @@ public interface KeyStoreDelegator {
      * @param authCode password to the keystore/crypto token (if needed)
      * @param services
      * @throws KeyStoreException 
+     * @throws org.signserver.common.CryptoTokenOfflineException 
      */
     void addAdditionalDataToEntry(TokenEntry entry, char[] authCode, IServices services)
-            throws KeyStoreException;
+            throws KeyStoreException, CryptoTokenOfflineException;
 
     /**
      * Assign a given key to a keystore entry.

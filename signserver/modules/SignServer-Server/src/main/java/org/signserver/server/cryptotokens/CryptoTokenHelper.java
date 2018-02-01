@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
@@ -42,6 +43,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.PredicateUtils;
@@ -261,9 +263,9 @@ public class CryptoTokenHelper {
         final Collection<KeyTestResult> result = new LinkedList<>();
 
         try {
-            final Enumeration<String> e = keyStore.aliases();
-            while (e.hasMoreElements()) {
-                final String keyAlias = e.nextElement();
+            for (final TokenEntry entry : keyStore.getEntries()) {
+                final String keyAlias = entry.getAlias();
+                
                 if (alias.equalsIgnoreCase(ICryptoTokenV4.ALL_KEYS)
                         || alias.equals(keyAlias)) {
                     if (LOG.isDebugEnabled()) {
@@ -275,17 +277,28 @@ public class CryptoTokenHelper {
                         String publicKeyHash = null;
                         boolean success = false;
                         try {
-                            final PrivateKey privateKey = (PrivateKey) keyStore.getKey(keyAlias, authCode);
-                            final Certificate entryCert = keyStore.getCertificate(keyAlias);
-                            if (entryCert != null) {
-                                final PublicKey publicKey = entryCert.getPublicKey();
-                                publicKeyHash = createKeyHash(publicKey);
-                                testSignAndVerify(privateKey, publicKey, signatureProvider, signatureAlgorithm);
-                                success = true;
-                                status = "";
+                            final Key key = keyStore.getKey(alias, authCode);
+                            
+                            if (!(key instanceof PrivateKey)) {
+                                if (key instanceof SecretKey) {
+                                    status = "Not testing keys with alias: " + keyAlias + ". Not a private key.";
+                                } else {
+                                    status = "No such key: " + keyAlias;
+                                }
+                                success = false;
                             } else {
-                                status = "Not testing keys with alias "
-                                        + keyAlias + ". No certificate exists.";
+                                final PrivateKey privateKey = (PrivateKey) key;
+                                final Certificate entryCert = keyStore.getCertificate(keyAlias);
+                                if (entryCert != null) {
+                                    final PublicKey publicKey = entryCert.getPublicKey();
+                                    publicKeyHash = createKeyHash(publicKey);
+                                    testSignAndVerify(privateKey, publicKey, signatureProvider, signatureAlgorithm);
+                                    success = true;
+                                    status = "";
+                                } else {
+                                    status = "Not testing keys with alias "
+                                            + keyAlias + ". No certificate exists.";
+                                }
                             }
                         } catch (ClassCastException ce) {
                             status = "Not testing keys with alias "

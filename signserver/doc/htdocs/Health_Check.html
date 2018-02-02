@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="5286104">
+<body pageid="16222896">
 
 <div id="ht-loader">
     <noscript>
@@ -233,6 +233,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="P11NG_CLI.html">P11NG CLI</a>
 
             </li>
                             </ul>
@@ -837,6 +841,10 @@
         <a class="ht-nav-page-link" href="Status_Repository_Logging.html">Status Repository Logging</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Client_Logging.html">Client Logging</a>
+
+            </li>
                             </ul>
             </li>
                                         <li class="leaf">
@@ -1121,40 +1129,103 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                             </ul>
-</div>            <h1 id="src-5283329"> <span>Health Check</span></h1>
+</div>            <h1 id="src-16222240"> <span>Health Check</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >In SignServer there exists a health check service that can be used for health monitoring. It is also useful for cluster, as it can be checked by load balancers to determine if a node should be active in the cluster (healthy) or taken out of the cluster (unhealthy).    </p>
-    <p  >The servlet is located at the URL: <a  class="external-link" href="http://localhost:8080/signserver/healthcheck/signserverhealth">http://localhost:8080/signserver/healthcheck/signserverhealth</a> and configured in signserver_deploy.properties.    </p>
-    <p  >The following configuration parameters may be set to configure authorization and what the service checks:    </p>
+    <p  >The SignServer Health Check service can be used for health monitoring and is useful for clusters, as it can be checked by load balancers to determine if a node should be active in the cluster (healthy), or taken out of the cluster (unhealthy).    </p>
+    <p  >The servlet is located at the URL: <a  class="external-link" href="http://localhost:8080/signserver/healthcheck/signserverhealth">http://localhost:8080/signserver/healthcheck/signserverhealth</a> and configured in <tt class=" ">signserver_deploy.properties</tt>.    </p>
+    <div class="section section-1" id="src-16222240_id-.HealthCheckv4.3.0-ConfigurationParameters">
+        <h1 class="heading "><span>Configuration Parameters</span></h1>
+    <p  >The following configuration parameters can be set to configure authorization and what the service checks:    </p>
+    <div  class="tablewrap">
+        <table class="confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Parameter    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Description    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >healthcheck.authorizedips    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >A semicolon-delimited list of IP addresses authorized to access the healthcheck servlet. If the list contains the keyword &quot;ANY&quot;, any IP address is authorized access. Defaults to 127.0.0.1.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >healthcheck.minimumfreememory    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Number of megabytes of memory that must be free before removing the node out of the cluster. Defaults to 1.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >healthcheck.checkdbstring    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >String used to do a minimal check that the database is working. May differ between databases. Defaults to <tt class=" ">Select count(*)</tt> from signerconfigdata, the property is not used when running without database.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >healthcheck.maintenancefile    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The path to a file containing the maintenance state. This file is a standard Java property file and should have a property (by default named DOWN_FOR_MAINTENANCE&quot;). If this property has the value true, none of the standard health checks will be performed, and instead the result will be a string of the form MAINT: DOWN_FOR_MAINTENANCE. If this property is not set (or an invalid file is given), the maintenance functionality is disabled.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >healthcheck.maintenancepropertyname    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The property name to be used in the maintenance file. This will also affect the error message returned when in maintenance mode (the part of the string after MAINT: defaults to DOWN_FOR_MAINTENANCE).    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >healthcheck.customerrormessage    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >If this is set to a non-empty value, the value is used for the error message instead of the details describing the errors (thus not exposing internal details).    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >healthcheck.sendservererror    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >If set to true (default), HTTP status 500 is returned with an error page containing the error message if health-monitoring fails. If set to false, a plain text result with HTTP status 200 is returned instead.    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    <div class="section section-1" id="src-16222240_id-.HealthCheckv4.3.0-Availabletestsandresponses">
+        <h1 class="heading "><span> Available tests and responses</span></h1>
     <p  >    </p>
-<pre class="prettyprint ">healthcheck.authorizedips</pre>    <p  >- A semicolon-delimited list of IP addresses authorized to access the healthcheck servlet, if the list contains the keyword &quot;ANY&quot;, any IP address is authorized access (defaults to 127.0.0.1).    </p>
-    <p  >    </p>
-<pre class="prettyprint ">healthcheck.minimumfreememory</pre>    <p  >- Number of megabytes of memory that must be free before removing the node out of the cluster (defaults to 1).    </p>
-    <p  >    </p>
-<pre class="prettyprint ">healthcheck.checkdbstring</pre>    <p  >- The string that should be used to do a minimal check that the database is working. May differ between databases. (defaults to Select count(*) from signerconfigdata, the property is not used when running without database).    </p>
-    <p  >    </p>
-<pre class="prettyprint ">healthcheck.maintenancefile</pre>    <p  >- The path to a file containing the maintenance state, this file is a standard Java property file and should have a property (by default named DOWN_FOR_MAINTENANCE&quot;). If this property has the value true, none of the standard health checks will be performed, and instead the result will be a string of the form MAINT: DOWN_FOR_MAINTENANCE. If this property is not set (or an invalid file is given), the maintenance functionallity is disabled.    </p>
-    <p  >    </p>
-<pre class="prettyprint ">healthcheck.maintenancepropertyname</pre>    <p  >- The property name to be used in the maintenance file. This will also affect the error message returned when in maintenance mode (the part of the string after MAINT: (defaults to DOWN_FOR_MAINTENANCE).    </p>
-<pre class="prettyprint "><br/>healthcheck.customerrormessage</pre>    <p  >- If this is set to a non-empty value, the value is used for the error message instead of details describing the errors (thus not exposing internal details).    </p>
-<pre class="prettyprint "><br/>healthcheck.sendservererror</pre>    <p  >- If this property is set to true (the default value), HTTP status 500 is returned with an error page containing the error message if health-monitoring fails. If set to false a plain text result with HTTP status 200 is returned instead.    </p>
-    <p  >    </p>
-    <div class="section section-1" id="src-5283329_id-.HealthCheckv4.1.0-Availabletestsandresponses">
-        <h1 class="heading "><span>Available tests and responses</span></h1>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">No errors</strong><br/>If all tests passed the HTTP result code is &quot;200 OK&quot; and page contains only the text &quot;ALLOK&quot;.    </p>
-</li><li class=" ">    <p  ><strong class=" ">Down for maintenance</strong><br/>If the down for maintenance file indicates that the server is down for maintenance an HTTP response code in 5xx range is returned with an error page containing &quot;MAINT: &quot; followed of the name of the maintenance property as configured. No further checks are performed.    </p>
-</li><li class=" ">    <p  ><strong class=" ">Database test</strong><br/>A test is performed that SignServer is able to query the database. When running without database a check is made that the configured directory is initialized correctly and is not empty. If anything failed one or more error messages are included in an error page returned with the HTTP response code in the 5xx range.    </p>
-</li><li class=" ">    <p  ><strong class=" ">Memory test</strong><br/>Checks the available free memory. If anything failed an error message is included in an error page returned with the HTTP response code in the 5xx range.    </p>
-</li><li class=" ">    <p  ><strong class=" ">Workers test</strong><br/>Each (non-disabled) worker is checked for a number of things. If anything failed one or more error messages are included in an error page returned with the HTTP response code in the 5xx range.    </p>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">No errors: </strong>If all tests passed the HTTP result code is &quot;200 OK&quot; and page contains only the text &quot;ALLOK&quot;.    </p>
+</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">Down for maintenance: </strong>If the down for maintenance file indicates that the server is down for maintenance an HTTP response code in 5xx range is returned with an error page containing &quot;MAINT: &quot; followed of the name of the maintenance property as configured. No further checks are performed.    </p>
+</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">Database test: </strong>A test is performed that SignServer is able to query the database. When running without database a check is made that the configured directory is initialized correctly and is not empty. If anything failed one or more error messages are included in an error page returned with the HTTP response code in the 5xx range.    </p>
+</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">Memory test: </strong>Checks the available free memory. If anything failed, an error message is included in an error page returned with the HTTP response code in the 5xx range.    </p>
+</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">Workers test: </strong>Each (non-disabled) worker is checked for a number of things. If anything failed, one or more error messages are included in an error page returned with the HTTP response code in the 5xx range.    </p>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">Token offline:</strong> Workers having a crypto token can be reported as offline    </p>
 </li><li class=" ">    <p  ><strong class=" ">Worker status and errors: </strong>Each worker implementation can put different requirements on when it is status is considered to be offline.    </p>
-</li><li class=" ">    <p  ><strong class=" ">Signer certificate:</strong> Signers requiring a certificate are checked that they have a certificate matching the configured key-pair and that the certificate is valid according the certificate validity time and the configured minimum remaining validity time.    </p>
+</li><li class=" ">    <p  ><strong class=" ">Signer certificate:</strong> Signers requiring a certificate are checked that they have a certificate matching the configured key-pair and that the certificate is valid according to the certificate validity time and the configured minimum remaining validity time.    </p>
 </li><li class=" ">    <p  ><strong class=" ">TimeStampSigner certificate missing EKU:</strong> If a TimeStampSigner certificate does not include the required EKU its status is set to offline.    </p>
 </li><li class=" ">    <p  ><strong class=" ">TimeStampSigner certificate not included in certificate chain</strong> If a TimeStampSigner certificate chain property does not include the signer certificate its status is set to offline.    </p>
-</li></ul></li><li class=" ">    <p  ><strong class=" ">Disabled workers</strong><br/>Workers that are disabled by having the worker property DISABLED=true are not considered in the Health check report.    </p>
+</li></ul></li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">Disabled workers: </strong>Workers that are disabled by having the worker property DISABLED=true are not considered in the Health Check report.    </p>
 </li></ul>    <p  >    </p>
     </div>
         </div>
@@ -1201,7 +1272,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

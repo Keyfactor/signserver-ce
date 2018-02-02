@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="5286104">
+<body pageid="16222896">
 
 <div id="ht-loader">
     <noscript>
@@ -233,6 +233,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="P11NG_CLI.html">P11NG CLI</a>
 
             </li>
                             </ul>
@@ -837,6 +841,10 @@
         <a class="ht-nav-page-link" href="Status_Repository_Logging.html">Status Repository Logging</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Client_Logging.html">Client Logging</a>
+
+            </li>
                             </ul>
             </li>
                                         <li class="leaf">
@@ -1242,10 +1250,19 @@
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Allowed Mechanisms    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >List of mechanisms (i.e. signature algorithms) that are allowed to be used with this key and are stored in the CKA_ALLOWED_MECHANISMS PKCS#11 attribute of the private key.    </p>
+    <p  >Refer <strong class=" ">ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS</strong> of <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a> or <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Wrapping Key    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key alias of the secret/symmetric wrapping key in the token that should be used to wrap and unwrap keys.    </p>
+        <p  >Key alias of the secret/symmetric wrapping key in the token that is used to unwrap this key (if the key was wrapped).    </p>
     <p  >Refer <strong class=" ">DEFAULTKEY</strong> worker property under <a   href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a> and <a   href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a> page.    </p>
             </td>
         </tr>
@@ -1421,7 +1438,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

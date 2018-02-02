@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <title>Remote Address Authorizer - SignServer - Documentation Space</title> -->
-    <title>Remote Address Authorizer - SignServer Manual</title>
+    <!-- <title>Client Logging - SignServer - Documentation Space</title> -->
+    <title>Client Logging - SignServer Manual</title>
 
     <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
@@ -784,7 +784,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link current" href="Remote_Address_Authorizer.html">Remote Address Authorizer</a>
+        <a class="ht-nav-page-link" href="Remote_Address_Authorizer.html">Remote Address Authorizer</a>
 
             </li>
                                         <li class="leaf">
@@ -842,7 +842,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="Client_Logging.html">Client Logging</a>
+        <a class="ht-nav-page-link current" href="Client_Logging.html">Client Logging</a>
 
             </li>
                             </ul>
@@ -1129,19 +1129,20 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                                              <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
                                         <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
-                                                                                                         <li class="shortcut"><a href="SignServer_Components.html">SignServer Components</a></li>
-                                                                                     <li><a href="Authorizers.html">Authorizers</a></li>
+                                                                                     <li><a href="Logging.html">Logging</a></li>
                                                             </ul>
-</div>            <h1 id="src-5284243"> <span>Remote Address Authorizer</span></h1>
+</div>            <h1 id="src-16222046"> <span>Client Logging</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >Remote address authentication.    </p>
-    <p  >AUTHTYPE=<strong class=" ">org.signserver.server.RemoteAddressAuthorizer</strong>    </p>
-    <p  >ALLOW_FROM = Comma separated list of IP addresses to allow requests from. By default all other addresses are denied access.    </p>
-    <p  >If a worker is invoked directly using an EJB call and no REMOTE_IP is specified in the RequestContext the IP-address is set to the String &quot;null&quot;. In that case, to allow requests using EJB calls, null can be added to the list of allowed addresses.<br/>When adding &quot;null&quot; to ALLOW_FROM not only locally running clients like the ClientCLI and AdminGUI is allowed access but also from workers that invoke the other worker directly using an EJB call. This is for instance the case for the XMLValidator which delegates the validation of the certificate to a CertValidator. If the CertValidator had a RemoteAddressAuthorizer allowing access from &quot;null&quot; then the XMLValidator would be able to use it. To restrict users from using the CertValidator (indirectly through the XMLValidator) an Authorizer could be configured for the XMLValidator.    </p>
-    <p  >Logging: This authorizer will add the remote IP address to the log field AUTHORIZED_ADDRESS.    </p>
+    <p  class="confluence-link">SignServer applications running on the client side (i.e. that are not deployed to an application server) such as the <a   href="Client_CLI.html">Client CLI</a>, <a   href="Administration_CLI.html">Administration CLI</a> and <a   href="Administration_GUI.html">Administration GUI</a> uses the Log4j configuration file <strong class=" ">conf/log4j.properties</strong> for its output.    </p>
+    <p  >In order to switch log level from INFO to DEBUG or even TRACE edit that file so that it has:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">log4j.rootLogger=TRACE, A1</code></div>
+</div>
+    </div>
     <p  >    </p>
         </div>
 
@@ -1149,7 +1150,7 @@
 
 
             <nav id="ht-post-nav">
-                <a href="Username_Authorizer.html" class="ht-post-nav-prev">
+                <a href="Status_Repository_Logging.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1158,9 +1159,9 @@
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Username Authorizer</span>
+            <span>Status Repository Logging</span>
         </a>
-                <a href="List_Based_Address_Authorizer.html" class="ht-post-nav-next">
+                <a href="SignServer_Authentication_and_Authorization.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1169,7 +1170,7 @@
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>List Based Address Authorizer</span>
+            <span>SignServer Authentication and Authorization</span>
         </a>
     </nav>    
             

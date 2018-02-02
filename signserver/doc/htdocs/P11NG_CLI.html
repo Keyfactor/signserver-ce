@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <title>Remote Address Authorizer - SignServer - Documentation Space</title> -->
-    <title>Remote Address Authorizer - SignServer Manual</title>
+    <!-- <title>P11NG CLI - SignServer - Documentation Space</title> -->
+    <title>P11NG CLI - SignServer Manual</title>
 
     <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
@@ -236,7 +236,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="P11NG_CLI.html">P11NG CLI</a>
+        <a class="ht-nav-page-link current" href="P11NG_CLI.html">P11NG CLI</a>
 
             </li>
                             </ul>
@@ -784,7 +784,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link current" href="Remote_Address_Authorizer.html">Remote Address Authorizer</a>
+        <a class="ht-nav-page-link" href="Remote_Address_Authorizer.html">Remote Address Authorizer</a>
 
             </li>
                                         <li class="leaf">
@@ -1127,21 +1127,63 @@
     <ul>
         <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
-                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
-                                        <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
-                                                                                                         <li class="shortcut"><a href="SignServer_Components.html">SignServer Components</a></li>
-                                                                                     <li><a href="Authorizers.html">Authorizers</a></li>
+                                                                                     <li><a href="SignServer_Integration.html">SignServer Integration</a></li>
                                                             </ul>
-</div>            <h1 id="src-5284243"> <span>Remote Address Authorizer</span></h1>
+</div>            <h1 id="src-16222565"> <span>P11NG CLI</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >Remote address authentication.    </p>
-    <p  >AUTHTYPE=<strong class=" ">org.signserver.server.RemoteAddressAuthorizer</strong>    </p>
-    <p  >ALLOW_FROM = Comma separated list of IP addresses to allow requests from. By default all other addresses are denied access.    </p>
-    <p  >If a worker is invoked directly using an EJB call and no REMOTE_IP is specified in the RequestContext the IP-address is set to the String &quot;null&quot;. In that case, to allow requests using EJB calls, null can be added to the list of allowed addresses.<br/>When adding &quot;null&quot; to ALLOW_FROM not only locally running clients like the ClientCLI and AdminGUI is allowed access but also from workers that invoke the other worker directly using an EJB call. This is for instance the case for the XMLValidator which delegates the validation of the certificate to a CertValidator. If the CertValidator had a RemoteAddressAuthorizer allowing access from &quot;null&quot; then the XMLValidator would be able to use it. To restrict users from using the CertValidator (indirectly through the XMLValidator) an Authorizer could be configured for the XMLValidator.    </p>
-    <p  >Logging: This authorizer will add the remote IP address to the log field AUTHORIZED_ADDRESS.    </p>
+    <p  >The CLI tool p11ng-tool provides actions for querying, removing, and creating objects(keys) in HSM Slot in addition to signing sample text with existing wrapped key.    </p>
+    <p  >The tool is provided for troubleshooting purposes and the API is likely to change in future versions.    </p>
+    <p  >Run p11ng-tool from <strong class=" ">SIGNSERVER_HOME </strong>using the following command:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain"> bin/p11ng-tool</code></div>
+</div>
+    </div>
+    <p  >    </p>
+    <div  class="confbox programlisting">
+                    <div class="title">Usage</div>
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Usage">
+<div class="line"><code class="plain">p11ng-tool [options]</code></div>
+<div class="line"><code class="plain">P11NG commands</code></div>
+<div class="line"><code class="plain"> -action &lt;arg&gt;       Operation to perform. Any of: [listSlots, showInfo,</code></div>
+<div class="line"><code class="plain">                     listObjects, listKeyStoreEntries, generateWrapKey,</code></div>
+<div class="line"><code class="plain">                     generateAndWrapKeyPair, unwrapAndSign,</code></div>
+<div class="line"><code class="plain">                     deleteObjectsByLabel, deleteObject, generateKeyPair,</code></div>
+<div class="line"><code class="plain">                     createSelfSignedCert]</code></div>
+<div class="line"><code class="plain"> -label &lt;arg&gt;        Key label</code></div>
+<div class="line"><code class="plain"> -libfile &lt;arg&gt;      Shared library path</code></div>
+<div class="line"><code class="plain"> -method &lt;arg&gt;       Method to use, either pkcs11 (</code><code class="keyword">default</code><code class="plain">) or provider</code></div>
+<div class="line"><code class="plain"> -object &lt;arg&gt;       Object ID (decimal)</code></div>
+<div class="line"><code class="plain"> -pin &lt;arg&gt;          User PIN</code></div>
+<div class="line"><code class="plain"> -plaintext &lt;arg&gt;    text string to sign</code></div>
+<div class="line"><code class="plain"> -privatekey &lt;arg&gt;   base64 encoded encrypted (wrapped) </code><code class="keyword">private</code><code class="plain"> key</code></div>
+<div class="line"><code class="plain"> -publickey &lt;arg&gt;    base64 encoded </code><code class="keyword">public</code><code class="plain"> key</code></div>
+<div class="line"><code class="plain"> -selfcert           Generate a self-signed certificate </code><code class="keyword">for</code><code class="plain"> the </code><code class="keyword">new</code></div>
+<div class="line"><code class="plain">                     key-pair</code></div>
+<div class="line"><code class="plain"> -slot &lt;arg&gt;         Slot ID to operate on</code></div>
+<div class="line"><code class="plain"> -unwrapkey &lt;arg&gt;    Label of key to unwrap with</code></div>
+<div class="line"><code class="plain"> -wrapkey &lt;arg&gt;      Label of key to wrap with</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">Sample usages:</code></div>
+<div class="line"><code class="plain">a) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
+<div class="line"><code class="plain">listSlots</code></div>
+<div class="line"><code class="plain">b) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
+<div class="line"><code class="plain">showInfo</code></div>
+<div class="line"><code class="plain">c) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
+<div class="line"><code class="plain">listObjects -slot </code><code class="value">0</code></div>
+<div class="line"><code class="plain">d) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
+<div class="line"><code class="plain">generateWrapKey -slot </code><code class="value">0</code><code class="plain"> -label wrapkey1</code></div>
+<div class="line"><code class="plain">e) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
+<div class="line"><code class="plain">deleteObject -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -object </code><code class="value">4</code></div>
+<div class="line"><code class="plain">f) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
+<div class="line"><code class="plain">deleteObjectsByLabel -slot </code><code class="value">0</code><code class="plain"> -label mykey1</code></div>
+<div class="line"><code class="plain">g) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
+<div class="line"><code class="plain">listKeyStoreEntries -slot </code><code class="value">0</code></div>
+</div>
+    </div>
     <p  >    </p>
         </div>
 
@@ -1149,7 +1191,7 @@
 
 
             <nav id="ht-post-nav">
-                <a href="Username_Authorizer.html" class="ht-post-nav-prev">
+                <a href="Stresstest_CLI.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1158,9 +1200,9 @@
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Username Authorizer</span>
+            <span>Stresstest CLI</span>
         </a>
-                <a href="List_Based_Address_Authorizer.html" class="ht-post-nav-next">
+                <a href="SignServer_Reference.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1169,7 +1211,7 @@
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>List Based Address Authorizer</span>
+            <span>SignServer Reference</span>
         </a>
     </nav>    
             

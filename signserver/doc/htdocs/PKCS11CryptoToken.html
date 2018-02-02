@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="5286104">
+<body pageid="16222896">
 
 <div id="ht-loader">
     <noscript>
@@ -233,6 +233,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="P11NG_CLI.html">P11NG CLI</a>
 
             </li>
                             </ul>
@@ -837,6 +841,10 @@
         <a class="ht-nav-page-link" href="Status_Repository_Logging.html">Status Repository Logging</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Client_Logging.html">Client Logging</a>
+
+            </li>
                             </ul>
             </li>
                                         <li class="leaf">
@@ -1277,13 +1285,14 @@
     <p  >    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Specify a PKCS#11 attribute to override the statically configured attribute to use when generating a key. In opposite to the ATTRIBUTES or ATTRIBUTESFILE properties this values can be changed without restarting the application server.    </p>
-    <p  >Where x is the object class: PUBLIC or PRIVATE.<br/>Where y is the key type: RSA, ECDSA, etc.<br/>Where z is the attribute name or ID as decimal number or a hexadecimal number prefixed with &quot;0x&quot;.    </p>
+        <p  >Specify a PKCS#11 attribute to override the statically configured attribute to use when generating a key. Unlike the ATTRIBUTES and ATTRIBUTESFILE properties, this value can be changed without restarting the application server.    </p>
+    <p  >Where x is the object class: PUBLIC or PRIVATE.<br/>Where y is the key type: RSA, ECDSA, etc.<br/>Where z is the attribute name or ID as decimal number or a hexadecimal number prefixed with &quot;0x&quot;. An exception to this is CKA_ALLOWED_MECHANISMS, which currently cannot be specified in decimal or hexadecimal form.    </p>
     <p  >Examples:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_SENSITIVE=TRUE</code></div>
-<div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS=CKM_RSA_PKCS, CKM_SHA256_RSA_PKCS, CKM_SHA256_RSA_PKCS_PSS</code></div>
+<div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.</code><code class="value">0X0000010C</code><code class="plain">=FALSE</code></div>
+<div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS=CKM_RSA_PKCS, CKM_SHA256_RSA_PKCS, </code><code class="value">0x00000043</code><code class="plain">, CKM_SHA256_RSA_PKCS_PSS</code></div>
 </div>
     </div>
     <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
@@ -1381,13 +1390,26 @@
 <div class="line"><code class="plain">bin/signserver uploadsignercertificatechain </code><code class="value">9</code><code class="plain"> GLOB /tmp/certchain.pem bin/signserver reload </code><code class="value">9</code></div>
 </div>
     </div>
-    <p  >    </p>
-    <p  >Specify a PKCS#11 attribute to override the statically configured attribute to use when generating a key.    </p>
-    <p  >Where x is the object class: PUBLIC or PRIVATE.<br/>Where y is the key type: RSA, ECDSA, etc.<br/>Where z is the attribute name or ID as decimal number or a hexadecimal number prefixed with &quot;0x&quot;.    </p>
-    <p  >Specify a PKCS#11 attribute to override the statically configured attribute to use when generating a key.    </p>
-    <p  >Where x is the object class: PUBLIC or PRIVATE.<br/>Where y is the key type: RSA, ECDSA, etc.<br/>Where z is the attribute name or ID as decimal number or a hexadecimal number prefixed with &quot;0x&quot;.    </p>
+    <p  >Specify a PKCS#11 attribute to override the statically configured attribute to use when generating a key.<br/>Where x is the object class: PUBLIC or PRIVATE.<br/>Where y is the key type: RSA, ECDSA, etc.<br/>Where z is the attribute name or ID as decimal number or a hexadecimal number prefixed with &quot;0x&quot;.    </p>
     </div>
     </div>
+    <div class="section section-1" id="src-11574695_id-.PKCS11CryptoTokenv4.3.0-NoteonFIPSMode">
+        <h1 class="heading "><span>Note on FIPS Mode</span></h1>
+    <p  >Some HSM vendors have started to enforce stricter rules on keys when the HSM is in FIPS mode. For instance, with Utimaco SecurityServer V4.10.0, the following is needed in order to generate key-pairs and activate the crypto token when the PKCS11CryptoToken is used:    </p>
+<ul class=" "><li class=" ">    <p  >Patched Java/SunPKCS11 (i.e. for RSASSA-PSS signature support and for setting allowed mechanisms).    </p>
+</li><li class=" ">    <p  >Key-pair to be generated with the following worker property set:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS=CKM_RSA_PKCS_PSS, CKM_SHA256_RSA_PKCS_PSS</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >The following worker property set in order for test signing to work:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">  SIGNATUREALGORITHM=SHA256withRSAandMGF1</code></div>
+</div>
+    </div>
+</li></ul>    </div>
         </div>
 
     </article>
@@ -1432,7 +1454,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

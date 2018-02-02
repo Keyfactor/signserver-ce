@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="5286104">
+<body pageid="16222896">
 
 <div id="ht-loader">
     <noscript>
@@ -233,6 +233,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="P11NG_CLI.html">P11NG CLI</a>
 
             </li>
                             </ul>
@@ -837,6 +841,10 @@
         <a class="ht-nav-page-link" href="Status_Repository_Logging.html">Status Repository Logging</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Client_Logging.html">Client Logging</a>
+
+            </li>
                             </ul>
             </li>
                                         <li class="leaf">
@@ -1124,15 +1132,21 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Validation_Service_Framework.html">SignServer Validation Service Framework</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277550"> <span>The Validation CLI interface</span></h1>
+</div>            <h1 id="src-16222572"> <span>The Validation CLI interface</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >There exists a Java CLI tool that can be used to check the validity of a certificate from scripts. It supports a clustered SignServer installation by using the &quot;Use first host that response OK&quot; policy.    </p>
-    <p  >When compiling, make sure that setting validationclient.enabled is set to &quot;true&quot; in the build properties. The client is lib/SignServer-Client-ValidationCLI.jar.    </p>
-    <p  >Use the client with    </p>
-<pre class=" ">bin/signclient validatecertificate &lt;options&gt;</pre>    <p  >Here is a list of available options:    </p>
+    <p  >A Java CLI tool can be used to check the validity of a certificate from scripts. The tool supports a clustered SignServer installation using the &quot;Use first host that response OK&quot; policy.    </p>
+    <p  >When compiling, make sure that the setting <strong class=" ">validationclient.enabled</strong> is set to <strong class=" ">true</strong> in the build properties. The client is <tt class=" ">lib/SignServer-Client-ValidationCLI.jar.</tt>    </p>
+    <p  >Use the client with:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">bin/signclient validatecertificate &lt;options&gt;</code></div>
+</div>
+    </div>
+    <p  >    </p>
+    <p  >The following options are available:    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable scroll-table-layout">
                     <colgroup>
@@ -1152,7 +1166,7 @@
         <p  >-cert &lt;cert-file&gt;    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Path to certificate file (DER or PEM) (Required).    </p>
+        <p  >Path to certificate file (DER or PEM). (Required).    </p>
             </td>
         </tr>
     <tr>
@@ -1176,7 +1190,7 @@
         <p  >-help    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Display this info    </p>
+        <p  >Displays this information.    </p>
             </td>
         </tr>
     <tr>
@@ -1184,7 +1198,7 @@
         <p  >-hosts &lt;hosts&gt;    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >A comma-separated string containing the hostnames of the validation service nodes. Ex 'host1.someorg.org,host2.someorg.org' (Required)    </p>
+        <p  >A comma-separated string containing the hostnames of the validation service nodes. For example, 'host1.someorg.org,host2.someorg.org'. (Required).    </p>
             </td>
         </tr>
     <tr>
@@ -1192,7 +1206,7 @@
         <p  >-pem    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Certificate is in PEM format (Default).    </p>
+        <p  >Certificate is in PEM format. (Default).    </p>
             </td>
         </tr>
     <tr>
@@ -1200,7 +1214,7 @@
         <p  >-port &lt;port&gt;    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Remote port of service (Default is 8080 or 8442 for SSL).    </p>
+        <p  >Remote port of service .(Default is 8080 or 8442 for SSL).    </p>
             </td>
         </tr>
     <tr>
@@ -1208,7 +1222,7 @@
         <p  >-service &lt;service-name&gt;    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The name or ID of the validation service to process request. (Required)    </p>
+        <p  >The name or ID of the validation service to process request. (Required).    </p>
             </td>
         </tr>
     <tr>
@@ -1216,7 +1230,7 @@
         <p  >-silent    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Don't produce any output, only return value.    </p>
+        <p  >Do not produce any output, only return value.    </p>
             </td>
         </tr>
     <tr>
@@ -1237,8 +1251,22 @@
         </tr>
 </tbody>        </table>
             </div>
-    <p  >The following return values is used:    </p>
-    <p  >-2 : Error happened during execution<br/>-1 : Bad arguments<br/>0 : Certificate is valid<br/>1 : Certificate is revoked<br/>2 : Certificate is not yet valid<br/>3 : Certificate have expired<br/>4 : Certificate doesn't verify<br/>5 : CA Certificate have been revoked<br/>6 : CA Certificate is not yet valid<br/>7 : CA Certificate have expired<br/>8 : Certificate have no valid certificate purpose    </p>
+    <p  >The following return values are used:    </p>
+    <div  class="confbox programlisting">
+                <div class="content">
+        <pre><code>-2 : Error happened during execution
+-1 : Bad arguments
+0 : Certificate is valid
+1 : Certificate is revoked
+2 : Certificate is not yet valid
+3 : Certificate has expired
+4 : Certificate does not verify
+5 : CA Certificate has been revoked
+6 : CA Certificate is not yet valid
+7 : CA Certificate has expired
+8 : Certificate has no valid certificate purpose</code></pre>
+        </div>
+    </div>
     <p  >    </p>
         </div>
 
@@ -1284,7 +1312,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

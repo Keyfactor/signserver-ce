@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="5286104">
+<body pageid="16222896">
 
 <div id="ht-loader">
     <noscript>
@@ -233,6 +233,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="P11NG_CLI.html">P11NG CLI</a>
 
             </li>
                             </ul>
@@ -837,6 +841,10 @@
         <a class="ht-nav-page-link" href="Status_Repository_Logging.html">Status Repository Logging</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Client_Logging.html">Client Logging</a>
+
+            </li>
                             </ul>
             </li>
                                         <li class="leaf">
@@ -1124,16 +1132,18 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Timed_Services.html">SignServer Timed Services</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277564"> <span>SignerStatusReportTimedService</span></h1>
+</div>            <h1 id="src-16222237"> <span>SignerStatusReportTimedService</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >Fully qualified class name: <strong class=" ">org.signserver.module.signerstatusreport.SignerStatusReportTimedService</strong>.    </p>
-    <div class="section section-1" id="src-5277564_id-.SignerStatusReportTimedServicev4.1.0-Overview">
+    <div class="section section-1" id="src-16222237_id-.SignerStatusReportTimedServicev4.3.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
-    <p  >The SignerStatusReportTimedService is a timed service that outputs status for a set of workers to a file. The information includes each workers crypto token status ACTIVE/OFFLINE and if available also the numbers of signatures that has been performed with the key currently associated with the worker. If the worker has a configured limit of number of signatures, this value is also included. See also the <a   href="SignerStatusReportWorker.html">SignerStatusReportWorker</a> which is an alternative way of offering this reports.    </p>
-    <div class="section section-2" id="src-5277564_id-.SignerStatusReportTimedServicev4.1.0-Format">
+    <p  >The SignerStatusReportTimedService is a timed service that outputs status for a set of workers to a file.    </p>
+    <p  >The information includes each workers crypto token status ACTIVE/OFFLINE, and if available also the number of signatures that has been performed with the key currently associated with the worker. If the worker has a configured limit of number of signatures, this value is also included.    </p>
+    <p  >See also the <a   href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>, which is an alternative way of offering thiese reports.    </p>
+    <div class="section section-2" id="src-16222237_id-.SignerStatusReportTimedServicev4.3.0-Format">
         <h2 class="heading "><span>Format</span></h2>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1144,19 +1154,81 @@
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-5277564_id-.SignerStatusReportTimedServicev4.1.0-Rules">
+    <div class="section section-2" id="src-16222237_id-.SignerStatusReportTimedServicev4.3.0-Rules">
         <h2 class="heading "><span>Rules</span></h2>
-    <p  >Each line contains a set of properties for one worker.<br/>Lines are separated by a system dependent newline character (CR, LF or CRLF).<br/>Properties are of form KEY=VALUE and are separated by a comma and a space (&quot;, &quot;).<br/>The properties <strong class=" ">workerName</strong>&quot; and <strong class=" ">status</strong> are the only ones that must be present.<br/>The property <strong class=" ">workerName</strong> is always the first property.    </p>
-    </div>
-    <div class="section section-2" id="src-5277564_id-.SignerStatusReportTimedServicev4.1.0-Properties">
+<ul class=" "><li class=" ">    <p  >Each line contains a set of properties for one worker.    </p>
+</li><li class=" ">    <p  >Lines are separated by a system dependent newline character (CR, LF or CRLF).    </p>
+</li><li class=" ">    <p  >Properties are of form KEY=VALUE and are separated by a comma and a space (&quot;, &quot;).    </p>
+</li><li class=" ">    <p  >The properties <strong class=" ">workerName</strong> and <strong class=" ">status</strong> are mandatory.    </p>
+</li><li class=" ">    <p  >The property <strong class=" ">workerName</strong> is always the first property.    </p>
+</li></ul>    </div>
+    <div class="section section-2" id="src-16222237_id-.SignerStatusReportTimedServicev4.3.0-Properties">
         <h2 class="heading "><span>Properties</span></h2>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">workerName</strong>: name of the worker. Example: &quot;sod71&quot; or &quot;sod72&quot;    </p>
-</li><li class=" ">    <p  ><strong class=" ">status</strong>: status of the worker's crypto token and key. Either &quot;ACTIVE&quot; or &quot;OFFLINE&quot;.    </p>
-</li><li class=" ">    <p  ><strong class=" ">validityNotBefore</strong>: the first date the signer is allowed to sign. Format is java.text.SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss z&quot;).    </p>
-</li><li class=" ">    <p  ><strong class=" ">validityNotAfter:</strong> the last date the signer is allowed to sign.    </p>
-</li><li class=" ">    <p  ><strong class=" ">signings</strong>: the number of signatures that has been performed with the key used by this worker.    </p>
-</li><li class=" ">    <p  ><strong class=" ">signLimit</strong>: the maximum number of signatures this worker is allowed to perfom or -1 if there is no limit.    </p>
-</li></ul>    <div class="section section-3" id="src-5277564_id-.SignerStatusReportTimedServicev4.1.0-Examples">
+    <div  class="tablewrap">
+        <table class="confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Property    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Desrciption    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >workerName    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Name of the worker. Example: &quot;sod71&quot; or &quot;sod72&quot;    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >status    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Sstatus of the worker's crypto token and key. Either &quot;ACTIVE&quot; or &quot;OFFLINE&quot;.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >validityNotBefore    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The first date the signer is allowed to sign. The format is java.text.SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss z&quot;).    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >validityNotAfter    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The last date the signer is allowed to sign.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >signings    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The number of signatures that has been performed with the key used by this worker.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >signLimit    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The maximum number of signatures this worker is allowed to perform, or -1 if there is no limit.    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <div class="section section-3" id="src-16222237_id-.SignerStatusReportTimedServicev4.3.0-Examples">
         <h3 class="heading "><span>Examples</span></h3>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1175,7 +1247,7 @@
 <div class="line"><code class="plain">workerName=Sod73, status=OFFLINE, validityNotBefore=2010-07-05 17:32:33 CEST, validityNotAfter=2010-09-08 17:32:33 EEST, signings=0, signLimit=100000,</code></div>
 </div>
     </div>
-    <p  >Explanation: Sod73 has not reached its limit and is still in validity time but is OFFLINE for some other reason.    </p>
+    <p  >Explanation: Sod73 has not reached its limit and is still in validity time, but is OFFLINE for some other reason.    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">workerName=Sod74, status=OFFLINE,</code></div>
@@ -1185,7 +1257,7 @@
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-5277564_id-.SignerStatusReportTimedServicev4.1.0-AvailableProperties">
+    <div class="section section-1" id="src-16222237_id-.SignerStatusReportTimedServicev4.3.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1264,7 +1336,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

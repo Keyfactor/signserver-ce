@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="5286104">
+<body pageid="16222896">
 
 <div id="ht-loader">
     <noscript>
@@ -233,6 +233,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Stresstest_CLI.html">Stresstest CLI</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="P11NG_CLI.html">P11NG CLI</a>
 
             </li>
                             </ul>
@@ -837,6 +841,10 @@
         <a class="ht-nav-page-link" href="Status_Repository_Logging.html">Status Repository Logging</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Client_Logging.html">Client Logging</a>
+
+            </li>
                             </ul>
             </li>
                                         <li class="leaf">
@@ -1200,8 +1208,9 @@
         <p  >The slot to use, identified with the type specified in SLOTLABELTYPE:    </p>
 <ul class=" "><li class=" ">    <p  >SLOT_NUMBER is the number (ID) of the slot    </p>
 </li><li class=" ">    <p  >SLOT_INDEX is the zero-base index of the slot in the list of available slots as returned by the PKCS#11 provider    </p>
-</li><li class=" ">    <p  >SLOT_LABEL (as supported by the old PKCS#11 implementation is currently not supported)    </p>
 </li></ul>    <p  >Required.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ SLOT_LABEL is currently not supported.    </p>
             </td>
         </tr>
     <tr>
@@ -1211,7 +1220,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Specify a PKCS#11 attribute to to use when generating a key.    </p>
-    <p  >Where x is the object class: PUBLIC or PRIVATE.<br/>Where y is the key type: RSA, ECDSA, etc.<br/>Where z is the attribute name or ID as decimal number or a hexadecimal number prefixed with &quot;0x&quot;.    </p>
+    <p  >Where x is the object class: PUBLIC or PRIVATE.<br/>Where y is the key type: RSA, ECDSA, etc.<br/>Where z is the attribute name or ID as decimal number or a hexadecimal number prefixed with &quot;0x&quot;. An exception to this is CKA_ALLOWED_MECHANISMS, which currently can not be specified in decimal or hexadecimal form.    </p>
     <p  >Examples:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1224,7 +1233,8 @@
 <div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_EXTRACTABLE = </code><code class="keyword">false</code></div>
 <div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_DECRYPT = </code><code class="keyword">false</code></div>
 <div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_UNWRAP = </code><code class="keyword">false</code></div>
-<div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS=CKM_RSA_PKCS, CKM_SHA256_RSA_PKCS, CKM_RSA_PKCS_PSS, CKM_SHA256_RSA_PKCS_PSS</code></div>
+<div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.</code><code class="value">0X0000010C</code><code class="plain">=FALSE</code></div>
+<div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS=CKM_RSA_PKCS, CKM_SHA256_RSA_PKCS, </code><code class="value">0x00000043</code><code class="plain">, CKM_RSA_PKCS_PSS</code></div>
 </div>
     </div>
             </td>
@@ -1299,7 +1309,7 @@
     
     <footer id="ht-footer">
     <small>
-        Copyright &copy; 2006-2017. PrimeKey Solutions AB. All rights reserved.
+        Copyright &copy; 2006-2018. PrimeKey Solutions AB. All rights reserved.
     </small>
     <a href="#" id="ht-jump-top" class="sp-aui-icon-small sp-aui-iconfont-arrows-up"></a>
 </footer></div>

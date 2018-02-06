@@ -37,7 +37,9 @@ import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -905,5 +907,22 @@ public class CryptoTokenHelper {
         if (Boolean.parseBoolean(config.getProperty(SignServerConstants.DISABLED))) {
             throw new CryptoTokenInitializationFailureException("Disabled");
         }
+    }
+    
+    /**
+     * Utility method to get CKA attribute map from list of provided CKA attribute property.
+     *
+     * @param attributes list of CKA attribute property
+     * @return map of CKA attribute constant as key and its value 
+     */
+    public static Map<Long, Object> convert(List<AttributeProperties.Attribute> attributes) {
+        if (attributes == null) {
+            return Collections.emptyMap();
+        }
+        final Map<Long, Object> result = new HashMap<>();
+        for (AttributeProperties.Attribute attribute : attributes) {
+            result.put(attribute.getId(), attribute.getValue());
+        }
+        return result;
     }
 }

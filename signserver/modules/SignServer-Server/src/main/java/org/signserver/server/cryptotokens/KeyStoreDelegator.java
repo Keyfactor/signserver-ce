@@ -85,8 +85,9 @@ public interface KeyStoreDelegator {
      * 
      * @return List of token entries
      * @throws KeyStoreException 
+     * @throws org.signserver.common.CryptoTokenOfflineException 
      */
-    public List<TokenEntry> getEntries() throws KeyStoreException;
+    public List<TokenEntry> getEntries() throws KeyStoreException, CryptoTokenOfflineException;
     
     /**
      * Populate additional data for a token entry.

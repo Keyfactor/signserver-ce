@@ -660,7 +660,7 @@ public class TimeStampSigner extends BaseSigner {
             } else {
                 try {
                     // Validate according to policy
-                    timeStampRequest.validate(getAcceptedAlgorithms(), getAcceptedPolicies(), getAcceptedExtensions());
+                    timeStampRequest.validate(getAcceptedAlgorithms(), acceptAnyPolicy ? null : this.getAcceptedPolicies(), getAcceptedExtensions());
 
                     // Create the generators
                     final TimeStampTokenGenerator timeStampTokenGen = getTimeStampTokenGenerator(crypto, timeStampRequest, logMap);

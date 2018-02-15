@@ -40,6 +40,7 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.cmp.PKIStatus;
 import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -59,6 +60,7 @@ import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TSPException;
+import org.bouncycastle.tsp.TSPValidationException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.tsp.TimeStampTokenGenerator;
@@ -639,28 +641,35 @@ public class TimeStampSigner extends BaseSigner {
                 }
             });
 
-            final TimeStampTokenGenerator timeStampTokenGen =
-                    getTimeStampTokenGenerator(crypto, timeStampRequest, logMap);
-
-            final TimeStampResponseGenerator timeStampResponseGen =
-                    getTimeStampResponseGenerator(timeStampTokenGen);
-
-            final Extensions additionalExtensions =
-                    getAdditionalExtensions(signRequest, requestContext);
+            // Create the response
             TimeStampResponse timeStampResponse;
-
+            if (date == null) {
+                // Generate failure response
+                final TimeStampResponseGenerator timeStampResponseGen = getTimeStampResponseGenerator(null);
+                timeStampResponse = timeStampResponseGen.generateRejectedResponse(new TSPValidationException("The time source is not available.", PKIFailureInfo.timeNotAvailable));
+            } else {
             try {
-                timeStampResponse =
-                        timeStampResponseGen.generateGrantedResponse(timeStampRequest,
+                    // Validate according to policy
+                    timeStampRequest.validate(getAcceptedAlgorithms(), getAcceptedPolicies(), getAcceptedExtensions());
+
+                    // Create the generators
+                    final TimeStampTokenGenerator timeStampTokenGen = getTimeStampTokenGenerator(crypto, timeStampRequest, logMap);
+                    final TimeStampResponseGenerator timeStampResponseGen = getTimeStampResponseGenerator(timeStampTokenGen);
+                    final Extensions additionalExtensions = getAdditionalExtensions(signRequest, requestContext);
+                    
+                    // Generate the response
+                    timeStampResponse = timeStampResponseGen.generateGrantedResponse(timeStampRequest,
                                 serialNumber, date,
                                 includeStatusString ? "Operation Okay" : null,
                                 additionalExtensions);
             } catch (TSPException e) {
+                    // Generate failure response
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Got exception generating response: ", e);
                 }
-                timeStampResponse =
-                        timeStampResponseGen.generateRejectedResponse(e);
+                    final TimeStampResponseGenerator timeStampResponseGen = getTimeStampResponseGenerator(null);
+                    timeStampResponse = timeStampResponseGen.generateRejectedResponse(e);
+            }
             }
 
             final TimeStampToken token = timeStampResponse.getTimeStampToken();

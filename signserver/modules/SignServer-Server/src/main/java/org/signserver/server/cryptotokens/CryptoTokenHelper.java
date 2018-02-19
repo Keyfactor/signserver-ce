@@ -915,7 +915,7 @@ public class CryptoTokenHelper {
      * @param attributes list of CKA attribute property
      * @return map of CKA attribute constant as key and its value 
      */
-    public static Map<Long, Object> convert(List<AttributeProperties.Attribute> attributes) {
+    public static Map<Long, Object> convertCKAAttributeListToMap(List<AttributeProperties.Attribute> attributes) {
         if (attributes == null) {
             return Collections.emptyMap();
         }

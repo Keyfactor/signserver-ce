@@ -93,7 +93,7 @@ CREATE TABLE `KeyData` (
   `wrappingCipher` bigint(19) NOT NULL,
   `keyData` LONGTEXT NOT NULL,
   `certData` LONGTEXT NOT NULL,
-  PRIMARY KEY (`alias`)
+  PRIMARY KEY (`keyAlias`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 

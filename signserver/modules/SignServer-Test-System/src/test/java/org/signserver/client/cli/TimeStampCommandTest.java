@@ -28,6 +28,7 @@ import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.ejb.interfaces.WorkerSession;
 
 /**
@@ -186,6 +187,59 @@ public class TimeStampCommandTest extends ModulesTestCase {
         assertTrue("Prints HTTP error 404: " + err,
                 err.contains("Failure: HTTP error: 404: Not Found") ||
                 err.contains("Failure: HTTP error: 404: Worker Not Found"));
+    }
+    
+    /**
+     * Tests that command fails when invalid digest algorithm is provided.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test07InvalidDigestAlgorithm() throws Exception {
+        try {
+            cli.execute("timestamp", "-instr",
+                    "Any text we want to have a timestamp for...123",
+                    "-url", "http://localhost:8080/signserver/tsa?workerId=" + getSignerIdTimeStampSigner1(), "-digestalgorithm", "invalidDigestAlgorithm");
+            fail("should fail");
+        } catch (UnexpectedCommandFailureException e) {
+            assertTrue("Should throw exception: " + e.getMessage(), e.getMessage().contains("Invalid digest algorithm"));
+        }
+    }
+    
+    /**
+     * Tests that command works when valid digest algorithm is provided.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test08ValidDigestAlgorithm() throws Exception {
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-instr",
+                "Any text we want to have a timestamp for...123",
+                "-url", "http://localhost:8080/signserver/tsa?workerId=" + getSignerIdTimeStampSigner1(), "-digestalgorithm", "SHA-256"));
+    }
+    
+    /**
+     * Tests that command works when digest algorithm is not provided as default digest algorithm (SHA-256) is used.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test09DigestAlgorithmNotSpecified() throws Exception {
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-instr",
+                "Any text we want to have a timestamp for...123",
+                "-url", "http://localhost:8080/signserver/tsa?workerId=" + getSignerIdTimeStampSigner1()));
+    }
+    
+    /**
+     * Tests that command fails when digest algorithm option name is invalid.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test10InvalidDigestAlgorithmOptionName() throws Exception {
+        assertEquals("Invalid arguments", CommandLineInterface.RETURN_INVALID_ARGUMENTS, cli.execute("timestamp", "-instr",
+                "Any text we want to have a timestamp for...123",
+                "-url", "http://localhost:8080/signserver/tsa?workerId=" + getSignerIdTimeStampSigner1(), "-digestAlgorithm", "SHA-256"));
     }
 
     @Test

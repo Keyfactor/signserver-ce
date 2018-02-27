@@ -318,8 +318,8 @@ public class TimeStampCommand extends AbstractCommand {
             if (cmd.hasOption("reqpolicy")) {
                 reqPolicy = cmd.getOptionValue("reqpolicy");
             }
-            if (cmd.hasOption("digestAlgorithm")) {
-                digestalgorithm = cmd.getOptionValue("digestAlgorithm");
+            if (cmd.hasOption("digestalgorithm")) {
+                digestalgorithm = cmd.getOptionValue("digestalgorithm");
             }
             
             try {

@@ -432,6 +432,30 @@ Installation Guide for details.
         </antcall>
     </target>
     
+    <target name="dist:p11ngcli-zip" description="Create a binary ZIP distribution of the P11NG CLI">
+        <delete dir="${tmp}/dist"/> <!-- Only include the clientcli in the zip file -->
+        <antcall target="dist:p11ngcli"/>
+        <antcall target="dist:zip">
+            <param name="dist.zipdest" value="${basedir}/tmp/SignServer-P11NGCLI-${app.version.number}-bin.zip"/>
+            <param name="dist.zipprefix" value="signserver"/>
+        </antcall>
+    </target>
+    
+    <target name="dist:p11ngcli">
+        <available file="${basedir}/lib/SignServer-P11NG-Common-${app.version.number}.jar" property="p11ng.jar" value="SignServer-P11NG-Common-${app.version.number}.jar"/>
+        <fail unless="p11ng.jar" message="Must build SignServer-P11NG-Common first"/>
+        <antcall target="dist">
+            <param name="dist.jars" value="${p11ng.jar}"/>
+            <param name="dist.includes" value="
+                bin/p11ng-tool,
+                conf/log4j.properties,
+                doc/lgpl-2.1.txt,
+                res/deploytools/cesecore/defaultvalues.properties,
+                ${dist.includes.extra}
+                "/>
+        </antcall>
+    </target>
+    
     <target name="dist:sampleconfigs-jar" depends="-create-sample-configs-dist"/>
     <target name="-create-sample-configs-dist">
         <delete dir="${tmp}/dist"/> <!-- Only include the client CLI in the zip file -->

@@ -5,6 +5,17 @@ Notice:
  - Default values for digest and signature algorithms have now changed to use SHA-256.
 
 
+SignServer 4.2.2
+----------------
+
+Bug fixes:
+ - Signing is no longer initialized if it is going to be refused 
+   in TimeStampSigner.
+ - Signing is no longer initialized if it is going to be refused 
+   in MasterListSigner. 
+ - An out of memory issue in the the database CLI command was fixed.
+
+
 SignServer 4.2.1
 ----------------
 

@@ -433,7 +433,7 @@ Installation Guide for details.
     </target>
     
     <target name="dist:p11ngcli-zip" description="Create a binary ZIP distribution of the P11NG CLI">
-        <delete dir="${tmp}/dist"/> <!-- Only include the clientcli in the zip file -->
+        <delete dir="${tmp}/dist"/> <!-- Only include the p11ng-tool in the zip file -->
         <antcall target="dist:p11ngcli"/>
         <antcall target="dist:zip">
             <param name="dist.zipdest" value="${basedir}/tmp/SignServer-P11NGCLI-${app.version.number}-bin.zip"/>

@@ -1,3 +1,12 @@
+SignServer 4.2.2, 2018-03-13
+----------------------------
+
+** Bug
+    * [DSS-1598] - Audit log verification CLI command fails with OOM exception in some cases
+    * [DSS-1600] - Do not initialize signing unless needed for time-stamp signer
+    * [DSS-1607] - Should fail before initializing signing in MasterListSigner
+
+
 SignServer 4.2.1, 2018-01-25
 ----------------------------
 

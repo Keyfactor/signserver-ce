@@ -137,6 +137,9 @@ public class CryptoTokenHelper {
     private static final long DEFAULT_VALIDITY_S = (long) 30 * 24 * 60 * 60 * 365; // 30 year in seconds
     private static final String DEFAULT_SIGNATUREALGORITHM = "SHA1withRSA"; // Legacy default
 
+    public static final String PROPERTY_USE_CACHE = "USE_CACHE";
+    public static final String DEFAULT_PROPERTY_USE_CACHE = "TRUE";
+
     public enum TokenEntryFields {
         /** Key alias of entry. */
         keyAlias,

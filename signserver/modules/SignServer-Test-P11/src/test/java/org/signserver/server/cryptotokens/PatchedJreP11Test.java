@@ -67,7 +67,7 @@ public class PatchedJreP11Test {
 
         @Override
         protected void generateKey(String keyType, String keySpec, String alias) throws CryptoTokenOfflineException, InvalidWorkerIdException, SignServerException {
-            testCase.getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_TOKEN), keySpec, keySpec, alias, null);
+            testCase.getWorkerSession().generateSignerKey(new WorkerIdentifier(CRYPTO_TOKEN), keyType, keySpec, alias, null);
         }
 
         @Override
@@ -136,6 +136,8 @@ public class PatchedJreP11Test {
         workerSession.setWorkerProperty(tokenId, "SLOTLABELVALUE", slot);
         workerSession.setWorkerProperty(tokenId, "PIN", pin);
         workerSession.setWorkerProperty(tokenId, "DEFAULTKEY", existingKey1); // Test key
+        workerSession.setWorkerProperty(tokenId, "SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
+        workerSession.setWorkerProperty(tokenId, "ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS", "CKM_RSA_PKCS_PSS, CKM_SHA256_RSA_PKCS_PSS, CKM_SHA384_RSA_PKCS_PSS, CKM_SHA512_RSA_PKCS_PSS");
         workerSession.setWorkerProperty(tokenId, "ATTRIBUTES",
             "attributes(generate,CKO_PUBLIC_KEY,*) = {\n" +
             "   CKA_TOKEN = false\n" +

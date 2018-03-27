@@ -191,8 +191,9 @@ public class PatchedJreP11Test {
             
             assertEquals("Modifiable field", Boolean.FALSE.toString(), entries.get(0).getInfo().get(CryptoTokenHelper.INFO_KEY_MODIFIABLE));
         } finally {
+            base.destroyKey(testKeyName);
             base.removeWorker(CRYPTO_TOKEN);
         }
     }
-    
+
 }

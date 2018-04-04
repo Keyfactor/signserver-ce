@@ -219,8 +219,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                 final byte[] errorBody = IOUtils.toByteArray(responseIn);
                 throw new HTTPException(processServlet, responseCode, conn.getResponseMessage(), errorBody);
             }
-        }
-        catch (ConnectException | SocketTimeoutException ex) {
+        } catch (ConnectException | SocketTimeoutException ex) {
             connectionFailure = true;
             LOG.error("Connection Failure occurred ");
             throw ex; //TODO: remove this and try signing on another host 

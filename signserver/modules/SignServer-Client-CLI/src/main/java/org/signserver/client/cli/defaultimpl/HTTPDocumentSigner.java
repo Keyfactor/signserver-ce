@@ -118,7 +118,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             final OutputStream out, final Map<String, Object> requestContext) throws IOException {
         
         OutputStream requestOut = null;
-        InputStream responseIn = null;
+        InputStream responseIn = null;        
         boolean connectionFailure = false;
         try {
             final HttpURLConnection conn = (HttpURLConnection) processServlet.openConnection();
@@ -224,8 +224,14 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             connectionFailure = true;
             LOG.error("Connection Failure occurred ");
             throw ex; //TODO: remove this and try signing on another host 
-        }   
-        catch (HttpRetryException ex) {
+        } catch (HTTPException ex) {
+            if (ex.getResponseCode() == 404 || ex.getResponseCode() == 503 || ex.getResponseCode() == 500) {
+                connectionFailure = true;
+                LOG.error("Connection Failure occurred ");
+                throw ex; //TODO: remove this and try signing on another host 
+            }
+            throw ex;
+        } catch (HttpRetryException ex) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(ex.getReason());
             }

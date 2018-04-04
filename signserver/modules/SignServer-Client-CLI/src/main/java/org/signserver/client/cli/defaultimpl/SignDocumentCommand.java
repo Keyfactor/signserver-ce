@@ -40,6 +40,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.protocol.ws.client.SignServerWSClientFactory;
+import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.DEFAULT_TIMEOUT_LIMIT;
 
 /**
  * Command Line Interface (CLI) for signing documents.
@@ -131,6 +132,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     /** Option EXTRAOPTION. */
     public static final String EXTRAOPTION = "extraoption";
+    
+    /** Option TIMEOUT. */
+    public static final String TIMEOUT = "timeout";
 
     /** The command line options. */
     private static final Options OPTIONS;
@@ -199,6 +203,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 TEXTS.getString("FILETYPE_DESCRIPTION"));
         OPTIONS.addOption(EXTRAOPTION, true,
                 TEXTS.getString("EXTRAOPTION_DESCRIPTION"));
+        OPTIONS.addOption(TIMEOUT, true,
+                TEXTS.getString("TIMEOUT_DESCRIPTION"));
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             OPTIONS.addOption(option);
         }
@@ -257,6 +263,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     private boolean clientside;
     private String digestAlgorithm;
     private String fileType;
+    private String timeOutString;
+    private int timeOutLimit;
 
     private final KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
@@ -390,7 +398,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         if (line.hasOption(FILETYPE)) {
             fileType = line.getOptionValue(FILETYPE);
         }
-        
+
+        timeOutString = line.getOptionValue(TIMEOUT, DEFAULT_TIMEOUT_LIMIT);
+                
         try {
             final ConsolePasswordReader passwordReader = createConsolePasswordReader();
             keyStoreOptions.parseCommandLine(line, passwordReader, out);
@@ -486,6 +496,15 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         }
 
         keyStoreOptions.validateOptions();
+        
+        try {
+            timeOutLimit = Integer.parseInt(timeOutString);
+            if (timeOutLimit < 0) {
+                throw new IllegalCommandArgumentsException("Time out limit can not be negative");
+            }
+        } catch (NumberFormatException ex) {
+            throw new IllegalCommandArgumentsException("Illegal time out limit: " + timeOutString);
+        }
     }
 
     /**
@@ -571,9 +590,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 LOG.debug("Using HTTP as procotol");
                 final URL url = new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host, port, servlet);
                 if (workerId == 0) {
-                    signer = new HTTPDocumentSigner(url, workerName, username, currentPassword, pdfPassword, metadata);
+                    signer = new HTTPDocumentSigner(url, workerName, username, currentPassword, pdfPassword, metadata, timeOutLimit);
                 } else {
-                    signer = new HTTPDocumentSigner(url, workerId, username, currentPassword, pdfPassword, metadata);
+                    signer = new HTTPDocumentSigner(url, workerId, username, currentPassword, pdfPassword, metadata, timeOutLimit);
                 }
             }
         }

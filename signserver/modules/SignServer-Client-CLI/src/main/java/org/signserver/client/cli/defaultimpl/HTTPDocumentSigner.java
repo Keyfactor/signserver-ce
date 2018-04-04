@@ -15,8 +15,10 @@ package org.signserver.client.cli.defaultimpl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.HttpRetryException;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.Map;
 import org.apache.log4j.Logger;
@@ -35,6 +37,7 @@ import org.signserver.common.SignServerException;
  */
 public class HTTPDocumentSigner extends AbstractDocumentSigner {
     public static final String CRLF = "\r\n";
+    static final String DEFAULT_TIMEOUT_LIMIT = "500";
 
     private static final String BASICAUTH_AUTHORIZATION = "Authorization";
 
@@ -57,12 +60,13 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     private String pdfPassword;
     
     private Map<String, String> metadata;
+    private final int timeOutLimit;
 
     public HTTPDocumentSigner(final URL processServlet,
-            final String workerName, 
+            final String workerName,
             final String username, final String password,
             final String pdfPassword,
-            final Map<String, String> metadata) {
+            final Map<String, String> metadata, final int timeOutLimit) {
         this.processServlet = processServlet;
         this.workerName = workerName;
         this.workerId = 0;
@@ -70,13 +74,14 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         this.password = password;
         this.pdfPassword = pdfPassword;
         this.metadata = metadata;
+        this.timeOutLimit = timeOutLimit;
     }
     
     public HTTPDocumentSigner(final URL processServlet,
             final int workerId, 
             final String username, final String password,
             final String pdfPassword,
-            final Map<String, String> metadata) {
+            final Map<String, String> metadata, final int timeOutLimit) {
         this.processServlet = processServlet;
         this.workerName = null;
         this.workerId = workerId;
@@ -84,6 +89,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         this.password = password;
         this.pdfPassword = pdfPassword;
         this.metadata = metadata;
+        this.timeOutLimit = timeOutLimit;
     }
 
     @Override
@@ -113,8 +119,10 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         
         OutputStream requestOut = null;
         InputStream responseIn = null;
+        boolean connectionFailure = false;
         try {
             final HttpURLConnection conn = (HttpURLConnection) processServlet.openConnection();
+            conn.setConnectTimeout(timeOutLimit);
             conn.setDoOutput(true);
             conn.setAllowUserInteraction(false);
 
@@ -211,7 +219,13 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                 final byte[] errorBody = IOUtils.toByteArray(responseIn);
                 throw new HTTPException(processServlet, responseCode, conn.getResponseMessage(), errorBody);
             }
-        } catch (HttpRetryException ex) {
+        }
+        catch (ConnectException | SocketTimeoutException ex) {
+            connectionFailure = true;
+            LOG.error("Connection Failure occurred ");
+            throw ex; //TODO: remove this and try signing on another host 
+        }   
+        catch (HttpRetryException ex) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(ex.getReason());
             }

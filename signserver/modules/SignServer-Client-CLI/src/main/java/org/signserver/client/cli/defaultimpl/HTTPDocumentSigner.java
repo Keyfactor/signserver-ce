@@ -18,8 +18,10 @@ import java.io.OutputStream;
 import java.net.ConnectException;
 import java.net.HttpRetryException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
@@ -51,7 +53,10 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     private final String workerName;
     private final int workerId;
 
-    private URL processServlet;
+    private final List<String> hosts;
+    private final int port;
+    private final String servlet;
+    private final boolean useHTTPS;
 
     private String username;
     private String password;
@@ -62,12 +67,18 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     private Map<String, String> metadata;
     private final int timeOutLimit;
 
-    public HTTPDocumentSigner(final URL processServlet,
+    public HTTPDocumentSigner(final List<String> hosts,
+            final int port,
+            final String servlet,
+            final boolean useHTTPS,
             final String workerName,
             final String username, final String password,
             final String pdfPassword,
             final Map<String, String> metadata, final int timeOutLimit) {
-        this.processServlet = processServlet;
+        this.hosts = hosts;
+        this.port = port;
+        this.servlet = servlet;
+        this.useHTTPS = useHTTPS;
         this.workerName = workerName;
         this.workerId = 0;
         this.username = username;
@@ -75,14 +86,22 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         this.pdfPassword = pdfPassword;
         this.metadata = metadata;
         this.timeOutLimit = timeOutLimit;
+        
+        System.out.println("Number of hosts: " + hosts.size());
     }
     
-    public HTTPDocumentSigner(final URL processServlet,
+    public HTTPDocumentSigner(final List<String> hosts,
+            final int port,
+            final String servlet,
+            final boolean useHTTPS,
             final int workerId, 
             final String username, final String password,
             final String pdfPassword,
             final Map<String, String> metadata, final int timeOutLimit) {
-        this.processServlet = processServlet;
+        this.hosts = hosts;
+        this.port = port;
+        this.servlet = servlet;
+        this.useHTTPS = useHTTPS;
         this.workerName = null;
         this.workerId = workerId;
         this.username = username;
@@ -106,10 +125,40 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                     + " containing data of length " + size + " bytes"
                     + " to worker " + workerName);
         }
-        sendRequest(processServlet, in, size, out, requestContext);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Got sign response");
+        try {
+            final URL url = createServletURL();
+            
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending to URL: " + url.toString());
+            }
+
+            sendRequest(url, in, size, out, requestContext);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Got sign response");
+            }
+        } catch (IOException e) {
+            LOG.error("Failed sending request to host: " + hosts.get(0));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Trying next host");
+            }
+            // remove failed host from list
+            hosts.remove(0);
+            // re-try with next host in list
+            if (hosts.size() > 0) {
+                doSign(in, size, encoding, out, requestContext);
+            } else {
+                LOG.error("No more hosts to try");
+                throw new SignServerException("No more hosts to try");
+            }
         }
+        
+    }
+    
+    private URL createServletURL() throws MalformedURLException, SignServerException {
+        final String host = hosts.get(0);
+
+        return new URL(useHTTPS ? "https" : "http", host, port, servlet);
     }
 
     private void sendRequest(final URL processServlet,

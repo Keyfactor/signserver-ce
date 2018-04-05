@@ -20,7 +20,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.ServiceConfigurationError;
@@ -76,6 +79,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
     /** Option HOST. */
     public static final String HOST = "host";
+    
+    /** Option HOSTS. */
+    public static final String HOSTS = "hosts";
 
     /** Option INFILE. */
     public static final String INFILE = "infile";
@@ -169,6 +175,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 TEXTS.getString("OUTFILE_DESCRIPTION"));
         OPTIONS.addOption(HOST, true,
                 TEXTS.getString("HOST_DESCRIPTION"));
+        OPTIONS.addOption(HOSTS, true,
+                TEXTS.getString("HOSTS_DESCRIPTION"));
         OPTIONS.addOption(PORT, true,
                 TEXTS.getString("PORT_DESCRIPTION"));
         OPTIONS.addOption(SERVLET, true,
@@ -222,6 +230,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     /** Hostname or IP address of the SignServer host. */
     private String host;
 
+    private List<String> hosts;
+    
     /** TCP port number of the SignServer host. */
     private Integer port;
 
@@ -316,7 +326,19 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         if (line.hasOption(WORKERID)) {
             workerId = Integer.parseInt(line.getOptionValue(WORKERID, null));
         }
-        host = line.getOptionValue(HOST, KeyStoreOptions.DEFAULT_HOST);
+        host = line.getOptionValue(HOST);
+        
+        if (line.hasOption(HOSTS)) {
+            final String hostsString = line.getOptionValue(HOSTS);
+            
+            hosts = new LinkedList<>();
+            for (final String hostString : hostsString.split(",")) {
+                final String hostTrim = hostString.trim();
+                
+                hosts.add(hostTrim);
+            }
+        }
+        
         if (line.hasOption(PORT)) {
             port = Integer.parseInt(line.getOptionValue(PORT));
         }
@@ -495,6 +517,20 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             }
         }
 
+        if (host != null && hosts != null) {
+            throw new IllegalCommandArgumentsException("Can only specify one of -host and -hosts");
+        }
+        
+        if (hosts != null && protocol != Protocol.HTTP) {
+            throw new IllegalCommandArgumentsException("Can only use -hosts with protocol HTTP");
+        }
+        
+        if (host != null) {
+            hosts = Collections.singletonList(host);
+        } else if (hosts == null && host == null) {
+            hosts = Collections.singletonList(KeyStoreOptions.DEFAULT_HOST);
+        }
+        
         keyStoreOptions.validateOptions();
         
         try {
@@ -590,9 +626,17 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 LOG.debug("Using HTTP as procotol");
                 final URL url = new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host, port, servlet);
                 if (workerId == 0) {
-                    signer = new HTTPDocumentSigner(url, workerName, username, currentPassword, pdfPassword, metadata, timeOutLimit);
+                    signer = new HTTPDocumentSigner(hosts, port, servlet, 
+                                                    keyStoreOptions.isUseHTTPS(),
+                                                    workerName, username,
+                                                    currentPassword, pdfPassword,
+                                                    metadata, timeOutLimit);
                 } else {
-                    signer = new HTTPDocumentSigner(url, workerId, username, currentPassword, pdfPassword, metadata, timeOutLimit);
+                    signer = new HTTPDocumentSigner(hosts, port, servlet,
+                                                    keyStoreOptions.isUseHTTPS(),
+                                                    workerId, username,
+                                                    currentPassword, pdfPassword,
+                                                    metadata, timeOutLimit);
                 }
             }
         }

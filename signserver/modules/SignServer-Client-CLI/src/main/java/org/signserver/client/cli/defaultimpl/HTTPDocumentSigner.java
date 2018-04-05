@@ -21,8 +21,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.encoders.Base64;
@@ -267,14 +269,14 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                 final byte[] errorBody = IOUtils.toByteArray(responseIn);
                 throw new HTTPException(processServlet, responseCode, conn.getResponseMessage(), errorBody);
             }
-        } catch (ConnectException | SocketTimeoutException ex) {
+        } catch (ConnectException | SocketTimeoutException | UnknownHostException ex) {
             connectionFailure = true;
-            LOG.error("Connection Failure occurred ");
+            LOG.error("Connection failure occurred: " + ex.getMessage());
             throw ex; //TODO: remove this and try signing on another host 
         } catch (HTTPException ex) {
-            if (ex.getResponseCode() == 404 || ex.getResponseCode() == 503 || ex.getResponseCode() == 500) {
+            if (ex.getResponseCode() == HttpServletResponse.SC_NOT_FOUND || ex.getResponseCode() == HttpServletResponse.SC_SERVICE_UNAVAILABLE || ex.getResponseCode() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
                 connectionFailure = true;
-                LOG.error("Connection Failure occurred ");
+                LOG.error("Connection failure occurred: " + ex.getMessage());
                 throw ex; //TODO: remove this and try signing on another host 
             }
             throw ex;

@@ -99,7 +99,49 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail("Should have thrown exception about missing arguments");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
+    
+    /**
+     * Test that setting both -host and -hosts is not allowed.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test01hostAndHostsNotAllowed() throws Exception {
+        LOG.info("test01hostAndHostsNotAllowed");
+        try {
+            execute("signdocument -host localhost -hosts localhost,otherhost");
+            fail("Should have thrown exception about illegal combination of arguments");
+        } catch (IllegalCommandArgumentsException expected) {} // NOPMD
+    }
+    
+    /**
+     * Test that setting -hosts options is not allowed for -protocol CLIENTWS.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test01hostsWithProtocolClientWSNotAllowed() throws Exception {
+        LOG.info("test01hostsWithProtocolClientWSNotAllowed");
+        try {
+            execute("signdocument -hosts localhost,otherhost -protocol CLIENTWS");
+            fail("Should have thrown exception about illegal combination of arguments");
+        } catch (IllegalCommandArgumentsException expected) {} // NOPMD
+    }
 
+    /**
+     * Test that setting -hosts options is not allowed for -protocol WEBSERVICES.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test01hostsWithProtocolWebservicesNotAllowed() throws Exception {
+        LOG.info("test01hostsWithProtocolWebservicesNotAllowed");
+        try {
+            execute("signdocument -hosts localhost,otherhost -protocol WEBSERVICES");
+            fail("Should have thrown exception about illegal combination of arguments");
+        } catch (IllegalCommandArgumentsException expected) {} // NOPMD
+    }
+    
     /**
      * Tests the sample use case a from the documentation.
      * <pre>

@@ -86,8 +86,6 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         this.pdfPassword = pdfPassword;
         this.metadata = metadata;
         this.timeOutLimit = timeOutLimit;
-        
-        System.out.println("Number of hosts: " + hosts.size());
     }
     
     public HTTPDocumentSigner(final List<String> hosts,
@@ -139,6 +137,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             }
         } catch (IOException e) {
             LOG.error("Failed sending request to host: " + hosts.get(0));
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Trying next host");
             }

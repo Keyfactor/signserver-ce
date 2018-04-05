@@ -335,7 +335,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             for (final String hostString : hostsString.split(",")) {
                 final String hostTrim = hostString.trim();
                 
-                hosts.add(hostTrim);
+                if (!hostTrim.isEmpty()) {
+                    hosts.add(hostTrim);
+                }
             }
         }
         
@@ -529,6 +531,10 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             hosts = Collections.singletonList(host);
         } else if (hosts == null && host == null) {
             hosts = Collections.singletonList(KeyStoreOptions.DEFAULT_HOST);
+        }
+        
+        if (hosts.size() == 0) {
+            throw new IllegalCommandArgumentsException("Hosts can not be empty");
         }
         
         keyStoreOptions.validateOptions();

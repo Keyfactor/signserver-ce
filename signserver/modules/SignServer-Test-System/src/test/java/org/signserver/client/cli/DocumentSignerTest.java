@@ -189,6 +189,33 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
+    
+    /**
+     * Test signing a file with multiple hosts set with -hosts with the first
+     * host failing.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test02signDocumentFromFileWithFallbackHost() throws Exception {
+        LOG.info("test02signDocumentFromFileWithFallbackHost");
+        try {
+            final File doc = File.createTempFile("test.xml", null);
+            try (FileOutputStream out = new FileOutputStream(doc)) {
+                out.write("<tag/>".getBytes());
+            }
+
+            String res =
+                    new String(execute("signdocument", "-workername",
+                    "-hosts nonexistinghost,localhost",
+                    "TestXMLSigner", "-infile", doc.getAbsolutePath()));
+            assertTrue("contains signature tag: "
+                    + res, res.contains("<tag><Signature"));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
 
     /**
      * Tests signing from a file and output the results to a file.

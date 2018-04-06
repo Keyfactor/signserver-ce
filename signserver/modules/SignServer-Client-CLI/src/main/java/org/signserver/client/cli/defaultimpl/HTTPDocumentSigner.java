@@ -146,10 +146,11 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Trying next host");
                 }
-                // remove failed host from list
-                hosts.remove(0);
+
                 // re-try with next host in list
-                if (hosts.size() > 0) {
+                if (hosts.size() > 1) {
+                    // remove failed host from list
+                    hosts.remove(0);
                     doSign(in, size, encoding, out, requestContext);
                 } else {
                     LOG.error("No more hosts to try");

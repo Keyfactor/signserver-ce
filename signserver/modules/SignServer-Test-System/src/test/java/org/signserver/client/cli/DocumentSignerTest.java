@@ -941,7 +941,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     
     /**
      * Test that command failure occurs within 501 milli seconds if connection is not established with specified host 
-     * within time specified by timeout flag (500 mili seconds).
+     * within time specified by timeout flag (500 milli seconds).
      * 
      * @throws Exception 
      */

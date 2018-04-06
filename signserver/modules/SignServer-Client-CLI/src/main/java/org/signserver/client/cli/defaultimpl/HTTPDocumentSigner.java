@@ -280,12 +280,11 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         } catch (ConnectException | SocketTimeoutException | UnknownHostException ex) {
             connectionFailure = true;
             LOG.error("Connection failure occurred: " + ex.getMessage());
-            throw ex; //TODO: remove this and try signing on another host 
+            throw ex;
         } catch (HTTPException ex) {
             if (ex.getResponseCode() == HttpServletResponse.SC_NOT_FOUND || ex.getResponseCode() == HttpServletResponse.SC_SERVICE_UNAVAILABLE || ex.getResponseCode() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
                 connectionFailure = true;
                 LOG.error("Connection failure occurred: " + ex.getMessage());
-                throw ex; //TODO: remove this and try signing on another host 
             }
             throw ex;
         } catch (HttpRetryException ex) {

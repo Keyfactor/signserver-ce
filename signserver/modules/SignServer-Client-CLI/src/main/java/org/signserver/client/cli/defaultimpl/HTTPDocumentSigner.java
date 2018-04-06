@@ -68,6 +68,8 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     
     private Map<String, String> metadata;
     private final int timeOutLimit;
+    
+    private boolean connectionFailure;
 
     public HTTPDocumentSigner(final List<String> hosts,
             final int port,
@@ -140,17 +142,22 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         } catch (IOException e) {
             LOG.error("Failed sending request to host: " + hosts.get(0));
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Trying next host");
-            }
-            // remove failed host from list
-            hosts.remove(0);
-            // re-try with next host in list
-            if (hosts.size() > 0) {
-                doSign(in, size, encoding, out, requestContext);
+            if (connectionFailure) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Trying next host");
+                }
+                // remove failed host from list
+                hosts.remove(0);
+                // re-try with next host in list
+                if (hosts.size() > 0) {
+                    doSign(in, size, encoding, out, requestContext);
+                } else {
+                    LOG.error("No more hosts to try");
+                    throw new SignServerException("No more hosts to try");
+                }
             } else {
-                LOG.error("No more hosts to try");
-                throw new SignServerException("No more hosts to try");
+                LOG.error("Failed sending request: " + e.getMessage());
+                throw new SignServerException("Failed sending request", e);
             }
         }
         
@@ -169,7 +176,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         
         OutputStream requestOut = null;
         InputStream responseIn = null;        
-        boolean connectionFailure = false;
+        connectionFailure = false;
         try {
             final HttpURLConnection conn = (HttpURLConnection) processServlet.openConnection();
             conn.setConnectTimeout(timeOutLimit);

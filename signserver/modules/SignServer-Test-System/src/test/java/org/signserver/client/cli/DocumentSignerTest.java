@@ -228,8 +228,8 @@ public class DocumentSignerTest extends ModulesTestCase {
 
             String res =
                     new String(execute("signdocument", "-workername",
-                    "-hosts nonexistinghost,localhost",
-                    "TestXMLSigner", "-infile", doc.getAbsolutePath()));
+                    "TestXMLSigner", "-infile", doc.getAbsolutePath(),
+                    "-hosts", "nonexistinghost,localhost"));
             assertTrue("contains signature tag: "
                     + res, res.contains("<tag><Signature"));
         } catch (IllegalCommandArgumentsException ex) {

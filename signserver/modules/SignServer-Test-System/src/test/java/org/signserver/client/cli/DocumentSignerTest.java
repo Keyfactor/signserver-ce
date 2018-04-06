@@ -142,6 +142,11 @@ public class DocumentSignerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
     
+    /**
+     * Test that illegal timeout (non-numeric) value is not allowed.
+     * 
+     * @throws Exception 
+     */
     @Test
     public void test01IllegalTimeOutNotAllowed() throws Exception {
         LOG.info("test01IllegalTimeOutNotAllowed");
@@ -152,6 +157,11 @@ public class DocumentSignerTest extends ModulesTestCase {
         } // NOPMD
     }
     
+    /**
+     * Test that negative timeout value is not allowed.
+     * 
+     * @throws Exception 
+     */
     @Test
     public void test01NegativeTimeOutNotAllowed() throws Exception {
         LOG.info("test01IllegalTimeOutNotAllowed");
@@ -876,6 +886,83 @@ public class DocumentSignerTest extends ModulesTestCase {
                 FileUtils.deleteQuietly(renamedFile);
             }
         }
+    }
+    
+    /**
+     * Test that command failure occurs within 11 seconds if connection is not established with specified host 
+     * within time specified by timeout flag (10 seconds).
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test24TimeOut_10Seconds() throws Exception {
+        LOG.info("test24TimeOut_10Seconds");
+        long startTime = 0, endTime, processingTime = 0;
+        String timeoutString = "10000"; //milliseconds
+        long timeout = Long.parseLong(timeoutString);
+        long timediffBetweenProcessingAndTimeout;
+        long assumedTimeDiffBetweenProcessingAndTimeout = 1000; // Let's assume that there would not be more than 1 second of time difference between timeout and processing time 
+        try {
+            startTime = System.currentTimeMillis();
+            execute("signdocument", "-workername", "TestXMLSigner", "-hosts", "primekey.com", "-timeout", timeoutString, "-data", "<root/>");
+            fail("Should have thrown SocketTimeoutException");
+        } catch (CommandFailureException expected) {
+            endTime = System.currentTimeMillis();
+            processingTime = endTime - startTime;
+            timediffBetweenProcessingAndTimeout = processingTime - timeout;
+            assertTrue("processing time should be less than timeout limit", timediffBetweenProcessingAndTimeout < assumedTimeDiffBetweenProcessingAndTimeout);
+        } // NOPMD
+    }
+    
+    /**
+     * Test that command failure occurs within 21 seconds if connection is not established with specified host 
+     * within time specified by timeout flag (20 seconds).
+     * 
+     * @throws Exception 
+     */    @Test
+    public void test24TimeOut_20Seconds() throws Exception {
+        LOG.info("test24TimeOut_20Seconds");
+        long startTime = 0, endTime, processingTime = 0;
+        String timeoutString = "20000"; //milliseconds
+        long timeout = Long.parseLong(timeoutString);
+        long timediffBetweenProcessingAndTimeout;
+        long assumedTimeDiffBetweenProcessingAndTimeout = 1000; // Let's assume that there would not be more than 1 second of time difference between timeout and processing time 
+        try {
+            startTime = System.currentTimeMillis();
+            execute("signdocument", "-workername", "TestXMLSigner", "-hosts", "primekey.com", "-timeout", timeoutString, "-data", "<root/>");
+            fail("Should have thrown SocketTimeoutException");
+        } catch (CommandFailureException expected) {
+            endTime = System.currentTimeMillis();
+            processingTime = endTime - startTime;
+            timediffBetweenProcessingAndTimeout = processingTime - timeout;
+            assertTrue("processing time should be less than timeout limit", timediffBetweenProcessingAndTimeout < assumedTimeDiffBetweenProcessingAndTimeout);
+        } // NOPMD
+    }
+    
+    /**
+     * Test that command failure occurs within 501 milli seconds if connection is not established with specified host 
+     * within time specified by timeout flag (500 mili seconds).
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test24TimeOut_Default() throws Exception {
+        LOG.info("test24TimeOut_Default");
+        long startTime = 0, endTime, processingTime = 0;
+        String timeoutString = "500"; // Default timeout is 500 milliseconds
+        long timeout = Long.parseLong(timeoutString);
+        long timediffBetweenProcessingAndTimeout;
+        long assumedTimeDiffBetweenProcessingAndTimeout = 1000; // Let's assume that there would not be more than 1 second of time difference between timeout and processing time 
+        try {
+            startTime = System.currentTimeMillis();
+            execute("signdocument", "-workername", "TestXMLSigner", "-hosts", "primekey.com", "-timeout", timeoutString, "-data", "<root/>");
+            fail("Should have thrown SocketTimeoutException");
+        } catch (CommandFailureException expected) {
+            endTime = System.currentTimeMillis();
+            processingTime = endTime - startTime;
+            timediffBetweenProcessingAndTimeout = processingTime - timeout;
+            assertTrue("processing time should be less than timeout limit", timediffBetweenProcessingAndTimeout < assumedTimeDiffBetweenProcessingAndTimeout);
+        } // NOPMD
     }
     
     @Test

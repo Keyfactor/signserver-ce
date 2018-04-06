@@ -142,6 +142,27 @@ public class DocumentSignerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
     
+    @Test
+    public void test01IllegalTimeOutNotAllowed() throws Exception {
+        LOG.info("test01IllegalTimeOutNotAllowed");
+        try {
+            execute("signdocument", "-workername", "TestXMLSigner", "-hosts", "invalidhost", "-timeout", "illegaltimeout", "-data", "<root/>");
+            fail("Should have thrown exception about illegal timeout value");
+        } catch (IllegalCommandArgumentsException expected) {
+        } // NOPMD
+    }
+    
+    @Test
+    public void test01NegativeTimeOutNotAllowed() throws Exception {
+        LOG.info("test01IllegalTimeOutNotAllowed");
+        String negativeTimeOut = "-1000";
+        try {
+            execute("signdocument", "-workername", "TestXMLSigner", "-hosts", "invalidhost", "-timeout", negativeTimeOut, "-data", "<root/>");
+            fail("Should have thrown exception about negative timeout value");
+        } catch (IllegalCommandArgumentsException expected) {
+        } // NOPMD
+    }
+    
     /**
      * Tests the sample use case a from the documentation.
      * <pre>

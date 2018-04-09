@@ -109,7 +109,8 @@ public class DocumentSignerTest extends ModulesTestCase {
     public void test01hostAndHostsNotAllowed() throws Exception {
         LOG.info("test01hostAndHostsNotAllowed");
         try {
-            execute("signdocument -host localhost -hosts localhost,otherhost");
+            execute("signdocument", "-host", "localhost", "-hosts",
+                    "localhost,otherhost");
             fail("Should have thrown exception about illegal combination of arguments");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
@@ -123,7 +124,8 @@ public class DocumentSignerTest extends ModulesTestCase {
     public void test01hostsWithProtocolClientWSNotAllowed() throws Exception {
         LOG.info("test01hostsWithProtocolClientWSNotAllowed");
         try {
-            execute("signdocument -hosts localhost,otherhost -protocol CLIENTWS");
+            execute("signdocument", "-hosts", "localhost,otherhost", "-protocol",
+                    "CLIENTWS");
             fail("Should have thrown exception about illegal combination of arguments");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
@@ -137,8 +139,37 @@ public class DocumentSignerTest extends ModulesTestCase {
     public void test01hostsWithProtocolWebservicesNotAllowed() throws Exception {
         LOG.info("test01hostsWithProtocolWebservicesNotAllowed");
         try {
-            execute("signdocument -hosts localhost,otherhost -protocol WEBSERVICES");
+            execute("signdocument", "-hosts", "localhost,otherhost", "-protocol",
+                    "WEBSERVICES");
             fail("Should have thrown exception about illegal combination of arguments");
+        } catch (IllegalCommandArgumentsException expected) {} // NOPMD
+    }
+    
+    /**
+     * Test that setting -hosts option with no argument is not allowed.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test01hostsNoArg() throws Exception {
+        LOG.info("test01hostsNoArg");
+        try {
+            execute("signdocument", "-hosts");
+            fail("Should have thrown exception about no argument");
+        } catch (IllegalCommandArgumentsException expected) {} // NOPMD
+    }
+    
+    /**
+     * Test that setting -hosts option with empty argument is not allowed.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test01hostsEmpty() throws Exception {
+        LOG.info("test01hostsEmpty");
+        try {
+            execute("signdocument", "-hosts", "");
+            fail("Should have thrown exception about no argument");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
     

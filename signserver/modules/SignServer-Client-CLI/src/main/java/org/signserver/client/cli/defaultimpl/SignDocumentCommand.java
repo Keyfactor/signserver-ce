@@ -44,6 +44,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.protocol.ws.client.SignServerWSClientFactory;
 import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.DEFAULT_TIMEOUT_LIMIT;
+import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.DEFAULT_LOAD_BALANCING;
 
 /**
  * Command Line Interface (CLI) for signing documents.
@@ -141,6 +142,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     /** Option TIMEOUT. */
     public static final String TIMEOUT = "timeout";
+    
+    /** Option LOAD_BALANCING. */
+    public static final String LOAD_BALANCING = "loadbalancing";
 
     /** The command line options. */
     private static final Options OPTIONS;
@@ -213,6 +217,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 TEXTS.getString("EXTRAOPTION_DESCRIPTION"));
         OPTIONS.addOption(TIMEOUT, true,
                 TEXTS.getString("TIMEOUT_DESCRIPTION"));
+        OPTIONS.addOption(LOAD_BALANCING, true,
+                TEXTS.getString("LOAD_BALANCING_DESCRIPTION"));
         for (Option option : KeyStoreOptions.getKeyStoreOptions()) {
             OPTIONS.addOption(option);
         }
@@ -275,6 +281,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     private String fileType;
     private String timeOutString;
     private int timeOutLimit;
+    private boolean useLoadBalancing;
 
     private final KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
@@ -424,6 +431,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         }
 
         timeOutString = line.getOptionValue(TIMEOUT, DEFAULT_TIMEOUT_LIMIT);
+        
+        useLoadBalancing = Boolean.parseBoolean(line.getOptionValue(LOAD_BALANCING, DEFAULT_LOAD_BALANCING));
                 
         try {
             final ConsolePasswordReader passwordReader = createConsolePasswordReader();
@@ -630,15 +639,21 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             case HTTP:
             default: {
                 LOG.debug("Using HTTP as procotol");
-                final URL url = new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host, port, servlet);
+                
+                String hostForFirstAttempt;
+                if (useLoadBalancing) {
+                    hostForFirstAttempt = RoundRobinUtils.getInstance(hosts).getHostForFirstAttempt();
+                } else {
+                    hostForFirstAttempt = hosts.get(0);
+                }
                 if (workerId == 0) {
-                    signer = new HTTPDocumentSigner(hosts, port, servlet, 
+                    signer = new HTTPDocumentSigner(hostForFirstAttempt, hosts, port, servlet,
                                                     keyStoreOptions.isUseHTTPS(),
                                                     workerName, username,
                                                     currentPassword, pdfPassword,
                                                     metadata, timeOutLimit);
                 } else {
-                    signer = new HTTPDocumentSigner(hosts, port, servlet,
+                    signer = new HTTPDocumentSigner(hostForFirstAttempt, hosts, port, servlet,
                                                     keyStoreOptions.isUseHTTPS(),
                                                     workerId, username,
                                                     currentPassword, pdfPassword,

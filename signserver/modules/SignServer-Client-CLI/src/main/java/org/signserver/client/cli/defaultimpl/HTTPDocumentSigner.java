@@ -41,7 +41,10 @@ import org.signserver.common.SignServerException;
  */
 public class HTTPDocumentSigner extends AbstractDocumentSigner {
     public static final String CRLF = "\r\n";
+    
     static final String DEFAULT_TIMEOUT_LIMIT = "500";
+    
+    static final String DEFAULT_LOAD_BALANCING = "TRUE";
 
     private static final String BASICAUTH_AUTHORIZATION = "Authorization";
 
@@ -70,8 +73,9 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     private final int timeOutLimit;
     
     private boolean connectionFailure;
+    private String hostForFirstAttempt;
 
-    public HTTPDocumentSigner(final List<String> hosts,
+    public HTTPDocumentSigner(final String hostForFirstAttempt, final List<String> hosts,
             final int port,
             final String servlet,
             final boolean useHTTPS,
@@ -79,6 +83,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             final String username, final String password,
             final String pdfPassword,
             final Map<String, String> metadata, final int timeOutLimit) {
+        this.hostForFirstAttempt = hostForFirstAttempt;
         this.hosts = hosts;
         this.port = port;
         this.servlet = servlet;
@@ -92,7 +97,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         this.timeOutLimit = timeOutLimit;
     }
     
-    public HTTPDocumentSigner(final List<String> hosts,
+    public HTTPDocumentSigner(final String hostForFirstAttempt, final List<String> hosts,
             final int port,
             final String servlet,
             final boolean useHTTPS,
@@ -100,6 +105,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             final String username, final String password,
             final String pdfPassword,
             final Map<String, String> metadata, final int timeOutLimit) {
+        this.hostForFirstAttempt = hostForFirstAttempt;
         this.hosts = hosts;
         this.port = port;
         this.servlet = servlet;
@@ -165,9 +171,12 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     }
     
     private URL createServletURL() throws MalformedURLException, SignServerException {
-        final String host = hosts.get(0);
-
-        return new URL(useHTTPS ? "https" : "http", host, port, servlet);
+        if (connectionFailure) {
+            final String host = hosts.get(0);
+            return new URL(useHTTPS ? "https" : "http", host, port, servlet);
+        } else {
+            return new URL(useHTTPS ? "https" : "http", hostForFirstAttempt, port, servlet);
+        }
     }
 
     private void sendRequest(final URL processServlet,

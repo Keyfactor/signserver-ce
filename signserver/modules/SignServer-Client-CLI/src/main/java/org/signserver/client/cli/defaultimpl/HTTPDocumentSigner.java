@@ -158,7 +158,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                 }
             } else {
                 LOG.error("Failed sending request: " + e.getMessage());
-                throw new SignServerException("Failed sending request", e);
+                throw e;
             }
         }
         

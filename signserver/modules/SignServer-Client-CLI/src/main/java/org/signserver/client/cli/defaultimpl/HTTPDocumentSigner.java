@@ -146,20 +146,16 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                 LOG.debug("Got sign response");
             }
         } catch (IOException e) {
-            LOG.error("Failed sending request to host: " + hosts.get(0));
-
             if (connectionFailure) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Trying next host");
-                }
-
                 // re-try with next host in list
                 if (hosts.size() > 1) {
                     // remove failed host from list
                     hosts.remove(0);
                     doSign(in, size, encoding, out, requestContext);
                 } else {
-                    LOG.error("No more hosts to try");
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("No more hosts to try");
+                    }
                     throw new SignServerException("No more hosts to try");
                 }
             } else {

@@ -1005,6 +1005,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             return 0;
         } catch (ParseException ex) {
             throw new IllegalCommandArgumentsException(ex.getMessage());
+        } finally {
+            //  Destroy singleton object to avoid System tests failures as all tests run in a process and share this singleton object
+            RoundRobinUtils.destroy();
         }
     }
     

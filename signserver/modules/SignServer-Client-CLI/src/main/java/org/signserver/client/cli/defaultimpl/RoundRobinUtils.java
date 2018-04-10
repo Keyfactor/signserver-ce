@@ -52,4 +52,9 @@ public class RoundRobinUtils {
         return host;
     }
 
+    static void destroy() {
+        if (instance != null) {
+            instance = null;
+        }
+    }
 }

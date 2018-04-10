@@ -43,7 +43,6 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.protocol.ws.client.SignServerWSClientFactory;
-import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.DEFAULT_TIMEOUT_LIMIT;
 import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.DEFAULT_LOAD_BALANCING;
 
 /**
@@ -430,7 +429,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             fileType = line.getOptionValue(FILETYPE);
         }
 
-        timeOutString = line.getOptionValue(TIMEOUT, DEFAULT_TIMEOUT_LIMIT);
+        timeOutString = line.getOptionValue(TIMEOUT);
         
         useLoadBalancing = Boolean.parseBoolean(line.getOptionValue(LOAD_BALANCING, DEFAULT_LOAD_BALANCING));
                 
@@ -548,13 +547,17 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         
         keyStoreOptions.validateOptions();
         
-        try {
-            timeOutLimit = Integer.parseInt(timeOutString);
-            if (timeOutLimit < 0) {
-                throw new IllegalCommandArgumentsException("Time out limit can not be negative");
+        if (timeOutString != null) {
+            try {
+                timeOutLimit = Integer.parseInt(timeOutString);
+                if (timeOutLimit < 0) {
+                    throw new IllegalCommandArgumentsException("Time out limit can not be negative");
+                }
+            } catch (NumberFormatException ex) {
+                throw new IllegalCommandArgumentsException("Illegal time out limit: " + timeOutString);
             }
-        } catch (NumberFormatException ex) {
-            throw new IllegalCommandArgumentsException("Illegal time out limit: " + timeOutString);
+        } else {
+            timeOutLimit = -1;
         }
     }
 

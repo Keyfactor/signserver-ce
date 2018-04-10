@@ -995,34 +995,8 @@ public class DocumentSignerTest extends ModulesTestCase {
             timediffBetweenProcessingAndTimeout = processingTime - timeout;
             assertTrue("processing time should be less than timeout limit", timediffBetweenProcessingAndTimeout < assumedTimeDiffBetweenProcessingAndTimeout);
         } // NOPMD
-    }
-    
-    /**
-     * Test that command failure occurs within 501 milli seconds if connection is not established with specified host 
-     * within time specified by timeout flag (500 milli seconds).
-     * 
-     * @throws Exception 
-     */
-    @Test
-    public void test24TimeOut_Default() throws Exception {
-        LOG.info("test24TimeOut_Default");
-        long startTime = 0, endTime, processingTime = 0;
-        String timeoutString = "500"; // Default timeout is 500 milliseconds
-        long timeout = Long.parseLong(timeoutString);
-        long timediffBetweenProcessingAndTimeout;
-        long assumedTimeDiffBetweenProcessingAndTimeout = 1000; // Let's assume that there would not be more than 1 second of time difference between timeout and processing time 
-        try {
-            startTime = System.currentTimeMillis();
-            execute("signdocument", "-workername", "TestXMLSigner", "-hosts", "primekey.com", "-timeout", timeoutString, "-data", "<root/>");
-            fail("Should have thrown SocketTimeoutException");
-        } catch (CommandFailureException expected) {
-            endTime = System.currentTimeMillis();
-            processingTime = endTime - startTime;
-            timediffBetweenProcessingAndTimeout = processingTime - timeout;
-            assertTrue("processing time should be less than timeout limit", timediffBetweenProcessingAndTimeout < assumedTimeDiffBetweenProcessingAndTimeout);
-        } // NOPMD
-    }
-    
+    }   
+        
     @Test
     public void test99TearDownDatabase() throws Exception {
         LOG.info("test99TearDownDatabase");

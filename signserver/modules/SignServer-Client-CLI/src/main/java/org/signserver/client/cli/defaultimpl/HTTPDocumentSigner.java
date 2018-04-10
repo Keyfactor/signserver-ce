@@ -40,10 +40,8 @@ import org.signserver.common.SignServerException;
  * @version $Id$
  */
 public class HTTPDocumentSigner extends AbstractDocumentSigner {
-    public static final String CRLF = "\r\n";
-    
-    static final String DEFAULT_TIMEOUT_LIMIT = "500";
-    
+    public static final String CRLF = "\r\n";   
+        
     static final String DEFAULT_LOAD_BALANCING = "TRUE";
 
     private static final String BASICAUTH_AUTHORIZATION = "Authorization";
@@ -185,7 +183,12 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         connectionFailure = false;
         try {
             final HttpURLConnection conn = (HttpURLConnection) processServlet.openConnection();
-            conn.setConnectTimeout(timeOutLimit);
+            
+            // only set timeout for connection when provided on command line
+            if (timeOutLimit != -1) {
+                conn.setConnectTimeout(timeOutLimit);
+            }
+            
             conn.setDoOutput(true);
             conn.setAllowUserInteraction(false);
 

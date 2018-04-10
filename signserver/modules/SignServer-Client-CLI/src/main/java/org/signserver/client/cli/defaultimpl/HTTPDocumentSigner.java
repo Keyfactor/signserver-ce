@@ -71,17 +71,18 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     private final int timeOutLimit;
     
     private boolean connectionFailure;
-    private String hostForFirstAttempt;
+    private final boolean useLoadBalancing;    
+    private String hostForCurrentRequest;
+    private String hostForRequestFailed;
 
-    public HTTPDocumentSigner(final String hostForFirstAttempt, final List<String> hosts,
+    public HTTPDocumentSigner(final List<String> hosts,
             final int port,
             final String servlet,
             final boolean useHTTPS,
             final String workerName,
             final String username, final String password,
             final String pdfPassword,
-            final Map<String, String> metadata, final int timeOutLimit) {
-        this.hostForFirstAttempt = hostForFirstAttempt;
+            final Map<String, String> metadata, final int timeOutLimit, final boolean useLoadBalancing) {        
         this.hosts = hosts;
         this.port = port;
         this.servlet = servlet;
@@ -93,17 +94,17 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         this.pdfPassword = pdfPassword;
         this.metadata = metadata;
         this.timeOutLimit = timeOutLimit;
+        this.useLoadBalancing = useLoadBalancing;
     }
     
-    public HTTPDocumentSigner(final String hostForFirstAttempt, final List<String> hosts,
+    public HTTPDocumentSigner(final List<String> hosts,
             final int port,
             final String servlet,
             final boolean useHTTPS,
             final int workerId, 
             final String username, final String password,
             final String pdfPassword,
-            final Map<String, String> metadata, final int timeOutLimit) {
-        this.hostForFirstAttempt = hostForFirstAttempt;
+            final Map<String, String> metadata, final int timeOutLimit, final boolean useLoadBalancing) {        
         this.hosts = hosts;
         this.port = port;
         this.servlet = servlet;
@@ -115,6 +116,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         this.pdfPassword = pdfPassword;
         this.metadata = metadata;
         this.timeOutLimit = timeOutLimit;
+        this.useLoadBalancing = useLoadBalancing;
     }
 
     @Override
@@ -148,7 +150,8 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                 // re-try with next host in list
                 if (hosts.size() > 1) {
                     // remove failed host from list
-                    hosts.remove(0);
+                    hostForRequestFailed = hostForCurrentRequest;
+                    hosts.remove(hostForRequestFailed);                    
                     doSign(in, size, encoding, out, requestContext);
                 } else {
                     if (LOG.isDebugEnabled()) {
@@ -165,11 +168,19 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     }
     
     private URL createServletURL() throws MalformedURLException, SignServerException {
+        selectHostForRequest();
+        return new URL(useHTTPS ? "https" : "http", hostForCurrentRequest, port, servlet);
+    }
+
+    private void selectHostForRequest() {
+        RoundRobinUtils instance = RoundRobinUtils.getInstance(hosts, useLoadBalancing);
         if (connectionFailure) {
-            final String host = hosts.get(0);
-            return new URL(useHTTPS ? "https" : "http", host, port, servlet);
+            instance.removeElement(hostForRequestFailed);
+            hostForCurrentRequest = instance.getNextHostForRequest();
         } else {
-            return new URL(useHTTPS ? "https" : "http", hostForFirstAttempt, port, servlet);
+            // It's a first request
+            // Check whether load balancing is enabled. If yes, choose host according to Round Robin algorithm otherwise just select first host in list
+            hostForCurrentRequest = instance.getNextHostForRequest();
         }
     }
 

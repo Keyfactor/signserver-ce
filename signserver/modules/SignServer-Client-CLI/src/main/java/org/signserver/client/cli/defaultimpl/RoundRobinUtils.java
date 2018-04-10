@@ -12,7 +12,7 @@
  ************************************************************************ */
 package org.signserver.client.cli.defaultimpl;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.log4j.Logger;
 
@@ -27,29 +27,50 @@ public class RoundRobinUtils {
 
     private static RoundRobinUtils instance;
     private static List<String> participantHosts;
-    private static Iterator<String> iterator;
+    private int currentIndex = -1;
+    private boolean firstHostDeterminedByRandom;
 
-    private RoundRobinUtils(List<String> hosts) {
+    private RoundRobinUtils(List<String> hosts, boolean firstHostDeterminedByRandom) {
         participantHosts = hosts;
-        iterator = participantHosts.iterator();
+        this.firstHostDeterminedByRandom = firstHostDeterminedByRandom;
     }
 
-    public static RoundRobinUtils getInstance(List<String> hosts) {
+    static RoundRobinUtils getInstance(List<String> hosts, boolean firstHostDeterminedByRandom) {
         if (instance == null) {
-            instance = new RoundRobinUtils(hosts);
+            participantHosts = new ArrayList(hosts);
+            instance = new RoundRobinUtils(participantHosts, firstHostDeterminedByRandom);
         }
         return instance;
     }
 
-    public String getHostForFirstAttempt() {
-        // TODO: get randomized host for first attempt 
-        // if we get to the end, start again
-        if (!iterator.hasNext()) {
-            iterator = participantHosts.iterator();
-        }
-        String host = iterator.next();
+    String getNextHostForRequest() {
+        checkNextElementIndex();
+        String host = participantHosts.get(currentIndex);
+        LOG.error("hosts size: " + participantHosts.size());
         LOG.error("Next host retrieved for signing: " + host);
         return host;
+    }
+
+    private void checkNextElementIndex() {
+        if (firstHostDeterminedByRandom) {
+            currentIndex = getIndexByRandom();
+            LOG.error("random index: " + currentIndex);
+            firstHostDeterminedByRandom = false;
+        } else {
+            currentIndex = currentIndex + 1;
+            if (currentIndex == participantHosts.size()) {
+                currentIndex = 0;
+            }
+        }
+    }
+
+    private int getIndexByRandom() {
+        return 0;
+    }
+
+    void removeElement(String host) {
+        participantHosts.remove(host);
+        currentIndex = currentIndex - 1;
     }
 
     static void destroy() {

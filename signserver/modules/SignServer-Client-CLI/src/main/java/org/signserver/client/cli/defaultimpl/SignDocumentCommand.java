@@ -14,7 +14,6 @@ package org.signserver.client.cli.defaultimpl;
 
 import java.io.*;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -641,26 +640,20 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             }
             case HTTP:
             default: {
-                LOG.debug("Using HTTP as procotol");
+                LOG.debug("Using HTTP as procotol");                
                 
-                String hostForFirstAttempt;
-                if (useLoadBalancing) {
-                    hostForFirstAttempt = RoundRobinUtils.getInstance(hosts).getHostForFirstAttempt();
-                } else {
-                    hostForFirstAttempt = hosts.get(0);
-                }
                 if (workerId == 0) {
-                    signer = new HTTPDocumentSigner(hostForFirstAttempt, hosts, port, servlet,
+                    signer = new HTTPDocumentSigner(hosts, port, servlet,
                                                     keyStoreOptions.isUseHTTPS(),
                                                     workerName, username,
                                                     currentPassword, pdfPassword,
-                                                    metadata, timeOutLimit);
+                                                    metadata, timeOutLimit, useLoadBalancing);
                 } else {
-                    signer = new HTTPDocumentSigner(hostForFirstAttempt, hosts, port, servlet,
+                    signer = new HTTPDocumentSigner(hosts, port, servlet,
                                                     keyStoreOptions.isUseHTTPS(),
                                                     workerId, username,
                                                     currentPassword, pdfPassword,
-                                                    metadata, timeOutLimit);
+                                                    metadata, timeOutLimit, useLoadBalancing);
                 }
             }
         }

@@ -538,13 +538,16 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         }
         
         if (host != null) {
+            if (host.trim().isEmpty()) {
+                throw new IllegalCommandArgumentsException("-host can not be empty");
+            }
             hosts = Collections.singletonList(host);
         } else if (hosts == null && host == null) {
             hosts = Collections.singletonList(KeyStoreOptions.DEFAULT_HOST);
         }
         
         if (hosts.isEmpty()) {
-            throw new IllegalCommandArgumentsException("Hosts can not be empty");
+            throw new IllegalCommandArgumentsException("-hosts can not be empty");
         }
         
         keyStoreOptions.validateOptions();

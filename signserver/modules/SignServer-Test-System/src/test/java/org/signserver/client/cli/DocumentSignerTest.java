@@ -174,6 +174,20 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
     
     /**
+     * Test that setting -hosts option with empty argument is not allowed.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test01hostEmpty() throws Exception {
+        LOG.info("test01hostsEmpty");
+        try {
+            execute("signdocument", "-host", "");
+            fail("Should have thrown exception about empty argument");
+        } catch (IllegalCommandArgumentsException expected) {} // NOPMD
+    }
+    
+    /**
      * Test that illegal timeout (non-numeric) value is not allowed.
      * 
      * @throws Exception 

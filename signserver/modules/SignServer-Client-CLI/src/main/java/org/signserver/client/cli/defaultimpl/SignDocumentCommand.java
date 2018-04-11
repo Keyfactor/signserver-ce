@@ -234,6 +234,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     /** Hostname or IP address of the SignServer host. */
     private String host;
 
+    /** List of host names to try to connect to, or distribute load on for
+     *  load balancing
+     */
     private List<String> hosts;
     
     /** TCP port number of the SignServer host. */

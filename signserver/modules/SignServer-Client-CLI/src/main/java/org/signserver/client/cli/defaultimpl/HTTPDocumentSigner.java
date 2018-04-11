@@ -192,7 +192,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         
         OutputStream requestOut = null;
         InputStream responseIn = null;        
-        connectionFailure = false;
+
         try {
             final HttpURLConnection conn = (HttpURLConnection) processServlet.openConnection();
             

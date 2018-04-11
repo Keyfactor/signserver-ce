@@ -977,7 +977,8 @@ public class DocumentSignerTest extends ModulesTestCase {
      * within time specified by timeout flag (20 seconds).
      * 
      * @throws Exception 
-     */    @Test
+     */    
+    @Test
     public void test24TimeOut_20Seconds() throws Exception {
         LOG.info("test24TimeOut_20Seconds");
         long startTime = 0, endTime, processingTime = 0;

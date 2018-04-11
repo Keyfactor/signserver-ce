@@ -175,7 +175,8 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     private void selectHostForRequest() {
         RoundRobinUtils instance = RoundRobinUtils.getInstance(hosts, useLoadBalancing);
         if (connectionFailure) {
-            instance.removeElement(hostForRequestFailed);
+            // Remove the host from participantHosts list so that no further request is sent to this host.
+            instance.removeHost(hostForRequestFailed);
             hostForCurrentRequest = instance.getNextHostForRequest();
         } else {
             // It's a first request

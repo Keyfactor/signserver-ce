@@ -56,6 +56,9 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     private final String workerName;
     private final int workerId;
 
+    /** List of host names to try to connect to, or distribute load on for
+     *  load balancing
+     */
     private final List<String> hosts;
     private final int port;
     private final String servlet;

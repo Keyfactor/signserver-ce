@@ -30,18 +30,25 @@ public class RoundRobinUtils {
     private static RoundRobinUtils instance;
     private static List<String> participantHosts;
     private int currentIndex = -1;
-    private boolean firstHostDeterminedByRandom;
+    private final boolean useLoadBalancing;
     private final Random random = new Random();
+    private boolean firstRequestWithLoadBalancing;
+    private int randomIndex = -1;
 
-    private RoundRobinUtils(List<String> hosts, boolean firstHostDeterminedByRandom) {
+    private RoundRobinUtils(List<String> hosts, boolean useLoadBalancing) {
         participantHosts = hosts;
-        this.firstHostDeterminedByRandom = firstHostDeterminedByRandom;
+        this.useLoadBalancing = useLoadBalancing;
+
+        if (useLoadBalancing) { // get randomized host for first attempt if loadbalancing is enabled
+            randomIndex = getHostIndexByRandom();
+            firstRequestWithLoadBalancing = true;
+        }
     }
 
-    synchronized static RoundRobinUtils getInstance(List<String> hosts, boolean firstHostDeterminedByRandom) {
+    synchronized static RoundRobinUtils getInstance(List<String> hosts, boolean useLoadBalancing) {
         if (instance == null) {
             participantHosts = new ArrayList(hosts);
-            instance = new RoundRobinUtils(participantHosts, firstHostDeterminedByRandom);
+            instance = new RoundRobinUtils(participantHosts, useLoadBalancing);
         }
         return instance;
     }
@@ -55,24 +62,60 @@ public class RoundRobinUtils {
         if (participantHosts.isEmpty()) {
             return null;
         }
+
         checkNextHostIndex();
         String host = participantHosts.get(currentIndex);
-        LOG.error("hosts size: " + participantHosts.size());
-        LOG.error("Next host retrieved for signing: " + host);
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("hosts size: " + participantHosts.size());
+        }       
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Next host retrieved for signing: " + host);
+        }
         return host;
     }
 
     private void checkNextHostIndex() {
-        if (firstHostDeterminedByRandom) { // get randomized host for first attempt if loadbalancing is enabled
-            currentIndex = getHostIndexByRandom();
-            LOG.error("random index: " + currentIndex);
-            firstHostDeterminedByRandom = false;
-        } else {
-            currentIndex = currentIndex + 1;
-            // if we get to the end, start again
-            if (currentIndex == participantHosts.size()) {
-                currentIndex = 0;
+        if (useLoadBalancing) {
+            if (firstRequestWithLoadBalancing) {
+                currentIndex = randomIndex;
+                LOG.error("random index: " + currentIndex);
+                firstRequestWithLoadBalancing = false;
+            } else {
+                updateCurrentIndex();
             }
+        } else { // always return first host in the list
+            currentIndex = 0;
+        }
+    }
+    
+    /**
+     * Determines the next host to be used for sending signing request when last request was unsuccessful due to connection failure.
+     *
+     * @returns host.
+     */
+    synchronized String getNextHostForRequestWhenFailure() {
+        if (participantHosts.isEmpty()) {
+            return null;
+        }
+
+        updateCurrentIndex();
+        String host = participantHosts.get(currentIndex);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("hosts size: " + participantHosts.size());
+        }
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Next host retrieved for signing: " + host);
+        }
+        return host;
+    }
+    
+    private void updateCurrentIndex() {
+        currentIndex = currentIndex + 1;
+        // if we get to the end, start again
+        if (currentIndex == participantHosts.size()) {
+            currentIndex = 0;
         }
     }
 
@@ -91,7 +134,7 @@ public class RoundRobinUtils {
         currentIndex = currentIndex - 1;
     }
 
-    static void destroy() {
+    synchronized static void destroy() {
         if (instance != null) {
             instance = null;
         }

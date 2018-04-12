@@ -41,7 +41,9 @@ import org.signserver.common.SignServerException;
 public class HTTPDocumentSigner extends AbstractDocumentSigner {
     public static final String CRLF = "\r\n";   
         
-    static final String DEFAULT_LOAD_BALANCING = "TRUE";
+    static final String DEFAULT_LOAD_BALANCING = "NONE";
+    
+    static final String ROUND_ROBIN_LOAD_BALANCING = "ROUND_ROBIN";    
 
     private static final String BASICAUTH_AUTHORIZATION = "Authorization";
 
@@ -160,7 +162,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                 hostUtil.removeHost(host);
 
                 // re-try with next host in list
-                final String nextHost = hostUtil.getNextHostForRequest();
+                final String nextHost = hostUtil.getNextHostForRequestWhenFailure();
                 if (nextHost == null) {
                     throw new SignServerException("No more hosts to try");
                 } else {
@@ -185,6 +187,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         OutputStream requestOut = null;
         InputStream responseIn = null;        
 
+        // set it false in beginning as signing will be tried with new host
         connectionFailure = false;
 
         try {

@@ -19,6 +19,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -43,6 +44,7 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
 import org.signserver.protocol.ws.client.SignServerWSClientFactory;
 import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.DEFAULT_LOAD_BALANCING;
+import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.ROUND_ROBIN_LOAD_BALANCING;
 
 /**
  * Command Line Interface (CLI) for signing documents.
@@ -162,7 +164,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         /** The HTTP interface. */
         HTTP
     }
-
+    
     static {
         OPTIONS = new Options();
         OPTIONS.addOption(WORKERID, true,
@@ -281,8 +283,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     private String digestAlgorithm;
     private String fileType;
     private String timeOutString;
-    private int timeOutLimit;
+    private int timeOutLimit;    
     private boolean useLoadBalancing;
+    private String loadBalancing;
 
     private final KeyStoreOptions keyStoreOptions = new KeyStoreOptions();
 
@@ -434,9 +437,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             fileType = line.getOptionValue(FILETYPE);
         }
 
-        timeOutString = line.getOptionValue(TIMEOUT);
-        
-        useLoadBalancing = Boolean.parseBoolean(line.getOptionValue(LOAD_BALANCING, DEFAULT_LOAD_BALANCING));
+        timeOutString = line.getOptionValue(TIMEOUT);      
+                
+        loadBalancing = line.getOptionValue(LOAD_BALANCING, DEFAULT_LOAD_BALANCING);
                 
         try {
             final ConsolePasswordReader passwordReader = createConsolePasswordReader();
@@ -552,9 +555,19 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         if (hosts.isEmpty()) {
             throw new IllegalCommandArgumentsException("-hosts can not be empty");
         }
-
-        hostsUtil = RoundRobinUtils.getInstance(hosts, useLoadBalancing);
         
+        if (loadBalancing.trim().isEmpty()) {
+            throw new IllegalCommandArgumentsException("-loadbalancing can not be empty");
+        }
+
+        if (!Arrays.asList(DEFAULT_LOAD_BALANCING, ROUND_ROBIN_LOAD_BALANCING).contains(loadBalancing)) {
+            throw new IllegalCommandArgumentsException("Not supported -loadbalancing: " + loadBalancing);
+        }      
+
+        if (!loadBalancing.equals(DEFAULT_LOAD_BALANCING) && protocol != Protocol.HTTP) {
+            throw new IllegalCommandArgumentsException("Can only use -loadbalancing with protocol HTTP");
+        }       
+                
         keyStoreOptions.validateOptions();
         
         if (timeOutString != null) {
@@ -569,6 +582,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         } else {
             timeOutLimit = -1;
         }
+        
+        useLoadBalancing = loadBalancing.equals(ROUND_ROBIN_LOAD_BALANCING);
+
+        //  it is right time to create RoundRobinUtils singleton class after all validations
+        hostsUtil = RoundRobinUtils.getInstance(hosts, useLoadBalancing);
     }
 
     /**

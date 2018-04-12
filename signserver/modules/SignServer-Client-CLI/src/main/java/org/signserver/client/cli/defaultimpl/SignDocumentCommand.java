@@ -309,7 +309,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             .append("c) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -truststore truststore.jks -truststorepwd changeit").append(NL)
             .append("d) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystore superadmin.jks -keystorepwd foo123").append(NL)
             .append("e) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -metadata param1=value1 -metadata param2=value2").append(NL)
-            .append("f) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -removefromindir -outdir ./output/ -threads 5").append(NL);
+            .append("f) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -removefromindir -outdir ./output/ -threads 5").append(NL)
+            .append("g) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -outdir ./output/ -threads 5 -hosts primaryhost,secondaryhost").append(NL);
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();

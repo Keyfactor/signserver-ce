@@ -1031,7 +1031,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 LOG.trace("Starting " + getName() + "...");
             }
             File file;
-            while ((file = producer.nextFile()) != null) {
+            while ((file = producer.nextFile()) != null && !hosts.isEmpty()) {
                 if (LOG.isInfoEnabled()) {
                     LOG.info("Sending " + file + "...");
                 }

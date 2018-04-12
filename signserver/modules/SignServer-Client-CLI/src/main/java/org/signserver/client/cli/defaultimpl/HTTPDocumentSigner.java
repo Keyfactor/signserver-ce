@@ -22,7 +22,6 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -59,7 +58,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     /** List of host names to try to connect to, or distribute load on for
      *  load balancing
      */
-    private final List<String> hosts;
+    private final RoundRobinUtils hostUtil;
     private final int port;
     private final String servlet;
     private final boolean useHTTPS;
@@ -74,19 +73,16 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     private final int timeOutLimit;
     
     private boolean connectionFailure;
-    private final boolean useLoadBalancing;    
-    private String hostForCurrentRequest;
-    private String hostForRequestFailed;
 
-    public HTTPDocumentSigner(final List<String> hosts,
+    public HTTPDocumentSigner(final RoundRobinUtils hostUtil,
             final int port,
             final String servlet,
             final boolean useHTTPS,
             final String workerName,
             final String username, final String password,
             final String pdfPassword,
-            final Map<String, String> metadata, final int timeOutLimit, final boolean useLoadBalancing) {        
-        this.hosts = hosts;
+            final Map<String, String> metadata, final int timeOutLimit) {        
+        this.hostUtil = hostUtil;
         this.port = port;
         this.servlet = servlet;
         this.useHTTPS = useHTTPS;
@@ -97,18 +93,17 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         this.pdfPassword = pdfPassword;
         this.metadata = metadata;
         this.timeOutLimit = timeOutLimit;
-        this.useLoadBalancing = useLoadBalancing;
     }
     
-    public HTTPDocumentSigner(final List<String> hosts,
+    public HTTPDocumentSigner(final RoundRobinUtils hostUtils,
             final int port,
             final String servlet,
             final boolean useHTTPS,
             final int workerId, 
             final String username, final String password,
             final String pdfPassword,
-            final Map<String, String> metadata, final int timeOutLimit, final boolean useLoadBalancing) {        
-        this.hosts = hosts;
+            final Map<String, String> metadata, final int timeOutLimit) {        
+        this.hostUtil = hostUtils;
         this.port = port;
         this.servlet = servlet;
         this.useHTTPS = useHTTPS;
@@ -119,7 +114,6 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         this.pdfPassword = pdfPassword;
         this.metadata = metadata;
         this.timeOutLimit = timeOutLimit;
-        this.useLoadBalancing = useLoadBalancing;
     }
 
     @Override
@@ -129,16 +123,29 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                 CryptoTokenOfflineException, SignServerException,
                 IOException {
 
-//        final int requestId = random.nextInt();
-
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending sign request "
                     + " containing data of length " + size + " bytes"
                     + " to worker " + workerName);
         }
+        
+        final String nextHost = hostUtil.getNextHostForRequest();
+        if (nextHost == null) {
+            throw new SignServerException("No more hosts to try");
+        } else {
+            internalDoSign(in, size, encoding, out, requestContext, nextHost);
+        }
+    }
+    
+    protected void internalDoSign(final InputStream in, final long size, final String encoding,
+            final OutputStream out, final Map<String,Object> requestContext, String host)
+            throws IllegalRequestException,
+                CryptoTokenOfflineException, SignServerException,
+                IOException {
+        
+        final URL url = createServletURL(host);
+        
         try {
-            final URL url = createServletURL();
-            
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sending to URL: " + url.toString());
             }
@@ -150,42 +157,24 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             }
         } catch (IOException e) {
             if (connectionFailure) {
+                hostUtil.removeHost(host);
+
                 // re-try with next host in list
-                if (hosts.size() > 1) {
-                    // remove failed host from list
-                    hostForRequestFailed = hostForCurrentRequest;
-                    hosts.remove(hostForRequestFailed);                    
-                    doSign(in, size, encoding, out, requestContext);
-                } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("No more hosts to try");
-                    }
+                final String nextHost = hostUtil.getNextHostForRequest();
+                if (nextHost == null) {
                     throw new SignServerException("No more hosts to try");
+                } else {
+                    internalDoSign(in, size, encoding, out, requestContext, nextHost);
                 }
             } else {
                 LOG.error("Failed sending request: " + e.getMessage());
                 throw e;
             }
         }
-        
     }
     
-    private URL createServletURL() throws MalformedURLException, SignServerException {
-        selectHostForRequest();
-        return new URL(useHTTPS ? "https" : "http", hostForCurrentRequest, port, servlet);
-    }
-
-    private void selectHostForRequest() {
-        RoundRobinUtils instance = RoundRobinUtils.getInstance(hosts, useLoadBalancing);
-        if (connectionFailure) {
-            // Remove the host from participantHosts list so that no further request is sent to this host.
-            instance.removeHost(hostForRequestFailed);
-            hostForCurrentRequest = instance.getNextHostForRequest();
-        } else {
-            // It's a first request
-            // Check whether load balancing is enabled. If yes, choose host according to Round Robin algorithm otherwise just select first host in list
-            hostForCurrentRequest = instance.getNextHostForRequest();
-        }
+    private URL createServletURL(String host) throws MalformedURLException, SignServerException {
+        return new URL(useHTTPS ? "https" : "http", host, port, servlet);
     }
 
     private void sendRequest(final URL processServlet,
@@ -195,6 +184,8 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         
         OutputStream requestOut = null;
         InputStream responseIn = null;        
+
+        connectionFailure = false;
 
         try {
             final HttpURLConnection conn = (HttpURLConnection) processServlet.openConnection();

@@ -52,6 +52,9 @@ public class RoundRobinUtils {
      * @returns host.
      */
     synchronized String getNextHostForRequest() {
+        if (participantHosts.isEmpty()) {
+            return null;
+        }
         checkNextHostIndex();
         String host = participantHosts.get(currentIndex);
         LOG.error("hosts size: " + participantHosts.size());
@@ -92,5 +95,9 @@ public class RoundRobinUtils {
         if (instance != null) {
             instance = null;
         }
+    }
+
+    synchronized boolean hasHost() {
+        return !participantHosts.isEmpty();
     }
 }

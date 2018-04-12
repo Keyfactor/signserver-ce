@@ -294,6 +294,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     private FileSpecificHandlerFactory handlerFactory;
     
+    private RoundRobinUtils hostsUtil;
+    
     @Override
     public String getDescription() {
         return "Request a document to be signed by SignServer";
@@ -550,6 +552,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         if (hosts.isEmpty()) {
             throw new IllegalCommandArgumentsException("-hosts can not be empty");
         }
+
+        hostsUtil = RoundRobinUtils.getInstance(hosts, useLoadBalancing);
         
         keyStoreOptions.validateOptions();
         
@@ -650,17 +654,17 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 LOG.debug("Using HTTP as procotol");                
                 
                 if (workerId == 0) {
-                    signer = new HTTPDocumentSigner(hosts, port, servlet,
+                    signer = new HTTPDocumentSigner(hostsUtil, port, servlet,
                                                     keyStoreOptions.isUseHTTPS(),
                                                     workerName, username,
                                                     currentPassword, pdfPassword,
-                                                    metadata, timeOutLimit, useLoadBalancing);
+                                                    metadata, timeOutLimit);
                 } else {
-                    signer = new HTTPDocumentSigner(hosts, port, servlet,
+                    signer = new HTTPDocumentSigner(hostsUtil, port, servlet,
                                                     keyStoreOptions.isUseHTTPS(),
                                                     workerId, username,
                                                     currentPassword, pdfPassword,
-                                                    metadata, timeOutLimit, useLoadBalancing);
+                                                    metadata, timeOutLimit);
                 }
             }
         }
@@ -930,7 +934,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             parseCommandLine(new GnuParser().parse(OPTIONS, args));
             validateOptions();
             initFileSpecificHandlerFactory();
-
+            
             if (inFile != null) {
                 LOG.debug("Will request for single file " + inFile);
                 if (!runBatch(null, inFile, outFile)) {
@@ -960,7 +964,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 };
                 
                 for (int i = 0; i < threadCount; i++) {
-                    final TransferThread t = new TransferThread(i, producer);
+                    final TransferThread t = new TransferThread(i, producer, hostsUtil);
                     t.setUncaughtExceptionHandler(handler);
                     consumers.add(t);
                 }
@@ -1018,11 +1022,13 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     private class TransferThread extends Thread {
         private final int id;
         private final TransferManager producer;
+        private final RoundRobinUtils hostsUtil;
 
-        public TransferThread(int id, TransferManager producer) {
+        public TransferThread(int id, TransferManager producer, RoundRobinUtils hostsUtil) {
             super("transfer-" + id);
             this.id = id;
             this.producer = producer;
+            this.hostsUtil = hostsUtil;
         }
         
         @Override
@@ -1031,7 +1037,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 LOG.trace("Starting " + getName() + "...");
             }
             File file;
-            while ((file = producer.nextFile()) != null && !hosts.isEmpty()) {
+            while ((file = producer.nextFile()) != null && hostsUtil.hasHost()) {
                 if (LOG.isInfoEnabled()) {
                     LOG.info("Sending " + file + "...");
                 }

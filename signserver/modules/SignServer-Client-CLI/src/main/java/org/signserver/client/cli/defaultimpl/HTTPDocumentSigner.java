@@ -60,7 +60,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     /** List of host names to try to connect to, or distribute load on for
      *  load balancing
      */
-    private final RoundRobinUtils hostUtil;
+    private final HostManager hostsManager;
     private final int port;
     private final String servlet;
     private final boolean useHTTPS;
@@ -76,7 +76,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     
     private boolean connectionFailure;
 
-    public HTTPDocumentSigner(final RoundRobinUtils hostUtil,
+    public HTTPDocumentSigner(final HostManager hostsManager,
             final int port,
             final String servlet,
             final boolean useHTTPS,
@@ -84,7 +84,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             final String username, final String password,
             final String pdfPassword,
             final Map<String, String> metadata, final int timeOutLimit) {        
-        this.hostUtil = hostUtil;
+        this.hostsManager = hostsManager;
         this.port = port;
         this.servlet = servlet;
         this.useHTTPS = useHTTPS;
@@ -97,7 +97,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         this.timeOutLimit = timeOutLimit;
     }
     
-    public HTTPDocumentSigner(final RoundRobinUtils hostUtils,
+    public HTTPDocumentSigner(final HostManager hostsManager,
             final int port,
             final String servlet,
             final boolean useHTTPS,
@@ -105,7 +105,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             final String username, final String password,
             final String pdfPassword,
             final Map<String, String> metadata, final int timeOutLimit) {        
-        this.hostUtil = hostUtils;
+        this.hostsManager = hostsManager;
         this.port = port;
         this.servlet = servlet;
         this.useHTTPS = useHTTPS;
@@ -131,7 +131,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                     + " to worker " + workerName);
         }
         
-        final String nextHost = hostUtil.getNextHostForRequest();
+        final String nextHost = hostsManager.getNextHostForRequest();
         if (nextHost == null) {
             throw new SignServerException("No more hosts to try");
         } else {
@@ -159,10 +159,10 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             }
         } catch (IOException e) {
             if (connectionFailure) {
-                hostUtil.removeHost(host);
+                hostsManager.removeHost(host);
 
                 // re-try with next host in list
-                final String nextHost = hostUtil.getNextHostForRequestWhenFailure();
+                final String nextHost = hostsManager.getNextHostForRequestWhenFailure();
                 if (nextHost == null) {
                     throw new SignServerException("No more hosts to try");
                 } else {

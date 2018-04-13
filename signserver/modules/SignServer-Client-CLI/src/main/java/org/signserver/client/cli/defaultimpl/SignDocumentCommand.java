@@ -297,7 +297,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     private FileSpecificHandlerFactory handlerFactory;
     
-    private RoundRobinUtils hostsUtil;
+    private HostManager hostsManager;
     
     @Override
     public String getDescription() {
@@ -591,8 +591,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         
         useLoadBalancing = loadBalancing.equals(ROUND_ROBIN_LOAD_BALANCING);
 
-        //  it is right time to create RoundRobinUtils singleton class after all validations
-        hostsUtil = RoundRobinUtils.getInstance(hosts, useLoadBalancing);
+        //  it is right time to initialize HostsManager after all validations
+        hostsManager = new HostManager(hosts, useLoadBalancing);
     }
 
     /**
@@ -678,13 +678,13 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 LOG.debug("Using HTTP as procotol");                
                 
                 if (workerId == 0) {
-                    signer = new HTTPDocumentSigner(hostsUtil, port, servlet,
+                    signer = new HTTPDocumentSigner(hostsManager, port, servlet,
                                                     keyStoreOptions.isUseHTTPS(),
                                                     workerName, username,
                                                     currentPassword, pdfPassword,
                                                     metadata, timeOutLimit);
                 } else {
-                    signer = new HTTPDocumentSigner(hostsUtil, port, servlet,
+                    signer = new HTTPDocumentSigner(hostsManager, port, servlet,
                                                     keyStoreOptions.isUseHTTPS(),
                                                     workerId, username,
                                                     currentPassword, pdfPassword,
@@ -988,7 +988,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 };
                 
                 for (int i = 0; i < threadCount; i++) {
-                    final TransferThread t = new TransferThread(i, producer, hostsUtil);
+                    final TransferThread t = new TransferThread(i, producer, hostsManager);
                     t.setUncaughtExceptionHandler(handler);
                     consumers.add(t);
                 }
@@ -1033,9 +1033,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             return 0;
         } catch (ParseException ex) {
             throw new IllegalCommandArgumentsException(ex.getMessage());
-        } finally {
-            //  Destroy singleton object to avoid System tests failures as all tests run in a process and share this singleton object
-            RoundRobinUtils.destroy();
         }
     }
     
@@ -1046,9 +1043,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     private class TransferThread extends Thread {
         private final int id;
         private final TransferManager producer;
-        private final RoundRobinUtils hostsUtil;
+        private final HostManager hostsUtil;
 
-        public TransferThread(int id, TransferManager producer, RoundRobinUtils hostsUtil) {
+        public TransferThread(int id, TransferManager producer, HostManager hostsUtil) {
             super("transfer-" + id);
             this.id = id;
             this.producer = producer;

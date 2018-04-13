@@ -23,20 +23,19 @@ import org.apache.log4j.Logger;
  * @author Vinay Singh
  * @version $Id$
  */
-public class RoundRobinUtils {
+public class HostManager {
 
-    private static final Logger LOG = Logger.getLogger(RoundRobinUtils.class);
-
-    private static RoundRobinUtils instance;
-    private static List<String> participantHosts;
+    private static final Logger LOG = Logger.getLogger(HostManager.class);
+    
+    private final List<String> participantHosts;
     private int currentIndex = -1;
     private final boolean useLoadBalancing;
     private final Random random = new Random();
     private boolean firstRequestWithLoadBalancing;
     private int randomIndex = -1;
 
-    private RoundRobinUtils(List<String> hosts, boolean useLoadBalancing) {
-        participantHosts = hosts;
+    public HostManager(List<String> hosts, boolean useLoadBalancing) {
+        participantHosts = new ArrayList(hosts);
         this.useLoadBalancing = useLoadBalancing;
 
         if (useLoadBalancing) { // get randomized host for first attempt if loadbalancing is enabled
@@ -44,15 +43,7 @@ public class RoundRobinUtils {
             firstRequestWithLoadBalancing = true;
         }
     }
-
-    synchronized static RoundRobinUtils getInstance(List<String> hosts, boolean useLoadBalancing) {
-        if (instance == null) {
-            participantHosts = new ArrayList(hosts);
-            instance = new RoundRobinUtils(participantHosts, useLoadBalancing);
-        }
-        return instance;
-    }
-
+    
     /**
      * Determines the next host to be used for sending signing request.
      *
@@ -100,6 +91,7 @@ public class RoundRobinUtils {
         }
 
         updateCurrentIndex();
+        LOG.error("inside next host in failure " + participantHosts.size() + "current index " + currentIndex);
         String host = participantHosts.get(currentIndex);
 
         if (LOG.isDebugEnabled()) {
@@ -114,7 +106,7 @@ public class RoundRobinUtils {
     private void updateCurrentIndex() {
         currentIndex = currentIndex + 1;
         // if we get to the end, start again
-        if (currentIndex == participantHosts.size()) {
+        if (currentIndex >= participantHosts.size()) {
             currentIndex = 0;
         }
     }
@@ -130,13 +122,10 @@ public class RoundRobinUtils {
      * @param host to be removed.
      */
     synchronized void removeHost(String host) {
-        participantHosts.remove(host);
-        currentIndex = currentIndex - 1;
-    }
-
-    synchronized static void destroy() {
-        if (instance != null) {
-            instance = null;
+        // If condition is imporant here to avoid a scenario where multiple thread try to remove host and only one of them actually remove
+        // the host and others just decrease the currentIndex (it may set currentIndex to negative value)
+        if (participantHosts.remove(host)) {
+            currentIndex = currentIndex - 1;
         }
     }
 

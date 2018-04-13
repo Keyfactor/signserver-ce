@@ -146,6 +146,40 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
     
     /**
+     * Test that setting -timeout options is not allowed for -protocol
+     * WEBSERVICES.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test01timeoutsWithProtocolWebservicesNotAllowed() throws Exception {
+        LOG.info("test01timeoutsWithProtocolWebservicesNotAllowed");
+        try {
+            execute("signdocument", "-timeout", "5000", "-protocol",
+                    "WEBSERVICES");
+            fail("Should have thrown exception about illegal combination of arguments");
+        } catch (IllegalCommandArgumentsException expected) {
+        } // NOPMD
+    }
+
+    /**
+     * Test that setting -timeout options is not allowed for -protocol
+     * WEBSERVICES.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test01timeoutsWithProtocolClientWSNotAllowed() throws Exception {
+        LOG.info("test01timeoutsWithProtocolClientWSNotAllowed");
+        try {
+            execute("signdocument", "-timeout", "5000", "-protocol",
+                    "CLIENTWS");
+            fail("Should have thrown exception about illegal combination of arguments");
+        } catch (IllegalCommandArgumentsException expected) {
+        } // NOPMD
+    }
+    
+    /**
      * Test that setting -hosts option with no argument is not allowed.
      * 
      * @throws Exception 

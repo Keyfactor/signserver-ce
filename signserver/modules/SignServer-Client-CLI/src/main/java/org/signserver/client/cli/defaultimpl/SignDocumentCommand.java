@@ -545,6 +545,14 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             throw new IllegalCommandArgumentsException("Can only use -hosts with protocol HTTP");
         }
         
+        if (!loadBalancing.equals(DEFAULT_LOAD_BALANCING) && protocol != Protocol.HTTP) {
+            throw new IllegalCommandArgumentsException("Can only use -loadbalancing with protocol HTTP");
+        }
+
+        if (timeOutString != null && protocol != Protocol.HTTP) {
+            throw new IllegalCommandArgumentsException("Can only use -timeout with protocol HTTP");
+        }
+        
         if (host != null) {
             if (host.trim().isEmpty()) {
                 throw new IllegalCommandArgumentsException("-host can not be empty");
@@ -564,12 +572,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
         if (!Arrays.asList(DEFAULT_LOAD_BALANCING, ROUND_ROBIN_LOAD_BALANCING).contains(loadBalancing)) {
             throw new IllegalCommandArgumentsException("Not supported -loadbalancing: " + loadBalancing);
-        }      
-
-        if (!loadBalancing.equals(DEFAULT_LOAD_BALANCING) && protocol != Protocol.HTTP) {
-            throw new IllegalCommandArgumentsException("Can only use -loadbalancing with protocol HTTP");
-        }       
-                
+        }     
+                           
         keyStoreOptions.validateOptions();
         
         if (timeOutString != null) {

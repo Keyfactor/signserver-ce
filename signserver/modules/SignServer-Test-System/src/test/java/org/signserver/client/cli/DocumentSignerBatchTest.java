@@ -346,7 +346,40 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
+    
+    /**
+     * Tests signing 50 documents from the input directory using 30 threads and loadbalancing as ROUND_ROBIN
+     * <pre>
+     * signdocument -workername XMLSigner -indir /tmp/input -outdir /tmp/output
+     * </pre>
+     * @throws Exception
+     */
+    @Test
+    public void test02sign50DocumentsFromInDirWith30ThreadsWithLoadBalancing() throws Exception {
+        LOG.info("test02sign50DocumentsFromInDirWith30ThreadsWithLoadBalancing");
+        // Create 50 input files
+        inDir.create();
+        outDir.create();
+        final ArrayList<File> files = createInputFiles(50);
 
+        try {
+            String res
+                    = new String(execute("signdocument",
+                            "-workername", "TestXMLSigner",
+                            "-indir", inDir.getRoot().getAbsolutePath(),
+                            "-outdir", outDir.getRoot().getAbsolutePath(),
+                            "-threads", "30", "loadbalancing", "ROUND_ROBIN", "-hosts", "invalidhost1,invalidhost2,localhost"));
+            assertFalse("should not contain any document: "
+                    + res, res.contains("<doc"));
+
+            assertOutfilesSignatures(files);
+
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }    
+    
     /**
      * Test for asking for user password with single thread.
      * @throws Exception 

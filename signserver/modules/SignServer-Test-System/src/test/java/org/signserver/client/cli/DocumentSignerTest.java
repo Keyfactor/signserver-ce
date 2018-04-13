@@ -164,7 +164,7 @@ public class DocumentSignerTest extends ModulesTestCase {
 
     /**
      * Test that setting -timeout options is not allowed for -protocol
-     * WEBSERVICES.
+     * CLIENTWS.
      *
      * @throws Exception
      */
@@ -174,6 +174,40 @@ public class DocumentSignerTest extends ModulesTestCase {
         try {
             execute("signdocument", "-timeout", "5000", "-protocol",
                     "CLIENTWS");
+            fail("Should have thrown exception about illegal combination of arguments");
+        } catch (IllegalCommandArgumentsException expected) {
+        } // NOPMD
+    }
+    
+    /**
+     * Test that setting -loadbalancing options is not allowed for -protocol
+     * CLIENTWS.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test01loadbalancingWithProtocolClientWSNotAllowed() throws Exception {
+        LOG.info("test01loadbalancingWithProtocolClientWSNotAllowed");
+        try {
+            execute("signdocument", "-loadbalancing", "ROUND_ROBIN", "-protocol",
+                    "CLIENTWS");
+            fail("Should have thrown exception about illegal combination of arguments");
+        } catch (IllegalCommandArgumentsException expected) {
+        } // NOPMD
+    }
+    
+    /**
+     * Test that setting -loadbalancing options is not allowed for -protocol
+     * WEBSERVICES.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test01loadbalancingWithProtocolWebservicesNotAllowed() throws Exception {
+        LOG.info("test01loadbalancingWithProtocolWebservicesNotAllowed");
+        try {
+            execute("signdocument", "-loadbalancing", "ROUND_ROBIN", "-protocol",
+                    "WEBSERVICES");
             fail("Should have thrown exception about illegal combination of arguments");
         } catch (IllegalCommandArgumentsException expected) {
         } // NOPMD
@@ -219,6 +253,35 @@ public class DocumentSignerTest extends ModulesTestCase {
             execute("signdocument", "-host", "");
             fail("Should have thrown exception about empty argument");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
+    }
+    
+    /**
+     * Test that setting -loadbalancing option with empty argument is not allowed.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test01loadbalancingEmptyNotAllowed() throws Exception {
+        LOG.info("test01loadbalancingEmptyNotAllowed");
+        try {
+            execute("signdocument", "-workername", "TestXMLSigner", "-loadbalancing", " ", "-data", "<root/>");
+            fail("Should have thrown exception about empty argument");
+        } catch (IllegalCommandArgumentsException expected) {} // NOPMD
+    }
+    
+    /**
+     * Test that illegal -loadbalancing value is not allowed.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test01IllegalLoadbalancingNotAllowed() throws Exception {
+        LOG.info("test01IllegalLoadbalancingNotAllowed");
+        try {
+            execute("signdocument", "-workername", "TestXMLSigner", "-loadbalancing", "invalid", "-data", "<root/>");
+            fail("Should have thrown exception about illegal timeout value");
+        } catch (IllegalCommandArgumentsException expected) {
+        } // NOPMD
     }
     
     /**

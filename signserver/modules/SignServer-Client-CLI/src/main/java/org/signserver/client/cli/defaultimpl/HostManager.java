@@ -112,7 +112,7 @@ public class HostManager {
         }
     }
 
-    private int getHostIndexByRandom() {
+    synchronized int getHostIndexByRandom() {
         return random.nextInt(participantHosts.size());
     }
 

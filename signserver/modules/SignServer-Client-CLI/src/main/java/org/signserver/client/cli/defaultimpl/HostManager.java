@@ -70,7 +70,9 @@ public class HostManager {
         if (useLoadBalancing) {
             if (firstRequestWithLoadBalancing) {
                 currentIndex = randomIndex;
-                LOG.error("random index: " + currentIndex);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("random index: " + currentIndex);
+                }
                 firstRequestWithLoadBalancing = false;
             } else {
                 updateCurrentIndex();
@@ -90,8 +92,7 @@ public class HostManager {
             return null;
         }
 
-        updateCurrentIndex();
-        LOG.error("inside next host in failure " + participantHosts.size() + "current index " + currentIndex);
+        updateCurrentIndex();        
         String host = participantHosts.get(currentIndex);
 
         if (LOG.isDebugEnabled()) {

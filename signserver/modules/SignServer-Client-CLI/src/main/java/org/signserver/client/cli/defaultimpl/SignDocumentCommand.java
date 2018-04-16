@@ -317,7 +317,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             .append("f) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -removefromindir -outdir ./output/ -threads 5").append(NL)
             .append("g) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -outdir ./output/ -threads 5 -hosts primaryhost,secondaryhost").append(NL)
             .append("h) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -outdir ./output/ -threads 5 -hosts primaryhost,secondaryhost,otherhost -timeout 5000").append(NL)
-            .append("i) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -outdir ./output/ -threads 5 -hosts primaryhost,secondaryhost,otherhost -loadbalancing ROUND_ROBIN -timeout 5000").append(NL);
+            .append("i) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -outdir ./output/ -threads 5 -hosts host1,host2,host3 -loadbalancing ROUND_ROBIN -timeout 5000").append(NL);
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();

@@ -348,7 +348,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
     }
     
     /**
-     * Tests signing 50 documents from the input directory using 30 threads and loadbalancing as ROUND_ROBIN
+     * Tests signing 50 documents from the input directory using 30 threads and loadbalancing as ROUND_ROBIN.
      * <pre>
      * signdocument -workername XMLSigner -indir /tmp/input -outdir /tmp/output
      * </pre>
@@ -368,7 +368,7 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
                             "-workername", "TestXMLSigner",
                             "-indir", inDir.getRoot().getAbsolutePath(),
                             "-outdir", outDir.getRoot().getAbsolutePath(),
-                            "-threads", "30", "loadbalancing", "ROUND_ROBIN", "-hosts", "invalidhost1,invalidhost2,localhost"));
+                            "-threads", "30", "-loadbalancing", "ROUND_ROBIN", "-hosts", "invalidhost1,invalidhost2,localhost"));
             assertFalse("should not contain any document: "
                     + res, res.contains("<doc"));
 
@@ -378,7 +378,47 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
         }
-    }    
+    }
+    
+    /**
+     * Tests signing 200 documents from the input directory using 100 threads and loadbalancing as ROUND_ROBIN.
+     * <pre>
+     * signdocument -workername XMLSigner -indir /tmp/input -outdir /tmp/output
+     * </pre>
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test02sign200DocumentsFromInDirWith100ThreadsWithLoadBalancing() throws Exception {
+        LOG.info("test02sign200DocumentsFromInDirWith100ThreadsWithLoadBalancing");
+        // Create 200 input files
+        inDir.create();
+        outDir.create();
+        final ArrayList<File> files = createInputFiles(200);
+
+        try {
+
+            // Disabling KEYUSAGECOUNTER is required currently to avoid a issue JBAS014516 (Failed to acquire a permit within 5 MINUTES)
+            getWorkerSession().setWorkerProperty(WORKERID, "DISABLEKEYUSAGECOUNTER", "TRUE");
+            getWorkerSession().reloadConfiguration(WORKERID);
+
+            String res
+                    = new String(execute("signdocument",
+                            "-workername", "TestXMLSigner",
+                            "-indir", inDir.getRoot().getAbsolutePath(),
+                            "-outdir", outDir.getRoot().getAbsolutePath(),
+                            "-threads", "100", "-loadbalancing", "ROUND_ROBIN", "-hosts", "primekey.com, localhost,localhost,localhost",
+                            "-timeout", "1000"));
+            assertFalse("should not contain any document: "
+                    + res, res.contains("<doc"));
+
+            assertOutfilesSignatures(files);
+
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        }
+    }
     
     /**
      * Test for asking for user password with single thread.

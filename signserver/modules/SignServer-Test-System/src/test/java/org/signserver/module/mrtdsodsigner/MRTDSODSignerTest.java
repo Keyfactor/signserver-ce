@@ -74,7 +74,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     private static final int WORKER5 = 7904;
 
     private static final String ALIAS_DEMODSEC = "MRTD Sod Signer";
-    private static final String ALIAS_DEMODS1 = "demods1";
+    private static final String ALIAS_DEMODS1 = "sod00001";
 
     private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
@@ -103,7 +103,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKER1, "KEYSTOREPATH",
                 getSignServerHome().getAbsolutePath()
                 + File.separator + "res" + File.separator + "test"
-                + File.separator + "demods1.p12");
+                + File.separator + "dss10" + File.separator + "dss10_keystore.p12");
         workerSession.setWorkerProperty(WORKER1, "KEYSTOREPASSWORD", "foo123");
         workerSession.setWorkerProperty(WORKER1, "DEFAULTKEY", ALIAS_DEMODS1);
 
@@ -119,7 +119,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKER2, "KEYSTOREPATH",
                 getSignServerHome().getAbsolutePath()
                 + File.separator + "res" + File.separator + "test"
-                + File.separator + "demods1.p12");
+                + File.separator + "dss10" + File.separator + "dss10_keystore.p12");
         workerSession.setWorkerProperty(WORKER2, "KEYSTOREPASSWORD", "foo123");
         workerSession.setWorkerProperty(WORKER2, "DEFAULTKEY", ALIAS_DEMODS1);
 
@@ -127,7 +127,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKER3, "KEYSTOREPATH",
                 getSignServerHome().getAbsolutePath()
                 + File.separator + "res" + File.separator + "test"
-                + File.separator + "demods1.p12");
+                + File.separator + "dss10" + File.separator + "dss10_keystore.p12");
         workerSession.setWorkerProperty(WORKER3, "KEYSTOREPASSWORD", "foo123");
         workerSession.setWorkerProperty(WORKER3, "DEFAULTKEY", ALIAS_DEMODS1);
 
@@ -135,7 +135,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKER4, "KEYSTOREPATH",
                 getSignServerHome().getAbsolutePath()
                 + File.separator + "res" + File.separator + "test"
-                + File.separator + "demods1.p12");
+                + File.separator + "dss10" + File.separator + "dss10_keystore.p12");
         workerSession.setWorkerProperty(WORKER4, "KEYSTOREPASSWORD", "foo123");
         workerSession.setWorkerProperty(WORKER4, "DEFAULTKEY", ALIAS_DEMODS1);
 

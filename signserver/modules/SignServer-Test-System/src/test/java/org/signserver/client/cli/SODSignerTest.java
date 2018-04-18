@@ -27,7 +27,6 @@ import org.signserver.admin.cli.AdminCLI;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.common.SignServerUtil;
 import org.signserver.module.mrtdsodsigner.jmrtd.SODFile;
-import org.signserver.server.signers.EchoRequestMetadataSigner;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
@@ -77,8 +76,8 @@ public class SODSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID, "KEYSTOREPATH",
                 getSignServerHome().getAbsolutePath()
                 + File.separator + "res" + File.separator + "test"
-                + File.separator + "demods1.p12");
-        workerSession.setWorkerProperty(WORKERID, "DEFAULTKEY", "demods1");
+                + File.separator + "dss10" + File.separator + "dss10_keystore.p12");
+        workerSession.setWorkerProperty(WORKERID, "DEFAULTKEY", "sod00001");
         workerSession.reloadConfiguration(WORKERID);
 
         // Dummy worker echoing request metadata     

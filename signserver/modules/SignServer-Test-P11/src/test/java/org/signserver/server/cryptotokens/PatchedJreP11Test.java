@@ -191,7 +191,12 @@ public class PatchedJreP11Test {
             
             assertEquals("Modifiable field", Boolean.FALSE.toString(), entries.get(0).getInfo().get(CryptoTokenHelper.INFO_KEY_MODIFIABLE));
         } finally {
-            base.destroyKey(testKeyName);
+            try {
+                base.destroyKey(testKeyName);
+            } catch (Exception ex) { // test should not throw error when key can not be removed although failure  is OK.
+                LOG.error("Error in removing key with alias: " + testKeyName + " " + ex.getMessage());
+            }
+
             base.removeWorker(CRYPTO_TOKEN);
         }
     }

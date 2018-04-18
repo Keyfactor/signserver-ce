@@ -161,7 +161,7 @@ public class JavaKeyStoreDelegator implements KeyStoreDelegator {
                 String keyError = null;
                 try {
                     key = keystore.getKey(keyAlias, null);
-                } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
+                } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | ProviderException ex) {
                     keyError = ex.getMessage();
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Unable to get key to query P11 info", ex);

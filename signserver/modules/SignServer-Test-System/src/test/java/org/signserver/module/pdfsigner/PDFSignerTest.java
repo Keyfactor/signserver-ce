@@ -152,7 +152,8 @@ public class PDFSignerTest extends ModulesTestCase {
                         new DefaultDigestAlgorithmIdentifierFinder();
                     final AlgorithmIdentifier ai = algFinder.find(expectedTsaDigestAlgorithm);
                     
-                    assertEquals("Expected TSA digest algorithm", ai, algId);
+                    assertEquals("Expected TSA digest algorithm",
+                                 ai.getAlgorithm(), algId.getAlgorithm());
                 }
             }
             

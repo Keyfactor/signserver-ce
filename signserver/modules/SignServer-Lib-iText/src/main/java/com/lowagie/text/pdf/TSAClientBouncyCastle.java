@@ -58,6 +58,7 @@ import org.bouncycastle.asn1.x509.*;
 import org.bouncycastle.tsp.*;
 
 import com.lowagie.text.pdf.codec.Base64;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 /**
  * Time Stamp Authority Client interface implementation using Bouncy Castle
@@ -78,12 +79,16 @@ public class TSAClientBouncyCastle implements TSAClient {
     /** Estimate of the received time stamp token */
     protected int tokSzEstimate;
     
+    private final ASN1ObjectIdentifier digestAlgorithm;
+    
     /**
      * Creates an instance of a TSAClient that will use BouncyCastle.
      * @param url String - Time Stamp Authority URL (i.e. "http://tsatest1.digistamp.com/TSA")
+     * @param digestAlgorithm
      */
-    public TSAClientBouncyCastle(String url) {
-        this(url, null, null, 7168);
+    public TSAClientBouncyCastle(String url,
+                                 ASN1ObjectIdentifier digestAlgorithm) {
+        this(url, null, null, 7168, digestAlgorithm);
     }
     
     /**
@@ -91,9 +96,11 @@ public class TSAClientBouncyCastle implements TSAClient {
      * @param url String - Time Stamp Authority URL (i.e. "http://tsatest1.digistamp.com/TSA")
      * @param username String - user(account) name
      * @param password String - password
+     * @param digestAlgorithm
      */
-    public TSAClientBouncyCastle(String url, String username, String password) {
-        this(url, username, password, 7168);
+    public TSAClientBouncyCastle(String url, String username, String password,
+                                 ASN1ObjectIdentifier digestAlgorithm) {
+        this(url, username, password, 7168, digestAlgorithm);
     }
     
     /**
@@ -105,12 +112,16 @@ public class TSAClientBouncyCastle implements TSAClient {
      * @param username String - user(account) name
      * @param password String - password
      * @param tokSzEstimate int - estimated size of received time stamp token (DER encoded)
+     * @param digestAlgorithm
      */
-    public TSAClientBouncyCastle(String url, String username, String password, int tokSzEstimate) {
+    public TSAClientBouncyCastle(String url, String username, String password,
+                                 int tokSzEstimate,
+                                 ASN1ObjectIdentifier digestAlgorithm) {
         this.tsaURL       = url;
         this.tsaUsername  = username;
         this.tsaPassword  = password;
         this.tokSzEstimate = tokSzEstimate;
+        this.digestAlgorithm = digestAlgorithm;
     }
     
     /**
@@ -146,7 +157,7 @@ public class TSAClientBouncyCastle implements TSAClient {
             tsqGenerator.setCertReq(true);
             // tsqGenerator.setReqPolicy("1.3.6.1.4.1.601.10.3.1");
             BigInteger nonce = BigInteger.valueOf(System.currentTimeMillis());
-            TimeStampRequest request = tsqGenerator.generate(X509ObjectIdentifiers.id_SHA1, imprint, nonce);
+            TimeStampRequest request = tsqGenerator.generate(digestAlgorithm, imprint, nonce);
             byte[] requestBytes = request.getEncoded();
             
             // Call the communications layer

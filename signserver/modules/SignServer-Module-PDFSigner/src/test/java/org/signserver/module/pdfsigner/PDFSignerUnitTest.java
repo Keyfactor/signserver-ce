@@ -1449,6 +1449,60 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         assertTrue("Should contain error",
                 fatalErrors.contains("Can not specify " + PDFSigner.TSA_URL + " and " + PDFSigner.TSA_WORKER + " at the same time."));
     }
+    
+    /**
+     * Test that explicitly setting TSA_DIGESTALGORITHM to SHA-384 doesn't
+     * give any error
+     * 
+     * @throws Exception
+     */
+    public void test15TSA_DIGESTALGORITHM_sha384() throws Exception {
+        WorkerConfig workerConfig = new WorkerConfig();
+
+        workerConfig.setProperty("NAME", "TestSigner100");
+        workerConfig.setProperty("TSA_WORKER", "TimeStampSigner2");
+        workerConfig.setProperty("TSA_DIGESTALGORITHM", "SHA-384");
+
+        final PDFSigner instance = new PDFSigner() {
+            @Override
+            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+                return null;
+            }
+        };
+        instance.init(WORKER1, workerConfig, null, null);
+
+        final String fatalErrors = instance.getFatalErrors(null).toString();
+
+        assertFalse("Should not contain error",
+                    fatalErrors.contains("Illegal timestamping digest algorithm specified"));
+    }
+    
+    /**
+     * Test that explicitly setting TSA_DIGESTALGORITHM to SHA-384 doesn't
+     * give any error
+     * 
+     * @throws Exception
+     */
+    public void test15IllegalTSA_DIGESTALGORITHM() throws Exception {
+        WorkerConfig workerConfig = new WorkerConfig();
+
+        workerConfig.setProperty("NAME", "TestSigner100");
+        workerConfig.setProperty("TSA_WORKER", "TimeStampSigner2");
+        workerConfig.setProperty("TSA_DIGESTALGORITHM", "_non_existing_");
+
+        final PDFSigner instance = new PDFSigner() {
+            @Override
+            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+                return null;
+            }
+        };
+        instance.init(WORKER1, workerConfig, null, null);
+
+        final String fatalErrors = instance.getFatalErrors(null).toString();
+
+        assertTrue("Should contain error: " + fatalErrors,
+                   fatalErrors.contains("Illegal timestamping digest algorithm specified"));
+    }
 
     /**
      * Test that providing empty strings for both TSA_URL and TSA_WORKER files are treated as not specified.

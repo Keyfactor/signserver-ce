@@ -32,6 +32,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.data.ReadableData;
@@ -119,6 +122,7 @@ public class PDFSigner extends BaseSigner {
     public static final String TSA_USERNAME = "TSA_USERNAME";
     public static final String TSA_PASSWORD = "TSA_PASSWORD";
     public static final String TSA_WORKER = "TSA_WORKER";
+    public static final String TSA_DIGESTALGORITHM = "TSA_DIGESTALGORITHM";
     
     // extra properties
     public static final String EMBED_CRL = "EMBED_CRL";
@@ -157,6 +161,8 @@ public class PDFSigner extends BaseSigner {
     public static final String DIGESTALGORITHM = "DIGESTALGORITHM";
     private static final String DEFAULTDIGESTALGORITHM = "SHA256";
     
+    private static final String DEFAULT_TSA_DIGESTALGORITHM = "SHA256";
+    
     private Pattern archivetodiskPattern;
 
     /** Random used for instance when setting a random owner/permissions password*/
@@ -167,6 +173,8 @@ public class PDFSigner extends BaseSigner {
     private InternalProcessSessionLocal workerSession;
 
     private String digestAlgorithm = DEFAULTDIGESTALGORITHM;
+
+    private ASN1ObjectIdentifier tsaDigestAlgorithm;
     
     @Override
     public void init(int signerId, WorkerConfig config,
@@ -195,6 +203,18 @@ public class PDFSigner extends BaseSigner {
         archivetodiskPattern = Pattern.compile(ARCHIVETODISK_PATTERN_REGEX);
         
         digestAlgorithm = config.getProperty(DIGESTALGORITHM, DEFAULTDIGESTALGORITHM);
+        final String tsaDigestAlgorithmString = config.getProperty(TSA_DIGESTALGORITHM,
+                                                DEFAULT_TSA_DIGESTALGORITHM);
+        final DefaultDigestAlgorithmIdentifierFinder algFinder =
+                new DefaultDigestAlgorithmIdentifierFinder();
+        final AlgorithmIdentifier ai = algFinder.find(tsaDigestAlgorithmString);
+        
+        tsaDigestAlgorithm = ai.getAlgorithm();
+        
+        if (tsaDigestAlgorithm == null) {
+            configErrors.add("Illegal timestamping digest algorithm specified: " +
+                             tsaDigestAlgorithmString);
+        }
         
         boolean algorithmSupported = PdfSignatureDigestAlgorithms.isSupported(digestAlgorithm);
         if (!algorithmSupported) {
@@ -1087,7 +1107,7 @@ public class PDFSigner extends BaseSigner {
     }
 
     protected TSAClient getTimeStampClient(String url, String username, String password) {
-        return new TSAClientBouncyCastle(url, username, password);
+        return new TSAClientBouncyCastle(url, username, password, tsaDigestAlgorithm);
     }
 
     @Override

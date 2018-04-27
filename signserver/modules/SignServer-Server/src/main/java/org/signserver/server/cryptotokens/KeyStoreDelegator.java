@@ -49,15 +49,6 @@ public interface KeyStoreDelegator {
     public void deleteEntry(String alias) throws KeyStoreException;
 
     /**
-     * Determine if an entry is a key.
-     * 
-     * @param keyAlias
-     * @return true if the alias is relating to a key
-     * @throws KeyStoreException 
-     */
-    public boolean isKeyEntry(String keyAlias) throws KeyStoreException;
-
-    /**
      * Get a certificate associated with an alias.
      * 
      * @param keyAlias
@@ -67,19 +58,26 @@ public interface KeyStoreDelegator {
     public Certificate getCertificate(String keyAlias) throws KeyStoreException;
     
     /**
-     * Get key with a given alias.
+     * Acquire exclusive use of a PrivateKey instance.
+     *
+     * Note: This must eventually follow be a call to releasePrivateKey().
      * 
-     * @param alias
-     * @param password
-     * @return key
+     * @param alias of entry
+     * @param password if one
+     * @return the private key
      * @throws KeyStoreException
      * @throws NoSuchAlgorithmException
      * @throws UnrecoverableKeyException 
      */
-    public Key getKey(String alias, char[] password)
-        throws KeyStoreException, NoSuchAlgorithmException,
-            UnrecoverableKeyException;
-    
+    public PrivateKey aquirePrivateKey(String alias, char[] password) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException;
+
+    /**
+     * Call with a PrivateKey instance previously acquired in order to release it.
+     *
+     * @param privateKey to release
+     */
+    public void releasePrivateKey(PrivateKey privateKey);
+
     /**
      * Get token entries from the token.
      * 

@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
@@ -44,7 +43,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import javax.crypto.SecretKey;
 import javax.security.auth.x500.X500Principal;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.PredicateUtils;
@@ -276,33 +274,25 @@ public class CryptoTokenHelper {
                         LOG.debug("checking keyAlias: " + keyAlias);
                     }
 
-                    if (keyStore.isKeyEntry(keyAlias)) {
-                        String status;
-                        String publicKeyHash = null;
-                        boolean success = false;
+                    String status;
+                    String publicKeyHash = null;
+                    boolean success = false;
+                    if (TokenEntry.TYPE_SECRETKEY_ENTRY.equals(entry.getType())) {
+                        status = "Not testing keys with alias: " + keyAlias + ". Not a private key.";
+                    } else if (TokenEntry.TYPE_PRIVATEKEY_ENTRY.equals(entry.getType())) {
+                        PrivateKey privateKey = null;
                         try {
-                            final Key key = keyStore.getKey(keyAlias, authCode);
-                            
-                            if (!(key instanceof PrivateKey)) {
-                                if (key instanceof SecretKey) {
-                                    status = "Not testing keys with alias: " + keyAlias + ". Not a private key.";
-                                } else {
-                                    status = "No such key: " + keyAlias;
-                                }
-                                success = false;
+                            privateKey = keyStore.aquirePrivateKey(alias, authCode);
+                            final Certificate entryCert = keyStore.getCertificate(keyAlias);
+                            if (entryCert != null) {
+                                final PublicKey publicKey = entryCert.getPublicKey();
+                                publicKeyHash = createKeyHash(publicKey);
+                                testSignAndVerify(privateKey, publicKey, signatureProvider, signatureAlgorithm);
+                                success = true;
+                                status = "";
                             } else {
-                                final PrivateKey privateKey = (PrivateKey) key;
-                                final Certificate entryCert = keyStore.getCertificate(keyAlias);
-                                if (entryCert != null) {
-                                    final PublicKey publicKey = entryCert.getPublicKey();
-                                    publicKeyHash = createKeyHash(publicKey);
-                                    testSignAndVerify(privateKey, publicKey, signatureProvider, signatureAlgorithm);
-                                    success = true;
-                                    status = "";
-                                } else {
-                                    status = "Not testing keys with alias "
-                                            + keyAlias + ". No certificate exists.";
-                                }
+                                status = "Not testing keys with alias "
+                                        + keyAlias + ". No certificate exists.";
                             }
                         } catch (ClassCastException ce) {
                             status = "Not testing keys with alias "
@@ -310,10 +300,16 @@ public class CryptoTokenHelper {
                         } catch (InvalidKeyException | KeyStoreException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException | UnrecoverableKeyException ex) {
                             LOG.error("Error testing key: " + keyAlias, ex);
                             status = ex.getMessage();
+                        } finally {
+                            if (privateKey != null) {
+                                keyStore.releasePrivateKey(privateKey);
+                            }
                         }
-                        result.add(new KeyTestResult(keyAlias, success, status,
-                                publicKeyHash));
+                    } else {
+                        status = "No such key: " + keyAlias;
                     }
+                    result.add(new KeyTestResult(keyAlias, success, status,
+                                publicKeyHash));
                 }
             }
         } catch (KeyStoreException ex) {
@@ -762,11 +758,18 @@ public class CryptoTokenHelper {
         
         // If any of the params are specified, we should re-generate the certificate
         if (dn != null || validity != null || signatureAlgorithm != null) {
-            final PrivateKey key = (PrivateKey) keyStore.getKey(alias, authCode);
-            final X509Certificate oldCert = (X509Certificate) keyStore.getCertificate(alias);
-            final X509Certificate newCert = createDummyCertificate(alias, params, new KeyPair(oldCert.getPublicKey(), key), provider);
+            PrivateKey key = null;
+            try {
+                key = keyStore.aquirePrivateKey(alias, authCode);
+                final X509Certificate oldCert = (X509Certificate) keyStore.getCertificate(alias);
+                final X509Certificate newCert = createDummyCertificate(alias, params, new KeyPair(oldCert.getPublicKey(), key), provider);
 
-            keyStore.setKeyEntry(alias, key, authCode, new Certificate[] { newCert });
+                keyStore.setKeyEntry(alias, key, authCode, new Certificate[] { newCert });
+            } finally {
+                if (key != null) {
+                    keyStore.releasePrivateKey(key);
+                }
+            }
         }
     }
     

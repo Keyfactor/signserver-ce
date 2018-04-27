@@ -70,20 +70,19 @@ public class JavaKeyStoreDelegator implements KeyStoreDelegator {
         keystore.deleteEntry(alias);
     }
 
-
-    @Override
-    public boolean isKeyEntry(String keyAlias) throws KeyStoreException {
-        return keystore.isKeyEntry(keyAlias);
-    }
-
     @Override
     public Certificate getCertificate(String keyAlias) throws KeyStoreException {
         return keystore.getCertificate(keyAlias);
     }
 
     @Override
-    public Key getKey(String alias, char[] password) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
-        return keystore.getKey(alias, password);
+    public PrivateKey aquirePrivateKey(String alias, char[] password) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        return (PrivateKey) keystore.getKey(alias, password);
+    }
+
+    @Override
+    public void releasePrivateKey(PrivateKey privateKey) {
+        // NOP
     }
 
     @Override

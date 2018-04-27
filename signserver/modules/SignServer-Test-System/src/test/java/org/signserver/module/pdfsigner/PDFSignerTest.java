@@ -144,8 +144,8 @@ public class PDFSignerTest extends ModulesTestCase {
 
                     assertNotNull("Timestamp token should be available",
                                   timeStampToken);
-
-                    final AlgorithmIdentifier algId = timeStampToken.toCMSSignedData().getDigestAlgorithmIDs().iterator().next();
+                    
+                    final AlgorithmIdentifier algId = timeStampToken.getTimeStampInfo().getHashAlgorithm();
                     final String expectedTsaDigestAlgorithm =
                             tsaDigestAlgorithm != null ? tsaDigestAlgorithm : "SHA256";
                     final DefaultDigestAlgorithmIdentifierFinder algFinder =

@@ -1132,7 +1132,7 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7() {
-        return getEncodedPKCS7(null, null, null, null);
+        return getEncodedPKCS7(null, null, null, null, null);
     }
     
     /**
@@ -1143,7 +1143,7 @@ public class PdfPKCS7 {
      * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime) {
-        return getEncodedPKCS7(secondDigest, signingTime, null, null);
+        return getEncodedPKCS7(secondDigest, signingTime, null, null, null);
     }
 
     /**
@@ -1156,7 +1156,8 @@ public class PdfPKCS7 {
      * @return byte[] the bytes for the PKCS7SignedData object
      * @since	2.1.6
      */
-    public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime, TSAClient tsaClient, byte[] ocsp) {
+    public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime, TSAClient tsaClient, byte[] ocsp,
+                                    String tsaDigestAlgorithm) {
         try {
             if (externalDigest != null) {
                 digest = externalDigest;
@@ -1238,7 +1239,7 @@ public class PdfPKCS7 {
             // Added by Martin Brunecky, 07/12/2007 folowing Aiken Sam, 2006-11-15
             // Sam found Adobe expects time-stamped SHA1-1 of the encrypted digest
             if (tsaClient != null) {
-                byte[] tsImprint = MessageDigest.getInstance("SHA-1").digest(digest);
+                byte[] tsImprint = MessageDigest.getInstance(tsaDigestAlgorithm).digest(digest);
                 byte[] tsToken = tsaClient.getTimeStampToken(this, tsImprint);
                 if (tsToken != null) {
                     ASN1EncodableVector unauthAttributes = buildUnauthenticatedAttributes(tsToken);

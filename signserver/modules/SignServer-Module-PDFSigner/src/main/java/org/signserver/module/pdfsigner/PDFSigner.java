@@ -175,6 +175,7 @@ public class PDFSigner extends BaseSigner {
     private String digestAlgorithm = DEFAULTDIGESTALGORITHM;
 
     private ASN1ObjectIdentifier tsaDigestAlgorithm;
+    private String tsaDigestAlgorithmName; // passed to PdfPkcs7
     
     @Override
     public void init(int signerId, WorkerConfig config,
@@ -203,17 +204,17 @@ public class PDFSigner extends BaseSigner {
         archivetodiskPattern = Pattern.compile(ARCHIVETODISK_PATTERN_REGEX);
         
         digestAlgorithm = config.getProperty(DIGESTALGORITHM, DEFAULTDIGESTALGORITHM);
-        final String tsaDigestAlgorithmString = config.getProperty(TSA_DIGESTALGORITHM,
+        tsaDigestAlgorithmName = config.getProperty(TSA_DIGESTALGORITHM,
                                                 DEFAULT_TSA_DIGESTALGORITHM);
         final DefaultDigestAlgorithmIdentifierFinder algFinder =
                 new DefaultDigestAlgorithmIdentifierFinder();
-        final AlgorithmIdentifier ai = algFinder.find(tsaDigestAlgorithmString);
+        final AlgorithmIdentifier ai = algFinder.find(tsaDigestAlgorithmName);
         
         tsaDigestAlgorithm = ai.getAlgorithm();
         
         if (tsaDigestAlgorithm == null) {
             configErrors.add("Illegal timestamping digest algorithm specified: " +
-                             tsaDigestAlgorithmString);
+                             tsaDigestAlgorithmName);
         }
         
         boolean algorithmSupported = PdfSignatureDigestAlgorithms.isSupported(digestAlgorithm);
@@ -555,7 +556,8 @@ public class PDFSigner extends BaseSigner {
             throw new SignServerException("Error calculating signature", e);
         }
 
-        byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp);
+        byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp,
+                                                tsaDigestAlgorithmName);
         
         return encodedSig;
     }
@@ -771,7 +773,8 @@ public class PDFSigner extends BaseSigner {
                     tsc = getTimeStampClient(params.getTsa_url(), params.getTsa_username(), params.getTsa_password());
                 } else {
                     tsc = new InternalTSAClient(getProcessSession(context.getServices()),
-                            WorkerIdentifier.createFromIdOrName(params.getTsa_worker()), params.getTsa_username(), params.getTsa_password());
+                            WorkerIdentifier.createFromIdOrName(params.getTsa_worker()), params.getTsa_username(), params.getTsa_password(),
+                            tsaDigestAlgorithm);
                 }
             }
 

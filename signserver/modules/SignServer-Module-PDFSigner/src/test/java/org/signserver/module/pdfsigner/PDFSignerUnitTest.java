@@ -30,11 +30,13 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.CRLReason;
 import org.bouncycastle.cert.X509CRLHolder;
 import org.bouncycastle.cert.X509v2CRLBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CRLConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.signserver.common.*;
 import org.signserver.common.data.ReadableData;
@@ -1776,7 +1778,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         PDFSigner instance = new PDFSigner() {
 
             @Override
-            protected TSAClient getTimeStampClient(String url, String username, String password) {
+            protected TSAClient getTimeStampClient(String url, String username, String password, ASN1ObjectIdentifier digestAlgo) {
                 return tsc;
             }
 
@@ -1794,9 +1796,13 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         instance.setIncludeCertificateLevels(1);
 
         try (CloseableWritableData responseData = createResponseData(false)) {
-
+            final DefaultDigestAlgorithmIdentifierFinder algFinder =
+                new DefaultDigestAlgorithmIdentifierFinder();
+                final AlgorithmIdentifier ai = algFinder.find("SHA-256");
+                final ASN1ObjectIdentifier tsaDigestAlgorithm = ai.getAlgorithm();
+            
             instance.addSignatureToPDFDocument(token.acquireCryptoInstance("any-alias", Collections.<String, Object>emptyMap(), null), params, pdfbytes, null, null, 0,
-                    null, responseData, null);
+                    null, responseData, null, tsaDigestAlgorithm, "SHA-256");
             byte[] signedPdfbytes = responseData.toReadableData().getAsByteArray();
             assertNotNull(signedPdfbytes);
             assertTrue("some data", signedPdfbytes.length > 0);
@@ -1827,7 +1833,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         dic.setLocation("Location...");
         dic.setDate(new PdfDate(Calendar.getInstance()));
         sap.setCryptoDictionary(dic);
-        byte[] encodedSig = instance.calculateSignature(new PdfPKCS7(signerPrivKey, certChain, crlList, "SHA1", null, false), estimate, MessageDigest.getInstance("SHA1"), Calendar.getInstance(), null, certChain, tsc, ocsp, sap);
+        byte[] encodedSig = instance.calculateSignature(new PdfPKCS7(signerPrivKey, certChain, crlList, "SHA1", null, false), estimate, MessageDigest.getInstance("SHA1"), Calendar.getInstance(), null, certChain, tsc, ocsp, sap, "SHA-256");
 
         return encodedSig.length;
     }

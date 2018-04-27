@@ -364,7 +364,7 @@ public class PDFSigner extends BaseSigner {
             }
             
             addSignatureToPDFDocument(crypto, params, pdfBytes, pdfFile, password, 0,
-                                              signRequest, responseData, requestContext);
+                                              signRequest, responseData, requestContext, tsaDigestAlgorithm, tsaDigestAlgorithmName);
             final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, responseData.toReadableData(), archiveId));
             
             
@@ -532,7 +532,7 @@ public class PDFSigner extends BaseSigner {
     
     protected byte[] calculateSignature(PdfPKCS7 sgn, int size, MessageDigest messageDigest,
     		Calendar cal, PDFSignerParameters params, Certificate[] certChain, TSAClient tsc, byte[] ocsp,
-    		PdfSignatureAppearance sap) throws IOException, DocumentException, SignServerException {
+    		PdfSignatureAppearance sap, String tsaDigestAlgo) throws IOException, DocumentException, SignServerException {
      
         final HashMap<PdfName, Integer> exc = new HashMap<>();
         exc.put(PdfName.CONTENTS, size * 2 + 2);
@@ -557,14 +557,15 @@ public class PDFSigner extends BaseSigner {
         }
 
         byte[] encodedSig = sgn.getEncodedPKCS7(hash, cal, tsc, ocsp,
-                                                tsaDigestAlgorithmName);
+                                                tsaDigestAlgo);
         
         return encodedSig;
     }
     
     protected void addSignatureToPDFDocument(final ICryptoInstance crypto, PDFSignerParameters params,
             byte[] pdfBytes, File pdfFile, byte[] password, int contentEstimated,
-            final Request request, final WritableData responseData, final RequestContext context)
+            final Request request, final WritableData responseData, final RequestContext context,
+            final ASN1ObjectIdentifier tsaDigestAlgo, final String tsaDigestAlgoName)
             throws IOException, DocumentException,
                    CryptoTokenOfflineException, SignServerException, IllegalRequestException {
     	// when given a content length (i.e. non-zero), it means we are running a second try
@@ -770,11 +771,12 @@ public class PDFSigner extends BaseSigner {
                 final String tsaUrl = params.getTsa_url();
 
                 if (tsaUrl != null) {
-                    tsc = getTimeStampClient(params.getTsa_url(), params.getTsa_username(), params.getTsa_password());
+                    tsc = getTimeStampClient(params.getTsa_url(), params.getTsa_username(), params.getTsa_password(),
+                                             tsaDigestAlgo);
                 } else {
                     tsc = new InternalTSAClient(getProcessSession(context.getServices()),
                             WorkerIdentifier.createFromIdOrName(params.getTsa_worker()), params.getTsa_username(), params.getTsa_password(),
-                            tsaDigestAlgorithm);
+                            tsaDigestAlgo);
                 }
             }
 
@@ -821,7 +823,10 @@ public class PDFSigner extends BaseSigner {
                             calculateEstimatedSignatureSize(certChain, tsc, ocsp, crlList);
             }
 
-            byte[] encodedSig = calculateSignature(sgn, contentEstimated, messageDigest, cal, params, certChain, tsc, ocsp, sap);
+            byte[] encodedSig = calculateSignature(sgn, contentEstimated,
+                                                   messageDigest, cal, params,
+                                                   certChain, tsc, ocsp, sap,
+                                                   tsaDigestAlgoName);
 
             if (LOG.isDebugEnabled()) {
                     LOG.debug("Estimated size: " + contentEstimated);
@@ -840,7 +845,7 @@ public class PDFSigner extends BaseSigner {
                             // try signing again
                             addSignatureToPDFDocument(crypto, params, pdfBytes, pdfFile,
                                                              password, contentExact,
-                                                             request, responseData, context);
+                                                             request, responseData, context, tsaDigestAlgo, tsaDigestAlgoName);
                             return;
                     } else {
                             // if we fail to get an accurate signature size on the second attempt, bail out (this shouldn't happen)
@@ -1109,8 +1114,10 @@ public class PDFSigner extends BaseSigner {
         return Arrays.equals(reader.computeUserPassword(), password);
     }
 
-    protected TSAClient getTimeStampClient(String url, String username, String password) {
-        return new TSAClientBouncyCastle(url, username, password, tsaDigestAlgorithm);
+    protected TSAClient getTimeStampClient(String url, String username,
+                                             String password,
+                                             ASN1ObjectIdentifier digestAlgo) {
+        return new TSAClientBouncyCastle(url, username, password, digestAlgo);
     }
 
     @Override

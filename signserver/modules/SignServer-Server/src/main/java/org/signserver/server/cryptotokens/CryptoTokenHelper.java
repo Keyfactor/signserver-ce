@@ -282,7 +282,7 @@ public class CryptoTokenHelper {
                     } else if (TokenEntry.TYPE_PRIVATEKEY_ENTRY.equals(entry.getType())) {
                         PrivateKey privateKey = null;
                         try {
-                            privateKey = keyStore.aquirePrivateKey(alias, authCode);
+                            privateKey = keyStore.aquirePrivateKey(keyAlias, authCode);
                             final Certificate entryCert = keyStore.getCertificate(keyAlias);
                             if (entryCert != null) {
                                 final PublicKey publicKey = entryCert.getPublicKey();

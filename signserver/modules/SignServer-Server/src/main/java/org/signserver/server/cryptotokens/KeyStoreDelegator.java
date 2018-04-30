@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
-import java.security.Key;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;

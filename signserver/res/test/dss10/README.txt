@@ -29,7 +29,7 @@ CA Certificates/Keystores:
 Signer crypto token keystore:
     dss10_keystore.p12
         This can be used as a sample keystore crypto token for signers signing docuement, timestamp
-	signer, code signing, and for TLS clients.
+	signer, code signing, e-passport signing and for TLS clients.
         Aliases for document signing: signer00001, signer00002, signer00003
             Keys with certificates issued directly by the root CA, by the root CA using ECDSA key
             and using RSA issued by a sub CA.
@@ -37,6 +37,8 @@ Signer crypto token keystore:
             Using the same variations as for the document signing keys (with critical EKU timestamping).
         Aliases for code signing: code00001, code00002, code00003
             Using the same variations as for the document signing keys (with critical EKU codeSigning).
+        Alias for e-passport signing: sod00001
+        Key with certificates issued directly by the root CA.
 	Alias for TLS: ra00001
 	    Keys with a certificate suitable for TLS (with EKU tlsClient).
 

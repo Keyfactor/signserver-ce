@@ -340,21 +340,23 @@ class WorkerProcessImpl {
 
             if (increment) {
                 if (!keyUsageCounterDataService.incrementIfWithinLimit(keyHash, keyUsageLimit)) {
-                        final String message
-                                = "Key usage limit exceeded or not initialized for worker "
-                                + workerId;
-                        LOG.debug(message);
-                        throw new CryptoTokenOfflineException(message);
-                    }
+                    final String message
+                            = "Key usage limit exceeded or not initialized for worker "
+                            + workerId;
+                    CryptoTokenOfflineException ex = new CryptoTokenOfflineException(message);
+                    LOG.error("Error while checking signer key usage counter", ex);
+                    throw ex;
+                }
             } else {
                 // Just check the value without updating
                 if (keyUsageLimit > -1) {
                     if (!keyUsageCounterDataService.isWithinLimit(keyHash, keyUsageLimit)) {
                         final String message
-                            = "Key usage limit exceeded or not initialized for worker "
-                            + workerId;
-                        LOG.debug(message);
-                        throw new CryptoTokenOfflineException(message);
+                                = "Key usage limit exceeded or not initialized for worker "
+                                + workerId;
+                        CryptoTokenOfflineException ex = new CryptoTokenOfflineException(message);
+                        LOG.error("Error while checking signer key usage counter", ex);
+                        throw ex;
                     }
                 }
             }
@@ -363,7 +365,7 @@ class WorkerProcessImpl {
                 LOG.debug("Worker[" + workerId + "]: "
                     + "No certificate so not checking signing key usage counter");
             }
-        }
+}
     }
 
     private static void handleArchiving(final Response res, final WorkerWithComponents worker, final RequestContext requestContext) throws SignServerException {

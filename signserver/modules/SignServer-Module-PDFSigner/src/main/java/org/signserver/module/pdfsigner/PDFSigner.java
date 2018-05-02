@@ -174,6 +174,10 @@ public class PDFSigner extends BaseSigner {
 
     private String digestAlgorithm = DEFAULTDIGESTALGORITHM;
 
+    /* TODO: for now these are two separate fields since there are different
+     * APIs handling TSA digests. Maybe this should be handled in the 
+     * PDFParameters utility class.
+     */
     private ASN1ObjectIdentifier tsaDigestAlgorithm;
     private String tsaDigestAlgorithmName; // passed to PdfPkcs7
     

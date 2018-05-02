@@ -1454,7 +1454,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     
     /**
      * Test that explicitly setting TSA_DIGESTALGORITHM to SHA-384 doesn't
-     * give any error
+     * give any error.
      * 
      * @throws Exception
      */
@@ -1481,7 +1481,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     
     /**
      * Test that explicitly setting TSA_DIGESTALGORITHM to SHA-384 doesn't
-     * give any error
+     * give any error.
      * 
      * @throws Exception
      */

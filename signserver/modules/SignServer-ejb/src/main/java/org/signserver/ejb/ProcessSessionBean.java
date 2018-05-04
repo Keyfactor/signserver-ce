@@ -107,6 +107,9 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
     
+    @EJB
+    ProcessSessionTransLocal processSessionTrans;
+    
     @Resource
     private SessionContext ctx;
     
@@ -333,23 +336,25 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         }
         
         if (SessionUtils.needsTransaction(workerManagerSession, wi)) {
-            return session.processWithTransaction(adminInfo, wi, request, requestContext);
+            // use separate transaction bean to avoid deadlock
+            return processSessionTrans.processWithTransaction(adminInfo, wi, request, requestContext, processImpl);
         } else {
             return processImpl.process(adminInfo, wi, request, requestContext);
         }
     }
-
+    
+    //  TODO: remove below method as it is not used any more since separate bean ProcessSessionTransBean is used for transaction.
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Response processWithTransaction(final AdminInfo info,
-                                           final WorkerIdentifier wi,
-                                           final Request request,
-                                           final RequestContext requestContext)
+            final WorkerIdentifier wi,
+            final Request request,
+            final RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         if (LOG.isDebugEnabled()) {
             LOG.debug(">process in transaction: " + wi);
         }
-        
+
         return processImpl.process(info, wi, request, requestContext);
     }
 }

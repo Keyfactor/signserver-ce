@@ -49,9 +49,5 @@ public class MockedWorkerSession implements ProcessSessionLocal, InternalProcess
 
         return new CertificateValidationResponse(new Validation(icert, chain, Validation.Status.VALID, "Certificate is valid"), validPurposes);
     }
-
-    @Override
-    public Response processWithTransaction(AdminInfo info, WorkerIdentifier wi, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    
 }

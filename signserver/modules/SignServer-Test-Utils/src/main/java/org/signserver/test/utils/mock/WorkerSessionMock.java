@@ -160,15 +160,8 @@ public class WorkerSessionMock implements WorkerSessionLocal,
            requestContext.put(RequestContext.TRANSACTION_ID, UUID.randomUUID().toString());
         }
         return worker.getProcessable().processData(request, requestContext);
-    }
-
-    @Override
-    public Response processWithTransaction(AdminInfo info, WorkerIdentifier wi, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
-    
-
+    }   
+        
     @Override
     public WorkerStatus getStatus(WorkerIdentifier workerId) throws
             InvalidWorkerIdException {

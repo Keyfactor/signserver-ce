@@ -1,4 +1,4 @@
-/*************************************************************************
+/** ***********************************************************************
  *                                                                       *
  *  SignServer: The OpenSource Automated Signing Server                  *
  *                                                                       *
@@ -9,7 +9,7 @@
  *                                                                       *
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
- *************************************************************************/
+ ************************************************************************ */
 package org.signserver.ejb;
 
 import javax.annotation.PostConstruct;
@@ -32,6 +32,7 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.Response;
 import org.signserver.ejb.interfaces.DispatcherProcessSessionLocal;
+import org.signserver.ejb.interfaces.DispatcherProcessTransactionSessionLocal;
 import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.worker.impl.WorkerManagerSingletonBean;
@@ -70,7 +71,12 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
 
-    /** Injected by ejb-jar.xml. */
+    @EJB
+    DispatcherProcessTransactionSessionLocal dispatcherProcessTransSession;
+
+    /**
+     * Injected by ejb-jar.xml.
+     */
     EntityManager em;
 
     @Resource
@@ -95,7 +101,7 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
         }
         processImpl = new WorkerProcessImpl(em, keyUsageCounterDataService, workerManagerSession, logSession);
         session = ctx.getBusinessObject(DispatcherProcessSessionLocal.class);
-        
+
         // XXX The lookups will fail on GlassFish V2
         // When we no longer support GFv2 we can refactor this code
         InternalProcessSessionLocal internalSession = null;
@@ -134,15 +140,11 @@ public class DispatcherProcessSessionBean implements DispatcherProcessSessionLoc
             SignServerException {
         requestContext.setServices(servicesImpl);
         if (SessionUtils.needsTransaction(workerManagerSession, wi)) {
-            return session.processWithTransaction(adminInfo, wi, request, requestContext);
+            // use separate transaction bean to avoid deadlock
+            return dispatcherProcessTransSession.processWithTransaction(adminInfo, wi, request, requestContext);
         } else {
             return processImpl.process(adminInfo, wi, request, requestContext);
         }
     }
 
-    @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public Response processWithTransaction(AdminInfo info, WorkerIdentifier wi, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        return processImpl.process(info, wi, request, requestContext);
-    }
 }

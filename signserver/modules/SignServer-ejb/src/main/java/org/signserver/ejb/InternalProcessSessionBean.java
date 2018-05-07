@@ -42,6 +42,7 @@ import org.signserver.server.log.AdminInfo;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.ejb.interfaces.InternalProcessTransactionSessionLocal;
 import org.signserver.statusrepo.StatusRepositorySessionLocal;
 
 /**
@@ -69,7 +70,10 @@ public class InternalProcessSessionBean implements InternalProcessSessionLocal {
 
     @EJB
     private SecurityEventsLoggerSessionLocal logSession;
-
+    
+    @EJB
+    InternalProcessTransactionSessionLocal internalProcessTransSession;
+    
     /** Injected by ejb-jar.xml. */
     EntityManager em;
     
@@ -134,15 +138,11 @@ public class InternalProcessSessionBean implements InternalProcessSessionLocal {
             SignServerException {
         requestContext.setServices(servicesImpl);
         if (SessionUtils.needsTransaction(workerManagerSession, wi)) {
-            return session.processWithTransaction(adminInfo, wi, request, requestContext);
+            // use separate transaction bean to avoid deadlock
+            return internalProcessTransSession.processWithTransaction(adminInfo, wi, request, requestContext);
         } else {
             return processImpl.process(adminInfo, wi, request, requestContext);
         }
-    }
-
-    @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public Response processWithTransaction(AdminInfo info, WorkerIdentifier wi, Request request, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        return processImpl.process(info, wi, request, requestContext);
-    }
+    }    
+    
 }

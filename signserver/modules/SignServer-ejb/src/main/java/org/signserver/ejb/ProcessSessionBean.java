@@ -73,6 +73,7 @@ import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.server.UsernamePasswordClientCredential;
 import org.signserver.common.data.SignatureRequest;
 import org.signserver.common.data.SignatureResponse;
+import org.signserver.ejb.interfaces.ProcessTransactionSessionLocal;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.data.impl.DataFactory;
@@ -108,7 +109,7 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
     private SecurityEventsLoggerSessionLocal logSession;
     
     @EJB
-    ProcessSessionTransLocal processSessionTrans;
+    ProcessTransactionSessionLocal processTransSession;
     
     @Resource
     private SessionContext ctx;
@@ -337,24 +338,10 @@ public class ProcessSessionBean implements ProcessSessionRemote, ProcessSessionL
         
         if (SessionUtils.needsTransaction(workerManagerSession, wi)) {
             // use separate transaction bean to avoid deadlock
-            return processSessionTrans.processWithTransaction(adminInfo, wi, request, requestContext, processImpl);
+            return processTransSession.processWithTransaction(adminInfo, wi, request, requestContext);
         } else {
             return processImpl.process(adminInfo, wi, request, requestContext);
         }
-    }
+    }        
     
-    //  TODO: remove below method as it is not used any more since separate bean ProcessSessionTransBean is used for transaction.
-    @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public Response processWithTransaction(final AdminInfo info,
-            final WorkerIdentifier wi,
-            final Request request,
-            final RequestContext requestContext)
-            throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(">process in transaction: " + wi);
-        }
-
-        return processImpl.process(info, wi, request, requestContext);
-    }
 }

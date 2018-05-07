@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  ************************************************************************ */
-package org.signserver.ejb;
+package org.signserver.ejb.interfaces;
 
 import javax.ejb.Local;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -27,10 +27,11 @@ import org.signserver.server.log.AdminInfo;
  * transaction is needed.
  *
  * @author Vinay Singh
- * @version $Id$
+ * @version $Id: ProcessTransactionSessionLocal.java 9302 2018-05-04 15:08:01Z vinays
+ * $
  */
 @Local
-public interface ProcessSessionTransLocal {
+public interface ProcessTransactionSessionLocal {
 
     /**
      * The Worker Beans main method. Takes requests processes them and returns a
@@ -40,14 +41,13 @@ public interface ProcessSessionTransLocal {
      * @param wi id of worker who should process the request
      * @param request the request
      * @param requestContext
-     * @param workerProcessImpl contains business logic of process method
      * @return The process response
      * @throws IllegalRequestException
      * @throws CryptoTokenOfflineException
      * @throws SignServerException
      */
     Response processWithTransaction(final AdminInfo info, WorkerIdentifier wi, Request request,
-            RequestContext requestContext, WorkerProcessImpl workerProcessImpl)
+            RequestContext requestContext)
             throws IllegalRequestException, CryptoTokenOfflineException,
             SignServerException;
 

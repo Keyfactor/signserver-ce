@@ -775,7 +775,7 @@ public class SODFile extends PassportFile
                             algorithmParameters.get(digestEncryptionAlgorithm.toLowerCase(Locale.ENGLISH));
 //                }
             } else {
-                digestEncryptionAlgorithmParams = null;
+                digestEncryptionAlgorithmParams = DERNull.INSTANCE;
             }
         }
         catch (NoSuchAlgorithmException e) {

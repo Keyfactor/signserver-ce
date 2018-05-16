@@ -67,8 +67,9 @@ public interface KeyStoreDelegator {
      * @throws KeyStoreException
      * @throws NoSuchAlgorithmException
      * @throws UnrecoverableKeyException 
+     * @throws CryptoTokenOfflineException 
      */
-    public PrivateKey aquirePrivateKey(String alias, char[] password) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException;
+    public PrivateKey aquirePrivateKey(String alias, char[] password) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CryptoTokenOfflineException;
 
     /**
      * Call with a PrivateKey instance previously acquired in order to release it.

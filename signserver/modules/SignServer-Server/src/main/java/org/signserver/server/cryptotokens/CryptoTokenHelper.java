@@ -747,11 +747,12 @@ public class CryptoTokenHelper {
      * @throws UnrecoverableKeyException
      * @throws OperatorCreationException
      * @throws CertificateException 
+     * @throws CryptoTokenOfflineException 
      * @see CryptoTokenHelper#PROPERTY_SELFSIGNED_DN
      * @see CryptoTokenHelper#PROPERTY_SELFSIGNED_SIGNATUREALGORITHM
      * @see CryptoTokenHelper#PROPERTY_SELFSIGNED_VALIDITY
      */
-    public static void regenerateCertIfWanted(final String alias, final char[] authCode, final Map<String, Object> params, final KeyStoreDelegator keyStore, final String provider) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, OperatorCreationException, CertificateException {
+    public static void regenerateCertIfWanted(final String alias, final char[] authCode, final Map<String, Object> params, final KeyStoreDelegator keyStore, final String provider) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, OperatorCreationException, CertificateException, CryptoTokenOfflineException {
         String dn = (String) params.get(PROPERTY_SELFSIGNED_DN);
         Long validity = (Long) params.get(PROPERTY_SELFSIGNED_VALIDITY);
         String signatureAlgorithm = (String) params.get(PROPERTY_SELFSIGNED_SIGNATUREALGORITHM);

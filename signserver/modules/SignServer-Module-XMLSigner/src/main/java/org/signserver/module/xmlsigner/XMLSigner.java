@@ -77,7 +77,8 @@ public class XMLSigner extends BaseSigner {
     private static final String CONTENT_TYPE = "text/xml";
 
     // Property constants
-    public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
+    public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";    
+    public static final String DIGESTLGORITHM = "DIGESTALGORITHM";
 
     /**
      * Addional signature methods not yet covered by
@@ -103,6 +104,7 @@ public class XMLSigner extends BaseSigner {
             "http://www.w3.org/2009/xmldsig11#dsa-sha256";
 
     private String signatureAlgorithm;
+    private String digestAlgorithm;
 
     @Override
     public void init(final int workerId, final WorkerConfig config,
@@ -111,6 +113,10 @@ public class XMLSigner extends BaseSigner {
 
         // Get the signature algorithm
         signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM, DEFAULT_NULL);
+        
+        // Get the digest algorithm
+        digestAlgorithm = config.getProperty(DIGESTLGORITHM, DEFAULT_NULL);
+        
     }
 
     @Override
@@ -164,8 +170,17 @@ public class XMLSigner extends BaseSigner {
             SignedInfo si;
             try {
                 final String sigAlg = signatureAlgorithm == null ? getDefaultSignatureAlgorithm(privKey) : signatureAlgorithm;
+                
+                // find digest method
+                final String digestMethod;                
+                if (digestAlgorithm == null) {
+                    digestMethod = getDefaultDigestMethodFromSignatureAlgorithm(sigAlg);
+                } else {
+                    digestMethod = getDigestMethodFromDigestAlgorithmString(digestAlgorithm);
+                }
+                
                 Reference ref = fac.newReference("",
-                        fac.newDigestMethod(DigestMethod.SHA1, null),
+                        fac.newDigestMethod(digestMethod, null),
                         Collections.singletonList(fac.newTransform(Transform.ENVELOPED, (XMLStructure) null)),
                         null, null);
 
@@ -295,6 +310,77 @@ public class XMLSigner extends BaseSigner {
             result = "SHA256withRSA";
         }
 
+        return result;
+    }
+
+    /**
+     * Return the default digest method URI matching the given signature algorithm.
+     *
+     * @param sigAlg
+     * @return
+     */
+    private String getDefaultDigestMethodFromSignatureAlgorithm(String sigAlg) throws NoSuchAlgorithmException {
+        String result;
+
+        switch (sigAlg) {
+            case "SHA1withDSA":
+            case "SHA1withRSA":
+            case "SHA1withECDSA":
+                result = DigestMethod.SHA1;
+                break;
+            case "SHA256withDSA":
+            case "SHA256withRSA":
+            case "SHA256withECDSA":
+                result = DigestMethod.SHA256;
+                break;
+
+            case "SHA384withRSA":
+            case "SHA384withECDSA":
+                // No constant for SHA384 In DigestMethod so let's use SHA256
+                result = DigestMethod.SHA256;
+                break;
+
+            case "SHA512withRSA":
+            case "SHA512withECDSA":
+                result = DigestMethod.SHA512;
+                break;
+
+            default:
+                throw new NoSuchAlgorithmException("XMLSigner does not support signature algorithm: " + sigAlg);
+        }
+
+        return result;
+    }
+
+    /**
+     * Return the digest method URI matching the given digest algorithm.
+     *
+     * @param digestAlgorithm
+     * @return
+     */
+    private String getDigestMethodFromDigestAlgorithmString(String digestAlgorithm) throws NoSuchAlgorithmException {
+        String result;
+
+        switch (digestAlgorithm) {
+            case "SHA1":
+            case "SHA-1":
+                result = DigestMethod.SHA1;
+                break;
+            case "SHA256":
+            case "SHA-256":
+                result = DigestMethod.SHA256;
+                break;
+            case "SHA512":
+            case "SHA-512":
+                result = DigestMethod.SHA512;
+                break;
+            case "RIPEMD160":
+            case "RIPEMD-160":
+                result = DigestMethod.RIPEMD160;
+                break;
+            default:
+                throw new NoSuchAlgorithmException("XMLSigner does not support digest algorithm: " + digestAlgorithm);
+        }
         return result;
     }
 }

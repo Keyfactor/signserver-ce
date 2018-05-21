@@ -67,6 +67,11 @@ public class XMLSignerTest extends ModulesTestCase {
     private final ProcessSessionRemote processSession = getProcessSession();
     private final GlobalConfigurationSession globalSession = getGlobalSession();
     
+    private static final String DIGEST_METHOD_URI_SHA512 = "http://www.w3.org/2001/04/xmlenc#sha512";
+    private static final String DIGEST_METHOD_URI_SHA1 = "http://www.w3.org/2000/09/xmldsig#sha1";
+    private static final String DIGEST_METHOD_URI_SHA256 = "http://www.w3.org/2001/04/xmlenc#sha256";
+    private static final String DIGEST_METHOD_URI_RIPEMD160 = "http://www.w3.org/2001/04/xmlenc#ripemd160";
+    
     @Before
     @Override
     public void setUp() throws Exception {
@@ -107,10 +112,11 @@ public class XMLSignerTest extends ModulesTestCase {
      * 
      * @param workerId Worker to use.
      * @param sigAlg If set to non-null, set this for the SIGNATUREALGORITHM worker property while running the test.
-     * @param expectedAlgString Expected algorithm string in the output XML structure.
+     * @param expectedAlgString Expected signature algorithm string in the output XML structure.
+     * @param expectedDigestAlgString Expected digest algorithm string in the output XML structure.
      * @throws Exception
      */
-    private void testBasicXmlSign(final int workerId, final String sigAlg, final String expectedAlgString) throws Exception {
+    private void testBasicXmlSign(final int workerId, final String sigAlg, final String expectedSignatureAlgString, final String expectedDigestAlgString) throws Exception {
         final int reqid = 13;
 
         final GenericSignRequest signRequest =
@@ -144,8 +150,11 @@ public class XMLSignerTest extends ModulesTestCase {
         // XML Document
         checkXmlWellFormed(new ByteArrayInputStream(data));
 
-        // Check algorithm
-        assertTrue("Algorithm", usesAlgorithm(new String(data), expectedAlgString));
+        // Check signatue algorithm
+        assertTrue("Algorithm", usesSignatureAlgorithm(new String(data), expectedSignatureAlgString));
+        
+        // Check digest algorithm
+        assertTrue("Algorithm", usesDigestAlgorithm(new String(data), expectedDigestAlgString));
         
         // reset signature algorithm property
         workerSession.removeWorkerProperty(workerId, "SIGNATUREALGORITHM");
@@ -159,7 +168,7 @@ public class XMLSignerTest extends ModulesTestCase {
      */
     @Test
     public void test01BasicXmlSignRSADefaultSigAlg() throws Exception {
-        testBasicXmlSign(WORKERID, null, "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+        testBasicXmlSign(WORKERID, null, "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", DIGEST_METHOD_URI_SHA256);
     }
     
     /**
@@ -169,7 +178,7 @@ public class XMLSignerTest extends ModulesTestCase {
      */
     @Test
     public void test17BasicXmlSignEmptySigAlg() throws Exception {
-        testBasicXmlSign(WORKERID, "   ", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+        testBasicXmlSign(WORKERID, "   ", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", DIGEST_METHOD_URI_SHA256);
     }
     
     /**
@@ -179,22 +188,22 @@ public class XMLSignerTest extends ModulesTestCase {
      */
     @Test
     public void test02BasicXmlSignRSASHA1() throws Exception {
-        testBasicXmlSign(WORKERID, "SHA1withRSA", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
+        testBasicXmlSign(WORKERID, "SHA1withRSA", "http://www.w3.org/2000/09/xmldsig#rsa-sha1", DIGEST_METHOD_URI_SHA1);
     }
     
     @Test
     public void test03BasicXmlSignRSASHA256() throws Exception {
-        testBasicXmlSign(WORKERID, "SHA256withRSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+        testBasicXmlSign(WORKERID, "SHA256withRSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", DIGEST_METHOD_URI_SHA256);
     }
     
     @Test
     public void test04BasicXmlSignRSASHA384() throws Exception {
-        testBasicXmlSign(WORKERID, "SHA384withRSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384");
+        testBasicXmlSign(WORKERID, "SHA384withRSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384", DIGEST_METHOD_URI_SHA256);
     }
     
     @Test
     public void test05BasicXmlSignRSASHA512() throws Exception {
-        testBasicXmlSign(WORKERID, "SHA512withRSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512");
+        testBasicXmlSign(WORKERID, "SHA512withRSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512", DIGEST_METHOD_URI_SHA512);
     }
 
     /**
@@ -205,7 +214,7 @@ public class XMLSignerTest extends ModulesTestCase {
     @Test
     public void test06BasicXmlSignRSAInvalidAlgorithm() throws Exception {
         try {
-            testBasicXmlSign(WORKERID, "SHA1withDSA", "http://www.w3.org/2000/09/xmldsig#dsa-sha1");
+            testBasicXmlSign(WORKERID, "SHA1withDSA", "http://www.w3.org/2000/09/xmldsig#dsa-sha1", DIGEST_METHOD_URI_SHA1);
             fail("Should fail using incorrect signature algorithm for the key");
         } catch (SignServerException e) {
             // expected
@@ -222,32 +231,32 @@ public class XMLSignerTest extends ModulesTestCase {
 
     @Test
     public void test08BasicXmlSignDSADefaultSigAlg() throws Exception {
-        testBasicXmlSign(WORKERID2, null, "http://www.w3.org/2009/xmldsig11#dsa-sha256");
+        testBasicXmlSign(WORKERID2, null, "http://www.w3.org/2009/xmldsig11#dsa-sha256", DIGEST_METHOD_URI_SHA256);
     }
     
     @Test
     public void test09BasicXmlSignDSASHA1() throws Exception {
-        testBasicXmlSign(WORKERID2, "SHA1withDSA", "http://www.w3.org/2000/09/xmldsig#dsa-sha1");
+        testBasicXmlSign(WORKERID2, "SHA1withDSA", "http://www.w3.org/2000/09/xmldsig#dsa-sha1", DIGEST_METHOD_URI_SHA1);
     }
 
     @Test
     public void test10BasicXmlSignECDSASHA1() throws Exception {
-        testBasicXmlSign(WORKERID3, "SHA1withECDSA", "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1");
+        testBasicXmlSign(WORKERID3, "SHA1withECDSA", "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha1", DIGEST_METHOD_URI_SHA1);
     }
  
     @Test
     public void test11BasicXmlSignECDSASHA256() throws Exception {
-        testBasicXmlSign(WORKERID3, "SHA256withECDSA", "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256");
+        testBasicXmlSign(WORKERID3, "SHA256withECDSA", "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256", DIGEST_METHOD_URI_SHA256);
     }
     
     @Test
     public void test12BasicXmlSignECDSASHA384() throws Exception {
-        testBasicXmlSign(WORKERID3, "SHA384withECDSA", "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384");
+        testBasicXmlSign(WORKERID3, "SHA384withECDSA", "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384", DIGEST_METHOD_URI_SHA256);
     }
     
     @Test
     public void test13BasicXmlSignECDSASHA512() throws Exception {
-        testBasicXmlSign(WORKERID3, "SHA512withECDSA", "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512");
+        testBasicXmlSign(WORKERID3, "SHA512withECDSA", "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512", DIGEST_METHOD_URI_SHA512);
     }
     
     /**
@@ -256,7 +265,7 @@ public class XMLSignerTest extends ModulesTestCase {
      */
     @Test
     public void test14BasicXmlSignECDSADefaultSigAlg() throws Exception {
-        testBasicXmlSign(WORKERID3, null, "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256");
+        testBasicXmlSign(WORKERID3, null, "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256", DIGEST_METHOD_URI_SHA256);
     }
     
     /**
@@ -340,11 +349,20 @@ public class XMLSignerTest extends ModulesTestCase {
     }
 
     /**
-     * Returns true if the signed XML document uses the specified algorithm.
+     * Returns true if the signed XML document uses the specified signature algorithm.
      * @param xml
      * @param algorithm
      */
-    private boolean usesAlgorithm(final String xml, final String algorithm) {
-        return xml.contains("Algorithm=\""+algorithm);
+    private boolean usesSignatureAlgorithm(final String xml, final String signatureAlgorithm) {
+        return xml.contains("Algorithm=\"" + signatureAlgorithm);
+    }
+    
+    /**
+     * Returns true if the signed XML document uses the specified digest algorithm.
+     * @param xml
+     * @param algorithm
+     */
+    private boolean usesDigestAlgorithm(final String xml, final String digestAlgorithm) {
+        return xml.contains("Algorithm=\"" + digestAlgorithm);
     }
 }

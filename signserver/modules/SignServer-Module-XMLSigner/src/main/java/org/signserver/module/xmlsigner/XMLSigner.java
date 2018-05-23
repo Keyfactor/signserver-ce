@@ -60,6 +60,8 @@ import org.signserver.server.signers.BaseSigner;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
+import static org.signserver.common.SignServerConstants.DIGEST_METHOD_URI_SHA384;
+import org.signserver.server.IServices;
 
 /**
  * A Signer signing XML documents.
@@ -78,8 +80,9 @@ public class XMLSigner extends BaseSigner {
 
     // Property constants
     public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";    
-    public static final String DIGESTLGORITHM = "DIGESTALGORITHM";
-
+    public static final String DIGESTALGORITHM = "DIGESTALGORITHM";    
+    private static final String SIGNATURE_ALGORITHM_PREFIX = "with";
+    
     /**
      * Addional signature methods not yet covered by
      * javax.xml.dsig.SignatureMethod
@@ -104,18 +107,32 @@ public class XMLSigner extends BaseSigner {
             "http://www.w3.org/2009/xmldsig11#dsa-sha256";
 
     private String signatureAlgorithm;
-    private String digestAlgorithm;
+    private String digestAlgorithmString;
+    private String digestMethod;
+    private LinkedList<String> configErrors;
 
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
+        
+        // Configuration errors
+        configErrors = new LinkedList<>();
 
         // Get the signature algorithm
         signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM, DEFAULT_NULL);
         
         // Get the digest algorithm
-        digestAlgorithm = config.getProperty(DIGESTLGORITHM, DEFAULT_NULL);
+        digestAlgorithmString = config.getProperty(DIGESTALGORITHM, DEFAULT_NULL);
+        
+        // Get the digest method from digest algorithm
+        if (digestAlgorithmString != null) {
+            try {
+                digestMethod = getDigestMethodFromDigestAlgorithmString(digestAlgorithmString);
+            } catch (NoSuchAlgorithmException ex) {
+                configErrors.add("XMLSigner does not support digest algorithm: " + digestAlgorithmString);
+            }
+        }
         
     }
 
@@ -128,6 +145,11 @@ public class XMLSigner extends BaseSigner {
             throw new IllegalRequestException(
                     "Received request wasn't an expected GenericSignRequest.");
         }
+        
+        if (!configErrors.isEmpty()) {
+            throw new SignServerException("Worker is misconfigured");
+        }
+        
         final SignatureRequest sReq = (SignatureRequest) signRequest;
         String archiveId = createArchiveId(new byte[0], (String) requestContext.get(RequestContext.TRANSACTION_ID));
 
@@ -171,12 +193,9 @@ public class XMLSigner extends BaseSigner {
             try {
                 final String sigAlg = signatureAlgorithm == null ? getDefaultSignatureAlgorithm(privKey) : signatureAlgorithm;
                 
-                // find digest method
-                final String digestMethod;                
-                if (digestAlgorithm == null) {
-                    digestMethod = getDefaultDigestMethodFromSignatureAlgorithm(sigAlg);
-                } else {
-                    digestMethod = getDigestMethodFromDigestAlgorithmString(digestAlgorithm);
+                // find digest method if DIGESTALGORITHM not provided                               
+                if (digestMethod == null) {
+                    digestMethod = getDefaultDigestMethodFromSignatureAlgorithm((sigAlg));
                 }
                 
                 Reference ref = fac.newReference("",
@@ -322,29 +341,22 @@ public class XMLSigner extends BaseSigner {
     private String getDefaultDigestMethodFromSignatureAlgorithm(String sigAlg) throws NoSuchAlgorithmException {
         String result;
 
-        switch (sigAlg) {
-            case "SHA1withDSA":
-            case "SHA1withRSA":
-            case "SHA1withECDSA":
+        // Extract digest algorithm from signature algorithm
+        String digestAlg = sigAlg.substring(0, sigAlg.indexOf(SIGNATURE_ALGORITHM_PREFIX));
+
+        switch (digestAlg) {
+            case "SHA1":
                 result = DigestMethod.SHA1;
                 break;
-            case "SHA256withDSA":
-            case "SHA256withRSA":
-            case "SHA256withECDSA":
+            case "SHA256":
                 result = DigestMethod.SHA256;
                 break;
-
-            case "SHA384withRSA":
-            case "SHA384withECDSA":
-                // No constant for SHA384 In DigestMethod so let's use SHA256
-                result = DigestMethod.SHA256;
+            case "SHA384":
+                result = DIGEST_METHOD_URI_SHA384;
                 break;
-
-            case "SHA512withRSA":
-            case "SHA512withECDSA":
+            case "SHA512":
                 result = DigestMethod.SHA512;
                 break;
-
             default:
                 throw new NoSuchAlgorithmException("XMLSigner does not support signature algorithm: " + sigAlg);
         }
@@ -370,6 +382,10 @@ public class XMLSigner extends BaseSigner {
             case "SHA-256":
                 result = DigestMethod.SHA256;
                 break;
+            case "SHA384":
+            case "SHA-384":
+                result = DIGEST_METHOD_URI_SHA384;
+                break;
             case "SHA512":
             case "SHA-512":
                 result = DigestMethod.SHA512;
@@ -382,5 +398,12 @@ public class XMLSigner extends BaseSigner {
                 throw new NoSuchAlgorithmException("XMLSigner does not support digest algorithm: " + digestAlgorithm);
         }
         return result;
+    }
+    
+    @Override
+    protected List<String> getFatalErrors(final IServices services) {
+        final LinkedList<String> errors = new LinkedList<>(super.getFatalErrors(services));
+        errors.addAll(configErrors);
+        return errors;
     }
 }

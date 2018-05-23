@@ -13,13 +13,14 @@
 package org.signserver.server.key.entities;
 
 /**
+ * Exception indicating that key data with the provided alias already exists.
  *
  * @author Markus Kilås
  * @version $Id$
  */
 public class AliasAlreadyExistsException extends Exception {
-    
-    private String alias;
+
+    private final String alias;
 
     public AliasAlreadyExistsException(String keyAlias) {
         super("Duplicate alias: " + keyAlias);

@@ -17,6 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 /**
+ * Service for interacting with the key data entities.
  *
  * @author Markus Kilås
  * @version $Id$

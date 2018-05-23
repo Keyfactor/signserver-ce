@@ -35,7 +35,6 @@ import org.junit.Test;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.ejb.interfaces.GlobalConfigurationSession;
-import static org.signserver.common.SignServerConstants.DIGEST_METHOD_URI_SHA384;
 
 /**
  * Tests for XMLSigner.
@@ -72,6 +71,7 @@ public class XMLSignerTest extends ModulesTestCase {
     private static final String DIGEST_METHOD_URI_SHA1 = "http://www.w3.org/2000/09/xmldsig#sha1";
     private static final String DIGEST_METHOD_URI_SHA256 = "http://www.w3.org/2001/04/xmlenc#sha256";
     private static final String DIGEST_METHOD_URI_RIPEMD160 = "http://www.w3.org/2001/04/xmlenc#ripemd160";
+    private static final String DIGEST_METHOD_URI_SHA384 = "http://www.w3.org/2001/04/xmldsig-more#sha384";
     
     @Before
     @Override

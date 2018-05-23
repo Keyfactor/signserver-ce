@@ -97,7 +97,5 @@ public class SignServerConstants {
     
     public static final String TOKEN_ENTRY_FIELDS_ALIAS = "alias";        // Old criteria column name that still need to be supported for client interfaces
     public static final String TOKEN_ENTRY_FIELDS_KEY_ALIAS = "keyAlias"; // Current criteria column name and defined in CryptoTokenHelper.TokenEntryFields
-    
-    // Digest method constant for SHA-384 algorithm with respect tot XML signing 
-    public static final String DIGEST_METHOD_URI_SHA384 = "http://www.w3.org/2001/04/xmldsig-more#sha384";
+
 }

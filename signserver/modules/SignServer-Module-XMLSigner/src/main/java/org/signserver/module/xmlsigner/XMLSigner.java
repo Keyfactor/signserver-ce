@@ -60,7 +60,6 @@ import org.signserver.server.signers.BaseSigner;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
-import static org.signserver.common.SignServerConstants.DIGEST_METHOD_URI_SHA384;
 import org.signserver.server.IServices;
 
 /**
@@ -81,7 +80,8 @@ public class XMLSigner extends BaseSigner {
     // Property constants
     public static final String SIGNATUREALGORITHM = "SIGNATUREALGORITHM";    
     public static final String DIGESTALGORITHM = "DIGESTALGORITHM";    
-    private static final String SIGNATURE_ALGORITHM_PREFIX = "with";
+    private static final String SIGNATURE_ALGORITHM_PREFIX = "with";     
+    private static final String DIGEST_METHOD_URI_SHA384 = "http://www.w3.org/2001/04/xmldsig-more#sha384";
     
     /**
      * Addional signature methods not yet covered by

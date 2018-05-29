@@ -1,3 +1,108 @@
+SignServer 4.3.0, 2018-06-01
+----------------------------
+
+** Bug
+    * [DSS-1408] - Key generation dummy certificate uses obsolete algorithm
+    * [DSS-1493] - Key generation and activation fails with Utimaco in FIPS mode
+    * [DSS-1520] - "View" link is shown even if "Certificate" property is "n/a" on CryptoTokenEntry page
+    * [DSS-1521] - Error not shown on GenerateKeyBean page if key creation fails
+    * [DSS-1527] - Crypto token content can not be displayed when keystore contains trusted entry
+    * [DSS-1529] - KeystoreCryptoTokenTest under Test-System module has not run ever
+    * [DSS-1538] - Regression: Type for trusted key entries displayed as "null null"
+    * [DSS-1542] - KeystoreCryptoTokenTest leaves temp files 
+    * [DSS-1563] - Dummy certificate not recognized as such with JackNJI11CryptoToken
+    * [DSS-1579] - Database CLI audit log verification not working with shared library name
+    * [DSS-1580] - NPE is thrown when worker is configured with inappropriate DEFAULT key of JackNJI11CryptoToken
+    * [DSS-1586] - Key creation with same alias not allowed sometimes after deletion in JackNJI11CryptoToken
+    * [DSS-1590] - Regression: Worker lockup under high load when database interactions are configured
+    * [DSS-1591] - P11NG tool should not require an application server
+    * [DSS-1605] - Stress test with new JackNJI11CryptoToken fails 
+    * [DSS-1606] - Not able to use certificate stored in config (i.e. not in token) with P11NG
+    * [DSS-1610] - No server side error when stress test with KeyWrappingWorker fails
+    * [DSS-1614] - Stress test with new JackNJI11KeyWrappingCryptoToken fails
+    * [DSS-1670] - Unwrapped objects not being removed
+    * [DSS-1673] - SOD Signer does not include NULL parameter for RSASSA-PKCS1 signature
+    * [DSS-1677] - XML Signer uses SHA1 for the DigestAlgorithm
+
+** Epic
+    * [DSS-1306] - Epic for HSM wrapped key crypto token with storage in database
+    * [DSS-1649] - Epic for SignClient server failover and loadbalancing options
+
+** New Feature
+    * [DSS-1489] - Secret (symmetric) key generation support
+    * [DSS-1490] - Support for multiple signature algorithms in provider
+    * [DSS-1495] - Support for specifying key attributes during key generation with SunPKCS11 provider
+    * [DSS-1496] - Support for specifying key attributes during key generation with JackNJI11 provider
+    * [DSS-1508] - Display key usage counter value for key entry in Admin Web
+    * [DSS-1509] - Display wrapping key alias and cipher suite for key entry in Admin Web
+    * [DSS-1510] - Configurable wrapping encryption algorithm for JackNJI11UnwrappingCryptoToken
+    * [DSS-1515] - Key removal support for wrapping crypto token
+    * [DSS-1516] - List secret key for JackNJI11 provider under Cryptotoken entry page
+    * [DSS-1524] - Key removal support for JackNJI11crypto token
+    * [DSS-1525] - PKCS#11 tests using the new provider
+    * [DSS-1526] - Possibility to disable a crypto token
+    * [DSS-1530] - Slot label type support for JackNJI11CryptoToken
+    * [DSS-1534] - Database protection signing support with JackNJI11 Provider
+    * [DSS-1613] - Test signing/performance command in p11ng-tool
+    * [DSS-1617] - Add ant target to produce P11NG tool bundle
+    * [DSS-1652] - Add signature algorithm option to P11NG CLI
+    * [DSS-1653] - SignClient connection timeout option
+    * [DSS-1654] - SignClient failover with multiple hosts option
+    * [DSS-1655] - SignClient loadbalancing option
+
+** Task
+    * [DSS-1519] - Create a 4.3.0 version in Confluence
+    * [DSS-1537] - Clean up PoC code
+    * [DSS-1548] - Test the 4.3 SQL-scripts with PostgreSQL
+    * [DSS-1570] - Update copyright year for 2018
+    * [DSS-1575] - Test that key wrapping crypto token fails in a proper way in NoDB mode
+    * [DSS-1635] - Caching: 1a. Identify cache update/invalidation scenarios
+    * [DSS-1636] - Caching: 1b. New GetAttributeValue & FindObjects methods
+    * [DSS-1637] - Caching: 1c. Create test scenarios (use cases and negative testing)
+    * [DSS-1638] - Caching: 2. Review mappings
+    * [DSS-1639] - Caching: 3a. Unit tests for FindObjects & GetAttributeValue
+    * [DSS-1640] - Caching: 3b. Add cache
+    * [DSS-1641] - Caching: 4a. Remove key: Invalidate cache entry, incl. unit tests
+    * [DSS-1642] - Caching: 4b. Upload cert: Invalidate cache entry, incl. unit tests
+    * [DSS-1643] - Caching: 4c. Tool: Cache option
+    * [DSS-1644] - Caching: 4d. CryptoToken: Cache option
+    * [DSS-1645] - Caching: 5a. Document caching for internal use
+    * [DSS-1646] - Caching: 5b. Document caching option for user documentation
+    * [DSS-1647] - Caching: 5c. Cache negative results
+
+** Improvement
+    * [DSS-1002] - Update sample PKCS#11 configuration to disable some additional attributes
+    * [DSS-1352] - Change all default algorithms to strong ones
+    * [DSS-1507] - Support for shared library name for JackNJI11 provider
+    * [DSS-1511] - Include wrapping key alias and wrapping algorithm in KeyData table
+    * [DSS-1513] - Display worker crypto token tab for all crypto workers
+    * [DSS-1514] - Unwrapping crypto worker referencing an other crypto worker
+    * [DSS-1517] - Use code block for command listings
+    * [DSS-1531] - Handle JackNJI11 crypto token errors
+    * [DSS-1536] - Show "disabled" as status for disabled workers in admin web
+    * [DSS-1541] - Make JackNJI11 Provider compatible with SunPKCS11 Provider
+    * [DSS-1547] - Rename alias column in KeyData table
+    * [DSS-1549] - Refactor duplicated code in CryptoTokenHelper vs. JackNJI11CryptoTokenHelper
+    * [DSS-1550] - Show meaningful failure message while testing secret key through JackNJICryptoToken
+    * [DSS-1554] - Cheerypick changes from upstream JackNJI11
+    * [DSS-1564] - Use C_SignUpdate in Signature implementation for JackNJI11 Provider
+    * [DSS-1567] - Document Key Wrapping set-up in operation guide
+    * [DSS-1568] - Document the new p11ng-tool
+    * [DSS-1581] - JUnit tests for setting attributes with P11NG
+    * [DSS-1582] - JUnit tests for secret key generation with P11NG
+    * [DSS-1583] - JUnit tests for key gen, usage, import, query and removal with P11NG
+    * [DSS-1584] - JUnit tests for different signature algorithms with P11NG
+    * [DSS-1585] - JUnit tests for slot label type support with P11NG
+    * [DSS-1589] - Refactor and improve code in P11NgCli
+    * [DSS-1592] - Fix DES key generation/test with ProtectServer Gold Emulator
+    * [DSS-1593] - Refuse to import certificate to token when keys don't match also for P11NG
+    * [DSS-1597] - Document that the MSAuthCodeCMSSigner does not support Authenticode time-stamp format
+    * [DSS-1601] - Add JackNJI11 crypto token options in Signer sample-configs files
+    * [DSS-1630] - Caching of JackNJI11 PKCS#11 calls
+    * [DSS-1661] - JArchiveSigner should request time-stamps with the configured algorithm
+    * [DSS-1662] - PDFSigner should request time-stamps with the configured algorithm
+
+
 SignServer 4.2.2, 2018-03-13
 ----------------------------
 

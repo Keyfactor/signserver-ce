@@ -1,8 +1,23 @@
 SignServer 4.3.0
 ----------------
 
+New features and improvements:
+ - SignClient Server Failover and Loadbalancing
+ - Strong Algorithms by Default
+ - Key Wrapping (limited support)
+ - New Alternative PKCS#11 Provider (experimental)
+ - Utimaco HSM in FIPS Mode Support
+
+Bug fixes:
+ - Regression: Worker lockup under high load when database interactions was 
+   configured.
+ - SOD Signer was not including NULL parameter for RSASSA-PKCS1 signature
+   as required by ICAO.
+
 Notice:
- - Default values for digest and signature algorithms have now changed to use SHA-256.
+ - Default values for digest and signature algorithms have now changed to use 
+   SHA-256. Explicitly specified algorithms will remain with the specified
+   values.
 
 
 SignServer 4.2.2

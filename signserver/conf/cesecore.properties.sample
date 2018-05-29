@@ -33,3 +33,14 @@ securityeventsaudit.exporter.1=org.cesecore.audit.impl.AuditExporterXml
 #securityeventsaudit.deviceproperty.1.export.dir=/tmp/
 #securityeventsaudit.deviceproperty.1.export.fetchsize=1000
 #securityeventsaudit.deviceproperty.1.validate.fetchsize=1000
+
+#------------------- PKCS#11 -------------------------------------
+# Configuration of PKCS#11 tokens.
+
+# Setting the PKCS#11 attribute CKA_MODIFIABLE to FALSE after a key is generated.
+#
+# If true and if is not patched then a warning will be written to the
+# log each time a key (all key types even none p11) is generated.
+# If the key is not a PKCS#11 key then nothing is done.
+# Default: false
+#pkcs11.makeKeyUnmodifiableAfterGeneration=true

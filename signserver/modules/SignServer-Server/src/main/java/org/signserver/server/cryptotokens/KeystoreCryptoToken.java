@@ -335,8 +335,14 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(final int startIndex, final int max, QueryCriteria qc, boolean includeData, Map<String, Object> params, IServices services) 
+    public TokenSearchResults searchTokenEntries(final int startIndex, final int max, QueryCriteria qc, boolean includeData, Map<String, Object> params, IServices services)
             throws CryptoTokenOfflineException, QueryException {
+
+        // check first whether keystore is available and initialized
+        if (this.delegator == null) {
+            throw new CryptoTokenOfflineException("PKCS#12 keystore invalid - wrong password or corrupted file?");
+        }
+
         return CryptoTokenHelper.searchTokenEntries(this.delegator, startIndex, max, qc, includeData, services, authenticationCode);
     }
 

@@ -14,6 +14,7 @@ package org.signserver.client.cli.defaultimpl;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import org.signserver.common.IllegalRequestException;
 
 /**
  * Interface for handling signing of specific file types.
@@ -40,8 +41,9 @@ public interface FileSpecificHandler extends AutoCloseable {
      * @return the signature input
      * @throws NoSuchAlgorithmException
      * @throws IOException typically in case of issues reading the input file or writing to the output file
+     * @throws IllegalRequestException for example: if file is already signed
      */
-    InputSource produceSignatureInput(String algorithm) throws NoSuchAlgorithmException, IOException;
+    InputSource produceSignatureInput(String algorithm) throws NoSuchAlgorithmException, IOException, IllegalRequestException;
     
     /**
      * Phase 2: Finalize the output file by embedding the provided signature.

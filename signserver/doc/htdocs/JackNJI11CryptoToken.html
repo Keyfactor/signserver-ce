@@ -215,9 +215,45 @@
         <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
 
             </li>
-                                        <li class="leaf">
+                                        <li class="collapsed">
         <a class="ht-nav-page-link" href="Client_CLI.html">Client CLI</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatedocument.html">validatedocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="timestamp.html">timestamp</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatecertificate.html">validatecertificate</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdatagroups.html">signdatagroups</a>
+
+            </li>
+                            </ul>
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Admin_WS_Interface.html">Admin WS Interface</a>
@@ -1170,14 +1206,6 @@
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >&nbsp;    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >&nbsp;    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >PIN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
@@ -1219,8 +1247,8 @@
     <p  >    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Specify a PKCS#11 attribute to to use when generating a key.    </p>
-    <p  >Where x is the object class: PUBLIC or PRIVATE.<br/>Where y is the key type: RSA, ECDSA, etc.<br/>Where z is the attribute name or ID as decimal number or a hexadecimal number prefixed with &quot;0x&quot;. An exception to this is CKA_ALLOWED_MECHANISMS, which currently can not be specified in decimal or hexadecimal form.    </p>
+        <p  >Specify a PKCS#11 attribute to use when generating a key.    </p>
+    <p  >Where x is the object class: PUBLIC or PRIVATE.<br/>Where y is the key type: RSA, ECDSA, etc.<br/>Where z is the attribute name or ID as decimal number, or a hexadecimal number prefixed with &quot;0x&quot;. An exception to this is CKA_ALLOWED_MECHANISMS, which currently cannot be specified in decimal or hexadecimal form.    </p>
     <p  >Examples:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1239,31 +1267,38 @@
     </div>
             </td>
         </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >USE_CACHE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Specify if key and certificate search results from the HSM should be cached. This can prevent problems due to too many find object requests under high load with some PKCS#11 implementations. Optional: default true.    </p>
+            </td>
+        </tr>
 </tbody>        </table>
             </div>
     </div>
     <div class="section section-1" id="src-11574708_id-.JackNJI11CryptoTokenv4.3.0-SecretKeygeneration">
         <h1 class="heading "><span>Secret Key generation</span></h1>
-    <p  >While generating secret key through JackNJ11CryptoToken, algorithm name can be supplied in below three ways. See also <a   href="Crypto_Token_Generate_Key_Page.html">Crypto Token Generate Key Page</a>    </p>
+    <p  >If generating a secret key through the JackNJI11CryptoToken, the algorithm name can be supplied in the following ways. See also <a   href="Crypto_Token_Generate_Key_Page.html">Crypto Token Generate Key Page</a>.    </p>
     <div class="section section-2" id="src-11574708_id-.JackNJI11CryptoTokenv4.3.0-StandardJavaName">
         <h2 class="heading "><span>Standard Java Name</span></h2>
-    <p  >Example: AES, DES    </p>
-    <p  >If provided algorithm name is not part of predefined list of known secret key algorithms, algorithm name should be prefixed with &quot;SEC&quot;: Example: <strong class=" ">SEC:CAST128</strong>    </p>
-    <p  >Currently known secret key list contains AES and DES algorithms.    </p>
+    <p  >Example: <strong class=" ">AES, DES.</strong>    </p>
+    <p  >If the specified key algorithm name is not present in the predefined list of known secret key algorithms, the key algorithm name must be specified with the prefix &quot;SEC:&quot;, for example: <strong class=" ">SEC:Blowfish</strong>. Currently, the secret key list contains the algorithms AES and DES.    </p>
     </div>
     <div class="section section-2" id="src-11574708_id-.JackNJI11CryptoTokenv4.3.0-CKMLongvalue">
         <h2 class="heading "><span>CKM Long value</span></h2>
-    <p  >Example: <strong class=" ">SEC:4224</strong>. Here 4224 represents long value for AES_KEY_GEN constant as per PKCS11 specification.&quot;SEC:&quot; is prefix    </p>
+    <p  >Example: <strong class=" ">SEC:4224</strong>. Here 4224 represents the long value for the AES_KEY_GEN constant as per the PKCS11 specification. &quot;SEC:&quot; is used as prefix.    </p>
     </div>
     <div class="section section-2" id="src-11574708_id-.JackNJI11CryptoTokenv4.3.0-CKMHexadecimalvalue">
         <h2 class="heading "><span>CKM Hexadecimal value</span></h2>
-    <p  >Example: <strong class=" ">SEC:0x00001080</strong>. Here 0x00001080 represents hexadecimal value for AES_KEY_GEN constant as per PKCS11 specification.&quot;SEC:&quot; is prefix    </p>
+    <p  >Example: <strong class=" ">SEC:0x00001080</strong>. Here 0x00001080 represents a hexadecimal value for the AES_KEY_GEN constant as per the PKCS11 specification. &quot;SEC:&quot; is used as prefix.    </p>
     </div>
     </div>
     <div class="section section-1" id="src-11574708_id-.JackNJI11CryptoTokenv4.3.0-KnowLimitations">
         <h1 class="heading "><span>Know Limitations</span></h1>
-<ul class=" "><li class=" ">    <p  >Multiple different CA certificates with the same subject DN can not be stored in the token (see <a  class="external-link" href="https://jira.primekey.se/browse/DSS-1544">DSS-1544</a>).    </p>
-</li><li class=" ">    <p  >Changes made in an HSM slot from a different process (i.e. outside the application server) might not be visible within SignServer without a restart of the application server. In order to be able to use new key-pairs directly it is recommended to generate the keys from within SignServer.    </p>
+<ul class=" "><li class=" ">    <p  >Multiple different CA certificates with the same subject DN cannot be stored in the token (see <a  class="external-link" href="https://jira.primekey.se/browse/DSS-1544">DSS-1544</a>).    </p>
+</li><li class=" ">    <p  >Changes made in an HSM slot from a different process (i.e. outside the application server) might not be visible within SignServer without a restart of the application server. To use new key-pairs directly, it is recommended to generate the keys from within SignServer.    </p>
 </li></ul>    </div>
         </div>
 

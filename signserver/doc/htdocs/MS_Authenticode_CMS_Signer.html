@@ -215,9 +215,45 @@
         <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
 
             </li>
-                                        <li class="leaf">
+                                        <li class="collapsed">
         <a class="ht-nav-page-link" href="Client_CLI.html">Client CLI</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatedocument.html">validatedocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="timestamp.html">timestamp</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatecertificate.html">validatecertificate</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdatagroups.html">signdatagroups</a>
+
+            </li>
+                            </ul>
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Admin_WS_Interface.html">Admin WS Interface</a>
@@ -1132,7 +1168,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-11573717"> <span>MS Authenticode CMS Signer</span></h1>
+</div>            <h1 id="src-16223897"> <span>MS Authenticode CMS Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1140,13 +1176,19 @@
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
     <p  >The signer has the fully qualified class name: <strong class=" ">org.signserver.module.msauthcode.signer.MSAuthCodeCMSSigner</strong>.    </p>
-    <div class="section section-1" id="src-11573717_id-.MSAuthenticodeCMSSignerv4.2.1-Overview">
+    <div class="section section-1" id="src-16223897_id-.MSAuthenticodeCMSSignerv4.3.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The MS Authenticode CMS signer is special-purpose version of the extended CMS signer, producing Authenticode-compatible CMS signatures suitable for embedding into portable executables (.exe, .dll) and MSI installer packages. This is intended for use with client-side hashing, where a client does the hashing of the original file and requests this hash to be signed by SignServer, giving a resulting signature which is then inserted into the resulting output file by the client.    </p>
     <p  >This signer has all the properties of the <a   href="Extended_CMS_Signer.html">Extended CMS Signer</a>, and also the same Authenticode-specific properties as the <a   href="MS_Authenticode_Signer.html">MS Authenticode Signer</a>. Note however that setting CONTENTOID or allowing overriding content OID (by setting ALLOW_CONTENTOID_OVERRIDE to true) is not supported (as the content OID will be set to be compatible with Authenticode specification).    </p>
     <p  >The signdocument command can be used with client-side hashing and construction to sign a portable executable or MSI installer by hashing on the client-side, signing the hash server-side using this signer, and finally assembling the final signed binary or installer on the client-side. For more information, see <a   href="Client-Side_Hashing.html">Client-Side Hashing</a>.    </p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+    <p  >The MS Authenticode CMS signer only supports RFC#3161 timestamps.    </p>
+        </div>
     </div>
-    <div class="section section-1" id="src-11573717_id-.MSAuthenticodeCMSSignerv4.2.1-AvailableProperties">
+    </div>
+    <div class="section section-1" id="src-16223897_id-.MSAuthenticodeCMSSignerv4.3.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1196,7 +1238,7 @@
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-11573717_id-.MSAuthenticodeCMSSignerv4.2.1-RequestProperties">
+    <div class="section section-2" id="src-16223897_id-.MSAuthenticodeCMSSignerv4.3.0-RequestProperties">
         <h2 class="heading "><span>Request Properties</span></h2>
     <p  >This worker can accept the following request metadata properties, given that they are configured to be allowed:    </p>
     <div  class="tablewrap">

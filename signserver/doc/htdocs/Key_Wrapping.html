@@ -215,9 +215,45 @@
         <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
 
             </li>
-                                        <li class="leaf">
+                                        <li class="collapsed">
         <a class="ht-nav-page-link" href="Client_CLI.html">Client CLI</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatedocument.html">validatedocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="timestamp.html">timestamp</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatecertificate.html">validatecertificate</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdatagroups.html">signdatagroups</a>
+
+            </li>
+                            </ul>
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Admin_WS_Interface.html">Admin WS Interface</a>
@@ -1136,8 +1172,41 @@
 
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
-    <p  >TODO: Give background on the concept and details on the required parts and reference the <a   href="SignServer_Operations.html">SignServer Operations</a> chapter with a how-to for how to <a   href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a> with step by step and also reference the <a   href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>, <a   href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a> and the <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>.    </p>
-    <p  >    </p>
+    <div class="section section-1" id="src-15859736_id-.KeyWrappingv4.3.0-Introduction">
+        <h1 class="heading "><span>Introduction</span></h1>
+    <p  >Key wrapping allows solving issues arising when the number of keys you need to handle exceeds the amount that can be stored in a limited storage space for an HSM. The feature enables exporting the key material in a protected manner and storing the wrapped, encrypted key in an external database.    </p>
+    <p  >A key-pair is generated within the HSM and the private key is wrapped (that is, encrypted with a secret key in the HSM) and exported and stored in the database. When you are going to sign with the key, the wrapped key is fetched from the database and unwrapped in the HSM, used for signing and then removed from the HSM again. Keys are thus only available in the HSM when used and only take up space in the HSM during that time.    </p>
+    <p  >For information on the steps required to set up key wrapping, see <a   href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>.    </p>
+    <p  >The following displays an overview of the key wrapping operations:    </p>
+    <p  >    <img  class="confluence-embedded-image" src="images/download/attachments/15859736/KeyWrappingOverview.png" alt="images/download/attachments/15859736/KeyWrappingOverview.png"  height="250" />
+        </p>
+<ul class=" "><li class=" ">    <p  >The Source Crypto Worker contains a Crypto Token in order to communicate with the HSM and perform key operations. The wrapping key (secret key: <tt class=" ">aeskey001)</tt> is created in the HSM using the Source Crypto Token.    </p>
+</li><li class=" ">    <p  >The Key Wrapping Crypto Worker contains a Key Wrapping Crypto Token in order to perform wrapped key operations. The Key Wrapping Crypto Worker references the Source Crypto Worker to get hold of HSM objects and perform key operations in the HSM.    </p>
+    <p  >The main operations of the Key Wrapping Crypto Token are to generate the wrapped key and to unwrap the wrapped key (using the wrapping key) in the HSM to be used for signing.    </p>
+</li><li class=" ">    <p  >The Plain Signer references the Key Wrapping Crypto Worker in order to perform a signing operation. The Plain Signer can be configured to use either a fixed key <tt class=" ">(fixedkey01)</tt> or an individual user key (<tt class=" ">userkey1/userkey2/userkey3</tt>) depending on the requirement.    </p>
+</li></ul>    </div>
+    <div class="section section-1" id="src-15859736_id-.KeyWrappingv4.3.0-Prerequisites">
+        <h1 class="heading "><span>Prerequisites</span></h1>
+    <p  >The key wrapping use case requires that the key wrapping functions PKCS#11 C_WrapKey and C_UnwrapKey are supported and allowed by both the HSM and the crypto token.    </p>
+    <p  >The SignServer <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a> uses the SunPKCS11 provider/wrapper from Java for interactions with the HSM and this provider/wrapper does not implement wrapping functions. Instead, the new P11NG provider in SignServer can be used, using the <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>. Additionally, for the key wrapping functionality, the <a   href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a> or the <a   href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a> can also be used.    </p>
+    <p  >Note that since the key material is stored in the database, this use case is not supported when running SignServer without database (also called NoDB mode).    </p>
+    </div>
+    <div class="section section-1" id="src-15859736_id-.KeyWrappingv4.3.0-Limitations">
+        <h1 class="heading "><span>Limitations</span></h1>
+    <p  >As of SignServer 4.3.0, the key wrapping use case has been successfully tested on the SafeNet ProtectServer Gold (HSM emulator).    </p>
+    <p  >While the key wrapping feature has been tested on Thales nCipher there are some open issues with stability. If using Thales nCipher, the following environment variable needs to be set:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">export CKNFAST_OVERRIDE_SECURITY_ASSURANCES=</code><code class="string">"tokenkeys;explicitness"</code></div>
+</div>
+    </div>
+    <p  >The following algorithms are supported:    </p>
+<ul class=" "><li class=" ">    <p  >Key algorithms: AES and RSA.    </p>
+</li><li class=" ">    <p  >Signature algorithms:     <span style="color: #000000;">
+SHAxwithRSA and SHAxwithRSAandMGF1.    </span>
+    </p>
+</li></ul>    <p  >Note that Elliptic curve (i.e. ECDSA) is not yet supported.    </p>
+    </div>
         </div>
 
     </article>

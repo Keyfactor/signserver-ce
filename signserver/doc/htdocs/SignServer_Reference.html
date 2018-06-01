@@ -215,9 +215,45 @@
         <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
 
             </li>
-                                        <li class="leaf">
+                                        <li class="collapsed">
         <a class="ht-nav-page-link" href="Client_CLI.html">Client CLI</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatedocument.html">validatedocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="timestamp.html">timestamp</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatecertificate.html">validatecertificate</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdatagroups.html">signdatagroups</a>
+
+            </li>
+                            </ul>
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Admin_WS_Interface.html">Admin WS Interface</a>
@@ -1128,91 +1164,30 @@
         <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                             </ul>
-</div>            <h1 id="src-3053817"> <span>SignServer Reference</span></h1>
+</div>            <h1 id="src-16223444"> <span>SignServer Reference</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
+    <p  >This Reference guide covers all configuration options, workers, and components.    </p>
+    <p  >The guide also contains information on the different SignServer User interfaces available: <a   href="Administration_Web.html">Administration Web</a>, <a   href="Administration_GUI.html">Administration GUI</a>, <a   href="Administration_CLI.html">Administration CLI</a>, and <a   href="Database_CLI.html">Database CLI</a>.    </p>
+    <p  >The Reference is divided in the following sections:    </p>
 <ul class=" "><li class=" ">    <p  ><a   href="Deploy-time_Configuration.html">Deploy-time Configuration</a>    </p>
 </li><li class=" ">    <p  ><a   href="SignServer_Workers.html">SignServer Workers</a>    </p>
 <ul class=" "><li class=" ">    <p  ><a   href="Common_configuration.html">Common configuration</a>    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="Generic_Worker_Properties.html">Generic Worker Properties</a>    </p>
-</li><li class=" ">    <p  ><a   href="Authorization_Type.html">Authorization Type</a>    </p>
-</li><li class=" ">    <p  ><a   href="Archiving.html">Archiving</a>    </p>
-</li><li class=" ">    <p  ><a   href="Accounter.html">Accounter</a>    </p>
-</li><li class=" ">    <p  ><a   href="Certificate_Validity_Checks.html">Certificate Validity Checks</a>    </p>
-</li><li class=" ">    <p  ><a   href="Limiting_the_number_of_signatures.html">Limiting the number of signatures</a>    </p>
-</li><li class=" ">    <p  ><a   href="Other_properties.html">Other properties</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="SignServer_Signers.html">SignServer Signers</a>    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="Common_Properties.html">Common Properties</a>    </p>
-</li><li class=" ">    <p  ><a   href="Time_Stamp_Signer.html">Time Stamp Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="MS_Authenticode_Time_Stamp_Signer.html">MS Authenticode Time Stamp Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="Extended_Time_Stamp_Signer.html">Extended Time Stamp Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="MRTD_Signer.html">MRTD Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="MRTD_SOD_Signer.html">MRTD SOD Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="PDF_Signer.html">PDF Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="ODF_Signer.html">ODF Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="XML_Signer.html">XML Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="XAdES_Signer.html">XAdES Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="OOXML_Signer.html">OOXML Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="CMS_Signer.html">CMS Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="Extended_CMS_Signer.html">Extended CMS Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="MS_Authenticode_Signer.html">MS Authenticode Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="JArchive_Signer.html">JArchive Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="JArchive_CMS_Signer.html">JArchive CMS Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="Master_List_Signer.html">Master List Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="Plain_Signer.html">Plain Signer</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="SignServer_Document_Validators.html">SignServer Document Validators</a>    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="XML_Validator.html">XML Validator</a>    </p>
-</li><li class=" ">    <p  ><a   href="XAdEs_Validator.html">XAdEs Validator</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="SignServer_Dispatchers.html">SignServer Dispatchers</a>    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="FirstActiveDispatcher.html">FirstActiveDispatcher</a>    </p>
-</li><li class=" ">    <p  ><a   href="RequestedPolicyDispatcher.html">RequestedPolicyDispatcher</a>    </p>
-</li><li class=" ">    <p  ><a   href="UserMappedDispatcher.html">UserMappedDispatcher</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="SignServer_Validation_Service_Framework.html">SignServer Validation Service Framework</a>    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="DefaultValidationService.html">DefaultValidationService</a>    </p>
-</li><li class=" ">    <p  ><a   href="Certificate_Validators.html">Certificate Validators</a>    </p>
-</li><li class=" ">    <p  ><a   href="The_Validation_CLI_interface.html">The Validation CLI interface</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="SignServer_Timed_Services.html">SignServer Timed Services</a>    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="SignerStatusReportTimedService.html">SignerStatusReportTimedService</a>    </p>
-</li><li class=" ">    <p  ><a   href="HSMKeepAliveTimedService.html">HSMKeepAliveTimedService</a>    </p>
-</li><li class=" ">    <p  ><a   href="RenewalTimedService.html">RenewalTimedService</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="Other_Workers.html">Other Workers</a>    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="CryptoWorker.html">CryptoWorker</a>    </p>
-</li><li class=" ">    <p  ><a   href="RenewalWorker.html">RenewalWorker</a>    </p>
-</li><li class=" ">    <p  ><a   href="StatusPropertiesWorker.html">StatusPropertiesWorker</a>    </p>
-</li><li class=" ">    <p  ><a   href="TimeMonitorManager.html">TimeMonitorManager</a>    </p>
-</li><li class=" ">    <p  ><a   href="TimeMonitorStatusReportWorker.html">TimeMonitorStatusReportWorker</a>    </p>
-</li><li class=" ">    <p  ><a   href="SignerStatusReportWorker.html">SignerStatusReportWorker</a>    </p>
-</li><li class=" ">    <p  ><a   href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>    </p>
-</li></ul></li></ul></li><li class=" ">    <p  ><a   href="SignServer_Components.html">SignServer Components</a>    </p>
+</li><li class=" ">    <p  ><a   href="SignServer_Signers.html">SignServer Signers</a>    </p>
+</li><li class=" ">    <p  ><a   href="SignServer_Document_Validators.html">SignServer Document Validators</a>    </p>
+</li><li class=" ">    <p  ><a   href="SignServer_Dispatchers.html">SignServer Dispatchers</a>    </p>
+</li><li class=" ">    <p  ><a   href="SignServer_Validation_Service_Framework.html">SignServer Validation Service Framework</a>    </p>
+</li><li class=" ">    <p  ><a   href="SignServer_Timed_Services.html">SignServer Timed Services</a>    </p>
+</li><li class=" ">    <p  ><a   href="Other_Workers.html">Other Workers</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="SignServer_Components.html">SignServer Components</a>    </p>
 <ul class=" "><li class=" ">    <p  ><a   href="CryptoTokens.html">CryptoTokens</a>    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="General_properties.html">General properties</a>    </p>
-</li><li class=" ">    <p  ><a   href="JKSCryptoToken.html">JKSCryptoToken</a>    </p>
-</li><li class=" ">    <p  ><a   href="KeystoreInConfigCryptoToken.html">KeystoreInConfigCryptoToken</a>    </p>
-</li><li class=" ">    <p  ><a   href="P12CryptoToken.html">P12CryptoToken</a>    </p>
-</li><li class=" ">    <p  ><a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>    </p>
-</li><li class=" ">    <p  ><a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>    </p>
-</li><li class=" ">    <p  ><a   href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="Archivers.html">Archivers</a>    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="OldDatabaseArchiver.html">OldDatabaseArchiver</a>    </p>
-</li><li class=" ">    <p  ><a   href="Base64DatabaseArchiver.html">Base64DatabaseArchiver</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="Accounters.html">Accounters</a>    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="NoAccounter.html">NoAccounter</a>    </p>
-</li><li class=" ">    <p  ><a   href="GlobalConfigSampleAccounter.html">GlobalConfigSampleAccounter</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="Alias_Selectors.html">Alias Selectors</a>    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="DefaultAliasSelector.html">DefaultAliasSelector</a>    </p>
-</li><li class=" ">    <p  ><a   href="AuthorizedUsernameAliasSelector.html">AuthorizedUsernameAliasSelector</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="Authorizers.html">Authorizers</a>    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="No_Authorizer.html">No Authorizer</a>    </p>
-</li><li class=" ">    <p  ><a   href="Client_Certificate_Authorizer.html">Client Certificate Authorizer</a>    </p>
-</li><li class=" ">    <p  ><a   href="Username_Password_Authorizer.html">Username Password Authorizer</a>    </p>
-</li><li class=" ">    <p  ><a   href="Username_Authorizer.html">Username Authorizer</a>    </p>
-</li><li class=" ">    <p  ><a   href="Remote_Address_Authorizer.html">Remote Address Authorizer</a>    </p>
-</li><li class=" ">    <p  ><a   href="List_Based_Address_Authorizer.html">List Based Address Authorizer</a>    </p>
-</li><li class=" ">    <p  ><a   href="Dispatched_Authorizer.html">Dispatched Authorizer</a>    </p>
-</li></ul></li></ul></li><li class=" ">    <p  ><a   href="Logging.html">Logging</a>    </p>
+</li><li class=" ">    <p  ><a   href="Archivers.html">Archivers</a>    </p>
+</li><li class=" ">    <p  ><a   href="Accounters.html">Accounters</a>    </p>
+</li><li class=" ">    <p  ><a   href="Alias_Selectors.html">Alias Selectors</a>    </p>
+</li><li class=" ">    <p  ><a   href="Authorizers.html">Authorizers</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="Logging.html">Logging</a>    </p>
 <ul class=" "><li class=" ">    <p  ><a   href="Worker_Log.html">Worker Log</a>    </p>
 </li><li class=" ">    <p  ><a   href="System_Log.html">System Log</a>    </p>
 </li><li class=" ">    <p  ><a   href="CESeCore_Security_Events_Logger.html">CESeCore Security Events Logger</a>    </p>
@@ -1228,13 +1203,7 @@
 <ul class=" "><li class=" ">    <p  ><a   href="Administration_CLI.html">Administration CLI</a>    </p>
 </li><li class=" ">    <p  ><a   href="Administration_GUI.html">Administration GUI</a>    </p>
 </li><li class=" ">    <p  ><a   href="Administration_Web.html">Administration Web</a>    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="Main_Page.html">Main Page</a>    </p>
-</li><li class=" ">    <p  ><a   href="Workers_Page.html">Workers Page</a>    </p>
-</li><li class=" ">    <p  ><a   href="Global_Configuration_Page.html">Global Configuration Page</a>    </p>
-</li><li class=" ">    <p  ><a   href="Administrators_Page.html">Administrators Page</a>    </p>
-</li><li class=" ">    <p  ><a   href="Audit_Log_Page.html">Audit Log Page</a>    </p>
-</li><li class=" ">    <p  ><a   href="Archive_Page.html">Archive Page</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="Database_CLI.html">Database CLI</a>    </p>
+</li><li class=" ">    <p  ><a   href="Database_CLI.html">Database CLI</a>    </p>
 </li></ul></li><li class=" ">    <p  ><a   href="Internationalization.html">Internationalization</a>    </p>
 </li><li class=" ">    <p  ><a   href="Peer_Systems.html">Peer Systems</a>    </p>
 </li><li class=" ">    <p  ><a   href="Client-Side_Hashing.html">Client-Side Hashing</a>    </p>

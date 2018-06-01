@@ -215,9 +215,45 @@
         <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
 
             </li>
-                                        <li class="leaf">
+                                        <li class="collapsed">
         <a class="ht-nav-page-link" href="Client_CLI.html">Client CLI</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatedocument.html">validatedocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="timestamp.html">timestamp</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatecertificate.html">validatecertificate</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdatagroups.html">signdatagroups</a>
+
+            </li>
+                            </ul>
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Admin_WS_Interface.html">Admin WS Interface</a>
@@ -1136,7 +1172,124 @@
 
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
-    <p  >TODO: Give step by step instructions and possibly relative parts from sample config for how to set it up key wrapping and possibly also reference the <a   href="Key_Wrapping.html">Key Wrapping</a> page in the reference guide as well as the <a   href="http://192.168.3.98:8090/display/SIGNDS/.JackNJI11UnwrappingCryptoWorker+v4.3.0">JackNJI11UnwrappingCryptoWorker</a>, <a   href="http://192.168.3.98:8090/display/SIGNDS/.JackNJI11UnwrappingCryptoToken+v4.3.0">JackNJI11UnwrappingCryptoToken</a> and the <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>.    </p>
+    <p  >Key wrapping allows solving issues arising when the number of keys you need to handle exceeds the amount that can be stored in a limited storage space for an HSM. The feature enables exporting the key material in a protected manner and storing the wrapped, encrypted key in an external database.    </p>
+    <p  class="confluence-link">Follow the steps below to set up key wrapping. For more information and background on key wrapping, see the reference section <a   href="Key_Wrapping.html">Key Wrapping</a>.    </p>
+<ul class=" "><li class=" ">    <p  ><a   href="#src-15859741_id-.SettingupKeyWrappingv4.3.0-Step1SetUpCryptoWorkerwithSourceCryptoToken">Step 1: Set Up Crypto Worker with Source Crypto Token</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-15859741_id-.SettingupKeyWrappingv4.3.0-Step2SetUpKeyWrappingCryptoWorkerReferencingtheSourceCryptoWorker">Step 2: Set Up Key Wrapping Crypto Worker Referencing the Source Crypto Worker</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-15859741_id-.SettingupKeyWrappingv4.3.0-Step3SetUpSignerwithWrappedKey">Step 3: Set Up Signer with Wrapped Key</a>    </p>
+</li></ul>    <div class="section section-1" id="src-15859741_safe-id-aWQtLlNldHRpbmd1cEtleVdyYXBwaW5ndjQuMy4wLVN0ZXAxOlNldFVwQ3J5cHRvV29ya2Vyd2l0aFNvdXJjZUNyeXB0b1Rva2VuU3RlcDFTZXRVcENyeXB0b1dvcmtlcndpdGhTb3VyY2VDcnlwdG9Ub2tlbg">
+        <h1 class="heading "><span id="src-15859741_id-.SettingupKeyWrappingv4.3.0-Step1SetUpCryptoWorkerwithSourceCryptoToken" class="confluence-anchor-link"></span><span>Step 1: Set Up Crypto Worker with Source Crypto Token </span></h1>
+    <p  >To set up crypto worker with source crypto token, do the following:    </p>
+<ol class=" "><li class=" ">    <p  >Create source crypto worker <strong class=" ">CryptoTokenP11NG1</strong> using the sample configuration <strong class=" ">p11ng-crypto.properties</strong>. For details, see <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>.    </p>
+    <div  class="confbox programlisting">
+                    <div class="title">Sample source crypto worker configuration</div>
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample source crypto worker configuration">
+<div class="line"><code class="plain">WORKERGENID1.TYPE=CRYPTO_WORKER</code></div>
+<div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.server.signers.CryptoWorker</code></div>
+<div class="line"><code class="plain">WORKERGENID1.CRYPTOTOKEN_IMPLEMENTATION_CLASS=org.signserver.p11ng.common.cryptotoken.JackNJI11CryptoToken</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Name </code><code class="keyword">for</code><code class="plain"> other workers to reference </code><code class="keyword">this</code><code class="plain"> worker:</code></div>
+<div class="line"><code class="plain">WORKERGENID1.NAME=CryptoTokenP11NG1</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Name of the PKCS#</code><code class="value">11</code><code class="plain"> shared library to use: </code></div>
+<div class="line"><code class="plain">WORKERGENID1.SHAREDLIBRARYNAME=SafeNet ProtectServer Gold Emulator</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># HSM slot details</code></div>
+<div class="line"><code class="plain">WORKERGENID1.SLOTLABELTYPE=SLOT_NUMBER</code></div>
+<div class="line"><code class="plain">WORKERGENID1.SLOTLABELVALUE=</code><code class="value">1</code></div>
+<div class="line"><code class="plain">WORKERGENID1.PIN=foo123</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">#One key to test activation with is required. If </code><code class="keyword">this</code><code class="plain"> key does not already exist generate it after the worker has been created.</code></div>
+<div class="line"><code class="plain">WORKERGENID1.DEFAULTKEY=testkey0</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >When the worker <strong class=" ">CryptoTokenP11NG1</strong> is ACTIVE, generate a secret key <strong class=" ">wrapkey001</strong> using algorithm <strong class=" ">AES</strong> and Key specification <strong class=" ">128</strong> to use as wrap key.    </p>
+</li></ol>    </div>
+    <div class="section section-1" id="src-15859741_safe-id-aWQtLlNldHRpbmd1cEtleVdyYXBwaW5ndjQuMy4wLVN0ZXAyOlNldFVwS2V5V3JhcHBpbmdDcnlwdG9Xb3JrZXJSZWZlcmVuY2luZ3RoZVNvdXJjZUNyeXB0b1dvcmtlclN0ZXAyU2V0VXBLZXlXcmFwcGluZ0NyeXB0b1dvcmtlclJlZmVyZW5jaW5ndGhlU291cmNlQ3J5cHRvV29ya2Vy">
+        <h1 class="heading "><span id="src-15859741_id-.SettingupKeyWrappingv4.3.0-Step2SetUpKeyWrappingCryptoWorkerReferencingtheSourceCryptoWorker" class="confluence-anchor-link"></span><span>Step 2: Set Up Key Wrapping Crypto Worker Referencing the Source Crypto Worker </span></h1>
+    <p  >To set up key wrapping crypto worker referencing the source crypto worker, do the following:    </p>
+<ol class=" "><li class=" ">    <p  >Create key wrapping crypto worker <strong class=" ">CryptoTokenP11NG1KeyWrapping</strong> using the sample configuration <strong class=" ">p11ng-keywrapping-crypto.properties</strong>. For details, see <a   href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a> and <a   href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>.    </p>
+    <div  class="confbox programlisting">
+                    <div class="title">Sample key wrapping crypto worker configuration</div>
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample key wrapping crypto worker configuration">
+<div class="line"><code class="plain">WORKERGENID1.TYPE=CRYPTO_WORKER</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.p11ng.common.cryptotoken.JackNJI11KeyWrappingCryptoWorker</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Name </code><code class="keyword">for</code><code class="plain"> other workers to reference </code><code class="keyword">this</code><code class="plain"> worker:</code></div>
+<div class="line"><code class="plain">WORKERGENID1.NAME=CryptoTokenP11NG1KeyWrapping</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># References a source crypto CryptoToken</code></div>
+<div class="line"><code class="plain">WORKERGENID1.CRYPTOTOKEN=CryptoTokenP11NG1</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Secret/symmetric key in the referenced crypto token to use </code><code class="keyword">for</code><code class="plain"> wrapping and unwrapping</code></div>
+<div class="line"><code class="plain">WORKERGENID1.DEFAULTKEY=wrapkey001</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Encryption algorithm</code></div>
+<div class="line"><code class="plain">WORKERGENID1.WRAPPING_CIPHER_ALGORITHM=CKM_AES_CBC_PAD</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >Create wrapped key(s).<br/>The wrapped key can be a common key (for example, wrappedkey001, wrappedkey002) or an individual user key (for example, <strong class=" ">userkey_foobar</strong>) depending on the requirement.<br/>For an individual user key, the key alias is a combination of user prefix and the user name. For example, for the key alias <strong class=" ">userkey_foobar</strong>, the <strong class=" ">userkey_</strong> is the user prefix and <strong class=" ">foobar</strong> is the user name.    </p>
+</li><li class=" ">    <p  >Generate Certificate Signing Request (CSR) for the wrapped key(s) created in the step 2 above, get certificate for the CSR, and install certificate for the key in token.    </p>
+</li></ol>    </div>
+    <div class="section section-1" id="src-15859741_safe-id-aWQtLlNldHRpbmd1cEtleVdyYXBwaW5ndjQuMy4wLVN0ZXAzOlNldFVwU2lnbmVyd2l0aFdyYXBwZWRLZXlTdGVwM1NldFVwU2lnbmVyd2l0aFdyYXBwZWRLZXk">
+        <h1 class="heading "><span id="src-15859741_id-.SettingupKeyWrappingv4.3.0-Step3SetUpSignerwithWrappedKey" class="confluence-anchor-link"></span><span>Step 3: Set Up Signer with Wrapped Key </span></h1>
+    <p  >The wrapped key can be a common/fixed key <i class=" ">or</i> an individual user key depending on the requirement.    </p>
+    <div class="section section-2" id="src-15859741_id-.SettingupKeyWrappingv4.3.0-FixedKey">
+        <h2 class="heading "><span>Fixed Key</span></h2>
+    <p  >Create PlainSigner using the sample configuration <strong class=" ">plainsigner.properties.</strong>    </p>
+    <div  class="confbox programlisting">
+                    <div class="title">Sample Plain Signer configuration with fixed wrapped key</div>
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample Plain Signer configuration with fixed wrapped key">
+<div class="line"><code class="plain"># General properties</code></div>
+<div class="line"><code class="plain">WORKERGENID1.TYPE=PROCESSABLE</code></div>
+<div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.module.cmssigner.PlainSigner</code></div>
+<div class="line"><code class="plain">WORKERGENID1.NAME=PlainSigner</code></div>
+<div class="line"><code class="plain">WORKERGENID1.AUTHTYPE=NOAUTH</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Crypto token</code></div>
+<div class="line"><code class="plain">WORKERGENID1.CRYPTOTOKEN=CryptoTokenP11NG1KeyWrapping</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Using one key-pair in the above crypto token</code></div>
+<div class="line"><code class="plain">WORKERGENID1.DEFAULTKEY=wrappedkey001</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">WORKERGENID1.SIGNATUREALGORITHM=SHA256withRSA</code></div>
+</div>
+    </div>
+    <p  >The sample config <strong class=" ">keywrapping-fixed_key.properties</strong> can also be used to create a <strong class=" ">XAdESSigner</strong> using a fixed wrapped key.    </p>
+    </div>
+    <div class="section section-2" id="src-15859741_id-.SettingupKeyWrappingv4.3.0-IndividualKey">
+        <h2 class="heading "><span>Individual Key</span></h2>
+    <p  >Create PlainSigner using the sample configuration <strong class=" ">plainsigner.properties</strong> and the following properties related to the Individual user key.    </p>
+    <div  class="confbox programlisting">
+                    <div class="title">Sample Plain Signer configuration with individual user wrapped key</div>
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample Plain Signer configuration with individual user wrapped key">
+<div class="line"><code class="plain"># General properties</code></div>
+<div class="line"><code class="plain">WORKERGENID1.TYPE=PROCESSABLE</code></div>
+<div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.module.cmssigner.PlainSigner</code></div>
+<div class="line"><code class="plain">WORKERGENID1.NAME=PlainSigner</code></div>
+<div class="line"><code class="plain">WORKERGENID1.AUTHTYPE=NOAUTH</code></div>
+<div class="line"><code class="plain"> </code></div>
+<div class="line"><code class="plain"># Crypto token</code></div>
+<div class="line"><code class="plain">WORKERGENID1.CRYPTOTOKEN=CryptoTokenP11NG1KeyWrapping</code></div>
+<div class="line"><code class="plain"> </code></div>
+<div class="line"><code class="plain"># Using one key-pair in the above crypto token</code></div>
+<div class="line"><code class="plain">WORKERGENID1.DEFAULTKEY=wrappedkey001</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Properties related to individual user key </code></div>
+<div class="line"><code class="plain"># Uses username to select which key to use</code></div>
+<div class="line"><code class="plain"># For user </code><code class="string">"foobar"</code><code class="plain"> the key should have alias </code><code class="string">"userkey_foobar"</code></div>
+<div class="line"><code class="plain">WORKERGENID1.AUTHTYPE=org.signserver.server.UsernameAuthorizer</code></div>
+<div class="line"><code class="plain">WORKERGENID1.ACCEPT_ALL_USERNAMES=</code><code class="keyword">true</code></div>
+<div class="line"><code class="plain">WORKERGENID1.ALIASSELECTOR=org.signserver.server.aliasselectors.AuthorizedUsernameAliasSelector</code></div>
+<div class="line"><code class="plain">WORKERGENID1.ALIAS_PREFIX=userkey_</code></div>
+<div class="line"><code class="plain"> </code></div>
+<div class="line"><code class="plain">WORKERGENID1.SIGNATUREALGORITHM=SHA256withRSA</code></div>
+</div>
+    </div>
+    <p  >The sample configuration <strong class=" ">keywrapping-multiple_keys.properties</strong> can also be used to create a <strong class=" ">XAdESSigner</strong> using an individual wrapped key.    </p>
+    </div>
+    </div>
         </div>
 
     </article>

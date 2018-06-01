@@ -215,9 +215,45 @@
         <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
 
             </li>
-                                        <li class="leaf">
+                                        <li class="collapsed">
         <a class="ht-nav-page-link" href="Client_CLI.html">Client CLI</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatedocument.html">validatedocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="timestamp.html">timestamp</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatecertificate.html">validatecertificate</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdatagroups.html">signdatagroups</a>
+
+            </li>
+                            </ul>
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Admin_WS_Interface.html">Admin WS Interface</a>
@@ -1139,8 +1175,8 @@
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >A new key-pair can be generated and its name stored as the next key in the configuration.    </p>
-    <p  >Make sure each worker that should have a new key pair generated has its check box selected.    </p>
-    <p  >Work from left to right for each worker and fill in the required information.    </p>
+    <p  >Make sure that each worker that should have a new key-pair generated has its check box selected.    </p>
+    <p  >Work from left to right for each worker and specify the required information.    </p>
     <div class="section section-1" id="src-16220168_id-.WorkersKeyGenerationPagev4.3.0-RenewKeys">
         <h1 class="heading "><span>Renew Keys</span></h1>
     <div  class="tablewrap">
@@ -1181,11 +1217,11 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Name of the key algorithm to use for the new key.    </p>
-    <p  >Examples: RSA, DSA, ECDSA, AES    </p>
+    <p  >Examples: RSA, DSA, ECDSA, AES.    </p>
     <p  >The value is already filled in if the worker has a KEYALG property specified.    </p>
-    <p  >    </p>
-    <p  >Note: While generating secret key if provided algorithm name is not part of predefined list of known secret key algorithms, algorithm name should be prefixed with &quot;SEC:&quot;. Example: <strong class=" ">SEC:Blowfish</strong>. Currently known secret key list contains AES and DES algorithms.    </p>
-    <p  >If worker references <a   href="JackNJI11CryptoToken.html"><strong class=" ">JackNJ11CryptoToken</strong></a>, it is possible to provide algorithm name as long or hexadecimal constant value also.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ If generating a symmetric (secret) key and the specified key algorithm name is not present in the predefined list of known secret key algorithms, the key algorithm name must be specified with the prefix &quot;SEC:&quot;, for example: <strong class=" ">SEC:Blowfish</strong>. Currently, the secret key list contains the algorithms AES and DES.    </p>
+    <p  class="sv-pt-link confluence-link">If the worker references the <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>, the algorithm name can be specified as a long or hexadecimal constant value. For more information, see <strong class=" ">Secret Key generation</strong> in <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>.    </p>
             </td>
         </tr>
     <tr>
@@ -1195,7 +1231,7 @@
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Parameters for the key generation process.    </p>
     <p  >For RSA and DSA this should be the key length and for ECDSA the name of the curve.    </p>
-    <p  >Examples: 2048, 3072, secp256r1    </p>
+    <p  >Examples: 2048, 3072, secp256r1.    </p>
     <p  >The value is already filled in if the worker has a KEYSPEC property specified.    </p>
             </td>
         </tr>

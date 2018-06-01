@@ -215,9 +215,45 @@
         <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
 
             </li>
-                                        <li class="leaf">
+                                        <li class="collapsed">
         <a class="ht-nav-page-link" href="Client_CLI.html">Client CLI</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatedocument.html">validatedocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="timestamp.html">timestamp</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatecertificate.html">validatecertificate</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdatagroups.html">signdatagroups</a>
+
+            </li>
+                            </ul>
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Admin_WS_Interface.html">Admin WS Interface</a>
@@ -1134,7 +1170,7 @@
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >The CLI tool p11ng-tool provides actions for querying, removing, and creating objects(keys) in HSM Slot in addition to signing sample text with existing wrapped key.    </p>
+    <p  >The CLI tool p11ng-tool provides actions for querying, removing, and creating objects(keys) in an HSM slot in addition to signing sample text with existing wrapped key.    </p>
     <p  >The tool is provided for troubleshooting purposes and the API is likely to change in future versions.    </p>
     <p  >Run p11ng-tool from <strong class=" ">SIGNSERVER_HOME </strong>using the following command:    </p>
     <div  class="confbox programlisting">
@@ -1148,24 +1184,42 @@
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Usage">
 <div class="line"><code class="plain">p11ng-tool [options]</code></div>
 <div class="line"><code class="plain">P11NG commands</code></div>
-<div class="line"><code class="plain"> -action &lt;arg&gt;       Operation to perform. Any of: [listSlots, showInfo,</code></div>
-<div class="line"><code class="plain">                     listObjects, listKeyStoreEntries, generateWrapKey,</code></div>
-<div class="line"><code class="plain">                     generateAndWrapKeyPair, unwrapAndSign,</code></div>
-<div class="line"><code class="plain">                     deleteObjectsByLabel, deleteObject, generateKeyPair,</code></div>
-<div class="line"><code class="plain">                     createSelfSignedCert]</code></div>
-<div class="line"><code class="plain"> -label &lt;arg&gt;        Key label</code></div>
-<div class="line"><code class="plain"> -libfile &lt;arg&gt;      Shared library path</code></div>
-<div class="line"><code class="plain"> -method &lt;arg&gt;       Method to use, either pkcs11 (</code><code class="keyword">default</code><code class="plain">) or provider</code></div>
-<div class="line"><code class="plain"> -object &lt;arg&gt;       Object ID (decimal)</code></div>
-<div class="line"><code class="plain"> -pin &lt;arg&gt;          User PIN</code></div>
-<div class="line"><code class="plain"> -plaintext &lt;arg&gt;    text string to sign</code></div>
-<div class="line"><code class="plain"> -privatekey &lt;arg&gt;   base64 encoded encrypted (wrapped) </code><code class="keyword">private</code><code class="plain"> key</code></div>
-<div class="line"><code class="plain"> -publickey &lt;arg&gt;    base64 encoded </code><code class="keyword">public</code><code class="plain"> key</code></div>
-<div class="line"><code class="plain"> -selfcert           Generate a self-signed certificate </code><code class="keyword">for</code><code class="plain"> the </code><code class="keyword">new</code></div>
-<div class="line"><code class="plain">                     key-pair</code></div>
-<div class="line"><code class="plain"> -slot &lt;arg&gt;         Slot ID to operate on</code></div>
-<div class="line"><code class="plain"> -unwrapkey &lt;arg&gt;    Label of key to unwrap with</code></div>
-<div class="line"><code class="plain"> -wrapkey &lt;arg&gt;      Label of key to wrap with</code></div>
+<div class="line"><code class="plain"> -action &lt;arg&gt;               Operation to perform. Any of: [listSlots,</code></div>
+<div class="line"><code class="plain">                             showInfo, listObjects, listKeyStoreEntries,</code></div>
+<div class="line"><code class="plain">                             generateKey, generateAndWrapKeyPair,</code></div>
+<div class="line"><code class="plain">                             unwrapAndSign, deleteKeyStoreEntryByAlias,</code></div>
+<div class="line"><code class="plain">                             deleteObjects, generateKeyPair,</code></div>
+<div class="line"><code class="plain">                             signPerformanceTest, unwrapPerformanceTest]</code></div>
+<div class="line"><code class="plain"> -alias &lt;arg&gt;                Key alias</code></div>
+<div class="line"><code class="plain"> -attributes_file &lt;arg&gt;      Path of file containing attributes to be used</code></div>
+<div class="line"><code class="plain">                             </code><code class="keyword">while</code><code class="plain"> generating key pair</code></div>
+<div class="line"><code class="plain"> -libfile &lt;arg&gt;              Shared library path</code></div>
+<div class="line"><code class="plain"> -method &lt;arg&gt;               Method to use, either pkcs11 (</code><code class="keyword">default</code><code class="plain">) or</code></div>
+<div class="line"><code class="plain">                             provider</code></div>
+<div class="line"><code class="plain"> -object &lt;arg&gt;               Object ID (decimal)</code></div>
+<div class="line"><code class="plain"> -pin &lt;arg&gt;                  User PIN</code></div>
+<div class="line"><code class="plain"> -plaintext &lt;arg&gt;            text string to sign</code></div>
+<div class="line"><code class="plain"> -privatekey &lt;arg&gt;           base64 encoded encrypted (wrapped) </code><code class="keyword">private</code></div>
+<div class="line"><code class="plain">                             key</code></div>
+<div class="line"><code class="plain"> -publickey &lt;arg&gt;            base64 encoded </code><code class="keyword">public</code><code class="plain"> key</code></div>
+<div class="line"><code class="plain"> -selfcert                   Generate a self-signed certificate </code><code class="keyword">for</code><code class="plain"> the</code></div>
+<div class="line"><code class="plain">                             </code><code class="keyword">new</code><code class="plain"> key-pair</code></div>
+<div class="line"><code class="plain"> -signaturealgorithm &lt;arg&gt;   For sign-/unwrapPerformanceTest: Signature algorithm</code></div>
+<div class="line"><code class="plain">                             to use (</code><code class="keyword">default</code><code class="plain">: SHA256withRSA)</code></div>
+<div class="line"><code class="plain"> -slot &lt;arg&gt;                 Slot ID to operate on</code></div>
+<div class="line"><code class="plain"> -threads &lt;arg&gt;              For sign-/unwrapPerformanceTest: Number of stresstest</code></div>
+<div class="line"><code class="plain">                             threads to run (</code><code class="keyword">default</code><code class="plain">: </code><code class="value">1</code><code class="plain">)</code></div>
+<div class="line"><code class="plain"> -timelimit &lt;arg&gt;            For sign-/unwrapPerformanceTest: Optional. Only run</code></div>
+<div class="line"><code class="plain">                             </code><code class="keyword">for</code><code class="plain"> the specified time (in milliseconds).</code></div>
+<div class="line"><code class="plain"> -unwrapkey &lt;arg&gt;            Label of key to unwrap with</code></div>
+<div class="line"><code class="plain"> -use_cache &lt;arg&gt;            For sign-/unwrapPerformanceTest: Whether key objects</code></div>
+<div class="line"><code class="plain">                             are fetched from cache instead of HSM token</code></div>
+<div class="line"><code class="plain">                             (</code><code class="keyword">default</code><code class="plain">: </code><code class="keyword">true</code><code class="plain">)</code></div>
+<div class="line"><code class="plain"> -warmuptime &lt;arg&gt;           For sign-/unwrapPerformanceTest: Don't count number</code></div>
+<div class="line"><code class="plain">                             of signings and response times until after</code></div>
+<div class="line"><code class="plain">                             </code><code class="keyword">this</code><code class="plain"> time (in milliseconds). Default=</code><code class="value">0</code><code class="plain"> (no</code></div>
+<div class="line"><code class="plain">                             warmup time).</code></div>
+<div class="line"><code class="plain"> -wrapkey &lt;arg&gt;              Label of key to wrap with</code></div>
 <div class="line"> </div>
 <div class="line"><code class="plain">Sample usages:</code></div>
 <div class="line"><code class="plain">a) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
@@ -1173,18 +1227,33 @@
 <div class="line"><code class="plain">b) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
 <div class="line"><code class="plain">showInfo</code></div>
 <div class="line"><code class="plain">c) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">listObjects -slot </code><code class="value">0</code></div>
+<div class="line"><code class="plain">listObjects -slot </code><code class="value">0</code><code class="plain"> -pin foo123</code></div>
 <div class="line"><code class="plain">d) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">generateWrapKey -slot </code><code class="value">0</code><code class="plain"> -label wrapkey1</code></div>
+<div class="line"><code class="plain">generateKey -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -alias wrapkey1</code></div>
 <div class="line"><code class="plain">e) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">deleteObject -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -object </code><code class="value">4</code></div>
+<div class="line"><code class="plain">generateKeyPair -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -alias myprivkey</code></div>
 <div class="line"><code class="plain">f) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">deleteObjectsByLabel -slot </code><code class="value">0</code><code class="plain"> -label mykey1</code></div>
+<div class="line"><code class="plain">generateKeyPair -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -alias myprivkey -attributes_file</code></div>
+<div class="line"><code class="plain">/home/user/attribute_file.properties</code></div>
 <div class="line"><code class="plain">g) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
-<div class="line"><code class="plain">listKeyStoreEntries -slot </code><code class="value">0</code></div>
+<div class="line"><code class="plain">deleteObjects -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -object </code><code class="value">4</code></div>
+<div class="line"><code class="plain">h) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
+<div class="line"><code class="plain">deleteObjects -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -object </code><code class="value">4</code><code class="plain"> -object </code><code class="value">5</code></div>
+<div class="line"><code class="plain">i) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
+<div class="line"><code class="plain">deleteKeyStoreEntryByAlias -slot </code><code class="value">0</code><code class="plain"> -alias mykey1</code></div>
+<div class="line"><code class="plain">j) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
+<div class="line"><code class="plain">listKeyStoreEntries -slot </code><code class="value">0</code><code class="plain"> -pin foo123</code></div>
+<div class="line"><code class="plain">k) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
+<div class="line"><code class="plain">generateAndWrapKeyPair -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -wrapkey wrapkey1 -selfcert</code></div>
+<div class="line"><code class="plain">-alias wrappedprivkey</code></div>
+<div class="line"><code class="plain">l) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
+<div class="line"><code class="plain">signPerformanceTest -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -alias mykey1 -warmuptime </code><code class="value">10000</code></div>
+<div class="line"><code class="plain">-timelimit </code><code class="value">100000</code><code class="plain"> -threads </code><code class="value">10</code></div>
+<div class="line"><code class="plain">m) p11ng-tool -libfile /opt/ETcpsdk/lib/linux-x86_64/libctsw.so -action</code></div>
+<div class="line"><code class="plain">unwrapPerformanceTest -slot </code><code class="value">0</code><code class="plain"> -pin foo123 -wrapkey wrapkey1 -warmuptime</code></div>
+<div class="line"><code class="value">10000</code><code class="plain"> -timelimit </code><code class="value">100000</code><code class="plain"> -threads </code><code class="value">10</code></div>
 </div>
     </div>
-    <p  >    </p>
         </div>
 
     </article>

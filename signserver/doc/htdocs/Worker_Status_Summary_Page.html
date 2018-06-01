@@ -215,9 +215,45 @@
         <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
 
             </li>
-                                        <li class="leaf">
+                                        <li class="collapsed">
         <a class="ht-nav-page-link" href="Client_CLI.html">Client CLI</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatedocument.html">validatedocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="timestamp.html">timestamp</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatecertificate.html">validatecertificate</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdatagroups.html">signdatagroups</a>
+
+            </li>
+                            </ul>
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Admin_WS_Interface.html">Admin WS Interface</a>
@@ -1161,7 +1197,7 @@
         <p  >Worker status    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >&quot;<i class=" ">Active</i>&quot; or &quot;<i class=" ">Offline</i>&quot; depending on if the configuration is correct and that the token is active. &quot;Disabled&quot; if <strong class=" ">DISABLED</strong> property is set to <strong class=" ">TRUE</strong>    </p>
+        <p  ><i class=" ">Active</i> or <i class=" ">Offline</i> depending on if the configuration is correct and the token is active. Shows <i class=" ">Disabled</i> if the worker property DISABLED=true, see <a   href="Other_properties.html">Other properties</a>.    </p>
             </td>
         </tr>
     <tr>
@@ -1169,7 +1205,7 @@
         <p  >Token status    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >&quot;<i class=" ">Active</i>&quot; or &quot;<i class=" ">Offline</i>&quot; depending on if the crypto token has been correctly activate or not.    </p>
+        <p  ><i class=" ">Active</i> or <i class=" ">Offline</i> depending on if the crypto token has been correctly activated or not.    </p>
             </td>
         </tr>
     <tr>
@@ -1186,7 +1222,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Lists any configuration errors or other errors that would prevent the worker from functioning.    </p>
-    <p  >If there is any errors listed here the worker status would be <i class=" ">Offline</i> and the worker might not function until the problem has been addressed.    </p>
+    <p  >If there is any errors listed here, the worker status would be <i class=" ">Offline</i> and the worker might not function until the problem has been addressed.    </p>
             </td>
         </tr>
 </tbody>        </table>

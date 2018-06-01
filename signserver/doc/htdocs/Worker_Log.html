@@ -215,9 +215,45 @@
         <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
 
             </li>
-                                        <li class="leaf">
+                                        <li class="collapsed">
         <a class="ht-nav-page-link" href="Client_CLI.html">Client CLI</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatedocument.html">validatedocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="timestamp.html">timestamp</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatecertificate.html">validatecertificate</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdatagroups.html">signdatagroups</a>
+
+            </li>
+                            </ul>
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Admin_WS_Interface.html">Admin WS Interface</a>
@@ -1131,54 +1167,93 @@
                                         <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                                                      <li><a href="Logging.html">Logging</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277906"> <span>Worker Log</span></h1>
+</div>            <h1 id="src-16222945"> <span>Worker Log</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >The purpose of the Worker Loggers are to log each transaction handled by the worker. Each worker can choose to have its own configuration for the logger. By default the AllFieldsWorkerLogger is used which used logs all the available fields one after each other separated by semi colons.    </p>
-    <p  >Which Worker Logger configuration to use is configured by setting the <strong class=" ">WORKERLOGGER</strong> property to the full class name of the IWorkerLogger implementation in the worker's configuration.    </p>
-    <div class="section section-1" id="src-5277906_id-.WorkerLogv4.1.0-AllFieldsWorkerLogger">
+    <p  >Worker Loggers log each transaction handled by a worker and can be configured per worker.    </p>
+    <p  >By default, the worker logger AllFieldsWorkerLogger is used, which logs all the available fields one after another, separated by semi colons.    </p>
+    <p  >To configure the Worker Logger, set the <strong class=" ">WORKERLOGGER</strong> property to the full class name of the IWorkerLogger implementation in the respective worker configuration.    </p>
+    <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-AllFieldsWorkerLogger">
         <h1 class="heading "><span>AllFieldsWorkerLogger</span></h1>
-    <p  >The default worker logger for most workers. Can be used during testing to find which fields a worker logs and then changed to the PatternWorkerLogger with only does fields that are of interest chosen.<br/>LOGLEVEL_DEFAULT sets the level at which the logger will do log output. These are specified as standard Log4J levels (FATAL, ERROR, WARNING, INFO, DEBUG, and TRACE), if not set, it defaults to INFO.    </p>
-<pre class=" ">WORKERLOGGER=org.signserver.server.log.AllFieldsWorkerLogger</pre><pre class="prettyprint ">LOGLEVEL_DEFAULT=INFO</pre>    </div>
-    <div class="section section-1" id="src-5277906_id-.WorkerLogv4.1.0-SecurityEventsWorkerLogger">
-        <h1 class="heading "><span>SecurityEventsWorkerLogger</span></h1>
-    <p  >Worker logger using the CESeCore security events logger. This logger included all fields in the additionalDetails fields in the audit log, except the worker ID, which is mapped to searchDetail2.    </p>
-    <p  >The properties LOGINCLUDEFIELDS and LOGEXCLUDEFIELDS can be used to restrict the fields included in additionalDetails by explicitly setting a comma-separated list of field names. Only one of these options can be set at a time.    </p>
-<pre class="prettyprint ">WORKERLOGGER=org.signserver.server.log.SecurityEventsWorkerLogger</pre>    </div>
-    <div class="section section-1" id="src-5277906_id-.WorkerLogv4.1.0-PatternWorkerLogger">
-        <h1 class="heading "><span>PatternWorkerLogger</span></h1>
-    <p  >The LOGLEVEL_DEFAULT property has the same behavior as for the AllFieldsWorkerLogger.    </p>
-<pre class=" ">WORKERLOGGER=org.signserver.server.log.PatternWorkerLogger</pre><pre class="prettyprint ">LOGTIMEZONE=GMT<br/>LOGDATEFORMAT=yyyy-MM-dd:HH:mm:ss:z<br/>LOGPATTERN=\$\{(.+?)\}<br/>LOGORDER=AUDIT; LOG_ID: ${LOG_ID}; CLIENT_IP: ${CLIENT_IP}; REQUEST_FULLURL: ${REQUEST_FULLURL}; RequestTime: ${LOG_TIME}; ResponseTime: ${REPLY_TIME}; EXCEPTION: ${EXCEPTION};<br/>LOGLEVEL_DEFAULT=INFO</pre>    </div>
-    <div class="section section-1" id="src-5277906_id-.WorkerLogv4.1.0-DefaultTimeStampLogger">
-        <h1 class="heading "><span>DefaultTimeStampLogger</span></h1>
+    <p  >The default worker logger for most workers. Can be used during testing to find which fields a worker logs, and may then be changed to the PatternWorkerLogger to only log fields that are of interest.    </p>
+    <p  >The LOGLEVEL_DEFAULT sets the level of the log output. The log levels are specified as the standard Log4J levels (FATAL, ERROR, WARNING, INFO, DEBUG, and TRACE) and default to the log level INFO if not set.    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">WORKERLOGGER=org.signserver.server.log.AllFieldsWorkerLogger</code></div>
+<div class="line"><code class="plain">LOGLEVEL_DEFAULT=INFO</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-SecurityEventsWorkerLogger">
+        <h1 class="heading section"><span>SecurityEventsWorkerLogger</span></h1>
+    <p  class="section">The SecurityEventsWorkerLogger worker logger uses the CESeCore security events logger and includes all fields in the additionalDetails fields in the audit log, except for the worker ID, which is mapped to searchDetail2.    </p>
+    <p  class="section">The properties LOGINCLUDEFIELDS and LOGEXCLUDEFIELDS can be used to restrict the fields included in additionalDetails by explicitly setting a comma-separated list of field names.    </p>
+    <p  >Note that only one of these options can be set at a time.    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">WORKERLOGGER=org.signserver.server.log.SecurityEventsWorkerLogger</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-PatternWorkerLogger">
+        <h1 class="heading section"><span>PatternWorkerLogger</span></h1>
+    <p  class="section">The LOGLEVEL_DEFAULT property has the same behavior as the AllFieldsWorkerLogger.    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">WORKERLOGGER=org.signserver.server.log.PatternWorkerLogger</code></div>
+<div class="line"><code class="plain">LOGTIMEZONE=GMT</code></div>
+<div class="line"><code class="plain">LOGDATEFORMAT=yyyy-MM-dd:HH:mm:ss:z</code></div>
+<div class="line"><code class="plain">LOGPATTERN=\$\{(.+?)\}</code></div>
+<div class="line"><code class="plain">LOGORDER=AUDIT; LOG_ID: ${LOG_ID}; CLIENT_IP: ${CLIENT_IP}; REQUEST_FULLURL: ${REQUEST_FULLURL}; RequestTime: ${LOG_TIME}; ResponseTime: ${REPLY_TIME}; EXCEPTION: ${EXCEPTION};</code></div>
+<div class="line"><code class="plain">LOGLEVEL_DEFAULT=INFO</code></div>
+</div>
+    </div>
+    <p  class="section">    </p>
+    </div>
+    <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-DefaultTimeStampLogger">
+        <h1 class="heading section"><span>DefaultTimeStampLogger</span></h1>
     <p  >Pattern logger with a default log order suitable for logging time-stamp requests. This logger is the default logger used by the <a   href="Time_Stamp_Signer.html">TimeStampSigner</a>.    </p>
-<pre class=" ">WORKERLOGGER=org.signserver.module.tsa.DefaultTimeStampLogger</pre>    </div>
-    <div class="section section-1" id="src-5277906_id-.WorkerLogv4.1.0-NullWorkerLogger">
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">WORKERLOGGER=org.signserver.module.tsa.DefaultTimeStampLogger</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-NullWorkerLogger">
         <h1 class="heading "><span>NullWorkerLogger</span></h1>
     <p  >Worker logger that does not log anything.    </p>
-<pre class=" ">WORKERLOGGER=org.signserver.server.log.NullWorkerLogger</pre>    </div>
-    <div class="section section-1" id="src-5277906_id-.WorkerLogv4.1.0-CustomTimeStampLogger1">
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">WORKERLOGGER=org.signserver.server.log.NullWorkerLogger</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-CustomTimeStampLogger1">
         <h1 class="heading "><span>CustomTimeStampLogger1</span></h1>
-<pre class=" ">WORKERLOGGER=org.signserver.module.tsa.CustomTimeStampLogger1</pre>    <p  >    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">WORKERLOGGER=org.signserver.module.tsa.CustomTimeStampLogger1</code></div>
+</div>
     </div>
-    <div class="section section-1" id="src-5277906_id-.WorkerLogv4.1.0-FileWorkerLogger">
+    </div>
+    <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-FileWorkerLogger">
         <h1 class="heading "><span>FileWorkerLogger</span></h1>
-    <p  >Worker logger that writes the log values to a worker-specific log file (the logger logs all fields, similar to AllFieldsWorkerLogger.<br/>This logger is mainly intended for use by unit tests, and is not thread safe.    </p>
-<pre class=" ">WORKERLOGGER=org.signserver.server.log.FileWorkerLogger</pre><pre class="prettyprint ">LOG_FILE_PATH=/path/to/logfile</pre>    <p  >    </p>
+    <p  >Worker logger that writes the log values to a worker-specific log file. This logger logs all fields, similar to the AllFieldsWorkerLogger, and is mainly intended for use by unit tests, and is not thread safe.    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">WORKERLOGGER=org.signserver.server.log.FileWorkerLogger</code></div>
+<div class="line"><code class="plain">LOG_FILE_PATH=/path/to/logfile</code></div>
+</div>
     </div>
-    <div class="section section-1" id="src-5277906_id-.WorkerLogv4.1.0-AvailableLogFields">
-        <h1 class="heading "><span>Available Log Fields</span></h1>
     <p  >    </p>
-    <div  class="confbox admonition admonition-note">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >This is not a complete list of all available log events.    </p>
-        </div>
     </div>
+    <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-AvailableLogFields">
+        <h1 class="heading "><span>Available Log Fields</span></h1>
+    <p  >The following lists some of the available log fields and is not a complete listing of all log events.    </p>
     <div  class="tablewrap">
-        <table class="fixed-table confluenceTable">
+        <table class="fixed-table wrapped confluenceTable">
                     <colgroup>
                                     <col  width="233"/>
                                     <col  width="1426"/>
@@ -1259,12 +1334,6 @@
         </tr>
 </tbody>        </table>
             </div>
-    <p  >    </p>
-    <p  >    </p>
-    <p  >    </p>
-    <p  >    </p>
-    <p  >    </p>
-    <p  >    </p>
     </div>
         </div>
 

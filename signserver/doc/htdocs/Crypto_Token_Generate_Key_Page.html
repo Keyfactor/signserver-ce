@@ -215,9 +215,45 @@
         <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
 
             </li>
-                                        <li class="leaf">
+                                        <li class="collapsed">
         <a class="ht-nav-page-link" href="Client_CLI.html">Client CLI</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatedocument.html">validatedocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="timestamp.html">timestamp</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatecertificate.html">validatecertificate</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdatagroups.html">signdatagroups</a>
+
+            </li>
+                            </ul>
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Admin_WS_Interface.html">Admin WS Interface</a>
@@ -1170,14 +1206,15 @@
         <p  >Key Algorithm    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Algorithm for the key to generate. It is possible to generate Symmetric key also. Generated key type (Asymmetric or Symmetric) will depend on the provided key algorithm.    </p>
-    <p  >For Example, if RSA is provided, Asymmetric key (key pair) will be generated and in case of AES, Symmetric key (Secret key) will be generated.    </p>
-    <p  >Examples:    </p>
+        <p  >Algorithm for the key to generate. The key can be generated as type asymmetric (key-pair) or symmetric (secret key), and either key type is determined by the key algorithm specified.    </p>
+    <p  >For example, if RSA is specified as Key Algorithm, an asymmetric key (key-pair) is generated, and specifying AES generates a symmetric key (secret key).    </p>
+    <p  >Examples of valid values:    </p>
 <ul class=" "><li class=" ">    <p  ><i class=" ">RSA</i>    </p>
 </li><li class=" ">    <p  ><i class=" ">ECDSA</i>    </p>
 </li><li class=" ">    <p  ><i class=" ">AES</i>    </p>
-</li></ul>    <p  >Note: While generating secret key if provided algorithm name is not part of predefined list of known secret key algorithms, algorithm name should be prefixed with &quot;SEC:&quot;. Example: <strong class=" ">SEC:Blowfish</strong>. Currently known secret key list contains AES and DES algorithms.    </p>
-    <p  >If <a   href="JackNJI11CryptoToken.html">JackNJ11CryptoToken</a> is used, it is possible to provide algorithm name as long or hexadecimal constant value also.    </p>
+</li></ul>    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+ If generating a symmetric (secret) key and the specified key algorithm name is not present in the predefined list of known secret key algorithms, the key algorithm name must be specified with the prefix &quot;SEC:&quot;, for example: <strong class=" ">SEC:Blowfish</strong>. Currently, the secret key list contains the algorithms AES and DES.    </p>
+    <p  >If using the <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>, the algorithm name can be specified as a long or hexadecimal constant value. For more information, see <strong class=" ">Secret Key generation</strong> in <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>.    </p>
             </td>
         </tr>
     <tr>
@@ -1186,8 +1223,8 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Key specifications for the key to generate.    </p>
-    <p  >For RSA and DSA this is the key length and is specified as a number. Additionally, for RSA it is possible to use a different exponent by suffixing the number with an &quot;e&quot; followed by the exponent in decimal or prefixed with &quot;0x&quot; for hexadecimal.    </p>
-    <p  >For ECDSA use the name of the curve.    </p>
+    <p  >For RSA and DSA, this is the key length and is specified as a number. Additionally, for RSA it is possible to use a different exponent by suffixing the number with an &quot;e&quot; followed by the exponent in decimal, or prefixed with &quot;0x&quot; for hexadecimal.    </p>
+    <p  >For ECDSA, use the name of the curve.    </p>
     <p  >Examples:    </p>
 <ul class=" "><li class=" ">    <p  ><i class=" ">2048</i>    </p>
 </li><li class=" ">    <p  ><i class=" ">2048 exp 0x10001</i>    </p>
@@ -1203,7 +1240,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Click the <strong class=" ">+</strong> (plus) button to supply information for an additional key to be generated at the same time.    </p>
-    <p  >Click the <strong class=" ">-</strong> (minus) button to remove a row.    </p>
+    <p  >Click the <strong class=" ">-</strong> (minus) button to remove the row.    </p>
             </td>
         </tr>
 </tbody>        </table>

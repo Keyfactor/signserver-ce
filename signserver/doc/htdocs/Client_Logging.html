@@ -215,9 +215,45 @@
         <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
 
             </li>
-                                        <li class="leaf">
+                                        <li class="collapsed">
         <a class="ht-nav-page-link" href="Client_CLI.html">Client CLI</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatedocument.html">validatedocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="timestamp.html">timestamp</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatecertificate.html">validatecertificate</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdatagroups.html">signdatagroups</a>
+
+            </li>
+                            </ul>
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Admin_WS_Interface.html">Admin WS Interface</a>
@@ -1136,8 +1172,8 @@
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  class="confluence-link">SignServer applications running on the client side (i.e. that are not deployed to an application server) such as the <a   href="Client_CLI.html">Client CLI</a>, <a   href="Administration_CLI.html">Administration CLI</a> and <a   href="Administration_GUI.html">Administration GUI</a> uses the Log4j configuration file <strong class=" ">conf/log4j.properties</strong> for its output.    </p>
-    <p  >In order to switch log level from INFO to DEBUG or even TRACE edit that file so that it has:    </p>
+    <p  class="confluence-link">SignServer applications running on the client side (i.e. that are not deployed to an application server) such as the <a   href="Client_CLI.html">Client CLI</a>, <a   href="Administration_CLI.html">Administration CLI</a>, and <a   href="Administration_GUI.html">Administration GUI</a> uses the Log4j configuration file <strong class=" ">conf/log4j.properties</strong> for its output.    </p>
+    <p  >To change the log level from INFO to DEBUG or TRACE, edit the <strong class=" ">conf/log4j.properties</strong> file according to the following example:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">log4j.rootLogger=TRACE, A1</code></div>

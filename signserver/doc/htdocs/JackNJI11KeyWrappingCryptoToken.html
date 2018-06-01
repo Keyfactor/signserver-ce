@@ -215,9 +215,45 @@
         <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
 
             </li>
-                                        <li class="leaf">
+                                        <li class="collapsed">
         <a class="ht-nav-page-link" href="Client_CLI.html">Client CLI</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatedocument.html">validatedocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="timestamp.html">timestamp</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatecertificate.html">validatecertificate</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdatagroups.html">signdatagroups</a>
+
+            </li>
+                            </ul>
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Admin_WS_Interface.html">Admin WS Interface</a>
@@ -1171,7 +1207,7 @@
         <p  >DEFAULTKEY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key alias of the secret/symmetric wrapping key in the token that should be used to wrap and unwrap keys. (Required)    </p>
+        <p  >Key alias of the secret/symmetric wrapping key in the token that should be used to wrap and unwrap keys. Required.    </p>
             </td>
         </tr>
     <tr>
@@ -1179,7 +1215,7 @@
         <p  >WRAPPED_TESTKEY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key alias of wrapped key stored in the database that can be used to test that unwrapping is working. If specified the worker will be offline if a test signing key can be performed with this key. (Optional)    </p>
+        <p  >Key alias of wrapped key stored in the database that can be used to test that unwrapping is working. If specified, the worker will be offline if a test signing cannot be performed with this key. Optional.    </p>
             </td>
         </tr>
     <tr>
@@ -1224,32 +1260,41 @@
         <p  >WRAPPING_CIPHER_ALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Cipher algorithm used to wrap the keys by secret/symmetric key. It can be provided as PKCS#11 mechanism name, long constant value or hexadecimal constant value. (Optional)    </p>
-    <p  >Default value is <strong class=" ">CKM_AES_CBC_PAD</strong>    </p>
+        <p  >Cipher algorithm used to wrap the keys by secret/symmetric key. The value can be provided as PKCS#11 mechanism name, long constant value, or hexadecimal constant value. See <a   href="#src-15859714_id-.JackNJI11KeyWrappingCryptoTokenv4.3.0-WrappingCipherAlgorithm">Wrapping Cipher Algorithm</a> below. (Optional).    </p>
+    <p  >Default value is <strong class=" ">CKM_AES_CBC_PAD</strong>.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >USE_CACHE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Specify if key and certificate search results from the HSM should be cached. This can prevent problems due to too many find object requests under high load with some PKCS#11 implementations. Optional: default true.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-15859714_id-.JackNJI11KeyWrappingCryptoTokenv4.3.0-WrappingCipherAlgorithm">
-        <h1 class="heading "><span>Wrapping Cipher Algorithm</span></h1>
-    <p  >Wrapping Cipher algorithm is used to wrap the keys by secret/symmetric key. It can be supplied in below three ways.    </p>
+    <div class="section section-1" id="src-15859714_id-.JackNJI11KeyWrappingCryptoTokenv4.3.0-WrappingCipherAlgorithmWrappingCipherAlgorithm">
+        <h1 class="heading "><span>Wrapping Cipher Algorithm </span></h1>
+    <p  >The Wrapping Cipher Algorithm is used to wrap the keys by secret/symmetric key. Values can be supplied in the following ways:    </p>
     <div class="section section-2" id="src-15859714_safe-id-aWQtLkphY2tOSkkxMUtleVdyYXBwaW5nQ3J5cHRvVG9rZW52NC4zLjAtUEtDUyMxMW1lY2hhbmlzbW5hbWU">
         <h2 class="heading "><span>PKCS#11 mechanism name</span></h2>
-    <p  >It starts with &quot;CKM_&quot;. Example: <strong class=" ">CKM_AES_CBC_PAD</strong>    </p>
+    <p  >Stating with &quot;CKM_&quot;. Example: <strong class=" ">CKM_AES_CBC_PAD</strong>.    </p>
     </div>
     <div class="section section-2" id="src-15859714_id-.JackNJI11KeyWrappingCryptoTokenv4.3.0-CKMLongvalue">
         <h2 class="heading "><span>CKM Long value</span></h2>
-    <p  >Example: <strong class=" ">4229</strong>. Here 4229 represents long value for CKM_AES_CBC_PAD constant as per PKCS11 specification.    </p>
+    <p  >Example: <strong class=" ">4229</strong>. Here 4229 represents long value for CKM_AES_CBC_PAD constant, as per PKCS11 specification.    </p>
     </div>
     <div class="section section-2" id="src-15859714_id-.JackNJI11KeyWrappingCryptoTokenv4.3.0-CKMHexadecimalvalue">
         <h2 class="heading "><span>CKM Hexadecimal value</span></h2>
-    <p  >Example: <strong class=" ">0x00001085. </strong>Here<strong class=" "> </strong>0x00001085 represents hexadecimal value for CKM_AES_CBC_PAD constant as per PKCS11 specification.    </p>
+    <p  >Example: <strong class=" ">0x00001085. </strong>Here<strong class=" "> </strong>0x00001085 represents hexadecimal value for CKM_AES_CBC_PAD constant, as per PKCS11 specification.    </p>
     </div>
     </div>
     <div class="section section-1" id="src-15859714_id-.JackNJI11KeyWrappingCryptoTokenv4.3.0-NoDBMode">
         <h1 class="heading "><span>NoDB Mode</span></h1>
-    <p  >All the crypto token functionalities like generate key, remove key, generate CSR &amp; import certificate are not supported by this token in NoDB mode as it requires database connection.    </p>
+    <p  >Crypto token features like generate key, remove key, generate CSR, and import certificate are not supported by this token in NoDB mode since it requires a database connection.    </p>
+    <p  >    </p>
     </div>
         </div>
 

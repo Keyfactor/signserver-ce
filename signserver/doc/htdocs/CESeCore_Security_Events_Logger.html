@@ -215,9 +215,45 @@
         <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
 
             </li>
-                                        <li class="leaf">
+                                        <li class="collapsed">
         <a class="ht-nav-page-link" href="Client_CLI.html">Client CLI</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatedocument.html">validatedocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="timestamp.html">timestamp</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatecertificate.html">validatecertificate</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdatagroups.html">signdatagroups</a>
+
+            </li>
+                            </ul>
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Admin_WS_Interface.html">Admin WS Interface</a>
@@ -1156,7 +1192,7 @@
     <p  >Each SignServer node writing to the audit log needs to use different node IDs. By default, the hostname is used. If multiple instances are running from the same host, set the node ID manually in <strong class=" ">conf/cesecore.properties</strong> as <i class=" ">cluster.nodeid</i>.    </p>
         </div>
     </div>
-    <p  >If signing and/or verification is enabled one or more crypto tokens needs to be configured.    </p>
+    <p  >If signing and/or verification is enabled, one or more crypto tokens need to be configured.    </p>
     <div class="section section-2" id="src-16221419_safe-id-aWQtLkNFU2VDb3JlU2VjdXJpdHlFdmVudHNMb2dnZXJ2NC4zLjAtUEtDUyMxMUV4YW1wbGV1c2luZ0RlZmF1bHRQcm92aWRlcg">
         <h2 class="heading "><span>PKCS#11 Example using Default Provider</span></h2>
     <p  >It is recommended to use the same type of PKCS#11 provider for database protection as the other signers are also using. If the signers are using the <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a> the below crypto token called org.cesecore.keys.token.PKCS11CryptoToken should be used:    </p>

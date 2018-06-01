@@ -215,9 +215,45 @@
         <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
 
             </li>
-                                        <li class="leaf">
+                                        <li class="collapsed">
         <a class="ht-nav-page-link" href="Client_CLI.html">Client CLI</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatedocument.html">validatedocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="timestamp.html">timestamp</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatecertificate.html">validatecertificate</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdatagroups.html">signdatagroups</a>
+
+            </li>
+                            </ul>
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Admin_WS_Interface.html">Admin WS Interface</a>
@@ -1167,7 +1203,7 @@
         <p  >DEFAULTKEY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key alias of the secret/symmetric wrapping key in the token that should be used to wrap and unwrap keys. (Required)    </p>
+        <p  >Key alias of the secret/symmetric wrapping key in the token that should be used to wrap and unwrap keys. Required.    </p>
             </td>
         </tr>
     <tr>
@@ -1175,7 +1211,7 @@
         <p  >WRAPPED_TESTKEY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key alias of wrapped key stored in the database that can be used to test that unwrapping is working. If specified the worker will be offline if a test signing key can be performed with this key. (Optional)    </p>
+        <p  >Key alias of wrapped key stored in the database that can be used to test that unwrapping is working. If specified, the worker will be offline if a test signing cannot be performed with this key. Optional.    </p>
             </td>
         </tr>
     <tr>
@@ -1183,15 +1219,13 @@
         <p  >WRAPPING_CIPHER_ALGORITHM    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Cipher algorithm used to wrap the keys by secret/symmetric key. It can be provided as PKCS#11 mechanism name, long constant value or hexadecimal constant value. (Optional)    </p>
-    <p  >Default value is <strong class=" ">CKM_AES_CBC_PAD</strong>    </p>
-    <p  >See <a   href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a> for more details.    </p>
+        <p  >Cipher algorithm used to wrap the keys by secret/symmetric key. The value can be provided as PKCS#11 mechanism name, long constant value, or hexadecimal constant value. For more information on the Wrapping Cipher Algorithm, see <a   href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>. Optional.    </p>
+    <p  >Default value is <strong class=" ">CKM_AES_CBC_PAD</strong>.    </p>
             </td>
         </tr>
 </thead><tfoot class=" "></tfoot><tbody class=" "></tbody>        </table>
             </div>
-    <p  >    </p>
-    <p  ><strong class=" ">Note:</strong> All crypto token functionalities are not supported by this worker without database. See <strong class=" ">NoDB Mode</strong> section of <a   href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>.    </p>
+    <p  >Note that all crypto token features are not supported by this worker if running in NoDB mode. For more information, see <strong class=" ">NoDB Mode</strong> in <a   href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>.    </p>
     </div>
         </div>
 

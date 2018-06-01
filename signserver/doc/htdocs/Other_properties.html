@@ -215,9 +215,45 @@
         <a class="ht-nav-page-link" href="Client_WS_Interface.html">Client WS Interface</a>
 
             </li>
-                                        <li class="leaf">
+                                        <li class="collapsed">
         <a class="ht-nav-page-link" href="Client_CLI.html">Client CLI</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatedocument.html">validatedocument</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="timestamp.html">timestamp</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="validatecertificate.html">validatecertificate</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="signdatagroups.html">signdatagroups</a>
+
+            </li>
+                            </ul>
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Admin_WS_Interface.html">Admin WS Interface</a>
@@ -1132,7 +1168,7 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="Common_configuration.html">Common configuration</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277275"> <span>Other properties</span></h1>
+</div>            <h1 id="src-16224083"> <span>Other properties</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1156,7 +1192,7 @@
         <p  >DISABLED    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Setting this to <i class=" ">true</i> disables a worker. A disabled worker can not perform any operations and any requests to it will fail. However, disabled workers are not included in the Health check report.    </p>
+        <p  >Setting this to <i class=" ">true</i> disables a worker. A disabled worker cannot perform any operations and any requests to the worker will fail. The status is visible on the <a   href="Workers_Page.html">Workers Page</a>. Note that disabled workers are not included in the <a   href="Health_Check.html">Health Check</a> report. Default: false.    </p>
             </td>
         </tr>
     <tr>
@@ -1164,7 +1200,7 @@
         <p  >EXPLICITECC    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Setting this to <i class=" ">true</i> uses explicit domain parameters instead of NamedCurves when generating a certificate request using the RenewalWorker or through to admin GUI. (default: false)    </p>
+        <p  >Setting this to <i class=" ">true</i> uses explicit domain parameters instead of NamedCurves when generating a certificate request using the RenewalWorker or through to Admin GUI. Default: false.    </p>
             </td>
         </tr>
     <tr>
@@ -1172,7 +1208,7 @@
         <p  >NOCERTIFICATES    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Setting this to <i class=" ">true</i> tells SignServer to not warn if no signer certificate is configured for this worker. This could be useful for special types of workers not performing any signing operations.    </p>
+        <p  >Setting this to <i class=" ">true</i> tells SignServer not to warn if no signer certificate is configured for this worker. Can be useful for special types of workers not performing any signing operations. Default: false.    </p>
             </td>
         </tr>
 </tbody>        </table>

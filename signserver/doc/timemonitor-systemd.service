@@ -1,0 +1,11 @@
+[Unit] 
+Description=SignServer TimeMonitor
+After=network.target
+ 
+[Service]
+Type=forking
+ExecStart=/opt/signserver/bin/timemonitor-in-background.sh
+
+[Install]
+WantedBy=multi-user.target
+

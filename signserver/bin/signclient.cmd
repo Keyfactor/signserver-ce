@@ -27,7 +27,7 @@ rem Optional JARs
 set VALIDATIONCLI_JAR=
 set ENTERPRISE_JAR=
 for /f "tokens=*" %%a in ('dir /b /s %SIGNSRV_HOME%\lib\SignServer-Client-ValidationCLI-*.jar') do set VALIDATIONCLI_JAR=%%a
-for /f "tokens=*" %%a in ('dir /b /s %SIGNSRV_HOME%\lib\SignServer-ClientCLI-Enterprise-*.jar') do set ENTERPRISE_JAR=%%a
+for /f "tokens=*" %%a in ('dir /b /s %SIGNSRV_HOME%\lib\SignServer-ClientCLI-Enterprise-*.jar 2^>nul') do set ENTERPRISE_JAR=%%a
 set OPTIONAL_CLASSPATH=%VALIDATIONCLI_JAR%;%ENTERPRISE_JAR%;%EXTRA_CLASSPATH%
 
 set CLASSPATH=%SIGNSRV_HOME%\conf;%SIGNSRV_HOME%\bin;%JAR%;%J2EE_CP%;%SIGNSRV_HOME%\res\deploytools\cesecore;%OPTIONAL_CLASSPATH%

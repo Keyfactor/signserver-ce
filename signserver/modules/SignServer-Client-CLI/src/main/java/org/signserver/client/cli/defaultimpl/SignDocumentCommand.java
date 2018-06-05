@@ -433,6 +433,28 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         
         if (line.hasOption(DIGESTALGORITHM)) {
             digestAlgorithm = line.getOptionValue(DIGESTALGORITHM);
+            if (digestAlgorithm != null) {
+                switch (digestAlgorithm.toUpperCase()) {
+                    case "SHA1":
+                    case "SHA-1":
+                        digestAlgorithm = "SHA-1";
+                        break;
+                    case "SHA256":
+                    case "SHA-256":
+                        digestAlgorithm = "SHA-256";
+                        break;
+                    case "SHA384":
+                    case "SHA-384":
+                        digestAlgorithm = "SHA-384";
+                        break;
+                    case "SHA512":
+                    case "SHA-512":
+                        digestAlgorithm = "SHA-512";
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
         
         if (line.hasOption(FILETYPE)) {
@@ -826,8 +848,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 success = false;
                 cleanUpOutputFileOnFailure = true;
             } catch (NoSuchAlgorithmException ex) {
-                // TODO: include digest algorithm in case of error
-                LOG.error("Unknown digest algorithm");
+                LOG.error("Unknown digest algorithm: " + digestAlgorithm);
                 success = false;
                 cleanUpOutputFileOnFailure = true;
             } finally {

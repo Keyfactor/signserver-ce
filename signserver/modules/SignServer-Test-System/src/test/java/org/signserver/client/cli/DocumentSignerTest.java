@@ -346,8 +346,9 @@ public class DocumentSignerTest extends ModulesTestCase {
     @Test
     public void test02signDocumentFromFile() throws Exception {
         LOG.info("test02signDocumentFromFile");
+        File doc = null;
         try {
-            final File doc = File.createTempFile("test.xml", null);
+            doc = File.createTempFile("test.xml", null);
             try (FileOutputStream out = new FileOutputStream(doc)) {
                 out.write("<tag/>".getBytes());
             }
@@ -360,6 +361,8 @@ public class DocumentSignerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
+        } finally {
+            FileUtils.deleteQuietly(doc);
         }
     }
     
@@ -372,8 +375,9 @@ public class DocumentSignerTest extends ModulesTestCase {
     @Test
     public void test02signDocumentFromFileWithFallbackHost() throws Exception {
         LOG.info("test02signDocumentFromFileWithFallbackHost");
+        File doc = null;
         try {
-            final File doc = File.createTempFile("test.xml", null);
+            doc = File.createTempFile("test.xml", null);
             try (FileOutputStream out = new FileOutputStream(doc)) {
                 out.write("<tag/>".getBytes());
             }
@@ -387,6 +391,8 @@ public class DocumentSignerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
+        } finally {
+            FileUtils.deleteQuietly(doc);
         }
     }
     
@@ -399,8 +405,9 @@ public class DocumentSignerTest extends ModulesTestCase {
     @Test
     public void test02signDocumentFromFileFallingHostFirstSuccess() throws Exception {
         LOG.info("test02signDocumentFromFileWithFallbackHostFirstSuccess");
+        File doc = null;
         try {
-            final File doc = File.createTempFile("test.xml", null);
+            doc = File.createTempFile("test.xml", null);
             try (FileOutputStream out = new FileOutputStream(doc)) {
                 out.write("<tag/>".getBytes());
             }
@@ -414,6 +421,8 @@ public class DocumentSignerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
+        } finally {
+            FileUtils.deleteQuietly(doc);
         }
     }
 
@@ -453,12 +462,8 @@ public class DocumentSignerTest extends ModulesTestCase {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
         } finally {
-            if (inFile != null) {
-                FileUtils.deleteQuietly(inFile);
-            }
-            if (outFile != null) {
-                FileUtils.deleteQuietly(inFile);
-            }
+            FileUtils.deleteQuietly(inFile);
+            FileUtils.deleteQuietly(outFile);
         }
     }
 
@@ -971,8 +976,9 @@ public class DocumentSignerTest extends ModulesTestCase {
     @Test
     public void test20handleError() throws Exception {
         LOG.info("test20handleError");
+        File doc = null;
         try {
-            final File doc = File.createTempFile("test.xml", null);
+            doc = File.createTempFile("test.xml", null);
             try (FileOutputStream out = new FileOutputStream(doc)) {
                 out.write("<tag/>".getBytes());
             }
@@ -985,6 +991,8 @@ public class DocumentSignerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
+        } finally {
+            FileUtils.deleteQuietly(doc);
         }
     }
     
@@ -1045,15 +1053,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             // input file should be present
             assertTrue("Input file not exists: ", inFile != null && inFile.exists());
         } finally {
-            if (inFile != null) {
-                FileUtils.deleteQuietly(inFile);
-            }
-            if (outFile != null) {
-                FileUtils.deleteQuietly(outFile);
-            }
-            if (renamedFile != null) {
-                FileUtils.deleteQuietly(renamedFile);
-            }
+            FileUtils.deleteQuietly(inFile);
+            FileUtils.deleteQuietly(outFile);
+            FileUtils.deleteQuietly(renamedFile);
         }
     }
     

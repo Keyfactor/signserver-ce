@@ -445,9 +445,6 @@ public class TimeStampCommand extends AbstractCommand {
             TimeStampTokenInfo info = token.getTimeStampInfo();
             if (info != null) {
                 out.println("      Info:");
-                out.print("         " + "Accuracy:                  ");
-                out.println(info.getAccuracy() != null ? info.getAccuracy() : "(null)");
-
                 out.print("         " + "Gen Time:                  ");
                 out.println(info.getGenTime());
 

@@ -435,9 +435,17 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             digestAlgorithm = line.getOptionValue(DIGESTALGORITHM);
             if (digestAlgorithm != null) {
                 switch (digestAlgorithm.toUpperCase()) {
+                    case "MD5":
+                    case "MD-5":
+                        digestAlgorithm = "MD5";
+                        break;
                     case "SHA1":
                     case "SHA-1":
                         digestAlgorithm = "SHA-1";
+                        break;
+                    case "SHA224":
+                    case "SHA-224":
+                        digestAlgorithm = "SHA-224";
                         break;
                     case "SHA256":
                     case "SHA-256":

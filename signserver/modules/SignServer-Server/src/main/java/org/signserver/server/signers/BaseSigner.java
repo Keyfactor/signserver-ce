@@ -88,7 +88,6 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
      */
     @Override
     public WorkerStatusInfo getStatus(final List<String> additionalFatalErrors, final IServices services) {
-        WorkerStatusInfo info;
         final List<String> fatalErrors = new LinkedList<>(additionalFatalErrors);
         fatalErrors.addAll(getFatalErrors(services));
 
@@ -120,8 +119,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             try {
                 crypto = acquireDefaultCryptoInstance(context);
 
-                signerCertificate =
-                        (X509Certificate) getSigningCertificate(crypto);
+                signerCertificate = (X509Certificate) getSigningCertificate(crypto);
                 if (signerCertificate != null) {
                     final long keyUsageLimit = Long.valueOf(config.getProperty(SignServerConstants.KEYUSAGELIMIT, "-1"));
 

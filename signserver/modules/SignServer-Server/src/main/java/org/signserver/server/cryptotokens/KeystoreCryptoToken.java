@@ -664,7 +664,11 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             UnsupportedCryptoTokenParameter,
             IllegalRequestException {
         final KeyEntry entry = getKeyEntry(alias, context.getServices());
-        return new DefaultCryptoInstance(alias, context, ks.getProvider(), entry.getPrivateKey(), entry.getCertificateChain());
+        if (entry.getCertificateChain().size() == 1 && CryptoTokenHelper.isDummyCertificate(entry.getCertificateChain().get(0))) {
+            return new DefaultCryptoInstance(alias, context, ks.getProvider(), entry.getPrivateKey(), entry.getCertificateChain().get(0).getPublicKey());
+        } else {
+            return new DefaultCryptoInstance(alias, context, ks.getProvider(), entry.getPrivateKey(), entry.getCertificateChain());
+        }
     }
 
     @Override

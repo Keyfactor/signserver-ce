@@ -432,8 +432,6 @@ public class P11SignTest extends ModulesTestCase {
         List<String> errors = workerSession.getStatus(new WorkerIdentifier(WORKER_TSA)).getFatalErrors();
         assertEquals("errors: " + errors, 0, errors.size());
 
-        final long kucBefore = workerSession.getKeyUsageCounterValue(new WorkerIdentifier(WORKER_TSA));
-
         // Test signing
         TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
@@ -447,10 +445,6 @@ public class P11SignTest extends ModulesTestCase {
         
         assertEquals("Token granted", PKIStatus.GRANTED, timeStampResponse.getStatus());
         assertNotNull("Got timestamp token", timeStampResponse.getTimeStampToken());
-        
-        final long kucAfter = workerSession.getKeyUsageCounterValue(new WorkerIdentifier(WORKER_TSA));
-
-        assertEquals("Key usage counter increased", kucBefore + 1, kucAfter);
     }
     
     private void setMRTDSODSignerProperties(final int workerId, final boolean cache) throws IOException {

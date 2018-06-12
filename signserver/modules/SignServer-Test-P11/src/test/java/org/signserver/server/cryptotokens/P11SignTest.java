@@ -107,6 +107,7 @@ public class P11SignTest extends ModulesTestCase {
     private static final int WORKER_ODF = 20005;
     private static final int WORKER_OOXML = 20006;
     private static final int WORKER_MSA = 20007;
+    private static final int WORKER_TSA_ALTKEY = 20008;
     
     private static final String MSAUTHCODE_REQUEST_DATA =
     		"MIIBIwYKKwYBBAGCNwMCATCCARMGCSqGSIb3DQEHAaCCAQQEggEAVVSpOKf9zJYc" +
@@ -390,6 +391,66 @@ public class P11SignTest extends ModulesTestCase {
         }
     }
     
+    public void testTSSigner_keyUsageCounterCertInConfig() throws Exception {
+        final String key = "altkey";
+        try {
+            // Setup worker
+            workerSession.setWorkerProperty(WORKER_TSA_ALTKEY, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+            workerSession.setWorkerProperty(WORKER_TSA_ALTKEY, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.tsa.TimeStampSigner");
+            workerSession.setWorkerProperty(WORKER_TSA_ALTKEY, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
+            workerSession.setWorkerProperty(WORKER_TSA_ALTKEY, "NAME", "TSSignerAltKey");
+            workerSession.setWorkerProperty(WORKER_TSA_ALTKEY, "AUTHTYPE", "NOAUTH");
+            workerSession.setWorkerProperty(WORKER_TSA_ALTKEY, "SHAREDLIBRARYNAME", sharedLibraryName);
+            workerSession.setWorkerProperty(WORKER_TSA_ALTKEY, "SLOT", slot);
+            workerSession.setWorkerProperty(WORKER_TSA_ALTKEY, "PIN", pin);
+            workerSession.setWorkerProperty(WORKER_TSA_ALTKEY, "DEFAULTKEY", key);
+            workerSession.setWorkerProperty(WORKER_TSA_ALTKEY, "DEFAULTTSAPOLICYOID", "1.2.3");
+            workerSession.setWorkerProperty(WORKER_TSA_ALTKEY, "ACCEPTANYPOLICY", "true");
+            
+            workerSession.generateSignerKey(new WorkerIdentifier(WORKER_TSA_ALTKEY),
+                                            "RSA", "2048", key, pin.toCharArray());
+            
+            // Generate CSR
+            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_TSA_ALTKEY, null);
+            Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(WORKER_TSA_ALTKEY), certReqInfo, false);
+
+            // Issue certificate
+            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo())
+                    .addExtension(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping).toASN1Primitive())
+                    .build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+            // Install certificate and chain
+            workerSession.uploadSignerCertificate(WORKER_TSA_ALTKEY, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKER_TSA_ALTKEY, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKER_TSA_ALTKEY);
+            
+            assertEquals("No key usage", 0, workerSession.getKeyUsageCounterValue(new WorkerIdentifier(WORKER_TSA_ALTKEY)));
+            
+            // Test signing
+            TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
+            TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
+            byte[] requestBytes = timeStampRequest.getEncoded();
+            GenericSignRequest signRequest = new GenericSignRequest(567, requestBytes);
+            final GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKER_TSA_ALTKEY), signRequest, new RemoteRequestContext());
+            Certificate signercert = res.getSignerCertificate();
+            assertNotNull(signercert);
+            final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
+            timeStampResponse.validate(timeStampRequest);
+
+            assertEquals("Token granted", PKIStatus.GRANTED, timeStampResponse.getStatus());
+            assertNotNull("Got timestamp token", timeStampResponse.getTimeStampToken());
+            
+            assertEquals("Key used once", 1, workerSession.getKeyUsageCounterValue(new WorkerIdentifier(WORKER_TSA_ALTKEY)));
+            
+        } finally {
+            workerSession.removeKey(new WorkerIdentifier(WORKER_TSA_ALTKEY), key);
+            removeWorker(WORKER_TSA_ALTKEY);
+        }
+    }
+    
+    
     /**
      * Tests setting up a TimeStamp Signer, giving it a certificate and request a time-stamp token.
      */
@@ -445,6 +506,14 @@ public class P11SignTest extends ModulesTestCase {
         
         assertEquals("Token granted", PKIStatus.GRANTED, timeStampResponse.getStatus());
         assertNotNull("Got timestamp token", timeStampResponse.getTimeStampToken());
+    }
+    
+    /**
+     * Test that key usage counter is updated as expected for a 
+     * @throws Exception 
+     */
+    public void testTSSigner_keyUsageCounter() throws Exception {
+        
     }
     
     private void setMRTDSODSignerProperties(final int workerId, final boolean cache) throws IOException {

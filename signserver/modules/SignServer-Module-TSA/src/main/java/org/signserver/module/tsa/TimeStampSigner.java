@@ -675,7 +675,7 @@ public class TimeStampSigner extends BaseSigner {
             final TimeStampToken token = timeStampResponse.getTimeStampToken();
             final byte[] signedbytes = legacyEncoding ? timeStampResponse.getEncoded(ASN1Encoding.DL) : timeStampResponse.getEncoded();
             out.write(signedbytes);
-            cert = crypto.getCertificate();
+            cert = getSigningCertificate(crypto);
 
             final TimeStampResponse tspResponse = timeStampResponse;
 

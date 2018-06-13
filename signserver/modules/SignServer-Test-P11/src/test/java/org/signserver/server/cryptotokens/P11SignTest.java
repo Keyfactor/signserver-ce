@@ -391,7 +391,28 @@ public class P11SignTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Test that key usage counter increments as expected for TimeStampSigner
+     * then the certificate is uploaded to the signer configuration.
+     * 
+     * @throws Exception 
+     */
     public void testTSSigner_keyUsageCounterCertInConfig() throws Exception {
+        testTSSigner_keyUsageCounter(true);
+    }
+    
+    /**
+     * Test that key usage counter increments as expected for TimeStampSigner
+     * then the certificate is uploaded to the token.
+     * 
+     * @throws Exception 
+     */
+    public void testTSSigner_keyUsageCounterCertInToken() throws Exception {
+        testTSSigner_keyUsageCounter(false);
+    }
+    
+    private void testTSSigner_keyUsageCounter(final boolean certInConfig) 
+        throws Exception {
         final String key = "altkey";
         try {
             // Setup worker
@@ -422,8 +443,14 @@ public class P11SignTest extends ModulesTestCase {
                     .build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 
             // Install certificate and chain
-            workerSession.uploadSignerCertificate(WORKER_TSA_ALTKEY, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.uploadSignerCertificateChain(WORKER_TSA_ALTKEY, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            if (certInConfig) {
+                workerSession.uploadSignerCertificate(WORKER_TSA_ALTKEY, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+                workerSession.uploadSignerCertificateChain(WORKER_TSA_ALTKEY, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            } else {
+                workerSession.importCertificateChain(new WorkerIdentifier(WORKER_TSA_ALTKEY),
+                                                     Arrays.asList(cert.getEncoded()),
+                                                     key, pin.toCharArray());
+            }
             workerSession.reloadConfiguration(WORKER_TSA_ALTKEY);
             
             assertEquals("No key usage", 0, workerSession.getKeyUsageCounterValue(new WorkerIdentifier(WORKER_TSA_ALTKEY)));

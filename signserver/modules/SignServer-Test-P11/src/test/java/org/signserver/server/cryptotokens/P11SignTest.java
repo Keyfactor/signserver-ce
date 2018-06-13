@@ -453,7 +453,7 @@ public class P11SignTest extends ModulesTestCase {
             }
             workerSession.reloadConfiguration(WORKER_TSA_ALTKEY);
             
-            assertEquals("No key usage", 0, workerSession.getKeyUsageCounterValue(new WorkerIdentifier(WORKER_TSA_ALTKEY)));
+            final long keyUsageBefore = workerSession.getKeyUsageCounterValue(new WorkerIdentifier(WORKER_TSA_ALTKEY));
             
             // Test signing
             TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
@@ -469,7 +469,7 @@ public class P11SignTest extends ModulesTestCase {
             assertEquals("Token granted", PKIStatus.GRANTED, timeStampResponse.getStatus());
             assertNotNull("Got timestamp token", timeStampResponse.getTimeStampToken());
             
-            assertEquals("Key used once", 1, workerSession.getKeyUsageCounterValue(new WorkerIdentifier(WORKER_TSA_ALTKEY)));
+            assertEquals("Key used once", keyUsageBefore + 1, workerSession.getKeyUsageCounterValue(new WorkerIdentifier(WORKER_TSA_ALTKEY)));
             
         } finally {
             workerSession.removeKey(new WorkerIdentifier(WORKER_TSA_ALTKEY), key);
@@ -534,15 +534,7 @@ public class P11SignTest extends ModulesTestCase {
         assertEquals("Token granted", PKIStatus.GRANTED, timeStampResponse.getStatus());
         assertNotNull("Got timestamp token", timeStampResponse.getTimeStampToken());
     }
-    
-    /**
-     * Test that key usage counter is updated as expected for a 
-     * @throws Exception 
-     */
-    public void testTSSigner_keyUsageCounter() throws Exception {
-        
-    }
-    
+
     private void setMRTDSODSignerProperties(final int workerId, final boolean cache) throws IOException {
         // Setup worker
         workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());

@@ -82,7 +82,9 @@ public class SignerStatusReportTimedService extends BaseTimedService {
         if (workersValue == null) {
             LOG.error("Property WORKERS missing!");
         } else {
-            workers.addAll(Arrays.asList(workersValue.split(",")));
+            for (String workerName : workersValue.split(",")) {
+                workers.add(workerName.trim());
+            }
         }
         LOG.info("Worker[" + workerId +"]: " + "Workers: " + workers.size());
     }

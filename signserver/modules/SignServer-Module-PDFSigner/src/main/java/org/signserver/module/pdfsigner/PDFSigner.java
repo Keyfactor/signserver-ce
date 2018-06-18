@@ -386,7 +386,7 @@ public class PDFSigner extends BaseSigner {
             
             return new SignatureResponse(sReq.getRequestID(),
                     responseData,
-                    crypto.getCertificate(),
+                    getSigningCertificate(crypto),
                     archiveId, archivables, CONTENT_TYPE);
         } catch (DocumentException e) {
             throw new IllegalRequestException("Could not sign document: "

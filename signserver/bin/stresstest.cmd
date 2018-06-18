@@ -33,7 +33,7 @@ if exist %APPSRV_HOME%\bin\standalone.bat  (
     set JEE_CLASSPATH=%CLASSPATH%;%SIGNSRV_HOME%\conf\jboss7;%APPSRV_HOME%\bin\client\jboss-client.jar
 )
 
-set CLASSPATH=%MAIN_CLASSPATH%;%JEE_CLASSPATH%
+set CLASSPATH=%MAIN_CLASSPATH%;%JEE_CLASSPATH%;%OPTIONAL_CLASSPATH%
 rem echo %CLASSPATH%
 
 rem Enable Java network debug logs

@@ -351,7 +351,7 @@ public class XAdESSigner extends BaseSigner {
             // Parse
             final XadesSigner signer =
                     createSigner(crypto, parameters, claimedRole, signRequest, requestContext);
-            cert = crypto.getCertificate();
+            cert = getSigningCertificate(crypto);
             final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
 

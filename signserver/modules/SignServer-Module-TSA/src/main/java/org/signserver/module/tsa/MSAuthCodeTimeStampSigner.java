@@ -596,11 +596,13 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                 }
             }
 
-            // Check if certificat has the required EKU
+            // Check if certificate has the required EKU
             final Certificate certificate = getSigningCertificate(services);
             result.addAll(checkTimeStampCertificate(certificate));
         } catch (CryptoTokenOfflineException ex) {
-            result.add("No signer certificate available");
+            if (isCryptoTokenActive(services)) {
+                result.add("No signer certificate available");
+            }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Signer " + workerId + ": Could not get signer certificate: " + ex.getMessage());
             }

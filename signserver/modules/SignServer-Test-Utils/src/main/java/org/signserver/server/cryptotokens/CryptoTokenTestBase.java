@@ -325,7 +325,7 @@ public abstract class CryptoTokenTestBase {
         
         try {
             final ISignerCertReqInfo req =
-                    new PKCS10CertReqInfo("SHA1WithRSA", "CN=imported", null);
+                    new PKCS10CertReqInfo("SHA1WithRSA", "CN=imported, organizationIdentifier=12345, O=Test", null);
             Base64SignerCertReqData reqData =
                     (Base64SignerCertReqData) genCertificateRequest(req, false, existingKey);
 
@@ -404,7 +404,7 @@ public abstract class CryptoTokenTestBase {
             NoSuchAlgorithmException, NoSuchProviderException,
             OperatorCreationException, IOException, QueryException, OperationUnsupportedException, AuthorizationDeniedException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
         
-        final ISignerCertReqInfo req = new PKCS10CertReqInfo("SHA1WithRSA", "CN=imported", null);
+        final ISignerCertReqInfo req = new PKCS10CertReqInfo("SHA1WithRSA", "CN=imported, organizationIdentifier=12345, O=Test", null);
         final Base64SignerCertReqData reqData = (Base64SignerCertReqData) genCertificateRequest(req, false, existingKey);
 
         // Generate a certificate chain that we will try to import and later export

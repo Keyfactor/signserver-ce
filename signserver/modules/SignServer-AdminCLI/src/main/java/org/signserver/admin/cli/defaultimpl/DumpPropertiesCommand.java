@@ -106,8 +106,7 @@ public class DumpPropertiesCommand extends AbstractAdminCommand {
         final WorkerSession ws = getWorkerSession();
         final Properties globalProps =
                 getGlobalConfigurationSession().getGlobalConfiguration().getConfig();
-        final Properties workerProps =
-                ws.getCurrentWorkerConfig(workerId).getProperties();
+        final Properties workerProps = ws.exportWorkerConfig(workerId);
         final Collection<AuthorizedClient> authClients = ws.getAuthorizedClients(workerId);
         
         PropertiesDumper.dumpWorkerProperties(workerId, globalProps, workerProps,

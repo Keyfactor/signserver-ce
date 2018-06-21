@@ -587,6 +587,21 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     }
 
     @Override
+    public Properties exportWorkerConfig(final int signerId) {
+        final WorkerConfig config = getCurrentWorkerConfig(signerId);
+        final Properties allProps = config.getProperties();
+        final Properties exportedProps = new Properties();
+        
+        for (final String key : allProps.stringPropertyNames()) {
+            if (!CompileTimeSettings.getInstance().getMaskedProperties().contains(key.toUpperCase(Locale.ENGLISH))) {
+                exportedProps.put(key, allProps.getProperty(key));
+            }
+        }
+        
+        return exportedProps;
+    }
+    
+    @Override
     public byte[] getKeystoreData(AdminInfo adminInfo, int signerId) {
         WorkerConfig config = getWorkerConfig(signerId);
         

@@ -20,6 +20,7 @@ import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.ArchiveDataVO;
@@ -122,6 +123,15 @@ public interface WorkerSession {
      */
     WorkerConfig getCurrentWorkerConfig(int signerId);
 
+    /**
+     * Exports a worker's properties excluding sensitive ones
+     * (as configured by deploy-time properties)
+     * 
+     * @param signerId
+     * @return current worker properties, excluding sensitive
+     */
+    Properties exportWorkerConfig(int signerId);
+    
     /**
      * Sets a parameter in a workers configuration.
      *

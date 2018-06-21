@@ -15,7 +15,10 @@ package org.signserver.common;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.Set;
 import org.apache.log4j.Logger;
 
 /**
@@ -67,6 +70,8 @@ public class CompileTimeSettings {
     private static final Properties DEFAULT_PROPERTIES = new Properties();
 
     private static CompileTimeSettings instance;
+    
+    private static Set<String> maskedWorkerPropertyNames;
 
     /** Properties put together at compile-time. */
     private Properties properties = new Properties(DEFAULT_PROPERTIES);
@@ -116,4 +121,24 @@ public class CompileTimeSettings {
         return properties;
     }
 
+    /**
+     * Get a set of worker property names that should masked out
+     * when i.e. dumping worker properties.
+     * 
+     * @return set of worker property names to be considered sensitive
+     */
+    public Set<String> getMaskedProperties() {
+        if (maskedWorkerPropertyNames == null) {
+            maskedWorkerPropertyNames = new HashSet<>();
+            final String maskedPropertiesString = getProperty("maskedworkerproperties");
+
+            for (final String prop : maskedPropertiesString.split(",")) {
+                final String trimProp = prop.trim();
+                maskedWorkerPropertyNames.add(trimProp.toUpperCase(Locale.ENGLISH));
+
+            }
+        }
+        
+        return maskedWorkerPropertyNames;
+    }
 }

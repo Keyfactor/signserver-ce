@@ -371,3 +371,12 @@
 # How long a peer can be absent in milliseconds before (re-)authentication is triggered. Default: 60000
 #peerconnector.incoming.authcachetime=60000
 #
+
+# -------------- Masking of sensitive information -----------------------------
+#
+# A list of worker property names that should be skipped out when dumping
+# worker configuration and audit logging to avoid exposing sensitive data.
+# To retain the old behaviour of showing all values, set the value to an empty
+# list.
+#maskedworkerproperties=PIN,KEYSTOREPASSWORD,KEYDATA
+#maskedworkerproperties=

@@ -297,9 +297,9 @@ public class WorkerConfig extends UpgradeableDataHashMap {
         final Properties oldProps = oldConfig.getProperties();
         final Properties newProps = newConfig.getProperties();
         
-        final Map<String, String> changed = new HashMap<String, String>();
-        final Map<String, String> added = new HashMap<String, String>();
-        final Map<String, String> removed = new HashMap<String, String>();
+        final Map<String, String> changed = new HashMap<>();
+        final Map<String, String> added = new HashMap<>();
+        final Map<String, String> removed = new HashMap<>();
         for (final Object o : newProps.keySet()) {
             final String prop = (String) o;
             final String val = (String) newProps.get(prop);
@@ -324,19 +324,19 @@ public class WorkerConfig extends UpgradeableDataHashMap {
         
         for (final String key : added.keySet()) {
             if (!shouldSkipProperty(key)) {
-                result.put("added: " + key, added.get(key));
+                result.put("added:" + key, added.get(key));
             }
         }
         
         for (final String key : changed.keySet()) {
             if (!shouldSkipProperty(key)) {
-                result.put("changed: " + key, changed.get(key));
+                result.put("changed:" + key, changed.get(key));
             }
         }
         
         for (final String key : removed.keySet()) {
             if (!shouldSkipProperty(key)) {
-                result.put("removed: " + key, removed.get(key));
+                result.put("removed:" + key, removed.get(key));
             }
         }
 

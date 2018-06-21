@@ -26,8 +26,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.internal.UpgradeableDataHashMap;
@@ -295,16 +297,19 @@ public class WorkerConfig extends UpgradeableDataHashMap {
         final Properties oldProps = oldConfig.getProperties();
         final Properties newProps = newConfig.getProperties();
         
+        final Map<String, String> changed = new HashMap<String, String>();
+        final Map<String, String> added = new HashMap<String, String>();
+        final Map<String, String> removed = new HashMap<String, String>();
         for (final Object o : newProps.keySet()) {
             final String prop = (String) o;
             final String val = (String) newProps.get(prop);
             
             if (oldProps.containsKey(prop)) {
                 if (!val.equals(oldProps.get(prop))) {
-                    result.put("changed:" + prop, val);
+                    changed.put(prop, val);
                 }
             } else {
-                result.put("added:" + prop, val);
+                added.put(prop, val);
             }
         }
         
@@ -313,11 +318,33 @@ public class WorkerConfig extends UpgradeableDataHashMap {
             final String val = (String) oldProps.get(prop);
 
             if (!newProps.containsKey(prop)) {
-                result.put("removed:" + prop, val);
+                removed.put(prop, val);
             }
         }
         
+        for (final String key : added.keySet()) {
+            if (!shouldSkipProperty(key)) {
+                result.put("added: " + key, added.get(key));
+            }
+        }
+        
+        for (final String key : changed.keySet()) {
+            if (!shouldSkipProperty(key)) {
+                result.put("changed: " + key, changed.get(key));
+            }
+        }
+        
+        for (final String key : removed.keySet()) {
+            if (!shouldSkipProperty(key)) {
+                result.put("removed: " + key, removed.get(key));
+            }
+        }
+
         return result;
+    }
+    
+    private static boolean shouldSkipProperty(final String propertyName) {
+        return CompileTimeSettings.getInstance().getMaskedProperties().contains(propertyName.toUpperCase(Locale.ENGLISH));
     }
 
 

@@ -479,21 +479,20 @@ Installation Guide for details.
         <property name="dist.dir" location="${tmp}/dist"/>
         <echo>Copying distribution to ${dist.dir}</echo>
         <mkdir dir="${dist.dir}"/>
-        
+
         <mkdir dir="${dist.dir}/sampleconfigs"/>
         <copy todir="${dist.dir}/sampleconfigs" overwrite="true" flatten="true">
             <fileset dir="." includes="_NON_EXISTING,${dist.includes}" excludes="_NON_EXISTING,${dist.excludes.extra}"/>
         </copy>
-        
-        <fileset id="dist.contents" dir="${dist.dir}/sampleconfigs" includes="*"/> 
-        <property name="prop.dist.contents" refid="dist.contents"/>
-        
-        <echo level="debug">Sample config files: ${prop.dist.contents}</echo>
-        
-        <echo file="${dist.dir}/sampleconfigs.properties" append="false" encoding="latin1">
-sampleconfigs.files=${prop.dist.contents}
-        </echo>
 
+        <fileset id="dist.contents" dir="${dist.dir}/sampleconfigs" includes="*"/> 
+        <pathconvert pathsep=";" property="prop.dist.contents" refid="dist.contents">
+            <mapper><flattenmapper/></mapper>
+        </pathconvert>
+
+        <echo level="debug">Sample config files: ${prop.dist.contents}</echo>
+
+        <echo file="${dist.dir}/sampleconfigs.properties" append="false" encoding="latin1">sampleconfigs.files=${prop.dist.contents}</echo>
     </target>
 
     <!-- =================================================================== -->

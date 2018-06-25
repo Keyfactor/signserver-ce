@@ -593,7 +593,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         final Properties exportedProps = new Properties();
         
         for (final String key : allProps.stringPropertyNames()) {
-            if (!CompileTimeSettings.getInstance().getMaskedProperties().contains(key.toUpperCase(Locale.ENGLISH))) {
+            if (!WorkerConfig.shouldMaskProperty(key)) {
                 exportedProps.put(key, allProps.getProperty(key));
             }
         }

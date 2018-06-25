@@ -30,6 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.internal.UpgradeableDataHashMap;
@@ -323,19 +324,19 @@ public class WorkerConfig extends UpgradeableDataHashMap {
         }
         
         for (final String key : added.keySet()) {
-            if (!shouldSkipProperty(key)) {
+            if (!shouldMaskProperty(key)) {
                 result.put("added:" + key, added.get(key));
             }
         }
         
         for (final String key : changed.keySet()) {
-            if (!shouldSkipProperty(key)) {
+            if (!shouldMaskProperty(key)) {
                 result.put("changed:" + key, changed.get(key));
             }
         }
         
         for (final String key : removed.keySet()) {
-            if (!shouldSkipProperty(key)) {
+            if (!shouldMaskProperty(key)) {
                 result.put("removed:" + key, removed.get(key));
             }
         }
@@ -343,8 +344,19 @@ public class WorkerConfig extends UpgradeableDataHashMap {
         return result;
     }
     
-    private static boolean shouldSkipProperty(final String propertyName) {
-        return CompileTimeSettings.getInstance().getMaskedProperties().contains(propertyName.toUpperCase(Locale.ENGLISH));
+    /**
+     * Determine if a worker property should be masked out in
+     * sensitive contexts such as logging and dumping.
+     * The list of masked properties are determined at deploy time.
+     * Also, properties prefixed or postfixed with a _ is considered as well.
+     * 
+     * @param propertyName
+     * @return True if property should be masked
+     */
+    public static boolean shouldMaskProperty(final String propertyName) {
+        final String propertyNameTrimmed =
+                StringUtils.removeEnd("_", StringUtils.removeStart("_", propertyName));
+        return CompileTimeSettings.getInstance().getMaskedProperties().contains(propertyNameTrimmed.toUpperCase(Locale.ENGLISH));
     }
 
 

@@ -123,6 +123,12 @@ public class WorkerConfig extends UpgradeableDataHashMap {
      */
     public static final String NO_REQUEST_ARCHIVING = "NO_REQUEST_ARCHIVING";
     
+    /**
+     * Placeholder to use when exporting sensitive worker properties (such as
+     * token PIN) in place of the actual value.
+     */
+    public static final String WORKER_PROPERTY_MASK_PLACEHOLDER = "_MASKED_";
+    
     @SuppressWarnings("unchecked")
     public WorkerConfig() {
         data.put(PROPERTIES, new Properties());
@@ -323,19 +329,25 @@ public class WorkerConfig extends UpgradeableDataHashMap {
         }
         
         for (final String key : added.keySet()) {
-            if (!shouldMaskProperty(key)) {
+            if (shouldMaskProperty(key)) {
+                result.put("added:" + key, WORKER_PROPERTY_MASK_PLACEHOLDER);
+            } else {
                 result.put("added:" + key, added.get(key));
             }
         }
         
         for (final String key : changed.keySet()) {
-            if (!shouldMaskProperty(key)) {
+            if (shouldMaskProperty(key)) {
+                result.put("changed:" + key, WORKER_PROPERTY_MASK_PLACEHOLDER);
+            } else {
                 result.put("changed:" + key, changed.get(key));
             }
         }
         
         for (final String key : removed.keySet()) {
-            if (!shouldMaskProperty(key)) {
+            if (shouldMaskProperty(key)) {
+                result.put("removed:" + key, WORKER_PROPERTY_MASK_PLACEHOLDER);
+            } else {
                 result.put("removed:" + key, removed.get(key));
             }
         }
@@ -354,7 +366,8 @@ public class WorkerConfig extends UpgradeableDataHashMap {
      */
     public static boolean shouldMaskProperty(final String propertyName) {
         final String propertyNameTrimmed =
-                StringUtils.removeEnd("_", StringUtils.removeStart("_", propertyName));
+                StringUtils.removeEnd(StringUtils.removeStart(propertyName, "_"), "_");
+
         return CompileTimeSettings.getInstance().getMaskedProperties().contains(propertyNameTrimmed.toUpperCase(Locale.ENGLISH));
     }
 

@@ -211,6 +211,11 @@ public class WorkerSessionMock implements WorkerSessionLocal,
     public WorkerConfig getCurrentWorkerConfig(int signerId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    @Override
+    public Properties exportWorkerConfig(int signerId) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     @Override
     public void setWorkerProperty(int workerId, String key, String value) {

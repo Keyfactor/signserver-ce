@@ -579,6 +579,9 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
 
     @Override
     public TokenSearchResults searchTokenEntries(final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, Map<String, Object> params, final IServices services) throws CryptoTokenOfflineException, QueryException {
+        if (keystoreDelegator == null) {
+            throw new CryptoTokenOfflineException("Crypto Token not activated");
+        }
         return CryptoTokenHelper.searchTokenEntries(keystoreDelegator, startIndex, max, qc, includeData, services, null);
     }
 

@@ -258,8 +258,7 @@ public class AdminWS {
         auth.requireAdminAuthorization(getCertificate(), "getCurrentWorkerConfig",
                 String.valueOf(workerId));
         
-        return new WSWorkerConfig(worker.getCurrentWorkerConfig(workerId)
-                .getProperties());
+        return new WSWorkerConfig(worker.exportWorkerConfig(workerId));
     }
 
     /**

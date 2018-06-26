@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.StaticWorkerStatus;
+import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerStatusInfo;
 import org.signserver.server.BaseProcessable;
@@ -60,7 +61,10 @@ public abstract class BaseDispatcher extends BaseProcessable {
         final StringBuilder configValue = new StringBuilder();
         Properties properties = config.getProperties();
         for (String key : properties.stringPropertyNames()) {
-            configValue.append(key).append("=").append(properties.getProperty(key)).append("\n\n");
+            final String value = WorkerConfig.shouldMaskProperty(key) ?
+                                 WorkerConfig.WORKER_PROPERTY_MASK_PLACEHOLDER :
+                                 properties.getProperty(key);
+            configValue.append(key).append("=").append(value).append("\n\n");
         }
         completeEntries.add(new WorkerStatusInfo.Entry("Worker properties", configValue.toString()));
 

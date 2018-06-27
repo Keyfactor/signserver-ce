@@ -24,7 +24,7 @@
                 <equals arg1="${appserver.subtype}" arg2="jbosseap6" />
             </or>
         </condition>
-        <fail message="Unsupported JBoss version detected. Only 5.1.x and 7.1.1.Final are supported." unless="supported.appserver"/>
+        <fail message="Unsupported application server, supported application servers are listed in the installation manual." unless="supported.appserver"/>
         <condition property="jboss7">
             <or>
                 <equals arg1="${appserver.subtype}" arg2="jboss7" />

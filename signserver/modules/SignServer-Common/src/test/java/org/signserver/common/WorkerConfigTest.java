@@ -12,7 +12,10 @@
  *************************************************************************/
 package org.signserver.common;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -41,7 +44,7 @@ public class WorkerConfigTest extends TestCase {
         newConf.setProperty("foo", "bar");
         newConf.setProperty("newprop", "newval");
 
-        final Map<String, Object> diff = WorkerConfig.propertyDiff(oldConf, newConf);
+        final Map<String, Object> diff = newConf.propertyDiffAgainst(oldConf);
 
         assertEquals("Number of diff entries", 1, diff.size());
         assertTrue("Cotains entry", "newval".equals(diff.get("added:newprop")));
@@ -60,7 +63,7 @@ public class WorkerConfigTest extends TestCase {
         newConf.setProperty("foo", "bar");
         newConf.setProperty("bar", "newval");
 
-        final Map<String, Object> diff = WorkerConfig.propertyDiff(oldConf, newConf);
+        final Map<String, Object> diff = newConf.propertyDiffAgainst(oldConf);
 
         assertEquals("Number of diff entries", 1, diff.size());
         assertTrue("Cotains entry", "newval".equals(diff.get("changed:bar")));
@@ -78,7 +81,7 @@ public class WorkerConfigTest extends TestCase {
         oldConf.setProperty("bar", "foobar");
         newConf.setProperty("foo", "bar");
 
-        final Map<String, Object> diff = WorkerConfig.propertyDiff(oldConf, newConf);
+        final Map<String, Object> diff = newConf.propertyDiffAgainst(oldConf);
 
         assertEquals("Number of diff entries", 1, diff.size());
         assertTrue("Contains entry", "foobar".equals(diff.get("removed:bar")));
@@ -96,7 +99,7 @@ public class WorkerConfigTest extends TestCase {
         newConf.setProperty("foo", "foobar");
         newConf.setProperty("bar", "foo");
 
-        final Map<String, Object> diff = WorkerConfig.propertyDiff(oldConf, newConf);
+        final Map<String, Object> diff = newConf.propertyDiffAgainst(oldConf);
 
         assertEquals("Number of diff entries", 2, diff.size());
         assertTrue("Contains entries",
@@ -116,7 +119,7 @@ public class WorkerConfigTest extends TestCase {
         oldConf.setProperty("bar", "foo");
         newConf.setProperty("foo", "foobar");
 
-        final Map<String, Object> diff = WorkerConfig.propertyDiff(oldConf, newConf);
+        final Map<String, Object> diff = newConf.propertyDiffAgainst(oldConf);
 
         assertEquals("Number of diff entries", 2, diff.size());
         assertTrue("Contains entries",
@@ -136,11 +139,154 @@ public class WorkerConfigTest extends TestCase {
         newConf.setProperty("bar", "foo");
         newConf.setProperty("foobar", "foobar");
 
-        final Map<String, Object> diff = WorkerConfig.propertyDiff(oldConf, newConf);
+        final Map<String, Object> diff = newConf.propertyDiffAgainst(oldConf);
 
         assertEquals("Number of diff entries", 2, diff.size());
         assertTrue("Contains entries",
                 "foobar".equals(diff.get("added:foobar")) && "bar".equals(diff.get("removed:foo")));
     }
-	
+    
+    /**
+     * Test that adding a masked worker property doesn't reveal the
+     * actual value.
+     *
+     * @throws Exception 
+     */
+    public void test07AddMaskedProperty() throws Exception {
+        final WorkerConfig oldConf = new MockedWorkerConfig();
+        final WorkerConfig newConf = new MockedWorkerConfig();
+        
+        newConf.setProperty("PIN", "foo123");
+
+        final Map<String, Object> diff = newConf.propertyDiffAgainst(oldConf);
+
+        assertEquals("Number of diff entries", 1, diff.size());
+        assertTrue("Contains masked entry", "_MASKED_".equals(diff.get("added:PIN")));
+    }
+    
+    /**
+     * Test that removing a masked worker property doesn't reveal the
+     * actual value.
+     *
+     * @throws Exception 
+     */
+    public void test08RemoveMaskedProperty() throws Exception {
+        final WorkerConfig oldConf = new MockedWorkerConfig();
+        final WorkerConfig newConf = new MockedWorkerConfig();
+        
+        oldConf.setProperty("PIN", "foo123");
+
+        final Map<String, Object> diff = newConf.propertyDiffAgainst(oldConf);
+
+        assertEquals("Number of diff entries", 1, diff.size());
+        assertTrue("Contains masked entry", "_MASKED_".equals(diff.get("removed:PIN")));
+    }
+    
+    /**
+     * Test that changing a masked worker property doesn't reveal the
+     * actual value.
+     *
+     * @throws Exception 
+     */
+    public void test09ChangeMaskedProperty() throws Exception {
+        final WorkerConfig oldConf = new MockedWorkerConfig();
+        final WorkerConfig newConf = new MockedWorkerConfig();
+        
+        oldConf.setProperty("PIN", "foo123");
+        newConf.setProperty("PIN", "123456");
+
+        final Map<String, Object> diff = newConf.propertyDiffAgainst(oldConf);
+
+        assertEquals("Number of diff entries", 1, diff.size());
+        assertTrue("Contains masked entry", "_MASKED_".equals(diff.get("changed:PIN")));
+    }
+    
+    /**
+     * Test that commenting a masked worker property by adding an _
+     * doesn't reveal the actual value.
+     *
+     * @throws Exception 
+     */
+    public void test10CommentMaskedProperty() throws Exception {
+        final WorkerConfig oldConf = new MockedWorkerConfig();
+        final WorkerConfig newConf = new MockedWorkerConfig();
+        
+        oldConf.setProperty("PIN", "foo123");
+        newConf.setProperty("PIN_", "foo123");
+
+        final Map<String, Object> diff = newConf.propertyDiffAgainst(oldConf);
+
+        assertEquals("Number of diff entries", 2, diff.size());
+        assertTrue("Contains masked entry", "_MASKED_".equals(diff.get("added:PIN_")));
+        assertTrue("Contains masked entry", "_MASKED_".equals(diff.get("removed:PIN")));
+    }
+    
+    /**
+     * Test that uncommenting a masked worker property by removing an _
+     * doesn't reveal the actual value.
+     *
+     * @throws Exception 
+     */
+    public void test11UncommentMaskedProperty() throws Exception {
+        final WorkerConfig oldConf = new MockedWorkerConfig();
+        final WorkerConfig newConf = new MockedWorkerConfig();
+        
+        oldConf.setProperty("PIN_", "foo123");
+        newConf.setProperty("PIN", "foo123");
+
+        final Map<String, Object> diff = newConf.propertyDiffAgainst(oldConf);
+
+        assertEquals("Number of diff entries", 2, diff.size());
+        assertTrue("Contains masked entry", "_MASKED_".equals(diff.get("added:PIN")));
+        assertTrue("Contains masked entry", "_MASKED_".equals(diff.get("removed:PIN_")));
+    }
+    
+    /**
+     * Test that commenting a masked worker property by adding an _
+     * as a prefix doesn't reveal the actual value.
+     *
+     * @throws Exception 
+     */
+    public void test12CommentMaskedPropertyPrefixUnderscore() throws Exception {
+        final WorkerConfig oldConf = new MockedWorkerConfig();
+        final WorkerConfig newConf = new MockedWorkerConfig();
+        
+        oldConf.setProperty("PIN", "foo123");
+        newConf.setProperty("_PIN", "foo123");
+
+        final Map<String, Object> diff = newConf.propertyDiffAgainst(oldConf);
+
+        assertEquals("Number of diff entries", 2, diff.size());
+        assertTrue("Contains masked entry", "_MASKED_".equals(diff.get("added:_PIN")));
+        assertTrue("Contains masked entry", "_MASKED_".equals(diff.get("removed:PIN")));
+    }
+    
+    /**
+     * Test that commenting a masked worker property by adding an _
+     * as a prefix and postfix doesn't reveal the actual value.
+     *
+     * @throws Exception 
+     */
+    public void test13CommentMaskedPropertyPrefixUnderscore() throws Exception {
+        final WorkerConfig oldConf = new MockedWorkerConfig();
+        final WorkerConfig newConf = new MockedWorkerConfig();
+        
+        oldConf.setProperty("PIN", "foo123");
+        newConf.setProperty("_PIN_", "foo123");
+
+        final Map<String, Object> diff = newConf.propertyDiffAgainst(oldConf);
+
+        assertEquals("Number of diff entries", 2, diff.size());
+        assertTrue("Contains masked entry", "_MASKED_".equals(diff.get("added:_PIN_")));
+        assertTrue("Contains masked entry", "_MASKED_".equals(diff.get("removed:PIN")));
+    }
+    
+    private static class MockedWorkerConfig extends WorkerConfig {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        protected Set<String> getMaskedProperties() {
+            return new HashSet<>(Arrays.asList("PIN", "KEYSTOREPASSWORD"));
+        }
+    }
 }

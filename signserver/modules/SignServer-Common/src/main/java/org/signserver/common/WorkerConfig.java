@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
@@ -296,12 +297,31 @@ public class WorkerConfig extends UpgradeableDataHashMap {
      * @param oldConfig
      * @param newConfig
      * @return Map<String, String> with differences
+     * @deprecated
+     * @see propertyDiffAgainst
      */
     public static Map<String, Object> propertyDiff(final WorkerConfig oldConfig,
             final WorkerConfig newConfig) {
+        return newConfig.propertyDiffAgainst(oldConfig);
+    }
+    
+    /**
+     * Compute the difference of properties between the instance and
+     * an older instance.
+     * Puts the result in a new Map with keys:
+     * <pre>
+     * changed:key, changedvalue
+     * removed:key, removedvalue
+     * added:key, addedvalue
+     * </pre>
+     * 
+     * @param oldConfig
+     * @return Map<String, String> with differences
+     */
+    public Map<String, Object> propertyDiffAgainst(final WorkerConfig oldConfig) {
         final Map<String, Object> result = new HashMap<>();
         final Properties oldProps = oldConfig.getProperties();
-        final Properties newProps = newConfig.getProperties();
+        final Properties newProps = getProperties();
         
         final Map<String, String> changed = new HashMap<>();
         final Map<String, String> added = new HashMap<>();
@@ -364,11 +384,15 @@ public class WorkerConfig extends UpgradeableDataHashMap {
      * @param propertyName
      * @return True if property should be masked
      */
-    public static boolean shouldMaskProperty(final String propertyName) {
+    public boolean shouldMaskProperty(final String propertyName) {
         final String propertyNameTrimmed =
                 StringUtils.removeEnd(StringUtils.removeStart(propertyName, "_"), "_");
 
-        return CompileTimeSettings.getInstance().getMaskedProperties().contains(propertyNameTrimmed.toUpperCase(Locale.ENGLISH));
+        return getMaskedProperties().contains(propertyNameTrimmed.toUpperCase(Locale.ENGLISH));
+    }
+    
+    protected Set<String> getMaskedProperties() {
+        return CompileTimeSettings.getInstance().getMaskedProperties();
     }
 
 

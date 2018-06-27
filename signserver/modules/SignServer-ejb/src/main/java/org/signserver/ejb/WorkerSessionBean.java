@@ -593,7 +593,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         final Properties exportedProps = new Properties();
         
         for (final String key : allProps.stringPropertyNames()) {
-            if (WorkerConfig.shouldMaskProperty(key)) {
+            if (config.shouldMaskProperty(key)) {
                 exportedProps.put(key, WorkerConfig.WORKER_PROPERTY_MASK_PLACEHOLDER);
             } else {
                 exportedProps.put(key, allProps.getProperty(key));

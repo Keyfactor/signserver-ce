@@ -315,11 +315,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             }
         } finally {
             if (requestOut != null) {
-                try {
-                    requestOut.close();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+                IOUtils.closeQuietly(requestOut);
             }
             if (responseIn != null) {
                 try {

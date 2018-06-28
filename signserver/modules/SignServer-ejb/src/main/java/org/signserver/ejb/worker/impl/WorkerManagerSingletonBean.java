@@ -118,6 +118,15 @@ public class WorkerManagerSingletonBean {
     }
     
     /**
+     * List all worker names available in the database.
+     *
+     * @return a list of all available worker names
+     */
+    public List<String> getAllWorkerNames() {
+        return workerConfigService.findAllNames();
+    }
+    
+    /**
      * List all worker IDs available in database of the given type.
      *
      * @param workerType type of worker to list

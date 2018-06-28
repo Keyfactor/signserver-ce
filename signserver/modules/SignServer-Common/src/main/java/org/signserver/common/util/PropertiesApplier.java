@@ -34,7 +34,7 @@ import static org.signserver.common.util.PropertiesConstants.WORKER_PREFIX;
  *
  */
 public abstract class PropertiesApplier {
-    
+
     protected static class PropertiesApplierException extends Exception {
         /**
          * 
@@ -71,6 +71,7 @@ public abstract class PropertiesApplier {
      */
     public void apply(final PropertiesParser parser) {       
         try {
+            workerNameAlreadyExists(parser.getWorkerNames());
             // prepare ID for the first generated worker ID, if needed later on
             firstGeneratedWorkerId = genFreeWorkerId();
            
@@ -331,6 +332,8 @@ public abstract class PropertiesApplier {
      * @throws PropertiesApplierException If there was a failure
      */
     protected abstract void removeAuthorizedClient(final int workerId, final AuthorizedClient ac) throws PropertiesApplierException;
+    
+    protected abstract void workerNameAlreadyExists(final List<String> workerNames) throws PropertiesApplierException;       
     
     /**
      * Get the worker ID for an indexed generated worker ID.

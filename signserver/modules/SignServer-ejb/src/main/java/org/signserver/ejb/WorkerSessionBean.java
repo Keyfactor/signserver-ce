@@ -1232,6 +1232,11 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         return workerManagerSession.getAllWorkerIDs();
     }
     
+    @Override
+    public List<String> getAllWorkerNames() {
+        return workerManagerSession.getAllWorkerNames();
+    }
+    
     private void auditLog(final AdminInfo adminInfo, SignServerEventTypes eventType, SignServerModuleTypes module,
     		final WorkerIdentifier wi) {
         auditLog(adminInfo, eventType, EventStatus.SUCCESS, module, wi, Collections.<String, Object>emptyMap());

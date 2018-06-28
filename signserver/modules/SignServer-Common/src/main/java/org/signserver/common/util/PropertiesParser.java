@@ -134,6 +134,7 @@ public class PropertiesParser {
     
     private final List<String> errors = new LinkedList<>();
     private final List<String> messages = new LinkedList<>();
+    private final List<String> workerNames = new ArrayList<>();    
     private final Map<GlobalProperty, String> setGlobalProperties = new HashMap<>();
     private final List<GlobalProperty> removeGlobalProperties = new LinkedList<>();
     private final Map<WorkerProperty, String> setWorkerProperties = new HashMap<>();
@@ -282,6 +283,9 @@ public class PropertiesParser {
                     }
                     signerCertificateChains.put(workerIdOrName, chain);
                 } else {
+                    if (propertykey.equals(PropertiesConstants.NAME)) {
+                        workerNames.add(propertyvalue);
+                    }
                     messages.add("Setting the property " + propertykey + " to " + propertyvalue + " for worker " + workerIdOrName);
                     setWorkerProperties.put(new WorkerProperty(workerIdOrName, propertykey), propertyvalue);
                 }
@@ -366,5 +370,9 @@ public class PropertiesParser {
     
     public Map<String, List<AuthorizedClient>> getRemoveAuthorizedClients() {
         return removeAuthorizedClients;
+    }
+    
+    public List<String> getWorkerNames() {
+        return workerNames;
     }
 }

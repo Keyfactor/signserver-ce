@@ -358,6 +358,11 @@ public class PropertiesApplierTest extends TestCase {
             
             throw new PropertiesApplierException("No such worker: " + workerName);
         }
+
+        @Override
+        protected void workerNameAlreadyExists(List<String> workerNames) throws PropertiesApplierException {
+            // do nothing
+        }
         
     }
     

@@ -140,6 +140,18 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
     }
     
     @Override
+     public List<String> findAllNames() {
+        final LinkedList<String> result = new LinkedList<>();
+        Query query = em.createQuery("SELECT w from WorkerConfigDataBean w"); 
+        List<WorkerConfigDataBean> list = (List<WorkerConfigDataBean>) query.getResultList();
+        for (WorkerConfigDataBean wcdb : list) {
+            result.add(wcdb.getSignerName());
+        }
+        
+        return result;
+    }
+    
+    @Override
     public List<Integer> findAllIds(final WorkerType workerType) {
         final LinkedList<Integer> result = new LinkedList<>();
         Query query;

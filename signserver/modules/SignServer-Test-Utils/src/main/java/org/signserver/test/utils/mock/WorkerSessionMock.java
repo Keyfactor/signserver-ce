@@ -458,6 +458,11 @@ public class WorkerSessionMock implements WorkerSessionLocal,
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public List<String> getAllWorkerNames() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public RequestContext getLastRequestContext() {
         return lastRequestContext;
     }

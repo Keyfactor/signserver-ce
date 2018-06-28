@@ -56,6 +56,8 @@ public interface IWorkerConfigDataService {
     void create(int workerId, String implClassName);
     
     List<Integer> findAllIds();
+    
+    public List<String> findAllNames();
 
     void populateNameColumn();
 

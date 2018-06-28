@@ -489,6 +489,13 @@ public interface WorkerSession {
      * @return list of worker IDs 
      */
     List<Integer> getAllWorkers();
+    
+    /**
+     * Get the complete list of all worker names.
+     *
+     * @return list of worker names
+     */
+    List<String> getAllWorkerNames();
 
     /**
      * Checks if there are any issues using this certificate chain with the specfied worker.

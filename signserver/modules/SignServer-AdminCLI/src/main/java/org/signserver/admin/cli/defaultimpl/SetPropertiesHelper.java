@@ -19,6 +19,7 @@ import java.util.*;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.util.PropertiesConstants;
 import static org.signserver.common.util.PropertiesConstants.*;
 
 /**
@@ -43,10 +44,13 @@ public class SetPropertiesHelper {
     }
 
     public void process(Properties properties) throws RemoteException, Exception {
-        Enumeration<?> iter = properties.keys();
-        while (iter.hasMoreElements()) {
-            String key = (String) iter.nextElement();
-            processKey(key.toUpperCase(), properties.getProperty(key));
+        // check first whether worker already exists with provided NAME(s)
+        if (!workerNameAlreadyExists(properties)) {
+            Enumeration<?> iter = properties.keys();
+            while (iter.hasMoreElements()) {
+                String key = (String) iter.nextElement();
+                processKey(key.toUpperCase(), properties.getProperty(key));
+            }
         }
     }
 
@@ -274,5 +278,36 @@ public class SetPropertiesHelper {
      */
     public List<Integer> getKeyWorkerDeclarations() {
         return workerDeclarations;
+    }
+    
+    private boolean workerNameAlreadyExists(Properties properties) throws RemoteException {
+        boolean workerWithNameAlreadyExists = false;
+        StringBuffer errorMessage = new StringBuffer();
+        errorMessage.append("Worker(s) with name already exists:");
+        List<String> workerNames = new ArrayList<>();
+        Enumeration<?> iter = properties.keys();
+        while (iter.hasMoreElements()) {
+            String key = (String) iter.nextElement();
+            String value = properties.getProperty(key);
+            key = key.toUpperCase();
+            if (!isRemoveKey(key) && (key.startsWith(WORKER_PREFIX) || key.startsWith(OLDWORKER_PREFIX))) {
+                int DOT_INDEX = key.indexOf('.');
+                String propertykey = key.substring(DOT_INDEX + 1);
+                if (propertykey.equals(PropertiesConstants.NAME)) {
+                    workerNames.add(value);
+                }
+            }
+        }
+        List existingWorkerNamesInDB = helper.getWorkerSession().getAllWorkerNames();
+        for (String workerName : workerNames) {
+            if (existingWorkerNamesInDB.contains(workerName)) {
+                workerWithNameAlreadyExists = true;
+                errorMessage.append(" ").append(workerName);
+            }
+        }
+        if (workerWithNameAlreadyExists) {
+            out.println(errorMessage);
+        }
+        return workerWithNameAlreadyExists;
     }
 }

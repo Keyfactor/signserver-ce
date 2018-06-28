@@ -476,6 +476,11 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
                     public Properties exportWorkerConfig(int signerId) {
                         throw new UnsupportedOperationException("Not supported yet.");
                     }
+
+                    @Override
+                    public List<String> getAllWorkerNames() {
+                        throw new UnsupportedOperationException("Not supported yet."); 
+                    }
                 };
             }
             return workerSession;

@@ -86,6 +86,10 @@ public class FileBasedWorkerConfigDataIndex {
     public List<Integer> findAllWorkerIds() {
         return new ArrayList<>(idToEntry.keySet());
     }
+    
+    public List<String> findAllWorkerNames() {
+        return new ArrayList<>(nameToEntry.keySet());
+    }
 
     public List<Integer> findAllWorkerIds(int workerType) {
         List<Integer> results;

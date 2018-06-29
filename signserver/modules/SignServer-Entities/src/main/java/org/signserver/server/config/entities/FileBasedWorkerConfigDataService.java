@@ -434,6 +434,11 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
 
     @Override
     public List<String> findAllNames() {
-        throw new FileBasedDatabaseException("This operation not supported in file based database");
+        synchronized (manager) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(">findAllWorkerNames()");
+            }
+            return getIndex().findAllWorkerNames();
+        }
     }
 }

@@ -51,8 +51,8 @@ public class ArchivingCLITest extends ModulesTestCase {
      */
     @Test
     public void test01SetupTimeStamp() throws Exception {
-        LOG.debug(">testSetupTimeStamp");
-
+        LOG.info("test01SetupTimeStamp");
+    
         assertTrue(new File(getSignServerHome() + "/res/test/test_add_timestamp_archive_configuration.properties").exists());
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
                 cli.execute("setproperties", getSignServerHome() + "/res/test/test_add_timestamp_archive_configuration.properties"));
@@ -144,7 +144,7 @@ public class ArchivingCLITest extends ModulesTestCase {
      */
     @Test
     public void test01ArchiveRequestAndResponse() throws Exception {
-        LOG.debug(">testSetupTimeStamp");
+        LOG.info("test01ArchiveRequestAndResponse");
 
         assertTrue(new File(getSignServerHome() + "/res/test/test_add_timestamp_archive_configuration.properties").exists());
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
@@ -240,27 +240,31 @@ public class ArchivingCLITest extends ModulesTestCase {
     
     @Test
     public void test01RemoveTimeStamp() throws Exception {
-        LOG.debug(">testRemoveTimeStamp");
-        // Remove and restore
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-                cli.execute("setproperties", getSignServerHome() + "/res/test/test_rem_timestamp_configuration.properties"));
-        assertPrinted("", cli.getOut(), "Removing the property NAME  for worker 1000");
+        LOG.info("test01RemoveTimeStamp");
+        try {
+            // Remove and restore
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                    cli.execute("setproperties", getSignServerHome() + "/res/test/test_rem_timestamp_configuration.properties"));
+            assertPrinted("", cli.getOut(), "Removing the property NAME  for worker 1000");
 
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-                cli.execute("getconfig", TESTTSID));
-        assertNotPrinted("", cli.getOut(), "AUTHTYPE=NOAUTH");
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                    cli.execute("getconfig", TESTTSID));
+            assertNotPrinted("", cli.getOut(), "AUTHTYPE=NOAUTH");
 
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-                cli.execute("removeproperty", TESTTSID, "TESTKEY"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                    cli.execute("removeproperty", TESTTSID, "TESTKEY"));
 
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-                cli.execute("reload", TESTTSID));
-        assertPrinted("", cli.getOut(), "SignServer reloaded successfully");
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                    cli.execute("reload", TESTTSID));
+            assertPrinted("", cli.getOut(), "SignServer reloaded successfully");
+        } finally {
+            removeWorker(WORKERID);
+        }
     }
     
     @Test
     public void test99TearDownDatabase() throws Exception {
-        LOG.info(">test99TearDownDatabase");
+        LOG.info("test99TearDownDatabase");
         removeWorker(WORKERID);
     }
 }

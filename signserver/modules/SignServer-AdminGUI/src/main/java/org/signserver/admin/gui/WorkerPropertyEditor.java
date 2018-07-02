@@ -47,7 +47,7 @@ public class WorkerPropertyEditor extends Container {
 
         editPanel.setName("editPanel"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.signserver.admin.gui.SignServerAdminGUIApplication.class).getContext().getResourceMap(WorkerPropertyEditor.class);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance().getContext().getResourceMap(WorkerPropertyEditor.class);
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
 
@@ -97,11 +97,11 @@ public class WorkerPropertyEditor extends Container {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGap(0, 432, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGap(0, 334, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -146,6 +146,11 @@ public class WorkerPropertyEditor extends Container {
      * @param value The value to set
      */
     public void setValue(final String value) {
+        // disable the property name edit field when the property is masked
+        if (MainView.MASKED_VALUE.equals(value)) {
+            System.out.println("disabling field");
+            editPropertyTextField.setEnabled(false);
+        }
         editPropertyValueTextArea.setText(value);
     }
     

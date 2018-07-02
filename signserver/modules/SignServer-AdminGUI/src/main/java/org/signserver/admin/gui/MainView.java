@@ -155,7 +155,7 @@ public class MainView extends FrameView {
         "Issuer DN"
     };
     
-    private static final String MASKED_VALUE = "\u25cf\u25cf\u25cf\u25cf\u25cf\u25cf";
+    static final String MASKED_VALUE = "\u25cf\u25cf\u25cf\u25cf\u25cf\u25cf";
 
     public MainView(SingleFrameApplication app) {
         super(app);

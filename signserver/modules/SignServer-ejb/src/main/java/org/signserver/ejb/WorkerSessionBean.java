@@ -1255,10 +1255,30 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         }
     }
     
+    /**
+     * Helper method that changes masked properties to prevent a possible
+     * side-channel where a user could guess a masked property by setting
+     * a new value and see it showed up as changed in the auditlog.
+     * 
+     * @param config 
+     */
+    private static void scrambleMaskedProperties(final WorkerConfig config) {
+       for (final Object o : config.getProperties().keySet()) {
+           final String key = (String) o;
+           
+           if (config.shouldMaskProperty(key)) {
+               config.getProperties().setProperty(key, "_OLD_MASKED_");
+           }
+       } 
+    }
+
     private void setWorkerConfig(final AdminInfo adminInfo, final int workerId, final WorkerConfig config,
     		final String additionalLogKey, final String additionalLogValue) {
-        final WorkerConfig oldConfig = workerConfigService.getWorkerProperties(workerId, true);       
-        Map<String, Object> configChanges = WorkerConfig.propertyDiff(oldConfig, config);
+        final WorkerConfig oldConfig = workerConfigService.getWorkerProperties(workerId, true);
+        
+        scrambleMaskedProperties(oldConfig);
+
+        Map<String, Object> configChanges = config.propertyDiffAgainst(oldConfig);
         
         if (additionalLogKey != null) {
         	configChanges.put(additionalLogKey, additionalLogValue);

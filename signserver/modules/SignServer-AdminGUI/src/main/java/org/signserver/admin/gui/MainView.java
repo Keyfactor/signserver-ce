@@ -154,6 +154,8 @@ public class MainView extends FrameView {
         "Certificate serial number",
         "Issuer DN"
     };
+    
+    private static final String MASKED_VALUE = "\u25cf\u25cf\u25cf\u25cf\u25cf\u25cf";
 
     public MainView(SingleFrameApplication app) {
         super(app);
@@ -2967,6 +2969,7 @@ private void displayLogEntryAction() {
             workerTabbedPane.remove(cryptoTokenTab);
             
         } else {
+            final String statusSummary = replaceMaskedPlaceholders(worker.getStatusSummary());
             statusSummaryTextPane.setText("<html><body><pre>\n" + worker.getStatusSummary() + "\n</pre></body></html>");
             statusSummaryTextPane.setCaretPosition(0);
 
@@ -3024,6 +3027,11 @@ private void displayLogEntryAction() {
         }
 
     }
+    
+    private static String replaceMaskedPlaceholders(final String statusSummary) {
+        return statusSummary.replaceAll(WorkerConfig.WORKER_PROPERTY_MASK_PLACEHOLDER,
+                                        MASKED_VALUE);
+    }
 
     private void loadCryptoTokenEntries(Worker worker) {
         
@@ -3071,6 +3079,7 @@ private void displayLogEntryAction() {
                     try {
                         final WsWorkerStatus status = SignServerAdminGUIApplication.getAdminWS().getStatus(workerId);
                         statusSummary = status.getCompleteStatusText();
+                        statusSummary = replaceMaskedPlaceholders(statusSummary);
                         tokenStatus = status.getOk() == null ? "ACTIVE" : "OFFLINE";
                         active = status.getOk() == null;
                         workerInfo.add(status.getOk() == null ? "OK" : status.getOk());
@@ -3095,9 +3104,19 @@ private void displayLogEntryAction() {
                     Object[][] configProperties = new Object[properties.size()][];
                     int j = 0;
                     for (String key : propertyNames) {
+                        String value = properties.getProperty(key);
+                        
+                        /* since we don't have access to the server-side
+                         * settings, let's assume the value _MASKED_ means
+                         * the property should be treated as masked
+                         */
+                        if (WorkerConfig.WORKER_PROPERTY_MASK_PLACEHOLDER.equals(value)) {
+                            value = MASKED_VALUE;
+                        }
+                        
                         configProperties[j] = new String[2];
                         configProperties[j][0] = key;
-                        configProperties[j][1] = properties.getProperty(key);
+                        configProperties[j][1] = value;
                         j++;
                     }
                     XMLGregorianCalendar notBefore = null;

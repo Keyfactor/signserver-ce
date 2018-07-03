@@ -332,7 +332,7 @@ public class AdminLayerEJBImpl implements AdminWS {
         WsWorkerConfig config = new WsWorkerConfig();
         WsWorkerConfig.Properties properties = new WsWorkerConfig.Properties();
 
-        for (Entry<Object, Object> pEntry : worker.getCurrentWorkerConfig(workerId).getProperties().entrySet()) {
+        for (Entry<Object, Object> pEntry : worker.exportWorkerConfig(workerId).entrySet()) {
             WsWorkerConfig.Properties.Entry entry = new WsWorkerConfig.Properties.Entry();
             entry.setKey(pEntry.getKey());
             entry.setValue(pEntry.getValue());

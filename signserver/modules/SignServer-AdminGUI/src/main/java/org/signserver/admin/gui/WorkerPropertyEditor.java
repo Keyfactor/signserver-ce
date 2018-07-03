@@ -148,7 +148,6 @@ public class WorkerPropertyEditor extends Container {
     public void setValue(final String value) {
         // disable the property name edit field when the property is masked
         if (MainView.MASKED_VALUE.equals(value)) {
-            System.out.println("disabling field");
             editPropertyTextField.setEnabled(false);
         }
         editPropertyValueTextArea.setText(value);

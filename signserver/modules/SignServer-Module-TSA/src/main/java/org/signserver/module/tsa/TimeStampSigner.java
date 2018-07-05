@@ -51,7 +51,9 @@ import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cms.SignerInfoGenerator;
+import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
+import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.DigestCalculator;
 import org.bouncycastle.operator.DigestCalculatorProvider;
@@ -223,6 +225,7 @@ public class TimeStampSigner extends BaseSigner {
     public static final String TSA = "TSA";
     public static final String TSA_FROM_CERT = "TSA_FROM_CERT";
     public static final String REQUIREVALIDCHAIN = "REQUIREVALIDCHAIN";
+    public static final String VERIFY_TOKEN_SIGNATURE = "VERIFY_TOKEN_SIGNATURE";
     public static final String MAXSERIALNUMBERLENGTH = "MAXSERIALNUMBERLENGTH";
     public static final String INCLUDESTATUSSTRING = "INCLUDESTATUSSTRING";
     public static final String INCLUDESIGNINGTIMEATTRIBUTE = "INCLUDESIGNINGTIMEATTRIBUTE";
@@ -308,6 +311,7 @@ public class TimeStampSigner extends BaseSigner {
     private boolean includeCmsProtectAlgorithmAttribute;
     private boolean includeCertIDIssuerSerial = true;
     private boolean legacyEncoding;
+    private boolean verifyTokenSignature = true;
 
     private boolean ordering;
 
@@ -372,6 +376,10 @@ public class TimeStampSigner extends BaseSigner {
         if (Boolean.parseBoolean(requireValidChain)) {
             validChain = validateChain(null);
         }
+        
+        // Whether token signature is to be validated before sending response
+        final String verifyTokenSignatureString = config.getProperty(VERIFY_TOKEN_SIGNATURE, Boolean.TRUE.toString());
+        verifyTokenSignature = Boolean.parseBoolean(verifyTokenSignatureString);        
 
         final String maxSerialNumberLengthProp = config.getProperty(MAXSERIALNUMBERLENGTH, Integer.toString(DEFAULT_MAXSERIALNUMBERLENGTH));
 
@@ -677,6 +685,12 @@ public class TimeStampSigner extends BaseSigner {
             out.write(signedbytes);
             cert = getSigningCertificate(crypto);
 
+            // validate the timestamp token signature before sending response
+            // token should not be null if generated till now
+            if (verifyTokenSignature && token != null) {
+                verifySignature(token, cert);
+            }
+            
             final TimeStampResponse tspResponse = timeStampResponse;
 
             // Log values for timestamp response
@@ -807,6 +821,20 @@ public class TimeStampSigner extends BaseSigner {
             throw exception;
         } finally {
             releaseCryptoInstance(crypto, requestContext);
+        }
+    }
+    
+    private void verifySignature(TimeStampToken token, Certificate signerCert) throws SignServerException {
+        final SignerInformationVerifier infoVerifier;
+        try {
+            infoVerifier = new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build((X509Certificate) signerCert);
+            token.validate(infoVerifier);
+        } catch (TSPValidationException ex) {
+            LOG.error("Token validation failed", ex);
+            throw new SignServerException("Token validation failed: " + ex.getMessage(), ex);
+        } catch (OperatorCreationException | TSPException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new SignServerException(ex.getMessage(), ex);
         }
     }
 

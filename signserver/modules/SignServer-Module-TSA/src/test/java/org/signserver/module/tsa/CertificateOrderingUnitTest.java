@@ -147,6 +147,8 @@ public class CertificateOrderingUnitTest extends ModulesTestCase {
         config.setProperty("SIGNERCERT", createPem(Arrays.asList(cert)));
         config.setProperty("SIGNERCERTCHAIN", createPem(certs));
         config.setProperty("LEGACYENCODING", Boolean.toString(!normalMode));
+        // Don't verify timestamp token signature in this test as it uses certificate in configuration which is not associated with the signing key
+        config.setProperty("VERIFY_TOKEN_SIGNATURE", "false");
 
         workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                 new TimeStampSigner());

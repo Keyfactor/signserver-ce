@@ -751,6 +751,50 @@ public class TimeStampSignerTest extends ModulesTestCase {
     }
     
     /**
+     * Tests that signing fails when the right signer certificate is not
+     * configured but works if VERIFY_TOKEN_SIGNATURE set to false.
+     *
+     */
+    @Test
+    public void test52WrongSignerCertificate_SigningFailed() throws Exception {
+        final List<Certificate> chain = workerSession.getSignerCertificateChain(WORKER2);
+        final X509Certificate subject = (X509Certificate) workerSession.getSignerCertificate(WORKER2);
+        
+        // Any other certificate that will not match the key-pair
+        final X509Certificate other = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=Other").addExtension(new CertExt(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping))).build());
+        
+        try {
+            // Use the other certificate which will not match the key        
+            workerSession.uploadSignerCertificate(WORKER2.getId(), other.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKER2.getId(), Arrays.asList(other.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKER2.getId());
+
+            // Test the status of the worker
+            WorkerStatus actualStatus = workerSession.getStatus(WORKER2);
+            assertEquals("should be error as the right signer certificate is not configured", 1, actualStatus.getFatalErrors().size());
+            assertTrue("error should talk about incorrect signer certificate: " + actualStatus.getFatalErrors(), actualStatus.getFatalErrors().get(0).contains("Certificate does not match key"));
+
+            // Send a request             
+            try {
+                assertTokenGranted(WORKER2);
+            } catch (SignServerException ex) {
+                assertTrue("message should talk about incorrect signer certificate", ex.getMessage().contains("Token validation failed"));
+            }
+            
+            // Now change to - not verifying token signature and signing should work
+            workerSession.setWorkerProperty(WORKER2.getId(), "VERIFY_TOKEN_SIGNATURE", "false");
+            workerSession.reloadConfiguration(WORKER2.getId());
+            assertTokenGranted(WORKER2);
+        } finally {
+            // Restore
+            workerSession.setWorkerProperty(WORKER2.getId(), "VERIFY_TOKEN_SIGNATURE", "true");
+            workerSession.uploadSignerCertificate(WORKER2.getId(), subject.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKER2.getId(), asListOfByteArrays(chain), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKER2.getId());
+        }
+    }
+    
+    /**
      * Tests that status is not OK and that an failure is generated when trying
      * to sign when the right signer certificate is not configured in the 
      * certificate chain property.

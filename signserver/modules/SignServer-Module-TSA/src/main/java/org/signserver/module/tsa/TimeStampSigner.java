@@ -378,8 +378,14 @@ public class TimeStampSigner extends BaseSigner {
         }
         
         // Whether token signature is to be validated before sending response
-        final String verifyTokenSignatureString = config.getProperty(VERIFY_TOKEN_SIGNATURE, Boolean.TRUE.toString());
-        verifyTokenSignature = Boolean.parseBoolean(verifyTokenSignatureString);        
+        final String verifyTokenSignatureString = config.getProperty(VERIFY_TOKEN_SIGNATURE, Boolean.TRUE.toString()).trim();
+        if (Boolean.TRUE.toString().equalsIgnoreCase(verifyTokenSignatureString)) {
+            verifyTokenSignature = true;
+        } else if (Boolean.FALSE.toString().equalsIgnoreCase(verifyTokenSignatureString)) {
+            verifyTokenSignature = false;
+        } else {
+            configErrors.add("Incorrect value for " + VERIFY_TOKEN_SIGNATURE);
+        }               
 
         final String maxSerialNumberLengthProp = config.getProperty(MAXSERIALNUMBERLENGTH, Integer.toString(DEFAULT_MAXSERIALNUMBERLENGTH));
 

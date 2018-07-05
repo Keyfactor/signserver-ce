@@ -292,6 +292,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 }
             }
         } catch (CryptoTokenOfflineException e) {
+            result.add(e.getMessage());
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Signer " + workerId + ": Could not get signer certificate: " + e.getMessage());
             }

@@ -1,3 +1,54 @@
+SignServer 4.3.1, 2018-07-06
+----------------------------
+
+** Bug
+    * [DSS-1363] - Load properties from file does not handle character encoding correctly
+    * [DSS-1364] - Error message for unsupported application server mentions JBoss 5
+    * [DSS-1411] - Adding a worker with an existing name gives ugly stacktrace
+    * [DSS-1455] - Display proper validation message when SQL unique constraint signerconfigdata_idx3 is violated
+    * [DSS-1459] - Font size changes when clicking 'View' button in 'Certificate Details'
+    * [DSS-1467] - 'Export' downloads an empty file even if 'No Workers' option is only selected
+    * [DSS-1480] - Duplicated property names in language files
+    * [DSS-1485] - DocumentSignerTest does not clean up test files
+    * [DSS-1497] - TSA_WORKER property missing in sample config
+    * [DSS-1539] - Sample configuration files with non-unix line terminators
+    * [DSS-1553] - Extra Accuracy field in the Client CLI time-stamp command output
+    * [DSS-1571] - NPE in SignClient when file type can not be determined
+    * [DSS-1572] - Missing Windows scripts for some CLI commands
+    * [DSS-1578] - Status Summary: Error getting status when configured key has been removed (CKR_KEY_HANDLE_INVALID)
+    * [DSS-1596] - Typos in the sample-configs
+    * [DSS-1604] - organizationIdentifier not supported in DN for cert requests
+    * [DSS-1608] - Cannot add worker when deploying with Ant 1.10.2 on JBoss EAP 7.1
+    * [DSS-1616] - SignClient on Windows prints "File Not Found"
+    * [DSS-1657] - TimeMonitor should pick the results chosen by ntpdate when mutiple are available
+    * [DSS-1663] - Regression: Key usage counter and signer validity checks not working with Time-stamp signer unless cert imported in token
+    * [DSS-1664] - Digest algorithm name parameter inconsistencies
+    * [DSS-1666] - Regression: Dummy certificate not recognized as such using KeystoreCryptoToken
+    * [DSS-1674] - NPE in AdminWeb browsing KeystoreCryptoToken with wrong password
+    * [DSS-1678] - SignClient in clientside mode does not refuse to sign already authenticode signed files
+    * [DSS-1710] - Error 500 when opening 'Crypto Token' tab for OFFLINE CryptoTokenP11
+    * [DSS-1712] - Error 500 when using PKCS11CryptoToken and CKR_PIN_LOCKED error from HSM
+    * [DSS-1714] - Escape special characters when generating keys
+    * [DSS-1725] - Selection of keys does not persist on 'Crypto Token' tab
+
+** New Feature
+    * [DSS-1660] - Add sample systemd service for starting TimeMonitor
+    * [DSS-1682] - Ability to select all in the Admin Web tables
+
+** Improvement
+    * [DSS-193] - Dump status/configuration with sensitive information masked out
+    * [DSS-479] - Option to validate timestamp token signature before returning response
+    * [DSS-763] - SignerStatusReportWorker should trim the listed worker names
+    * [DSS-1207] - Add information about TimeMonitorStatusReportWorker
+    * [DSS-1324] - Improve error reporting for timeserver.hosts property
+    * [DSS-1406] - Client CLI shows exception stack trace when failing to upload large file
+    * [DSS-1445] - Token Entry: ....> Certificate Details 'Export' function
+    * [DSS-1595] - Admin Web workers page should print worker Id
+    * [DSS-1603] - Cryptotoken gives "no certificate installed" error when not activated
+    * [DSS-1632] - Disable key usage counter by default in worker templates
+    * [DSS-1713] - Add checkboxes and 'Remove selected' feature to 'Global Configuration' and worker 'Configuration' tabs
+
+
 SignServer 4.3.0, 2018-06-01
 ----------------------------
 

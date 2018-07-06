@@ -1,3 +1,34 @@
+SignServer 4.3.1
+----------------
+
+General:
+- Sensitive information masked in status output, configuration and logs.
+
+Administration Web:
+- New possibility to easily select 'all' in the tables.
+- Improved certificate export page.
+- Character encoding handled correctly when importing configuration.
+- A number of other minor bug fixes or improvements.
+
+Configuration and Deployment:
+- Key usage counter disabled by default in sample configuration files.
+- Fixed typos in sample configuration files.
+- Sample Systemd service file added.
+- Fixed deployment issue with Ant version 1.10.2.
+- CLI scripts for Windows updated or added were missing.
+
+Time-stamping:
+- Fixed regression with key usage counter and signer validity checks in some situations.
+- Tokens are verified after signing to ensure the right key/certificate is used.
+- Improved error reporting in TimeMonitor when an incorrect time server is configured.
+- TimeMonitor now picks the results chosen by ntpdate when multiple are available.
+- Removed redundant 'Accuracy' field in the SignClient output.
+
+Code Signing:
+- Fixed error message in SignClient when file type could not be determined.
+- SignClient in client-side mode now properly refuses already Authenticode signed files.
+
+
 SignServer 4.3.0
 ----------------
 

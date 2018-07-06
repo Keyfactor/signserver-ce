@@ -106,11 +106,11 @@
             <header class="ht-sidebar-header">
                 <h1 class="ht-logo">
                     <span class="ht-logo-label">SIGNDS</span>
-                    <!-- <img class="space-logo" src="spacelogo.png" /> -->
+                    <!-- <img class="space-logo" src="SIGNDS" /> -->
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.3.0</p>
+                    <p>Version: 4.3.1</p>
                 </div>
             </header>
 
@@ -1167,7 +1167,7 @@
                                         <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                                                      <li><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277239"> <span>Common configuration</span></h1>
+</div>            <h1 id="src-16234847"> <span>Common configuration</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1175,6 +1175,17 @@
     <p  >Configuring workers are done by setting properties in the worker configuration. There is one set of configuration options that are handled by the framework, the common configuration, and that applies to all workers.    </p>
     <p  >Then there are worker specific properties handled by the worker implementation.    </p>
     <p  >    </p>
+    <div class="section section-1" id="src-16234847_id-.Commonconfigurationv4.3.1-Sensitiveproperties">
+        <h1 class="heading "><span>Sensitive properties</span></h1>
+    <p  >A few properties are considered sensitive (currently <tt class=" ">PIN</tt>, <tt class=" ">KEYSTOREPASSWORD</tt>, and <tt class=" ">KEYDATA</tt>) and are masked out when shown in the administration GUI, when creating configuration dumps (value is replaced by the string _MASKED_), and also for configuration change notifications in the audit log.    </p>
+    <p  >    </p>
+    </div>
+    <div class="section section-1" id="src-16234847_id-.Commonconfigurationv4.3.1-Commenting-outproperties">
+        <h1 class="heading "><span>Commenting-out properties</span></h1>
+    <p  >Properties can be commented-out (temporarily disabled) by adding a pre- or postfix underscore. Doing this with masked sensitive properties as described above will still treated as masked for the cases described above.    </p>
+    <p  >    </p>
+    <p  >    </p>
+    </div>
         </div>
 
     </article>

@@ -106,11 +106,11 @@
             <header class="ht-sidebar-header">
                 <h1 class="ht-logo">
                     <span class="ht-logo-label">SIGNDS</span>
-                    <!-- <img class="space-logo" src="spacelogo.png" /> -->
+                    <!-- <img class="space-logo" src="SIGNDS" /> -->
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.3.0</p>
+                    <p>Version: 4.3.1</p>
                 </div>
             </header>
 
@@ -1168,13 +1168,13 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-16221239"> <span>Time Stamp Signer</span></h1>
+</div>            <h1 id="src-16235155"> <span>Time Stamp Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The signer has the class name: <strong class=" ">org.signserver.server.signers.TimeStampSigner</strong>.    </p>
-    <div class="section section-1" id="src-16221239_id-.TimeStampSignerv4.3.0-Overview">
+    <div class="section section-1" id="src-16235155_id-.TimeStampSignerv4.3.1-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The time stamp server generates time stamp tokens and supports the following options:    </p>
 <ul class=" "><li class=" ">    <p  >Set of accepted policies    </p>
@@ -1195,7 +1195,7 @@
     <p  >The time-stamp signer requires a time-stamp certificate with the extended key usage <strong class=" ">time-stamp</strong> only. The extended key usage extension must be critical.    </p>
     <p  >If the time-stamp request contains a nonce value, this value will also be included in the time-stamp token.    </p>
     </div>
-    <div class="section section-1" id="src-16221239_id-.TimeStampSignerv4.3.0-AvailableProperties">
+    <div class="section section-1" id="src-16235155_id-.TimeStampSignerv4.3.1-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <p  >The following properties can be configured with the signer:    </p>
     <p  >    </p>
@@ -1414,10 +1414,18 @@
         <p  >As of SignServer 4.0, the encoding of the time-stamp tokens has changed. One consequence is that the order of the certificates in the output might not be the same as in the certificate chain due to the DER encoding and the fact that the certificates field is a set and thus not ordered. To restore the old behavior, set LEGACYENCODING=true. Default is false. OPTIONAL    </p>
             </td>
         </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >VERIFY_TOKEN_SIGNATURE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Whether timestamp token signature is to be validated after signing. Signing fails if validation is not successful. Default is true    </p>
+            </td>
+        </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-16221239_id-.TimeStampSignerv4.3.0-CertificateRequirements">
+    <div class="section section-1" id="src-16235155_id-.TimeStampSignerv4.3.1-CertificateRequirements">
         <h1 class="heading "><span>Certificate Requirements</span></h1>
 <ul class=" "><li class=" ">    <p  >Specifying a signer certificate is required as information from that certificate will be used to indicate which signer signed the time-stamp token.    </p>
 </li><li class=" ">    <p  >The signer certificate chain contains all certificates included in the token if the client requests the certificates.    </p>

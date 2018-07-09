@@ -578,6 +578,7 @@ mvn install
             <include name="bin/signserver-gui"/>
 	    <include name="bin/stresstest"/>
             <include name="bin/timemonitor-in-background.sh"/>
+            <include name="lib/ext/ext/geckodriver"/>
         </patternset>
         
         <!-- All files for binary release except scripts -->
@@ -629,6 +630,7 @@ mvn install
             <include name="bin/signserver-gui"/>
 	    <include name="bin/stresstest"/>
             <include name="bin/timemonitor-in-background.sh"/>
+            <include name="lib/ext/ext/geckodriver"/>
         </patternset>
         
         <!-- All files for mixed release except scripts -->

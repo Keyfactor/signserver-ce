@@ -159,6 +159,12 @@
                 <artifactId>jacknji11</artifactId>
                 <version>1.0-20180109-6d6503f</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-java</artifactId>
+                <version>3.13.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     

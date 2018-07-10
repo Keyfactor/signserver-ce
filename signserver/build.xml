@@ -543,6 +543,7 @@ mvn install
             <exclude name="bin/signserver-gui"/>
 	    <exclude name="bin/stresstest"/>
             <exclude name="bin/timemonitor-in-background.sh"/>
+            <exclude name="lib/ext/ext/geckodriver"/>
             
             <exclude name="**/CVS/**" />
             <exclude name="signserver_deploy.properties" />
@@ -594,6 +595,7 @@ mvn install
             <exclude name="bin/signserver-gui"/>
 	    <exclude name="bin/stresstest"/>
             <exclude name="bin/timemonitor-in-background.sh"/>
+            <exclude name="lib/ext/ext/geckodriver"/>
 
             <exclude name="signserver_deploy.properties" />
             <exclude name="conf/signserver_deploy.properties" />
@@ -647,6 +649,7 @@ mvn install
             <exclude name="bin/signserver-gui"/>
 	    <exclude name="bin/stresstest"/>
             <exclude name="bin/timemonitor-in-background.sh"/>
+            <exclude name="lib/ext/ext/geckodriver"/>
 
             <exclude name="doc/lgpl-**" />
             <exclude name="**/CVS/**" />

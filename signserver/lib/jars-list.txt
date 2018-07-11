@@ -29,6 +29,7 @@ a7f713593007813bf07d19bd1df9f81c86c0719e9a0bb2ef1b98b78313fc940d  ./ext/commons-
 23c4916125e8f3ce99c0c5bb20fbedaf7f927417e4379286e450f6fc29767de5  ./ext/DeployTools-Maven-2.2.jar;                        "SignServer"
 593552ffea3c5823c6602478b5002a7c525fd904a3c44f1abe4065c22edfac73  ./ext/dom4j-1.6.1.jar;                                  "Hibernate dependencies"
 83da036a146664f1c9f5637f3aae8cb83722baaa03c0fd16f6d4208127628129  ./ext/ejb3-persistence.jar;                             "Hibernate dependencies"
+5423a6e514ea3c7a2dc464ee441c03543ccfe5b85c09081e62f41b3346097507  ./ext/ext/geckodriver-v0.21.0-linux64.bin;              "Geckodriver"
 66fdef91e9739348df7a096aa384a5685f4e875584cce89386a7a47251c4d8e9  ./ext/ext/hamcrest-core-1.3.jar;                        "Hamcrest"
 c121a8b0afc2f4c182ee3af65f8c61132fb126870b43b9e94148ea1c797d59dc  ./ext/ext/jcommon-1.0.12.jar;                           "JFreeChart"
 4a2a1eb6d188a43e1e97bb7c7d204a5bdd1aaec0d82203cf1b1156ff697d7f8e  ./ext/ext/jfreechart-1.0.9.jar;                         "JFreeChart"

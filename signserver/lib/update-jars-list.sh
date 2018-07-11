@@ -3,7 +3,7 @@
 # and which project it comes from (filled in manually).
 
 # External dependencies
-EXT=`find ./ext -name "*.jar" | sort`
+EXT=`find ./ext -name "*.jar" -o -name "*.bin" | sort`
 
 # Things we build our self
 INT=`find . -name "*-Lib-*.jar" | sort`

@@ -543,7 +543,7 @@ mvn install
             <exclude name="bin/signserver-gui"/>
 	    <exclude name="bin/stresstest"/>
             <exclude name="bin/timemonitor-in-background.sh"/>
-            <exclude name="lib/ext/ext/geckodriver"/>
+            <exclude name="lib/ext/ext/geckodriver-v0.21.0-linux64.bin"/>
             
             <exclude name="**/CVS/**" />
             <exclude name="signserver_deploy.properties" />
@@ -579,7 +579,7 @@ mvn install
             <include name="bin/signserver-gui"/>
 	    <include name="bin/stresstest"/>
             <include name="bin/timemonitor-in-background.sh"/>
-            <include name="lib/ext/ext/geckodriver"/>
+            <include name="lib/ext/ext/geckodriver-v0.21.0-linux64.bin"/>
         </patternset>
         
         <!-- All files for binary release except scripts -->
@@ -595,7 +595,7 @@ mvn install
             <exclude name="bin/signserver-gui"/>
 	    <exclude name="bin/stresstest"/>
             <exclude name="bin/timemonitor-in-background.sh"/>
-            <exclude name="lib/ext/ext/geckodriver"/>
+            <exclude name="lib/ext/ext/geckodriver-v0.21.0-linux64.bin"/>
 
             <exclude name="signserver_deploy.properties" />
             <exclude name="conf/signserver_deploy.properties" />
@@ -632,7 +632,7 @@ mvn install
             <include name="bin/signserver-gui"/>
 	    <include name="bin/stresstest"/>
             <include name="bin/timemonitor-in-background.sh"/>
-            <include name="lib/ext/ext/geckodriver"/>
+            <include name="lib/ext/ext/geckodriver-v0.21.0-linux64.bin"/>
         </patternset>
         
         <!-- All files for mixed release except scripts -->
@@ -649,7 +649,7 @@ mvn install
             <exclude name="bin/signserver-gui"/>
 	    <exclude name="bin/stresstest"/>
             <exclude name="bin/timemonitor-in-background.sh"/>
-            <exclude name="lib/ext/ext/geckodriver"/>
+            <exclude name="lib/ext/ext/geckodriver-v0.21.0-linux64.bin"/>
 
             <exclude name="doc/lgpl-**" />
             <exclude name="**/CVS/**" />
@@ -1075,4 +1075,41 @@ SHA-512 checksum: ${zip.bin.sha512}
     <!-- Other                                                               -->
     <!-- =================================================================== -->
     
+    <!-- SignServer WebTest -->
+    <target name="webtest" description="Runs SignServer WebTest." depends="-webtest-single,-webtest-all">
+        <first id="webtest.jar.file">
+            <fileset dir="${basedir}" includes="**/lib/*WebTest*.jar"/>
+        </first>
+        <property name="webtest.jar" value="${toString:webtest.jar.file}"/>
+
+        <echo>Running SignServer WebTest with: 
+            -Dwebtest.jar=${webtest.jar}
+            -Dwebtest.include=${webtest.include}
+        </echo>
+
+        <property name="junit.output.dir" location="${tmp}/test/results"/>
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="on" haltonfailure="off">
+            <formatter type="xml"/>
+            <batchtest fork="yes" todir="${junit.output.dir}">
+                <resources>
+                   <zipfileset src="${webtest.jar}" includes="${webtest.include}"/>
+                </resources> 
+            </batchtest>
+            <classpath>
+                <pathelement path="${webtest.jar}"/>
+                <pathelement path="${basedir}/conf"/>
+                <pathelement path="${basedir}/lib/ext/ext/junit-4.12.jar"/>
+                <pathelement path="${basedir}/lib/ext/ext/hamcrest-core-1.3.jar"/>
+                <pathelement path="${basedir}/lib/ext/ext/selenium-server-standalone-3.13.0.jar"/>
+            </classpath>
+        </junit>
+        <antcall target="systemtest:report"/>
+    </target>
+    <target name="-webtest-single" if="webtest.single">
+        <property name="webtest.include" value="**/${webtest.single}.class"/>
+    </target>
+    <target name="-webtest-all" unless="webtest.single">
+        <property name="webtest.include" value="**/DssQa*.class"/>
+    </target>
 </project>

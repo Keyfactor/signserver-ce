@@ -822,6 +822,8 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             throw new CryptoTokenOfflineException("Crypto token not available");
         }
         try {
+            // Set this so that one time crypto worker doesn't have to create short lived key if it is status check only
+            context.put(RequestContext.ACQUIRE_DEFAULT_CRYPTO_INSTANCE, true);
             result = token.acquireCryptoInstance(alias, Collections.<String, Object>emptyMap(), context);
         } catch (NoSuchAliasException ex) {
             throw new CryptoTokenOfflineException("Key not available: " + ex.getMessage());

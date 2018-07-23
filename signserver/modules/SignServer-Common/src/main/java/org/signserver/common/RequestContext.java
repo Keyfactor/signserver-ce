@@ -81,6 +81,11 @@ public class RequestContext implements Serializable {
     public static final String STATISTICS_EVENT = "STATISTICS_EVENT";
     
     /**
+     * All requests for acquiring default crypto instance should set this setting to Boolean true.
+     */
+    public static final String ACQUIRE_DEFAULT_CRYPTO_INSTANCE = "ACQUIRE_DEFAULT_CRYPTO_INSTANCE";
+    
+    /**
      * The transaction ID.
      * This value is set by the WorkerSessionBean but could be read by
      * different workers in order for them to include it in logs to

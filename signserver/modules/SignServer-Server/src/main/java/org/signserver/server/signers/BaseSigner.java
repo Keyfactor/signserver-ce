@@ -79,6 +79,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 }
             } catch (NumberFormatException e) {
                 configErrors.add("Unable to parse property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 0 supported: " + e.getLocalizedMessage());
+                includeCertificateLevels = -1;
             }
         }
     }

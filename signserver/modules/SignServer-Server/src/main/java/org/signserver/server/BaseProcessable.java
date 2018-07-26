@@ -35,7 +35,6 @@ import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.ECKeyUtil;
 import org.bouncycastle.util.encoders.Hex;
-import org.cesecore.keybind.CertificateImportException;
 import org.cesecore.util.CertTools;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.*;

@@ -199,6 +199,7 @@ public class PDFSigner extends BaseSigner {
             if (path == null) {
                 LOG.warn("Worker[" + workerId
                         + "]: Archiving path missing");
+                configErrors.add("Archiving path not specified");
             } else if (!new File(path).exists()) {
                 LOG.warn("Worker[" + workerId
                         + "]: Archiving path does not exists: "

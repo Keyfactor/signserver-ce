@@ -24,6 +24,7 @@ import java.security.cert.Certificate;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -180,6 +181,7 @@ public class PDFSigner extends BaseSigner {
      */
     private ASN1ObjectIdentifier tsaDigestAlgorithm;
     private String tsaDigestAlgorithmName; // passed to PdfPkcs7
+    PDFSignerParameters params;
     
     @Override
     public void init(int signerId, WorkerConfig config,
@@ -237,6 +239,10 @@ public class PDFSigner extends BaseSigner {
         if (config.getProperty(TSA_URL, DEFAULT_NULL) != null && config.getProperty(TSA_WORKER, DEFAULT_NULL) != null) {
             configErrors.add("Can not specify " + TSA_URL + " and " + TSA_WORKER + " at the same time.");
         }
+
+        // retrieve and preprocess configuration parameter values
+        params = new PDFSignerParameters(workerId, config, configErrors);
+
     }
 
     
@@ -310,10 +316,7 @@ public class PDFSigner extends BaseSigner {
         final ReadableData requestData = sReq.getRequestData();
 
         // Log values
-        final LogMap logMap = LogMap.getInstance(requestContext);
-
-        // retrieve and preprocess configuration parameter values
-        PDFSignerParameters params = new PDFSignerParameters(workerId, config);
+        final LogMap logMap = LogMap.getInstance(requestContext);        
 
         // Start processing the actual signature
         

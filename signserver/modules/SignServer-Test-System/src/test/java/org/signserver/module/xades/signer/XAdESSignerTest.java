@@ -64,16 +64,21 @@ public class XAdESSignerTest extends ModulesTestCase {
     private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
 
-    @Test
-    public void testBasicSigningXAdESFormT() throws Exception {
-        LOG.info("testBasicSigningXAdESFormT");
+    private void internalSigningAndVerify(String tsaDigestAlgorithm, String acceptedTSADigestAlgorithm) throws Exception {        
         try {
 
             addTimeStampSigner(TS_ID, TS_NAME, true);
             addSigner(XAdESSigner.class.getName(), WORKER_ID, WORKER_NAME, true);
+            
             workerSession.setWorkerProperty(TS_ID, "DEFAULTTSAPOLICYOID", "1.2.3");
+            workerSession.setWorkerProperty(TS_ID, "ACCEPTEDALGORITHMS", acceptedTSADigestAlgorithm);
+            
             workerSession.setWorkerProperty(WORKER_ID, "XADESFORM", "T");
-            workerSession.setWorkerProperty(WORKER_ID, "TSA_WORKER", TS_NAME);
+            workerSession.setWorkerProperty(WORKER_ID, "TSA_WORKER", TS_NAME);            
+            if (tsaDigestAlgorithm != null) {
+                workerSession.setWorkerProperty(WORKER_ID, "TSA_DIGEST_ALGORITHM", tsaDigestAlgorithm);
+            }
+            
             workerSession.reloadConfiguration(TS_ID);
             workerSession.reloadConfiguration(WORKER_ID);
 
@@ -117,6 +122,24 @@ public class XAdESSignerTest extends ModulesTestCase {
             removeWorker(WORKER_ID);
             removeWorker(TS_ID);
         }
+    }
+    
+    @Test
+    public void testBasicSigningXAdESFormT_TSA_DIGEST_ALGO_Default_SHA256() throws Exception {
+        LOG.info("testBasicSigningXAdESFormT_TSA_DIGEST_ALGO_Default_SHA256");
+        internalSigningAndVerify(null, "SHA256");
+    }
+    
+    @Test
+    public void testBasicSigningXAdESFormT_TSA_DIGEST_ALGO_SHA1() throws Exception {
+        LOG.info("testBasicSigningXAdESFormT_TSA_DIGEST_ALGO_SHA1");
+        internalSigningAndVerify("SHA1", "SHA1");
+    }
+    
+    @Test
+    public void testBasicSigningXAdESFormT_TSA_DIGEST_ALGO_SHA512() throws Exception {
+        LOG.info("testBasicSigningXAdESFormT_TSA_DIGEST_ALGO_SHA512");
+        internalSigningAndVerify("SHA512", "SHA512");
     }
 
 }

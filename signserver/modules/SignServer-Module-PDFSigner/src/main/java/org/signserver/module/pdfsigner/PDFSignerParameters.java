@@ -191,7 +191,7 @@ public class PDFSignerParameters {
 
             if (rect.length < 4) {
                 configErrors.add("RECTANGLE property must contain 4 comma separated values with no spaces.");
-            } else { // Only read values when all 4 are provided otherwise ArrayIndexOutOfBoundExcpetion will be thrown
+            } else { // Only read values when all 4 are provided otherwise ArrayIndexOutOfBoundException will be thrown
                 try {
                     visible_sig_rectangle_llx = Integer.valueOf(rect[0]);
                     visible_sig_rectangle_lly = Integer.valueOf(rect[1]);

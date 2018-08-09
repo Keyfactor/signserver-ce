@@ -159,7 +159,7 @@ public class PDFSignerParameters {
             try {
                 setPermissions = Permissions.fromSet(Arrays.asList(array), true);
             } catch (UnknownPermissionException ex) {
-                configErrors.add("Signer " + workerId + " missconfigured: " + ex.getMessage());
+                configErrors.add("Signer " + workerId + " misconfigured: " + ex.getMessage());
             }
         }
         // Remove permissions
@@ -188,13 +188,20 @@ public class PDFSignerParameters {
             LOG.debug("Using rectangle: " + visible_sig_rectangle);
 
             String[] rect = visible_sig_rectangle.split(",");
+
             if (rect.length < 4) {
                 configErrors.add("RECTANGLE property must contain 4 comma separated values with no spaces.");
+            } else { // Only read values when all 4 are provided otherwise ArrayIndexOutOfBoundExcpetion will be thrown
+                try {
+                    visible_sig_rectangle_llx = Integer.valueOf(rect[0]);
+                    visible_sig_rectangle_lly = Integer.valueOf(rect[1]);
+                    visible_sig_rectangle_urx = Integer.valueOf(rect[2]);
+                    visible_sig_rectangle_ury = Integer.valueOf(rect[3]);
+                } catch (NumberFormatException ex) {
+                    configErrors.add("Invalid RECTANGLE property specified: " + visible_sig_rectangle);
+                    LOG.error("Invalid RECTANGLE property specified", ex);
+                }
             }
-            visible_sig_rectangle_llx = Integer.valueOf(rect[0]);
-            visible_sig_rectangle_lly = Integer.valueOf(rect[1]);
-            visible_sig_rectangle_urx = Integer.valueOf(rect[2]);
-            visible_sig_rectangle_ury = Integer.valueOf(rect[3]);
 
             // custom image to use with signature
             // base64 encoded byte[]

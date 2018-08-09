@@ -1505,6 +1505,43 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         assertTrue("Should contain error: " + fatalErrors,
                    fatalErrors.contains("Illegal timestamping digest algorithm specified"));
     }
+    
+    /**
+     * Test that providing illegal PDFSignerParameter values result in
+     * configuration errors.
+     *
+     *
+     * @throws Exception
+     */
+    public void test23Illegal_Value_Gives_Configuration_Errors() throws Exception {
+        WorkerConfig workerConfig = new WorkerConfig();
+
+        workerConfig.setProperty("NAME", "TestSigner100");
+        workerConfig.setProperty("CERTIFICATION_LEVEL", "invalid_value");
+        workerConfig.setProperty("SET_PERMISSIONS", "_invalid_value");
+        workerConfig.setProperty("ADD_VISIBLE_SIGNATURE", "True");
+        workerConfig.setProperty("VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH", "_invalid_value");
+        workerConfig.setProperty("VISIBLE_SIGNATURE_RECTANGLE", "0,0,0");
+
+        final PDFSigner instance = new PDFSigner() {
+            @Override
+            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+                return null;
+            }
+        };
+        instance.init(WORKER1, workerConfig, null, null);
+
+        final String fatalErrors = instance.getFatalErrors(null).toString();
+
+        assertTrue("Should contain error: " + fatalErrors,
+                fatalErrors.contains("Unknown value for CERTIFICATION_LEVEL"));
+        assertTrue("Should contain error: " + fatalErrors,
+                fatalErrors.contains("Unknown permission value"));
+        assertTrue("Should contain error: " + fatalErrors,
+                fatalErrors.contains("Error reading custom image data from path specified"));
+        assertTrue("Should contain error: " + fatalErrors,
+                fatalErrors.contains("RECTANGLE property must contain 4 comma separated values with no spaces"));
+    }
 
     /**
      * Test that providing empty strings for both TSA_URL and TSA_WORKER files are treated as not specified.

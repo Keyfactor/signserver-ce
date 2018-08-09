@@ -24,7 +24,6 @@ import java.security.cert.Certificate;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -293,8 +292,11 @@ public class PDFSigner extends BaseSigner {
      * signRequest to be a GenericSignRequest containing a signed PDF file.
      * 
      * @param signRequest
+     * @param requestContext
      * @return 
+     * @throws IllegalRequestException 
      * @throws SignServerException
+     * @throws CryptoTokenOfflineException
      * @see org.signserver.server.IProcessable#processData(org.signserver.common.ProcessRequest,
      *      org.signserver.common.RequestContext)
      */

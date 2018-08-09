@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.util.encoders.DecoderException;
 
 /**
  * Class that holds configuration values passed to pdfsigner.
@@ -222,7 +223,12 @@ public class PDFSignerParameters {
                 // retrieve custom image
                 byte[] imageByteArray = null;
                 if (use_image_from_base64_string) {
-                    imageByteArray = Base64.decode(visible_sig_custom_image_base64.getBytes());
+                    try {
+                        imageByteArray = Base64.decode(visible_sig_custom_image_base64.getBytes());
+                    } catch (DecoderException ex) {
+                        configErrors.add("Error reading custom image base 64 encoded data: " + ex.getMessage());
+                        LOG.error("Error reading custom image base 64 encoded data", ex);
+                    }
                 } else {
                     try {
                         imageByteArray = readFile(visible_sig_custom_image_path);

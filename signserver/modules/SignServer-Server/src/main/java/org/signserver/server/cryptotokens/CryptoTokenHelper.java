@@ -47,7 +47,6 @@ import javax.security.auth.x500.X500Principal;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.PredicateUtils;
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
@@ -82,6 +81,8 @@ import org.signserver.server.IServices;
 import org.signserver.server.KeyUsageCounterHash;
 import org.signserver.server.entities.IKeyUsageCounterDataService;
 import org.signserver.server.entities.KeyUsageCounter;
+import static org.signserver.common.SignServerConstants.TOKEN_ENTRY_FIELDS_ALIAS;
+import static org.signserver.common.SignServerConstants.TOKEN_ENTRY_FIELDS_KEY_ALIAS;
 
 /**
  * Helper methods used by the CryptoTokens.
@@ -560,6 +561,9 @@ public class CryptoTokenHelper {
                 }
             }
             
+            // apply ordering if applicable
+            handleOrdering(filteredEntries, qc);
+            
             final long maxIndex = (long) startIndex + max;
             
             for (int i = startIndex; i < maxIndex && i < filteredEntries.size(); i++) {
@@ -932,4 +936,34 @@ public class CryptoTokenHelper {
         }
         return result;
     }
+    
+    private static void handleOrdering(List<TokenEntry> filteredEntries, QueryCriteria qc) {
+        final List<Elem> elements = qc.getElements();
+        final List<Elem> clauses = new ArrayList<>();
+        
+        // Read requested Ordering from criteria
+        CollectionUtils.select(elements, PredicateUtils.instanceofPredicate(Order.class), clauses);
+        
+        if (!clauses.isEmpty()) {
+            if (clauses.size() == 1) {
+                Elem elem = clauses.get(0);
+                Order order = (Order) elem;
+                if (order.getName().equals(TOKEN_ENTRY_FIELDS_KEY_ALIAS)) {
+                    Order.Value orderValue = order.getOrder();
+                    if (orderValue.equals(Order.Value.ASC)) {
+                        TokenEntryKeyAliasOrderByASC ascComparison = new TokenEntryKeyAliasOrderByASC();
+                        Collections.sort(filteredEntries, ascComparison);
+                    } else { // DESC ordering
+                        TokenEntryKeyAliasOrderByDESC descComparison = new TokenEntryKeyAliasOrderByDESC();
+                        Collections.sort(filteredEntries, descComparison);
+                    }
+                } else { // TODO: support for ordering by other column names
+                    LOG.warn("Ordering only supported by column name: " + TOKEN_ENTRY_FIELDS_KEY_ALIAS + "/" + TOKEN_ENTRY_FIELDS_ALIAS);
+                }
+            } else { // TODO: support for ordering by multiple column names as ADMIN WS allows multiple ordering elements
+                LOG.warn("Ordering by more than one column name not supported");
+            }
+        }
+    }
+    
 }

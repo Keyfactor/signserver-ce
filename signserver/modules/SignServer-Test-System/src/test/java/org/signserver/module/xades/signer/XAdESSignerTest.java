@@ -19,6 +19,7 @@ import java.security.cert.CertStore;
 import java.security.cert.Certificate;
 import java.security.cert.CollectionCertStoreParameters;
 import java.util.List;
+import javax.ejb.EJBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
@@ -140,6 +141,17 @@ public class XAdESSignerTest extends ModulesTestCase {
     public void testBasicSigningXAdESFormT_TSA_DIGEST_ALGO_SHA512() throws Exception {
         LOG.info("testBasicSigningXAdESFormT_TSA_DIGEST_ALGO_SHA512");
         internalSigningAndVerify("SHA512", "SHA512");
+    }
+    
+    @Test
+    public void testBasicSigningXAdESFormT_Illegal_TSA_DIGEST_ALGO() throws Exception {
+        LOG.info("testBasicSigningXAdESFormT_Illegal_TSA_DIGEST_ALGO");
+        try {
+            internalSigningAndVerify("Illegal_TSA_Digest_Algo", "SHA512");
+            fail("It should have been failed");
+        } catch (EJBException ex) {
+            assertTrue("error: " + ex.getMessage(), ex.getMessage().contains("Unsupported TSA digest algorithm"));
+        }
     }
 
 }

@@ -125,24 +125,45 @@ public class XAdESSignerTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Tests XADES-T signing with default TSA_DIGEST_ALGORITHM algorithm.
+     *
+     * @throws Exception
+     */
     @Test
     public void testBasicSigningXAdESFormT_TSA_DIGEST_ALGO_Default_SHA256() throws Exception {
         LOG.info("testBasicSigningXAdESFormT_TSA_DIGEST_ALGO_Default_SHA256");
         internalSigningAndVerify(null, "SHA256");
     }
     
+    /**
+     * Tests XADES-T signing with SHA-1 TSA_DIGEST_ALGORITHM algorithm.
+     *
+     * @throws Exception
+     */
     @Test
     public void testBasicSigningXAdESFormT_TSA_DIGEST_ALGO_SHA1() throws Exception {
         LOG.info("testBasicSigningXAdESFormT_TSA_DIGEST_ALGO_SHA1");
         internalSigningAndVerify("SHA1", "SHA1");
     }
     
+    /**
+     * Tests XADES-T signing with SHA-512 TSA_DIGEST_ALGORITHM algorithm.
+     *
+     * @throws Exception
+     */
     @Test
     public void testBasicSigningXAdESFormT_TSA_DIGEST_ALGO_SHA512() throws Exception {
         LOG.info("testBasicSigningXAdESFormT_TSA_DIGEST_ALGO_SHA512");
         internalSigningAndVerify("SHA512", "SHA512");
     }
     
+    /**
+     * Tests XADES-T signing with illegal TSA_DIGEST_ALGORITHM algorithm and
+     * check if fails.
+     *
+     * @throws Exception
+     */
     @Test
     public void testBasicSigningXAdESFormT_Illegal_TSA_DIGEST_ALGO() throws Exception {
         LOG.info("testBasicSigningXAdESFormT_Illegal_TSA_DIGEST_ALGO");

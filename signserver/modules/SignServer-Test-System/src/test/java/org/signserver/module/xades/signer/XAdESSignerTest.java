@@ -77,7 +77,7 @@ public class XAdESSignerTest extends ModulesTestCase {
             workerSession.setWorkerProperty(WORKER_ID, "XADESFORM", "T");
             workerSession.setWorkerProperty(WORKER_ID, "TSA_WORKER", TS_NAME);            
             if (tsaDigestAlgorithm != null) {
-                workerSession.setWorkerProperty(WORKER_ID, "TSA_DIGEST_ALGORITHM", tsaDigestAlgorithm);
+                workerSession.setWorkerProperty(WORKER_ID, "TSA_DIGESTALGORITHM", tsaDigestAlgorithm);
             }
             
             workerSession.reloadConfiguration(TS_ID);

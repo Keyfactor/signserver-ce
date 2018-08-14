@@ -128,7 +128,7 @@ public class XAdESSigner extends BaseSigner {
     private static final String DEFAULT_TSA_DIGEST_ALGORITHM = "SHA256";
     
     /** Worker property: TSA_DIGEST_ALGORITHM. */
-    private static final String TSA_DIGEST_ALGORITHM = "TSA_DIGEST_ALGORITHM";
+    private static final String TSA_DIGESTALGORITHM = "TSA_DIGESTALGORITHM";
     
     private static final String CONTENT_TYPE = "text/xml";
     
@@ -289,7 +289,7 @@ public class XAdESSigner extends BaseSigner {
         signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM, DEFAULT_NULL);
         
         // Get the TSA digest algorithm
-        tsaDigestAlgorithm = config.getProperty(TSA_DIGEST_ALGORITHM, DEFAULT_TSA_DIGEST_ALGORITHM);
+        tsaDigestAlgorithm = config.getProperty(TSA_DIGESTALGORITHM, DEFAULT_TSA_DIGEST_ALGORITHM);
                 
         claimedRoleDefault = config.getProperty(CLAIMED_ROLE, DEFAULT_NULL);
         claimedRoleFromUsername =

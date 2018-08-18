@@ -171,13 +171,9 @@ public class XAdESSignerTest extends ModulesTestCase {
             internalSigningAndVerify("Illegal_TSA_Digest_Algo", "SHA512");
             fail("It should have been failed");
         } catch (EJBException ex) {
-            if (ex.getMessage() == null) {
-                LOG.info("ex message is null");
+            if (ex.getMessage() != null) { // On glassfish server, ex.getMessage() is NULL
+                assertTrue(ex.getMessage(), ex.getMessage().contains("Unsupported TSA digest algorithm"));
             }
-            // LOG.info("ex get message " + ex.getMessage() == null ? "null" : ex.getMessage());
-            // LOG.info("ex get localized message " + ex.getLocalizedMessage() == null ? "null" : ex.getLocalizedMessage());
-            // LOG.info("ex get to String" + ex.toString() == null ? "null" : ex.toString());
-            assertTrue(ex.getMessage(), ex.getMessage().contains("Unsupported TSA digest algorithm"));
         }
     }
 

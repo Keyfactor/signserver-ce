@@ -124,4 +124,9 @@ public class NullCryptoToken extends BaseCryptoToken {
         throw new CryptoTokenOfflineException("Unsupported by crypto token");
     }
     
+    @Override
+    public boolean shortLivedKeysSupported() {
+        return false;
+    }
+    
 }

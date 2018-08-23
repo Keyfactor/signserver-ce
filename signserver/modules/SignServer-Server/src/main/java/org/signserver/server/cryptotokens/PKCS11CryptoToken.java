@@ -671,5 +671,10 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
             }
         }
     }
+    
+    @Override
+    public boolean shortLivedKeysSupported() {
+        return false;
+    }
 
 }

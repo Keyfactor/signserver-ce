@@ -716,4 +716,9 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             privateKey = privKey;
         }
      }
+    
+    @Override
+    public boolean shortLivedKeysSupported() {
+        return false;
+    }
   }

@@ -271,4 +271,11 @@ public interface ICryptoTokenV4 {
      */
     boolean removeKey(String alias, IServices services) throws CryptoTokenOfflineException, 
             KeyStoreException, SignServerException;
+    
+    /**
+     * If crypto token supports short-lived one time key generation.
+     *
+     * @return True or false
+     */
+    boolean shortLivedKeysSupported();
 }

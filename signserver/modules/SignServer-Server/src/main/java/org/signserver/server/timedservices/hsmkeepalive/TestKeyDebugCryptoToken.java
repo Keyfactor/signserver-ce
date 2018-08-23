@@ -158,4 +158,9 @@ public class TestKeyDebugCryptoToken implements ICryptoTokenV4 {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
+    @Override
+        public boolean shortLivedKeysSupported() {
+            return false;
+        }
+    
 }

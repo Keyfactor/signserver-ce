@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
@@ -36,15 +35,14 @@ import org.signserver.common.KeyTestResult;
 import org.signserver.common.NoSuchAliasException;
 import org.signserver.common.QueryException;
 import org.signserver.common.RequestContext;
-import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerException;
 import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.IServices;
+import org.signserver.server.cryptotokens.BaseCryptoToken;
 import org.signserver.server.cryptotokens.DefaultCryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoInstance;
-import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 import org.signserver.statusrepo.common.NoSuchPropertyException;
 import org.signserver.statusrepo.StatusRepositorySessionLocal;
@@ -55,7 +53,7 @@ import org.signserver.statusrepo.StatusRepositorySessionLocal;
  * @author Marcus Lundblad
  * @version $Id$
  */
-public class TestKeyDebugCryptoToken implements ICryptoTokenV4 {
+public class TestKeyDebugCryptoToken extends BaseCryptoToken {
 
     private static Logger LOG = Logger.getLogger(TestKeyDebugCryptoToken.class);
 
@@ -157,10 +155,5 @@ public class TestKeyDebugCryptoToken implements ICryptoTokenV4 {
     public boolean removeKey(String alias, IServices services) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    @Override
-        public boolean shortLivedKeysSupported() {
-            return false;
-        }
-    
+
 }

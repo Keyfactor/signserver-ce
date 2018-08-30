@@ -123,10 +123,5 @@ public class NullCryptoToken extends BaseCryptoToken {
     public boolean removeKey(String alias, IServices services) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
         throw new CryptoTokenOfflineException("Unsupported by crypto token");
     }
-    
-    @Override
-    public boolean shortLivedKeysSupported() {
-        return false;
-    }
-    
+
 }

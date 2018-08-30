@@ -871,17 +871,18 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
 
     /**
-     * Indicates if this worker is configured to not be configured with any certificates or crypto token referenced by worker is
-     * OneTimeCryptoToken. This can be overridden by worker implementations to
-     * not require the user to explicitly configure this.
+     * Indicates if this worker is configured to not be configured with any
+     * certificates or crypto token referenced by worker requires no
+     * certificates. This can be overridden by worker implementations to not
+     * require the user to explicitly configure this.
      *
      * @return True if this worker is configured to not use any certificates or
      * crypto token referenced by worker is OneTimeCryptoToken.
      */
     protected boolean isNoCertificates() {
         boolean noCertInConfig = Boolean.parseBoolean(config.getProperty("NOCERTIFICATES", Boolean.FALSE.toString()));
-        boolean oneTimeCryptoToken = cryptoToken != null && cryptoToken.shortLivedKeysSupported();
-        return noCertInConfig || oneTimeCryptoToken;
+        boolean noCertificatesRequired = cryptoToken != null && cryptoToken.isNoCertificatesRequired();
+        return noCertInConfig || noCertificatesRequired;
     }
 
     @Override

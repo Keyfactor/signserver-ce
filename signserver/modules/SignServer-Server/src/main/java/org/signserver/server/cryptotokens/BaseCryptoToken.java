@@ -21,5 +21,10 @@ package org.signserver.server.cryptotokens;
  * @version $Id$
  */
 public abstract class BaseCryptoToken implements ICryptoTokenV4 {
-    
+
+    @Override
+    public boolean isNoCertificatesRequired() {
+        return false;
+    }
+
 }

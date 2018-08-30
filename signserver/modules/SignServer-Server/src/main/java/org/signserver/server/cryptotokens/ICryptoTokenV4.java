@@ -273,9 +273,9 @@ public interface ICryptoTokenV4 {
             KeyStoreException, SignServerException;
     
     /**
-     * If crypto token supports short-lived one time key generation.
+     * If signer requires no certificates when using this crypto token.
      *
      * @return True or false
      */
-    boolean shortLivedKeysSupported();
+    boolean isNoCertificatesRequired();
 }

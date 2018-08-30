@@ -27,9 +27,9 @@ import org.apache.log4j.Logger;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.*;
 import org.signserver.server.IServices;
+import org.signserver.server.cryptotokens.BaseCryptoToken;
 import org.signserver.server.cryptotokens.DefaultCryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoInstance;
-import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.cryptotokens.TokenSearchResults;
 
 /**
@@ -39,7 +39,7 @@ import org.signserver.server.cryptotokens.TokenSearchResults;
  * @author Markus Kilås
  * @version $Id$
  */
-public class MockedCryptoToken implements ICryptoTokenV4 {
+public class MockedCryptoToken extends BaseCryptoToken {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(MockedCryptoToken.class);
@@ -172,10 +172,5 @@ public class MockedCryptoToken implements ICryptoTokenV4 {
     public boolean removeKey(String alias, IServices services) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    @Override
-    public boolean shortLivedKeysSupported() {
-        return false;
-    }
-    
+
 }

@@ -78,13 +78,8 @@ public class RequestContext implements Serializable {
      * The current statistics event that a worker can use to add custom data.
      * Is null if no statistics is performed.
      */
-    public static final String STATISTICS_EVENT = "STATISTICS_EVENT";
-    
-    /**
-     * All requests for acquiring default crypto instance should set this setting to Boolean true.
-     */
-    public static final String ACQUIRE_DEFAULT_CRYPTO_INSTANCE = "ACQUIRE_DEFAULT_CRYPTO_INSTANCE";
-    
+    public static final String STATISTICS_EVENT = "STATISTICS_EVENT";    
+        
     /**
      * The transaction ID.
      * This value is set by the WorkerSessionBean but could be read by

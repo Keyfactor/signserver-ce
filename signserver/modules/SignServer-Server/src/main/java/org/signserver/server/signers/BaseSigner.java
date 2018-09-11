@@ -14,9 +14,13 @@ package org.signserver.server.signers;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.CertStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -42,6 +46,7 @@ import org.signserver.server.WorkerContext;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.entities.KeyUsageCounter;
+import static org.signserver.common.WorkerConfig.VERIFY_SIGNATURE;
 
 /**
  * Base class that all signers can extend to cover basic in common
@@ -62,6 +67,8 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
 
     private static final FastDateFormat FDF = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss z");
     
+    protected boolean verifySignature;
+    
     @Override
     public void init(int workerId, WorkerConfig config,
             WorkerContext workerContext, EntityManager workerEM) {
@@ -81,6 +88,16 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
                 configErrors.add("Unable to parse property " + WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + ". Only numbers >= 0 supported: " + e.getLocalizedMessage());
                 includeCertificateLevels = -1;
             }
+        }
+        
+        // Whether signature is to be validated before sending response
+        final String verifySignatureString = config.getProperty(VERIFY_SIGNATURE, Boolean.TRUE.toString()).trim();
+        if (Boolean.TRUE.toString().equalsIgnoreCase(verifySignatureString)) {
+            verifySignature = true;
+        } else if (Boolean.FALSE.toString().equalsIgnoreCase(verifySignatureString)) {
+            verifySignature = false;
+        } else {
+            configErrors.add("Incorrect value for " + VERIFY_SIGNATURE);
         }
     }
 
@@ -409,6 +426,27 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             return certs.subList(0, Math.min(includeCertificateLevels, certs.size()));
         } else {
             return certs;
+        }
+    }
+    
+    protected void verifySignature(PrivateKey privateKey, Certificate signerCert, String signatureProvider, String sigAlg) throws SignServerException {
+        final byte input[] = "Lillan gick pa vagen ut, motte dar en katt...".getBytes();
+        PublicKey publicKey = signerCert.getPublicKey();
+
+        try {
+            Signature signSignature = Signature.getInstance(sigAlg, signatureProvider);
+            signSignature.initSign(privateKey);
+            signSignature.update(input);
+            byte[] signBA = signSignature.sign();
+
+            final Signature verifySignatureInstance = Signature.getInstance(sigAlg, "BC");
+            verifySignatureInstance.initVerify(publicKey);
+            verifySignatureInstance.update(input);
+            if (!verifySignatureInstance.verify(signBA)) {
+                throw new SignServerException("Signature validation failed");
+            }
+        } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException | SignatureException ex) {
+            throw new SignServerException(ex.getMessage(), ex);
         }
     }
 

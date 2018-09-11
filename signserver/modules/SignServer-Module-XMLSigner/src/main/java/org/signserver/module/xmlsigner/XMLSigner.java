@@ -190,8 +190,9 @@ public class XMLSigner extends BaseSigner {
             final PrivateKey privKey = crypto.getPrivateKey();
 
             SignedInfo si;
+            final String sigAlg;
             try {
-                final String sigAlg = signatureAlgorithm == null ? getDefaultSignatureAlgorithm(privKey) : signatureAlgorithm;
+                sigAlg = signatureAlgorithm == null ? getDefaultSignatureAlgorithm(privKey) : signatureAlgorithm;
                 
                 // find digest method if DIGESTALGORITHM not provided                               
                 if (digestMethod == null) {
@@ -250,6 +251,11 @@ public class XMLSigner extends BaseSigner {
                 signature.sign(dsc);
             } catch (MarshalException | XMLSignatureException ex) {
                 throw new SignServerException("Signature generation error", ex);
+            }
+
+            // Verify signature
+            if (verifySignature) {
+                verifySignature(privKey, cert, crypto.getProvider().getName(), sigAlg);
             }
         } finally {
             releaseCryptoInstance(crypto, requestContext);

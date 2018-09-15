@@ -542,7 +542,9 @@ public class SystemLoggingTest extends ModulesTestCase {
         assertTrue("Contains node", line.contains("NODE: " + WorkerConfig.getNodeId()));
         
         // Remove the property
-        workerSession.removeWorkerProperty(signerId, "SIGNERCERTCHAIN");
+        if (!workerSession.removeWorkerProperty(signerId, WorkerConfig.getNodeId() + ".SIGNERCERTCHAIN")) {
+            throw new Exception("Property could not be removed");
+        }
         
         
         // Test when setting the property manually (global scope)

@@ -255,7 +255,7 @@ public class XMLSigner extends BaseSigner {
 
             // Verify signature
             if (verifySignature) {
-                verifySignature(privKey, cert, crypto.getProvider().getName(), sigAlg);
+                verifySignature(privKey, cert, null, sigAlg);
             }
         } finally {
             releaseCryptoInstance(crypto, requestContext);

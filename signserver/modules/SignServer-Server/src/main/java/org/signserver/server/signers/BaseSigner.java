@@ -433,8 +433,14 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         final byte input[] = "Lillan gick pa vagen ut, motte dar en katt...".getBytes();
         PublicKey publicKey = signerCert.getPublicKey();
 
+        Signature signSignature;
         try {
-            Signature signSignature = Signature.getInstance(sigAlg, signatureProvider);
+            if (signatureProvider == null) {
+                signSignature = Signature.getInstance(sigAlg);
+            } else {
+                signSignature = Signature.getInstance(sigAlg, signatureProvider);
+            }
+            
             signSignature.initSign(privateKey);
             signSignature.update(input);
             byte[] signBA = signSignature.sign();

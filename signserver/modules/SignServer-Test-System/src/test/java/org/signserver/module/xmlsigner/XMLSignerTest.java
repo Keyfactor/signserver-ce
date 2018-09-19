@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -285,10 +286,14 @@ public class XMLSignerTest extends ModulesTestCase {
      * @throws Exception
      */
     @Test
-    public void test23SignatureValidation_WrongCertificate() throws Exception {
+    public void test23SignatureValidationWrongCertificate() throws Exception {
+        File keystore = new File(getSignServerHome(), "res/test/dss10/dss10_keystore.p12");
+        File keystoreFile = File.createTempFile("dss10_keystore_temp", ".p12");
+        FileUtils.copyFile(keystore, keystoreFile);
         try {
-            workerSession.generateSignerKey(new WorkerIdentifier(WORKERID), "RSA", "1024", TEST_KEY_ALIAS, null);
+            workerSession.setWorkerProperty(WORKERID, "KEYSTOREPATH", keystoreFile.getAbsolutePath());
             workerSession.reloadConfiguration(WORKERID);
+            workerSession.generateSignerKey(new WorkerIdentifier(WORKERID), "RSA", "1024", TEST_KEY_ALIAS, null);
 
             // Generate CSR
             final ISignerCertReqInfo req
@@ -330,6 +335,7 @@ public class XMLSignerTest extends ModulesTestCase {
             workerSession.removeWorkerProperty(WORKERID, "SIGNERCERT");
             workerSession.removeWorkerProperty(WORKERID, "SIGNERCERTCHAIN ");
             workerSession.reloadConfiguration(WORKERID);
+            FileUtils.deleteQuietly(keystoreFile);
         }
     }
 

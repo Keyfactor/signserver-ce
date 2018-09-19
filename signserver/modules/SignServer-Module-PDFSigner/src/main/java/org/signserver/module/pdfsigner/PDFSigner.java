@@ -386,6 +386,26 @@ public class PDFSigner extends BaseSigner {
                 archiveToDisk(sReq, responseData.toReadableData(), requestContext);
             }
             
+            // Verify signature
+            if (verifySignature) {
+                // Derive signature algorithm based on digest algorithm and key algorithm
+                String keyAlgName = crypto.getPrivateKey().getAlgorithm();
+                String sigAlgName;
+                switch (keyAlgName) {
+                    case "RSA":
+                        sigAlgName = digestAlgorithm + "withRSA";
+                        break;
+                    case "DSA":
+                        sigAlgName = digestAlgorithm + "withDSA";
+                        break;
+                    default:
+                        // PdfPKCS7 only supports RSA & DSA key algorithms currently
+                        throw new SignServerException("Unknown Key Algorithm: " + keyAlgName);
+                }
+
+                verifySignature(crypto.getPrivateKey(), getSigningCertificate(crypto), null, sigAlgName);
+            }
+            
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
             

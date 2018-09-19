@@ -17,14 +17,26 @@ import com.lowagie.text.pdf.PdfPKCS7;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
 import java.io.*;
+import java.math.BigInteger;
 import java.net.URL;
+import java.security.KeyPair;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.fail;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.FastDateFormat;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.CertTools;
@@ -38,6 +50,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.test.utils.builders.CryptoUtils;
 
 /**
  * Unit tests for the PDFSigner.
@@ -59,6 +72,8 @@ public class PDFSignerTest extends ModulesTestCase {
 
     private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
+    
+    private static final String TEST_KEY_ALIAS = "testkey123";
 
     @Before
     @Override
@@ -547,6 +562,7 @@ public class PDFSignerTest extends ModulesTestCase {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
         byte[] certFile = getTestFile("dss10" + File.separator + "long_chain.pem");
 
+        workerSession.setWorkerProperty(WORKERID, "VERIFY_SIGNATURE", "FALSE");
         workerSession.setWorkerProperty(WORKERID, "SIGNERCERTCHAIN", new String(certFile));
         workerSession.reloadConfiguration(WORKERID);
 
@@ -554,6 +570,7 @@ public class PDFSignerTest extends ModulesTestCase {
             signGenericDocument(WORKERID, pdfOk);
         } finally {
             workerSession.removeWorkerProperty(WORKERID, "SIGNERCERTCHAIN");
+            workerSession.removeWorkerProperty(WORKERID, "VERIFY_SIGNATURE");
             workerSession.reloadConfiguration(WORKERID);
         }
     }
@@ -589,6 +606,68 @@ public class PDFSignerTest extends ModulesTestCase {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
         
         signGenericPDFWithHash(WORKERID, pdfOk, "SHA512", false, null);
+    }
+    
+    /**
+     * Test that signing fails when using wrong certificate and VERIFY_SIGNATURE
+     * is TRUE (default) but it works when set as FALSE.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test22SignatureValidationWrongCertificate() throws Exception {
+        final byte[] pdfOk = getTestFile(TESTPDF_OK);
+        File keystore = new File(getSignServerHome(), "res/test/dss10/dss10_keystore.p12");
+        File keystoreFile = File.createTempFile("dss10_keystore_temp", ".p12");
+        FileUtils.copyFile(keystore, keystoreFile);
+
+        try {
+            workerSession.setWorkerProperty(WORKERID, "KEYSTOREPATH", keystoreFile.getAbsolutePath());            
+            workerSession.reloadConfiguration(WORKERID);
+            workerSession.generateSignerKey(new WorkerIdentifier(WORKERID), "RSA", "1024", TEST_KEY_ALIAS, null);
+
+            // Generate CSR
+            final ISignerCertReqInfo req
+                    = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKERID, null);
+            Base64SignerCertReqData reqData
+                    = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKERID), req, false, TEST_KEY_ALIAS);
+
+            // Issue certificate
+            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+            // Install certificate and chain
+            workerSession.uploadSignerCertificate(WORKERID, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKERID, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKERID);
+
+            // Test the status of the worker
+            WorkerStatus actualStatus = workerSession.getStatus(new WorkerIdentifier(WORKERID));
+            assertEquals("should be error as the right signer certificate is not configured", 1, actualStatus.getFatalErrors().size());
+            assertTrue("error should talk about incorrect signer certificate: " + actualStatus.getFatalErrors().toString(), actualStatus.getFatalErrors().get(0).contains("Certificate does not match key"));
+
+            try {
+                signGenericPDFWithHash(WORKERID, pdfOk, "SHA512", false, null);
+                fail("Should fail complaining about signature validation failure");
+            } catch (SignServerException e) {
+                // expected
+            } catch (Exception e) {
+                fail("Unexpected exception thrown: " + e.getClass().getName());
+            }
+
+            // Now change to - not verifying signature and signing should work
+            workerSession.setWorkerProperty(WORKERID, "VERIFY_SIGNATURE", "FALSE");
+            workerSession.reloadConfiguration(WORKERID);
+
+            signGenericPDFWithHash(WORKERID, pdfOk, "SHA512", false, null);
+        } finally {
+            workerSession.removeKey(new WorkerIdentifier(WORKERID), TEST_KEY_ALIAS);
+            workerSession.removeWorkerProperty(WORKERID, "SIGNERCERT");
+            workerSession.removeWorkerProperty(WORKERID, "SIGNERCERTCHAIN ");
+            workerSession.reloadConfiguration(WORKERID);
+            FileUtils.deleteQuietly(keystoreFile);
+        }
     }
     
     /**

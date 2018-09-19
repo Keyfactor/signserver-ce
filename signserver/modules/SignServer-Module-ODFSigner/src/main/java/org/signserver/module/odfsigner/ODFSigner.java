@@ -129,6 +129,11 @@ public class ODFSigner extends BaseSigner {
             } catch (Exception e) {
                 throw new SignServerException("Problem signing odf document", e);
             }
+            
+            // Verify signature
+            if (verifySignature) { // DocumentSignatureManager class uses SignatureMethod.RSA_SHA1 currently           
+                verifySignature(crypto.getPrivateKey(), cert, null, "SHA1withRSA");
+            }
         } finally {
             releaseCryptoInstance(crypto, requestContext);
         }

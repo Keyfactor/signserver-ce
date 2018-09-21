@@ -14,8 +14,23 @@ package org.signserver.module.ooxmlsigner;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.math.BigInteger;
+import java.security.KeyPair;
 import java.security.cert.Certificate;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.fail;
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.util.encoders.Base64;
 
 import org.junit.FixMethodOrder;
@@ -26,6 +41,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.test.utils.builders.CryptoUtils;
 
 /**
  * Test for ooxmlsigner. Worker ID of 5677 is hard coded here and used from module-configs/ooxmlsigner/junittest-part-config.properties
@@ -51,6 +67,11 @@ public class OOXMLSignerTest extends ModulesTestCase {
     
     private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
+    
+    private static final String TEST_KEY_ALIAS = "testkey123";
+    
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(OOXMLSignerTest.class);
     
     public static void main(String[] args) {
         try {
@@ -78,6 +99,7 @@ public class OOXMLSignerTest extends ModulesTestCase {
 
     @Test
     public void test01SignDocx() throws Exception {
+        LOG.info("test01SignDocx");
         int reqid = 13;
 
         GenericSignRequest signRequest = new GenericSignRequest(reqid, Base64.decode(TEST_DOCX.getBytes()));
@@ -104,6 +126,7 @@ public class OOXMLSignerTest extends ModulesTestCase {
 
     @Test
     public void test02GetStatus() throws Exception {
+        LOG.info("test02GetStatus");
         StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(WORKERID));
         assertTrue(stat.getTokenStatus() == WorkerStatus.STATUS_ACTIVE);
     }
@@ -115,6 +138,7 @@ public class OOXMLSignerTest extends ModulesTestCase {
      */
     @Test
     public void test03IncludeCertificateLevelsNotSupported() throws Exception {
+        LOG.info("test03IncludeCertificateLevelsNotSupported");
         try {
             workerSession.setWorkerProperty(WORKERID, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS, "2");
             workerSession.reloadConfiguration(WORKERID);
@@ -135,6 +159,7 @@ public class OOXMLSignerTest extends ModulesTestCase {
      */
     @Test
     public void test04NoSigningWhenWorkerMisconfigued() throws Exception {
+        LOG.info("test04NoSigningWhenWorkerMisconfigued");
         int reqid = 13;
         workerSession.setWorkerProperty(WORKERID, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS, "2");
         workerSession.reloadConfiguration(WORKERID);
@@ -144,6 +169,76 @@ public class OOXMLSignerTest extends ModulesTestCase {
             GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKERID), signRequest, new RemoteRequestContext());
         } catch (SignServerException expected) {
             assertTrue("exception message", expected.getMessage().contains("Worker is misconfigured"));
+        } finally {
+            workerSession.removeWorkerProperty(WORKERID, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
+            workerSession.reloadConfiguration(WORKERID);
+        }
+    }
+    
+    /**
+     * Test that signing fails when using wrong certificate and VERIFY_SIGNATURE
+     * is TRUE (default) but it works when set as FALSE.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test05SignatureValidationWrongCertificate() throws Exception {
+        LOG.info("test05SignatureValidationWrongCertificate");
+        int reqid = 13;
+        GenericSignRequest signRequest = new GenericSignRequest(reqid, Base64.decode(TEST_DOCX.getBytes()));
+
+        File keystore = new File(getSignServerHome(), "res/test/dss10/dss10_keystore.p12");
+        File keystoreFile = File.createTempFile("dss10_keystore_temp", ".p12");
+        FileUtils.copyFile(keystore, keystoreFile);
+
+        try {
+            workerSession.setWorkerProperty(WORKERID, "KEYSTOREPATH", keystoreFile.getAbsolutePath());
+            workerSession.reloadConfiguration(WORKERID);
+            workerSession.generateSignerKey(new WorkerIdentifier(WORKERID), "RSA", "1024", TEST_KEY_ALIAS, null);
+
+            // Generate CSR
+            final ISignerCertReqInfo req
+                    = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKERID, null);
+            Base64SignerCertReqData reqData
+                    = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKERID), req, false, TEST_KEY_ALIAS);
+
+            // Issue certificate
+            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
+            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+            // Install certificate and chain
+            workerSession.uploadSignerCertificate(WORKERID, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(WORKERID, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(WORKERID);
+
+            // Test the status of the worker
+            WorkerStatus actualStatus = workerSession.getStatus(new WorkerIdentifier(WORKERID));            
+            assertEquals("should be error as the right signer certificate is not configured", 1, actualStatus.getFatalErrors().size());
+            assertTrue("error should talk about incorrect signer certificate: " + actualStatus.getFatalErrors().toString(), actualStatus.getFatalErrors().get(0).contains("Certificate does not match key"));
+
+            try {
+                GenericSignResponse res = (GenericSignResponse) processSession.process(
+                        new WorkerIdentifier(WORKERID), signRequest, new RemoteRequestContext());
+                fail("Should fail complaining about signature validation failure");
+            } catch (SignServerException e) {
+                // expected
+            } catch (Exception e) {
+                fail("Unexpected exception thrown: " + e.getClass().getName());
+            }
+
+            // Now change to - not verifying signature and signing should work
+            workerSession.setWorkerProperty(WORKERID, "VERIFY_SIGNATURE", "FALSE");
+            workerSession.reloadConfiguration(WORKERID);
+
+            GenericSignResponse res = (GenericSignResponse) processSession.process(
+                    new WorkerIdentifier(WORKERID), signRequest, new RemoteRequestContext());
+        } finally {
+            workerSession.removeKey(new WorkerIdentifier(WORKERID), TEST_KEY_ALIAS);
+            workerSession.removeWorkerProperty(WORKERID, "SIGNERCERT");
+            workerSession.removeWorkerProperty(WORKERID, "SIGNERCERTCHAIN ");
+            workerSession.reloadConfiguration(WORKERID);
+            FileUtils.deleteQuietly(keystoreFile);
         }
     }
 

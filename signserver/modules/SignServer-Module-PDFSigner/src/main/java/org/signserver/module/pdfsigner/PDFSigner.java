@@ -400,7 +400,7 @@ public class PDFSigner extends BaseSigner {
                         break;
                     default:
                         // PdfPKCS7 only supports RSA & DSA key algorithms currently
-                        throw new SignServerException("Unknown Key Algorithm: " + keyAlgName);
+                        throw new SignServerException("Unknown key Algorithm: " + keyAlgName);
                 }
 
                 verifySignature(crypto.getPrivateKey(), getSigningCertificate(crypto), null, sigAlgName);

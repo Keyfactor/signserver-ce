@@ -44,3 +44,8 @@ securityeventsaudit.exporter.1=org.cesecore.audit.impl.AuditExporterXml
 # If the key is not a PKCS#11 key then nothing is done.
 # Default: false
 #pkcs11.makeKeyUnmodifiableAfterGeneration=true
+
+# Caching the references to PKCS#11 objects can make a big performance difference.
+# Default: true
+#cryptotoken.keystorecache=true
+

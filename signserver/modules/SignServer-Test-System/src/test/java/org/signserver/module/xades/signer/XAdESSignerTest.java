@@ -252,6 +252,7 @@ public class XAdESSignerTest extends ModulesTestCase {
             workerSession.removeWorkerProperty(WORKER_ID, "SIGNERCERT");
             workerSession.removeWorkerProperty(WORKER_ID, "SIGNERCERTCHAIN ");
             workerSession.reloadConfiguration(WORKER_ID);
+            removeWorker(WORKER_ID);
             FileUtils.deleteQuietly(keystoreFile);
         }
     }

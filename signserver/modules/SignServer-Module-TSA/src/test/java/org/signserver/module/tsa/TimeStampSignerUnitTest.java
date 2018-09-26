@@ -1034,6 +1034,60 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                    fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true"));
     }
     
+    @Test
+    public void testSignatureVerification_ConflictingLegacyCurrentValues() throws Exception {
+        LOG.info("test1_LegacyAndCurrentSignatureVerification");
+
+        final WorkerConfig config = new WorkerConfig();
+        config.setProperty("ACCEPTANYPOLICY", "true");
+        config.setProperty("TYPE", "PROCESSABLE");
+        config.setProperty("DEFAULTTSAPOLICYOID", "1.3.6.1.4.1.22408.1.2.3.45");
+
+        config.setProperty("VERIFY_SIGNATURE", "true");
+        config.setProperty("VERIFY_TOKEN_SIGNATURE", "false");
+
+        final TimeStampSigner signer = new TimeStampSigner() {
+            @Override
+            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+                return null;
+            }
+        };
+
+        signer.init(WORKER1, config, null, null);
+
+        final List<String> fatalErrors = signer.getFatalErrors(null);
+
+        assertEquals("There should be only one error", fatalErrors.size(), 1);
+        assertTrue("should contain configuration error",
+                fatalErrors.toString().contains("Conflicting values specified for properties:"));
+    }
+    
+    @Test
+    public void testSignatureVerification_NoLegacyCurrentValues() throws Exception {
+        LOG.info("test2_LegacyAndCurrentSignatureVerification");
+
+        final WorkerConfig config = new WorkerConfig();
+        config.setProperty("ACCEPTANYPOLICY", "true");
+        config.setProperty("TYPE", "PROCESSABLE");
+        config.setProperty("DEFAULTTSAPOLICYOID", "1.3.6.1.4.1.22408.1.2.3.45");
+
+        config.setProperty("VERIFY_SIGNATURE", " ");
+        config.setProperty("VERIFY_TOKEN_SIGNATURE", " ");
+
+        final TimeStampSigner signer = new TimeStampSigner() {
+            @Override
+            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+                return null;
+            }
+        };
+
+        signer.init(WORKER1, config, null, null);
+
+        final List<String> fatalErrors = signer.getFatalErrors(null);
+
+        assertEquals("There should be no error", fatalErrors.size(), 0);        
+    }
+    
     /**
      * Test that setting ACCEPTANYPOLICY to FALSE (with caps) without setting ACCEPTEDPOLICIES
      * is not allowed.

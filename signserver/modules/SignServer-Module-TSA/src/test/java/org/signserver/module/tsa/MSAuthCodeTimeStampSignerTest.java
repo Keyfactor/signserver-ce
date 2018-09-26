@@ -15,7 +15,10 @@ package org.signserver.module.tsa;
 import java.io.File;
 import java.math.BigInteger;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,7 +41,9 @@ import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.Time;
 import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.X509Extension;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
@@ -48,6 +53,7 @@ import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.Test;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
@@ -65,6 +71,7 @@ import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.LogMap;
 import org.signserver.test.utils.CertTools;
 import org.signserver.test.utils.builders.CertBuilder;
+import org.signserver.test.utils.builders.CertBuilderException;
 import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
 
@@ -580,7 +587,72 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         final List<String> fatalErrors = instance.getFatalErrors(null);
 
         assertTrue("Should not report fatal error" + fatalErrors, fatalErrors.isEmpty());
-    }      
+    }
+    
+    @Test
+    public void testSignatureValidationWrongCertificate() throws Exception {
+        //  data to be signed
+        RequestContext requestContext = new RequestContext();
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
+        CloseableReadableData requestData = ModulesTestCase.createRequestData(REQUEST_DATA.getBytes());
+        CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
+        SignatureRequest request = new SignatureRequest(100, requestData, responseData);
+
+        // Initialize signer with key & certificates
+        final KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
+        final String signatureAlgorithm = "SHA1withRSA";
+        final CertBuilder certBuilder
+                = new CertBuilder().
+                        setSelfSignKeyPair(signerKeyPair).
+                        setNotBefore(new Date()).
+                        setSignatureAlgorithm(signatureAlgorithm);
+        KeyPurposeId[] ekus = new KeyPurposeId[]{KeyPurposeId.id_kp_timeStamping};
+        if (ekus != null && ekus.length > 0) {
+            certBuilder.addExtension(new CertExt(Extension.extendedKeyUsage,
+                    true,
+                    new ExtendedKeyUsage(ekus)));
+        }
+        final Certificate[] certChain
+                = new Certificate[]{new JcaX509CertificateConverter().getCertificate(
+                            certBuilder.build())};
+        final Certificate signerCertificate = certChain[0];
+        final MockedCryptoToken token
+                = new MockedCryptoToken(signerKeyPair.getPrivate(),
+                        signerKeyPair.getPublic(),
+                        signerCertificate,
+                        Arrays.asList(certChain), "BC");
+
+        final MSAuthCodeTimeStampSigner instance
+                = new MockedMSAuthCodeTimeStampSigner(token);
+        
+        WorkerConfig workerConfig = new WorkerConfig();
+        workerConfig.setProperty("TIMESOURCE", "   ");
+        workerConfig.setProperty("TYPE", "PROCESSABLE");
+        workerConfig.setProperty("SIGNATUREALGORITHM", " ");
+
+        // Create some other signer certificate and upload to worker configuration
+        final List<Certificate> signerCert = createSignerCertificate();
+        workerConfig.setProperty("SIGNERCERTCHAIN",
+                new String(org.cesecore.util.CertTools.getPemFromCertificateChain(signerCert)));
+        workerConfig.setProperty("SIGNERCERT",
+                new String(org.cesecore.util.CertTools.getPemFromCertificateChain(Arrays.asList(signerCert.get(0)))));
+
+        instance.init(2, workerConfig, new SignServerContext(), null);       
+                
+        try {
+            instance.processData(request, requestContext);
+            fail("Should fail complaining about signature validation failure");
+        } catch (SignServerException e) {
+            // expected
+        } catch (Exception e) {
+            fail("Unexpected exception thrown: " + e.getClass().getName());
+        }
+        
+        // Now change to - not verifying signature and signing should work
+        workerConfig.setProperty("VERIFY_SIGNATURE", "FALSE");
+        instance.init(1, workerConfig, new SignServerContext(), null);
+        instance.processData(request, requestContext);
+    }
     
     /**
      * Tests that Signer refuses to sign if worker has configuration errors.
@@ -653,5 +725,25 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         public ICryptoTokenV4 getCryptoToken(final IServices services) {
             return mockedToken;
         }
+    }
+    
+    private List<Certificate> createSignerCertificate() throws NoSuchAlgorithmException, NoSuchProviderException, CertificateException, CertBuilderException {
+        final KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
+        final String signatureAlgorithm = "SHA1withRSA";
+        final CertBuilder certBuilder
+                = new CertBuilder().
+                        setSelfSignKeyPair(signerKeyPair).
+                        setNotBefore(new Date()).
+                        setSignatureAlgorithm(signatureAlgorithm);
+        KeyPurposeId[] ekus = new KeyPurposeId[]{KeyPurposeId.id_kp_timeStamping};
+        if (ekus != null && ekus.length > 0) {
+            certBuilder.addExtension(new CertExt(Extension.extendedKeyUsage,
+                    true,
+                    new ExtendedKeyUsage(ekus)));
+        }
+        final Certificate[] certChain
+                = new Certificate[]{new JcaX509CertificateConverter().getCertificate(
+                            certBuilder.build())};
+        return Arrays.asList(certChain);
     }
 }

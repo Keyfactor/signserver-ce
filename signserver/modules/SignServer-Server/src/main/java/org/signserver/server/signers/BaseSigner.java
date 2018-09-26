@@ -429,6 +429,16 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         }
     }
     
+    /**
+     * Verifies signature performing cheap signing operation using private key
+     * and public key from signer certificate.
+     *
+     * @param privateKey private key used for signing
+     * @param signerCert signer certificate
+     * @param signatureProvider signature provider
+     * @param sigAlg signature algorithm
+     * @throws SignServerException
+     */
     protected void verifySignature(PrivateKey privateKey, Certificate signerCert, String signatureProvider, String sigAlg) throws SignServerException {
         final byte input[] = "Lillan gick pa vagen ut, motte dar en katt...".getBytes();
         PublicKey publicKey = signerCert.getPublicKey();

@@ -246,7 +246,11 @@ public class XAdESSignerTest extends ModulesTestCase {
             workerSession.setWorkerProperty(WORKER_ID, "VERIFY_SIGNATURE", "FALSE");
             workerSession.reloadConfiguration(WORKER_ID);
 
-            processSession.process(new WorkerIdentifier(WORKER_ID), signRequest, new RemoteRequestContext());
+            try {
+                processSession.process(new WorkerIdentifier(WORKER_ID), signRequest, new RemoteRequestContext());
+            } catch (SignServerException e) {
+                fail("SignServerException should not be thrown");
+            }
         } finally {
             workerSession.removeKey(new WorkerIdentifier(WORKER_ID), TEST_KEY_ALIAS);
             workerSession.removeWorkerProperty(WORKER_ID, "SIGNERCERT");

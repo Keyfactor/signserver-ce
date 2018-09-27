@@ -660,7 +660,11 @@ public class PDFSignerTest extends ModulesTestCase {
             workerSession.setWorkerProperty(WORKERID, "VERIFY_SIGNATURE", "FALSE");
             workerSession.reloadConfiguration(WORKERID);
 
-            signGenericPDFWithHash(WORKERID, pdfOk, "SHA512", false, null);
+            try {
+                signGenericPDFWithHash(WORKERID, pdfOk, "SHA512", false, null);
+            } catch (SignServerException e) {
+                fail("SignServerException should not be thrown");
+            }
         } finally {
             workerSession.removeKey(new WorkerIdentifier(WORKERID), TEST_KEY_ALIAS);
             workerSession.removeWorkerProperty(WORKERID, "SIGNERCERT");

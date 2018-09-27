@@ -407,11 +407,9 @@ public class XAdESSigner extends BaseSigner {
                             sigAlgName = "SHA1withDSA";
                             break;
                         case "EC":
-                            sigAlgName = "SHA1withECDSA";
-                            break;
                         case "ECDSA":
                             sigAlgName = "SHA1withECDSA";
-                            break;
+                            break;                        
                         default:
                             throw new SignServerException("Unknown key Algorithm: " + keyAlgName);
                     }

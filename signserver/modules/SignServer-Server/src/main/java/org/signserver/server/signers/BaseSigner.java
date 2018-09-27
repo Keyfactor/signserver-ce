@@ -13,6 +13,7 @@
 package org.signserver.server.signers;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -440,7 +441,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
      * @throws SignServerException
      */
     protected void verifySignature(PrivateKey privateKey, Certificate signerCert, String signatureProvider, String sigAlg) throws SignServerException {
-        final byte input[] = "Lillan gick pa vagen ut, motte dar en katt...".getBytes();
+        final byte input[] = "Lillan gick pa vagen ut, motte dar en katt...".getBytes(StandardCharsets.UTF_8);
         PublicKey publicKey = signerCert.getPublicKey();
 
         Signature signSignature;

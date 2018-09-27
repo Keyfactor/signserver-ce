@@ -329,7 +329,11 @@ public class XMLSignerTest extends ModulesTestCase {
             workerSession.setWorkerProperty(WORKERID, "VERIFY_SIGNATURE", "FALSE");
             workerSession.reloadConfiguration(WORKERID);
 
-            testBasicXmlSign(WORKERID, "SHA256withRSA", null, "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", DIGEST_METHOD_URI_SHA256);
+            try {
+                testBasicXmlSign(WORKERID, "SHA256withRSA", null, "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", DIGEST_METHOD_URI_SHA256);
+            } catch (SignServerException e) {
+                fail("SignServerException should not be thrown");
+            }
         } finally {
             workerSession.removeKey(new WorkerIdentifier(WORKERID), TEST_KEY_ALIAS);
             workerSession.removeWorkerProperty(WORKERID, "SIGNERCERT");

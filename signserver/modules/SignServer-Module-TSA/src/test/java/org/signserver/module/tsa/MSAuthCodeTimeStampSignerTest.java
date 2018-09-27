@@ -589,6 +589,12 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         assertTrue("Should not report fatal error" + fatalErrors, fatalErrors.isEmpty());
     }
     
+    /**
+     * Test that signing fails when using wrong certificate and VERIFY_SIGNATURE
+     * is TRUE (default) but it works when set as FALSE.
+     *
+     * @throws Exception
+     */
     @Test
     public void testSignatureValidationWrongCertificate() throws Exception {
         //  data to be signed
@@ -613,7 +619,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
                     new ExtendedKeyUsage(ekus)));
         }
         final Certificate[] certChain
-                = new Certificate[]{new JcaX509CertificateConverter().getCertificate(
+                = new Certificate[] {new JcaX509CertificateConverter().getCertificate(
                             certBuilder.build())};
         final Certificate signerCertificate = certChain[0];
         final MockedCryptoToken token
@@ -651,7 +657,11 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         // Now change to - not verifying signature and signing should work
         workerConfig.setProperty("VERIFY_SIGNATURE", "FALSE");
         instance.init(1, workerConfig, new SignServerContext(), null);
-        instance.processData(request, requestContext);
+        try {
+            instance.processData(request, requestContext);
+        } catch (SignServerException e) {
+            fail("SignServerException should not be thrown");
+        }
     }
     
     /**
@@ -742,7 +752,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
                     new ExtendedKeyUsage(ekus)));
         }
         final Certificate[] certChain
-                = new Certificate[]{new JcaX509CertificateConverter().getCertificate(
+                = new Certificate[] {new JcaX509CertificateConverter().getCertificate(
                             certBuilder.build())};
         return Arrays.asList(certChain);
     }

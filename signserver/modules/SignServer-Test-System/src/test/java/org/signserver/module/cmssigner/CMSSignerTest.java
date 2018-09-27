@@ -202,8 +202,12 @@ public class CMSSignerTest  {
             // Now change to - not verifying signature and signing should work
             workerSession.setWorkerProperty(mt.getSignerIdDummy1(), "VERIFY_SIGNATURE", "FALSE");
             workerSession.reloadConfiguration(mt.getSignerIdDummy1());
-            processSession.process(new WorkerIdentifier(mt.getSignerIdDummy1()), signRequest, new RemoteRequestContext());
-            
+            try {
+                processSession.process(new WorkerIdentifier(mt.getSignerIdDummy1()), signRequest, new RemoteRequestContext());
+            } catch (SignServerException e) {
+                fail("SignServerException should not be thrown");
+            }
+
         } finally {
             workerSession.removeKey(new WorkerIdentifier(mt.getSignerIdDummy1()), TEST_KEY_ALIAS);
             workerSession.removeWorkerProperty(mt.getSignerIdDummy1(), "SIGNERCERT");

@@ -1034,9 +1034,15 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                    fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true"));
     }
     
+    /**
+     * Test that setting both VERIFY_SIGNATURE & VERIFY_TOKEN_SIGNATURE with
+     * conflicting values is not allowed.
+     *
+     * @throws Exception
+     */
     @Test
     public void testSignatureVerification_ConflictingLegacyCurrentValues() throws Exception {
-        LOG.info("test1_LegacyAndCurrentSignatureVerification");
+        LOG.info("testSignatureVerification_ConflictingLegacyCurrentValues");
 
         final WorkerConfig config = new WorkerConfig();
         config.setProperty("ACCEPTANYPOLICY", "true");
@@ -1062,9 +1068,15 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 fatalErrors.toString().contains("Conflicting values specified for properties:"));
     }
     
+    /**
+     * Test that not setting both VERIFY_SIGNATURE & VERIFY_TOKEN_SIGNATURE is
+     * allowed.
+     *
+     * @throws Exception
+     */
     @Test
     public void testSignatureVerification_NoLegacyCurrentValues() throws Exception {
-        LOG.info("test2_LegacyAndCurrentSignatureVerification");
+        LOG.info("testSignatureVerification_NoLegacyCurrentValues");
 
         final WorkerConfig config = new WorkerConfig();
         config.setProperty("ACCEPTANYPOLICY", "true");

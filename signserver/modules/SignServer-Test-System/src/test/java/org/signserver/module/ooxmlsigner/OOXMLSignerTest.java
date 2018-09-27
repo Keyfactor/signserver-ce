@@ -231,8 +231,12 @@ public class OOXMLSignerTest extends ModulesTestCase {
             workerSession.setWorkerProperty(WORKERID, "VERIFY_SIGNATURE", "FALSE");
             workerSession.reloadConfiguration(WORKERID);
 
-            GenericSignResponse res = (GenericSignResponse) processSession.process(
-                    new WorkerIdentifier(WORKERID), signRequest, new RemoteRequestContext());
+            try {
+                GenericSignResponse res = (GenericSignResponse) processSession.process(
+                        new WorkerIdentifier(WORKERID), signRequest, new RemoteRequestContext());
+            } catch (SignServerException e) {
+                fail("SignServerException should not be thrown");
+            }
         } finally {
             workerSession.removeKey(new WorkerIdentifier(WORKERID), TEST_KEY_ALIAS);
             workerSession.removeWorkerProperty(WORKERID, "SIGNERCERT");

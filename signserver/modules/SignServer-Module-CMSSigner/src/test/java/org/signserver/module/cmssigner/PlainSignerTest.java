@@ -239,7 +239,11 @@ public class PlainSignerTest {
         // Now change to - not verifying signature and signing should work
         config.setProperty("VERIFY_SIGNATURE", "FALSE");
         instance.init(1, config, new SignServerContext(), null);
-        instance.processData(request, requestContext);
+        try {
+            instance.processData(request, requestContext);
+        } catch (SignServerException e) {
+            fail("SignServerException should not be thrown");
+        }
     }
 
     /**
@@ -716,7 +720,7 @@ public class PlainSignerTest {
         // Create signer key-pair (RSA) and issue certificate
         final KeyPair signerKeyPairRSA = CryptoUtils.generateRSA(1024);
         final Certificate[] certChainRSA
-                = new Certificate[]{
+                = new Certificate[] {
                     // Code Signer
                     new JcaX509CertificateConverter().getCertificate(new CertBuilder()
                             .setIssuerPrivateKey(caKeyPair.getPrivate())

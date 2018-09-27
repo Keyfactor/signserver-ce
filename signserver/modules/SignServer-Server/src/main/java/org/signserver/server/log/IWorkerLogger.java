@@ -49,6 +49,10 @@ public interface IWorkerLogger {
     
     /** The key alias used. */
     String LOG_KEYALIAS = "KEYALIAS";
+    /** The key algorithm used. */
+    String LOG_KEY_ALGORITHM = "KEY_ALGORITHM";
+    /** The key specification used. */
+    String LOG_KEY_SPECIFICATION = "KEY_SPECIFICATION";
 
     /**
      * The configured crypto token, or if none configured the name of the worker

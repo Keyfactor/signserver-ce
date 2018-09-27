@@ -22,8 +22,8 @@ import java.net.URLConnection;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIStatus;
+import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
@@ -42,16 +42,12 @@ public class TimeStamp implements Task {
     /** Logger for this class */
     Logger LOG = Logger.getLogger(TimeStamp.class);
     
-    private final String tsaUrl;
-    private final Random random;
-    private final byte[] hashValue;
-    private final ASN1ObjectIdentifier hashAlgorithm;
+    private String tsaUrl;
+    private Random random;
 
-    public TimeStamp(final String url, final Random random, final byte[] hashValue, final ASN1ObjectIdentifier hashAlgorithm) {
+    public TimeStamp(final String url, final Random random) {
         this.tsaUrl = url;
         this.random = random;
-        this.hashValue = hashValue;
-        this.hashAlgorithm = hashAlgorithm;
     }
     
     @Override
@@ -82,8 +78,9 @@ public class TimeStamp implements Task {
     			new TimeStampRequestGenerator();
     	final int nonce = random.nextInt();
 
+    	byte[] digest = new byte[20];
     	final TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(
-    			hashAlgorithm, hashValue, BigInteger.valueOf(nonce));
+    			TSPAlgorithms.SHA1, digest, BigInteger.valueOf(nonce));
     	final byte[] requestBytes = timeStampRequest.getEncoded();
 
     	URL url;

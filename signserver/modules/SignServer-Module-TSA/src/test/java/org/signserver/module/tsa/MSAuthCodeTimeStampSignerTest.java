@@ -745,11 +745,11 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
                         setSelfSignKeyPair(signerKeyPair).
                         setNotBefore(new Date()).
                         setSignatureAlgorithm(signatureAlgorithm);
-        KeyPurposeId[] ekus = new KeyPurposeId[]{KeyPurposeId.id_kp_timeStamping};
-        if (ekus != null && ekus.length > 0) {
+        KeyPurposeId[] kpid = new KeyPurposeId[]{KeyPurposeId.id_kp_timeStamping};
+        if (kpid != null && kpid.length > 0) {
             certBuilder.addExtension(new CertExt(Extension.extendedKeyUsage,
                     true,
-                    new ExtendedKeyUsage(ekus)));
+                    new ExtendedKeyUsage(kpid)));
         }
         final Certificate[] certChain
                 = new Certificate[] {new JcaX509CertificateConverter().getCertificate(

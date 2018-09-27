@@ -14,6 +14,7 @@ package org.signserver.test.performance.impl;
 
 import java.io.*;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.signserver.test.performance.FailureCallback;
 import org.signserver.test.performance.WorkerThread;
 
@@ -30,9 +31,9 @@ public class TimeStampThread extends WorkerThread {
     private TimeStamp tsa;
     
     public TimeStampThread(final String name, final FailureCallback failureCallback, final String url, int maxWaitTime,
-    		int seed, long warmupTime, final long limitedTime, final File statFile) {
+    		int seed, long warmupTime, final long limitedTime, final File statFile, final byte[] hashValue, final ASN1ObjectIdentifier hashAlgorithm) {
         super(name, failureCallback, maxWaitTime, seed, warmupTime, limitedTime, statFile);
-        this.task = new TimeStamp(url, random);
+        this.task = new TimeStamp(url, random, hashValue, hashAlgorithm);
     }
 
 }

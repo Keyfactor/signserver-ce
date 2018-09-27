@@ -21,6 +21,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
+import org.bouncycastle.tsp.TSPAlgorithms;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.test.performance.FailureCallback;
 import org.signserver.test.performance.WorkerThread;
@@ -73,6 +74,7 @@ public class Main {
 
     private enum TestSuites {
         TimeStamp1,
+        TimeStamp2,
         DocumentSigner1,
         DocumentValidator1,
     }
@@ -106,7 +108,7 @@ public class Main {
         footer.append(NL)
                 .append("Sample usages:").append(NL)
                 .append("a) ").append(COMMAND)
-                .append(" -testsuite TimeStamp1 -threads 4 -tsaurl http://localhost:8080/signserver/tsa?workerId=1").append(NL)
+                .append(" -testsuite TimeStamp2 -threads 4 -tsaurl http://localhost:8080/signserver/tsa?workerId=1").append(NL)
                 .append("b) ").append(COMMAND)
                 .append(" -testsuite TimeStamp1 -threads 4 -maxwaittime 100 -statoutputdir ./statistics/ -tsaurl http://localhost:8080/signserver/tsa?workerId=1").append(NL)
                 .append("c) ").append(COMMAND)
@@ -170,9 +172,8 @@ public class Main {
             final String url;
             boolean useWorkerServlet = false;
             if (commandLine.hasOption(TSA_URL)) {
-                if (!ts.equals(TestSuites.TimeStamp1)) {
-                    throw new ParseException("Option " + TSA_URL + " can only be used with the " +
-                            TestSuites.TimeStamp1.toString() + " test suite.");
+                if (!ts.name().startsWith("TimeStamp")) {
+                    throw new ParseException("Option " + TSA_URL + " can only be used with the TimeStamp test suites.");
                 }
                 url = commandLine.getOptionValue(TSA_URL);
             } else if (commandLine.hasOption(PROCESS_URL)) {
@@ -308,6 +309,9 @@ public class Main {
                 switch (ts) {
                 case TimeStamp1:
                     timeStamp1(threads, numThreads, callback, url, maxWaitTime, warmupTime, limitedTime, statFolder);
+                    break;
+                case TimeStamp2:
+                    timeStamp2(threads, numThreads, callback, url, maxWaitTime, warmupTime, limitedTime, statFolder);
                     break;
                 case DocumentSigner1:
                     documentSigner1(threads, numThreads, callback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder, userPrefix, usersuffixMin, usersuffixMax);
@@ -453,7 +457,36 @@ public class Main {
                 statFile = new File(statFolder, name + ".csv");
             }
             threads.add(new TimeStampThread(name, failureCallback, url, maxWaitTime, random.nextInt(),
-                    warmupTime, limitedTime, statFile));
+                    warmupTime, limitedTime, statFile, new byte[20], TSPAlgorithms.SHA1));
+        }
+    }
+    
+    /**
+     * Initialize the worker thread list for the time stamp test suite using SHA-256.
+     *
+     * @param threads A list to hold the worker threads. This list is filled by the method.
+     * @param numThreads Number of threads to create.
+     * @param failureCallback Callback to handle failures.
+     * @param url Time stamp signer URL.
+     * @param maxWaitTime Maximum waiting time between generated requests.
+     * @param warmupTime Warmup time, if set to > 0, will add a warmup period where no stats are collected.
+     * @param limitedTime Maximum run time, if set to -1, threads will run until interrupted.
+     * @param statFolder Output folder for statistics.
+     * @throws Exception
+     */
+    private static void timeStamp2(final List<WorkerThread> threads, final int numThreads, final FailureCallback failureCallback,
+            final String url, int maxWaitTime, long warmupTime, final long limitedTime, final File statFolder) throws Exception {
+        final Random random = new Random();
+        for (int i = 0; i < numThreads; i++) {
+            final String name = "TimeStamp2-" + i;
+            final File statFile;
+            if (statFolder == null) {
+                statFile = null;
+            } else {
+                statFile = new File(statFolder, name + ".csv");
+            }
+            threads.add(new TimeStampThread(name, failureCallback, url, maxWaitTime, random.nextInt(),
+                    warmupTime, limitedTime, statFile, new byte[32], TSPAlgorithms.SHA256));
         }
     }
 

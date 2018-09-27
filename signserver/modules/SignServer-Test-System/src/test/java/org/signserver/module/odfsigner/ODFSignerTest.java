@@ -215,7 +215,7 @@ public class ODFSignerTest extends ModulesTestCase {
             try {
                 GenericSignResponse res = (GenericSignResponse) processSession.process(
                         new WorkerIdentifier(WORKERID), signRequest, new RemoteRequestContext());
-            } catch (Exception e) {
+            } catch (SignServerException e) {
                 fail("SignServerException should not be thrown");
             }
         } finally {

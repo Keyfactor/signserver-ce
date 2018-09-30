@@ -7,6 +7,7 @@ EXT=`find ./ext -name "*.jar" -o -name "*.bin" | sort`
 
 # Things we build our self
 INT=`find . -name "*-Lib-*.jar" | sort`
+VERSION=`grep "app.version.number=" ../res/deploytools/app.properties | sed "s/app.version.number=//"`
 
 # Previous list of dependencies
 PREVFILE="../tmp/jars-list.txt"
@@ -25,8 +26,11 @@ do
     printf "%-120s  %s\n" "${SUM};" "${PROJECT}" >> jars-list.txt
 done
 
-for f in $INT
+for f1 in $INT
 do
+    # Remove our version number as it makes the build process tricky
+    f=`echo $f1 | sed "s/-${VERSION}//"`
+
     # Only file name for JARs we build
     SUM=`printf "%64s  %s" " " "$f"`
 

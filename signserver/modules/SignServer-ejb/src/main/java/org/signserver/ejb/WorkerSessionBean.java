@@ -477,7 +477,6 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         
             signer.generateKey(keyAlgorithm, keySpec, alias, authCode, params,
                     servicesImpl);
-
             final HashMap<String, Object> auditMap = new HashMap<>();
             auditMap.put(AdditionalDetailsTypes.KEYALG.name(), keyAlgorithm);
             auditMap.put(AdditionalDetailsTypes.KEYSPEC.name(), keySpec);

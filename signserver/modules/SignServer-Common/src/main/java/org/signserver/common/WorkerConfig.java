@@ -130,13 +130,6 @@ public class WorkerConfig extends UpgradeableDataHashMap {
      */
     public static final String WORKER_PROPERTY_MASK_PLACEHOLDER = "_MASKED_";
     
-    /**
-     * Specifies that signature is to be verified or not before returning
-     * response by Signer.     
-     *
-     */
-    public static final String VERIFY_SIGNATURE = "VERIFY_SIGNATURE";
-    
     @SuppressWarnings("unchecked")
     public WorkerConfig() {
         data.put(PROPERTIES, new Properties());

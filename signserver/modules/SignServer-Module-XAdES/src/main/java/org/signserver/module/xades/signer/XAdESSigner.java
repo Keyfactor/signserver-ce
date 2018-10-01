@@ -392,30 +392,6 @@ public class XAdESSigner extends BaseSigner {
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer trans = tf.newTransformer();
             trans.transform(new DOMSource(doc), new StreamResult(out));
-            
-            // Verify Signature
-            if (verifySignature) {
-                String sigAlgName = signatureAlgorithm;
-                if (sigAlgName == null) {
-                    // Derive signature algorithm based on key algorithm
-                    String keyAlgName = crypto.getPrivateKey().getAlgorithm();
-                    switch (keyAlgName) {
-                        case "RSA":
-                            sigAlgName = "SHA256withRSA";
-                            break;
-                        case "DSA":
-                            sigAlgName = "SHA1withDSA";
-                            break;
-                        case "EC":
-                        case "ECDSA":
-                            sigAlgName = "SHA1withECDSA";
-                            break;                        
-                        default:
-                            throw new SignServerException("Unknown key Algorithm: " + keyAlgName);
-                    }
-                }
-                verifySignature(crypto.getPrivateKey(), cert, null, sigAlgName);
-            }
         } catch (SAXException ex) {
             throw new IllegalRequestException("Document parsing error", ex);
         } catch (IOException | ParserConfigurationException ex) {

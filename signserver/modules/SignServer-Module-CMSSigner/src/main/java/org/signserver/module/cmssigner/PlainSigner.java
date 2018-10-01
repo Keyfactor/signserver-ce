@@ -224,11 +224,6 @@ public class PlainSigner extends BaseSigner {
             if (fileNameOriginal != null) {
                 requestContext.put(RequestContext.RESPONSE_FILENAME, fileNameOriginal + ".sig");
             }
-            
-            // Verify signature
-            if (verifySignature) {
-                verifySignature(privKey, cert, crypto.getProvider().getName(), sigAlg);
-            }
 
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);

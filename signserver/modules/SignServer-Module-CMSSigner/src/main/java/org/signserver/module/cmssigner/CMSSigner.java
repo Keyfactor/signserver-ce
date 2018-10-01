@@ -664,11 +664,6 @@ public class CMSSigner extends BaseSigner {
                 requestContext.put(RequestContext.RESPONSE_FILENAME, fileNameOriginal + ".p7s");
             }
             
-            // Verify signature
-            if (verifySignature) {
-                verifySignature(crypto.getPrivateKey(), cert, crypto.getProvider().getName(), sigAlg);
-            }
-            
             // The client can be charged for the request
             requestContext.setRequestFulfilledByWorker(true);
             

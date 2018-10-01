@@ -23,13 +23,11 @@ import java.security.Security;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import static junit.framework.TestCase.assertTrue;
-import static junit.framework.TestCase.fail;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
@@ -39,7 +37,6 @@ import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
-import org.cesecore.util.CertTools;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -47,7 +44,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerType;
 import org.signserver.common.data.SignatureRequest;
@@ -57,7 +53,6 @@ import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.log.LogMap;
 import org.signserver.test.utils.builders.CertBuilder;
-import org.signserver.test.utils.builders.CertBuilderException;
 import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.test.utils.mock.MockedCryptoToken;
@@ -197,53 +192,6 @@ public class PlainSignerTest {
         byte[] plainText = "some-data".getBytes("ASCII");
         SimplifiedResponse resp = sign(plainText, tokenRSA, createConfig("  "));
         assertSignedAndVerifiable(plainText, "SHA256withRSA", tokenRSA, resp);
-    }
-    
-    /**
-     * Test that signing fails when using wrong certificate and VERIFY_SIGNATURE
-     * is TRUE (default) but it works when set as FALSE.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testSignatureValidationWrongCertificate() throws Exception {
-        LOG.info("testSignatureValidationWrongCertificate");
-        byte[] plainText = "some-data".getBytes("ASCII");
-        WorkerConfig config = createConfig("  ");
-        final List<Certificate> signerCert = createSignerCertificate();
-        config.setProperty("SIGNERCERTCHAIN",
-                new String(CertTools.getPemFromCertificateChain(signerCert)));
-        config.setProperty("SIGNERCERT",
-                new String(CertTools.getPemFromCertificateChain(Arrays.asList(signerCert.get(0)))));
-
-        MockedPlainSigner instance = new MockedPlainSigner(tokenRSA);
-        instance.init(1, config, new SignServerContext(), null);
-
-        RequestContext requestContext = new RequestContext();
-        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
-
-        CloseableReadableData requestData = ModulesTestCase.createRequestData(plainText);
-        CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
-
-        SignatureRequest request = new SignatureRequest(100, requestData, responseData);
-
-        try {
-            instance.processData(request, requestContext);
-            fail("Should fail complaining about signature validation failure");
-        } catch (SignServerException e) {
-            // expected
-        } catch (Exception e) {
-            fail("Unexpected exception thrown: " + e.getClass().getName());
-        }
-
-        // Now change to - not verifying signature and signing should work
-        config.setProperty("VERIFY_SIGNATURE", "FALSE");
-        instance.init(1, config, new SignServerContext(), null);
-        try {
-            instance.processData(request, requestContext);
-        } catch (SignServerException e) {
-            fail("SignServerException should not be thrown");
-        }
     }
 
     /**
@@ -699,43 +647,5 @@ public class PlainSignerTest {
         byte[] hash = md.digest();
         SimplifiedResponse resp = sign(hash, tokenECDSA, createConfig("NONEwithECDSA"));
         assertSignedAndVerifiable(plainText, "SHA384withECDSA", tokenECDSA, resp);
-    }
-    
-    private List<Certificate> createSignerCertificate() throws NoSuchAlgorithmException, NoSuchProviderException, CertificateException, CertBuilderException {
-        final String signatureAlgorithm = "SHA256withRSA";
-
-        // Create CA
-        final KeyPair caKeyPair = CryptoUtils.generateRSA(1024);
-        final String caDN = "CN=Test CA";
-        long currentTime = System.currentTimeMillis();
-        final X509Certificate caCertificate
-                = new JcaX509CertificateConverter().getCertificate(new CertBuilder()
-                        .setSelfSignKeyPair(caKeyPair)
-                        .setNotBefore(new Date(currentTime - 120000))
-                        .setSignatureAlgorithm(signatureAlgorithm)
-                        .setIssuer(caDN)
-                        .setSubject(caDN)
-                        .build());
-
-        // Create signer key-pair (RSA) and issue certificate
-        final KeyPair signerKeyPairRSA = CryptoUtils.generateRSA(1024);
-        final Certificate[] certChainRSA
-                = new Certificate[] {
-                    // Code Signer
-                    new JcaX509CertificateConverter().getCertificate(new CertBuilder()
-                            .setIssuerPrivateKey(caKeyPair.getPrivate())
-                            .setSubjectPublicKey(signerKeyPairRSA.getPublic())
-                            .setNotBefore(new Date(currentTime - 60000))
-                            .setSignatureAlgorithm(signatureAlgorithm)
-                            .setIssuer(caDN)
-                            .setSubject("CN=Code Signer RSA 1")
-                            .addExtension(new CertExt(X509Extension.subjectKeyIdentifier, false, new JcaX509ExtensionUtils().createSubjectKeyIdentifier(signerKeyPairRSA.getPublic())))
-                            .addExtension(new CertExt(X509Extension.extendedKeyUsage, false, new ExtendedKeyUsage(KeyPurposeId.id_kp_codeSigning).toASN1Primitive()))
-                            .build()),
-                    // CA
-                    caCertificate
-                };
-
-        return Arrays.asList(certChainRSA);
     }
 }

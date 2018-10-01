@@ -88,7 +88,6 @@ import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
 import org.signserver.server.signers.BaseSigner;
 import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
-import static org.signserver.common.WorkerConfig.VERIFY_SIGNATURE;
 
 /**
  * A Signer signing Time-stamp request according to RFC 3161 using the
@@ -227,7 +226,6 @@ public class TimeStampSigner extends BaseSigner {
     public static final String TSA_FROM_CERT = "TSA_FROM_CERT";
     public static final String REQUIREVALIDCHAIN = "REQUIREVALIDCHAIN";
     public static final String VERIFY_TOKEN_SIGNATURE = "VERIFY_TOKEN_SIGNATURE";
-    public static final String DEFAULT_VERIFY_TOKEN_SIGNATURE = "TRUE";
     public static final String MAXSERIALNUMBERLENGTH = "MAXSERIALNUMBERLENGTH";
     public static final String INCLUDESTATUSSTRING = "INCLUDESTATUSSTRING";
     public static final String INCLUDESIGNINGTIMEATTRIBUTE = "INCLUDESIGNINGTIMEATTRIBUTE";
@@ -313,7 +311,7 @@ public class TimeStampSigner extends BaseSigner {
     private boolean includeCmsProtectAlgorithmAttribute;
     private boolean includeCertIDIssuerSerial = true;
     private boolean legacyEncoding;
-    private boolean verifySignatureBeforeResponse = true;
+    private boolean verifyTokenSignature = true;
 
     private boolean ordering;
 
@@ -379,57 +377,15 @@ public class TimeStampSigner extends BaseSigner {
             validChain = validateChain(null);
         }
         
-        boolean validInput = true;
-        // Whether token signature is to be validated before sending response (legacy property VERIFY_TOKEN_SIGNATURE)
-        boolean verifyTokenSignature = true;
-        final String verifyTokenSignatureString = config.getProperty(VERIFY_TOKEN_SIGNATURE, DEFAULT_NULL);
-        if (verifyTokenSignatureString != null) {
-            if (Boolean.TRUE.toString().equalsIgnoreCase(verifyTokenSignatureString)) {
-                verifyTokenSignature = true;                
-            } else if (Boolean.FALSE.toString().equalsIgnoreCase(verifyTokenSignatureString)) {
-                verifyTokenSignature = false;                
-            } else {
-                configErrors.add("Incorrect value for " + VERIFY_TOKEN_SIGNATURE);
-                validInput = false;
-            }
-        }
-        
-        // Whether signature is to be validated before sending response (generic current property VERIFY_SIGNATURE)
-        boolean verifySignatureGeneric = true;
-        final String verifySignatureString = config.getProperty(VERIFY_SIGNATURE, DEFAULT_NULL);
-        if (verifySignatureString != null) {
-            if (Boolean.TRUE.toString().equalsIgnoreCase(verifySignatureString)) {
-                verifySignatureGeneric = true;
-            } else if (Boolean.FALSE.toString().equalsIgnoreCase(verifySignatureString)) {
-                verifySignatureGeneric = false;
-            } else {
-                configErrors.add("Incorrect value for " + VERIFY_SIGNATURE);
-                validInput = false;
-            }
-        }
-
-        if (validInput) { // only check values if valid input is provided
-
-            if (verifyTokenSignatureString == null) {
-                if (verifySignatureString == null) { // use default value if both legacy and new property values are not specified
-                    verifySignatureBeforeResponse = Boolean.parseBoolean(DEFAULT_VERIFY_TOKEN_SIGNATURE);;
-                } else {
-                    verifySignatureBeforeResponse = verifySignatureGeneric;
-                }
-            } else {
-                if (verifySignatureString == null) {
-                    verifySignatureBeforeResponse = verifyTokenSignature;
-                } else {
-                    boolean matchedLegacyAndCurrentProperty = (verifyTokenSignature == verifySignatureGeneric);
-                    if (!matchedLegacyAndCurrentProperty) {
-                        configErrors.add("Conflicting values specified for properties: " + VERIFY_TOKEN_SIGNATURE + "& " + VERIFY_SIGNATURE);
-                    } else {
-                        verifySignatureBeforeResponse = verifyTokenSignature;
-                    }
-                }
-            }
-
-        }
+        // Whether token signature is to be validated before sending response
+        final String verifyTokenSignatureString = config.getProperty(VERIFY_TOKEN_SIGNATURE, Boolean.TRUE.toString()).trim();
+        if (Boolean.TRUE.toString().equalsIgnoreCase(verifyTokenSignatureString)) {
+            verifyTokenSignature = true;
+        } else if (Boolean.FALSE.toString().equalsIgnoreCase(verifyTokenSignatureString)) {
+            verifyTokenSignature = false;
+        } else {
+            configErrors.add("Incorrect value for " + VERIFY_TOKEN_SIGNATURE);
+        }               
 
         final String maxSerialNumberLengthProp = config.getProperty(MAXSERIALNUMBERLENGTH, Integer.toString(DEFAULT_MAXSERIALNUMBERLENGTH));
 
@@ -737,7 +693,7 @@ public class TimeStampSigner extends BaseSigner {
 
             // validate the timestamp token signature before sending response
             // token should not be null if generated till now
-            if (verifySignatureBeforeResponse && token != null) {
+            if (verifyTokenSignature && token != null) {
                 verifySignature(token, cert);
             }
             

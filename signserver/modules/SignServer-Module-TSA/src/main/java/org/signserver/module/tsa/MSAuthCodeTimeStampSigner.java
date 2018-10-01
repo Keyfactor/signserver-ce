@@ -394,11 +394,6 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
                 der = ASN1Primitive.fromByteArray(cmssd.getEncoded()).getEncoded();
                 signedbytes = Base64.encode(der, false);
                 out.write(signedbytes);
-
-                // Verify signature
-                if (verifySignature) {
-                    verifySignature(crypto.getPrivateKey(), x509cert, crypto.getProvider().getName(), signatureAlgo);
-                }
             } finally {
                 releaseCryptoInstance(crypto, requestContext);
             }

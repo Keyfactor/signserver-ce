@@ -18,24 +18,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
-import java.security.KeyPair;
 import java.security.cert.Certificate;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.X509v3CertificateBuilder;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.bouncycastle.util.encoders.Base64;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
@@ -46,7 +35,6 @@ import org.junit.Test;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.ejb.interfaces.GlobalConfigurationSession;
-import org.signserver.test.utils.builders.CryptoUtils;
 
 /**
  * Tests for XMLSigner.
@@ -84,8 +72,6 @@ public class XMLSignerTest extends ModulesTestCase {
     private static final String DIGEST_METHOD_URI_SHA256 = "http://www.w3.org/2001/04/xmlenc#sha256";
     private static final String DIGEST_METHOD_URI_RIPEMD160 = "http://www.w3.org/2001/04/xmlenc#ripemd160";
     private static final String DIGEST_METHOD_URI_SHA384 = "http://www.w3.org/2001/04/xmldsig-more#sha384";
-    
-    private static final String TEST_KEY_ALIAS = "testkey123";
     
     @Before
     @Override
@@ -272,77 +258,9 @@ public class XMLSignerTest extends ModulesTestCase {
             // expected
         } catch (Exception e) {
             fail("Unexpected exception thrown when using invalid digest algorithm: " + e.getClass().getName());
-        } finally {
-            // reset digest algorithm property
-            workerSession.removeWorkerProperty(WORKERID, "DIGESTALGORITHM");
-            workerSession.reloadConfiguration(WORKERID);
         }
     }
     
-    /**
-     * Test that signing fails when using wrong certificate and VERIFY_SIGNATURE
-     * is TRUE (default) but it works when set as FALSE.
-     *
-     * @throws Exception
-     */
-    @Test
-    public void test23SignatureValidationWrongCertificate() throws Exception {
-        File keystore = new File(getSignServerHome(), "res/test/dss10/dss10_keystore.p12");
-        File keystoreFile = File.createTempFile("dss10_keystore_temp", ".p12");
-        FileUtils.copyFile(keystore, keystoreFile);
-        try {
-            workerSession.setWorkerProperty(WORKERID, "KEYSTOREPATH", keystoreFile.getAbsolutePath());
-            workerSession.reloadConfiguration(WORKERID);
-            workerSession.generateSignerKey(new WorkerIdentifier(WORKERID), "RSA", "1024", TEST_KEY_ALIAS, null);
-
-            // Generate CSR
-            final ISignerCertReqInfo req
-                    = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKERID, null);
-            Base64SignerCertReqData reqData
-                    = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKERID), req, false, TEST_KEY_ALIAS);
-
-            // Issue certificate
-            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
-            KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
-            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
-
-            // Install certificate and chain
-            workerSession.uploadSignerCertificate(WORKERID, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.uploadSignerCertificateChain(WORKERID, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
-            workerSession.reloadConfiguration(WORKERID);
-
-            // Test the status of the worker
-            WorkerStatus actualStatus = workerSession.getStatus(new WorkerIdentifier(WORKERID));
-            assertEquals("should be error as the right signer certificate is not configured", 1, actualStatus.getFatalErrors().size());
-            assertTrue("error should talk about incorrect signer certificate: " + actualStatus.getFatalErrors().toString(), actualStatus.getFatalErrors().get(0).contains("Certificate does not match key"));
-
-            try {
-                testBasicXmlSign(WORKERID, "SHA256withRSA", null, "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", DIGEST_METHOD_URI_SHA256);
-                fail("Should fail complaining about signature validation failure");
-            } catch (SignServerException e) {
-                // expected
-            } catch (Exception e) {
-                fail("Unexpected exception thrown: " + e.getClass().getName());
-            }
-
-            // Now change to - not verifying signature and signing should work
-            workerSession.setWorkerProperty(WORKERID, "VERIFY_SIGNATURE", "FALSE");
-            workerSession.reloadConfiguration(WORKERID);
-
-            try {
-                testBasicXmlSign(WORKERID, "SHA256withRSA", null, "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", DIGEST_METHOD_URI_SHA256);
-            } catch (SignServerException e) {
-                fail("SignServerException should not be thrown");
-            }
-        } finally {
-            workerSession.removeKey(new WorkerIdentifier(WORKERID), TEST_KEY_ALIAS);
-            workerSession.removeWorkerProperty(WORKERID, "SIGNERCERT");
-            workerSession.removeWorkerProperty(WORKERID, "SIGNERCERTCHAIN ");
-            workerSession.reloadConfiguration(WORKERID);
-            FileUtils.deleteQuietly(keystoreFile);
-        }
-    }
-
     @Test
     public void test07GetStatus() throws Exception {
         final StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(WORKERID));

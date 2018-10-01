@@ -134,12 +134,6 @@ public class OOXMLSigner extends BaseSigner {
 
                 // sign document
                 dsm.SignDocument(crypto.getPrivateKey(), cert);
-
-                // Verify signature
-                if (verifySignature) { // PackageDigitalSignatureManager class uses SignatureMethod.RSA_SHA1 currently           
-                    verifySignature(crypto.getPrivateKey(), cert, null, "SHA1withRSA");
-                }
-
             } catch (OpenXML4JException e1) {
                 throw new SignServerException("Problem signing document", e1);
             } finally {

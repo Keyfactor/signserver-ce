@@ -1939,7 +1939,6 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             config.setProperty("DEFAULTKEY", "Signer 1");
             config.setProperty("DIGESTALGORITHM", "SHA256");
-            config.setProperty("VERIFY_SIGNATURE", "FALSE");
 
             config.setProperty(AUTHTYPE, "NOAUTH");
 
@@ -1971,7 +1970,6 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             config.setProperty("DEFAULTKEY", "Signer 1");
             config.setProperty("DIGESTALGORITHM", "SHA256");
             config.setProperty("EMBED_CRL", "true");
-            config.setProperty("VERIFY_SIGNATURE", "FALSE");
 
             config.setProperty(AUTHTYPE, "NOAUTH");
 

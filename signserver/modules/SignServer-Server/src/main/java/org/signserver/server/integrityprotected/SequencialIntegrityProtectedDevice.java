@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 import javax.naming.NamingException;
 
 import org.cesecore.audit.AuditLogDevice;
@@ -79,7 +80,10 @@ import org.signserver.common.ServiceLocator;
 public class SequencialIntegrityProtectedDevice implements AuditLogDevice {
 
         private org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SequencialIntegrityProtectedDevice.class);
-    
+
+        /** Global lock for updating the sequence number. */
+        private static final ReentrantLock LOCK = new ReentrantLock(true);
+
 	private Map<Class<?>, ?> ejbs;
         
         private long sequenceNumber;
@@ -113,9 +117,9 @@ public class SequencialIntegrityProtectedDevice implements AuditLogDevice {
         @SuppressWarnings("UseSpecificCatch") // We really need to catch and handle any failure
 	public void log(TrustedTime trustedTime, EventType eventType, EventStatus eventStatus, ModuleType module, ServiceType service, String authToken, String customId,
 			String searchDetail1, String searchDetail2, Map<String, Object> additionalDetails, Properties properties) throws AuditRecordStorageException {
-            
-            
-            synchronized (SequencialIntegrityProtectedDevice.class) {
+
+            LOCK.lock();  // block until condition holds
+            try {
                 sequenceNumber++;
                 
                 if (log.isTraceEnabled()) {
@@ -142,6 +146,8 @@ public class SequencialIntegrityProtectedDevice implements AuditLogDevice {
                     sequenceNumber--;
                     throw new AuditRecordStorageException(ex);
                 }
+            } finally {
+                LOCK.unlock();
             }
 	}
 

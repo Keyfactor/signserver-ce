@@ -24,6 +24,7 @@ import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.ocsp.*;
 import org.bouncycastle.cert.ocsp.jcajce.JcaCertificateID;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -369,9 +370,19 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
         while (certsIter.hasNext()) {
             try {
                 // direct cast to org.signserver.validationservice.common.X509Certificate fails
-                tempCert = (java.security.cert.X509Certificate) certsIter.next();
-            } catch (Exception e) {
-                //eat up exception 
+                final Object cert = certsIter.next();
+                if (cert instanceof X509CertificateHolder) {
+                    final X509CertificateHolder holder =
+                            (X509CertificateHolder) cert;
+                    
+                    tempCert = new JcaX509CertificateConverter().setProvider("BC")
+                            .getCertificate(holder);
+                } else {
+                    tempCert = (X509Certificate) cert;
+                }
+            } catch (CertificateException e) {
+                //eat up exception
+                log.debug("Failed to convert certificate: ", e);
                 continue;
             }
             //it might be the case that certchain contains more than one certificate with OCSPSigner extension

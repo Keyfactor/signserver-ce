@@ -31,6 +31,7 @@ import org.cesecore.audit.enums.EventType;
 import org.cesecore.audit.enums.ModuleType;
 import org.cesecore.audit.enums.ServiceType;
 import org.cesecore.audit.impl.integrityprotected.IntegrityProtectedAuditorSessionLocal;
+import org.cesecore.audit.impl.integrityprotected.IntegrityProtectedDevice;
 import org.cesecore.audit.impl.integrityprotected.NodeSequenceHolder;
 import org.cesecore.audit.log.AuditLogResetException;
 import org.cesecore.audit.log.AuditRecordStorageException;
@@ -75,6 +76,7 @@ import org.signserver.common.ServiceLocator;
  * 
  * Based on SVN Id IntegrityProtectedDevice.java 18194 2013-11-21 18:09:12Z jeklund
  * Modify to log sequentially.
+ * @see IntegrityProtectedDevice
  * @version $Id$
  */
 public class SequencialIntegrityProtectedDevice implements AuditLogDevice {

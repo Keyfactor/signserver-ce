@@ -297,6 +297,70 @@ Installation Guide for details.
                     <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
                 </tokenfilter>
                 <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
+                    <filetokenizer/>
+                    <replaceregex pattern="\r?\n (.+)$" replace="\1" flags="m"/>
+                </tokenfilter>
+                <tokenfilter>
                     <containsregex pattern="^Class-Path: (.+)$" flags="i"/>
                     <replaceregex pattern="^Class-Path: (.+)$" replace="\1" flags="i"/>
                 </tokenfilter>

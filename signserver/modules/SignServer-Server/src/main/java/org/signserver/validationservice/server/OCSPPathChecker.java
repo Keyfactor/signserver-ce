@@ -382,7 +382,9 @@ public class OCSPPathChecker extends PKIXCertPathChecker {
                 }
             } catch (CertificateException e) {
                 //eat up exception
-                log.debug("Failed to convert certificate: ", e);
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to convert certificate: ", e);
+                }
                 continue;
             }
             //it might be the case that certchain contains more than one certificate with OCSPSigner extension

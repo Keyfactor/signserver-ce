@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.3.1</p>
+                    <p>Version: 4.4.0</p>
                 </div>
             </header>
 
@@ -181,6 +181,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_One-time_Keys.html">Setting up One-time Keys</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Stress_Test_with_Short-lived_Keys.html">Setting up Stress Test with Short-lived Keys</a>
 
             </li>
                                         <li class="leaf">
@@ -318,7 +326,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="collapsed">
-        <a class="ht-nav-page-link" href="Common_configuration.html">Common configuration</a>
+        <a class="ht-nav-page-link" href="Common_Configuration.html">Common Configuration</a>
 
                     <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
                 <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -631,6 +639,10 @@
         <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OneTimeCryptoWorker.html">OneTimeCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -896,7 +908,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_TimeMonitor_application.html">SignServer TimeMonitor application</a>
+        <a class="ht-nav-page-link" href="SignServer_TimeMonitor_Application.html">SignServer TimeMonitor Application</a>
 
             </li>
                                         <li class="collapsed">
@@ -1127,6 +1139,50 @@
         <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
 
             </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Developer_Reference.html">Developer Reference</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Checking_Out_from_Subversion.html">Checking Out from Subversion</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Building_SignServer_with_Maven.html">Building SignServer with Maven</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="IDEs.html">IDEs</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Automated_Tests.html">Automated Tests</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WebTest_Module.html">WebTest Module</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Coding_Conventions.html">Coding Conventions</a>
+
+            </li>
+                            </ul>
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1168,17 +1224,17 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-11573983"> <span>XAdES Signer</span></h1>
+</div>            <h1 id="src-16237501"> <span>XAdES Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >Fully qualified class name: <strong class=" ">org.signserver.module.xades.signer.XAdESSigner</strong>    </p>
-    <div class="section section-1" id="src-11573983_id-.XAdESSignerv4.2.1-Overview">
+    <div class="section section-1" id="src-16237501_id-.XAdESSignerv4.4.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The XAdES Signer creates XML signatures according to the specified profile of XAdES.    </p>
     </div>
-    <div class="section section-1" id="src-11573983_id-.XAdESSignerv4.2.1-AvailableProperties">
+    <div class="section section-1" id="src-16237501_id-.XAdESSignerv4.4.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1207,7 +1263,7 @@
         <p  >COMMITMENT_TYPES    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >List of commitment types to be indicated in the signature. Multiple values can be given separated by &quot;,&quot;. See <a   href="#src-11573983_id-.XAdESSignerv4.2.1-CommitmentTypes">Commitment Types</a> for valid values. Optionally, the constant NONE can be used to explicitly state that no commitment types should be included (this constant can only be used alone). Optional. Default: no commitment types are included.    </p>
+        <p  >List of commitment types to be indicated in the signature. Multiple values can be given separated by &quot;,&quot;. See <a   href="#src-16237501_id-.XAdESSignerv4.4.0-CommitmentTypes">Commitment Types</a> for valid values. Optionally, the constant NONE can be used to explicitly state that no commitment types should be included (this constant can only be used alone). Optional. Default: no commitment types are included.    </p>
             </td>
         </tr>
     <tr>
@@ -1244,17 +1300,17 @@
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_URL<span id="src-11573983_id-.XAdESSignerv4.2.1-TSA_URL"></span>    </p>
+        <p  >TSA_URL<span id="src-16237501_id-.XAdESSignerv4.4.0-TSA_URL"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >URL of Time-Stamping Authority. Required if XADESFORM=T and TSA_WORKER not specified.    </p>
     <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
- Cannot be set at the same time as <a   href="#src-11573983_id-.XAdESSignerv4.2.1-TSA_WORKER">TSA_WORKER</a>.    </p>
+ Cannot be set at the same time as <a   href="#src-16237501_id-.XAdESSignerv4.4.0-TSA_WORKER">TSA_WORKER</a>.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_WORKER<span id="src-11573983_id-.XAdESSignerv4.2.1-TSA_WORKER"></span>    </p>
+        <p  >TSA_WORKER<span id="src-16237501_id-.XAdESSignerv4.4.0-TSA_WORKER"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Specify a worker ID or worker name for a time stamp signer. Required if XADESFORM=T and TSA_URL are not specified. This will use internal calls and can only be used for a time stamp authority running in the same SignServer instance.    </p>
@@ -1278,10 +1334,18 @@
         <p  >Login password used if the TSA uses HTTP Basic Auth.    </p>
             </td>
         </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >TSA_DIGESTALGORITHM    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Algorithm for timestamp digests. Optional. Default: SHA-256.    </p>
+            </td>
+        </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-11573983_id-.XAdESSignerv4.2.1-CommitmentTypes">
+    <div class="section section-1" id="src-16237501_id-.XAdESSignerv4.4.0-CommitmentTypes">
         <h1 class="heading "><span>Commitment Types</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">

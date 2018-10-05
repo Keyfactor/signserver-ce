@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.3.1</p>
+                    <p>Version: 4.4.0</p>
                 </div>
             </header>
 
@@ -181,6 +181,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_One-time_Keys.html">Setting up One-time Keys</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Stress_Test_with_Short-lived_Keys.html">Setting up Stress Test with Short-lived Keys</a>
 
             </li>
                                         <li class="leaf">
@@ -318,7 +326,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="collapsed">
-        <a class="ht-nav-page-link" href="Common_configuration.html">Common configuration</a>
+        <a class="ht-nav-page-link" href="Common_Configuration.html">Common Configuration</a>
 
                     <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
                 <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -631,6 +639,10 @@
         <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OneTimeCryptoWorker.html">OneTimeCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -896,7 +908,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_TimeMonitor_application.html">SignServer TimeMonitor application</a>
+        <a class="ht-nav-page-link" href="SignServer_TimeMonitor_Application.html">SignServer TimeMonitor Application</a>
 
             </li>
                                         <li class="collapsed">
@@ -1127,6 +1139,50 @@
         <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
 
             </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Developer_Reference.html">Developer Reference</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Checking_Out_from_Subversion.html">Checking Out from Subversion</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Building_SignServer_with_Maven.html">Building SignServer with Maven</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="IDEs.html">IDEs</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Automated_Tests.html">Automated Tests</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WebTest_Module.html">WebTest Module</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Coding_Conventions.html">Coding Conventions</a>
+
+            </li>
+                            </ul>
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1167,13 +1223,13 @@
                                         <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                                                      <li><a href="Logging.html">Logging</a></li>
                                                             </ul>
-</div>            <h1 id="src-16221419"> <span>CESeCore Security Events Logger</span></h1>
+</div>            <h1 id="src-23859255"> <span>CESeCore Security Events Logger</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The default logging implementation, <strong class=" ">org.signserver.server.log.SignServerLog4jDevice</strong> uses Log4J and a similar logging format as the old SystemLogger.    </p>
-    <div class="section section-1" id="src-16221419_id-.CESeCoreSecurityEventsLoggerv4.3.0-Signedlog">
+    <div class="section section-1" id="src-23859255_id-.CESeCoreSecurityEventsLoggerv4.4.0-Signedlog">
         <h1 class="heading "><span>Signed log</span></h1>
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.An example configuration for CESeCore is provided in <strong class=" ">conf/cesecore.properties.sample</strong>.    </p>
@@ -1193,7 +1249,7 @@
         </div>
     </div>
     <p  >If signing and/or verification is enabled, one or more crypto tokens need to be configured.    </p>
-    <div class="section section-2" id="src-16221419_safe-id-aWQtLkNFU2VDb3JlU2VjdXJpdHlFdmVudHNMb2dnZXJ2NC4zLjAtUEtDUyMxMUV4YW1wbGV1c2luZ0RlZmF1bHRQcm92aWRlcg">
+    <div class="section section-2" id="src-23859255_safe-id-aWQtLkNFU2VDb3JlU2VjdXJpdHlFdmVudHNMb2dnZXJ2NC40LjAtUEtDUyMxMUV4YW1wbGV1c2luZ0RlZmF1bHRQcm92aWRlcg">
         <h2 class="heading "><span>PKCS#11 Example using Default Provider</span></h2>
     <p  >It is recommended to use the same type of PKCS#11 provider for database protection as the other signers are also using. If the signers are using the <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a> the below crypto token called org.cesecore.keys.token.PKCS11CryptoToken should be used:    </p>
     <div  class="confbox programlisting">
@@ -1210,7 +1266,7 @@
     </div>
     <p  >    </p>
     </div>
-    <div class="section section-2" id="src-16221419_safe-id-aWQtLkNFU2VDb3JlU2VjdXJpdHlFdmVudHNMb2dnZXJ2NC4zLjAtUEtDUyMxMUV4YW1wbGV1c2luZ0phY2tOSkkxMVByb3ZpZGVy">
+    <div class="section section-2" id="src-23859255_safe-id-aWQtLkNFU2VDb3JlU2VjdXJpdHlFdmVudHNMb2dnZXJ2NC40LjAtUEtDUyMxMUV4YW1wbGV1c2luZ0phY2tOSkkxMVByb3ZpZGVy">
         <h2 class="heading prettyprint"><span>PKCS#11 Example using JackNJI11 Provider</span></h2>
     <p  >It is recommended to use the same type of PKCS#11 provider for database protection as the other signers are also using. If the signers are using the <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a> the below crypto token called     <span style="color: #000000;">
 org.signserver.p11ng.common.cryptotoken.JackNJI11DatabaseProtectionCryptoToken    </span>
@@ -1230,8 +1286,8 @@ org.signserver.p11ng.common.cryptotoken.JackNJI11DatabaseProtectionCryptoToken  
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-16221419_id-.CESeCoreSecurityEventsLoggerv4.3.0-AuditRecordDatatableAuditRecordData_table">
-        <h1 class="heading "><span id="src-16221419_id-.CESeCoreSecurityEventsLoggerv4.3.0-AuditRecordData_table" class="confluence-anchor-link"></span><span>AuditRecordData table</span></h1>
+    <div class="section section-1" id="src-23859255_id-.CESeCoreSecurityEventsLoggerv4.4.0-AuditRecordDatatableAuditRecordData_table">
+        <h1 class="heading "><span id="src-23859255_id-.CESeCoreSecurityEventsLoggerv4.4.0-AuditRecordData_table" class="confluence-anchor-link"></span><span>AuditRecordData table</span></h1>
     <p  >The exact database table structure is described in the SQL scripts available under doc/sql-scripts/.    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1493,7 +1549,21 @@ org.signserver.p11ng.common.cryptotoken.JackNJI11DatabaseProtectionCryptoToken  
         </tr>
 </tbody>        </table>
             </div>
-<pre class=" "><br/></pre>    </div>
+    </div>
+    <div class="section section-1" id="src-23859255_id-.CESeCoreSecurityEventsLoggerv4.4.0-AlternativeLow-PerformanceIntegrityProtectedLogDevice">
+        <h1 class="heading "><span>Alternative Low-Performance Integrity Protected Log Device</span></h1>
+    <p  >By default, the IntegrityProtectedLogDevice is used for audit logging to the database. However, there are situations where gaps may occur in the sequence number, for example if the database or HSM is unavailable when the logging is being performed. Normally when this happens, the times of the missing sequence numbers can be correlated to error messages in other logs for database or HSM failures. The operations that the missing sequence numbers represent were not executed since the logging that failed always is performed first. Thus, no log rows are actually missing, it is the counter that has incorrect values.    </p>
+    <p  >To solve the above issue, an alternative IntegrityProtectedLogDevice can be used that works sequentially and only logs one row at the time and only proceeds with the next one after the first succeeds. The disadvantage is significant less performance.    </p>
+    <p  >To configure the alternative device, edit the <tt class=" ">conf/cesecore.properties</tt> file and comment out the default IntegrityProtectedLogDevice and instead set the SequencialIntegrityProtectedLogDevice according to the following example:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">#securityeventsaudit.implementation.</code><code class="value">1</code><code class="plain">=org.cesecore.audit.impl.integrityprotected.IntegrityProtectedDevice</code></div>
+<div class="line"><code class="plain">securityeventsaudit.implementation.</code><code class="value">1</code><code class="plain">=org.signserver.server.integrityprotected.SequencialIntegrityProtectedDevice</code></div>
+</div>
+    </div>
+    <p  >Note that SignServer must be redeployed for the changes in <tt class=" ">conf/cesecore.properties</tt> to take effect.    </p>
+    <p  >    </p>
+    </div>
         </div>
 
     </article>

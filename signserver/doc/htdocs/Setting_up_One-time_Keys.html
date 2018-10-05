@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <title>Common configuration - SignServer - Documentation Space</title> -->
-    <title>Common configuration - SignServer Manual</title>
+    <!-- <title>Setting up One-time Keys - SignServer - Documentation Space</title> -->
+    <title>Setting up One-time Keys - SignServer Manual</title>
 
     <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.3.1</p>
+                    <p>Version: 4.4.0</p>
                 </div>
             </header>
 
@@ -181,6 +181,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Setting_up_Key_Wrapping.html">Setting up Key Wrapping</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link current" href="Setting_up_One-time_Keys.html">Setting up One-time Keys</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Stress_Test_with_Short-lived_Keys.html">Setting up Stress Test with Short-lived Keys</a>
 
             </li>
                                         <li class="leaf">
@@ -318,7 +326,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="collapsed">
-        <a class="ht-nav-page-link current" href="Common_configuration.html">Common configuration</a>
+        <a class="ht-nav-page-link" href="Common_Configuration.html">Common Configuration</a>
 
                     <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
                 <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -631,6 +639,10 @@
         <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OneTimeCryptoWorker.html">OneTimeCryptoWorker</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -896,7 +908,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_TimeMonitor_application.html">SignServer TimeMonitor application</a>
+        <a class="ht-nav-page-link" href="SignServer_TimeMonitor_Application.html">SignServer TimeMonitor Application</a>
 
             </li>
                                         <li class="collapsed">
@@ -1127,6 +1139,50 @@
         <a class="ht-nav-page-link" href="Key_Wrapping.html">Key Wrapping</a>
 
             </li>
+                                        <li class="collapsed">
+        <a class="ht-nav-page-link" href="Developer_Reference.html">Developer Reference</a>
+
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Checking_Out_from_Subversion.html">Checking Out from Subversion</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Building_SignServer_with_Maven.html">Building SignServer with Maven</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="IDEs.html">IDEs</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Automated_Tests.html">Automated Tests</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="WebTest_Module.html">WebTest Module</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Coding_Conventions.html">Coding Conventions</a>
+
+            </li>
+                            </ul>
+            </li>
                             </ul>
             </li>
                                     </ul>
@@ -1163,26 +1219,137 @@
     <ul>
         <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
-                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
-                                        <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
-                                                                                     <li><a href="SignServer_Workers.html">SignServer Workers</a></li>
+                                                                                     <li><a href="SignServer_Operations.html">SignServer Operations</a></li>
                                                             </ul>
-</div>            <h1 id="src-16234847"> <span>Common configuration</span></h1>
+</div>            <h1 id="src-16235273"> <span>Setting up One-time Keys</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >Configuring workers are done by setting properties in the worker configuration. There is one set of configuration options that are handled by the framework, the common configuration, and that applies to all workers.    </p>
-    <p  >Then there are worker specific properties handled by the worker implementation.    </p>
     <p  >    </p>
-    <div class="section section-1" id="src-16234847_id-.Commonconfigurationv4.3.1-Sensitiveproperties">
-        <h1 class="heading "><span>Sensitive properties</span></h1>
-    <p  >A few properties are considered sensitive (currently <tt class=" ">PIN</tt>, <tt class=" ">KEYSTOREPASSWORD</tt>, and <tt class=" ">KEYDATA</tt>) and are masked out when shown in the administration GUI, when creating configuration dumps (value is replaced by the string _MASKED_), and also for configuration change notifications in the audit log.    </p>
-    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+    <p  >For now this instruction is for the PoC and might be restructured later on.    </p>
+        </div>
     </div>
-    <div class="section section-1" id="src-16234847_id-.Commonconfigurationv4.3.1-Commenting-outproperties">
-        <h1 class="heading "><span>Commenting-out properties</span></h1>
-    <p  >Properties can be commented-out (temporarily disabled) by adding a pre- or postfix underscore. Doing this with masked sensitive properties as described above will still treated as masked for the cases described above.    </p>
+    <p  >    </p>
+    <div class="section section-1" id="src-16235273_id-.SettingupOne-timeKeysv4.4.0-Introduction">
+        <h1 class="heading "><span>Introduction</span></h1>
+    <p  >The short-lived epic, <a  class="external-link" href="https://jira.primekey.se/browse/DSS-951">https://jira.primekey.se/browse/DSS-951</a>: Epic for Unlimited one-time keys and certificates, offers a new <a   href="CryptoWorker.html">CryptoWorker</a> called OneTimeCryptoWorker. The CryptoWorker references a normal crypto token that will be used to generate the short-lived key-pair. Everytime a signer requests a crypto instance from the OneTimeCryptoWorker a new key-pair is generated and a certificate for the public key is obtained from a new component called CA Connector. The PoC offer two different CA Connector implementations:    </p>
+<ol class=" "><li class=" ">    <p  ><strong class=" ">SelfSignedCAConnector:</strong><br/>This CA Connector just generates its own self-signed certificate. The purpose is just for quick testing and demonstration of the OneTimeCryptoWorker without the need for a real CA.    </p>
+</li><li class=" ">    <p  ><strong class=" ">EjbcaWSCAConnector:</strong><br/>This CA Connector connects to EJBCA using Web Services in the same way as the <a   href="RenewalWorker.html">RenewalWorker</a>.    </p>
+</li></ol>    <p  >    </p>
+    </div>
+    <div class="section section-1" id="src-16235273_id-.SettingupOne-timeKeysv4.4.0-QuickConfigurationwithSelf-signedCAConnector">
+        <h1 class="heading "><span>Quick Configuration with Self-signed CA Connector</span></h1>
+<ol class=" "><li class=" ">    <p  >Make sure you have a <a   href="CryptoWorker.html">CryptoWorker</a> with one of the <a   href="CryptoTokens.html">CryptoTokens</a> setup as usual.<br/>Typically in this could be a P11 or P12 crypto token.    </p>
+</li><li class=" ">    <p  >Add a new worker using the template &quot;short-lived-poc.properties&quot; but make the following changes:    </p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Property    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Change    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >NAME    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Update as appropriate (i.e. P11 or P12 and possibly slot).    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >CACONNECTOR_IMPLEMENTATION    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Comment out the empty example.<br/>Remove the comment for (i.e. enable):    </p>
+<ul class=" "><li class=" ">    <p  >CACONNECTOR_IMPLEMENTATION=org.signserver.server.enterprise.caconnector.SelfSignedCAConnector    </p>
+</li><li class=" ">    <p  >CERTSIGNATUREALGORITHM    </p>
+</li></ul>            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+</li><li class=" ">    <p  >Configure a signer (for example the XAdESSigner) to use the newly created CryptoWorker:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">CRYPTOTOKEN=CryptoTokenP11OneTimeSelfSigned</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >Use the worker as normal and observe that a new certificate with a new key is used every time. The new key is not stored in the source crypto token after the signature has been created.    </p>
+</li></ol>    </div>
+    <div class="section section-1" id="src-16235273_id-.SettingupOne-timeKeysv4.4.0-ConfigurationwithEjbcaWSCAConnector">
+        <h1 class="heading "><span>Configuration with EjbcaWS CA Connector</span></h1>
+<ol class=" "><li class=" ">    <p  >Make sure you have a <a   href="CryptoWorker.html">CryptoWorker</a> with one of the <a   href="CryptoTokens.html">CryptoTokens</a> setup as usual.<br/>Typically in this could be a P11 or P12 crypto token.    </p>
+</li><li class=" ">    <p  >Add a new worker using the template &quot;short-lived-poc.properties&quot; but make the following changes:    </p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Property    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Change    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >NAME    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Update as appropriate (i.e. P11 or P12 and possibly slot).    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >CACONNECTOR_IMPLEMENTATION    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Comment out the empty example.<br/>Remove the comment for (i.e. enable) all the properties for the EjbcaWS CA connector, i.e.:    </p>
+<ul class=" "><li class=" ">    <p  >CACONNECTOR_IMPLEMENTATION=org.signserver.server.enterprise.caconnector.EjbcaWSCAConnector    </p>
+</li><li class=" ">    <p  >TRUSTSTORETYPE    </p>
+</li><li class=" ">    <p  >TRUSTSTOREPATH or TRUSTSTOREVALUE (depending on TRUSTSTORETYPE)    </p>
+</li><li class=" ">    <p  >TRUSTSTOREPASSWORD    </p>
+</li><li class=" ">    <p  >TLSCLIENTKEY    </p>
+</li><li class=" ">    <p  >EJBCAWSURL    </p>
+</li><li class=" ">    <p  >CANAME    </p>
+</li><li class=" ">    <p  >ENDENTITYPROFILE    </p>
+</li><li class=" ">    <p  >CERTIFICATEPROFILE    </p>
+</li><li class=" ">    <p  >USERNAME_PATTERN    </p>
+</li><li class=" ">    <p  >SUBJECTDN_PATTERN    </p>
+</li><li class=" ">    <p  >SUBJECTALTNAME_PATTERN    </p>
+</li><li class=" ">    <p  >CERTIFICATESTARTTIME    </p>
+</li><li class=" ">    <p  >CERTIFICATEENDTIME    </p>
+</li></ul>            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+</li><li class=" ">    <p  >The crypto worker might be offline at this point.<br/>To trust the TLS certificate of the CA the truststore properties must be configured and contain the issuer (i.e. CA) certificate that issued the TLS server certificate used when connecting to the CA. In some cases you can just point out the path to the truststore.jks from the application server where EJBCA is running.    </p>
+</li><li class=" ">    <p  >Make sure the EJBCAWSURL is correct. You can normally test it in your web browser.    </p>
+</li><li class=" ">    <p  >Configure a signer (for example the XAdESSigner) to use the newly created CryptoWorker and make sure it uses a username or username/password authorizer as the user name will be in the Subject DN:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">CRYPTOTOKEN=CryptoTokenP11OneTimeEjbcaWS</code></div>
+<div class="line"><code class="plain">AUTHTYPE=org.signserver.server.UsernameAuthorizer</code></div>
+<div class="line"><code class="plain">ACCEPT_ALL_USERNAMES=</code><code class="keyword">true</code></div>
+</div>
+    </div>
+</li><li class=" ">    <p  >Use the worker as normal and observe that a new certificate with a new key is used every time. The new key is not stored in the source crypto token after the signature has been created.    </p>
+</li></ol>    <p  >    </p>
     <p  >    </p>
     <p  >    </p>
     </div>
@@ -1192,7 +1359,7 @@
 
 
             <nav id="ht-post-nav">
-                <a href="SignServer_Workers.html" class="ht-post-nav-prev">
+                <a href="Setting_up_Key_Wrapping.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1201,9 +1368,9 @@
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Workers</span>
+            <span>Setting up Key Wrapping</span>
         </a>
-                <a href="Generic_Worker_Properties.html" class="ht-post-nav-next">
+                <a href="Setting_up_Stress_Test_with_Short-lived_Keys.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1212,7 +1379,7 @@
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Generic Worker Properties</span>
+            <span>Setting up Stress Test with Short-lived Keys</span>
         </a>
     </nav>    
             

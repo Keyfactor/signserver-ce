@@ -92,7 +92,7 @@ public class Main {
         OPTIONS.addOption(WARMUP_TIME, true,
                 "Don't count number of signings and response times until after this time (in milliseconds). Default=0 (no warmup time).");
         OPTIONS.addOption(STAT_OUTPUT_DIR, true,
-                "Optional. Directory to output statistics to. If set, each threads creates a file in this directory to output its response times to. The directory must exist.");
+                "Optional. Directory to output statistics to. If set, each thread creates a file in this directory to output its response times to. The directory must exist.");
         OPTIONS.addOption(INFILE, true, "Input file used for DocumentSigner/Validator1 testsuites.");
         OPTIONS.addOption(DATA, true, "Input data to be used with the DocumentSigner/Validator1 testsuites using an XMLSigner.");
         OPTIONS.addOption(USERPREFIX, true, "Prefix for usernames.");

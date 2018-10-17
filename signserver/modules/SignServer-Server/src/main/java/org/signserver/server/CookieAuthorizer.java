@@ -79,7 +79,7 @@ public class CookieAuthorizer implements IAuthorizer {
         Map<String, String>  cookiesMap = (HashMap) requestContext.get(RequestContext.REQUEST_COOKIES);
         //Cookie[] cookies = new Cookie(cookiesMap.keySet(), cookiesMap.values());
         for ( int i = 0; i< cookiesMap.size(); i++ ) {
-            System.out.println("\n SwissSign Cookie["+ i+ "] " + cookiesMap.keySet().toArray()[i] + ":" + cookiesMap.values().toArray()[i]);
+            System.out.println("\n Cookie["+ i+ "] " + cookiesMap.keySet().toArray()[i] + ":" + cookiesMap.values().toArray()[i]);
         }
         
         logMap.putAll(cookiesMap);

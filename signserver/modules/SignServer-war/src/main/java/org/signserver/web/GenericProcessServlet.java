@@ -56,6 +56,8 @@ import org.signserver.server.data.impl.DataUtils;
 import org.signserver.server.data.impl.UploadConfig;
 import org.signserver.server.log.Loggable;
 import org.signserver.validationservice.common.Validation;
+import javax.servlet.http.Cookie;
+import org.signserver.common.RequestContext;
 
 /**
  * GenericProcessServlet is a general Servlet passing on it's request info to the worker configured by either
@@ -468,7 +470,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         final String remoteAddr = req.getRemoteAddr();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received HTTP process request for worker " + wi + ", from IP " + remoteAddr);
-        }
+        }        
 
         // Client certificate
         Certificate clientCertificate = null;
@@ -481,6 +483,11 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         final RequestContext context = new RequestContext(clientCertificate,
                 remoteAddr);
         RequestMetadata metadata = RequestMetadata.getInstance(context);
+        
+        //extract ALL cookies from client request
+        //so that other DSS components could work with them!
+        Cookie[] cookies = req.getCookies();
+        context.put(RequestContext.REQUEST_COOKIES, cookies);
 
         // Add credentials to the context
         CredentialUtils.addToRequestContext(context, req, clientCertificate);

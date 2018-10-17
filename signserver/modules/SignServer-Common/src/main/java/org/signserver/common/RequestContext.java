@@ -51,6 +51,12 @@ public class RequestContext implements Serializable {
     public static final String CLIENT_CERTIFICATE = "CLIENT_CERTIFICATE";
     
     /**
+     * Used to fetch the client cookies used for the request if there exists any, otherwise is
+     * 'null' returned.
+     */
+    public static final String REQUEST_COOKIES = "REQUEST_COOKIES";
+    
+    /**
      * Used to fetch the remote IP address used by the client if there exists any, otherwise is
      * 'null' returned.
      */

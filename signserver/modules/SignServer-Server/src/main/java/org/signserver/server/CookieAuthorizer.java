@@ -19,24 +19,24 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.IllegalRequestException;
-import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.data.Request;
 import org.signserver.server.log.LogMap;
+import org.signserver.common.RequestContext;
 
-/**
- * Skeleton authorizer...
- * <p>
- * The authorizer has the following worker properties:
- * </p>
- * <ul>
- *    <li>
- *        <b>PROPERTY...</b> = Description... (Required/Optional, default: ...)
- *    </li>
- * </ul>
- *
- * @author ...
+ /** 
+  * Cookie Authorizer is used for Airlock feature where custom client cookies
+  * are added to RequestContext, parsed, analyzed and then logged
+  * based on customer requirements/preferences.
+  * 
+  * This feature could be used to profile/black list IP ranges, user OS, etc.
+  * one can e.g. add "strange" IP ranges to Apache Web server .htacess 
+  * and deny them access to SignServer functionality!
+  * 
+  * @author netmakan
+  * @author georgem
+           
  * @version $Id$
  */
 public class CookieAuthorizer implements IAuthorizer {
@@ -73,21 +73,16 @@ public class CookieAuthorizer implements IAuthorizer {
             SignServerException {
         final Object o = requestContext.get(RequestContext.CLIENT_CREDENTIAL_CERTIFICATE); // or CLIENT_CREDENTIAL_PASSWORD
 
-        // Get the authentication information from requestContext
-        // TODO: Extract cookie:
-        // Cookie[] cookie = requestContext.get(RequestContext.COOKIE_SOMETHING);
-        // ...
-        Map<String, String> cookies = new HashMap<>();
-        cookies.put("SWS_ENV_OPERATIONALMODE", "PRODUCTION");
-        cookies.put("SWS_ENV_SERVER_REQUEST", "/");
-        cookies.put("SWS_ENV_REMOTE_ADDR", "46.140.94.220");
-        cookies.put("SWS_ENV_SERVER_ADDR", "x.x.x.x");
-        
         final LogMap logMap = LogMap.getInstance(requestContext);
         
-        // TODO: Add business logic for processing the cookies and add them to logMap
+        //Parse/analyze the cookies from RequestContext then add SOME of them to LogMap
+        Map<String, String>  cookiesMap = (HashMap) requestContext.get(RequestContext.REQUEST_COOKIES);
+        //Cookie[] cookies = new Cookie(cookiesMap.keySet(), cookiesMap.values());
+        for ( int i = 0; i< cookiesMap.size(); i++ ) {
+            System.out.println("\n SwissSign Cookie["+ i+ "] " + cookiesMap.keySet().toArray()[i] + ":" + cookiesMap.values().toArray()[i]);
+        }
         
-        logMap.putAll(cookies);
+        logMap.putAll(cookiesMap);
     }
 
     @Override

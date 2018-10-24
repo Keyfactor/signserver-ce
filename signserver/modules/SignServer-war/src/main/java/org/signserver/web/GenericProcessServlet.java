@@ -487,15 +487,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         //extract ALL cookies from client request
         //so that other DSS components could work with them!
         Cookie[] cookies = req.getCookies();
-        
-        //first test: set cookies from client production into HashMap,
-        //add HashMap to RequestContext and try to parse them in CookieAuthorizer 
-        Map<String, String> cookiesMap = new HashMap<>();
-        //ookies[0] = new Cookei ("SWS_ENV_OPERATIONALMODE", "PRODUCTION");
-        cookiesMap.put("DSS_ENV_SERVER_REQUEST", "/");
-        cookiesMap.put("DSS_ENV_REMOTE_ADDR", "93.184.216.34");
-        cookiesMap.put("DSS_ENV_SERVER_ADDR", "x.x.x.x");
-        context.put(RequestContext.REQUEST_COOKIES, cookiesMap);
+        context.put(RequestContext.REQUEST_COOKIES, cookies);
 
         // Add credentials to the context
         CredentialUtils.addToRequestContext(context, req, clientCertificate);

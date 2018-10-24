@@ -671,7 +671,7 @@ public class BaseProcessableTest extends TestCase {
     }
     
     /**
-     * Test that setting the cache private key option to true results in not
+     * Test that setting the cache private key option to true results in
      * requesting caching when aquiring the token.
      * 
      * @throws Exception 

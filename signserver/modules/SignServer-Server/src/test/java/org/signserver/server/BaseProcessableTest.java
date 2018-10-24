@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -48,12 +50,16 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.Response;
+import org.signserver.common.data.SignatureRequest;
 import org.signserver.server.aliasselectors.AliasSelector;
 import org.signserver.server.cryptotokens.NullCryptoToken;
 import org.signserver.server.signers.BaseSigner;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.server.cryptotokens.DefaultCryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoInstance;
+import org.signserver.server.cryptotokens.ICryptoTokenV4;
+import org.signserver.server.data.impl.ByteArrayReadableData;
+import org.signserver.server.data.impl.TemporarlyWritableData;
 import org.signserver.server.log.AdminInfo;
 
 /**
@@ -574,6 +580,129 @@ public class BaseProcessableTest extends TestCase {
         assertFalse("key1 != key3", instance.publicKeyEquals(key1, key3));
         assertFalse("key3 != key1", instance.publicKeyEquals(key3, key1));
     }
+    
+    /**
+     * Test that setting an illegal value for CACHE_PRIVATEKEY gives a
+     * configuration error.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInit_illegalCachePrivateKey() throws Exception {
+        final Properties globalConfig = new Properties();
+        final TestSigner instance = new TestSigner(globalConfig);
+        final WorkerConfig config = new WorkerConfig();
+        
+        config.setProperty("CACHE_PRIVATEKEY", "_illegal_");
+        instance.init(42, config, anyContext, null);
+ 
+        final List<String> fatalErrors =
+                instance.getFatalErrors(new MockServices(globalConfig));
+        
+        assertTrue("Contains error",
+                   fatalErrors.contains("Illegal value for CACHE_PRIVATEKEY: _illegal_"));
+    }
+    
+    /**
+     * Test that the default behaviour of the cache private key option is to
+     * request caching when aquiring the token.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testDefaultCachePrivateKey() throws Exception {
+        final Properties globalConfig = new Properties();
+        final TestSigner instance = new TestSigner(globalConfig);
+        final WorkerConfig config = new WorkerConfig();
+        final MockServices services = new MockServices(globalConfig);
+        
+        config.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS,
+                           MockedCryptoToken.class.getName());
+        config.setProperty("DEFAULTKEY", TestAliasSelector.ALIAS);
+        instance.init(42, config, anyContext, null);
+        
+        final RequestContext context = new RequestContext();
+        final File tempDirFolder = new File(System.getProperty("java.io.tmpdir"));
+        
+        context.setServices(services);
+        
+        final SignatureRequest req = new SignatureRequest(42, new ByteArrayReadableData("abc".getBytes(StandardCharsets.UTF_8), tempDirFolder),
+                                                              new TemporarlyWritableData(false, tempDirFolder));
+        instance.acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, req, context);
+
+        assertNotNull("aquireCryptoInstance called",
+                      MockedCryptoToken.aquireCryptoInstanceParams);
+        assertEquals("Requested caching of private key", true,
+                    MockedCryptoToken.aquireCryptoInstanceParams.get(ICryptoTokenV4.PARAM_CACHEPRIVATEKEY));
+    }
+    
+    /**
+     * Test that setting the cache private key option to false results in not
+     * requesting caching when aquiring the token.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testCachePrivateKeyFalse() throws Exception {
+        final Properties globalConfig = new Properties();
+        final TestSigner instance = new TestSigner(globalConfig);
+        final WorkerConfig config = new WorkerConfig();
+        final MockServices services = new MockServices(globalConfig);
+        
+        config.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS,
+                           MockedCryptoToken.class.getName());
+        config.setProperty("DEFAULTKEY", TestAliasSelector.ALIAS);
+        config.setProperty("CACHE_PRIVATEKEY", "false");
+        instance.init(42, config, anyContext, null);
+        
+        final RequestContext context = new RequestContext();
+        final File tempDirFolder = new File(System.getProperty("java.io.tmpdir"));
+        
+        context.setServices(services);
+        
+        final SignatureRequest req = new SignatureRequest(42, new ByteArrayReadableData("abc".getBytes(StandardCharsets.UTF_8), tempDirFolder),
+                                                              new TemporarlyWritableData(false, tempDirFolder));
+        instance.acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, req, context);
+
+        assertNotNull("aquireCryptoInstance called",
+                      MockedCryptoToken.aquireCryptoInstanceParams);
+        assertEquals("Requested caching of private key", false,
+                    MockedCryptoToken.aquireCryptoInstanceParams.get(ICryptoTokenV4.PARAM_CACHEPRIVATEKEY));
+    }
+    
+    /**
+     * Test that setting the cache private key option to true results in not
+     * requesting caching when aquiring the token.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testCachePrivateKeyTrue() throws Exception {
+        final Properties globalConfig = new Properties();
+        final TestSigner instance = new TestSigner(globalConfig);
+        final WorkerConfig config = new WorkerConfig();
+        final MockServices services = new MockServices(globalConfig);
+        
+        config.setProperty(WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS,
+                           MockedCryptoToken.class.getName());
+        config.setProperty("DEFAULTKEY", TestAliasSelector.ALIAS);
+        config.setProperty("CACHE_PRIVATEKEY", "true");
+        instance.init(42, config, anyContext, null);
+        
+        final RequestContext context = new RequestContext();
+        final File tempDirFolder = new File(System.getProperty("java.io.tmpdir"));
+        
+        context.setServices(services);
+        
+        final SignatureRequest req = new SignatureRequest(42, new ByteArrayReadableData("abc".getBytes(StandardCharsets.UTF_8), tempDirFolder),
+                                                              new TemporarlyWritableData(false, tempDirFolder));
+        instance.acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, req, context);
+
+        assertNotNull("aquireCryptoInstance called",
+                      MockedCryptoToken.aquireCryptoInstanceParams);
+        assertEquals("Requested caching of private key", true,
+                    MockedCryptoToken.aquireCryptoInstanceParams.get(ICryptoTokenV4.PARAM_CACHEPRIVATEKEY));
+    }
 
     /** CryptoToken only holding its properties and offering a way to access them. */
     private static class MockedCryptoToken extends NullCryptoToken {
@@ -583,6 +712,8 @@ public class BaseProcessableTest extends TestCase {
         private static final Certificate CERTIFICATE;
         private final Map<String, List<Certificate>> importedChains =
                 new HashMap<>();
+
+        static Map<String, Object> aquireCryptoInstanceParams = null;
         
         static {
             try {
@@ -621,6 +752,7 @@ public class BaseProcessableTest extends TestCase {
         @Override
         public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException {
             PrivateKey privateKey = null;
+            aquireCryptoInstanceParams = params;
             return new DefaultCryptoInstance("anyAlias", context, new BouncyCastleProvider(), privateKey, importedChains.isEmpty() ? Arrays.asList(CERTIFICATE) : importedChains.get(alias));
         }
 
@@ -721,6 +853,8 @@ public class BaseProcessableTest extends TestCase {
     
     private static class TestAliasSelector implements AliasSelector {
 
+        public static final String ALIAS = "Test";
+        
         @Override
         public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
             
@@ -728,7 +862,7 @@ public class BaseProcessableTest extends TestCase {
 
         @Override
         public String getAlias(int purpose, IProcessable processble, Request signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-            return "Test";
+            return ALIAS;
         }
 
         @Override

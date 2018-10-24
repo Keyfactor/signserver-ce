@@ -101,7 +101,18 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             aliasSelector.init(workerId, config, workerContext, workerEM);
         }
 
-        cachePrivateKey = Boolean.parseBoolean(config.getProperty(PROPERTY_CACHE_PRIVATEKEY, Boolean.TRUE.toString()));
+        final String cachePrivateKeyString = config.getProperty(PROPERTY_CACHE_PRIVATEKEY);
+        
+        if (cachePrivateKeyString == null) {
+            cachePrivateKey = true;
+        } else if (Boolean.TRUE.toString().equalsIgnoreCase(cachePrivateKeyString)) {
+            cachePrivateKey = true;
+        } else if (Boolean.FALSE.toString().equalsIgnoreCase(cachePrivateKeyString)) {
+            cachePrivateKey = false;
+        } else {
+            fatalErrors.add("Illegal value for " + PROPERTY_CACHE_PRIVATEKEY +
+                            ": " + cachePrivateKeyString);
+        }
     }
 
     /**

@@ -188,10 +188,6 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="Setting_up_Stress_Test_with_Short-lived_Keys.html">Setting up Stress Test with Short-lived Keys</a>
-
-            </li>
-                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -1228,24 +1224,46 @@
 
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
-    <div  class="confbox admonition admonition-note">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >For now this instruction is for the PoC and might be restructured later on.    </p>
-        </div>
-    </div>
     <p  >    </p>
-    <div class="section section-1" id="src-16235273_id-.SettingupOne-timeKeysv4.4.0-Introduction">
-        <h1 class="heading "><span>Introduction</span></h1>
-    <p  >The short-lived epic, <a  class="external-link" href="https://jira.primekey.se/browse/DSS-951">https://jira.primekey.se/browse/DSS-951</a>: Epic for Unlimited one-time keys and certificates, offers a new <a   href="CryptoWorker.html">CryptoWorker</a> called OneTimeCryptoWorker. The CryptoWorker references a normal crypto token that will be used to generate the short-lived key-pair. Everytime a signer requests a crypto instance from the OneTimeCryptoWorker a new key-pair is generated and a certificate for the public key is obtained from a new component called CA Connector. The PoC offer two different CA Connector implementations:    </p>
-<ol class=" "><li class=" ">    <p  ><strong class=" ">SelfSignedCAConnector:</strong><br/>This CA Connector just generates its own self-signed certificate. The purpose is just for quick testing and demonstration of the OneTimeCryptoWorker without the need for a real CA.    </p>
-</li><li class=" ">    <p  ><strong class=" ">EjbcaWSCAConnector:</strong><br/>This CA Connector connects to EJBCA using Web Services in the same way as the <a   href="RenewalWorker.html">RenewalWorker</a>.    </p>
-</li></ol>    <p  >    </p>
+    <p  >One-time keys and certificates allow you to have a large number of individual signing keys and certificates, despite the often limited storage capabilities of HSMs. One-time keys are created on request and are deleted once the signature has been created.    </p>
+    <p  class="inline-comment-marker">One-time keys use a specific crypto worker called <a   href="OneTimeCryptoWorker.html">OneTimeCryptoWorker</a>. The crypto worker references a regular crypto token used to generate the short-lived key-pair. Every time a signer requests a crypto instance from the <a   href="OneTimeCryptoWorker.html">OneTimeCryptoWorker</a>, a new key-pair is generated and a certificate for the public key is obtained from a CA Connector component.    </p>
+    <p  >SignServer allows multiple implementations of the CA component. The following describes how to set up one-time keys either using the <a   href="#src-16235273_id-.SettingupOne-timeKeysv4.4.0-Self-SignedCAConnector">Self-Signed CA Connector</a> for testing purposes, or using the <a   href="#src-16235273_id-.SettingupOne-timeKeysv4.4.0-EJBCAWSCAConnector">EJBCA WS CA Connector</a> that connects to the EJBCA.    </p>
+    <p  >    </p>
+<ul class="toc-indentation "></ul>    <div class="section section-1" id="src-16235273_safe-id-aWQtLlNldHRpbmd1cE9uZS10aW1lS2V5c3Y0LjQuMC1TdGVwMTpTZXRVcENyeXB0b1dvcmtlcndpdGhTb3VyY2VDcnlwdG9Ub2tlbg">
+        <h1 class="heading "><span>Step 1: Set Up Crypto Worker with Source Crypto Token </span></h1>
+    <p  >Make sure you have a <a   href="CryptoWorker.html">CryptoWorker</a> with a source <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a> set up.    </p>
+    <p  >The following shows a source crypto worker <strong class=" ">CryptoTokenP11</strong> sample configuration <strong class=" ">pkcs11-crypto.properties</strong>:    </p>
+    <div  class="confbox programlisting">
+                    <div class="title">Sample source crypto worker configuration</div>
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample source crypto worker configuration">
+<div class="line"><code class="plain">WORKERGENID1.TYPE=CRYPTO_WORKER</code></div>
+<div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.server.signers.CryptoWorker</code></div>
+<div class="line"><code class="plain">WORKERGENID1.CRYPTOTOKEN_IMPLEMENTATION_CLASS=org.signserver.server.cryptotokens.PKCS11CryptoToken</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Name </code><code class="keyword">for</code><code class="plain"> other workers to reference </code><code class="keyword">this</code><code class="plain"> worker:</code></div>
+<div class="line"><code class="plain">WORKERGENID1.NAME=CryptoTokenP11</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Name of the PKCS#</code><code class="value">11</code><code class="plain"> shared library to use: </code></div>
+<div class="line"><code class="plain">WORKERGENID1.SHAREDLIBRARYNAME=Utimaco</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># HSM slot details</code></div>
+<div class="line"><code class="plain">WORKERGENID1.SLOTLABELTYPE=SLOT_NUMBER</code></div>
+<div class="line"><code class="plain">WORKERGENID1.SLOTLABELVALUE=</code><code class="value">1</code></div>
+<div class="line"><code class="plain">WORKERGENID1.PIN=foo123</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">#One key to test activation with is required. If </code><code class="keyword">this</code><code class="plain"> key does not already exist generate it after the worker has been created.</code></div>
+<div class="line"><code class="plain">WORKERGENID1.DEFAULTKEY=testkey0</code></div>
+</div>
     </div>
-    <div class="section section-1" id="src-16235273_id-.SettingupOne-timeKeysv4.4.0-QuickConfigurationwithSelf-signedCAConnector">
-        <h1 class="heading "><span>Quick Configuration with Self-signed CA Connector</span></h1>
-<ol class=" "><li class=" ">    <p  >Make sure you have a <a   href="CryptoWorker.html">CryptoWorker</a> with one of the <a   href="CryptoTokens.html">CryptoTokens</a> setup as usual.<br/>Typically in this could be a P11 or P12 crypto token.    </p>
-</li><li class=" ">    <p  >Add a new worker using the template &quot;short-lived-poc.properties&quot; but make the following changes:    </p>
+    </div>
+    <div class="section section-1" id="src-16235273_safe-id-aWQtLlNldHRpbmd1cE9uZS10aW1lS2V5c3Y0LjQuMC1TdGVwMjpTZXRVcE9uZS10aW1lQ3J5cHRvV29ya2VyUmVmZXJlbmNpbmd0aGVTb3VyY2VDcnlwdG9Xb3JrZXI">
+        <h1 class="heading "><span>Step 2: Set Up One-time Crypto Worker Referencing the Source Crypto Worker</span></h1>
+    <p  >Next, set up a OneTimeCryptoWorker referencing the source CryptoWorker. You can choose to test the OneTimeCryptoWorker without an actual CA by setting up the <a   href="#src-16235273_id-.SettingupOne-timeKeysv4.4.0-Self-signedCAConnector">Self-signed CA Connector</a> that generates its own self-signed certificate, or using the <a   href="#src-16235273_id-.SettingupOne-timeKeysv4.4.0-EJBCAWSCAConnector">EJBCA WS CA Connector</a> that connects to EJBCA using Web Services.    </p>
+    <div class="section section-2" id="src-16235273_id-.SettingupOne-timeKeysv4.4.0-Self-SignedCAConnector">
+        <h2 class="heading "><span>Self-Signed CA Connector</span></h2>
+    <p  >The Self-Signed CA Connector generates its own self-signed certificate and is suitable for testing the OneTimeCryptoWorker without requiring a real CA.    </p>
+    <p  >To configure the Self-Signed CA Connector and set up a crypto worker referencing the source crypto worker, do the following:    </p>
+<ol class=" "><li class=" ">    <p  >Add a new worker using the template <strong class=" ">onetime-crypto.properties</strong>. See <a   href="OneTimeCryptoWorker.html">OneTimeCryptoWorker</a> properties for details.    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
                     <colgroup>
@@ -1257,7 +1275,7 @@
         <p  >Property    </p>
             </td>
                 <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Change    </p>
+        <p  >Value    </p>
             </td>
         </tr>
 </thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
@@ -1265,7 +1283,7 @@
         <p  >NAME    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Update as appropriate (i.e. P11 or P12 and possibly slot).    </p>
+        <p  >Update as appropriate, for example P11 or P12 and possibly slot.    </p>
             </td>
         </tr>
     <tr>
@@ -1273,37 +1291,57 @@
         <p  >CACONNECTOR_IMPLEMENTATION    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Comment out the empty example.<br/>Remove the comment for (i.e. enable):    </p>
-<ul class=" "><li class=" ">    <p  >CACONNECTOR_IMPLEMENTATION=org.signserver.server.enterprise.caconnector.SelfSignedCAConnector    </p>
-</li><li class=" ">    <p  >CERTSIGNATUREALGORITHM    </p>
-</li></ul>            </td>
+        <p  >org.signserver.module.onetime.caconnector.SelfSignedCAConnector    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+    <pre class=" ">CERTSIGNATUREALGORITHM</pre>            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+    <pre class=" ">SHA256WithRSA</pre>            </td>
         </tr>
 </tbody>        </table>
             </div>
-</li><li class=" ">    <p  >Configure a signer (for example the XAdESSigner) to use the newly created CryptoWorker:    </p>
+    <p  ><strong class=" ">Example Configuration Sample</strong><br/>The following shows a sample configuration <strong class=" ">onetime-crypto.properties</strong> for a crypto worker <strong class=" ">CryptoTokenP11OneTimeSelfSigned</strong>:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">CRYPTOTOKEN=CryptoTokenP11OneTimeSelfSigned</code></div>
+                    <div class="title">Sample Configuration</div>
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample Configuration">
+<div class="line"><code class="plain">WORKERGENID1.TYPE=CRYPTO_WORKER</code></div>
+<div class="line"><code class="plain"> </code></div>
+<div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.module.onetime.cryptoworker.OneTimeCryptoWorker</code></div>
+<div class="line"><code class="plain"> </code></div>
+<div class="line"><code class="plain"># Name </code><code class="keyword">for</code><code class="plain"> other workers to reference </code><code class="keyword">this</code><code class="plain"> worker:</code></div>
+<div class="line"><code class="plain">WORKERGENID1.NAME=CryptoTokenP11OneTimeSelfSigned</code></div>
+<div class="line"><code class="plain"> </code></div>
+<div class="line"><code class="plain"># References a source CryptoToken</code></div>
+<div class="line"><code class="plain">WORKERGENID1.CRYPTOTOKEN=CryptoTokenP11</code></div>
+<div class="line"><code class="plain"> </code></div>
+<div class="line"><code class="plain"># Key generation</code></div>
+<div class="line"><code class="plain">WORKERGENID1.KEYALG=RSA</code></div>
+<div class="line"><code class="plain">WORKERGENID1.KEYSPEC=</code><code class="value">2048</code></div>
+<div class="line"><code class="plain"> </code></div>
+<div class="line"><code class="plain"># CA Connector: Self-signed demo connector (not using a real CA)</code></div>
+<div class="line"><code class="plain">WORKERGENID1.CACONNECTOR_IMPLEMENTATION=org.signserver.module.onetime.caconnector.SelfSignedCAConnector</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># CSR &amp; Certificate Signing</code></div>
+<div class="line"><code class="plain">WORKERGENID1.CERTSIGNATUREALGORITHM=SHA256WithRSA</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >Use the worker as normal and observe that a new certificate with a new key is used every time. The new key is not stored in the source crypto token after the signature has been created.    </p>
+</li><li class=" ">    <p  >Check that the status of the worker is ACTIVE, either on the SignServer Admin Web <strong class=" ">Worker Status</strong> page, or in the CLI using the command: <tt class=" ">./bin/signserver getstatus brief</tt>.    </p>
 </li></ol>    </div>
-    <div class="section section-1" id="src-16235273_id-.SettingupOne-timeKeysv4.4.0-ConfigurationwithEjbcaWSCAConnector">
-        <h1 class="heading "><span>Configuration with EjbcaWS CA Connector</span></h1>
-<ol class=" "><li class=" ">    <p  >Make sure you have a <a   href="CryptoWorker.html">CryptoWorker</a> with one of the <a   href="CryptoTokens.html">CryptoTokens</a> setup as usual.<br/>Typically in this could be a P11 or P12 crypto token.    </p>
-</li><li class=" ">    <p  >Add a new worker using the template &quot;short-lived-poc.properties&quot; but make the following changes:    </p>
+    <div class="section section-2" id="src-16235273_id-.SettingupOne-timeKeysv4.4.0-EJBCAWSCAConnector">
+        <h2 class="heading "><span>EJBCA WS CA Connector</span></h2>
+    <p  >The EJBCA WS CA Connector connects to EJBCA using Web Services.    </p>
+    <p  >To configure the EJBCA WS CA Connector and set up a crypto worker referencing the source crypto worker, do the following:    </p>
+<ol class=" "><li class=" ">    <p  >Add a new worker using the template <strong class=" ">onetime-crypto.properties</strong> and make the following changes. See <a   href="OneTimeCryptoWorker.html">OneTimeCryptoWorker</a> properties for details.    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
-                    <colgroup>
-                                    <col />
-                                    <col />
-                            </colgroup>
         <thead class=" ">    <tr>
             <td  class="confluenceTh" rowspan="1" colspan="1">
         <p  >Property    </p>
             </td>
                 <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Change    </p>
+        <p  >Value    </p>
             </td>
         </tr>
 </thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
@@ -1311,7 +1349,7 @@
         <p  >NAME    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Update as appropriate (i.e. P11 or P12 and possibly slot).    </p>
+        <p  >Update as appropriate, for example P11 or P12 and possibly slot.    </p>
             </td>
         </tr>
     <tr>
@@ -1319,8 +1357,8 @@
         <p  >CACONNECTOR_IMPLEMENTATION    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Comment out the empty example.<br/>Remove the comment for (i.e. enable) all the properties for the EjbcaWS CA connector, i.e.:    </p>
-<ul class=" "><li class=" ">    <p  >CACONNECTOR_IMPLEMENTATION=org.signserver.server.enterprise.caconnector.EjbcaWSCAConnector    </p>
+        <p  >Enable the following by removing the comments for the EjbcaWSCAConnector properties:    </p>
+<ul class=" "><li class=" ">    <p  >CACONNECTOR_IMPLEMENTATION=org.signserver.module.onetime.caconnector.EjbcaWSCAConnector    </p>
 </li><li class=" ">    <p  >TRUSTSTORETYPE    </p>
 </li><li class=" ">    <p  >TRUSTSTOREPATH or TRUSTSTOREVALUE (depending on TRUSTSTORETYPE)    </p>
 </li><li class=" ">    <p  >TRUSTSTOREPASSWORD    </p>
@@ -1336,22 +1374,190 @@
 </li><li class=" ">    <p  >CERTIFICATEENDTIME    </p>
 </li></ul>            </td>
         </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >CERTSIGNATUREALGORITHM    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >SHA256WithRSA    </p>
+            </td>
+        </tr>
 </tbody>        </table>
             </div>
-</li><li class=" ">    <p  >The crypto worker might be offline at this point.<br/>To trust the TLS certificate of the CA the truststore properties must be configured and contain the issuer (i.e. CA) certificate that issued the TLS server certificate used when connecting to the CA. In some cases you can just point out the path to the truststore.jks from the application server where EJBCA is running.    </p>
-</li><li class=" ">    <p  >Make sure the EJBCAWSURL is correct. You can normally test it in your web browser.    </p>
-</li><li class=" ">    <p  >Configure a signer (for example the XAdESSigner) to use the newly created CryptoWorker and make sure it uses a username or username/password authorizer as the user name will be in the Subject DN:    </p>
+    <p  ><strong class=" "><strong class=" ">Example Configuration Sample</strong><br/></strong>    </p>
+    <p  >The following shows a sample configuration <strong class=" ">onetime-crypto.properties</strong> for a crypto worker <strong class=" ">CryptoTokenP11OneTimeEjbcaWS</strong>:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">CRYPTOTOKEN=CryptoTokenP11OneTimeEjbcaWS</code></div>
-<div class="line"><code class="plain">AUTHTYPE=org.signserver.server.UsernameAuthorizer</code></div>
-<div class="line"><code class="plain">ACCEPT_ALL_USERNAMES=</code><code class="keyword">true</code></div>
+                    <div class="title">Sample CryptoTokenP11OneTimeEjbcaWS Configuration</div>
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample CryptoTokenP11OneTimeEjbcaWS Configuration">
+<div class="line"><code class="plain">WORKERGENID1.TYPE=CRYPTO_WORKER</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.module.onetime.cryptoworker.OneTimeCryptoWorker</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Name </code><code class="keyword">for</code><code class="plain"> other workers to reference </code><code class="keyword">this</code><code class="plain"> worker:</code></div>
+<div class="line"><code class="plain">WORKERGENID1.NAME=CryptoTokenP11OneTimeEjbcaWS</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># References a source CryptoToken</code></div>
+<div class="line"><code class="plain">WORKERGENID1.CRYPTOTOKEN=CryptoTokenP11</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Key generation</code></div>
+<div class="line"><code class="plain">WORKERGENID1.KEYALG=RSA</code></div>
+<div class="line"><code class="plain">WORKERGENID1.KEYSPEC=</code><code class="value">2048</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># CA Connector: EjbcaWS (using EJBCA through Web Services)</code></div>
+<div class="line"><code class="plain">WORKERGENID1.CACONNECTOR_IMPLEMENTATION=org.signserver.module.onetime.caconnector.EjbcaWSCAConnector</code></div>
+<div class="line"><code class="plain">WORKERGENID1.TRUSTSTORETYPE=JKS</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># To trust the TLS certificate of the CA the trust store properties must be configured and contain the issuer (i.e. CA) certificate that issued the TLS server certificate used when connecting to the CA</code></div>
+<div class="line"><code class="plain">WORKERGENID1.TRUSTSTOREPATH=/opt/jboss-eap-</code><code class="value">6.4</code><code class="plain">-ca/standalone/configuration/keystore/truststore.jks</code></div>
+<div class="line"><code class="plain">WORKERGENID1.TRUSTSTOREPASSWORD=changeit</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">WORKERGENID1.TLSCLIENTKEY=tls_key</code></div>
+<div class="line"><code class="plain">WORKERGENID1.EJBCAWSURL=https:</code><code class="comments">//localhost:9443/ejbca</code></div>
+<div class="line"><code class="plain">WORKERGENID1.ENDENTITYPROFILE=EMPTY</code></div>
+<div class="line"><code class="plain">WORKERGENID1.CERTIFICATEPROFILE=ENDUSER</code></div>
+<div class="line"><code class="plain">WORKERGENID1.USERNAME_PATTERN=onetime-${transactionId}</code></div>
+<div class="line"><code class="plain">WORKERGENID1.SUBJECTDN_PATTERN=CN=User ${username},UID=${transactionId},O=SignServer Testing,C=SE </code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># CSR &amp; Certificate Signing</code></div>
+<div class="line"><code class="plain">WORKERGENID1.CERTSIGNATUREALGORITHM=SHA256WithRSA</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >Use the worker as normal and observe that a new certificate with a new key is used every time. The new key is not stored in the source crypto token after the signature has been created.    </p>
-</li></ol>    <p  >    </p>
-    <p  >    </p>
-    <p  >    </p>
+</li><li class=" ">    <p  >To trust the TLS certificate of the CA, the truststore properties must be configured and contain the issuer (i.e. CA) certificate that issued the TLS server certificate used when connecting to the CA. In some cases you can just point out the path to the <tt class=" ">truststore.jks</tt> from the application server where EJBCA is running.    </p>
+</li><li class=" ">    <p  >Create a TLS client key (<strong class=" ">tls_key</strong>).    </p>
+</li><li class=" ">    <p  >Generate a Certificate Signing Request (CSR) for the TLS key created in the step above, get the certificate for the CSR, and install the certificate for the key in the token.    </p>
+</li><li class=" ">    <p  >Provide Administrator access for the TLS Client certificate under the EJBCA CA Administration section, to enable the TLS client to access the CA resource (Web Service).    </p>
+</li><li class=" ">    <p  >Check that the status of the worker is ACTIVE, either on the SignServer Admin Web <strong class=" ">Worker Status</strong> page, or in the CLI using using the command: <tt class=" ">./bin/signserver getstatus brief</tt>.    </p>
+</li></ol>    </div>
+    </div>
+    <div class="section section-1" id="src-16235273_safe-id-aWQtLlNldHRpbmd1cE9uZS10aW1lS2V5c3Y0LjQuMC1TdGVwMzpTZXRVcFNpZ25lcndpdGhPbmUtdGltZUtleQ">
+        <h1 class="heading "><span>Step 3: Set Up Signer with One-time Key</span></h1>
+    <p  >Configure a signer (for example the XAdESSigner) to use the following properties of your newly created CryptoWorker.    </p>
+    <p  >Since the user credentials are used in the certificate issuance, the signer needs to use a username or username/password authorizer, see <a   href="OneTimeCryptoWorker.html">OneTimeCryptoWorker</a>.    </p>
+    <div  class="tablewrap">
+        <table class="wrapped relative-table confluenceTable">
+                    <colgroup>
+                                    <col  width="26%"/>
+                                    <col  width="73%"/>
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Property    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Change    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >CRYPTOTOKEN    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >CryptoTokenP11OneTimeSelfSigned<br/>or<br/>CryptoTokenP11OneTimeEjbcaWS    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >AUTHTYPE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >org.signserver.server.UsernameAuthorizer    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >ACCEPT_ALL_USERNAMES    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >true    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >ALIASSELECTOR    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >org.signserver.server.aliasselectors.AuthorizedUsernameAliasSelector    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <p  ><strong class=" ">Example Configuration Sample<br/></strong>    </p>
+    <p  >The following shows a sample configuration <strong class=" ">xadessigner.properties</strong> for a <strong class=" ">CryptoTokenP11OneTimeEjbcaWS</strong>:    </p>
+    <div  class="confbox programlisting">
+                    <div class="title">Sample XAdESSigner Configuration with One-time Key</div>
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample XAdESSigner Configuration with One-time Key">
+<div class="line"><code class="plain"># General properties</code></div>
+<div class="line"><code class="plain">WORKERGENID1.TYPE=PROCESSABLE</code></div>
+<div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.module.xades.signer.XAdESSigner</code></div>
+<div class="line"><code class="plain">WORKERGENID1.NAME=XAdESSigner</code></div>
+<div class="line"><code class="plain"> </code></div>
+<div class="line"><code class="plain"># Crypto token</code></div>
+<div class="line"><code class="plain">WORKERGENID1.CRYPTOTOKEN=CryptoTokenP11OneTimeEjbcaWS</code></div>
+<div class="line"><code class="plain"> </code></div>
+<div class="line"><code class="plain"># Using one key-pair in the above crypto token</code></div>
+<div class="line"><code class="plain">WORKERGENID1.DEFAULTKEY=tls_key</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain"># Properties related to User Authentication &amp; Alias selector as username will be part of Subject DN and Alias selector will be used to select key alias based on logged user name.</code></div>
+<div class="line"><code class="plain">WORKERGENID1.AUTHTYPE=org.signserver.server.UsernameAuthorizer</code></div>
+<div class="line"><code class="plain">WORKERGENID1.ACCEPT_ALL_USERNAMES=</code><code class="keyword">true</code></div>
+<div class="line"><code class="plain">WORKERGENID1.ALIASSELECTOR=org.signserver.server.aliasselectors.AuthorizedUsernameAliasSelector</code></div>
+<div class="line"><code class="plain"> </code></div>
+<div class="line"><code class="plain">WORKERGENID1.SIGNATUREALGORITHM=SHA256withRSA</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">WORKERGENID1.XADESFORM = BES</code></div>
+<div class="line"><code class="plain">WORKERGENID1.INCLUDE_CERTIFICATE_LEVELS=</code><code class="value">1</code></div>
+<div class="line"><code class="plain">WORKERGENID1.COMMITMENT_TYPES = NONE</code></div>
+</div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-16235273_safe-id-aWQtLlNldHRpbmd1cE9uZS10aW1lS2V5c3Y0LjQuMC1TdGVwNDpUZXN0YW5kVmVyaWZ5U2lnbmluZ3dpdGhPbmUtdGltZUtleXM">
+        <h1 class="heading "><span>Step 4: Test and Verify Signing with One-time Keys</span></h1>
+    <p  >You can now test to sign using SignClient or test the performance using the stresstest tool.    </p>
+    <div class="section section-2" id="src-16235273_id-.SettingupOne-timeKeysv4.4.0-TestSigningwithSignClient">
+        <h2 class="heading "><span>Test Signing with SignClient</span></h2>
+    <p  >To test signing using the SignServer CLI SignClient, run the following:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">bin/signclient signdocument -workername XAdESSigner -data </code><code class="string">"&lt;xml/&gt;"</code><code class="plain"> -username user1 -password password</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">bin/signclient signdocument -workername CMSSigner -infile </code><code class="string">"input.txt"</code><code class="plain"> -username user1 -password password -outfile </code><code class="string">"output.p7s"</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">bin/signclient signdocument -workername JArchiveSigner -infile </code><code class="string">"HelloJar.jar"</code><code class="plain"> -username user1 -password password -outfile </code><code class="string">"HelloSignedJar.jar"</code></div>
+</div>
+    </div>
+    <p  >Note that a new certificate with a new key is used every time.    </p>
+    </div>
+    <div class="section section-2" id="src-16235273_id-.SettingupOne-timeKeysv4.4.0-SignatureVerification">
+        <h2 class="heading "><span>Signature Verification</span></h2>
+<ul class=" "><li class=" ">    <p  >To verify the CMS Signature through OpenSSL, run the following:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">openssl cms -verify -in output.p7s -inform DER -content input.txt -CAfile cacert.pem &gt; /dev/</code><code class="keyword">null</code></div>
+</div>
+    </div>
+</li></ul><ul class=" "><li class=" ">    <p  >To verify the code signature with jarsigner, run the following:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">jarsigner -verify -strict HelloJar_Signed.jar -certs </code></div>
+</div>
+    </div>
+</li></ul>    </div>
+    <div class="section section-2" id="src-16235273_id-.SettingupOne-timeKeysv4.4.0-PerformanceTestusingStresstestTool">
+        <h2 class="heading "><span>Performance Test using Stresstest Tool</span></h2>
+    <p  >To run a performance test using the stresstest tool, run the following:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+<div class="line"><code class="plain">bin/stresstest -testsuite DocumentSigner1 -threads </code><code class="value">20</code><code class="plain"> -processurl http:</code><code class="comments">//localhost:8080/signserver/process -worker XAdESSigner -data "&lt;root/&gt;" -userprefix user -usersuffixmin 1 -usersuffixmax 500</code></div>
+</div>
+    </div>
+    <div  class="confbox admonition admonition-warning">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+    <p  >To prevent memory leaks when generating a high number of keys, do not enable the crypto token caching (cryptotoken.keystorecache) in <tt class=" ">conf/cesecore.properties.</tt>    </p>
+        </div>
+    </div>
+    <p  >For more information on using the stresstest tool, see <a   href="Stresstest_CLI.html">Stresstest CLI</a>.    </p>
+    </div>
     </div>
         </div>
 
@@ -1370,7 +1576,7 @@
             </svg>
             <span>Setting up Key Wrapping</span>
         </a>
-                <a href="Setting_up_Stress_Test_with_Short-lived_Keys.html" class="ht-post-nav-next">
+                <a href="Troubleshooting.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1379,7 +1585,7 @@
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Setting up Stress Test with Short-lived Keys</span>
+            <span>Troubleshooting</span>
         </a>
     </nav>    
             

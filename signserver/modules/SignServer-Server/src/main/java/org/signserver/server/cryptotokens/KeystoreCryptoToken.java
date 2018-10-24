@@ -74,7 +74,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     private boolean autoActivate;
     private String signatureAlgorithm;
 
-    private volatile KeyStore ks; // Note: Needs volatile as different threads might load the key store at activation time
+    private KeyStore ks;
     private String keystoretype;
     private Properties properties;
 
@@ -175,7 +175,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     /**
      * (Re)read from keystore to in-memory representation.
      */
-    private void readFromKeystore(final String authenticationcode, final IServices services)
+    private synchronized void readFromKeystore(final String authenticationcode, final IServices services)
             throws KeyStoreException, CertificateException,
                    NoSuchProviderException, NoSuchAlgorithmException,
                    IOException,
@@ -185,6 +185,9 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
         }
         this.ks = getKeystore(keystoretype, keystorepath, authenticationCode, services);
         this.delegator = new JavaKeyStoreDelegator(this.ks);
+        
+        System.out.println("ks: " + ks);
+        System.out.println("ks.class " + ks.getClass());
         
         entries = new HashMap<>();
 
@@ -289,7 +292,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public boolean deactivate(final IServices services) {
+    public synchronized boolean deactivate(final IServices services) {
         entries = null;
         ks = null;
         if (authenticationCode != null) {
@@ -304,7 +307,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
         return "BC";
     }
 
-    private KeyEntry getKeyEntry(final Object purposeOrAlias, IServices services) throws CryptoTokenOfflineException {
+    private synchronized KeyEntry getKeyEntry(final Object purposeOrAlias, IServices services) throws CryptoTokenOfflineException {
         if (entries == null) {
             if (keystorepassword != null) {
                 try {
@@ -327,7 +330,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public Collection<KeyTestResult> testKey(final String alias,
+    public synchronized Collection<KeyTestResult> testKey(final String alias,
             final char[] authCode,
             final IServices services) throws CryptoTokenOfflineException,
             KeyStoreException {
@@ -335,7 +338,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public TokenSearchResults searchTokenEntries(final int startIndex, final int max, QueryCriteria qc, boolean includeData, Map<String, Object> params, IServices services)
+    public synchronized TokenSearchResults searchTokenEntries(final int startIndex, final int max, QueryCriteria qc, boolean includeData, Map<String, Object> params, IServices services)
             throws CryptoTokenOfflineException, QueryException {
 
         // check first whether keystore is available and initialized
@@ -346,7 +349,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
         return CryptoTokenHelper.searchTokenEntries(this.delegator, startIndex, max, qc, includeData, services, authenticationCode);
     }
 
-    private void generateKeyPair(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+    private synchronized void generateKeyPair(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         try {
             final KeyStore keystore = getKeyStore();
                         
@@ -418,7 +421,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     }
     
     @Override
-    public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+    public synchronized void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
         if (keySpec == null) {
             throw new IllegalArgumentException("Missing keyspec parameter");
         }
@@ -457,7 +460,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
         }
     }
     
-    private void generateSecretKey(String keyAlgorithm, String keySpec, String alias) throws CryptoTokenOfflineException {
+    private synchronized void generateSecretKey(String keyAlgorithm, String keySpec, String alias) throws CryptoTokenOfflineException {
         if (keyAlgorithm.startsWith(CryptoTokenHelper.SECRET_KEY_PREFIX)) {
             keyAlgorithm = keyAlgorithm.substring(keyAlgorithm.indexOf(SECRET_KEY_PREFIX) + SECRET_KEY_PREFIX.length());
         }
@@ -488,7 +491,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public KeyStore getKeyStore() throws UnsupportedOperationException,
+    public synchronized KeyStore getKeyStore() throws UnsupportedOperationException,
             CryptoTokenOfflineException, KeyStoreException {
         if (ks == null) {
             throw new CryptoTokenOfflineException("Not activated");
@@ -496,7 +499,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
         return ks;
     }
 
-    private KeyStore getKeystore(final String type, final String path,
+    private synchronized KeyStore getKeystore(final String type, final String path,
             final char[] authCode, final IServices services) throws
             KeyStoreException, CertificateException, NoSuchProviderException,
             NoSuchAlgorithmException, FileNotFoundException, IOException {
@@ -542,7 +545,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public boolean removeKey(final String alias, final IServices services) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
+    public synchronized boolean removeKey(final String alias, final IServices services) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
         final KeyStore keyStore = getKeyStore();
         boolean result = CryptoTokenHelper.removeKey(this.delegator, alias);
         if (result) {
@@ -598,7 +601,7 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
     }
 
     @Override
-    public void importCertificateChain(final List<Certificate> certChain,
+    public synchronized void importCertificateChain(final List<Certificate> certChain,
                                        final String alias,
                                        final char[] authCode,
                                        final Map<String, Object> params,

@@ -126,7 +126,8 @@ public class CookieAuthorizerTest extends WebTestCase {
             cookies.put("DSS_PARANTHESIS", "Within (paranthesis) that was");
             cookies.put("DSS_EMAILS", "user1@example.com, user2@example.com");
             cookies.put("DSS_ENV_SSL_CLIENT_S_DN", "CN=Client User (Authentication),emailAddress=client.user@example.com,serialNumber=1234-5678-9012-3456");
-            
+            cookies.put("DSS_24Oct", "NewLine 1\nNewLine 2\nLine3");       
+              
             // Send request
             sendRequestWithCookie(getSignerNameDummy1(), cookies);
 
@@ -154,6 +155,45 @@ public class CookieAuthorizerTest extends WebTestCase {
             workerSession.reloadConfiguration(getSignerIdDummy1());
         }
     }
+    
+     /**
+     * Tests logging of some cookies in the request with custom prefix.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testLoggingWithPrefix() throws Exception {
+        try {
+            // Add signer
+            addDummySigner1(true);
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "REQUEST_COOKIES_PREFIX", "AIRLOCK_"); // Use our CookieAuthorizer
+            workerSession.reloadConfiguration(getSignerIdDummy1());
+            getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
+
+            // Cookie values
+            Map<String, String> cookies = new HashMap<>();
+            cookies.put("DSS_ENV_SERVER_REQUEST", "/");
+            cookies.put("DSS_ENV_REMOTE_ADDR", "93.184.216.34");
+            cookies.put("DSS_ENV_SERVER_ADDR", "x.x.x.x");
+            
+            // Send request
+            sendRequestWithCookie(getSignerNameDummy1(), cookies);
+
+            // Query last log
+            Map<String, Object> logFields = queryLastLogFields();
+            
+            // Check log values
+            assertEquals("DSS_ENV_SERVER_REQUEST", "/", logFields.get("AIRLOCK_DSS_ENV_SERVER_REQUEST"));
+            assertEquals("DSS_ENV_REMOTE_ADDR", "93.184.216.34", logFields.get("AIRLOCK_DSS_ENV_REMOTE_ADDR"));
+            assertEquals("DSS_ENV_SERVER_ADDR", "x.x.x.x", logFields.get("AIRLOCK_DSS_ENV_SERVER_ADDR"));
+        } finally {
+            removeWorker(getSignerIdDummy1());
+            workerSession.reloadConfiguration(getSignerIdDummy1());
+        }
+    }
+
 
     /**
      * Query the last log field of event type PROCESS.

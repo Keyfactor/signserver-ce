@@ -44,8 +44,11 @@ public class CookieAuthorizer implements IAuthorizer {
     /** Logger for this class. */
     private static final Logger LOG
             = Logger.getLogger(CookieAuthorizer.class);
+    
+    /** default cookies prefix for Airlock feature */
+    private static final String REQUEST_COOKIES_PREFIX = "REQUEST_COOKIES_PREFIX";
 
-    // Worker properties
+    // Worker propertifes
     //...
 
     // Log fields
@@ -58,13 +61,13 @@ public class CookieAuthorizer implements IAuthorizer {
     private final LinkedList<String> configErrors = new LinkedList<>();
 
     // Configuration values
-    //...
+    private String cookiePrefix; 
 
     @Override
     public void init(int workerId, WorkerConfig config, EntityManager em)
             throws SignServerException {
-        // Read properties
-        //...
+        // Get COOKIES_PREFIX property from a Worker configuration
+        cookiePrefix = config.getProperty(REQUEST_COOKIES_PREFIX);
     }
 
     @Override
@@ -77,12 +80,19 @@ public class CookieAuthorizer implements IAuthorizer {
         
         //Parse/analyze the cookies from RequestContext then add SOME of them to LogMap
         Cookie[] cookies = (Cookie[]) requestContext.get(RequestContext.REQUEST_COOKIES);
-        
+                
         if (cookies != null) {
             int i = 0;
             for (Cookie cookie : cookies) {
+                StringBuilder cookiebuf = new StringBuilder();
                 i++;
-                logMap.put(cookie.getName(), CookieUtils.fromCookieValue(cookie.getValue()));
+                if( cookiePrefix != null ) {
+                    cookiebuf.append(cookiePrefix);
+                }
+                cookiebuf.append(cookie.getName());
+                
+                //Log cookies with correct prefix
+                logMap.put(cookiebuf.toString(), CookieUtils.fromCookieValue(cookie.getValue()));
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Client Cookie[" + i + "]:" + cookie.getName()+ ":"+ cookie.getValue());
                 }

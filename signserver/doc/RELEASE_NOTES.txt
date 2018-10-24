@@ -1,3 +1,14 @@
+SignServer 4.4.0
+----------------
+
+Notes:
+- By default CACHE_PRIVATEKEY is enabled for all signers. To get the old
+  behaviour for a signer, set CACHE_PRIVATEKEY=false.
+- By default the CESeCore keystore cache is now disabled. To get the old
+  behaviour it needs to be explicitly enabled in conf/cesecore.properties
+  Note: it can not be enabled when using the new one-time crypto and is a
+  global setting.
+
 SignServer 4.3.1
 ----------------
 

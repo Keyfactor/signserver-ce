@@ -1,13 +1,26 @@
 SignServer 4.4.0
 ----------------
 
-Notes:
-- By default CACHE_PRIVATEKEY is enabled for all signers. To get the old
-  behaviour for a signer, set CACHE_PRIVATEKEY=false.
+New features and improvements:
+- Support for on-demand generated one-time keys with short-lived
+  certificates issued from EJBCA.
+- 12 other minor improvements
+
+Bug fixes:
+- Time-stamp hash algorithm used by XAdESSigner should be configurable
+- Error with MSI signing when certificate not installed in token
+- OCSP validator failed with external OCSP responder
+- Admin GUI download bundle failed to start
+- 7 other bug fixes
+
+Notice:
+- By default CACHE_PRIVATEKEY is now enabled for all signers. To get the 
+  old behaviour for a signer, set CACHE_PRIVATEKEY=false.
 - By default the CESeCore keystore cache is now disabled. To get the old
   behaviour it needs to be explicitly enabled in conf/cesecore.properties
   Note: it can not be enabled when using the new one-time crypto and is a
   global setting.
+
 
 SignServer 4.3.1
 ----------------

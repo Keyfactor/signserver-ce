@@ -1,3 +1,64 @@
+SignServer 4.4.0, 2018-10-23
+----------------------------
+
+** Bug
+    * [DSS-1456] - Two error rows for one invalid value are displayed under Worker Status
+    * [DSS-1475] - PdfSigner throws NPE when not specifying ARCHIVETODISK_PATH_BASE property
+    * [DSS-1477] - Space in 'Signature Algorithm' on 'Generate CSR' page causes error
+    * [DSS-1740] - Handle OneTimeCryptoToken errors
+    * [DSS-1742] - OneTimeSigner requests for new certificate without signing function also
+    * [DSS-1747] - XAdES-T signer always uses SHA-1 for time-stamp
+    * [DSS-1749] - NPE when Signer certificate has Private Key Usage Period with only not after/before
+    * [DSS-1750] - NPE with MSI signing when certificate not installed in token
+    * [DSS-1781] - OCSP validation fails with external OCSP responder
+    * [DSS-1789] - AdminGUI download bundle misses classpath entries - short-term fix
+    * [DSS-1802] - Error getting status when connection is refused in OneTimeCryptoWorker
+
+** New Feature
+    * [DSS-1697] - Create One-Time CryptoWorker
+    * [DSS-1698] - Key gen. in One-Time CryptoWorker
+    * [DSS-1699] - Key removal in One-Time CryptoWorker
+    * [DSS-1700] - Username to CSR mapping
+    * [DSS-1701] - CA Connector: CSR generation
+    * [DSS-1702] - CA Connector: TLS Client Cert usage for EjbcaWS
+    * [DSS-1703] - CA Connector: Call EjbcaWS
+    * [DSS-1728] - Create a module for automated web tests
+    * [DSS-1730] - Create an Ant job for running automated web test(s)
+    * [DSS-1732] - Create an automated web test for DSSQA-43
+    * [DSS-1733] - Create an automated web test for DSSQA-52
+    * [DSS-1735] - Create an automated web test for DSSQA-55
+    * [DSS-1736] - Create an automated web test for DSSQA-99
+    * [DSS-1757] - Sequential and low performance integrity protected log device
+
+** Task
+    * [DSS-1692] - Prototype: Setup running prototype of Short-Lived certs
+    * [DSS-1693] - Prototype: Demo session of early PoC Short-Lived certs
+    * [DSS-1694] - Prototype: Stress test of early PoC of Short-Lived certs
+    * [DSS-1695] - Prototype: Performance figures on PoC Short-Lived certs on Utimaco
+    * [DSS-1696] - Prototype: Test PoC Short-Lived certs on real Utimaco HSM
+    * [DSS-1741] - Add DISABLED logic to OneTimeCryptoWorker
+    * [DSS-1746] - Address java doc, license header, LOG, cleanup for Short_Lived_Keys_Module
+    * [DSS-1754] - Prototype: Test PoC Short-Lived certs on real Safenet Luna HSM
+    * [DSS-1771] - Prototype: Performance figures on PoC Short-Lived certs on Safenet
+    * [DSS-1797] - Finalize documentation on Short-Lived Keys
+    * [DSS-1800] - Come up with solution/workaround on the Appliance for the CachingKeyStoreWrapper memory leak
+
+** Improvement
+    * [DSS-1131] - Configuration-time checking of PDF Signer configuration
+    * [DSS-1561] - Token entries are not displayed in order
+    * [DSS-1658] - Document USER_NOT_LOGGED_IN error with JackNJI11CryptoToken & Utimaco emulator
+    * [DSS-1738] - Migrate DEVELOP.txt to the SignServer Manual
+    * [DSS-1751] - Optimize empty value checks in Short-Lived prototype
+    * [DSS-1752] - Write JBoss AS 7 in installation guide to not confuse with JBoss EAP 7
+    * [DSS-1755] - Should not have to install certificate to worker when OneTimeCryptoWorker is being used.
+    * [DSS-1772] - Add cryptotoken.keystorecache property in SignServer cesecore.properties.sample
+    * [DSS-1776] - Update performance test CLI to use SHA-256 for the time-stamp request
+    * [DSS-1784] - Remove version number from our JARs in the JARs list
+    * [DSS-1785] - Use versions plugin for automagically updating version number if POM files
+    * [DSS-1805] - Enable crypto instance cache (CACHE_PRIVATEKEY) by default
+    * [DSS-1806] - Disable CESeCore keystore cache by default
+
+
 SignServer 4.3.1, 2018-07-06
 ----------------------------
 

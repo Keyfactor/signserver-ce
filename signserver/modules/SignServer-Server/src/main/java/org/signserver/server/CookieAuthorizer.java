@@ -24,6 +24,7 @@ import org.signserver.common.data.Request;
 import org.signserver.server.log.LogMap;
 import org.signserver.common.RequestContext;
 import org.signserver.server.CookieUtils;
+import org.apache.commons.lang.StringUtils;
 
  /** 
   * Cookie Authorizer is used for Airlock feature where custom client cookies
@@ -68,6 +69,12 @@ public class CookieAuthorizer implements IAuthorizer {
             throws SignServerException {
         // Get COOKIES_PREFIX property from a Worker configuration
         cookiePrefix = config.getProperty(REQUEST_COOKIES_PREFIX);
+        
+        // Check that COOKIES_PREFIX is set
+        if (StringUtils.trim(cookiePrefix) == null) {
+            configErrors.add("Required property is not set "
+                    + REQUEST_COOKIES_PREFIX);
+        }
     }
 
     @Override

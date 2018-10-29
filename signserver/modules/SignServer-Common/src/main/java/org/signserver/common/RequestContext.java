@@ -57,6 +57,11 @@ public class RequestContext implements Serializable {
     public static final String REQUEST_COOKIES = "REQUEST_COOKIES";
     
     /**
+     * Allow all clients access to DSS via setting this Worker property to TRUE 
+     */
+    public static final String ALLOW_ANY = "ALLOW_ANY";
+    
+    /**
      * Used to fetch the remote IP address used by the client if there exists any, otherwise is
      * 'null' returned.
      */

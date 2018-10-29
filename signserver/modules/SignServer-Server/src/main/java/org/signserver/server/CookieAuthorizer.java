@@ -48,6 +48,9 @@ public class CookieAuthorizer implements IAuthorizer {
     
     /** default cookies prefix for Airlock feature */
     private static final String REQUEST_COOKIES_PREFIX = "REQUEST_COOKIES_PREFIX";
+    
+    /** default selection rule for cookies from client request to be logged */
+    private static final String ALLOW_ANY = "ALLOW_ANY";
 
     // Worker propertifes
     //...
@@ -61,19 +64,26 @@ public class CookieAuthorizer implements IAuthorizer {
     // Configuration errors
     private final LinkedList<String> configErrors = new LinkedList<>();
 
-    // Configuration values
-    private String cookiePrefix; 
-
+    // Cookies configuration properties
+    private String cookiePrefix;
+    
     @Override
-    public void init(int workerId, WorkerConfig config, EntityManager em)
+    public void init(final int workerId, final WorkerConfig config, final EntityManager em)
             throws SignServerException {
         // Get COOKIES_PREFIX property from a Worker configuration
         cookiePrefix = config.getProperty(REQUEST_COOKIES_PREFIX);
+        // Check if ALLOW_ANY cookie rule is set
+        String allowAny = config.getProperty(ALLOW_ANY);
         
-        // Check that COOKIES_PREFIX is set
+        // Check that COOKIES_PREFIX is set 
         if (StringUtils.trim(cookiePrefix) == null) {
             configErrors.add("Required property is not set "
                     + REQUEST_COOKIES_PREFIX);
+        }
+        //and ALLOW_ANY property must be set to TRUE in Worker 
+        if (!Boolean.TRUE.toString().equalsIgnoreCase(allowAny)) {
+            configErrors.add("Worker property "
+                    + ALLOW_ANY + " must be set to TRUE");
         }
     }
 
@@ -93,7 +103,8 @@ public class CookieAuthorizer implements IAuthorizer {
             for (Cookie cookie : cookies) {
                 StringBuilder cookiebuf = new StringBuilder();
                 i++;
-                if( cookiePrefix != null ) {
+                //Log cookies with pre-configured prefix
+                if (cookiePrefix != null) {
                     cookiebuf.append(cookiePrefix);
                 }
                 cookiebuf.append(cookie.getName());

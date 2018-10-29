@@ -113,6 +113,7 @@ public class CookieAuthorizerTest extends WebTestCase {
             // Add signer
             addDummySigner1(true);
             workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_ANY", "TRUE"); // Allow all clients access DSS by default
             workerSession.setWorkerProperty(getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
             workerSession.reloadConfiguration(getSignerIdDummy1());
             getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
@@ -169,6 +170,7 @@ public class CookieAuthorizerTest extends WebTestCase {
             workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
             workerSession.setWorkerProperty(getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
             workerSession.setWorkerProperty(getSignerIdDummy1(), "REQUEST_COOKIES_PREFIX", "AIRLOCK_"); // Use our CookieAuthorizer
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_ANY", "TRUE"); // Allow any client access
             workerSession.reloadConfiguration(getSignerIdDummy1());
             getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
 

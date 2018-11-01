@@ -181,6 +181,7 @@ public class WorkerFactory {
             try {
                 final String authType = ((IProcessable) worker).getAuthenticationType();
                 authorizer = getAuthenticator(workerId, authType, config, em);
+                createErrors.addAll(authorizer.getFatalErrors());
             } catch (SignServerException ex) {
                 createErrors.add(ex.getLocalizedMessage());
             }

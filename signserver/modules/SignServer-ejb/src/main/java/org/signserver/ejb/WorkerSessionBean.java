@@ -270,11 +270,6 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         try {
             worker = workerManagerSession.getWorkerWithComponents(workerId);
             
-            final IAuthorizer authorizer = worker.getAuthorizer();
-            if (authorizer != null) {
-                errorsAtEjbLevel.addAll(authorizer.getFatalErrors());
-            }
-            
             final List<Archiver> archivers = worker.getArchivers();
             if (archivers != null) {
                 for (final Archiver archiver : worker.getArchivers()) {

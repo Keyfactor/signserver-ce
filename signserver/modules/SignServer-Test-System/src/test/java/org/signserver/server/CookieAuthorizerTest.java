@@ -74,6 +74,8 @@ public class CookieAuthorizerTest extends WebTestCase {
             // Add signer
             addDummySigner1(true);
             workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "REQUEST_COOKIES_PREFIX", "ABC_"); // send Cookies with prefix
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_ANY", "TRUE"); // Allow all clients access DSS by default
             workerSession.setWorkerProperty(getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
             workerSession.reloadConfiguration(getSignerIdDummy1());
             getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
@@ -91,9 +93,9 @@ public class CookieAuthorizerTest extends WebTestCase {
             Map<String, Object> logFields = queryLastLogFields();
             
             // Check log values
-            assertEquals("DSS_ENV_SERVER_REQUEST", "/", logFields.get("DSS_ENV_SERVER_REQUEST"));
-            assertEquals("DSS_ENV_REMOTE_ADDR", "93.184.216.34", logFields.get("DSS_ENV_REMOTE_ADDR"));
-            assertEquals("DSS_ENV_SERVER_ADDR", "x.x.x.x", logFields.get("DSS_ENV_SERVER_ADDR"));
+            assertEquals("DSS_ENV_SERVER_REQUEST", "/", logFields.get("ABC_DSS_ENV_SERVER_REQUEST"));
+            assertEquals("DSS_ENV_REMOTE_ADDR", "93.184.216.34", logFields.get("ABC_DSS_ENV_REMOTE_ADDR"));
+            assertEquals("DSS_ENV_SERVER_ADDR", "x.x.x.x", logFields.get("ABC_DSS_ENV_SERVER_ADDR"));
         } finally {
             removeWorker(getSignerIdDummy1());
             workerSession.reloadConfiguration(getSignerIdDummy1());
@@ -113,6 +115,7 @@ public class CookieAuthorizerTest extends WebTestCase {
             // Add signer
             addDummySigner1(true);
             workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "REQUEST_COOKIES_PREFIX", "ABC_"); // send Cookies with prefix
             workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_ANY", "TRUE"); // Allow all clients access DSS by default
             workerSession.setWorkerProperty(getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
             workerSession.reloadConfiguration(getSignerIdDummy1());
@@ -136,21 +139,21 @@ public class CookieAuthorizerTest extends WebTestCase {
             Map<String, Object> logFields = queryLastLogFields();
 
             // Check log values
-            assertEquals("DSS_SIMPLEST", "simplestValue", logFields.get("DSS_SIMPLEST"));
-            assertEquals("DSS_SIMPLE", "A simple value", logFields.get("DSS_SIMPLE"));
+            assertEquals("DSS_SIMPLEST", "simplestValue", logFields.get("ABC_DSS_SIMPLEST"));
+            assertEquals("DSS_SIMPLE", "A simple value", logFields.get("ABC_DSS_SIMPLE"));
             
             // Check with equals sign
-            assertEquals("DSS_EQUALS1", "=", logFields.get("DSS_EQUALS1"));
-            assertEquals("DSS_EQUALS2", "==", logFields.get("DSS_EQUALS2"));
+            assertEquals("DSS_EQUALS1", "=", logFields.get("ABC_DSS_EQUALS1"));
+            assertEquals("DSS_EQUALS2", "==", logFields.get("ABC_DSS_EQUALS2"));
             
             // Check with paranthesis
-            assertEquals("DSS_PARANTHESIS", "Within (paranthesis) that was", logFields.get("DSS_PARANTHESIS"));
+            assertEquals("DSS_PARANTHESIS", "Within (paranthesis) that was", logFields.get("ABC_DSS_PARANTHESIS"));
             
             // Check with AT-sign
-            assertEquals("DSS_EMAILS", "user1@example.com, user2@example.com", logFields.get("DSS_EMAILS"));
+            assertEquals("DSS_EMAILS", "user1@example.com, user2@example.com", logFields.get("ABC_DSS_EMAILS"));
             
             // Check complex one
-            assertEquals("DSS_ENV_SSL_CLIENT_S_DN", "CN=Client User (Authentication),emailAddress=client.user@example.com,serialNumber=1234-5678-9012-3456", logFields.get("DSS_ENV_SSL_CLIENT_S_DN"));
+            assertEquals("DSS_ENV_SSL_CLIENT_S_DN", "CN=Client User (Authentication),emailAddress=client.user@example.com,serialNumber=1234-5678-9012-3456", logFields.get("ABC_DSS_ENV_SSL_CLIENT_S_DN"));
         } finally {
             removeWorker(getSignerIdDummy1());
             workerSession.reloadConfiguration(getSignerIdDummy1());
@@ -169,7 +172,7 @@ public class CookieAuthorizerTest extends WebTestCase {
             addDummySigner1(true);
             workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
             workerSession.setWorkerProperty(getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "REQUEST_COOKIES_PREFIX", "AIRLOCK_"); // Use our CookieAuthorizer
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "REQUEST_COOKIES_PREFIX", "ABC_"); // Use our CookieAuthorizer
             workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_ANY", "TRUE"); // Allow any client access
             workerSession.reloadConfiguration(getSignerIdDummy1());
             getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
@@ -187,9 +190,9 @@ public class CookieAuthorizerTest extends WebTestCase {
             Map<String, Object> logFields = queryLastLogFields();
             
             // Check log values
-            assertEquals("DSS_ENV_SERVER_REQUEST", "/", logFields.get("AIRLOCK_DSS_ENV_SERVER_REQUEST"));
-            assertEquals("DSS_ENV_REMOTE_ADDR", "93.184.216.34", logFields.get("AIRLOCK_DSS_ENV_REMOTE_ADDR"));
-            assertEquals("DSS_ENV_SERVER_ADDR", "x.x.x.x", logFields.get("AIRLOCK_DSS_ENV_SERVER_ADDR"));
+            assertEquals("DSS_ENV_SERVER_REQUEST", "/", logFields.get("ABC_DSS_ENV_SERVER_REQUEST"));
+            assertEquals("DSS_ENV_REMOTE_ADDR", "93.184.216.34", logFields.get("ABC_DSS_ENV_REMOTE_ADDR"));
+            assertEquals("DSS_ENV_SERVER_ADDR", "x.x.x.x", logFields.get("ABC_DSS_ENV_SERVER_ADDR"));
         } finally {
             removeWorker(getSignerIdDummy1());
             workerSession.reloadConfiguration(getSignerIdDummy1());

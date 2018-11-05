@@ -1,13 +1,23 @@
 @echo off
 
 rem library classpath
+if "%SIGNCLIENT_HOME%" == "" (
 if "%SIGNSERVER_HOME%" == "" (
-  set SIGNSRV_HOME=..
+  set SIGNSRV_HOME=%cd%\..
   rem It must work to call both as bin\signserver.cmd or from within bin
-  if not exist signclient.cmd set SIGNSRV_HOME=.
+  if not exist signclient.cmd set SIGNSRV_HOME=%cd%
  ) else (
     set SIGNSRV_HOME=%SIGNSERVER_HOME%
-) 
+)   
+ ) else (
+    set SIGNSRV_HOME=%SIGNCLIENT_HOME%
+)  
+
+rem Check if SIGNSRV_HOME points to valid path
+if not exist %SIGNSRV_HOME%\\bin\\signclient.cmd (
+    echo You must run signclient from either of following directories: SIGNCLIENT_HOME, SIGNCLIENT_HOME\bin OR set either of following environment variables: SIGNCLIENT_HOME, SIGNSERVER_HOME
+    goto end
+)
 
 rem Application server jars
 if not "%APPSRV_HOME%" == "" (

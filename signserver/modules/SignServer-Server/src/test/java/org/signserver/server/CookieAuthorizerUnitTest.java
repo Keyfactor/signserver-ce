@@ -19,12 +19,12 @@ import org.signserver.common.WorkerConfig;
  *
  * @author gm
  */
-public class CookieAuthorizerTest {
+public class CookieAuthorizerUnitTest {
     
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(CookieAuthorizerTest.class);
+    private static final Logger LOG = Logger.getLogger(CookieAuthorizerUnitTest.class);
     
-    public CookieAuthorizerTest() {
+    public CookieAuthorizerUnitTest() {
     }
     
     @BeforeClass

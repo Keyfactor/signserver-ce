@@ -159,6 +159,42 @@ public class CookieAuthorizerTest extends WebTestCase {
             workerSession.reloadConfiguration(getSignerIdDummy1());
         }
     }
+
+    /**
+     * Tests that you can not send request to misconfigured Authorizer.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testMisconfiguredAuthorizer() throws Exception {
+        try {
+            // Add signer
+            addDummySigner1(true);
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
+            // we do not configure required properties ALLOW_ANY and REQUEST_COOKIES_PREFIX and Authorizer should return Error 500
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
+            workerSession.reloadConfiguration(getSignerIdDummy1());
+            getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
+
+            // Cookie values
+            Map<String, String> cookies = new HashMap<>();
+            cookies.put("DSS_ENV_SERVER_REQUEST", "/");
+            cookies.put("DSS_ENV_REMOTE_ADDR", "93.184.216.34");
+            cookies.put("DSS_ENV_SERVER_ADDR", "x.x.x.x");
+            
+            // Send request
+            sendRequestWithCookie(getSignerNameDummy1(), cookies, 500);
+
+            // Query last log
+            Map<String, Object> logFields = queryLastLogFields();
+            
+            // Check log values
+            assertEquals("EXCEPTION", "Worker is misconfigured", logFields.get("EXCEPTION"));
+        } finally {
+            removeWorker(getSignerIdDummy1());
+            workerSession.reloadConfiguration(getSignerIdDummy1());
+        }
+    }
     
      /**
      * Tests logging of some cookies in the request with custom prefix.
@@ -247,7 +283,7 @@ public class CookieAuthorizerTest extends WebTestCase {
         return cookieOctet;
     }
     
-    private void sendRequestWithCookie(String signerName, Map<String, String> cookies) throws MalformedURLException, URISyntaxException {
+    private void sendRequestWithCookie(String signerName, Map<String, String> cookies, int expResponseCode) throws MalformedURLException, URISyntaxException {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerName", signerName);
         fields.put("data", "<root/>");
@@ -270,12 +306,17 @@ public class CookieAuthorizerTest extends WebTestCase {
             int response = con.getResponseCode();
             String message = con.getResponseMessage();
             LOG.info("Returned " + response + " " + message);
-            assertEquals("POST url-encoded: status response: " + message, 200, response);
+            assertEquals("POST url-encoded: status response: " + message, expResponseCode , response);
             con.disconnect();
         } catch (IOException ex) {
             LOG.error("IOException", ex);
             fail(ex.getMessage());
         }
+    }
+    
+    private void sendRequestWithCookie(String signerName, Map<String, String> cookies) throws MalformedURLException, URISyntaxException 
+    {
+        sendRequestWithCookie(signerName, cookies, 200);
     }
 
 }

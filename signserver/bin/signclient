@@ -26,7 +26,11 @@ fi
 
 class_name=org.signserver.client.cli.ClientCLI
 
-if [ ! -n "${SIGNSERVER_HOME}" ]; then
+if [ -n "${SIGNCLIENT_HOME}" ]; then
+  SIGNSRV_HOME=$SIGNCLIENT_HOME
+elif [ -n "${SIGNSERVER_HOME}" ]; then
+  SIGNSRV_HOME=$SIGNSERVER_HOME
+else
   if [ -f $DIR/signclient ]; then
     SIGNSRV_HOME=$DIR/..
   fi
@@ -51,9 +55,13 @@ if [ ! -n "${SIGNSERVER_HOME}" ]; then
   if [ -f bin/signclient ]; then
      SIGNSRV_HOME=.
   fi
-else
-  SIGNSRV_HOME=$SIGNSERVER_HOME
 fi 
+
+# Check if SIGNSRV_HOME points to valid path
+if [ ! -f ${SIGNSRV_HOME}/bin/signclient ]; then
+    echo "You must run signclient from either of following directories: SIGNCLIENT_HOME, SIGNCLIENT_HOME\bin OR set either of following environment variables: SIGNCLIENT_HOME, SIGNSERVER_HOME"
+    exit 1
+fi
 
 MAIN_JAR=`find "${SIGNSRV_HOME}/lib" -name "SignServer-Client-CLI*.jar"`
 

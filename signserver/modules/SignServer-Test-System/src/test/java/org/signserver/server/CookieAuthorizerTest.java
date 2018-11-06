@@ -314,8 +314,7 @@ public class CookieAuthorizerTest extends WebTestCase {
         }
     }
     
-    private void sendRequestWithCookie(String signerName, Map<String, String> cookies) throws MalformedURLException, URISyntaxException 
-    {
+    private void sendRequestWithCookie(String signerName, Map<String, String> cookies) throws MalformedURLException, URISyntaxException {
         sendRequestWithCookie(signerName, cookies, 200);
     }
 

@@ -234,7 +234,7 @@ public class CookieAuthorizerTest extends WebTestCase {
             workerSession.reloadConfiguration(getSignerIdDummy1());
         }
     }
-
+    
 
     /**
      * Query the last log field of event type PROCESS.
@@ -317,5 +317,48 @@ public class CookieAuthorizerTest extends WebTestCase {
     private void sendRequestWithCookie(String signerName, Map<String, String> cookies) throws MalformedURLException, URISyntaxException {
         sendRequestWithCookie(signerName, cookies, 200);
     }
+    
+     /**
+     * Tests logging request cookies with prefix as well as with prefix that already exist
+     * using overloaded method with extra parameter
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testLoggingWithPrefixExist() throws Exception {
+        try {
+            // Add signer
+            addDummySigner1(true);
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "REQUEST_COOKIES_PREFIX", "ABC_"); // Use our CookieAuthorizer
+            workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_ANY", "TRUE"); // Allow any client access
+            workerSession.reloadConfiguration(getSignerIdDummy1());
+            getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
 
+            // Cookies with ABC_ prefix
+            Map<String, String> cookies = new HashMap<>();
+            cookies.put("ABC_DSS_ENV_SERVER_REQUEST", "/");
+            cookies.put("ABC_DSS_ENV_REMOTE_ADDR", "93.184.216.34");
+            cookies.put("ABC_DSS_ENV_SERVER_ADDR", "x.x.x.x");
+            //cookies.put("DSS_ENV_SERVER_ADDR", "x.x.x.x");
+            cookies.put("DSS_IP_ADDR", "212.97.132.147");
+            
+            // Send request
+            sendRequestWithCookie(getSignerNameDummy1(), cookies);
+
+            // Query last log
+            Map<String, Object> logFields = queryLastLogFields();
+            
+            // Check log values
+            assertEquals("DSS_ENV_SERVER_REQUEST", "/", logFields.get("ABC_DSS_ENV_SERVER_REQUEST"));
+            assertEquals("DSS_ENV_REMOTE_ADDR", "93.184.216.34", logFields.get("ABC_DSS_ENV_REMOTE_ADDR"));
+            //assertEquals("DSS_ENV_SERVER_ADDR", "x.x.x.x", logFields.get("ABC_DSS_ENV_SERVER_ADDR"));
+            assertEquals("DSS_ENV_SERVER_ADDR", "x.x.x.x", logFields.get("ABC_DSS_ENV_SERVER_ADDR"));
+            assertEquals("DSS_IP_ADDR", "212.97.132.147", logFields.get("ABC_DSS_IP_ADDR"));
+        } finally {
+            removeWorker(getSignerIdDummy1());
+            workerSession.reloadConfiguration(getSignerIdDummy1());
+        }
+    }
 }

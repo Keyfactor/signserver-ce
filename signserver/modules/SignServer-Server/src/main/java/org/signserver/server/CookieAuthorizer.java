@@ -104,7 +104,7 @@ public class CookieAuthorizer implements IAuthorizer {
                 StringBuilder cookiebuf = new StringBuilder();
                 i++;
                 //Log cookies with pre-configured prefix
-                if (cookiePrefix != null) {
+                if (cookiePrefix != null && !cookie.getName().startsWith(cookiePrefix)) {
                     cookiebuf.append(cookiePrefix);
                 }
                 cookiebuf.append(cookie.getName());

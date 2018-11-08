@@ -291,8 +291,6 @@ public class ValidateDocumentCommand extends AbstractCommand {
             workerIdOrName = String.valueOf(workerId);
         }
 
-        keyStoreOptions.setupHTTPS();
-
         if (port == null) {
             if (keyStoreOptions.isUsePrivateHTTPS()) {
                 port = KeyStoreOptions.DEFAULT_PRIVATE_HTTPS_PORT;
@@ -327,6 +325,9 @@ public class ValidateDocumentCommand extends AbstractCommand {
         default:
             throw new IllegalArgumentException("Unknown protocol: " + protocol.toString());
         };
+
+        keyStoreOptions.setupHTTPS();
+
         return validator;
     }
 

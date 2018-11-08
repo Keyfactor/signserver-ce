@@ -637,8 +637,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             throws MalformedURLException {
         final DocumentSigner signer;
 
-        keyStoreOptions.setupHTTPS(); // TODO: Should be done earlier and only once (not for each signer)
-
         if (port == null) {
             if (keyStoreOptions.isUsePrivateHTTPS()) {
                 port = KeyStoreOptions.DEFAULT_PRIVATE_HTTPS_PORT;
@@ -722,6 +720,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 }
             }
         }
+        
+        keyStoreOptions.setupHTTPS(); // TODO: Should be done earlier and only once (not for each signer)
+        
         return signer;
     }
 

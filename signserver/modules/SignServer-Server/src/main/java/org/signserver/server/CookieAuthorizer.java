@@ -23,7 +23,6 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.data.Request;
 import org.signserver.server.log.LogMap;
 import org.signserver.common.RequestContext;
-import org.signserver.server.CookieUtils;
 import org.apache.commons.lang.StringUtils;
 
  /** 
@@ -35,7 +34,7 @@ import org.apache.commons.lang.StringUtils;
   * one can e.g. add "strange" IP ranges to Apache Web server .htacess 
   * and deny them access to SignServer functionality!
   * 
-  * @author netmakan
+  * @author netmackan
   * @author georgem
            
  * @version $Id$

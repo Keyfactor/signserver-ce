@@ -23,7 +23,8 @@ import static org.junit.Assert.*;
 import org.signserver.common.WorkerConfig;
 
 /**
- *
+ * Unit test for CookieAutorizer feature.
+ * 
  * @author George Matveev
  * @version $Id$
  */

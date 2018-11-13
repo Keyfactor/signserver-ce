@@ -1,3 +1,13 @@
+SignServer 4.3.2
+----------------
+
+General:
+- New authorizer for logging cookies from the request
+
+Time-stamping:
+- Performance test CLI now uses SHA-256 for the time-stamp request
+
+
 SignServer 4.4.0
 ----------------
 

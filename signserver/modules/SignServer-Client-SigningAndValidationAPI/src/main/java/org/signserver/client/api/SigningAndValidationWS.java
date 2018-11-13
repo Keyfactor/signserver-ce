@@ -171,14 +171,19 @@ public class SigningAndValidationWS implements ISigningAndValidation {
                                           "SignServerWSService"));
         signserver = service.getSignServerWSPort();
 
+        final BindingProvider bp = (BindingProvider) signserver;
+        final Map<String, Object> requestContext = bp.getRequestContext();
+            
+        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
+        
         // Authentication
         if (username != null && password != null) {
-            ((BindingProvider) signserver).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
-            ((BindingProvider) signserver).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+            bp.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
+            bp.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
         }
         
         if (socketFactory != null) {
-            final Client client = ClientProxy.getClient((BindingProvider) signserver);
+            final Client client = ClientProxy.getClient(bp);
             final HTTPConduit http = (HTTPConduit) client.getConduit();
             final TLSClientParameters params = new TLSClientParameters();
             

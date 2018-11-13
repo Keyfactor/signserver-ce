@@ -29,6 +29,8 @@ import java.util.ResourceBundle;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.concurrent.TimeUnit;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
@@ -637,6 +639,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             throws MalformedURLException {
         final DocumentSigner signer;
 
+        final SSLSocketFactory sf = keyStoreOptions.setupHTTPS(); // TODO: Should be done earlier and only once (not for each signer)
+
         if (port == null) {
             if (keyStoreOptions.isUsePrivateHTTPS()) {
                 port = KeyStoreOptions.DEFAULT_PRIVATE_HTTPS_PORT;
@@ -678,7 +682,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     workerIdOrName,
                     keyStoreOptions.isUseHTTPS(),
                     username, currentPassword,
-                    pdfPassword, metadata);
+                    pdfPassword, sf, metadata);
                 break;
             }
             case CLIENTWS: {
@@ -698,12 +702,16 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     workerIdOrName,
                     keyStoreOptions.isUseHTTPS(),
                     username, currentPassword,
-                    pdfPassword, metadata);
+                    pdfPassword, sf, metadata);
                 break;
             }
             case HTTP:
             default: {
-                LOG.debug("Using HTTP as procotol");                
+                LOG.debug("Using HTTP as procotol");
+                
+                if (sf != null) {
+                    HttpsURLConnection.setDefaultSSLSocketFactory(sf);
+                }
                 
                 if (workerId == 0) {
                     signer = new HTTPDocumentSigner(hostsManager, port, servlet,
@@ -720,9 +728,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 }
             }
         }
-        
-        keyStoreOptions.setupHTTPS(); // TODO: Should be done earlier and only once (not for each signer)
-        
+
         return signer;
     }
 

@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import javax.net.ssl.SSLSocketFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.signserver.client.api.ISignServerWorker;
@@ -46,9 +47,10 @@ public class WebServicesDocumentValidator extends AbstractDocumentValidator {
     public WebServicesDocumentValidator(final String host, final int port,
             final String servlet, final boolean useHTTPS, final String workerName,
             final String username, final String password,
+            final SSLSocketFactory socketFactory,
             final Map<String, String> metadata) {
         this.signServer = new SigningAndValidationWS(host, port, servlet, useHTTPS,
-                username, password);
+                username, password, socketFactory);
         this.workerName = workerName;
         this.metadata = metadata;
     }

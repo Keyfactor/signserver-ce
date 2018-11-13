@@ -14,7 +14,6 @@ package org.signserver.client.api;
 
 import java.io.IOException;
 import java.net.Authenticator;
-import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.Collections;
@@ -22,8 +21,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import java.util.Map;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.transport.http.HTTPConduit;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
@@ -73,7 +77,7 @@ public class SigningAndValidationWS implements ISigningAndValidation {
      * @param port The remote port to connect to.
      */
     public SigningAndValidationWS(final String host, final int port) {
-        this(host, port, null, null);
+        this(host, port, null, null, null);
     }
 
     /**
@@ -85,7 +89,7 @@ public class SigningAndValidationWS implements ISigningAndValidation {
      */
     public SigningAndValidationWS(final String host, final int port,
             final boolean useHTTPS) {
-        this(host, port, useHTTPS, null, null);
+        this(host, port, useHTTPS, null, null, null);
     }
 
     /**
@@ -99,10 +103,12 @@ public class SigningAndValidationWS implements ISigningAndValidation {
      * @param port The remote port to connect to.
      * @param username Username for authentication.
      * @param password Password for authentication.
+     * @param socketFactory
      */
     public SigningAndValidationWS(final String host, final int port,
-            final String username, final String password) {
-        this(host, port, false, username, password);
+            final String username, final String password,
+            final SSLSocketFactory socketFactory) {
+        this(host, port, false, username, password, socketFactory);
     }
 
     /**
@@ -114,10 +120,13 @@ public class SigningAndValidationWS implements ISigningAndValidation {
      * @param useHTTPS True if SSL/TLS is to be used (HTTPS).
      * @param username Username for authentication.
      * @param password Password for authentication.
+     * @param socketFactory
      */
     public SigningAndValidationWS(final String host, final int port,
-    		final boolean useHTTPS, final String username, final String password) {
-    	this(host, port, SignServerWSClientFactory.DEFAULT_WSDL_URL, useHTTPS, username, password);
+    		final boolean useHTTPS, final String username, final String password,
+                final SSLSocketFactory socketFactory) {
+    	this(host, port, SignServerWSClientFactory.DEFAULT_WSDL_URL, useHTTPS,
+             username, password, socketFactory);
     }
     
     /**
@@ -131,10 +140,12 @@ public class SigningAndValidationWS implements ISigningAndValidation {
      * @param useHTTPS True if SSL/TLS is to be used (HTTPS).
      * @param username Username for authentication.
      * @param password Password for authentication.
+     * @param socketFactory
      */
     public SigningAndValidationWS(final String host, final int port,
             final String servlet, final boolean useHTTPS,
-            final String username, final String password) {
+            final String username, final String password,
+            final SSLSocketFactory socketFactory) {
         final String url = (useHTTPS ? "https://" : "http://")
                 + host + ":" + port
                 + servlet;
@@ -152,20 +163,27 @@ public class SigningAndValidationWS implements ISigningAndValidation {
             });
         }
 
-        try {
-            service = new SignServerWSService(new URL(url),
-                    new QName("gen.ws.protocol.signserver.org",
-                    "SignServerWSService"));
-        } catch (MalformedURLException ex) {
-            throw new IllegalArgumentException("Malformed URL: "
-                    + url, ex);
-        }
+        final URL resource =
+                getClass().getResource("/org/signserver/client/cli/SignServerWS.wsdl");
+
+        service = new SignServerWSService(resource,
+                                          new QName("gen.ws.protocol.signserver.org",
+                                          "SignServerWSService"));
         signserver = service.getSignServerWSPort();
 
         // Authentication
         if (username != null && password != null) {
             ((BindingProvider) signserver).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
             ((BindingProvider) signserver).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+        }
+        
+        if (socketFactory != null) {
+            final Client client = ClientProxy.getClient((BindingProvider) signserver);
+            final HTTPConduit http = (HTTPConduit) client.getConduit();
+            final TLSClientParameters params = new TLSClientParameters();
+            
+            params.setSSLSocketFactory(socketFactory);
+            http.setTlsClientParameters(params);
         }
 
         SignServerUtil.installBCProvider();

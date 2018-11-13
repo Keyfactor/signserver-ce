@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import javax.net.ssl.SSLSocketFactory;
 import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
 import org.signserver.client.api.ISignServerWorker;
@@ -47,15 +48,19 @@ public class WebServicesDocumentSigner extends AbstractDocumentSigner {
     public WebServicesDocumentSigner(final String host, final int port,
             final String servlet, final String workerName, final boolean useHTTPS, 
             final String username, final String password, final String pdfPassword,
+            final SSLSocketFactory socketFactory,
             final Map<String, String> metadata) {
         this.signServer = null;
         
         if (servlet != null) {
-        	this.signServer = new SigningAndValidationWS(host, port, servlet, useHTTPS, 
-                username, password);
+        	this.signServer =
+                        new SigningAndValidationWS(host, port, servlet, useHTTPS, 
+                                                   username, password, socketFactory);
         } else {
-        	this.signServer = new SigningAndValidationWS(host, port, useHTTPS,
-        			username, password);
+        	this.signServer =
+                        new SigningAndValidationWS(host, port, useHTTPS,
+                                                   username, password,
+                                                   socketFactory);
         }
 
         this.workerName = workerName;

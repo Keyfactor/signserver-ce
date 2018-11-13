@@ -16,18 +16,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Authenticator;
-import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.MTOMFeature;
 import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.transport.http.HTTPConduit;
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.client.clientws.ClientWS;
 import org.signserver.client.clientws.ClientWSService;
@@ -60,6 +64,7 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
     public ClientWSDocumentSigner(final String host, final int port,
             final String servlet, final String workerName, final boolean useHTTPS, 
             final String username, final String password, final String pdfPassword,
+            final SSLSocketFactory socketFactory,
             final Map<String, String> metadata) {
         final String url = (useHTTPS ? "https://" : "http://")
                 + host + ":" + port
@@ -78,22 +83,34 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
             });
         }
 
-        try {
-            service = new ClientWSService(new URL(url), new QName("http://clientws.signserver.org/", "ClientWSService"));
-        } catch (MalformedURLException ex) {
-            throw new IllegalArgumentException("Malformed URL: "
-                    + url, ex);
-        }
-        
+        final URL resource =
+                getClass().getResource("/org/signserver/client/cli/ClientWS.wsdl");
+
+        service = new ClientWSService(resource, new QName("http://clientws.signserver.org/", "ClientWSService"));
+
         this.signServer = service.getPort(new QName("http://clientws.signserver.org/", "ClientWSPort"), ClientWS.class, new MTOMFeature(true));
         this.workerName = workerName;
         this.pdfPassword = pdfPassword;
         this.metadata = metadata;
         
+        final BindingProvider bp = (BindingProvider) signServer;
+        final Map<String, Object> requestContext = bp.getRequestContext();
+            
+        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
+        
         // Authentication
-        if (username != null && password != null) {
-            ((BindingProvider) signServer).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
-            ((BindingProvider) signServer).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+        if (username != null && password != null) { 
+            bp.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
+            bp.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+        }
+        
+        if (socketFactory != null) {
+            final Client client = ClientProxy.getClient((BindingProvider) signServer);
+            final HTTPConduit http = (HTTPConduit) client.getConduit();
+            final TLSClientParameters params = new TLSClientParameters();
+            
+            params.setSSLSocketFactory(socketFactory);
+            http.setTlsClientParameters(params);
         }
     }
 

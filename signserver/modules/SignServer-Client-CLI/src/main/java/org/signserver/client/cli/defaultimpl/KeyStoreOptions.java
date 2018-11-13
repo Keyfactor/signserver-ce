@@ -183,7 +183,7 @@ public class KeyStoreOptions {
         return truststorePassword;
     }
 
-    public void setupHTTPS() {
+    public SSLSocketFactory setupHTTPS() {
         // If we should use HTTPS
         if (truststoreFile != null) {
             try {
@@ -218,11 +218,13 @@ public class KeyStoreOptions {
 
         if (useHTTPS) {
             try {
-                setDefaultSocketFactory(truststore, keystore, keyAlias,
+                return setDefaultSocketFactory(truststore, keystore, keyAlias,
                     keystorePassword == null ? null : keystorePassword.toCharArray());
             } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException | UnrecoverableKeyException ex) {
                 throw new RuntimeException("Could not setup HTTPS", ex);
             }
+        } else {
+            return null;
         }
     }
 
@@ -233,7 +235,7 @@ public class KeyStoreOptions {
         return keystore;
     }
 
-    private static void setDefaultSocketFactory(final KeyStore truststore,
+    private static SSLSocketFactory setDefaultSocketFactory(final KeyStore truststore,
             final KeyStore keystore, String keyAlias, char[] keystorePassword) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, UnrecoverableKeyException {
 
         final TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
@@ -262,7 +264,8 @@ public class KeyStoreOptions {
         context.init(keyManagers, tmf.getTrustManagers(), new SecureRandom());
 
         SSLSocketFactory factory = context.getSocketFactory();
-        HttpsURLConnection.setDefaultSSLSocketFactory(factory);
+        
+        return factory;
     }
 
     public boolean isUseHTTPS() {

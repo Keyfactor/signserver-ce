@@ -22,6 +22,8 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
@@ -291,6 +293,8 @@ public class ValidateDocumentCommand extends AbstractCommand {
             workerIdOrName = String.valueOf(workerId);
         }
 
+        final SSLSocketFactory sf = keyStoreOptions.setupHTTPS();
+
         if (port == null) {
             if (keyStoreOptions.isUsePrivateHTTPS()) {
                 port = KeyStoreOptions.DEFAULT_PRIVATE_HTTPS_PORT;
@@ -312,10 +316,16 @@ public class ValidateDocumentCommand extends AbstractCommand {
                     workerIdOrName,
                     username,
                     password,
+                    sf,
                     metadata);
             break;
         case HTTP:
             final URL url = new URL(keyStoreOptions.isUseHTTPS() ? "https" : "http", host, port, servlet);
+            
+            if (sf != null) {
+                HttpsURLConnection.setDefaultSSLSocketFactory(sf);
+            }
+            
             if (workerId == 0) {
                 validator = new HTTPDocumentValidator(url, workerName, username, password, metadata);
             } else {
@@ -325,8 +335,6 @@ public class ValidateDocumentCommand extends AbstractCommand {
         default:
             throw new IllegalArgumentException("Unknown protocol: " + protocol.toString());
         };
-
-        keyStoreOptions.setupHTTPS();
 
         return validator;
     }

@@ -105,7 +105,7 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
         }
         
         if (socketFactory != null) {
-            final Client client = ClientProxy.getClient((BindingProvider) signServer);
+            final Client client = ClientProxy.getClient(bp);
             final HTTPConduit http = (HTTPConduit) client.getConduit();
             final TLSClientParameters params = new TLSClientParameters();
             

@@ -1,3 +1,15 @@
+SignServer 4.3.2, 2018-11-13
+----------------------------
+
+** New Feature
+    * [DSS-1792] - Make HTTP cookies available to workers and components
+    * [DSS-1793] - Authorizer logging cookies
+
+** Improvement
+    * [DSS-1776] - Update performance test CLI to use SHA-256 for the time-stamp request
+    * [DSS-1812] - Don't add prefix if the cookie name is already prefixed
+
+
 SignServer 4.3.1, 2018-07-06
 ----------------------------
 

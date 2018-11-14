@@ -1,3 +1,10 @@
+SignServer 4.4.1
+----------------
+
+Notice:
+ - Java 7 is no longer supported by the SignClient tool when
+   using the CLIENTWS or WEBSERVICES protocols
+
 SignServer 4.3.2
 ----------------
 

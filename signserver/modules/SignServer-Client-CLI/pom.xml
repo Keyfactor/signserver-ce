@@ -102,7 +102,6 @@
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-osgi-locator</artifactId>
             <version>1.1</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>

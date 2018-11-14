@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.3.1</p>
+                    <p>Version: 4.3.2</p>
                 </div>
             </header>
 
@@ -831,6 +831,10 @@
         <a class="ht-nav-page-link" href="Dispatched_Authorizer.html">Dispatched Authorizer</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Cookie_Authorizer.html">Cookie Authorizer</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -1395,7 +1399,7 @@
         <p  >INCLUDECMSALGORITHMPROTECTATTRIBUTE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Specifies if the cmsAlgorithmProtect (RFC#6211) signed attribute should be included in the response, default is true. OPTIONAL-    </p>
+        <p  >Specifies if the cmsAlgorithmProtect (RFC#6211) signed attribute should be included in the response, default is true. OPTIONAL.    </p>
             </td>
         </tr>
     <tr>
@@ -1411,7 +1415,7 @@
         <p  >LEGACYENCODING    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >As of SignServer 4.0, the encoding of the time-stamp tokens has changed. One consequence is that the order of the certificates in the output might not be the same as in the certificate chain due to the DER encoding and the fact that the certificates field is a set and thus not ordered. To restore the old behavior, set LEGACYENCODING=true. Default is false. OPTIONAL    </p>
+        <p  >As of SignServer 4.0, the encoding of the time-stamp tokens has changed. One consequence is that the order of the certificates in the output might not be the same as in the certificate chain due to the DER encoding and the fact that the certificates field is a set and thus not ordered. To restore the old behavior, set LEGACYENCODING=true. Default is false. OPTIONAL.    </p>
             </td>
         </tr>
     <tr>
@@ -1419,7 +1423,7 @@
         <p  >VERIFY_TOKEN_SIGNATURE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Whether timestamp token signature is to be validated after signing. Signing fails if validation is not successful. Default is true    </p>
+        <p  >Specifies if the timestamp token signature is to be validated after signing. Signing fails if validation is not successful. Default is true.    </p>
             </td>
         </tr>
 </tbody>        </table>

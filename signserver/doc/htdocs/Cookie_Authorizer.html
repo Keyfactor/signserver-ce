@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <title>Crypto Token Generate CSR Page - SignServer - Documentation Space</title> -->
-    <title>Crypto Token Generate CSR Page - SignServer Manual</title>
+    <!-- <title>Cookie Authorizer - SignServer - Documentation Space</title> -->
+    <title>Cookie Authorizer - SignServer Manual</title>
 
     <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
@@ -832,7 +832,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="Cookie_Authorizer.html">Cookie Authorizer</a>
+        <a class="ht-nav-page-link current" href="Cookie_Authorizer.html">Cookie Authorizer</a>
 
             </li>
                             </ul>
@@ -1070,7 +1070,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link current" href="Crypto_Token_Generate_CSR_Page.html">Crypto Token Generate CSR Page</a>
+        <a class="ht-nav-page-link" href="Crypto_Token_Generate_CSR_Page.html">Crypto Token Generate CSR Page</a>
 
             </li>
                                         <li class="leaf">
@@ -1169,148 +1169,29 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                                              <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
                                         <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
-                                                                                                         <li class="shortcut"><a href="SignServer_User_Interfaces.html">SignServer User Interfaces</a></li>
-                                                                                                         <li class="shortcut"><a href="Administration_Web.html">Administration Web</a></li>
-                                                                                                         <li class="shortcut"><a href="Workers_Page.html">Workers Page</a></li>
-                                                                                                         <li class="shortcut"><a href="Worker_Page.html">Worker Page</a></li>
-                                                                                     <li><a href="Worker_Crypto_Token_Page.html">Worker Crypto Token Page</a></li>
+                                                                                                         <li class="shortcut"><a href="SignServer_Components.html">SignServer Components</a></li>
+                                                                                     <li><a href="Authorizers.html">Authorizers</a></li>
                                                             </ul>
-</div>            <h1 id="src-5282839"> <span>Crypto Token Generate CSR Page</span></h1>
+</div>            <h1 id="src-26772835"> <span>Cookie Authorizer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >Generation of certificate signing requests.    </p>
-    <p  >Make sure each key that should have a CSR generated are selected.    </p>
-    <div class="section section-1" id="src-5282839_id-.CryptoTokenGenerateCSRPagev4.1.0-GenerateCSR">
-        <h1 class="heading "><span>Generate CSR</span></h1>
-    <div  class="tablewrap">
-        <table class="confluenceTable">
-                    <colgroup>
-                                    <col />
-                                    <col />
-                            </colgroup>
-        <thead class=" ">    <tr>
-            <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Column    </p>
-            </td>
-                <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Description    </p>
-            </td>
-        </tr>
-</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Key    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The key alias of the key to generate the CSR for.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Signature Algorithm    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The signature algorithm to use when creating the signature in the CSR (proof-of-possession).    </p>
-    <p  >The algorithm must work with the key algorithm used (i.e. RSA or ECDSA).    </p>
-    <p  >Examples:    </p>
-<ul class=" "><li class=" ">    <p  >SHA256withRSA    </p>
-</li><li class=" ">    <p  >SHA256withECDSA    </p>
-</li></ul>            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >DN    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Subject DN to include in the CSR.    </p>
-    <p  >Certification Authorities might or might not use this information when creating the certificate.    </p>
-    <p  >Example:    </p>
-<ul class=" "><li class=" ">    <p  >CN=My PDF Signer,O=PrimeKey Solutions,C=SE    </p>
-</li></ul>            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Result    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >After clicking the <strong class=" ">Generate</strong> button, this column shows a button for each worker to download the generated CSR file.    </p>
-            </td>
-        </tr>
-</tbody>        </table>
-            </div>
-    </div>
-    <div class="section section-1" id="src-5282839_id-.CryptoTokenGenerateCSRPagev4.1.0-FormatOptions">
-        <h1 class="heading "><span>Format Options</span></h1>
-    <div  class="tablewrap">
-        <table class="confluenceTable">
-                    <colgroup>
-                                    <col />
-                                    <col />
-                            </colgroup>
-        <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Standard CSR    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Creates a normal PKCS#10 certificate signing request.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >CSR signed by worker    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Create a PKCS#10 certificate signing request that is encapsulated in a PKCS#7/CMS SignedData structure.    </p>
-    <p  >If this option is selected then the drop-down menu should be used to select the CMS signer that will sign the request.    </p>
-            </td>
-        </tr>
-</tbody>        </table>
-            </div>
-    </div>
-    <div class="section section-1" id="src-5282839_id-.CryptoTokenGenerateCSRPagev4.1.0-Actions">
-        <h1 class="heading "><span>Actions</span></h1>
-    <div  class="tablewrap">
-        <table class="confluenceTable">
-                    <colgroup>
-                                    <col />
-                                    <col />
-                            </colgroup>
-        <thead class=" ">    <tr>
-            <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Action    </p>
-            </td>
-                <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Description    </p>
-            </td>
-        </tr>
-</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Generate    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Performs the CSR generation for each selected key.    </p>
-    <p  >The result column will provide a download button for each CSR generated.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Cancel    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Returns to the previous page.    </p>
-            </td>
-        </tr>
-</tbody>        </table>
-            </div>
-    </div>
+    <p  >Cookies-based authentication.    </p>
+    <p  >AUTHTYPE=<strong class=" ">org.signserver.server.CookieAuthorizer<br/></strong>    </p>
+    <p  >The Cookie Authorizer can be used to authorize clients when SignServer is sitting behind an Apache HTTP Server or an Airlock Web Application Firewall (WAF). The client HTTP request may then include custom cookies with a client set prefix and a signature. The Cookie Authorizer enables logging the client cookies to the SignServer log, which can later be used for statistical analysis. The cookies are extracted by the Cookie Authorizer based on client specific business logic, and then parsed, analyzed and logged.    </p>
+    <p  >To configure the Cookie Authorizer to accept all clients, enable the worker property ALLOW_ANY:    </p>
+<ul class=" "><li class=" ">    <p  >ALLOW_ANY = true    </p>
+</li></ul>    <p  >To configure to display a prefix for incoming cookies in the SignServer log file, set the worker property REQUEST_COOKIES_PREFIX, for example:    </p>
+<ul class=" "><li class=" ">    <p  >REQUEST_COOKIES_PREFIX = ABC_    </p>
+</li></ul>    <p  >If the same prefix is already present in the cookies coming from the client, no additional prefix will be added when logging the cookie. This avoids that the cookie name overwrites an existing log field and prevents increasing the log file.    </p>
         </div>
 
     </article>
 
 
             <nav id="ht-post-nav">
-                <a href="Crypto_Token_Generate_Key_Page.html" class="ht-post-nav-prev">
+                <a href="Dispatched_Authorizer.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1319,9 +1200,9 @@
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Crypto Token Generate Key Page</span>
+            <span>Dispatched Authorizer</span>
         </a>
-                <a href="Crypto_Token_Import_Certificates_Page.html" class="ht-post-nav-next">
+                <a href="Logging.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1330,7 +1211,7 @@
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Crypto Token Import Certificates Page</span>
+            <span>Logging</span>
         </a>
     </nav>    
             

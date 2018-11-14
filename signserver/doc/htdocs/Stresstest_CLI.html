@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.3.1</p>
+                    <p>Version: 4.3.2</p>
                 </div>
             </header>
 
@@ -831,6 +831,10 @@
         <a class="ht-nav-page-link" href="Dispatched_Authorizer.html">Dispatched Authorizer</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Cookie_Authorizer.html">Cookie Authorizer</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -1165,14 +1169,14 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Integration.html">SignServer Integration</a></li>
                                                             </ul>
-</div>            <h1 id="src-11574103"> <span>Stresstest CLI</span></h1>
+</div>            <h1 id="src-23858714"> <span>Stresstest CLI</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >The stresstest tool can be used to run performance tests. There are currently test suites available for running timestamping, document signing, and document validation stress tests.    </p>
+    <p  >The stresstest tool can be used to run performance tests. There are currently test suites available for running stress tests for time-stamping, document signing, and document validation. For more information, see <a   href="#src-23858714_id-.StresstestCLIv4.3.2-TestSuites">Test Suites</a>.    </p>
     <p  >Tests can be run with a varying number of concurrent threads to simulate multiple concurrent incoming connections.    </p>
-    <p  >It can be run from <strong class=" ">SIGNSERVER_HOME </strong>using    </p>
+    <p  >Run stresstest from <strong class=" ">SIGNSERVER_HOME </strong>using the following command:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">bin</code><code class="plain">/stresstest</code></div>
@@ -1195,10 +1199,10 @@
 <div class="line"><code class="plain"> -processurl &lt;arg&gt;      URL to process servlet (</code><code class="keyword">for</code><code class="plain"> the</code></div>
 <div class="line"><code class="plain">                        DocumentSigner/Validator1 test suites).</code></div>
 <div class="line"><code class="plain"> -statoutputdir &lt;arg&gt;   Optional. Directory to output statistics to. If</code></div>
-<div class="line"><code class="plain">                        set, each threads creates a file in </code><code class="keyword">this</code><code class="plain"> directory</code></div>
+<div class="line"><code class="plain">                        set, each thread creates a file in </code><code class="keyword">this</code><code class="plain"> directory</code></div>
 <div class="line"><code class="plain">                        to output its response times to. The directory</code></div>
 <div class="line"><code class="plain">                        must exist.</code></div>
-<div class="line"><code class="plain"> -testsuite &lt;arg&gt;       Test suite to run. Any of [TimeStamp1,</code></div>
+<div class="line"><code class="plain"> -testsuite &lt;arg&gt;       Test suite to run. Any of [TimeStamp1, TimeStamp2,</code></div>
 <div class="line"><code class="plain">                        DocumentSigner1, DocumentValidator1].</code></div>
 <div class="line"><code class="plain"> -threads &lt;arg&gt;         Number of threads requesting time stamps.</code></div>
 <div class="line"><code class="plain"> -timelimit &lt;arg&gt;       Optional. Only run </code><code class="keyword">for</code><code class="plain"> the specified time (in</code></div>
@@ -1218,7 +1222,7 @@
 <div class="line"><code class="plain">                        DocumentSigner/Validator1 test suites).</code></div>
 <div class="line"><code class="plain"> </code></div>
 <div class="line"><code class="plain">Sample usages:</code></div>
-<div class="line"><code class="plain">a) stresstest -testsuite TimeStamp1 -threads </code><code class="value">4</code><code class="plain"> -tsaurl</code></div>
+<div class="line"><code class="plain">a) stresstest -testsuite TimeStamp2 -threads </code><code class="value">4</code><code class="plain"> -tsaurl</code></div>
 <div class="line"><code class="plain">http:</code><code class="comments">//localhost:8080/signserver/tsa?workerId=1</code></div>
 <div class="line"><code class="plain">b) stresstest -testsuite TimeStamp1 -threads </code><code class="value">4</code><code class="plain"> -maxwaittime </code><code class="value">100</code></div>
 <div class="line"><code class="plain">-statoutputdir ./statistics/ -tsaurl</code></div>
@@ -1236,7 +1240,51 @@
 <div class="line"><code class="plain">signed.xml</code></div>
 </div>
     </div>
-    <p  >When finished (after time limit expires, or process is stopped using control+c) a statistic overview is printed containing number of signings, and statistics (average, minimum, and maximum) for response times.    </p>
+    <p  >When finished, that is once the time limit expires or you stop the process by pressing <strong class=" ">Ctrl+C</strong>, a statistic overview is printed containing the number of signings, and statistics (average, minimum, and maximum) for the response times.    </p>
+    <div class="section section-1" id="src-23858714_id-.StresstestCLIv4.3.2-TestSuites">
+        <h1 class="heading "><span>Test Suites</span></h1>
+    <p  >There following test suites are available for running stress tests for time-stamping, document signing, and document validation:    </p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >TimeStamp1    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Sends time-stamp requests using a dummy SHA-1 hash.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >TimeStmap2    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Sends time-stamp requests using a dummy SHA-256 hash.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >DocumentSigner1    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Sends document signing requests.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >DocumentValidator1    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Sends document validation requests.    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
         </div>
 
     </article>

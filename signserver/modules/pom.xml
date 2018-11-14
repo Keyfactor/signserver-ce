@@ -16,6 +16,8 @@
         <fixedTime/>
         <dist.fixedTime>${fixedTime}</dist.fixedTime>
         <primekey.customer>primekey</primekey.customer>
+        <cxf.version>3.2.6</cxf.version>
+        <cxf-rt-transports-http.version>3.2.0</cxf-rt-transports-http.version>
     </properties>
 
     <profiles>

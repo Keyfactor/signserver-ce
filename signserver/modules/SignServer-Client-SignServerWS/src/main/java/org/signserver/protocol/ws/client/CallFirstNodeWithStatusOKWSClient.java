@@ -16,11 +16,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.transport.http.HTTPConduit;
 
 import org.apache.log4j.Logger;
 import org.signserver.protocol.ws.ProcessRequestWS;
@@ -57,6 +62,7 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
     private String wSDLURL = null;
     private HashMap<String, SignServerWS> serviceMap = new HashMap<>();
     private IFaultCallback faultCallback;
+    private SSLSocketFactory socketFactory;
 
     /**
      * Special constructor used from test scripts
@@ -83,10 +89,7 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
         this.port = port;
         this.wSDLURL = wSDLURL;
         this.faultCallback = faultCallback;
-
-        if (sSLSocketFactory != null) {
-            HttpsURLConnection.setDefaultSSLSocketFactory(sSLSocketFactory);
-        }
+        socketFactory = sSLSocketFactory;
 
         for (String host : hosts) {
             try {
@@ -104,13 +107,29 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
             try {
                 QName qname = new QName("gen.ws.protocol.signserver.org", "SignServerWSService");
                 URL u = new URL(protocol + host + ":" + port + wSDLURL);
-                SignServerWSService signServerWSService = new SignServerWSService(u, qname);
+                final URL resource =
+                    getClass().getResource("/org/signserver/client/cli/SignServerWS.wsdl");
+                
+                SignServerWSService signServerWSService = new SignServerWSService(resource, qname);
                 retval = signServerWSService.getSignServerWSPort();
                 if (retval instanceof BindingProvider) {
-                    ((BindingProvider) retval).getRequestContext().put(
+                    final BindingProvider bp = (BindingProvider) retval;
+                    bp.getRequestContext().put(
                             "com.sun.xml.ws.connect.timeout", timeOut);
-                    ((BindingProvider) retval).getRequestContext().put(
+                    bp.getRequestContext().put(
                             "com.sun.xml.ws.request.timeout", timeOut);
+                    
+                    final Map<String, Object> requestContext = bp.getRequestContext();
+                    requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, u.toString());
+
+                    if (socketFactory != null) {
+                        final Client client = ClientProxy.getClient(bp);
+                        final HTTPConduit http = (HTTPConduit) client.getConduit();
+                        final TLSClientParameters params = new TLSClientParameters();
+
+                        params.setSSLSocketFactory(socketFactory);
+                        http.setTlsClientParameters(params);
+                    } 
                 }
                 serviceMap.put(host, retval);
             } catch (MalformedURLException e) {

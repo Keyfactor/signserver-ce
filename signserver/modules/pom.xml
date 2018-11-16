@@ -16,8 +16,6 @@
         <fixedTime/>
         <dist.fixedTime>${fixedTime}</dist.fixedTime>
         <primekey.customer>primekey</primekey.customer>
-        <cxf.version>3.2.6</cxf.version>
-        <cxf-rt-transports-http.version>3.2.0</cxf-rt-transports-http.version>
     </properties>
 
     <profiles>
@@ -100,6 +98,47 @@
         <!-- Documentation -->
         <module>SignServer-Doc-web</module>
     </modules>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-bindings-soap</artifactId>
+                <version>3.2.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-databinding-jaxb</artifactId>
+                <version>3.2.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-frontend-simple</artifactId>
+                <version>3.2.6</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-core</artifactId>
+                <version>3.2.6</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-frontend-jaxws</artifactId>
+                <version>3.2.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-wsdl</artifactId>
+                <version>3.2.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-transports-http</artifactId>
+                <version>3.2.0</version>
+            </dependency>
+        </dependencies> 
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <artifactId>${bouncycastle.bcpkix.artifact}</artifactId>

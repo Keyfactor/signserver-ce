@@ -114,12 +114,10 @@ public class CallFirstNodeWithStatusOKWSClient implements ISignServerWSClient {
                 retval = signServerWSService.getSignServerWSPort();
                 if (retval instanceof BindingProvider) {
                     final BindingProvider bp = (BindingProvider) retval;
-                    bp.getRequestContext().put(
-                            "com.sun.xml.ws.connect.timeout", timeOut);
-                    bp.getRequestContext().put(
-                            "com.sun.xml.ws.request.timeout", timeOut);
-                    
                     final Map<String, Object> requestContext = bp.getRequestContext();
+                    
+                    requestContext.put("com.sun.xml.ws.connect.timeout", timeOut);
+                    requestContext.put("com.sun.xml.ws.request.timeout", timeOut);
                     requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, u.toString());
 
                     if (socketFactory != null) {

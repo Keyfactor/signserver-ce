@@ -100,8 +100,8 @@ public class ClientWSDocumentSigner extends AbstractDocumentSigner {
         
         // Authentication
         if (username != null && password != null) { 
-            bp.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, username);
-            bp.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, password);
+            requestContext.put(BindingProvider.USERNAME_PROPERTY, username);
+            requestContext.put(BindingProvider.PASSWORD_PROPERTY, password);
         }
         
         if (socketFactory != null) {

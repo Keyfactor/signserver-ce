@@ -553,7 +553,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             if (digestAlgorithm == null) {
                 throw new IllegalCommandArgumentsException("Must specify -digestalgorithm when using -clientside");
             }
-            
+
             if (inFile == null && inDir == null) {
                 throw new IllegalCommandArgumentsException("Can only use -clientside with -infile or -indir");
             }
@@ -561,7 +561,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             if (digestAlgorithm != null) {
                 throw new IllegalCommandArgumentsException("Can only use -digestalgorithm with -clientside");
             }
-            
+
             if (fileType != null) {
                 throw new IllegalCommandArgumentsException("Can only use -filetype with -clientside");
             }

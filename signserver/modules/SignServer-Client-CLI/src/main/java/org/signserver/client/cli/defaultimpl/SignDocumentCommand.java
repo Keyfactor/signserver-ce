@@ -555,20 +555,20 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             if (digestAlgorithm == null) {
                 throw new IllegalCommandArgumentsException("Must specify -digestalgorithm when using -clientside");
             }
-            
-        // check that outFile is provided with client-side option
-        if (outFile == null) {
+
+            // check that outFile is provided with client-side option
+            if (outFile == null) {
                 throw new IllegalCommandArgumentsException("Must specify -outFile when using -clientside");
             }
-            
-        if (inFile == null && inDir == null) {
+
+            if (inFile == null && inDir == null) {
                 throw new IllegalCommandArgumentsException("Can only use -clientside with -infile or -indir");
             }
         } else {
             if (digestAlgorithm != null) {
                 throw new IllegalCommandArgumentsException("Can only use -digestalgorithm with -clientside");
             }
-            
+
             if (fileType != null) {
                 throw new IllegalCommandArgumentsException("Can only use -filetype with -clientside");
             }

@@ -35,7 +35,7 @@ Signer crypto token keystore:
             and using RSA issued by a sub CA.
         Aliases for timestamp signing: ts00001, ts00002, ts00003
             Using the same variations as for the document signing keys (with critical EKU timestamping).
-        Aliases for code signing: code00001, code00002, code00003
+        Aliases for code signing: code00001, code00002, code00003, code40003
             Using the same variations as for the document signing keys (with critical EKU codeSigning).
         Alias for e-passport signing: sod00001
         Key with certificates issued directly by the root CA.

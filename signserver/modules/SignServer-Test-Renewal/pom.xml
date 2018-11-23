@@ -55,12 +55,12 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>9.4.12.v20180830</version>
+            <version>9.2.25.v20180606</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
-            <version>9.4.12.v20180830</version>
+            <version>9.2.25.v20180606</version>
         </dependency>
     </dependencies>
     <build>

@@ -30,6 +30,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -736,7 +738,11 @@ public class TimeStampCommand extends AbstractCommand {
                 }
             }
             
-            keyStoreOptions.setupHTTPS();
+            final SSLSocketFactory sf = keyStoreOptions.setupHTTPS();
+            
+            if (sf != null) {
+                HttpsURLConnection.setDefaultSSLSocketFactory(sf);
+            }
 
             URL url;
             HttpURLConnection urlConn;

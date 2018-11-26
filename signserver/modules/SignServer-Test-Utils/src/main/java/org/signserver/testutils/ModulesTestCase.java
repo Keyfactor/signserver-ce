@@ -29,6 +29,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.*;
 import javax.naming.NamingException;
+import javax.net.ssl.SSLSocketFactory;
 import junit.framework.TestCase;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
@@ -638,8 +639,8 @@ public class ModulesTestCase extends TestCase {
     }
 
     /** Setup keystores for SSL. **/
-    public void setupSSLKeystores() throws KeyStoreException, IOException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
-        testUtils.setupSSLTruststore();
+    public SSLSocketFactory setupSSLKeystores() throws KeyStoreException, IOException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+        return testUtils.setupSSLTruststore();
     }
     
     public TestUtils getTestUtils() {

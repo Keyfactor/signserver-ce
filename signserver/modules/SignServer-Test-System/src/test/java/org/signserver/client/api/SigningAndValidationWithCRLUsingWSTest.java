@@ -26,6 +26,6 @@ public class SigningAndValidationWithCRLUsingWSTest extends SigningAndValidation
     @Override
     protected ISigningAndValidation getSigningAndValidationImpl() {
         return new SigningAndValidationWS(getHTTPHost(),
-                getPublicHTTPSPort(), true);
+                getPublicHTTPSPort(), true, null, null, socketFactory);
     }
 }

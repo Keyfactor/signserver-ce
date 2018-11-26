@@ -16,6 +16,7 @@ import java.io.*;
 import java.security.cert.Certificate;
 import java.util.List;
 import javax.naming.NamingException;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.io.FileUtils;
@@ -69,8 +70,10 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     private final WorkerSession workerSession = getWorkerSession();
     private final GlobalConfigurationSession globalSession = getGlobalSession();
     
+    protected final SSLSocketFactory socketFactory;
+    
     public SigningAndValidationWithCRLTest() throws Exception {
-        setupSSLKeystores();
+        socketFactory = setupSSLKeystores();
     }
 
     @Before

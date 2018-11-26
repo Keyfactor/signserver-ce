@@ -71,7 +71,7 @@ public class TestUtils {
     private static final String O = "SignServer";
     private static final String C = "SE";
     
-    public void setupSSLTruststore() throws KeyStoreException, IOException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+    public SSLSocketFactory setupSSLTruststore() throws KeyStoreException, IOException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
         // This does not work on JDK 7 / GlassFish 3
 //        System.setProperty("javax.net.ssl.trustStore", trustStore);
 //        System.setProperty("javax.net.ssl.trustStorePassword",
@@ -81,7 +81,7 @@ public class TestUtils {
         
         // Instead set the socket factory
         KeyStore truststore = loadKeyStore(getTruststoreFile(), getTrustStorePassword());
-        setDefaultSocketFactory(truststore, null, null, null);
+        return setDefaultSocketFactory(truststore, null, null, null);
     }
     
     private static KeyStore loadKeyStore(final File truststoreFile,
@@ -92,7 +92,7 @@ public class TestUtils {
         return keystore;
     }
 
-    private static void setDefaultSocketFactory(final KeyStore truststore,
+    private static SSLSocketFactory setDefaultSocketFactory(final KeyStore truststore,
             final KeyStore keystore, String keyAlias, char[] keystorePassword) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, UnrecoverableKeyException {
 
         final TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
@@ -121,7 +121,8 @@ public class TestUtils {
         context.init(keyManagers, tmf.getTrustManagers(), new SecureRandom());
 
         SSLSocketFactory factory = context.getSocketFactory();
-        HttpsURLConnection.setDefaultSSLSocketFactory(factory);
+        
+        return factory;
     }
     
     private Properties getBuildConfig() {

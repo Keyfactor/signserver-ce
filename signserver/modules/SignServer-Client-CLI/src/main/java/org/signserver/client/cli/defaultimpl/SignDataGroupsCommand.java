@@ -21,6 +21,8 @@ import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.signserver.cli.spi.AbstractCommand;
@@ -301,7 +303,11 @@ public class SignDataGroupsCommand extends AbstractCommand {
     private SODSigner createSigner() throws MalformedURLException {
         final SODSigner signer;
 
-        keyStoreOptions.setupHTTPS();
+        final SSLSocketFactory sf = keyStoreOptions.setupHTTPS();
+        
+        if (sf != null) {
+            HttpsURLConnection.setDefaultSSLSocketFactory(sf);
+        }
 
         if (port == null) {
             if (keyStoreOptions.isUsePrivateHTTPS()) {

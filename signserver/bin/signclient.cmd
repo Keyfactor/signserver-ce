@@ -15,7 +15,7 @@ if "%SIGNSERVER_HOME%" == "" (
 
 rem Check if SIGNSRV_HOME points to valid path
 if not exist %SIGNSRV_HOME%\\bin\\signclient.cmd (
-    echo You must run signclient from either of following directories: SIGNCLIENT_HOME, SIGNCLIENT_HOME\bin OR set either of following environment variables: SIGNCLIENT_HOME, SIGNSERVER_HOME
+    echo You must run signclient from ONE of following directories: $SIGNSERVER_HOME, $SIGNSERVER_HOME\bin, OR set ONE of following environment variables: SIGNCLIENT_HOME, SIGNSERVER_HOME
     goto end
 )
 

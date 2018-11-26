@@ -29,6 +29,6 @@ public class SigningAndValidationWithCRLUsingWSBalancedTest extends SigningAndVa
     @Override
     protected ISigningAndValidation getSigningAndValidationImpl() {
         return new SigningAndValidationWSBalanced(getHTTPHost(),
-                getPublicHTTPSPort(), true);
+                getPublicHTTPSPort(), true, socketFactory);
     }
 }

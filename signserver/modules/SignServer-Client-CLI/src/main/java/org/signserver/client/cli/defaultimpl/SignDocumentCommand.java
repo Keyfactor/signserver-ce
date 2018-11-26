@@ -29,6 +29,7 @@ import java.util.ResourceBundle;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.ws.soap.SOAPFaultException;
@@ -251,7 +252,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     /** File to read the data from. */
     private File inFile;
 
-    /** File to read the signed data to. */
+    /** File to write the signed data to. */
     private File outFile;
 
     /** Directory to read files from. */
@@ -277,6 +278,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
     private String username;
     private String password;
+    //GeoMat: -keystorepwd is same as password???
     private boolean promptForPassword;
 
     private String pdfPassword;
@@ -556,14 +558,19 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 throw new IllegalCommandArgumentsException("Must specify -digestalgorithm when using -clientside");
             }
 
-            // check that outfile is provided with client-side option
-            if (outFile == null) {
-                throw new IllegalCommandArgumentsException("Must specify -outfile when using -clientside");
+            //GeoMat check that outfile is provided with client-side option
+            if (outFile == null && outDir == null) {
+                throw new IllegalCommandArgumentsException("Must specify -outfile or -outdir when using -clientside");
             }
 
             if (inFile == null && inDir == null) {
                 throw new IllegalCommandArgumentsException("Can only use -clientside with -infile or -indir");
-            }
+            } //GeoMat:else {
+                // check that outfile is provided with client-side option
+            //if (outFile == null) {
+                //throw new IllegalCommandArgumentsException("Must specify -outfile or -outdir when using -clientside");
+            //}
+            //}
         } else {
             if (digestAlgorithm != null) {
                 throw new IllegalCommandArgumentsException("Can only use -digestalgorithm with -clientside");
@@ -741,10 +748,10 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
      * Execute the signing operation.
      * @param manager for managing the threads
      * @param inFile directory
-     * @param outFile directory
+     * @param outFile file for signature
      * @return True if success or False if there is a failure and there is no TransferManager to register the failure on
      */
-    protected boolean runBatch(TransferManager manager, final File inFile, final File outFile) {
+    protected boolean runBatch(TransferManager manager, final File inFile, File outFile) {
         boolean success = true;
         InputStream fin = null;
         try {
@@ -760,7 +767,17 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 fin = new BufferedInputStream(new FileInputStream(inFile));
                 size = inFile.length();
             }
+            //if outFile is not given by user we create temp file in /tmp
+            if(outFile == null)
+            outFile = createTempFile("PESignature");
+            System.out.println("\n\t *** GeoMat: SignDocCom770 outFile="+outFile.getName());
+            
+            //GeoMat: we write signature into the file, print it out on console
+            //and then remove /tmp/PESignatureXXX.tmp file
+            //printRemoveFile(outFile);
+            
             success = runFile(manager, requestContext, inFile, fin, size, outFile);
+                        
         } catch (FileNotFoundException ex) {
             LOG.error(MessageFormat.format(TEXTS.getString("FILE_NOT_FOUND:"),
                     ex.getLocalizedMessage()));
@@ -822,6 +839,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     private boolean runFile(TransferManager manager, Map<String, Object> requestContext, final File inFile, final InputStream bytes, final long size, final File outFile) {  // TODO: merge with runBatch ?, inFile here is only used when removing the file
         boolean success = true;
         boolean cleanUpOutputFileOnFailure = false;
+        System.out.println("\n\t --- GeoMat: SignDocCom840: outFile="+outFile.getName());
         try {
             OutputStream outStream = null;
 
@@ -833,11 +851,13 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     outStream = System.out;
                 } else {
                     outStream = new FileOutputStream(outFile);
+                    System.out.println("\n --- GeoMat: SignDocCom853: outStream="+outStream);
                 }
 
                 final InputSource inputSource = handler.produceSignatureInput(digestAlgorithm);
                 final DocumentSigner signer =
                     createSigner(handler, manager == null ? password : manager.getPassword());
+                System.out.println("\n --- GeoMat: SignDocCom859: signer="+signer+", manager="+manager+", pass="+password);//pass=NULL
                 
                 // Take start time
                 final long startTime = System.nanoTime();
@@ -1109,6 +1129,75 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 LOG.trace(id + ": No more work.");
             }
         }
+    }
+    
+    /**
+    * this method creates file in /tmp for Signature
+    * 
+    * @param name of the file
+    */
+   private File createTempFile (String name) {
+    
+    //file for Signature in /tmp
+    File tmpFile = null;
+        
+        //create /tmp/PESignXXX.tmp file for signature
+        try {
+            // TODO code application logic here
+            tmpFile = File.createTempFile(name, "tmp");
+        } catch (IOException ex) {
+            System.out.println(" Error creating PESignature file:"+ex.toString());
+        }
+        return tmpFile;
+    }
+   
+   /**
+     * this method prints out file contents on std.out and then removes file
+     * 
+     * @param inputFile
+     * @return result
+     */
+    static int printRemoveFile(File file)
+    {
+        int res = 0;//number of bytes written or Error code
+        
+        FileInputStream in = null;
+        
+      try
+      {
+                //ByteArrayInputStream is = new ByteArrayInputStream(in);
+                in = new FileInputStream(file);
+            
+          
+         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+         
+         //we print out Signature on console
+         Console console = System.console();
+         
+        int ch;
+        while ((ch = in.read()) != -1)
+        {
+            buffer.write(ch);
+            buffer.toByteArray();
+            System.out.print(buffer);
+            //console.print
+            res = buffer.size();
+        }
+         
+        } catch (Exception ex) {
+                System.out.println("\n === GeoMat: SingDocCom1168, Exception "+ex.toString());
+            }
+      finally
+      {
+         res = 66;
+            try {
+                in.close();
+            } catch (IOException ex) {
+                System.out.println("\n === Exception closing InStream:"+ex.toString());
+            }
+      }
+        
+        return res;
     }
     
 }

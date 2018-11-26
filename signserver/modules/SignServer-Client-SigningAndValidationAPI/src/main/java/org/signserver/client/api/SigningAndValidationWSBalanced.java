@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
@@ -105,6 +106,22 @@ public class SigningAndValidationWSBalanced implements ISigningAndValidation {
     public SigningAndValidationWSBalanced(String host, int port, boolean useHTTPS) {
         this();
         this.signserver = new SignServerWSClientFactory().generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK, new String[]{host}, useHTTPS, new LogErrorCallback(), port, SignServerWSClientFactory.DEFAULT_TIMEOUT, SignServerWSClientFactory.DEFAULT_WSDL_URL);
+    }
+    
+    /**
+     * Creates an instance of SigningAndValidationWSBalanced using host and port
+     * and default parameters.
+     *
+     * @param host The remote host to connect to.
+     * @param port The remote port to connect to.
+     * @param useHTTPS indicates of HTTPS should be used.
+     * @param socketFactory SSL socket factory to use.
+     */
+    public SigningAndValidationWSBalanced(String host, int port, boolean useHTTPS,
+                                          SSLSocketFactory socketFactory) {
+        this();
+        this.signserver = new SignServerWSClientFactory().generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK, new String[]{host}, useHTTPS, new LogErrorCallback(), port, SignServerWSClientFactory.DEFAULT_TIMEOUT, SignServerWSClientFactory.DEFAULT_WSDL_URL,
+                                                                                     socketFactory);
     }
 
     /**

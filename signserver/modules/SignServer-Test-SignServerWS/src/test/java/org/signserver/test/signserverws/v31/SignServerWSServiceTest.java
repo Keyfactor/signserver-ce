@@ -17,11 +17,26 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.FixMethodOrder;
@@ -62,7 +77,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
 
     /** Endpoint URL. */
     private final String ENDPOINT =
-            "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/signserverws/signserverws?wsdl";
+            "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/SignServerWSService/SignServerWS?wsdl";
 
     private static final String[] CONF_FILES = {
         "signserver_deploy.properties",
@@ -78,14 +93,15 @@ public class SignServerWSServiceTest extends ModulesTestCase {
     
     
     private SignServerWS ws;
+    private SSLSocketFactory sf;
 
     public SignServerWSServiceTest() {
         super();
-        setupKeystores();
+        sf = setupKeystores();
     }
 
     /** Setup keystores for SSL. **/
-    private void setupKeystores() {
+    private SSLSocketFactory setupKeystores() {
         Properties config = new Properties();
         
         final File home;
@@ -118,13 +134,36 @@ public class SignServerWSServiceTest extends ModulesTestCase {
         } catch (IOException ex) {
             LOG.error("Not using signserver_deploy.properties: " + ex.getMessage());
         }
-            final String truststore = new File(home, "p12/truststore.jks").getAbsolutePath();
-            System.out.println("Truststore: " + truststore);
-            System.setProperty("javax.net.ssl.trustStore", truststore);
-        System.setProperty("javax.net.ssl.trustStorePassword",
-                config.getProperty("java.trustpassword", "changeit"));
+        
+            
+        final File truststore = new File(home, "p12/truststore.jks");
+//            System.out.println("Truststore: " + truststore);
+//            System.setProperty("javax.net.ssl.trustStore", truststore);
+//        System.setProperty("javax.net.ssl.trustStorePassword",
+//                config.getProperty("java.trustpassword", "changeit"));
         //System.setProperty("javax.net.ssl.keyStore", "../../p12/testadmin.jks");
         //System.setProperty("javax.net.ssl.keyStorePassword", "foo123");
+        
+        final String truststorePassword = config.getProperty("java.trustpassword", "changeit");
+        SSLSocketFactory sf = null; 
+        
+        try {
+            final KeyStore keystore = KeyStore.getInstance("JKS");
+            keystore.load(new FileInputStream(truststore), truststorePassword.toCharArray());
+            
+            final TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+            tmf.init(keystore);
+            
+            final SSLContext context = SSLContext.getInstance("TLS");
+            context.init(null, tmf.getTrustManagers(), new SecureRandom());
+
+            sf = context.getSocketFactory();
+        } catch (KeyStoreException | IOException | KeyManagementException |
+                 NoSuchAlgorithmException | CertificateException e) {
+            LOG.error("Could not read truststore: " + e.getMessage());
+        }
+        
+        return sf;
     }
     }
 
@@ -134,9 +173,25 @@ public class SignServerWSServiceTest extends ModulesTestCase {
         LOG.info("Initilizing test using WS URL: " + getWsEndPointUrl());
         QName qname = new QName("gen.ws.protocol.signserver.org",
                 "SignServerWSService");
+        final URL resource =
+                getClass().getResource("/org/signserver/test/signserverws/v31/SignServerWS.wsdl");
         SignServerWSService signServerWSService = new SignServerWSService(
-               new URL(getWsEndPointUrl()), qname);
+               resource, qname);
         ws =  signServerWSService.getSignServerWSPort();
+        
+        final BindingProvider bp = (BindingProvider) ws;
+        final Map<String, Object> requestContext = bp.getRequestContext();
+            
+        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT);
+        
+        if (sf != null) {
+            final Client client = ClientProxy.getClient(bp);
+            final HTTPConduit http = (HTTPConduit) client.getConduit();
+            final TLSClientParameters params = new TLSClientParameters();
+            
+            params.setSSLSocketFactory(sf);
+            http.setTlsClientParameters(params);
+        }
     }
 
     @Override

@@ -336,7 +336,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
                     servlet,
                     workerIdOrName,
                     keyStoreOptions.isUseHTTPS(),
-                    username, password, metadata);
+                    username, password, metadata, sf);
                 break;
             }
             case HTTP:

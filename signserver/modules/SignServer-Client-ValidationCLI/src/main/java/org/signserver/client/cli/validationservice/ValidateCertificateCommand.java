@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import org.apache.commons.cli.*;
 import org.cesecore.util.CertTools;
@@ -406,21 +407,21 @@ public class ValidateCertificateCommand extends AbstractCommand {
 
         println("\n");
         
+        // set up trust
+        SSLSocketFactory sslf = null;
+        if (trustStorePath != null) {
+            sslf = WSClientUtil.genCustomSSLSocketFactory(null, null, trustStorePath, trustStorePwd);
+        }
+
         // validate
         final ValidateResponse vresp;
         switch (protocol) {
         case WEBSERVICES:
-            // set up trust
-            SSLSocketFactory sslf = null;
-            if (trustStorePath != null) {
-                sslf = WSClientUtil.genCustomSSLSocketFactory(null, null, trustStorePath, trustStorePwd);
-            }
-
             vresp = runWS(sslf, cert);
             break;
         case HTTP:
             try {
-                vresp = runHTTP(cert);
+                vresp = runHTTP(sslf, cert);
             } catch (HTTPException ex) {
                 println("Failure: HTTP error: " + ex.getResponseCode() + ": " +
                         ex.getResponseMessage());
@@ -473,12 +474,16 @@ public class ValidateCertificateCommand extends AbstractCommand {
         return vresp;
     }
     
-    private ValidateResponse runHTTP(final X509Certificate cert) throws Exception {
+    private ValidateResponse runHTTP(final SSLSocketFactory sslf, final X509Certificate cert) throws Exception {
         
         final URL processServlet = new URL(useSSL ? "https" : "http", hosts[0], port, servlet);
         
         OutputStream out = null;
         InputStream in = null;
+        
+        if (sslf != null) {
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslf);
+        }
         
         try {
             final HttpURLConnection conn =

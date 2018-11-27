@@ -19,10 +19,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.transport.http.HTTPConduit;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
@@ -54,12 +60,13 @@ public class ArchiveTestCase extends ModulesTestCase {
     
     private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
+    private SSLSocketFactory socketFactory;
     
     @Before
     @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        setupSSLKeystores();
+        socketFactory = setupSSLKeystores();
     }
 
     @After
@@ -69,21 +76,33 @@ public class ArchiveTestCase extends ModulesTestCase {
     }
     
     private DataResponse processWithClientWS(WorkerIdentifier wi, byte[] document, final String xForwardedFor) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException, InternalServerException_Exception, RequestFailedException_Exception {
+        final URL resource =
+                getClass().getResource("/org/signserver/protocol/client/ws/ClientWS.wsdl");
         final String url = "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/ClientWSService/ClientWS?wsdl";
-        final ClientWSService service;
-        try {
-            service = new ClientWSService(new URL(url), new QName("http://clientws.signserver.org/", "ClientWSService"));
-            ClientWS wsPort = service.getClientWSPort();
-            // Add HTTP header
-            if (xForwardedFor != null) {
-                ((BindingProvider) wsPort).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS,
-                        Collections.singletonMap("X-Forwarded-For", Collections.singletonList(xForwardedFor)));
-            }
-            return wsPort.processData(wi.hasName() ? wi.getName() : String.valueOf(wi.getId()), Collections.<Metadata>emptyList(), document);
-        } catch (MalformedURLException ex) {
-            throw new IllegalArgumentException("Malformed URL: "
-                    + url, ex);
+        final ClientWSService service =
+                new ClientWSService(resource, new QName("http://clientws.signserver.org/", "ClientWSService"));
+        final ClientWS wsPort = service.getClientWSPort();
+            
+        final BindingProvider bp = (BindingProvider) wsPort;
+        final Map<String, Object> requestContext = bp.getRequestContext();
+
+        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
+
+        if (socketFactory != null) {
+            final Client client = ClientProxy.getClient(bp);
+            final HTTPConduit http = (HTTPConduit) client.getConduit();
+            final TLSClientParameters params = new TLSClientParameters();
+
+            params.setSSLSocketFactory(socketFactory);
+            http.setTlsClientParameters(params);
         }
+
+        // Add HTTP header
+        if (xForwardedFor != null) {
+            requestContext.put(MessageContext.HTTP_REQUEST_HEADERS,
+                    Collections.singletonMap("X-Forwarded-For", Collections.singletonList(xForwardedFor)));
+        }
+        return wsPort.processData(wi.hasName() ? wi.getName() : String.valueOf(wi.getId()), Collections.<Metadata>emptyList(), document);
     }
     
     protected ArchiveDataVO testArchive(final String document, final String xForwardedFor) throws Exception {

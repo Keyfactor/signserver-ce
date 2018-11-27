@@ -586,7 +586,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         try {
             final String res = new String(execute("signdocument", "-workername", "TestXMLSigner",
                         "-data", "<root/>", "-protocol", "WEBSERVICES",
-                        "-servlet", "/signserver/signserverws/signserverws?wsdl",
+                        "-servlet", "/signserver/SignServerWSService/SignServerWS?wsdl",
                         "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit",
                         "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort())));
             assertTrue("contains signature tag: "

@@ -17,8 +17,15 @@ import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
+import javax.net.ssl.SSLSocketFactory;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.transport.http.HTTPConduit;
 
 import org.bouncycastle.jce.X509KeyUsage;
 import org.bouncycastle.util.encoders.Base64;
@@ -171,14 +178,29 @@ public class ValidationWSTest extends ModulesTestCase {
     
     private org.signserver.protocol.validationservice.ws.gen.ValidationWS getValidationWS() throws Exception {
         if (validationWS == null) {
-            setupSSLKeystores();
+            final SSLSocketFactory socketFactory = setupSSLKeystores();
+            final String url = "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() +
+                               "/signserver/ValidationWSService/ValidationWS?wsdl";
+            final URL resource =
+                getClass().getResource("/org/signserver/protocol/validationservice/ws/ValidationWS.wsdl");
             QName qname = new QName("gen.ws.validationservice.protocol.signserver.org", "ValidationWSService");
             ValidationWSService validationWSService =
-                    new ValidationWSService(new URL("https://" + getHTTPHost() + ":"
-                    + getPublicHTTPSPort()
-                    + "/signserver/validationws/validationws?wsdl"),
-                    qname);
+                    new ValidationWSService(resource, qname);
             validationWS = validationWSService.getValidationWSPort();
+            
+            final BindingProvider bp = (BindingProvider) validationWS;
+            final Map<String, Object> requestContext = bp.getRequestContext();
+
+            requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
+            
+            if (socketFactory != null) {
+                final Client client = ClientProxy.getClient(bp);
+                final HTTPConduit http = (HTTPConduit) client.getConduit();
+                final TLSClientParameters params = new TLSClientParameters();
+            
+                params.setSSLSocketFactory(socketFactory);
+                http.setTlsClientParameters(params);
+            }
         }
         return validationWS;
     }

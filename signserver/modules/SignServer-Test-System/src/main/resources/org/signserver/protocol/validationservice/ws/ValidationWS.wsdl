@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:tns="gen.ws.validationservice.protocol.signserver.org" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/" name="ValidationWSService" targetNamespace="gen.ws.validationservice.protocol.signserver.org">
+  <types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="gen.ws.validationservice.protocol.signserver.org" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="gen.ws.validationservice.protocol.signserver.org" version="1.0">
+	
+	  
+  <xs:element name="IllegalRequestException" type="tns:IllegalRequestException"/>
+	
+	  
+  <xs:element name="SignServerException" type="tns:SignServerException"/>
+	
+	  
+  <xs:element name="getStatus" type="tns:getStatus"/>
+	
+	  
+  <xs:element name="getStatusResponse" type="tns:getStatusResponse"/>
+	
+	  
+  <xs:element name="isValid" type="tns:isValid"/>
+	
+	  
+  <xs:element name="isValidResponse" type="tns:isValidResponse"/>
+	
+	  
+  <xs:complexType name="getStatus">
+	    
+    <xs:sequence>
+	      
+      <xs:element minOccurs="0" name="serviceName" type="xs:string"/>
+	    
+    </xs:sequence>
+	  
+  </xs:complexType>
+	
+	  
+  <xs:complexType name="getStatusResponse">
+	    
+    <xs:sequence>
+	      
+      <xs:element minOccurs="0" name="return" type="xs:string"/>
+	    
+    </xs:sequence>
+	  
+  </xs:complexType>
+	
+	  
+  <xs:complexType name="IllegalRequestException">
+	    
+    <xs:sequence>
+	      
+      <xs:element minOccurs="0" name="message" type="xs:string"/>
+	    
+    </xs:sequence>
+	  
+  </xs:complexType>
+	
+	  
+  <xs:complexType name="isValid">
+	    
+    <xs:sequence>
+	      
+      <xs:element minOccurs="0" name="serviceName" type="xs:string"/>
+	      
+      <xs:element minOccurs="0" name="base64Cert" type="xs:string"/>
+	      
+      <xs:element minOccurs="0" name="certPurposes" type="xs:string"/>
+	    
+    </xs:sequence>
+	  
+  </xs:complexType>
+	
+	  
+  <xs:complexType name="isValidResponse">
+	    
+    <xs:sequence>
+	      
+      <xs:element minOccurs="0" name="return" type="tns:validationResponse"/>
+	    
+    </xs:sequence>
+	  
+  </xs:complexType>
+	
+	  
+  <xs:complexType name="validationResponse">
+	    
+    <xs:sequence>
+	      
+      <xs:element minOccurs="0" name="revocationDate" type="xs:dateTime"/>
+	      
+      <xs:element name="revocationReason" type="xs:int"/>
+	      
+      <xs:element minOccurs="0" name="status" type="tns:status"/>
+	      
+      <xs:element minOccurs="0" name="statusMessage" type="xs:string"/>
+	      
+      <xs:element minOccurs="0" name="validCertificatePurposes" type="xs:string"/>
+	      
+      <xs:element minOccurs="0" name="validationDate" type="xs:dateTime"/>
+	    
+    </xs:sequence>
+	  
+  </xs:complexType>
+	
+	  
+  <xs:complexType name="SignServerException">
+	    
+    <xs:sequence>
+	      
+      <xs:element minOccurs="0" name="message" type="xs:string"/>
+	    
+    </xs:sequence>
+	  
+  </xs:complexType>
+	
+	  
+  <xs:simpleType name="status">
+	    
+    <xs:restriction base="xs:string">
+	      
+      <xs:enumeration value="VALID"/>
+	      
+      <xs:enumeration value="REVOKED"/>
+	      
+      <xs:enumeration value="NOTYETVALID"/>
+	      
+      <xs:enumeration value="EXPIRED"/>
+	      
+      <xs:enumeration value="DONTVERIFY"/>
+	      
+      <xs:enumeration value="CAREVOKED"/>
+	      
+      <xs:enumeration value="CANOTYETVALID"/>
+	      
+      <xs:enumeration value="CAEXPIRED"/>
+	      
+      <xs:enumeration value="BADCERTPURPOSE"/>
+	      
+      <xs:enumeration value="ISSUERNOTSUPPORTED"/>
+	    
+    </xs:restriction>
+	  
+  </xs:simpleType>
+	
+</xs:schema>
+  </types>
+  <message name="getStatus">
+    <part element="tns:getStatus" name="parameters">
+    </part>
+  </message>
+  <message name="IllegalRequestException">
+    <part element="tns:IllegalRequestException" name="fault">
+    </part>
+  </message>
+  <message name="isValidResponse">
+    <part element="tns:isValidResponse" name="parameters">
+    </part>
+  </message>
+  <message name="SignServerException">
+    <part element="tns:SignServerException" name="fault">
+    </part>
+  </message>
+  <message name="isValid">
+    <part element="tns:isValid" name="parameters">
+    </part>
+  </message>
+  <message name="getStatusResponse">
+    <part element="tns:getStatusResponse" name="parameters">
+    </part>
+  </message>
+  <portType name="ValidationWS">
+    <operation name="isValid">
+      <input message="tns:isValid">
+    </input>
+      <output message="tns:isValidResponse">
+    </output>
+      <fault message="tns:SignServerException" name="SignServerException">
+    </fault>
+      <fault message="tns:IllegalRequestException" name="IllegalRequestException">
+    </fault>
+    </operation>
+    <operation name="getStatus">
+      <input message="tns:getStatus">
+    </input>
+      <output message="tns:getStatusResponse">
+    </output>
+      <fault message="tns:IllegalRequestException" name="IllegalRequestException">
+    </fault>
+    </operation>
+  </portType>
+  <binding name="ValidationWSPortBinding" type="tns:ValidationWS">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="isValid">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="SignServerException">
+        <soap:fault name="SignServerException" use="literal"/>
+      </fault>
+      <fault name="IllegalRequestException">
+        <soap:fault name="IllegalRequestException" use="literal"/>
+      </fault>
+    </operation>
+    <operation name="getStatus">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="IllegalRequestException">
+        <soap:fault name="IllegalRequestException" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="ValidationWSService">
+    <port binding="tns:ValidationWSPortBinding" name="ValidationWSPort">
+      <soap:address location="http://localhost:8443/signserver/ValidationWSService/ValidationWS"/>
+    </port>
+  </service>
+</definitions>

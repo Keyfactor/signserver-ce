@@ -182,6 +182,7 @@ public class ModulesTestCase extends TestCase {
     private static File signServerHome;
 
     private Properties config;
+    private Properties deployConfig = new Properties();
     
     private CLITestHelper adminCLI;
     private CLITestHelper clientCLI;
@@ -211,6 +212,13 @@ public class ModulesTestCase extends TestCase {
                     LOG.error("Could not close config file", ex);
                 }
             }
+        }
+
+        // Load conf/signserver_deploy.properties
+        try (FileInputStream fin = new FileInputStream(new File(getSignServerHome(), "conf/signserver_deploy.properties"))) {
+            deployConfig.load(fin);
+        } catch (Exception ex) {
+            fail("Could not load conf/signserver_deploy.properties: " + ex.getMessage());
         }
     }
 
@@ -607,6 +615,10 @@ public class ModulesTestCase extends TestCase {
 
     public Properties getConfig() {
         return config;
+    }
+
+    public Properties getDeployConfig() {
+        return deployConfig;
     }
 
     public int getPublicHTTPPort() {

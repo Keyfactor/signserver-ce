@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.naming.NamingException;
+import static junit.framework.TestCase.fail;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.AuditLogEntry;
@@ -32,11 +33,15 @@ import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.util.query.Criteria;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.Term;
+import static org.junit.Assert.assertEquals;
+import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Test;
 import org.signserver.admin.common.query.AuditLogFields;
 import org.signserver.admin.common.query.QueryUtil;
 import org.signserver.common.CESeCoreModules;
 import org.signserver.common.ServiceLocator;
+import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.testutils.ModulesTestCase;
@@ -48,17 +53,28 @@ import org.signserver.testutils.WebTestCase;
  * @author Markus Kilås
  * @version $Id$
  */
-public class CookieAuthorizerTest extends WebTestCase {
+public class CookieAuthorizerTest {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(CookieAuthorizerTest.class);
 
-    private final WorkerSessionRemote workerSession = getWorkerSession();
+    /** Overridden to set Servlet URL and making it public. */
+    private final class MyWebTestCase extends WebTestCase {
+        @Override
+        public String getServletURL() {
+            return getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/process";
+        }
+    };
+    
+    private final MyWebTestCase test = new MyWebTestCase();
+    private final WorkerSessionRemote workerSession = test.getWorkerSession();
     private SecurityEventsAuditorSessionRemote auditorSession;
 
-    @Override
-    protected String getServletURL() {
-        return getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/process";
+
+    @Before
+    public void setUp() throws Exception {
+        Assume.assumeFalse("Test does not run in NODB mode", "nodb".equalsIgnoreCase(test.getDeployConfig().getProperty("database.name")));
+        SignServerUtil.installBCProvider();
     }
 
     // TODO: Test init
@@ -72,13 +88,13 @@ public class CookieAuthorizerTest extends WebTestCase {
     public void testLoggingOfCookies() throws Exception {
         try {
             // Add signer
-            addDummySigner1(true);
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "REQUEST_COOKIES_PREFIX", "ABC_"); // send Cookies with prefix
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_ANY", "TRUE"); // Allow all clients access DSS by default
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
-            workerSession.reloadConfiguration(getSignerIdDummy1());
-            getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
+            test.addDummySigner1(true);
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "REQUEST_COOKIES_PREFIX", "ABC_"); // send Cookies with prefix
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "ALLOW_ANY", "TRUE"); // Allow all clients access DSS by default
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
+            workerSession.reloadConfiguration(test.getSignerIdDummy1());
+            test.getWorkerSession().activateSigner(new WorkerIdentifier(test.getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
 
             // Cookie values
             Map<String, String> cookies = new HashMap<>();
@@ -87,7 +103,7 @@ public class CookieAuthorizerTest extends WebTestCase {
             cookies.put("DSS_ENV_SERVER_ADDR", "x.x.x.x");
             
             // Send request
-            sendRequestWithCookie(getSignerNameDummy1(), cookies);
+            sendRequestWithCookie(test.getSignerNameDummy1(), cookies);
 
             // Query last log
             Map<String, Object> logFields = queryLastLogFields();
@@ -97,8 +113,8 @@ public class CookieAuthorizerTest extends WebTestCase {
             assertEquals("DSS_ENV_REMOTE_ADDR", "93.184.216.34", logFields.get("ABC_DSS_ENV_REMOTE_ADDR"));
             assertEquals("DSS_ENV_SERVER_ADDR", "x.x.x.x", logFields.get("ABC_DSS_ENV_SERVER_ADDR"));
         } finally {
-            removeWorker(getSignerIdDummy1());
-            workerSession.reloadConfiguration(getSignerIdDummy1());
+            test.removeWorker(test.getSignerIdDummy1());
+            workerSession.reloadConfiguration(test.getSignerIdDummy1());
         }
     }
 
@@ -113,13 +129,13 @@ public class CookieAuthorizerTest extends WebTestCase {
     public void testLoggingOfCookiesWithProblematicCharacters() throws Exception {
         try {
             // Add signer
-            addDummySigner1(true);
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "REQUEST_COOKIES_PREFIX", "ABC_"); // send Cookies with prefix
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_ANY", "TRUE"); // Allow all clients access DSS by default
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
-            workerSession.reloadConfiguration(getSignerIdDummy1());
-            getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
+            test.addDummySigner1(true);
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "REQUEST_COOKIES_PREFIX", "ABC_"); // send Cookies with prefix
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "ALLOW_ANY", "TRUE"); // Allow all clients access DSS by default
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
+            workerSession.reloadConfiguration(test.getSignerIdDummy1());
+            test.getWorkerSession().activateSigner(new WorkerIdentifier(test.getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
 
             // Cookie values
             Map<String, String> cookies = new HashMap<>();
@@ -133,7 +149,7 @@ public class CookieAuthorizerTest extends WebTestCase {
             cookies.put("DSS_24Oct", "NewLine 1\nNewLine 2\nLine3");       
               
             // Send request
-            sendRequestWithCookie(getSignerNameDummy1(), cookies);
+            sendRequestWithCookie(test.getSignerNameDummy1(), cookies);
 
             // Query last log
             Map<String, Object> logFields = queryLastLogFields();
@@ -155,8 +171,8 @@ public class CookieAuthorizerTest extends WebTestCase {
             // Check complex one
             assertEquals("DSS_ENV_SSL_CLIENT_S_DN", "CN=Client User (Authentication),emailAddress=client.user@example.com,serialNumber=1234-5678-9012-3456", logFields.get("ABC_DSS_ENV_SSL_CLIENT_S_DN"));
         } finally {
-            removeWorker(getSignerIdDummy1());
-            workerSession.reloadConfiguration(getSignerIdDummy1());
+            test.removeWorker(test.getSignerIdDummy1());
+            workerSession.reloadConfiguration(test.getSignerIdDummy1());
         }
     }
 
@@ -169,12 +185,12 @@ public class CookieAuthorizerTest extends WebTestCase {
     public void testMisconfiguredAuthorizer() throws Exception {
         try {
             // Add signer
-            addDummySigner1(true);
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
+            test.addDummySigner1(true);
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
             // we do not configure required properties ALLOW_ANY and REQUEST_COOKIES_PREFIX and Authorizer should return Error 500
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
-            workerSession.reloadConfiguration(getSignerIdDummy1());
-            getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
+            workerSession.reloadConfiguration(test.getSignerIdDummy1());
+            test.getWorkerSession().activateSigner(new WorkerIdentifier(test.getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
 
             // Cookie values
             Map<String, String> cookies = new HashMap<>();
@@ -183,7 +199,7 @@ public class CookieAuthorizerTest extends WebTestCase {
             cookies.put("DSS_ENV_SERVER_ADDR", "x.x.x.x");
             
             // Send request
-            sendRequestWithCookie(getSignerNameDummy1(), cookies, 500);
+            sendRequestWithCookie(test.getSignerNameDummy1(), cookies, 500);
 
             // Query last log
             Map<String, Object> logFields = queryLastLogFields();
@@ -191,8 +207,8 @@ public class CookieAuthorizerTest extends WebTestCase {
             // Check log values
             assertEquals("EXCEPTION", "Worker is misconfigured", logFields.get("EXCEPTION"));
         } finally {
-            removeWorker(getSignerIdDummy1());
-            workerSession.reloadConfiguration(getSignerIdDummy1());
+            test.removeWorker(test.getSignerIdDummy1());
+            workerSession.reloadConfiguration(test.getSignerIdDummy1());
         }
     }
     
@@ -205,13 +221,13 @@ public class CookieAuthorizerTest extends WebTestCase {
     public void testLoggingWithPrefix() throws Exception {
         try {
             // Add signer
-            addDummySigner1(true);
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "REQUEST_COOKIES_PREFIX", "ABC_"); // Use our CookieAuthorizer
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_ANY", "TRUE"); // Allow any client access
-            workerSession.reloadConfiguration(getSignerIdDummy1());
-            getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
+            test.addDummySigner1(true);
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "REQUEST_COOKIES_PREFIX", "ABC_"); // Use our CookieAuthorizer
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "ALLOW_ANY", "TRUE"); // Allow any client access
+            workerSession.reloadConfiguration(test.getSignerIdDummy1());
+            test.getWorkerSession().activateSigner(new WorkerIdentifier(test.getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
 
             // Cookie values
             Map<String, String> cookies = new HashMap<>();
@@ -220,7 +236,7 @@ public class CookieAuthorizerTest extends WebTestCase {
             cookies.put("DSS_ENV_SERVER_ADDR", "x.x.x.x");
             
             // Send request
-            sendRequestWithCookie(getSignerNameDummy1(), cookies);
+            sendRequestWithCookie(test.getSignerNameDummy1(), cookies);
 
             // Query last log
             Map<String, Object> logFields = queryLastLogFields();
@@ -230,8 +246,8 @@ public class CookieAuthorizerTest extends WebTestCase {
             assertEquals("DSS_ENV_REMOTE_ADDR", "93.184.216.34", logFields.get("ABC_DSS_ENV_REMOTE_ADDR"));
             assertEquals("DSS_ENV_SERVER_ADDR", "x.x.x.x", logFields.get("ABC_DSS_ENV_SERVER_ADDR"));
         } finally {
-            removeWorker(getSignerIdDummy1());
-            workerSession.reloadConfiguration(getSignerIdDummy1());
+            test.removeWorker(test.getSignerIdDummy1());
+            workerSession.reloadConfiguration(test.getSignerIdDummy1());
         }
     }
     
@@ -301,7 +317,7 @@ public class CookieAuthorizerTest extends WebTestCase {
         // POST (url-encoded)
         try {
             HttpURLConnection con = WebTestCase.sendPostFormUrlencoded(
-                    getServletURL(), fields, headers);
+                    test.getServletURL(), fields, headers);
 
             int response = con.getResponseCode();
             String message = con.getResponseMessage();
@@ -328,13 +344,13 @@ public class CookieAuthorizerTest extends WebTestCase {
     public void testLoggingWithPrefixExist() throws Exception {
         try {
             // Add signer
-            addDummySigner1(true);
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "REQUEST_COOKIES_PREFIX", "ABC_"); // Use our CookieAuthorizer
-            workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_ANY", "TRUE"); // Allow any client access
-            workerSession.reloadConfiguration(getSignerIdDummy1());
-            getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
+            test.addDummySigner1(true);
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "AUTHTYPE", "org.signserver.server.CookieAuthorizer"); // Use our CookieAuthorizer
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "WORKERLOGGER", "org.signserver.server.log.SecurityEventsWorkerLogger"); // Use logging to database so that we can query the log
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "REQUEST_COOKIES_PREFIX", "ABC_"); // Use our CookieAuthorizer
+            workerSession.setWorkerProperty(test.getSignerIdDummy1(), "ALLOW_ANY", "TRUE"); // Allow any client access
+            workerSession.reloadConfiguration(test.getSignerIdDummy1());
+            test.getWorkerSession().activateSigner(new WorkerIdentifier(test.getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
 
             // Cookies with ABC_ prefix
             Map<String, String> cookies = new HashMap<>();
@@ -345,7 +361,7 @@ public class CookieAuthorizerTest extends WebTestCase {
             cookies.put("DSS_IP_ADDR", "212.97.132.147");
             
             // Send request
-            sendRequestWithCookie(getSignerNameDummy1(), cookies);
+            sendRequestWithCookie(test.getSignerNameDummy1(), cookies);
 
             // Query last log
             Map<String, Object> logFields = queryLastLogFields();
@@ -357,8 +373,8 @@ public class CookieAuthorizerTest extends WebTestCase {
             assertEquals("DSS_ENV_SERVER_ADDR", "x.x.x.x", logFields.get("ABC_DSS_ENV_SERVER_ADDR"));
             assertEquals("DSS_IP_ADDR", "212.97.132.147", logFields.get("ABC_DSS_IP_ADDR"));
         } finally {
-            removeWorker(getSignerIdDummy1());
-            workerSession.reloadConfiguration(getSignerIdDummy1());
+            test.removeWorker(test.getSignerIdDummy1());
+            workerSession.reloadConfiguration(test.getSignerIdDummy1());
         }
     }
 }

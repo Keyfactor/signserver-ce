@@ -37,6 +37,7 @@ import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.junit.FixMethodOrder;
@@ -77,7 +78,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
 
     /** Endpoint URL. */
     private final String ENDPOINT =
-            "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/SignServerWSService/SignServerWS?wsdl";
+            "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/signserverws/signserverws?wsdl";
 
     private static final String[] CONF_FILES = {
         "signserver_deploy.properties",
@@ -191,6 +192,9 @@ public class SignServerWSServiceTest extends ModulesTestCase {
             
             params.setSSLSocketFactory(sf);
             http.setTlsClientParameters(params);
+            
+            final HTTPClientPolicy policy = http.getClient();
+            policy.setAutoRedirect(true);
         }
     }
 

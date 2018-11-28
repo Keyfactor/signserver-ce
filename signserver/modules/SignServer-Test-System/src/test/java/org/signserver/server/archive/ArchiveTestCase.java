@@ -13,7 +13,6 @@
 package org.signserver.server.archive;
 
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;

@@ -1072,7 +1072,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         String timeoutString = "10000"; //milliseconds
         long timeout = Long.parseLong(timeoutString);
         long timediffBetweenProcessingAndTimeout;
-        long assumedTimeDiffBetweenProcessingAndTimeout = 1000; // Let's assume that there would not be more than 1 second of time difference between timeout and processing time 
+        long assumedTimeDiffBetweenProcessingAndTimeout = 5000; // Let's assume that there would not be more than 5 seconds of time difference between timeout and processing time 
         try {
             startTime = System.currentTimeMillis();
             execute("signdocument", "-workername", "TestXMLSigner", "-hosts", "primekey.com", "-timeout", timeoutString, "-data", "<root/>");
@@ -1098,7 +1098,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         String timeoutString = "20000"; //milliseconds
         long timeout = Long.parseLong(timeoutString);
         long timediffBetweenProcessingAndTimeout;
-        long assumedTimeDiffBetweenProcessingAndTimeout = 1000; // Let's assume that there would not be more than 1 second of time difference between timeout and processing time 
+        long assumedTimeDiffBetweenProcessingAndTimeout = 5000; // Let's assume that there would not be more than 5 seconds of time difference between timeout and processing time 
         try {
             startTime = System.currentTimeMillis();
             execute("signdocument", "-workername", "TestXMLSigner", "-hosts", "primekey.com", "-timeout", timeoutString, "-data", "<root/>");

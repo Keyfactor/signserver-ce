@@ -270,6 +270,21 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
     
     /**
+     * Tests that it is not allowed to specify both -infile and -outdir.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void test25Both_infile_And_outdir_NotAllowed() throws Exception {
+        LOG.info("test25Both_infile_And_outdir_NotAllowed");
+        try {
+            execute("signdocument", "-workername", "TestXMLSigner", "-outdir", "imaginary_out_dir_path", "-infile", "imaginary_in_file_path");
+            fail("Should have thrown exception about invalid combiination of arguments");
+        } catch (IllegalCommandArgumentsException expected) {
+        } // NOPMD
+    }
+    
+    /**
      * Test that illegal -loadbalancing value is not allowed.
      * 
      * @throws Exception 

@@ -524,6 +524,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         if (inFile != null && inDir != null) {
             throw new IllegalCommandArgumentsException("Can not specify both -infile and -indir");
         }
+        if (inFile != null && outDir != null) {
+            throw new IllegalCommandArgumentsException("Can not specify both -infile and -outdir");
+        }
 
         if (inDir != null && inDir.equals(outDir)) {
             throw new IllegalCommandArgumentsException("Can not specify the same directory as -indir and -outdir");

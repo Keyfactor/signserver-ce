@@ -135,18 +135,10 @@ public class SignServerWSServiceTest extends ModulesTestCase {
         } catch (IOException ex) {
             LOG.error("Not using signserver_deploy.properties: " + ex.getMessage());
         }
-        
-            
+    
         final File truststore = new File(home, "p12/truststore.jks");
-//            System.out.println("Truststore: " + truststore);
-//            System.setProperty("javax.net.ssl.trustStore", truststore);
-//        System.setProperty("javax.net.ssl.trustStorePassword",
-//                config.getProperty("java.trustpassword", "changeit"));
-        //System.setProperty("javax.net.ssl.keyStore", "../../p12/testadmin.jks");
-        //System.setProperty("javax.net.ssl.keyStorePassword", "foo123");
-        
         final String truststorePassword = config.getProperty("java.trustpassword", "changeit");
-        SSLSocketFactory sf = null; 
+        SSLSocketFactory socketFactory = null;
         
         try {
             final KeyStore keystore = KeyStore.getInstance("JKS");
@@ -158,13 +150,13 @@ public class SignServerWSServiceTest extends ModulesTestCase {
             final SSLContext context = SSLContext.getInstance("TLS");
             context.init(null, tmf.getTrustManagers(), new SecureRandom());
 
-            sf = context.getSocketFactory();
+            socketFactory = context.getSocketFactory();
         } catch (KeyStoreException | IOException | KeyManagementException |
                  NoSuchAlgorithmException | CertificateException e) {
             LOG.error("Could not read truststore: " + e.getMessage());
         }
         
-        return sf;
+        return socketFactory;
     }
     }
 

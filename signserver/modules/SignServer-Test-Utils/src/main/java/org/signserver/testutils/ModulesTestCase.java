@@ -214,9 +214,14 @@ public class ModulesTestCase extends TestCase {
             }
         }
 
-        // Load conf/signserver_deploy.properties
+        // Load conf/signserver_deploy.properties (if it is available)
         try (FileInputStream fin = new FileInputStream(new File(getSignServerHome(), "conf/signserver_deploy.properties"))) {
             deployConfig.load(fin);
+        } catch (FileNotFoundException ex) {
+            // This file is not currently needed for running unit tests so lets just ignore it
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No conf/signsever_deploy.properties: " + ex.getMessage());
+            }
         } catch (Exception ex) {
             fail("Could not load conf/signserver_deploy.properties: " + ex.getMessage());
         }

@@ -34,7 +34,6 @@ public class ValidationWSServiceTest extends org.signserver.test.validationws.v3
 
     public ValidationWSServiceTest() {
         super();
-        setupKeystores();
     }
 
     @Override

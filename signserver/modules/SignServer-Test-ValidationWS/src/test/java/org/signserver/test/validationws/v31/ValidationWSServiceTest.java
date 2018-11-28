@@ -17,8 +17,24 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.util.Map;
 import java.util.Properties;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.log4j.Logger;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
@@ -88,14 +104,15 @@ public class ValidationWSServiceTest extends ModulesTestCase {
         +"tmtQmg==";
 
     private ValidationWS ws;
+    private final SSLSocketFactory socketFactory;
 
     public ValidationWSServiceTest() {
         super();
-        setupKeystores();
+        socketFactory = setupKeystores();
     }
 
     /** Setup keystores for SSL. **/
-    protected void setupKeystores() {
+    protected SSLSocketFactory setupKeystores() {
         Properties config = new Properties();
         
         final File home;
@@ -128,13 +145,32 @@ public class ValidationWSServiceTest extends ModulesTestCase {
             } catch (IOException ex) {
                 LOG.error("Not using signserver_deploy.properties: " + ex.getMessage());
             }
-                final String truststore = new File(home, "p12/truststore.jks").getAbsolutePath();
-                System.out.println("Truststore: " + truststore);
-                System.setProperty("javax.net.ssl.trustStore", truststore);
-                System.setProperty("javax.net.ssl.trustStorePassword",
-                    config.getProperty("java.trustpassword", "changeit"));
-            //System.setProperty("javax.net.ssl.keyStore", "../../p12/testadmin.jks");
-            //System.setProperty("javax.net.ssl.keyStorePassword", "foo123");
+
+            final File truststoreFile = new File(home, "p12/truststore.jks");
+            final String truststorePassword =
+                    config.getProperty("java.truststorepassword", "changeit");
+            
+            SSLSocketFactory socketFactory = null;
+            
+            try {
+                KeyStore keystore = KeyStore.getInstance("JKS");
+                keystore.load(new FileInputStream(truststoreFile),
+                              truststorePassword.toCharArray());
+                
+                final TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+                tmf.init(keystore);
+                
+                final SSLContext context = SSLContext.getInstance("TLS");
+                context.init(null, tmf.getTrustManagers(), new SecureRandom());
+
+                socketFactory = context.getSocketFactory();
+            } catch (KeyStoreException | IOException |
+                     NoSuchAlgorithmException | CertificateException |
+                     KeyManagementException e) {
+                LOG.error("Failed to load truststore: " + e.getMessage());
+            }
+         
+            return socketFactory;
         }
     }
 
@@ -142,12 +178,32 @@ public class ValidationWSServiceTest extends ModulesTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         LOG.info("Initilizing test using WS URL: " + getWsEndPointUrl());
+        final URL resource =
+                getClass().getResource("/org/signserver/test/validationws/ValidationWS.wsdl");
         final QName qname
                 = new QName("gen.ws.validationservice.protocol.signserver.org",
                 "ValidationWSService");
-        final ValidationWSService wsService = new ValidationWSService(
-               new URL(getWsEndPointUrl()), qname);
+        final ValidationWSService wsService =
+                new ValidationWSService(resource, qname);
         ws =  wsService.getValidationWSPort();
+        
+        final BindingProvider bp = (BindingProvider) ws;
+        final Map<String, Object> requestContext = bp.getRequestContext();
+
+        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                           getWsEndPointUrl());
+
+        if (socketFactory != null) {
+            final Client client = ClientProxy.getClient(bp);
+            final HTTPConduit http = (HTTPConduit) client.getConduit();
+            final TLSClientParameters params = new TLSClientParameters();
+
+            params.setSSLSocketFactory(socketFactory);
+            http.setTlsClientParameters(params);
+            
+            final HTTPClientPolicy policy = http.getClient();
+            policy.setAutoRedirect(true);
+        }
     }
 
     /**

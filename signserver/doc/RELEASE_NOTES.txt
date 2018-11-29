@@ -2,8 +2,8 @@ SignServer 4.4.1
 ----------------
 
 Notice:
- - Java 7 is no longer supported by the SignClient tool when
-   using the CLIENTWS or WEBSERVICES protocols
+- Running SignClient with SignServer running on Glassfish 3.x
+  has not been completely tested for this release
 
 SignServer 4.3.2
 ----------------

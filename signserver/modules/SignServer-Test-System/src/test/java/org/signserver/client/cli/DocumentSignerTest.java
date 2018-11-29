@@ -1075,7 +1075,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
     
     /**
-     * Test that command failure occurs within 11 seconds if connection is not established with specified host 
+     * Test that command failure occurs within 15 seconds if connection is not established with specified host 
      * within time specified by timeout flag (10 seconds).
      * 
      * @throws Exception 
@@ -1101,7 +1101,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
     
     /**
-     * Test that command failure occurs within 21 seconds if connection is not established with specified host 
+     * Test that command failure occurs within 25 seconds if connection is not established with specified host 
      * within time specified by timeout flag (20 seconds).
      * 
      * @throws Exception 

@@ -279,7 +279,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         LOG.info("test25Both_infile_And_outdir_NotAllowed");
         try {
             execute("signdocument", "-workername", "TestXMLSigner", "-outdir", "imaginary_out_dir_path", "-infile", "imaginary_in_file_path");
-            fail("Should have thrown exception about invalid combiination of arguments");
+            fail("Should have thrown exception about invalid combination of arguments");
         } catch (IllegalCommandArgumentsException expected) {
         } // NOPMD
     }

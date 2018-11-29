@@ -208,6 +208,16 @@
                 <artifactId>cxf-rt-transports-http-jetty</artifactId>
                 <version>3.1.17</version>
             </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-server</artifactId>
+                <version>9.2.25.v20180606</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-util</artifactId>
+                <version>9.2.25.v20180606</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     

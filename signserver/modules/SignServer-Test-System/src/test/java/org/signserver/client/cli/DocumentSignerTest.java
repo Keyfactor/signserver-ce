@@ -1122,7 +1122,7 @@ public class DocumentSignerTest extends ModulesTestCase {
             endTime = System.currentTimeMillis();
             processingTime = endTime - startTime;
             timediffBetweenProcessingAndTimeout = processingTime - timeout;
-            assertTrue("processing time should be less than timeout limit, diff (ms): " +  + timediffBetweenProcessingAndTimeout, timediffBetweenProcessingAndTimeout < assumedTimeDiffBetweenProcessingAndTimeout);
+            assertTrue("processing time should be less than timeout limit, diff (ms): " + timediffBetweenProcessingAndTimeout, timediffBetweenProcessingAndTimeout < assumedTimeDiffBetweenProcessingAndTimeout);
         } // NOPMD
     }   
         

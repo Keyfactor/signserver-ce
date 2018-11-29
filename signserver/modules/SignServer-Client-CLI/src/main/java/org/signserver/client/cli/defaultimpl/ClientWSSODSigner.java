@@ -14,9 +14,7 @@ package org.signserver.client.cli.defaultimpl;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Map;

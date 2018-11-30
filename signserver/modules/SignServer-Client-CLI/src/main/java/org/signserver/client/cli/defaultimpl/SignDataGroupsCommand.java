@@ -185,7 +185,8 @@ public class SignDataGroupsCommand extends AbstractCommand {
         footer.append(NL)
                 .append("Sample usages:").append(NL)
                 .append("a) ").append(COMMAND).append(" -workername MRTDSODSigner -data \"1=value1&2=value2&3=value3\"").append(NL)
-                .append("b) ").append(COMMAND).append(" -workername MRTDSODSigner -data \"1=value1&2=value2&3=value3\" -metadata param1=value1 -metadata param2=value2").append(NL);
+                .append("b) ").append(COMMAND).append(" -workername MRTDSODSigner -data \"1=PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=&2=BTfUgfc6dXM0MoBS2jr5YmztlwKOILhJ9hFcIs12UZc=&3=idxq5/Bqn0a1Za8D6rDs4L9gJNNlm346HQNXPP6wtZ0=\"").append(NL)
+                .append("c) ").append(COMMAND).append(" -workername MRTDSODSigner -data \"1=value1&2=value2&3=value3\" -metadata param1=value1 -metadata param2=value2").append(NL);
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
         try (PrintWriter pw = new PrintWriter(bout)) {

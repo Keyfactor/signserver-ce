@@ -1,9 +1,18 @@
 SignServer 4.4.1
 ----------------
 
+General:
+- New Authorizer component for logging cookies from the request
+- Improvements to startup scripts
+
+SignClient:
+- While SignServer still requires Java 7 or 8, the Client command line interface (SignClient) can now additionally also be run on Java 11.
+- Error handling improvements
+
 Notice:
-- Running SignClient with SignServer running on Glassfish 3.x
-  has not been completely tested for this release
+- Running SignClient with SignServer running on GlassFish V3
+  has not been completely tested for this release.
+
 
 SignServer 4.3.2
 ----------------

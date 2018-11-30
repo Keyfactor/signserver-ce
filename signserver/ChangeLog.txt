@@ -1,3 +1,28 @@
+SignServer 4.4.1, 2018-12-03
+----------------------------
+
+** Bug
+    * [DSS-1763] - NPE when outfile is not specified
+    * [DSS-1808] - signserver & signserver-gui window scripts fail on launching
+    * [DSS-1809] - Requests sent to a worker with misconfigured Authorizer should give error
+    * [DSS-1833] - System.println committed as part of an other commit
+    * [DSS-1843] - CookieAuthorizer system tests requires DB but are not ignored in NODB mode
+    * [DSS-1844] - Systemtest with DocumentSignerClientsideBatchTest fails locally
+    * [DSS-1845] - No error message when specifying both infile and outdir
+
+** New Feature
+    * [DSS-1768] - Make SignClient with protocol HTTP run on Java 10+11
+    * [DSS-1792] - Make HTTP cookies available to workers and components
+    * [DSS-1793] - Authorizer logging cookies
+
+** Improvement
+    * [DSS-1810] - Improve error message when SIGNSERVER_HOME or SIGNCLIENT_HOME is not specified
+    * [DSS-1812] - Don't add prefix if the cookie name is already prefixed
+    * [DSS-1813] - ClientWS (and SignServerWS) with Java 10+ only works with certificates installed in Java's keystores
+    * [DSS-1839] - Add 4096 bit key and certificate to the sample keystore
+    * [DSS-1847] - Increase timeout difference threashold for DocumentSignerTest
+
+
 SignServer 4.3.2, 2018-11-13
 ----------------------------
 

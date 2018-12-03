@@ -106,11 +106,11 @@
             <header class="ht-sidebar-header">
                 <h1 class="ht-logo">
                     <span class="ht-logo-label">SIGNDS</span>
-                    <!-- <img class="space-logo" src="SIGNDS" /> -->
+                    <!-- <img class="space-logo" src="SIGNDS.png" /> -->
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.4.0</p>
+                    <p>Version: 4.4.1</p>
                 </div>
             </header>
 
@@ -839,6 +839,10 @@
         <a class="ht-nav-page-link" href="Dispatched_Authorizer.html">Dispatched Authorizer</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Cookie_Authorizer.html">Cookie Authorizer</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -1250,7 +1254,7 @@
     <p  >When selecting <strong class=" ">Load from file</strong> it is possible to load a configuration file. This is equivalent of the <strong class=" ">setproperties </strong><a   href="Administration_CLI.html">Admin CLI</a> command.    </p>
     <p  >Selecting <strong class=" ">Add worker</strong> enables setting up a worker from scratch by manually specifying a worker ID (the default selected will generate an ID dynamically), worker name, fully qualified class name for the implementation, and (optionally) a signer token implementation. Additional properties can be added using the table below.    </p>
     <p  >When the required parameters are given, the <strong class=" ">Next</strong> button will enable moving to the next step where additional manual editing of the resulting configuration can be made (the format is the same as the worker properties files). Clicking the <strong class=" ">Apply</strong> button from this stage will load the current configuration. The dialog can be dismissed in both states using the <strong class=" ">Cancel</strong> button.    </p>
-</li><li class=" ">    <p  ><strong class=" ">File -&gt; Export...</strong>:<br/>Opens the <strong class=" ">Export configuration</strong> dialog. This is the equivalent of the <strong class=" ">dumpproperties</strong> <a   href="Administration_CLI.html">Admin CLI</a> command. The dialog gives the option to export all workers, the selected workers or none. In addition it also gives the option to include all global configurations not related to any worker (always enabled if no workers choosen for export).    </p>
+</li><li class=" ">    <p  ><strong class=" ">File -&gt; Export...</strong>:<br/>Opens the <strong class=" ">Export configuration</strong> dialog. This is the equivalent of the <strong class=" ">dumpproperties</strong><a   href="Administration_CLI.html">Admin CLI</a> command. The dialog gives the option to export all workers, the selected workers or none. In addition it also gives the option to include all global configurations not related to any worker (always enabled if no workers choosen for export).    </p>
 </li><li class=" ">    <p  ><strong class=" ">File -&gt; Exit</strong>:<br/>Exits the SignServer Administration GUI    </p>
 </li><li class=" ">    <p  ><strong class=" ">Edit -&gt; Activate</strong>:<br/>Activates the selected worker(s).    </p>
 </li><li class=" ">    <p  ><strong class=" ">Edit -&gt; Deactivate</strong>:<br/>Deactivates the selected worker(s).    </p>

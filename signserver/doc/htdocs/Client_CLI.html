@@ -106,11 +106,11 @@
             <header class="ht-sidebar-header">
                 <h1 class="ht-logo">
                     <span class="ht-logo-label">SIGNDS</span>
-                    <!-- <img class="space-logo" src="SIGNDS" /> -->
+                    <!-- <img class="space-logo" src="SIGNDS.png" /> -->
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.4.0</p>
+                    <p>Version: 4.4.1</p>
                 </div>
             </header>
 
@@ -839,6 +839,10 @@
         <a class="ht-nav-page-link" href="Dispatched_Authorizer.html">Dispatched Authorizer</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Cookie_Authorizer.html">Cookie Authorizer</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -1217,18 +1221,22 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Integration.html">SignServer Integration</a></li>
                                                             </ul>
-</div>            <h1 id="src-16221245"> <span>Client CLI</span></h1>
+</div>            <h1 id="src-26773025"> <span>Client CLI</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >Requests can be sent to the workers using the SignServer Client Command Line Interface (CLI) SignClient.    </p>
+    <p  >The SignServer Client CLI SignClient is used for sending requests to the workers.    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">$ bin/signclient</code></div>
-<div class="line"><code class="plain">usage: signclient &lt;signdocument | validatedocument | timestamp | validatecertificate | signdatagroups | clientsidesign&gt;</code></div>
+<div class="line"><code class="plain">usage: signclient &lt;signdocument | validatedocument | timestamp | validatecertificate | signdatagroups&gt;</code></div>
 </div>
     </div>
+    <p  >Run SignClient from <tt class=" ">SIGNSERVER_HOME</tt> or <tt class=" ">SIGNSERVER_HOME\bin</tt> or specify the home directory using one of the following parameters to allow running SignClient from any directory:    </p>
+<ul class=" "><li class=" ">    <p  >SIGNCLIENT_HOME: SignClient specific environment variable for specifying the home directory. Takes precedence over the SIGNSERVER_HOME variable.    </p>
+</li><li class=" ">    <p  >SIGNSERVER_HOME: General SignServer environment variable also valid for SignClient if the SIGNCLIENT_HOME variable is not set.    </p>
+</li></ul>    <p  >    </p>
     <p  >The following sections cover options and sample usages of the following SignClient commands:    </p>
 <ul class="childpages-macro "><li class=" ">    <p  ><a   href="signdocument.html">Client CLI signdocument Command</a>    </p>
 </li><li class=" ">    <p  ><a   href="validatedocument.html">Client CLI validatedocument Command</a>    </p>
@@ -1236,7 +1244,6 @@
 </li><li class=" ">    <p  ><a   href="validatecertificate.html">Client CLI validatecertificate Command</a>    </p>
 </li><li class=" ">    <p  ><a   href="signdatagroups.html">Client CLI signdatagroups Command</a>    </p>
 </li></ul>    <p  >For information on logging, see <a   href="Client_Logging.html">Client Logging</a>.    </p>
-    <p  >    </p>
         </div>
 
     </article>

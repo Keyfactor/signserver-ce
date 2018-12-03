@@ -106,11 +106,11 @@
             <header class="ht-sidebar-header">
                 <h1 class="ht-logo">
                     <span class="ht-logo-label">SIGNDS</span>
-                    <!-- <img class="space-logo" src="SIGNDS" /> -->
+                    <!-- <img class="space-logo" src="SIGNDS.png" /> -->
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.4.0</p>
+                    <p>Version: 4.4.1</p>
                 </div>
             </header>
 
@@ -839,6 +839,10 @@
         <a class="ht-nav-page-link" href="Dispatched_Authorizer.html">Dispatched Authorizer</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Cookie_Authorizer.html">Cookie Authorizer</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -1219,14 +1223,13 @@
                                         <li class="shortcut"><a href="SignServer_Integration.html">SignServer Integration</a></li>
                                                                                      <li><a href="Client_CLI.html">Client CLI</a></li>
                                                             </ul>
-</div>            <h1 id="src-16228793"> <span>signdatagroups</span></h1>
+</div>            <h1 id="src-26776313"> <span>signdatagroups</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >Sign the specified data groups and produce an SOd (MRTD).    </p>
-<pre class="prettyprint ">$ bin/signclient signdatagroups<br/>usage: signdatagroups &lt;options&gt;<br/>Request MRTD data groups to be signed<br/> -data &lt;arg&gt;            Data to send to the worker.<br/> -encoding &lt;arg&gt;        Encoding of the data option. None or base64.<br/>                        Default: none.<br/> -host &lt;arg&gt;            Server name or IP address. Default: localhost<br/> -keyalias &lt;arg&gt;        Alias of the key in the keystore to use for<br/>                        authentication.<br/> -keystore &lt;arg&gt;        Keystore with private key and certificate for<br/>                        client certificate authentication.<br/> -keystorepwd &lt;arg&gt;     Password for reading the keystore.  If keystore is<br/>                        specified but not this keystore password option,<br/>                        the CLI will instead prompt for the password.<br/> -metadata &lt;arg&gt;        Additional meta data to send to the signer. The<br/>                              parameters should be given in the form KEY=VALUE.<br/>                              This option can be given multiple times.<br/> -password &lt;arg&gt;        Password for authentication. If username is<br/>                        specified but not this password option, the CLI<br/>                        will instead prompt for the password.<br/> -port &lt;arg&gt;            Server port. Default: 8080 (for HTTP), 8442 for<br/>                        HTTPS and 8443 for HTTPS with client<br/>                        authentication.<br/> -protocol &lt;arg&gt;        Method of interacting with SignServer. HTTP or<br/>                        CLIENTWS. Default: HTTP.<br/> -repeat &lt;arg&gt;          Run the operation this number of times. Default: 1<br/> -servlet &lt;arg&gt;         Servlet to call. Default /signserver/sod<br/> -truststore &lt;arg&gt;      Keystore with trusted certificates to use with<br/>                        HTTPS.<br/> -truststorepwd &lt;arg&gt;   Password for the keystore with trusted<br/>                        certificates. If truststore is specified but not<br/>                        this truststore password option, the CLI will<br/>                        instead prompt for the password.<br/> -username &lt;arg&gt;        Username for authentication.<br/> -workerid &lt;arg&gt;        ID of worker which should perform the operation.<br/> -workername &lt;arg&gt;      Name of worker which should perform the operation.<br/><br/>Sample usages:<br/>a) signdatagroups -workername MRTDSODSigner -data &quot;1=value1&amp;2=value2&amp;3=value3&quot;<br/>b) signdatagroups -workername MRTDSODSigner -data &quot;1=value1&amp;2=value2&amp;3=value3&quot; -metadata param1=value1 -metadata param2=value2</pre>    <p  >    </p>
-        </div>
+<pre class=" ">$ bin/signclient signdatagroups<br/>usage: signdatagroups &lt;options&gt;<br/>Request MRTD data groups to be signed<br/> -data &lt;arg&gt;            Data to send to the worker.<br/> -encoding &lt;arg&gt;        Encoding of the data option. None or base64.<br/>                        Default: none.<br/> -host &lt;arg&gt;            Server name or IP address. Default: localhost<br/> -keyalias &lt;arg&gt;        Alias of the key in the keystore to use for<br/>                        authentication.<br/> -keystore &lt;arg&gt;        Keystore with private key and certificate for<br/>                        client certificate authentication.<br/> -keystorepwd &lt;arg&gt;     Password for reading the keystore.  If keystore is<br/>                        specified but not this keystore password option,<br/>                        the CLI will instead prompt for the password.<br/> -metadata &lt;arg&gt;        Additional meta data to send to the signer. The<br/>                              parameters should be given in the form KEY=VALUE.<br/>                              This option can be given multiple times.<br/> -password &lt;arg&gt;        Password for authentication. If username is<br/>                        specified but not this password option, the CLI<br/>                        will instead prompt for the password.<br/> -port &lt;arg&gt;            Server port. Default: 8080 (for HTTP), 8442 for<br/>                        HTTPS and 8443 for HTTPS with client<br/>                        authentication.<br/> -protocol &lt;arg&gt;        Method of interacting with SignServer. HTTP or<br/>                        CLIENTWS. Default: HTTP.<br/> -repeat &lt;arg&gt;          Run the operation this number of times. Default: 1<br/> -servlet &lt;arg&gt;         Servlet to call. Default /signserver/sod<br/> -truststore &lt;arg&gt;      Keystore with trusted certificates to use with<br/>                        HTTPS.<br/> -truststorepwd &lt;arg&gt;   Password for the keystore with trusted<br/>                        certificates. If truststore is specified but not<br/>                        this truststore password option, the CLI will<br/>                        instead prompt for the password.<br/> -username &lt;arg&gt;        Username for authentication.<br/> -workerid &lt;arg&gt;        ID of worker which should perform the operation.<br/> -workername &lt;arg&gt;      Name of worker which should perform the operation.</pre><pre class=" ">Sample usages:<br/>a) signdatagroups -workername MRTDSODSigner -data<br/>&quot;1=value1&amp;2=value2&amp;3=value3&quot;<br/>b) signdatagroups -workername MRTDSODSigner -data<br/>&quot;1=PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4=&amp;2=BTfUgfc6dXM0MoBS2jr5Ymzt<br/>lwKOILhJ9hFcIs12UZc=&amp;3=idxq5/Bqn0a1Za8D6rDs4L9gJNNlm346HQNXPP6wtZ0=&quot;<br/>c) signdatagroups -workername MRTDSODSigner -data<br/>&quot;1=value1&amp;2=value2&amp;3=value3&quot; -metadata param1=value1 -metadata<br/>param2=value2</pre>        </div>
 
     </article>
 

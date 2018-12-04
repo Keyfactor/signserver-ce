@@ -9,6 +9,7 @@ SignServer 4.4.1, 2018-12-03
     * [DSS-1843] - CookieAuthorizer system tests requires DB but are not ignored in NODB mode
     * [DSS-1844] - Systemtest with DocumentSignerClientsideBatchTest fails locally
     * [DSS-1845] - No error message when specifying both infile and outdir
+    * [DSS-1853] - Security: security issue
 
 ** New Feature
     * [DSS-1768] - Make SignClient with protocol HTTP run on Java 10+11

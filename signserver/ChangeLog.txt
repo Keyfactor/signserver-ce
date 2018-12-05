@@ -22,6 +22,7 @@ SignServer 4.4.1, 2018-12-03
     * [DSS-1813] - ClientWS (and SignServerWS) with Java 10+ only works with certificates installed in Java's keystores
     * [DSS-1839] - Add 4096 bit key and certificate to the sample keystore
     * [DSS-1847] - Increase timeout difference threashold for DocumentSignerTest
+    * [DSS-1854] - Regression: Unable to connect with AdminGUI remotely
 
 
 SignServer 4.3.2, 2018-11-13

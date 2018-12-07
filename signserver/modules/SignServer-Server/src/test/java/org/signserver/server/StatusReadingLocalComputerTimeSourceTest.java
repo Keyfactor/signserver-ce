@@ -366,14 +366,14 @@ public class StatusReadingLocalComputerTimeSourceTest extends TestCase {
     
     /** 
      * Test that requesting time when a leap second is near,
-     * but with the time stamp near midnight, but in the local time zone
+     * but with the time stamp near midnight, but in a non-GMT time zone.
      * Test that the time source is not pausing in this case.
      * 
      * @throws Exception
      */
-    public void test11RequestTimeLocalTimezone() throws Exception {
-        LOG.info("test11RequestTimeLocalTimezone");
-    	Calendar cal = Calendar.getInstance();
+    public void test11RequestOtherTimezone1() throws Exception {
+        LOG.info("test11RequestOtherTimezone1");
+    	Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT-1:00"));
         cal.set(2012, 11, 31, 23, 59, 59);
         
         // Strategy: PAUSE

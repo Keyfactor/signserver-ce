@@ -13,6 +13,9 @@
         <!-- BouncyCastle artifacts name, so we can easily switch to the debug ones -->
         <bouncycastle.bcpkix.artifact>bcpkix-jdk15on</bouncycastle.bcpkix.artifact>
         <bouncycastle.bcprov.artifact>bcprov-jdk15on</bouncycastle.bcprov.artifact>
+        
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <profiles>

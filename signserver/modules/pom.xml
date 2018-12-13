@@ -161,6 +161,7 @@
                 <executions>
                     <execution>
                         <id>module-desc</id>
+                        <phase>install</phase>
                         <goals>
                             <goal>create-module-descriptor</goal>
                         </goals>

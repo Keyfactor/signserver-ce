@@ -161,6 +161,14 @@
                 <executions>
                     <execution>
                         <id>module-desc</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>create-module-descriptor</goal>
+                        </goals>
+                        <configuration/>
+                    </execution>
+                    <execution>
+                        <id>module-desc2</id>
                         <phase>install</phase>
                         <goals>
                             <goal>create-module-descriptor</goal>

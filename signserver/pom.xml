@@ -231,7 +231,7 @@
                 <plugin>
                     <groupId>org.signserver.deploytools</groupId>
                     <artifactId>DeployTools-Maven</artifactId>
-                    <version>2.2</version>
+                    <version>2.2.1-SNAPSHOT</version>
                 </plugin>
 
                 <plugin>

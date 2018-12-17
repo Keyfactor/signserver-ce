@@ -31,7 +31,7 @@ import org.signserver.common.data.SignatureRequest;
 import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.WritableData;
 import org.signserver.server.archive.Archivable;
-import org.signserver.server.archive.olddbarchiver.ArchiveDataArchivable;
+import org.signserver.server.archive.ArchiveDataArchivable;
 import org.signserver.server.signers.BaseSigner;
 
 /**

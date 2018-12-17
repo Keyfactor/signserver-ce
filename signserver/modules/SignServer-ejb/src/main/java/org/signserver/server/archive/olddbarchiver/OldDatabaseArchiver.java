@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server.archive.olddbarchiver;
 
+import org.signserver.server.archive.ArchiveDataArchivable;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collections;

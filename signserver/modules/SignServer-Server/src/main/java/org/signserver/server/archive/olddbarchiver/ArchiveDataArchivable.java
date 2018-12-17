@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.server.archive;
+package org.signserver.server.archive.olddbarchiver;
 
 import org.signserver.common.ArchiveData;
 import org.signserver.server.archive.AbstractArchivable;

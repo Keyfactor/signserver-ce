@@ -48,7 +48,7 @@ public class AccounterTest extends ModulesTestCase {
             addSigner(Test1Signer.class.getName(), true);
             
             // Setup Accounter
-            getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "ACCOUNTER", NoAccounter.class.getName());
+            getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "ACCOUNTER", "org.signserver.server.NoAccounter");
             getWorkerSession().reloadConfiguration(getSignerIdDummy1());
         
             // Process

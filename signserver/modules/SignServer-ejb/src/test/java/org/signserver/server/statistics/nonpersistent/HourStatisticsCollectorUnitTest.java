@@ -14,8 +14,9 @@ package org.signserver.server.statistics.nonpersistent;
 
 import java.util.Calendar;
 import java.util.List;
-
-import junit.framework.TestCase;
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
+import org.junit.Test;
 
 import org.signserver.common.NonPersistentStatisticsConstants;
 import org.signserver.common.StatisticsConstants;
@@ -23,58 +24,49 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.server.statistics.Event;
 import org.signserver.server.statistics.StatisticsEntry;
 
-/**
- * TODO: Document me!
- * 
- * @version $Id$
- */
-public class DayStatisticsCollectorTest extends TestCase {
+public class HourStatisticsCollectorUnitTest {
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-
+    @Test
     public void testBasics() throws Exception {
-        DayStatisticsCollector dc = genDayStatisticsCollector(null);
+        HourStatisticsCollector hc = genHourStatisticsCollector(null);
 
         Calendar currentTime = Calendar.getInstance();
         currentTime.setTimeInMillis(System.currentTimeMillis());
 
-        assertNotNull(dc.genCurrentStartPeriod());
+        assertNotNull(hc.genCurrentStartPeriod());
         Calendar currentStartTime = Calendar.getInstance();
-        currentStartTime.setTime(dc.genCurrentStartPeriod());
+        currentStartTime.setTime(hc.genCurrentStartPeriod());
         assertTrue(currentTime.get(Calendar.DAY_OF_MONTH) == currentStartTime.get(Calendar.DAY_OF_MONTH));
-        assertTrue(currentStartTime.get(Calendar.HOUR) == 0);
+        assertTrue(currentTime.get(Calendar.HOUR) == currentStartTime.get(Calendar.HOUR));
         assertTrue(currentStartTime.get(Calendar.MINUTE) == 0);
         assertTrue(currentStartTime.get(Calendar.SECOND) == 0);
         assertTrue(currentStartTime.get(Calendar.MILLISECOND) == 0);
 
-        assertNotNull(dc.genCurrentEndPeriod());
+        assertNotNull(hc.genCurrentEndPeriod());
         Calendar currentEndTime = Calendar.getInstance();
-        currentEndTime.setTime(dc.genCurrentEndPeriod());
+        currentEndTime.setTime(hc.genCurrentEndPeriod());
         assertTrue(currentTime.get(Calendar.DAY_OF_MONTH) == currentEndTime.get(Calendar.DAY_OF_MONTH));
-        assertTrue(currentEndTime.get(Calendar.HOUR_OF_DAY) == 23);
-        assertTrue(currentEndTime.get(Calendar.HOUR) == 11);
+        assertTrue(currentTime.get(Calendar.HOUR) == currentEndTime.get(Calendar.HOUR));
         assertTrue(currentEndTime.get(Calendar.MINUTE) == 59);
         assertTrue(currentEndTime.get(Calendar.SECOND) == 59);
         assertTrue(currentEndTime.get(Calendar.MILLISECOND) == 999);
-        assertTrue("" + dc.getExpireTime(), dc.getExpireTime() == (Long.parseLong(NonPersistentStatisticsConstants.DEFAULT_DAYSTATISTICS_EXPIRETIME) * 1000));
+        assertTrue("" + hc.getExpireTime(), hc.getExpireTime() == (Long.parseLong(NonPersistentStatisticsConstants.DEFAULT_HOURSTATISTICS_EXPIRETIME) * 1000));
 
-        assertTrue(dc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size() == 0);
+        assertTrue(hc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size() == 0);
 
-        dc.addEvent(getEvent());
-        dc.addEvent(getEvent());
-        List<StatisticsEntry> list = dc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null);
+        hc.addEvent(getEvent());
+        hc.addEvent(getEvent());
+        List<StatisticsEntry> list = hc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null);
         assertTrue(list.size() == 1);
         assertTrue(list.get(0).getNumberOfEvents() == 2);
 
-        dc.flush();
-        assertTrue(dc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size() == 0);
+        hc.flush();
+        assertTrue(hc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size() == 0);
     }
 
+    @Test
     public void testFifoQueue() throws Exception {
-        DayStatisticsCollector hc = genDayStatisticsCollector("1");
+        HourStatisticsCollector hc = genHourStatisticsCollector("1");
         hc.addEvent(getEvent());
         assertTrue(hc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size() == 1);
         Thread.sleep(1050);
@@ -82,11 +74,11 @@ public class DayStatisticsCollectorTest extends TestCase {
 
     }
 
-    private DayStatisticsCollector genDayStatisticsCollector(String expireTime) {
-        DayStatisticsCollector ret = new DayStatisticsCollector();
+    private HourStatisticsCollector genHourStatisticsCollector(String expireTime) {
+        HourStatisticsCollector ret = new HourStatisticsCollector();
         WorkerConfig config = new WorkerConfig();
         if (expireTime != null) {
-            config.setProperty(NonPersistentStatisticsConstants.DAYSTATISTICS_EXPIRETIME, expireTime);
+            config.setProperty(NonPersistentStatisticsConstants.HOURSTATISTICS_EXPIRETIME, expireTime);
         }
         ret.init(123, config, null);
 

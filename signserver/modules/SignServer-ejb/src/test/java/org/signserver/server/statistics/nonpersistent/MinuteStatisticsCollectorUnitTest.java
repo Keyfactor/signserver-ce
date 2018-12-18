@@ -13,21 +13,18 @@
 package org.signserver.server.statistics.nonpersistent;
 
 import java.util.Calendar;
-
-import junit.framework.TestCase;
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
+import org.junit.Test;
 
 import org.signserver.common.NonPersistentStatisticsConstants;
 import org.signserver.common.StatisticsConstants;
 import org.signserver.common.WorkerConfig;
 import org.signserver.server.statistics.Event;
 
-public class MinuteStatisticsCollectorTest extends TestCase {
-
-        @Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
+public class MinuteStatisticsCollectorUnitTest {
 	
+        @Test
 	public void testBasics() throws Exception {
 		MinuteStatisticsCollector mc = genMinuteStatisticsCollector(null);
 		
@@ -71,24 +68,7 @@ public class MinuteStatisticsCollectorTest extends TestCase {
 		Thread.sleep(1050);
 		assertTrue(mc.fetchStatistics(StatisticsConstants.QUERYTYPE_ALL, null, null).size() == 0);
 		
-	}
-	
-	/*
-	public void testFifoQueue() throws Exception {
-		MinuteStatisticsCollector mc = genMinuteStatisticsCollector("1");
-		mc.addEvent(getEvent());
-		mc.addEvent(getEvent());
-		Thread.sleep(500);
-		mc.addEvent(getEvent());
-		assertTrue(mc.fetchStatistics(StatisticsConstants.TYPE_ALL, null, null).size() == 3);
-		assertTrue(mc.fetchStatistics(StatisticsConstants.TYPE_ALL, new Date(System.currentTimeMillis() - 300), null).size() == 1);
-		assertTrue(mc.fetchStatistics(StatisticsConstants.TYPE_ALL, new Date(System.currentTimeMillis() - 600), new Date(System.currentTimeMillis() - 500)).size() == 2);
-		assertTrue(mc.fetchStatistics(StatisticsConstants.TYPE_ALL, null, new Date(System.currentTimeMillis() - 500)).size() == 2);
-		
-		Thread.sleep(550);
-		assertTrue(mc.fetchStatistics(StatisticsConstants.TYPE_ALL, null, null).size() == 1);
-	}*/
-	
+        }
 	
 	private MinuteStatisticsCollector genMinuteStatisticsCollector(String expireTime){
 		MinuteStatisticsCollector ret = new MinuteStatisticsCollector();		

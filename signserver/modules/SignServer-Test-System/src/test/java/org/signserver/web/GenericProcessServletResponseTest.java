@@ -59,7 +59,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         addDummySigner1(false);
         addCMSSigner1();
         addXMLValidator();
-        addSigner(EchoRequestMetadataSigner.class.getName(), 123, "DummySigner123", true);
+        addSigner("org.signserver.server.signers.EchoRequestMetadataSigner", 123, "DummySigner123", true);
         getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), ModulesTestCase.KEYSTORE_PASSWORD);
         getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdCMSSigner1()), ModulesTestCase.KEYSTORE_PASSWORD);
     }

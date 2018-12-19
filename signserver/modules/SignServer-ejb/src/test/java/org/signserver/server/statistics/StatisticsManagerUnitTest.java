@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.server.statistics;
 
-import org.signserver.common.SignServerException;
 import org.signserver.common.StatisticsConstants;
 import org.signserver.common.WorkerConfig;
 

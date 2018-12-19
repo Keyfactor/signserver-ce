@@ -138,8 +138,8 @@
             <groupId>asm</groupId>
             <artifactId>asm</artifactId>
             <version>3.3.1</version>
-        </dependency>
-    </dependencies>
+        </dependency> 
+   </dependencies>
     <build>
         <plugins>
             <plugin>

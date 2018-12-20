@@ -16,6 +16,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.PublicKey;
 import java.security.Security;
 import java.security.cert.Certificate;
@@ -48,18 +49,29 @@ public class MockedCryptoToken extends BaseCryptoToken {
     private final PublicKey publicKey;
     private final Certificate signerCertificate;
     private final List<Certificate> certificateChain;
-    private final String provider;
+    private final Provider provider;
+    private final String providerName;
 
     private int privateKeyCalls;
     
-    public MockedCryptoToken(PrivateKey privateKey, PublicKey publicKey, Certificate signerCertificate, List<Certificate> certificateChain, String provider) {
+    public MockedCryptoToken(PrivateKey privateKey, PublicKey publicKey, Certificate signerCertificate, List<Certificate> certificateChain, String providerName) {
+        this.privateKey = privateKey;
+        this.publicKey = publicKey;
+        this.signerCertificate = signerCertificate;
+        this.certificateChain = certificateChain;
+        this.providerName = providerName;
+        this.provider = null;
+    }
+
+    public MockedCryptoToken(PrivateKey privateKey, PublicKey publicKey, Certificate signerCertificate, List<Certificate> certificateChain, Provider provider) {
         this.privateKey = privateKey;
         this.publicKey = publicKey;
         this.signerCertificate = signerCertificate;
         this.certificateChain = certificateChain;
         this.provider = provider;
+        this.providerName = null;
     }
-    
+
     @Override
     public void init(int workerId, Properties props, IServices services) throws CryptoTokenInitializationFailureException {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -99,7 +111,11 @@ public class MockedCryptoToken extends BaseCryptoToken {
 
     public String getProvider(int providerUsage) {
         LOG.debug(">getProvider");
-        return provider;
+        if (provider == null) {
+            return providerName;
+        } else {
+            return provider.getName();
+        }
     }
 
     public Certificate getCertificate(int purpose) throws CryptoTokenOfflineException {
@@ -145,7 +161,7 @@ public class MockedCryptoToken extends BaseCryptoToken {
 
     @Override
     public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, NoSuchAliasException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException {
-        return new DefaultCryptoInstance(alias, context, Security.getProvider(provider), privateKey, certificateChain);
+        return new DefaultCryptoInstance(alias, context, provider == null ? Security.getProvider(providerName) : provider, privateKey, certificateChain);
     }
 
     @Override

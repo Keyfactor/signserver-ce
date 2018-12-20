@@ -15,7 +15,6 @@ package org.signserver.module.xmlsigner;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
-import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import org.apache.log4j.Logger;
@@ -57,7 +56,6 @@ public class XMLSignerUnitTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        Security.addProvider(new BouncyCastleProvider());
         tokenRSA = generateToken(KeyType.RSA);
         tokenDSA = generateToken(KeyType.DSA);
         tokenECDSA = generateToken(KeyType.ECDSA);
@@ -72,18 +70,19 @@ public class XMLSignerUnitTest {
     private static MockedCryptoToken generateToken(final KeyType keyType) throws Exception {
         final KeyPair signerKeyPair;
         final String signatureAlgorithm;
+        final BouncyCastleProvider provider = new BouncyCastleProvider();
 
         switch (keyType) {
         case RSA:
-            signerKeyPair = CryptoUtils.generateRSA(1024);
+            signerKeyPair = CryptoUtils.generateRSA(1024, provider);
             signatureAlgorithm = "SHA1withRSA";
             break;
         case DSA:
-            signerKeyPair = CryptoUtils.generateDSA(1024);
+            signerKeyPair = CryptoUtils.generateDSA(1024, provider);
             signatureAlgorithm = "SHA1withDSA";
             break;
         case ECDSA:
-            signerKeyPair = CryptoUtils.generateEcCurve("prime256v1");
+            signerKeyPair = CryptoUtils.generateEcCurve("prime256v1", provider);
             signatureAlgorithm = "SHA1withECDSA";
             break;
         default:
@@ -94,10 +93,10 @@ public class XMLSignerUnitTest {
                 new Certificate[] {new JcaX509CertificateConverter().getCertificate(new CertBuilder().
                         setSelfSignKeyPair(signerKeyPair).
                         setSignatureAlgorithm(signatureAlgorithm)
+                        .setProvider(provider)
                         .build())};
         final Certificate signerCertificate = certChain[0];
-        return new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), "BC");
-
+        return new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), provider);
     }
 
     /**

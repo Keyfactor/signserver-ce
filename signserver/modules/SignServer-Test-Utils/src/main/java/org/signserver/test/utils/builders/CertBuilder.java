@@ -62,6 +62,7 @@ public class CertBuilder implements Cloneable {
     private Set<CertExt> extensions = new HashSet<>();
     private boolean[] issuerUniqueId;
     private boolean[] subjectUniqueId;
+    private Provider provider;
 
     public Date getNotAfter() {
         if (notAfter == null) {
@@ -175,6 +176,11 @@ public class CertBuilder implements Cloneable {
         return this;
     }
     
+    public CertBuilder setProvider(Provider provider) {
+        this.provider = provider;
+        return this;
+    }
+
     /**
      * Builds a certificate based on the specified values and default values 
      * for everything not specified but required.
@@ -183,6 +189,12 @@ public class CertBuilder implements Cloneable {
      */
     public X509CertificateHolder build() throws CertBuilderException {
         try {
+            final JcaContentSignerBuilder contentSignerBuilder = new JcaContentSignerBuilder(getSignatureAlgorithm());
+            if (provider != null) {
+                contentSignerBuilder.setProvider(provider);
+            }
+            ContentSigner contentSigner = contentSignerBuilder.build(getIssuerPrivateKey());
+
             if (isVersion3()) {
                 JcaX509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(getIssuer(), getSerialNumber(), getNotBefore(), getNotAfter(), getSubject(), getSubjectPublicKey());
                 
@@ -196,13 +208,9 @@ public class CertBuilder implements Cloneable {
                     builder.setSubjectUniqueID(getSubjectUniqueId());
                 }
 //                builder.setSubjectUniqueID(issuerUniqueId)
-               
-    
-                ContentSigner contentSigner = new JcaContentSignerBuilder(getSignatureAlgorithm()).setProvider("BC").build(getIssuerPrivateKey());
                 return builder.build(contentSigner);
             } else {
                 JcaX509v1CertificateBuilder builder = new JcaX509v1CertificateBuilder(getIssuer(), getSerialNumber(), getNotBefore(), getNotAfter(), getSubject(), getSubjectPublicKey());
-                ContentSigner contentSigner = new JcaContentSignerBuilder(getSignatureAlgorithm()).setProvider("BC").build(getIssuerPrivateKey());
                 return builder.build(contentSigner);
             }
         } catch (OperatorCreationException | NoSuchAlgorithmException | NoSuchProviderException | CertIOException ex) {

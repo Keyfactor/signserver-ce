@@ -134,6 +134,8 @@ public class XMLSigner extends BaseSigner {
             }
         }
         
+        SignServerUtil.installBCProviderIfNotAvailable();
+        
     }
 
     @Override

@@ -246,6 +246,7 @@ public class XMLSigner extends BaseSigner {
                 throw new SignServerException("Document parsing error", ex);
             }
             DOMSignContext dsc = new DOMSignContext(privKey, doc.getDocumentElement());
+            dsc.setProperty("org.jcp.xml.dsig.internal.dom.SignatureProvider", crypto.getProvider());
 
             XMLSignature signature = fac.newXMLSignature(si, ki);
             try {

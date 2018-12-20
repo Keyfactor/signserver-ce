@@ -133,9 +133,6 @@ public class XMLSigner extends BaseSigner {
                 configErrors.add("XMLSigner does not support digest algorithm: " + digestAlgorithmString);
             }
         }
-        
-        SignServerUtil.installBCProviderIfNotAvailable();
-        
     }
 
     @Override

@@ -25,6 +25,11 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import org.junit.Assume;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
@@ -34,7 +39,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
-import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 
 /**
  * Tests for XMLSigner.
@@ -45,9 +49,10 @@ import org.signserver.ejb.interfaces.GlobalConfigurationSession;
  * @version $Id$
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class XMLSignerTest extends ModulesTestCase {
+public class XMLSignerTest {
 
     private static final Logger LOG = Logger.getLogger(XMLSignerTest.class);
+    private final ModulesTestCase mt = new ModulesTestCase();
 
     /** WORKERID used in this test case as defined in junittest-part-config.properties */
     private static final int WORKERID = 5676;
@@ -63,25 +68,26 @@ public class XMLSignerTest extends ModulesTestCase {
 
     private static final String TESTXML1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root><my-tag>My Data</my-tag></root>";
 
-    private final WorkerSession workerSession = getWorkerSession();
-    private final ProcessSessionRemote processSession = getProcessSession();
-    private final GlobalConfigurationSession globalSession = getGlobalSession();
-    
+    private final WorkerSession workerSession = mt.getWorkerSession();
+    private final ProcessSessionRemote processSession = mt.getProcessSession();
+
     private static final String DIGEST_METHOD_URI_SHA512 = "http://www.w3.org/2001/04/xmlenc#sha512";
     private static final String DIGEST_METHOD_URI_SHA1 = "http://www.w3.org/2000/09/xmldsig#sha1";
     private static final String DIGEST_METHOD_URI_SHA256 = "http://www.w3.org/2001/04/xmlenc#sha256";
     private static final String DIGEST_METHOD_URI_RIPEMD160 = "http://www.w3.org/2001/04/xmlenc#ripemd160";
     private static final String DIGEST_METHOD_URI_SHA384 = "http://www.w3.org/2001/04/xmldsig-more#sha384";
+        
+    private static final double TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS = 1.7;
+    private static final double JAVA_VERSION = ModulesTestCase.getJavaVersion();
     
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        addSigner("org.signserver.module.xmlsigner.XMLSigner", WORKERID, "TestXMLSigner", true);
+        mt.addSigner("org.signserver.module.xmlsigner.XMLSigner", WORKERID, "TestXMLSigner", true);
         
         // Update path to JKS file
         workerSession.setWorkerProperty(WORKERID2, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlsigner.XMLSigner");
@@ -89,7 +95,7 @@ public class XMLSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID2, "NAME", "TestXMLSignerDSA");
         workerSession.setWorkerProperty(WORKERID2, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(WORKERID2, "KEYSTOREPATH",
-                new File(getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsigner4.jks").getAbsolutePath());
+                new File(mt.getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsigner4.jks").getAbsolutePath());
         workerSession.setWorkerProperty(WORKERID2, "KEYSTOREPASSWORD", "foo123");
         workerSession.setWorkerProperty(WORKERID2, "DEFAULTKEY", "xmlsigner4");
         workerSession.reloadConfiguration(WORKERID2);
@@ -99,13 +105,13 @@ public class XMLSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID3, "NAME", "TestXMLSignerECDSA");
         workerSession.setWorkerProperty(WORKERID3, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(WORKERID3, "KEYSTOREPATH",
-                new File(getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsignerec.p12").getAbsolutePath());
+                new File(mt.getSignServerHome() + File.separator + "res" + File.separator + "test" + File.separator + "xmlsignerec.p12").getAbsolutePath());
         workerSession.setWorkerProperty(WORKERID3, "KEYSTOREPASSWORD", "foo123");
         workerSession.setWorkerProperty(WORKERID3, "DEFAULTKEY",
                 "23b427f763311df918fc10e44e19528634b4193c");
         workerSession.reloadConfiguration(WORKERID3);
         
-        addSigner("org.signserver.module.xmlsigner.DebugSigner", DEBUGWORKER, "XMLDebugSigner", false);
+        mt.addSigner("org.signserver.module.xmlsigner.DebugSigner", DEBUGWORKER, "XMLDebugSigner", false);
     }
 
     /**
@@ -144,7 +150,7 @@ public class XMLSignerTest extends ModulesTestCase {
         assertSame("Request ID", reqid, res.getRequestID());
 
         try ( // Output for manual inspection
-                FileOutputStream fos = new FileOutputStream(new File(getSignServerHome()
+                FileOutputStream fos = new FileOutputStream(new File(mt.getSignServerHome()
                         + File.separator
                         + "tmp" + File.separator + "signedxml_" + workerId + "_" + sigAlg + ".xml"))) {
             fos.write((byte[]) data);
@@ -269,6 +275,11 @@ public class XMLSignerTest extends ModulesTestCase {
 
     @Test
     public void test08BasicXmlSignDSADefaultSigAlg() throws Exception {
+        
+        // Looks like SHA256withDSA is not supported as signature algorithm by SUN provider in all Java 7 versions
+        // so let's run this test with Java 8 and higher versions only
+        Assume.assumeTrue("Test not supported by Java version " + JAVA_VERSION, JAVA_VERSION > TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS);
+
         testBasicXmlSign(WORKERID2, null, null, "http://www.w3.org/2009/xmldsig11#dsa-sha256", DIGEST_METHOD_URI_SHA256);
     }
     
@@ -379,7 +390,7 @@ public class XMLSignerTest extends ModulesTestCase {
     @Test
     public void test99TearDownDatabase() throws Exception {
         for (int workerId : WORKERS) {
-            removeWorker(workerId);
+            mt.removeWorker(workerId);
         }
     }
 

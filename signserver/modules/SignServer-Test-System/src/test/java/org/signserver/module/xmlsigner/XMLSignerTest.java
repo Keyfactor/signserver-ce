@@ -29,7 +29,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import org.junit.Assume;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.*;
@@ -76,10 +75,7 @@ public class XMLSignerTest {
     private static final String DIGEST_METHOD_URI_SHA256 = "http://www.w3.org/2001/04/xmlenc#sha256";
     private static final String DIGEST_METHOD_URI_RIPEMD160 = "http://www.w3.org/2001/04/xmlenc#ripemd160";
     private static final String DIGEST_METHOD_URI_SHA384 = "http://www.w3.org/2001/04/xmldsig-more#sha384";
-        
-    private static final double TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS = 1.7;
-    private static final double JAVA_VERSION = ModulesTestCase.getJavaVersion();
-    
+
     @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
@@ -275,11 +271,6 @@ public class XMLSignerTest {
 
     @Test
     public void test08BasicXmlSignDSADefaultSigAlg() throws Exception {
-        
-        // Looks like SHA256withDSA is not supported as signature algorithm by SUN provider in all Java 7 versions
-        // so let's run this test with Java 8 and higher versions only
-        Assume.assumeTrue("Test not supported by Java version " + JAVA_VERSION, JAVA_VERSION > TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS);
-
         testBasicXmlSign(WORKERID2, null, null, "http://www.w3.org/2009/xmldsig11#dsa-sha256", DIGEST_METHOD_URI_SHA256);
     }
     

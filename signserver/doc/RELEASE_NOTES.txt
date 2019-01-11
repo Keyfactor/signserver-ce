@@ -1,3 +1,9 @@
+SignServer 5.0.0
+----------------
+
+Notice:
+- Building and running SignServer on Java 7 is no longer supported.
+
 SignServer 4.4.1
 ----------------
 

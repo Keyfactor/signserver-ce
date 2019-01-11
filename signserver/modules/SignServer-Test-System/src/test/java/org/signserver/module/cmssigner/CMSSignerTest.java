@@ -64,10 +64,6 @@ public class CMSSignerTest  {
     private final WorkerSession workerSession;
     private final ProcessSessionRemote processSession;
     private final ModulesTestCase mt = new ModulesTestCase();
-    
-    static {
-        JAVA_VERSION = ModulesTestCase.getJavaVersion();
-    }
 
     public CMSSignerTest() {
         workerSession = mt.getWorkerSession();

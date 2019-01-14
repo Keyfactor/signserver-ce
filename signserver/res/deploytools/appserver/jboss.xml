@@ -20,37 +20,25 @@
         <fail message="Please set the property 'appserver.home' or environment variable APPSRV_HOME" unless="appserver.home"/>    
         <condition property="supported.appserver">
             <or>
-                <equals arg1="${appserver.subtype}" arg2="jboss7" />
                 <equals arg1="${appserver.subtype}" arg2="jbosseap6" />
             </or>
         </condition>
         <fail message="Unsupported application server, supported application servers are listed in the installation manual." unless="supported.appserver"/>
-        <condition property="jboss7">
-            <or>
-                <equals arg1="${appserver.subtype}" arg2="jboss7" />
-                <equals arg1="${appserver.subtype}" arg2="jbosseap6" />
-            </or>
-        </condition>
 
-        <!-- Exclude dom4j on JBoss AS 7 as it does not work (and on EAP 6 only conistency) -->
+        <!-- Exclude dom4j on JBoss EAP 6.x -->
         <condition property="appserver.lib.excludes" value="lib/ext/hibernate/dom4j-*.jar">
             <or>
-                <equals arg1="${appserver.subtype}" arg2="jboss7" />
                 <equals arg1="${appserver.subtype}" arg2="jbosseap6" />
             </or>
         </condition>
     </target>
 
-    <target name="j2ee:configure"  unless="deploy.hostname.node1" depends="j2ee:check, -set-deploy-dir-jboss-other, -set-deploy-dir-jboss7"/>
+    <target name="j2ee:configure"  unless="deploy.hostname.node1" depends="j2ee:check, -set-deploy-dir-jboss"/>
 
-    <target name="-set-deploy-dir-jboss-other" depends="j2ee:check" unless="jboss7">
-        <fail message="Not supported"/>
-    </target>
-
-    <target name="-set-deploy-dir-jboss7" depends="j2ee:check" if="jboss7">
+    <target name="-set-deploy-dir-jboss" depends="j2ee:check">
         <property name="jboss.deploy.dir" location="${appserver.home}/standalone/deployments"/>
     </target>
-
+    
     <target name="j2ee:deploy" depends="j2ee:configure" >
         <echo message="Deploying ${ear.dist.file} to ${jboss.deploy.dir}"/>
         <copy file="${ear.dist.file}" todir="${jboss.deploy.dir}" failonerror="true"/>

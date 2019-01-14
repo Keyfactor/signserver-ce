@@ -3,6 +3,8 @@ SignServer 5.0.0
 
 Notice:
 - Building and running SignServer on Java 7 is no longer supported.
+- SignServer now requires a Java EE 7+ application server. Support for JBoss AS 7 has thus been dropped.
+
 
 SignServer 4.4.1
 ----------------

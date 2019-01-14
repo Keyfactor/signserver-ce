@@ -43,7 +43,6 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import static org.signserver.server.cryptotokens.CryptoTokenHelper.SECRET_KEY_PREFIX;
-import org.signserver.testutils.ModulesTestCase;
 
 /**
  * JKS CryptoToken test uses JKS file on file system, The JKS keystore in the file uses a standard PKCS12 format.
@@ -62,15 +61,9 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
     private static final int CRYPTO_TOKEN = 10300;
     private static final String CRYPTO_TOKEN_NAME = "TestJKSCryptoToken";
     private final String testSecretKeyAlias = "testsecretkey";
-    private static final double TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS= 1.7; 
-    private static final double JAVA_VERSION;    
     private static final String KEYSTORE_NAME = "jkstestkeystore1234";
     private File keystoreFile;
-    private final File keystore; 
-            
-    static {
-        JAVA_VERSION = ModulesTestCase.getJavaVersion();
-    }
+    private final File keystore;
     
     public JKSCryptoTokenTest() throws FileNotFoundException {
         keystore = new File(getSignServerHome(), "res/test/samplejkskeystore.jks");
@@ -99,11 +92,7 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
     @Test
     public void testGenerateSecretKey_AES_256() throws Exception {
         LOG.info("testGenerateSecretKey_AES_256");
-        if (JAVA_VERSION > TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS) {
-            secretKeyGenerationHelper("AES", "256");
-        } else {
-            LOG.info("Test is not supported by Java Version so do nothing");
-        }
+        secretKeyGenerationHelper("AES", "256");
     }
     
     /**
@@ -114,11 +103,7 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
     @Test
     public void testGenerateSecretKey_DES_56() throws Exception {
         LOG.info("testGenerateSecretKey_DES_56");
-        if (JAVA_VERSION > TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS) {
-            secretKeyGenerationHelper("DES", "56");
-        } else {
-            LOG.info("Test is not supported by Java Version so do nothing");
-        }
+        secretKeyGenerationHelper("DES", "56");
     }
     
     /**
@@ -129,11 +114,7 @@ public class JKSCryptoTokenTest extends CryptoTokenTestBase {
     @Test
     public void testGenerateSecretKey_Blowfish_168_JKSTypeP12CryptoToken() throws Exception {
         LOG.info("testGenerateSecretKey_Blowfish_168_JKSTypeP12CryptoToken");
-        if (JAVA_VERSION > TEST_NOT_SUPPORTS_THIS_AND_OLDER_VERSIONS) {
-            secretKeyGenerationHelper(SECRET_KEY_PREFIX + "Blowfish", "168");
-        } else {
-            LOG.info("Test is not supported by Java Version so do nothing");
-        }
+        secretKeyGenerationHelper(SECRET_KEY_PREFIX + "Blowfish", "168");
     }
     
     private void secretKeyGenerationHelper(String algo, String keySpec) throws Exception {

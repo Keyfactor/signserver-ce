@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.0.0.Alpha2-SNAPSHOT</version>
+        <version>5.0.0.Alpha1</version>
     </parent>
     <artifactId>SignServer-AdminGUI</artifactId>
     <name>SignServer-AdminGUI</name>
@@ -57,12 +57,12 @@
         <dependency>
             <groupId>org.signserver</groupId>
             <artifactId>SignServer-Client-CLientWS</artifactId>
-            <version>5.0.0.Alpha2-SNAPSHOT</version>
+            <version>5.0.0.Alpha1</version>
         </dependency>
         <dependency>
             <groupId>org.signserver</groupId>
             <artifactId>SignServer-Client-SigningAndValidationAPI</artifactId>
-            <version>5.0.0.Alpha2-SNAPSHOT</version>
+            <version>5.0.0.Alpha1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.cxf</groupId>
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>org.signserver</groupId>
             <artifactId>SignServer-Module-Renewal-interfaces</artifactId>
-            <version>5.0.0.Alpha2-SNAPSHOT</version>
+            <version>5.0.0.Alpha1</version>
         </dependency>
     </dependencies>
     <build>

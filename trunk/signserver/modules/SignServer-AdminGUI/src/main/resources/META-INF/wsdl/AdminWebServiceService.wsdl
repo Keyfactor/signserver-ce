@@ -1,0 +1,1842 @@
+<definitions name='AdminWSService' targetNamespace='http://adminws.signserver.org/' xmlns='http://schemas.xmlsoap.org/wsdl/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:tns='http://adminws.signserver.org/' xmlns:xsd='http://www.w3.org/2001/XMLSchema'>
+ <types>
+  <xs:schema targetNamespace='http://adminws.signserver.org/' version='1.0' xmlns:tns='http://adminws.signserver.org/' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+   <xs:element name='AdminNotAuthorizedException' type='tns:AdminNotAuthorizedException'/>
+   <xs:element name='AuthorizationDeniedException' type='tns:AuthorizationDeniedException'/>
+   <xs:element name='CertificateException' type='tns:CertificateException'/>
+   <xs:element name='CryptoTokenAuthenticationFailureException' type='tns:CryptoTokenAuthenticationFailureException'/>
+   <xs:element name='CryptoTokenOfflineException' type='tns:CryptoTokenOfflineException'/>
+   <xs:element name='IllegalRequestException' type='tns:IllegalRequestException'/>
+   <xs:element name='InvalidWorkerIdException' type='tns:InvalidWorkerIdException'/>
+   <xs:element name='KeyStoreException' type='tns:KeyStoreException'/>
+   <xs:element name='OperationUnsupportedException' type='tns:OperationUnsupportedException'/>
+   <xs:element name='QueryException' type='tns:QueryException'/>
+   <xs:element name='ResyncException' type='tns:ResyncException'/>
+   <xs:element name='SignServerException' type='tns:SignServerException'/>
+   <xs:element name='activateSigner' type='tns:activateSigner'/>
+   <xs:element name='activateSignerResponse' type='tns:activateSignerResponse'/>
+   <xs:element name='addAuthorizedClient' type='tns:addAuthorizedClient'/>
+   <xs:element name='addAuthorizedClientResponse' type='tns:addAuthorizedClientResponse'/>
+   <xs:element name='deactivateSigner' type='tns:deactivateSigner'/>
+   <xs:element name='deactivateSignerResponse' type='tns:deactivateSignerResponse'/>
+   <xs:element name='destroyKey' type='tns:destroyKey'/>
+   <xs:element name='destroyKeyResponse' type='tns:destroyKeyResponse'/>
+   <xs:element name='generateSignerKey' type='tns:generateSignerKey'/>
+   <xs:element name='generateSignerKeyResponse' type='tns:generateSignerKeyResponse'/>
+   <xs:element name='getAuthorizedClients' type='tns:getAuthorizedClients'/>
+   <xs:element name='getAuthorizedClientsResponse' type='tns:getAuthorizedClientsResponse'/>
+   <xs:element name='getCurrentWorkerConfig' type='tns:getCurrentWorkerConfig'/>
+   <xs:element name='getCurrentWorkerConfigResponse' type='tns:getCurrentWorkerConfigResponse'/>
+   <xs:element name='getGlobalConfiguration' type='tns:getGlobalConfiguration'/>
+   <xs:element name='getGlobalConfigurationResponse' type='tns:getGlobalConfigurationResponse'/>
+   <xs:element name='getKeyUsageCounterValue' type='tns:getKeyUsageCounterValue'/>
+   <xs:element name='getKeyUsageCounterValueResponse' type='tns:getKeyUsageCounterValueResponse'/>
+   <xs:element name='getPKCS10CertificateRequest' type='tns:getPKCS10CertificateRequest'/>
+   <xs:element name='getPKCS10CertificateRequestForAlias' type='tns:getPKCS10CertificateRequestForAlias'/>
+   <xs:element name='getPKCS10CertificateRequestForAliasResponse' type='tns:getPKCS10CertificateRequestForAliasResponse'/>
+   <xs:element name='getPKCS10CertificateRequestForKey' type='tns:getPKCS10CertificateRequestForKey'/>
+   <xs:element name='getPKCS10CertificateRequestForKeyResponse' type='tns:getPKCS10CertificateRequestForKeyResponse'/>
+   <xs:element name='getPKCS10CertificateRequestResponse' type='tns:getPKCS10CertificateRequestResponse'/>
+   <xs:element name='getSignerCertificate' type='tns:getSignerCertificate'/>
+   <xs:element name='getSignerCertificateChain' type='tns:getSignerCertificateChain'/>
+   <xs:element name='getSignerCertificateChainResponse' type='tns:getSignerCertificateChainResponse'/>
+   <xs:element name='getSignerCertificateResponse' type='tns:getSignerCertificateResponse'/>
+   <xs:element name='getSigningValidityNotAfter' type='tns:getSigningValidityNotAfter'/>
+   <xs:element name='getSigningValidityNotAfterResponse' type='tns:getSigningValidityNotAfterResponse'/>
+   <xs:element name='getSigningValidityNotBefore' type='tns:getSigningValidityNotBefore'/>
+   <xs:element name='getSigningValidityNotBeforeResponse' type='tns:getSigningValidityNotBeforeResponse'/>
+   <xs:element name='getStatus' type='tns:getStatus'/>
+   <xs:element name='getStatusResponse' type='tns:getStatusResponse'/>
+   <xs:element name='getWorkerId' type='tns:getWorkerId'/>
+   <xs:element name='getWorkerIdResponse' type='tns:getWorkerIdResponse'/>
+   <xs:element name='getWorkers' type='tns:getWorkers'/>
+   <xs:element name='getWorkersResponse' type='tns:getWorkersResponse'/>
+   <xs:element name='globalReload' type='tns:globalReload'/>
+   <xs:element name='globalReloadResponse' type='tns:globalReloadResponse'/>
+   <xs:element name='globalResync' type='tns:globalResync'/>
+   <xs:element name='globalResyncResponse' type='tns:globalResyncResponse'/>
+   <xs:element name='importCertificateChain' type='tns:importCertificateChain'/>
+   <xs:element name='importCertificateChainResponse' type='tns:importCertificateChainResponse'/>
+   <xs:element name='process' type='tns:process'/>
+   <xs:element name='processResponse' type='tns:processResponse'/>
+   <xs:element name='queryArchive' type='tns:queryArchive'/>
+   <xs:element name='queryArchiveResponse' type='tns:queryArchiveResponse'/>
+   <xs:element name='queryArchiveWithIds' type='tns:queryArchiveWithIds'/>
+   <xs:element name='queryArchiveWithIdsResponse' type='tns:queryArchiveWithIdsResponse'/>
+   <xs:element name='queryAuditLog' type='tns:queryAuditLog'/>
+   <xs:element name='queryAuditLogResponse' type='tns:queryAuditLogResponse'/>
+   <xs:element name='queryTokenEntries' type='tns:queryTokenEntries'/>
+   <xs:element name='queryTokenEntriesResponse' type='tns:queryTokenEntriesResponse'/>
+   <xs:element name='reloadConfiguration' type='tns:reloadConfiguration'/>
+   <xs:element name='reloadConfigurationResponse' type='tns:reloadConfigurationResponse'/>
+   <xs:element name='removeAuthorizedClient' type='tns:removeAuthorizedClient'/>
+   <xs:element name='removeAuthorizedClientResponse' type='tns:removeAuthorizedClientResponse'/>
+   <xs:element name='removeGlobalProperty' type='tns:removeGlobalProperty'/>
+   <xs:element name='removeGlobalPropertyResponse' type='tns:removeGlobalPropertyResponse'/>
+   <xs:element name='removeKey' type='tns:removeKey'/>
+   <xs:element name='removeKeyResponse' type='tns:removeKeyResponse'/>
+   <xs:element name='removeWorkerProperty' type='tns:removeWorkerProperty'/>
+   <xs:element name='removeWorkerPropertyResponse' type='tns:removeWorkerPropertyResponse'/>
+   <xs:element name='setGlobalProperty' type='tns:setGlobalProperty'/>
+   <xs:element name='setGlobalPropertyResponse' type='tns:setGlobalPropertyResponse'/>
+   <xs:element name='setWorkerProperty' type='tns:setWorkerProperty'/>
+   <xs:element name='setWorkerPropertyResponse' type='tns:setWorkerPropertyResponse'/>
+   <xs:element name='testKey' type='tns:testKey'/>
+   <xs:element name='testKeyResponse' type='tns:testKeyResponse'/>
+   <xs:element name='uploadSignerCertificate' type='tns:uploadSignerCertificate'/>
+   <xs:element name='uploadSignerCertificateChain' type='tns:uploadSignerCertificateChain'/>
+   <xs:element name='uploadSignerCertificateChainResponse' type='tns:uploadSignerCertificateChainResponse'/>
+   <xs:element name='uploadSignerCertificateResponse' type='tns:uploadSignerCertificateResponse'/>
+   <xs:complexType name='process'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='workerIdOrName' type='xs:string'/>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='processRequest' type='xs:base64Binary'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='processResponse'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='return' type='xs:base64Binary'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='InvalidWorkerIdException'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='message' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='IllegalRequestException'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='message' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='CryptoTokenOfflineException'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='message' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='SignServerException'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='message' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='AdminNotAuthorizedException'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='message' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getStatus'>
+    <xs:sequence>
+     <xs:element name='workerId' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getStatusResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:wsWorkerStatus'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='wsWorkerStatus'>
+    <xs:sequence>
+     <xs:element name='activeConfig'>
+      <xs:complexType>
+       <xs:sequence>
+        <xs:element maxOccurs='unbounded' minOccurs='0' name='entry'>
+         <xs:complexType>
+          <xs:sequence>
+           <xs:element minOccurs='0' name='key' type='xs:anyType'/>
+           <xs:element minOccurs='0' name='value' type='xs:anyType'/>
+          </xs:sequence>
+         </xs:complexType>
+        </xs:element>
+       </xs:sequence>
+      </xs:complexType>
+     </xs:element>
+     <xs:element minOccurs='0' name='completeStatusText' type='xs:string'/>
+     <xs:element minOccurs='0' name='hostname' type='xs:string'/>
+     <xs:element minOccurs='0' name='ok' type='xs:string'/>
+     <xs:element minOccurs='0' name='statusText' type='xs:string'/>
+     <xs:element name='workerId' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getWorkerId'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='workerName' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getWorkerIdResponse'>
+    <xs:sequence>
+     <xs:element name='return' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='reloadConfiguration'>
+    <xs:sequence>
+     <xs:element name='workerId' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='reloadConfigurationResponse'>
+    <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name='activateSigner'>
+    <xs:sequence>
+     <xs:element name='signerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='authenticationCode' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='activateSignerResponse'>
+    <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name='CryptoTokenAuthenticationFailureException'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='message' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='deactivateSigner'>
+    <xs:sequence>
+     <xs:element name='signerId' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='deactivateSignerResponse'>
+    <xs:sequence>
+     <xs:element name='return' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getCurrentWorkerConfig'>
+    <xs:sequence>
+     <xs:element name='workerId' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getCurrentWorkerConfigResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:wsWorkerConfig'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='wsWorkerConfig'>
+    <xs:sequence>
+     <xs:element name='properties'>
+      <xs:complexType>
+       <xs:sequence>
+        <xs:element maxOccurs='unbounded' minOccurs='0' name='entry'>
+         <xs:complexType>
+          <xs:sequence>
+           <xs:element minOccurs='0' name='key' type='xs:anyType'/>
+           <xs:element minOccurs='0' name='value' type='xs:anyType'/>
+          </xs:sequence>
+         </xs:complexType>
+        </xs:element>
+       </xs:sequence>
+      </xs:complexType>
+     </xs:element>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='setWorkerProperty'>
+    <xs:sequence>
+     <xs:element name='workerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='key' type='xs:string'/>
+     <xs:element minOccurs='0' name='value' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='setWorkerPropertyResponse'>
+    <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name='removeWorkerProperty'>
+    <xs:sequence>
+     <xs:element name='workerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='key' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='removeWorkerPropertyResponse'>
+    <xs:sequence>
+     <xs:element name='return' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getAuthorizedClients'>
+    <xs:sequence>
+     <xs:element name='workerId' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getAuthorizedClientsResponse'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='return' type='tns:authorizedClient'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='authorizedClient'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='certSN' type='xs:string'/>
+     <xs:element minOccurs='0' name='issuerDN' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='addAuthorizedClient'>
+    <xs:sequence>
+     <xs:element name='workerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='authClient' type='tns:authorizedClient'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='addAuthorizedClientResponse'>
+    <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name='removeAuthorizedClient'>
+    <xs:sequence>
+     <xs:element name='workerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='authClient' type='tns:authorizedClient'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='removeAuthorizedClientResponse'>
+    <xs:sequence>
+     <xs:element name='return' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getPKCS10CertificateRequest'>
+    <xs:sequence>
+     <xs:element name='signerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='certReqInfo' type='tns:pkcs10CertReqInfo'/>
+     <xs:element name='explicitEccParameters' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='pkcs10CertReqInfo'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='attributes' type='tns:asn1Set'/>
+     <xs:element minOccurs='0' name='signatureAlgorithm' type='xs:string'/>
+     <xs:element minOccurs='0' name='subjectDN' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType abstract='true' name='asn1Set'>
+    <xs:complexContent>
+     <xs:extension base='tns:asn1Primitive'>
+      <xs:sequence/>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType abstract='true' name='asn1Primitive'>
+    <xs:complexContent>
+     <xs:extension base='tns:asn1Object'>
+      <xs:sequence/>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType abstract='true' name='asn1Object'>
+    <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name='getPKCS10CertificateRequestResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:base64SignerCertReqData'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='base64SignerCertReqData'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='base64CertReq' type='xs:base64Binary'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getPKCS10CertificateRequestForKey'>
+    <xs:sequence>
+     <xs:element name='signerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='certReqInfo' type='tns:pkcs10CertReqInfo'/>
+     <xs:element name='explicitEccParameters' type='xs:boolean'/>
+     <xs:element name='defaultKey' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getPKCS10CertificateRequestForKeyResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:base64SignerCertReqData'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getPKCS10CertificateRequestForAlias'>
+    <xs:sequence>
+     <xs:element name='signerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='certReqInfo' type='tns:pkcs10CertReqInfo'/>
+     <xs:element name='explicitEccParameters' type='xs:boolean'/>
+     <xs:element minOccurs='0' name='keyAlias' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getPKCS10CertificateRequestForAliasResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:base64SignerCertReqData'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getSignerCertificate'>
+    <xs:sequence>
+     <xs:element name='signerId' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getSignerCertificateResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='xs:base64Binary'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getSignerCertificateChain'>
+    <xs:sequence>
+     <xs:element name='signerId' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getSignerCertificateChainResponse'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='return' type='xs:base64Binary'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getSigningValidityNotAfter'>
+    <xs:sequence>
+     <xs:element name='workerId' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getSigningValidityNotAfterResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='xs:dateTime'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getSigningValidityNotBefore'>
+    <xs:sequence>
+     <xs:element name='workerId' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getSigningValidityNotBeforeResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='xs:dateTime'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getKeyUsageCounterValue'>
+    <xs:sequence>
+     <xs:element name='workerId' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getKeyUsageCounterValueResponse'>
+    <xs:sequence>
+     <xs:element name='return' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='destroyKey'>
+    <xs:sequence>
+     <xs:element name='signerId' type='xs:int'/>
+     <xs:element name='purpose' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='destroyKeyResponse'>
+    <xs:sequence>
+     <xs:element name='return' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='generateSignerKey'>
+    <xs:sequence>
+     <xs:element name='signerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='keyAlgorithm' type='xs:string'/>
+     <xs:element minOccurs='0' name='keySpec' type='xs:string'/>
+     <xs:element minOccurs='0' name='alias' type='xs:string'/>
+     <xs:element minOccurs='0' name='authCode' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='generateSignerKeyResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='testKey'>
+    <xs:sequence>
+     <xs:element name='signerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='alias' type='xs:string'/>
+     <xs:element minOccurs='0' name='authCode' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='testKeyResponse'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='return' type='tns:keyTestResult'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='keyTestResult'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='alias' type='xs:string'/>
+     <xs:element minOccurs='0' name='publicKeyHash' type='xs:string'/>
+     <xs:element minOccurs='0' name='status' type='xs:string'/>
+     <xs:element name='success' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='KeyStoreException'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='message' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='removeKey'>
+    <xs:sequence>
+     <xs:element name='signerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='alias' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='removeKeyResponse'>
+    <xs:sequence>
+     <xs:element name='return' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='uploadSignerCertificate'>
+    <xs:sequence>
+     <xs:element name='signerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='signerCert' type='xs:base64Binary'/>
+     <xs:element minOccurs='0' name='scope' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='uploadSignerCertificateResponse'>
+    <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name='uploadSignerCertificateChain'>
+    <xs:sequence>
+     <xs:element name='signerId' type='xs:int'/>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='signerCerts' type='xs:base64Binary'/>
+     <xs:element minOccurs='0' name='scope' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='uploadSignerCertificateChainResponse'>
+    <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name='setGlobalProperty'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='scope' type='xs:string'/>
+     <xs:element minOccurs='0' name='key' type='xs:string'/>
+     <xs:element minOccurs='0' name='value' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='setGlobalPropertyResponse'>
+    <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name='removeGlobalProperty'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='scope' type='xs:string'/>
+     <xs:element minOccurs='0' name='key' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='removeGlobalPropertyResponse'>
+    <xs:sequence>
+     <xs:element name='return' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getGlobalConfiguration'>
+    <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name='getGlobalConfigurationResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:wsGlobalConfiguration'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='wsGlobalConfiguration'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='appVersion' type='xs:string'/>
+     <xs:element name='clusterClassLoaderEnabled' type='xs:boolean'/>
+     <xs:element name='config'>
+      <xs:complexType>
+       <xs:sequence>
+        <xs:element maxOccurs='unbounded' minOccurs='0' name='entry'>
+         <xs:complexType>
+          <xs:sequence>
+           <xs:element minOccurs='0' name='key' type='xs:anyType'/>
+           <xs:element minOccurs='0' name='value' type='xs:anyType'/>
+          </xs:sequence>
+         </xs:complexType>
+        </xs:element>
+       </xs:sequence>
+      </xs:complexType>
+     </xs:element>
+     <xs:element name='requireSigning' type='xs:boolean'/>
+     <xs:element minOccurs='0' name='state' type='xs:string'/>
+     <xs:element name='useClassVersions' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getWorkers'>
+    <xs:sequence>
+     <xs:element name='workerType' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='getWorkersResponse'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='return' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='globalResync'>
+    <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name='globalResyncResponse'>
+    <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name='ResyncException'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='message' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='globalReload'>
+    <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name='globalReloadResponse'>
+    <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name='importCertificateChain'>
+    <xs:sequence>
+     <xs:element name='workerId' type='xs:int'/>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='certificateChain' type='xs:base64Binary'/>
+     <xs:element minOccurs='0' name='alias' type='xs:string'/>
+     <xs:element minOccurs='0' name='authenticationCode' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='importCertificateChainResponse'>
+    <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name='CertificateException'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='message' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='OperationUnsupportedException'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='message' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='queryAuditLog'>
+    <xs:sequence>
+     <xs:element name='startIndex' type='xs:int'/>
+     <xs:element name='max' type='xs:int'/>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='condition' type='tns:queryCondition'/>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='ordering' type='tns:queryOrdering'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='queryCondition'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='column' type='xs:string'/>
+     <xs:element minOccurs='0' name='operator' type='tns:relationalOperator'/>
+     <xs:element minOccurs='0' name='value' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='queryOrdering'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='column' type='xs:string'/>
+     <xs:element minOccurs='0' name='order' type='tns:order'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='queryAuditLogResponse'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='return' type='tns:logEntry'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='logEntry'>
+    <xs:sequence>
+     <xs:element name='additionalDetails'>
+      <xs:complexType>
+       <xs:sequence>
+        <xs:element maxOccurs='unbounded' minOccurs='0' name='entry'>
+         <xs:complexType>
+          <xs:sequence>
+           <xs:element minOccurs='0' name='key' type='xs:string'/>
+           <xs:element minOccurs='0' name='value' type='xs:string'/>
+          </xs:sequence>
+         </xs:complexType>
+        </xs:element>
+       </xs:sequence>
+      </xs:complexType>
+     </xs:element>
+     <xs:element minOccurs='0' name='authToken' type='xs:string'/>
+     <xs:element minOccurs='0' name='customId' type='xs:string'/>
+     <xs:element minOccurs='0' name='eventStatus' type='tns:eventStatus'/>
+     <xs:element minOccurs='0' name='eventType' type='xs:string'/>
+     <xs:element minOccurs='0' name='moduleType' type='xs:string'/>
+     <xs:element minOccurs='0' name='nodeId' type='xs:string'/>
+     <xs:element minOccurs='0' name='searchDetail1' type='xs:string'/>
+     <xs:element minOccurs='0' name='searchDetail2' type='xs:string'/>
+     <xs:element minOccurs='0' name='sequenceNumber' type='xs:long'/>
+     <xs:element minOccurs='0' name='serviceType' type='xs:string'/>
+     <xs:element minOccurs='0' name='timeStamp' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='queryArchive'>
+    <xs:sequence>
+     <xs:element name='startIndex' type='xs:int'/>
+     <xs:element name='max' type='xs:int'/>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='condition' type='tns:queryCondition'/>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='ordering' type='tns:queryOrdering'/>
+     <xs:element name='includeData' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='queryArchiveResponse'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='return' type='tns:archiveEntry'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='archiveEntry'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='archiveData' type='xs:base64Binary'/>
+     <xs:element minOccurs='0' name='archiveId' type='xs:string'/>
+     <xs:element minOccurs='0' name='requestCertSerialNumber' type='xs:string'/>
+     <xs:element minOccurs='0' name='requestIP' type='xs:string'/>
+     <xs:element minOccurs='0' name='requestIssuerDN' type='xs:string'/>
+     <xs:element minOccurs='0' name='signerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='time' type='xs:long'/>
+     <xs:element minOccurs='0' name='type' type='xs:int'/>
+     <xs:element minOccurs='0' name='uniqueId' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='queryArchiveWithIds'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='uniqueIds' type='xs:string'/>
+     <xs:element name='includeData' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='queryArchiveWithIdsResponse'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='return' type='tns:archiveEntry'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='queryTokenEntries'>
+    <xs:sequence>
+     <xs:element name='workerId' type='xs:int'/>
+     <xs:element name='startIndex' type='xs:int'/>
+     <xs:element name='max' type='xs:int'/>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='condition' type='tns:queryCondition'/>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='ordering' type='tns:queryOrdering'/>
+     <xs:element name='includeData' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='queryTokenEntriesResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:tokenSearchResults'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='tokenSearchResults'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='entries' nillable='true' type='tns:tokenEntry'/>
+     <xs:element minOccurs='0' name='moreEntriesAvailable' type='xs:boolean'/>
+     <xs:element minOccurs='0' name='numMoreEntries' type='xs:long'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='tokenEntry'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='alias' type='xs:string'/>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='chain' nillable='true' type='xs:base64Binary'/>
+     <xs:element minOccurs='0' name='creationDate' type='xs:dateTime'/>
+     <xs:element name='info'>
+      <xs:complexType>
+       <xs:sequence>
+        <xs:element maxOccurs='unbounded' minOccurs='0' name='entry'>
+         <xs:complexType>
+          <xs:sequence>
+           <xs:element minOccurs='0' name='key' type='xs:string'/>
+           <xs:element minOccurs='0' name='value' type='xs:string'/>
+          </xs:sequence>
+         </xs:complexType>
+        </xs:element>
+       </xs:sequence>
+      </xs:complexType>
+     </xs:element>
+     <xs:element minOccurs='0' name='trustedCertificate' type='xs:base64Binary'/>
+     <xs:element minOccurs='0' name='type' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='QueryException'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='message' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='AuthorizationDeniedException'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='message' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:simpleType name='relationalOperator'>
+    <xs:restriction base='xs:string'>
+     <xs:enumeration value='GT'/>
+     <xs:enumeration value='GE'/>
+     <xs:enumeration value='LT'/>
+     <xs:enumeration value='LE'/>
+     <xs:enumeration value='EQ'/>
+     <xs:enumeration value='NEQ'/>
+     <xs:enumeration value='BETWEEN'/>
+     <xs:enumeration value='LIKE'/>
+     <xs:enumeration value='NULL'/>
+     <xs:enumeration value='NOTNULL'/>
+    </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name='order'>
+    <xs:restriction base='xs:string'>
+     <xs:enumeration value='ASC'/>
+     <xs:enumeration value='DESC'/>
+    </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name='eventStatus'>
+    <xs:restriction base='xs:string'>
+     <xs:enumeration value='FAILURE'/>
+     <xs:enumeration value='SUCCESS'/>
+     <xs:enumeration value='VOID'/>
+    </xs:restriction>
+   </xs:simpleType>
+  </xs:schema>
+ </types>
+ <message name='AdminWS_testKeyResponse'>
+  <part element='tns:testKeyResponse' name='testKeyResponse'></part>
+ </message>
+ <message name='AdminWS_reloadConfiguration'>
+  <part element='tns:reloadConfiguration' name='reloadConfiguration'></part>
+ </message>
+ <message name='AdminWS_removeKey'>
+  <part element='tns:removeKey' name='removeKey'></part>
+ </message>
+ <message name='AdminWS_removeGlobalProperty'>
+  <part element='tns:removeGlobalProperty' name='removeGlobalProperty'></part>
+ </message>
+ <message name='OperationUnsupportedException'>
+  <part element='tns:OperationUnsupportedException' name='OperationUnsupportedException'></part>
+ </message>
+ <message name='AdminWS_getGlobalConfigurationResponse'>
+  <part element='tns:getGlobalConfigurationResponse' name='getGlobalConfigurationResponse'></part>
+ </message>
+ <message name='AdminWS_generateSignerKey'>
+  <part element='tns:generateSignerKey' name='generateSignerKey'></part>
+ </message>
+ <message name='IllegalRequestException'>
+  <part element='tns:IllegalRequestException' name='IllegalRequestException'></part>
+ </message>
+ <message name='AdminWS_getWorkersResponse'>
+  <part element='tns:getWorkersResponse' name='getWorkersResponse'></part>
+ </message>
+ <message name='CertificateException'>
+  <part element='tns:CertificateException' name='CertificateException'></part>
+ </message>
+ <message name='AdminWS_activateSigner'>
+  <part element='tns:activateSigner' name='activateSigner'></part>
+ </message>
+ <message name='AdminWS_getStatus'>
+  <part element='tns:getStatus' name='getStatus'></part>
+ </message>
+ <message name='AdminWS_testKey'>
+  <part element='tns:testKey' name='testKey'></part>
+ </message>
+ <message name='AdminWS_setGlobalProperty'>
+  <part element='tns:setGlobalProperty' name='setGlobalProperty'></part>
+ </message>
+ <message name='AdminWS_queryArchiveWithIds'>
+  <part element='tns:queryArchiveWithIds' name='queryArchiveWithIds'></part>
+ </message>
+ <message name='AdminWS_getKeyUsageCounterValue'>
+  <part element='tns:getKeyUsageCounterValue' name='getKeyUsageCounterValue'></part>
+ </message>
+ <message name='AdminWS_queryTokenEntriesResponse'>
+  <part element='tns:queryTokenEntriesResponse' name='queryTokenEntriesResponse'></part>
+ </message>
+ <message name='AdminWS_getSigningValidityNotBeforeResponse'>
+  <part element='tns:getSigningValidityNotBeforeResponse' name='getSigningValidityNotBeforeResponse'></part>
+ </message>
+ <message name='AdminWS_destroyKey'>
+  <part element='tns:destroyKey' name='destroyKey'></part>
+ </message>
+ <message name='AdminWS_getWorkerId'>
+  <part element='tns:getWorkerId' name='getWorkerId'></part>
+ </message>
+ <message name='AdminWS_globalReloadResponse'>
+  <part element='tns:globalReloadResponse' name='globalReloadResponse'></part>
+ </message>
+ <message name='AdminWS_queryArchiveResponse'>
+  <part element='tns:queryArchiveResponse' name='queryArchiveResponse'></part>
+ </message>
+ <message name='AdminWS_getSigningValidityNotBefore'>
+  <part element='tns:getSigningValidityNotBefore' name='getSigningValidityNotBefore'></part>
+ </message>
+ <message name='AdminWS_activateSignerResponse'>
+  <part element='tns:activateSignerResponse' name='activateSignerResponse'></part>
+ </message>
+ <message name='AdminWS_setWorkerPropertyResponse'>
+  <part element='tns:setWorkerPropertyResponse' name='setWorkerPropertyResponse'></part>
+ </message>
+ <message name='ResyncException'>
+  <part element='tns:ResyncException' name='ResyncException'></part>
+ </message>
+ <message name='AdminWS_uploadSignerCertificateChainResponse'>
+  <part element='tns:uploadSignerCertificateChainResponse' name='uploadSignerCertificateChainResponse'></part>
+ </message>
+ <message name='AdminWS_generateSignerKeyResponse'>
+  <part element='tns:generateSignerKeyResponse' name='generateSignerKeyResponse'></part>
+ </message>
+ <message name='AdminWS_getPKCS10CertificateRequestForKey'>
+  <part element='tns:getPKCS10CertificateRequestForKey' name='getPKCS10CertificateRequestForKey'></part>
+ </message>
+ <message name='AdminWS_getAuthorizedClients'>
+  <part element='tns:getAuthorizedClients' name='getAuthorizedClients'></part>
+ </message>
+ <message name='AdminWS_getSignerCertificateChain'>
+  <part element='tns:getSignerCertificateChain' name='getSignerCertificateChain'></part>
+ </message>
+ <message name='AdminWS_importCertificateChain'>
+  <part element='tns:importCertificateChain' name='importCertificateChain'></part>
+ </message>
+ <message name='AdminWS_addAuthorizedClientResponse'>
+  <part element='tns:addAuthorizedClientResponse' name='addAuthorizedClientResponse'></part>
+ </message>
+ <message name='AdminWS_getCurrentWorkerConfigResponse'>
+  <part element='tns:getCurrentWorkerConfigResponse' name='getCurrentWorkerConfigResponse'></part>
+ </message>
+ <message name='AuthorizationDeniedException'>
+  <part element='tns:AuthorizationDeniedException' name='AuthorizationDeniedException'></part>
+ </message>
+ <message name='AdminWS_process'>
+  <part element='tns:process' name='process'></part>
+ </message>
+ <message name='AdminWS_getSignerCertificate'>
+  <part element='tns:getSignerCertificate' name='getSignerCertificate'></part>
+ </message>
+ <message name='AdminWS_getGlobalConfiguration'>
+  <part element='tns:getGlobalConfiguration' name='getGlobalConfiguration'></part>
+ </message>
+ <message name='AdminWS_getPKCS10CertificateRequestForAliasResponse'>
+  <part element='tns:getPKCS10CertificateRequestForAliasResponse' name='getPKCS10CertificateRequestForAliasResponse'></part>
+ </message>
+ <message name='AdminWS_getPKCS10CertificateRequestForAlias'>
+  <part element='tns:getPKCS10CertificateRequestForAlias' name='getPKCS10CertificateRequestForAlias'></part>
+ </message>
+ <message name='CryptoTokenOfflineException'>
+  <part element='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></part>
+ </message>
+ <message name='AdminWS_queryTokenEntries'>
+  <part element='tns:queryTokenEntries' name='queryTokenEntries'></part>
+ </message>
+ <message name='AdminWS_deactivateSigner'>
+  <part element='tns:deactivateSigner' name='deactivateSigner'></part>
+ </message>
+ <message name='AdminWS_getPKCS10CertificateRequestForKeyResponse'>
+  <part element='tns:getPKCS10CertificateRequestForKeyResponse' name='getPKCS10CertificateRequestForKeyResponse'></part>
+ </message>
+ <message name='AdminWS_getSigningValidityNotAfter'>
+  <part element='tns:getSigningValidityNotAfter' name='getSigningValidityNotAfter'></part>
+ </message>
+ <message name='AdminWS_addAuthorizedClient'>
+  <part element='tns:addAuthorizedClient' name='addAuthorizedClient'></part>
+ </message>
+ <message name='AdminWS_removeWorkerProperty'>
+  <part element='tns:removeWorkerProperty' name='removeWorkerProperty'></part>
+ </message>
+ <message name='AdminWS_removeGlobalPropertyResponse'>
+  <part element='tns:removeGlobalPropertyResponse' name='removeGlobalPropertyResponse'></part>
+ </message>
+ <message name='AdminWS_getSignerCertificateChainResponse'>
+  <part element='tns:getSignerCertificateChainResponse' name='getSignerCertificateChainResponse'></part>
+ </message>
+ <message name='KeyStoreException'>
+  <part element='tns:KeyStoreException' name='KeyStoreException'></part>
+ </message>
+ <message name='AdminWS_uploadSignerCertificate'>
+  <part element='tns:uploadSignerCertificate' name='uploadSignerCertificate'></part>
+ </message>
+ <message name='AdminWS_getStatusResponse'>
+  <part element='tns:getStatusResponse' name='getStatusResponse'></part>
+ </message>
+ <message name='AdminWS_removeKeyResponse'>
+  <part element='tns:removeKeyResponse' name='removeKeyResponse'></part>
+ </message>
+ <message name='AdminWS_getWorkers'>
+  <part element='tns:getWorkers' name='getWorkers'></part>
+ </message>
+ <message name='AdminWS_processResponse'>
+  <part element='tns:processResponse' name='processResponse'></part>
+ </message>
+ <message name='AdminNotAuthorizedException'>
+  <part element='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></part>
+ </message>
+ <message name='AdminWS_uploadSignerCertificateChain'>
+  <part element='tns:uploadSignerCertificateChain' name='uploadSignerCertificateChain'></part>
+ </message>
+ <message name='QueryException'>
+  <part element='tns:QueryException' name='QueryException'></part>
+ </message>
+ <message name='AdminWS_importCertificateChainResponse'>
+  <part element='tns:importCertificateChainResponse' name='importCertificateChainResponse'></part>
+ </message>
+ <message name='AdminWS_uploadSignerCertificateResponse'>
+  <part element='tns:uploadSignerCertificateResponse' name='uploadSignerCertificateResponse'></part>
+ </message>
+ <message name='AdminWS_removeAuthorizedClient'>
+  <part element='tns:removeAuthorizedClient' name='removeAuthorizedClient'></part>
+ </message>
+ <message name='AdminWS_globalReload'>
+  <part element='tns:globalReload' name='globalReload'></part>
+ </message>
+ <message name='AdminWS_removeAuthorizedClientResponse'>
+  <part element='tns:removeAuthorizedClientResponse' name='removeAuthorizedClientResponse'></part>
+ </message>
+ <message name='AdminWS_getPKCS10CertificateRequest'>
+  <part element='tns:getPKCS10CertificateRequest' name='getPKCS10CertificateRequest'></part>
+ </message>
+ <message name='AdminWS_removeWorkerPropertyResponse'>
+  <part element='tns:removeWorkerPropertyResponse' name='removeWorkerPropertyResponse'></part>
+ </message>
+ <message name='AdminWS_getCurrentWorkerConfig'>
+  <part element='tns:getCurrentWorkerConfig' name='getCurrentWorkerConfig'></part>
+ </message>
+ <message name='AdminWS_queryAuditLogResponse'>
+  <part element='tns:queryAuditLogResponse' name='queryAuditLogResponse'></part>
+ </message>
+ <message name='AdminWS_queryAuditLog'>
+  <part element='tns:queryAuditLog' name='queryAuditLog'></part>
+ </message>
+ <message name='AdminWS_queryArchive'>
+  <part element='tns:queryArchive' name='queryArchive'></part>
+ </message>
+ <message name='InvalidWorkerIdException'>
+  <part element='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></part>
+ </message>
+ <message name='AdminWS_getSigningValidityNotAfterResponse'>
+  <part element='tns:getSigningValidityNotAfterResponse' name='getSigningValidityNotAfterResponse'></part>
+ </message>
+ <message name='AdminWS_setGlobalPropertyResponse'>
+  <part element='tns:setGlobalPropertyResponse' name='setGlobalPropertyResponse'></part>
+ </message>
+ <message name='AdminWS_destroyKeyResponse'>
+  <part element='tns:destroyKeyResponse' name='destroyKeyResponse'></part>
+ </message>
+ <message name='AdminWS_globalResyncResponse'>
+  <part element='tns:globalResyncResponse' name='globalResyncResponse'></part>
+ </message>
+ <message name='AdminWS_globalResync'>
+  <part element='tns:globalResync' name='globalResync'></part>
+ </message>
+ <message name='AdminWS_getWorkerIdResponse'>
+  <part element='tns:getWorkerIdResponse' name='getWorkerIdResponse'></part>
+ </message>
+ <message name='AdminWS_getAuthorizedClientsResponse'>
+  <part element='tns:getAuthorizedClientsResponse' name='getAuthorizedClientsResponse'></part>
+ </message>
+ <message name='AdminWS_deactivateSignerResponse'>
+  <part element='tns:deactivateSignerResponse' name='deactivateSignerResponse'></part>
+ </message>
+ <message name='AdminWS_getKeyUsageCounterValueResponse'>
+  <part element='tns:getKeyUsageCounterValueResponse' name='getKeyUsageCounterValueResponse'></part>
+ </message>
+ <message name='AdminWS_reloadConfigurationResponse'>
+  <part element='tns:reloadConfigurationResponse' name='reloadConfigurationResponse'></part>
+ </message>
+ <message name='AdminWS_getPKCS10CertificateRequestResponse'>
+  <part element='tns:getPKCS10CertificateRequestResponse' name='getPKCS10CertificateRequestResponse'></part>
+ </message>
+ <message name='AdminWS_setWorkerProperty'>
+  <part element='tns:setWorkerProperty' name='setWorkerProperty'></part>
+ </message>
+ <message name='AdminWS_getSignerCertificateResponse'>
+  <part element='tns:getSignerCertificateResponse' name='getSignerCertificateResponse'></part>
+ </message>
+ <message name='SignServerException'>
+  <part element='tns:SignServerException' name='SignServerException'></part>
+ </message>
+ <message name='CryptoTokenAuthenticationFailureException'>
+  <part element='tns:CryptoTokenAuthenticationFailureException' name='CryptoTokenAuthenticationFailureException'></part>
+ </message>
+ <message name='AdminWS_queryArchiveWithIdsResponse'>
+  <part element='tns:queryArchiveWithIdsResponse' name='queryArchiveWithIdsResponse'></part>
+ </message>
+ <portType name='AdminWS'>
+  <operation name='activateSigner' parameterOrder='activateSigner'>
+   <input message='tns:AdminWS_activateSigner'></input>
+   <output message='tns:AdminWS_activateSignerResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+   <fault message='tns:CryptoTokenAuthenticationFailureException' name='CryptoTokenAuthenticationFailureException'></fault>
+   <fault message='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></fault>
+  </operation>
+  <operation name='addAuthorizedClient' parameterOrder='addAuthorizedClient'>
+   <input message='tns:AdminWS_addAuthorizedClient'></input>
+   <output message='tns:AdminWS_addAuthorizedClientResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+  <operation name='deactivateSigner' parameterOrder='deactivateSigner'>
+   <input message='tns:AdminWS_deactivateSigner'></input>
+   <output message='tns:AdminWS_deactivateSignerResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+   <fault message='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></fault>
+  </operation>
+  <operation name='destroyKey' parameterOrder='destroyKey'>
+   <input message='tns:AdminWS_destroyKey'></input>
+   <output message='tns:AdminWS_destroyKeyResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></fault>
+  </operation>
+  <operation name='generateSignerKey' parameterOrder='generateSignerKey'>
+   <input message='tns:AdminWS_generateSignerKey'></input>
+   <output message='tns:AdminWS_generateSignerKeyResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+   <fault message='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></fault>
+  </operation>
+  <operation name='getAuthorizedClients' parameterOrder='getAuthorizedClients'>
+   <input message='tns:AdminWS_getAuthorizedClients'></input>
+   <output message='tns:AdminWS_getAuthorizedClientsResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+  <operation name='getCurrentWorkerConfig' parameterOrder='getCurrentWorkerConfig'>
+   <input message='tns:AdminWS_getCurrentWorkerConfig'></input>
+   <output message='tns:AdminWS_getCurrentWorkerConfigResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+  <operation name='getGlobalConfiguration' parameterOrder='getGlobalConfiguration'>
+   <input message='tns:AdminWS_getGlobalConfiguration'></input>
+   <output message='tns:AdminWS_getGlobalConfigurationResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+  <operation name='getKeyUsageCounterValue' parameterOrder='getKeyUsageCounterValue'>
+   <input message='tns:AdminWS_getKeyUsageCounterValue'></input>
+   <output message='tns:AdminWS_getKeyUsageCounterValueResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+  </operation>
+  <operation name='getPKCS10CertificateRequest' parameterOrder='getPKCS10CertificateRequest'>
+   <input message='tns:AdminWS_getPKCS10CertificateRequest'></input>
+   <output message='tns:AdminWS_getPKCS10CertificateRequestResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+   <fault message='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></fault>
+  </operation>
+  <operation name='getPKCS10CertificateRequestForAlias' parameterOrder='getPKCS10CertificateRequestForAlias'>
+   <input message='tns:AdminWS_getPKCS10CertificateRequestForAlias'></input>
+   <output message='tns:AdminWS_getPKCS10CertificateRequestForAliasResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+   <fault message='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></fault>
+  </operation>
+  <operation name='getPKCS10CertificateRequestForKey' parameterOrder='getPKCS10CertificateRequestForKey'>
+   <input message='tns:AdminWS_getPKCS10CertificateRequestForKey'></input>
+   <output message='tns:AdminWS_getPKCS10CertificateRequestForKeyResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+   <fault message='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></fault>
+  </operation>
+  <operation name='getSignerCertificate' parameterOrder='getSignerCertificate'>
+   <input message='tns:AdminWS_getSignerCertificate'></input>
+   <output message='tns:AdminWS_getSignerCertificateResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+  </operation>
+  <operation name='getSignerCertificateChain' parameterOrder='getSignerCertificateChain'>
+   <input message='tns:AdminWS_getSignerCertificateChain'></input>
+   <output message='tns:AdminWS_getSignerCertificateChainResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+  </operation>
+  <operation name='getSigningValidityNotAfter' parameterOrder='getSigningValidityNotAfter'>
+   <input message='tns:AdminWS_getSigningValidityNotAfter'></input>
+   <output message='tns:AdminWS_getSigningValidityNotAfterResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+  </operation>
+  <operation name='getSigningValidityNotBefore' parameterOrder='getSigningValidityNotBefore'>
+   <input message='tns:AdminWS_getSigningValidityNotBefore'></input>
+   <output message='tns:AdminWS_getSigningValidityNotBeforeResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+  </operation>
+  <operation name='getStatus' parameterOrder='getStatus'>
+   <input message='tns:AdminWS_getStatus'></input>
+   <output message='tns:AdminWS_getStatusResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></fault>
+  </operation>
+  <operation name='getWorkerId' parameterOrder='getWorkerId'>
+   <input message='tns:AdminWS_getWorkerId'></input>
+   <output message='tns:AdminWS_getWorkerIdResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+  <operation name='getWorkers' parameterOrder='getWorkers'>
+   <input message='tns:AdminWS_getWorkers'></input>
+   <output message='tns:AdminWS_getWorkersResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+  <operation name='globalReload' parameterOrder='globalReload'>
+   <input message='tns:AdminWS_globalReload'></input>
+   <output message='tns:AdminWS_globalReloadResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+  <operation name='globalResync' parameterOrder='globalResync'>
+   <input message='tns:AdminWS_globalResync'></input>
+   <output message='tns:AdminWS_globalResyncResponse'></output>
+   <fault message='tns:ResyncException' name='ResyncException'></fault>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+  <operation name='importCertificateChain' parameterOrder='importCertificateChain'>
+   <input message='tns:AdminWS_importCertificateChain'></input>
+   <output message='tns:AdminWS_importCertificateChainResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:OperationUnsupportedException' name='OperationUnsupportedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+   <fault message='tns:CertificateException' name='CertificateException'></fault>
+  </operation>
+  <operation name='process' parameterOrder='process'>
+   <input message='tns:AdminWS_process'></input>
+   <output message='tns:AdminWS_processResponse'></output>
+   <fault message='tns:IllegalRequestException' name='IllegalRequestException'></fault>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+   <fault message='tns:SignServerException' name='SignServerException'></fault>
+   <fault message='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></fault>
+  </operation>
+  <operation name='queryArchive' parameterOrder='queryArchive'>
+   <input message='tns:AdminWS_queryArchive'></input>
+   <output message='tns:AdminWS_queryArchiveResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:SignServerException' name='SignServerException'></fault>
+  </operation>
+  <operation name='queryArchiveWithIds' parameterOrder='queryArchiveWithIds'>
+   <input message='tns:AdminWS_queryArchiveWithIds'></input>
+   <output message='tns:AdminWS_queryArchiveWithIdsResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:SignServerException' name='SignServerException'></fault>
+  </operation>
+  <operation name='queryAuditLog' parameterOrder='queryAuditLog'>
+   <input message='tns:AdminWS_queryAuditLog'></input>
+   <output message='tns:AdminWS_queryAuditLogResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:SignServerException' name='SignServerException'></fault>
+  </operation>
+  <operation name='queryTokenEntries' parameterOrder='queryTokenEntries'>
+   <input message='tns:AdminWS_queryTokenEntries'></input>
+   <output message='tns:AdminWS_queryTokenEntriesResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:AuthorizationDeniedException' name='AuthorizationDeniedException'></fault>
+   <fault message='tns:OperationUnsupportedException' name='OperationUnsupportedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+   <fault message='tns:SignServerException' name='SignServerException'></fault>
+   <fault message='tns:QueryException' name='QueryException'></fault>
+   <fault message='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></fault>
+  </operation>
+  <operation name='reloadConfiguration' parameterOrder='reloadConfiguration'>
+   <input message='tns:AdminWS_reloadConfiguration'></input>
+   <output message='tns:AdminWS_reloadConfigurationResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+  <operation name='removeAuthorizedClient' parameterOrder='removeAuthorizedClient'>
+   <input message='tns:AdminWS_removeAuthorizedClient'></input>
+   <output message='tns:AdminWS_removeAuthorizedClientResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+  <operation name='removeGlobalProperty' parameterOrder='removeGlobalProperty'>
+   <input message='tns:AdminWS_removeGlobalProperty'></input>
+   <output message='tns:AdminWS_removeGlobalPropertyResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+  <operation name='removeKey' parameterOrder='removeKey'>
+   <input message='tns:AdminWS_removeKey'></input>
+   <output message='tns:AdminWS_removeKeyResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+   <fault message='tns:KeyStoreException' name='KeyStoreException'></fault>
+   <fault message='tns:SignServerException' name='SignServerException'></fault>
+   <fault message='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></fault>
+  </operation>
+  <operation name='removeWorkerProperty' parameterOrder='removeWorkerProperty'>
+   <input message='tns:AdminWS_removeWorkerProperty'></input>
+   <output message='tns:AdminWS_removeWorkerPropertyResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+  <operation name='setGlobalProperty' parameterOrder='setGlobalProperty'>
+   <input message='tns:AdminWS_setGlobalProperty'></input>
+   <output message='tns:AdminWS_setGlobalPropertyResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+  <operation name='setWorkerProperty' parameterOrder='setWorkerProperty'>
+   <input message='tns:AdminWS_setWorkerProperty'></input>
+   <output message='tns:AdminWS_setWorkerPropertyResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+  <operation name='testKey' parameterOrder='testKey'>
+   <input message='tns:AdminWS_testKey'></input>
+   <output message='tns:AdminWS_testKeyResponse'></output>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+   <fault message='tns:CryptoTokenOfflineException' name='CryptoTokenOfflineException'></fault>
+   <fault message='tns:KeyStoreException' name='KeyStoreException'></fault>
+   <fault message='tns:InvalidWorkerIdException' name='InvalidWorkerIdException'></fault>
+  </operation>
+  <operation name='uploadSignerCertificate' parameterOrder='uploadSignerCertificate'>
+   <input message='tns:AdminWS_uploadSignerCertificate'></input>
+   <output message='tns:AdminWS_uploadSignerCertificateResponse'></output>
+   <fault message='tns:IllegalRequestException' name='IllegalRequestException'></fault>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+  <operation name='uploadSignerCertificateChain' parameterOrder='uploadSignerCertificateChain'>
+   <input message='tns:AdminWS_uploadSignerCertificateChain'></input>
+   <output message='tns:AdminWS_uploadSignerCertificateChainResponse'></output>
+   <fault message='tns:IllegalRequestException' name='IllegalRequestException'></fault>
+   <fault message='tns:AdminNotAuthorizedException' name='AdminNotAuthorizedException'></fault>
+  </operation>
+ </portType>
+ <binding name='AdminWSBinding' type='tns:AdminWS'>
+  <soap:binding style='document' transport='http://schemas.xmlsoap.org/soap/http'/>
+  <operation name='activateSigner'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenAuthenticationFailureException'>
+    <soap:fault name='CryptoTokenAuthenticationFailureException' use='literal'/>
+   </fault>
+   <fault name='InvalidWorkerIdException'>
+    <soap:fault name='InvalidWorkerIdException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='addAuthorizedClient'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='deactivateSigner'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+   <fault name='InvalidWorkerIdException'>
+    <soap:fault name='InvalidWorkerIdException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='destroyKey'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='InvalidWorkerIdException'>
+    <soap:fault name='InvalidWorkerIdException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='generateSignerKey'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+   <fault name='InvalidWorkerIdException'>
+    <soap:fault name='InvalidWorkerIdException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='getAuthorizedClients'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='getCurrentWorkerConfig'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='getGlobalConfiguration'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='getKeyUsageCounterValue'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='getPKCS10CertificateRequest'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+   <fault name='InvalidWorkerIdException'>
+    <soap:fault name='InvalidWorkerIdException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='getPKCS10CertificateRequestForAlias'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+   <fault name='InvalidWorkerIdException'>
+    <soap:fault name='InvalidWorkerIdException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='getPKCS10CertificateRequestForKey'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+   <fault name='InvalidWorkerIdException'>
+    <soap:fault name='InvalidWorkerIdException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='getSignerCertificate'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='getSignerCertificateChain'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='getSigningValidityNotAfter'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='getSigningValidityNotBefore'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='getStatus'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='InvalidWorkerIdException'>
+    <soap:fault name='InvalidWorkerIdException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='getWorkerId'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='getWorkers'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='globalReload'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='globalResync'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='ResyncException'>
+    <soap:fault name='ResyncException' use='literal'/>
+   </fault>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='importCertificateChain'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='OperationUnsupportedException'>
+    <soap:fault name='OperationUnsupportedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+   <fault name='CertificateException'>
+    <soap:fault name='CertificateException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='process'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='IllegalRequestException'>
+    <soap:fault name='IllegalRequestException' use='literal'/>
+   </fault>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+   <fault name='SignServerException'>
+    <soap:fault name='SignServerException' use='literal'/>
+   </fault>
+   <fault name='InvalidWorkerIdException'>
+    <soap:fault name='InvalidWorkerIdException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='queryArchive'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='SignServerException'>
+    <soap:fault name='SignServerException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='queryArchiveWithIds'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='SignServerException'>
+    <soap:fault name='SignServerException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='queryAuditLog'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='SignServerException'>
+    <soap:fault name='SignServerException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='queryTokenEntries'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='AuthorizationDeniedException'>
+    <soap:fault name='AuthorizationDeniedException' use='literal'/>
+   </fault>
+   <fault name='OperationUnsupportedException'>
+    <soap:fault name='OperationUnsupportedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+   <fault name='SignServerException'>
+    <soap:fault name='SignServerException' use='literal'/>
+   </fault>
+   <fault name='QueryException'>
+    <soap:fault name='QueryException' use='literal'/>
+   </fault>
+   <fault name='InvalidWorkerIdException'>
+    <soap:fault name='InvalidWorkerIdException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='reloadConfiguration'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='removeAuthorizedClient'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='removeGlobalProperty'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='removeKey'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+   <fault name='KeyStoreException'>
+    <soap:fault name='KeyStoreException' use='literal'/>
+   </fault>
+   <fault name='SignServerException'>
+    <soap:fault name='SignServerException' use='literal'/>
+   </fault>
+   <fault name='InvalidWorkerIdException'>
+    <soap:fault name='InvalidWorkerIdException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='removeWorkerProperty'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='setGlobalProperty'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='setWorkerProperty'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='testKey'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+   <fault name='CryptoTokenOfflineException'>
+    <soap:fault name='CryptoTokenOfflineException' use='literal'/>
+   </fault>
+   <fault name='KeyStoreException'>
+    <soap:fault name='KeyStoreException' use='literal'/>
+   </fault>
+   <fault name='InvalidWorkerIdException'>
+    <soap:fault name='InvalidWorkerIdException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='uploadSignerCertificate'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='IllegalRequestException'>
+    <soap:fault name='IllegalRequestException' use='literal'/>
+   </fault>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+  <operation name='uploadSignerCertificateChain'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+   <fault name='IllegalRequestException'>
+    <soap:fault name='IllegalRequestException' use='literal'/>
+   </fault>
+   <fault name='AdminNotAuthorizedException'>
+    <soap:fault name='AdminNotAuthorizedException' use='literal'/>
+   </fault>
+  </operation>
+ </binding>
+ <service name='AdminWSService'>
+  <port binding='tns:AdminWSBinding' name='AdminWSPort'>
+   <soap:address location='http://localhost:8080/signserver/AdminWSService/AdminWS'/>
+  </port>
+ </service>
+</definitions>

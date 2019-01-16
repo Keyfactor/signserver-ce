@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>run</actionName>
+            <goals>
+                <goal>antrun:run</goal>
+            </goals>
+            <activatedProfiles>
+                <activatedProfile>profile-empty</activatedProfile>
+            </activatedProfiles>
+        </action>
+    </actions>

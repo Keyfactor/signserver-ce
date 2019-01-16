@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.signserver.deploytools</groupId>
+    <artifactId>DeployTools</artifactId>
+    <version>2.2.1</version>
+    <packaging>pom</packaging>
+    <scm>
+        <connection>scm:svn:https://svn.cesecore.eu/svn/signserver/</connection>
+        <developerConnection>scm:svn:https://svn.cesecore.eu/svn/primekey/signserver-labs/deploytools/trunk/DeployTools</developerConnection>
+        <url>http://fisheye.primekey.se/browse/SignServer-labs/deploytools/trunk</url>
+    </scm>
+    <modules>
+        <module>DeployTools-Common</module>
+        <module>DeployTools-Ant</module>
+        <module>DeployTools-Maven</module>
+        <module>DeployTools-CLI</module>
+    </modules>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+    </properties>
+    <name>DeployTools</name>
+    <description>Helper tools and common project structure for building and deploying Java Enterprise applications using CESeCore.</description>
+    <url>https://www.signserver.org</url>
+    <licenses>
+        <license>
+            <name>LGPL license, Version 2.1</name>
+            <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Markus Kilås</name>
+            <email>markus.kilas@primekey.se</email>
+            <organization>PrimeKey Solutions</organization>
+            <organizationUrl>https://www.primekey.se</organizationUrl>
+        </developer>
+        <developer>
+            <name>Marcus Lundblad</name>
+            <email>marcus.lundblad@primekey.se</email>
+            <organization>PrimeKey Solutions</organization>
+            <organizationUrl>https://www.primekey.se</organizationUrl>
+        </developer>
+    </developers>
+</project>

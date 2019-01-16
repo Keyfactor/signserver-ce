@@ -1,0 +1,2 @@
+org.signserver.client.cli.defaultimpl.DefaultClientCommandFactory
+org.signserver.client.cli.performance.PerformanceClientCommandFactory

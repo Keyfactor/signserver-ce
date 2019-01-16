@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+
+# Find directory for this script
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ] ; do SOURCE="$(readlink -f "$SOURCE")"; done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
+# OS specific support.
+cygwin=false;
+case "`uname`" in
+  CYGWIN*) cygwin=true ;;
+esac
+
+JAVACMD=`which java`
+# Check that JAVA_HOME is set
+if [ ! -n "$JAVA_HOME" ]; then
+    if [ ! -n "$JAVACMD" ]
+    then
+        echo "You must set JAVA_HOME before running the SignServer cli."
+        exit 1
+    fi
+else
+    JAVACMD=$JAVA_HOME/bin/java
+fi
+
+
+class_name=org.signserver.test.performance.cli.Main
+
+# discard $1 from the command line args
+#shift
+
+# J2EE server classpath
+if [ ! -n "$APPSRV_HOME" ]; then
+    if [ -n "$JBOSS_HOME" ]; then
+        APPSRV_HOME=$JBOSS_HOME
+    elif [ -n "$WEBLOGIC_HOME" ]; then
+        APPSRV_HOME=$WEBLOGIC_HOME
+    fi
+fi
+
+if [ ! -n "${SIGNSERVER_HOME}" ]; then
+  if [ -f $DIR/signclient ]; then
+    SIGNSRV_HOME=$DIR/..
+  fi
+  if [ -f /etc/signserver/signservermgmt.env ]; then
+     . /etc/signserver/signservermgmt.env
+  fi
+  if [ -f /etc/mailsigner/mailsignermgmt.env ]; then
+     . /etc/mailsigner/mailsignermgmt.env
+  fi
+  if [ -f /usr/share/signserver/bin/signclient ]; then
+     SIGNSRV_HOME=/usr/share/signserver
+  fi
+  if [ -f /opt/signserver/bin/signclient ]; then
+     SIGNSRV_HOME=/opt/signserver
+  fi
+  if [ -f /usr/local/signserver/bin/signclient ]; then
+     SIGNSRV_HOME=/usr/local/signserver
+  fi
+  if [ -f ./signclient ]; then
+     SIGNSRV_HOME=`pwd`/..
+  fi
+  if [ -f bin/signclient ]; then
+     SIGNSRV_HOME=`pwd`
+  fi
+else
+  SIGNSRV_HOME=$SIGNSERVER_HOME
+fi 
+
+MAIN_JAR=`find "${SIGNSRV_HOME}/lib" -name "SignServer-Test-Performance*.jar"`
+
+# Check that classes exist
+if [ ! -f "${MAIN_JAR}" ]
+then
+	echo "You must build SignServer Performance Test CLI first."
+        exit 1
+fi
+
+# Optional JARs
+OPTIONAL_CLASSPATH=${EXTRA_CLASSPATH}
+
+# Construct the classpath
+CP="${MAIN_JAR}"
+CP="${SIGNSRV_HOME}/conf":"$CP"
+CP="$CP":${OPTIONAL_CLASSPATH}
+
+# Application server dependencies
+if [ -f $APPSRV_HOME/lib/appserv-rt.jar ]; then
+    CP=$CP:"${SIGNSRV_HOME}/conf/glassfish"
+    CP=$CP:"$APPSRV_HOME/lib/appserv-rt.jar"
+fi
+if [ -f $APPSRV_HOME/client/jbossall-client.jar ]; then
+    CP=$CP:"${SIGNSRV_HOME}/conf/jboss"
+    CP=$CP:"$APPSRV_HOME/client/jbossall-client.jar"
+fi
+
+# For Cygwin, switch paths to Windows format before running java
+if $cygwin; then
+  CP=`cygpath --path --windows "$CP"`
+fi
+
+# Enable Java network debug logs
+#JAVA_OPTS="$JAVA_OPTS -Djavax.net.debug=all"
+#JAVA_OPTS="$JAVA_OPTS -Djavax.net.debug=ssl"
+
+# Enable Java PKCS#11 debug logs
+#JAVA_OPTS="$JAVA_OPTS -Djava.security.debug=sunpkcs11"
+
+# Enable Java debugging
+#JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=n"
+#JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=y"
+
+# Execute the command
+$JAVACMD $JAVA_OPTS -cp "${CP}" $class_name "$@"

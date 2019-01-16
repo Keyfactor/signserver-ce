@@ -1,0 +1,149 @@
+signserver3.3 (3.3.0beta8-0markus1) precise; urgency=low
+
+  * New upstream pre-release.
+
+ -- Markus Kilås <markus@markuspage.com>  Sat, 19 Jan 2013 21:16:30 +0100
+
+signserver3.3 (3.3.0beta1-0markus1) precise; urgency=low
+
+  * New upstream pre-release.
+
+ -- Markus Kilås <markus@markuspage.com>  Sat, 17 Nov 2012 20:05:37 +0100
+
+signserver3.3 (3.3.0alpha6-1markus1) oneiric; urgency=low
+
+  * Simplified packaging.
+
+ -- Markus Kilås <markus@markuspage.com>  Sat, 31 Dec 2011 21:28:55 +0100
+
+signserver3.3 (3.3.0alpha5-1markus3) natty; urgency=low
+
+  * Fixing desktop shortcuts.
+
+ -- Markus Kilås <markus@markuspage.com>  Thu, 29 Dec 2011 20:39:01 +0100
+
+signserver3.3 (3.3.0alpha5-1markus2) natty; urgency=low
+
+  * Fixing dependencies.
+
+ -- Markus Kilås <markus@markuspage.com>  Tue, 27 Dec 2011 22:30:34 +0100
+
+signserver3.3 (3.3.0alpha5-1markus1) natty; urgency=low
+
+  * New upstream release.
+
+ -- Markus Kilås <markus@primekey.se>  Tue, 27 Dec 2011 15:20:34 +0100
+
+signserver3.3 (3.3.0alpha4-1markus7) natty; urgency=low
+
+  * Including Admin GUI splash screen.
+
+ -- Markus Kilås <markus@primekey.se>  Tue, 27 Dec 2011 13:45:10 +0100
+
+signserver3.3 (3.3.0alpha4-1markus6) natty; urgency=low
+
+  * Added documentation build.
+
+ -- Markus Kilås <markus@primekey.se>  Tue, 27 Dec 2011 12:18:53 +0100
+
+signserver3.3 (3.3.0alpha4-1markus5) natty; urgency=low
+
+  * Fixed wrapper scripts.
+
+ -- Markus Kilås <markus@markuspage.com>  Mon, 26 Dec 2011 17:57:07 +0100
+
+signserver3.3 (3.3.0alpha4-1markus4) natty; urgency=low
+
+  * New packages.
+
+ -- Markus Kilås <markus@markuspage.com>  Sun, 25 Dec 2011 21:12:13 +0100
+
+signserver3.3 (3.3.0alpha4-1markus3) natty; urgency=low
+
+  * Added missing dependencies.
+
+ -- Markus Kilås <markus@primekey.se>  Thu, 22 Dec 2011 10:34:37 +0100
+
+signserver3.3 (3.3.0alpha4-1markus2) natty; urgency=low
+
+  * Added missing dependencies.
+
+ -- Markus Kilås <markus@markuspage.com>  Wed, 21 Dec 2011 20:17:08 +0100
+
+signserver3.3 (3.3.0alpha4-1markus1) natty; urgency=low
+
+  * New upstreams release.
+
+ -- Markus Kilås <markus@primekey.se>  Wed, 21 Dec 2011 12:54:27 +0100
+
+signserver3.3 (3.3.0alpha1-1markus9) natty; urgency=low
+
+  * Fixed commands in debian/rules.
+
+ -- Markus Kilås <markus@markuspage.com>  Thu, 17 Nov 2011 16:41:38 +0100
+
+signserver3.3 (3.3.0alpha1-1markus8) natty; urgency=low
+
+  * Added missing build dependency: libejbca-util-signserver-java.
+
+ -- Markus Kilås <markus@markuspage.com>  Thu, 17 Nov 2011 09:28:54 +0100
+
+signserver3.3 (3.3.0alpha1-1markus7) natty; urgency=low
+
+  * Removed conflicting dependency.
+
+ -- Markus Kilås <markus@markuspage.com>  Wed, 16 Nov 2011 19:39:52 +0100
+
+signserver3.3 (3.3.0alpha1-1markus6) natty; urgency=low
+
+  * Fixed dependencies.
+
+ -- Markus Kilås <markus@markuspage.com>  Wed, 16 Nov 2011 10:46:54 +0100
+
+signserver3.3 (3.3.0alpha1-1markus5) natty; urgency=low
+
+  * Added missing dependencies.
+
+ -- Markus Kilås <markus@markuspage.com>  Tue, 15 Nov 2011 19:23:50 +0100
+
+signserver3.3 (3.3.0alpha1-1markus4) natty; urgency=low
+
+  * Excluding some parts using Ant instead of removing the sources.
+
+ -- Markus Kilås <markus@markuspage.com>  Sun, 13 Nov 2011 21:51:36 +0100
+
+signserver3.3 (3.3.0alpha1-1markus3) natty; urgency=low
+
+  * Including original sources.
+
+ -- Markus Kilås <markus@markuspage.com>  Sun, 13 Nov 2011 10:00:55 +0100
+
+signserver3.3 (3.3.0alpha1-1markus2) natty; urgency=low
+
+  * Improved package.
+
+ -- Markus Kilås <markus@markuspage.com>  Sat, 12 Nov 2011 21:40:36 +0100
+
+signserver3.3 (3.3.0alpha1-1) natty; urgency=low
+
+  * New upstream alpha from SVN (r1910).
+
+ -- Markus Kilås <markus@markuspage.com>  Sat, 05 Nov 2011 21:16:53 +0200
+
+signserver3.2 (3.2.0-b20110320-1) lucid; urgency=low
+
+  * New upstream beta from SVN.
+
+ -- Markus Kilås <markus@markuspage.com>  Sun, 20 Mar 2011 12:34:33 +0200
+
+signserver3.1 (3.1.4-svn-0markus2) lucid; urgency=low
+
+  * Added dependency on ant-optional.
+
+ -- Markus Kilås <markus@markuspage.com>  Sat, 14 Aug 2010 00:46:28 +0200
+
+signserver3.1 (3.1.4-svn-0markus1) lucid; urgency=low
+
+  * Initial release.
+
+ -- Markus Kilås <markus@markuspage.com>  Fri, 13 Aug 2010 17:27:18 +0200

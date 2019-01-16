@@ -1,0 +1,209 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+    
+    <f:metadata>
+        <f:viewParam name="selected" value="#{archiveBean.requestedSelected}"/>
+        <f:viewParam name="fromIndex" value="#{archiveBean.fromIndex}"/>
+        <f:viewParam name="maxEntries" value="#{archiveBean.maxEntries}"/>
+        <f:event type="preRenderView" listener="#{archiveBean.init()}"/>
+    </f:metadata>
+    
+    <body>
+
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            <ui:param name="activeMenu" value="archive"/>
+
+            <ui:define name="title">
+                <h:outputText value="#{text['Archive']}"/>
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <h1><h:outputText value="#{text['Current_Conditions']}"/></h1>
+                <h:form>
+                    <h:panelGroup>
+                        <h:dataTable value="#{archiveBean.conditions}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Column']}"/>
+                                </f:facet>
+                                <h:outputText value="#{archiveBean.nameFromColumn[item.column]}"/>
+                                <f:facet name="footer">
+                                    <h:selectOneMenu rendered="#{archiveBean.conditionToAdd == null}" value="#{archiveBean.conditionColumn}"><f:selectItems value="#{archiveBean.columns}"/></h:selectOneMenu>
+                                    <h:commandButton class="buttonNeutral" rendered="#{archiveBean.conditionToAdd == null}" action="#{archiveBean.addConditionAction()}" value="#{text['Add...']}"/>
+                                    <h:outputText rendered="#{archiveBean.conditionToAdd != null}" value="#{archiveBean.nameFromColumn[archiveBean.conditionToAdd.column]}"></h:outputText>
+                                </f:facet>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Condition']}"/>
+                                </f:facet>
+                                <h:outputText value="#{archiveBean.nameFromCondition(item.operator)}"/>
+                                <f:facet name="footer">
+                                    <h:selectOneMenu rendered="#{archiveBean.conditionToAdd != null}" value="#{archiveBean.conditionToAdd.operator}"><f:selectItems value="#{archiveBean.definedConditions}"/></h:selectOneMenu>
+                                </f:facet>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Value']}"/>
+                                </f:facet>
+                                <h:outputText value="#{archiveBean.nameFromValue(item.value, item.column)}"/>
+                                <f:facet name="footer">
+                                    <h:inputText rendered="#{archiveBean.conditionToAdd != null}" value="#{archiveBean.conditionToAdd.value}"/> 
+                                    <span class="errorMessage"><h:outputText value="#{archiveBean.conditionToAddError}"/></span>
+                                </f:facet>
+                            </h:column>
+                            <h:column>
+                                <h:commandButton class="buttonNeutral" value="#{text['Remove']}" action="#{archiveBean.removeConditionAction(item)}"/>
+                                <f:facet name="footer">
+                                    <h:commandButton class="buttonNeutral" rendered="#{archiveBean.conditionToAdd != null}" value="#{text['Add']}" action="#{archiveBean.addConditionToAddAction()}"/> <h:commandButton class="buttonNeutral" rendered="#{archiveBean.conditionToAdd != null}" value="#{text['Remove']}" action="#{archiveBean.removeConditionToAddAction()}"/>
+                                </f:facet>
+                            </h:column>
+                            <f:facet name="footer">
+                            </f:facet>
+                        </h:dataTable>
+                    </h:panelGroup>
+
+                    <p>&nbsp;</p>
+
+                    <h1><h:outputText value="#{text['Search_Results']}"/></h1>
+                    <h:panelGroup>
+                        <h:commandButton class="buttonNeutral" value="#{text['First']}" action="#{archiveBean.firstAction()}" disabled="#{!archiveBean.enableFirst}"/> 
+                        <h:commandButton class="buttonNeutral" value="#{text['Previous']}" action="#{archiveBean.previousAction()}" disabled="#{!archiveBean.enablePrevious}"/> 
+                        <h:commandButton class="buttonFeatured" value="#{text['Reload']}" action="#{archiveBean.reloadAction()}"/> 
+                        <h:commandButton class="buttonNeutral" value="#{text['Next']}" action="#{archiveBean.nextAction()}" disabled="#{!archiveBean.enableNext}"/> 
+                        <h:outputText value="#{text['Displaying_results']} "/><h:inputText value="#{archiveBean.fromIndex}" size="3"/><h:outputText value=" #{text['to']} "/><h:outputText value="#{archiveBean.queryingToIndex}"/>.
+                        <h:outputText value="#{text['Entries_per_page']} :"/><h:inputText value="#{archiveBean.maxEntries}" size="3"/>
+
+                        <p class="errorMessage">
+                            <h:outputText value="#{archiveBean.queryError}"/>
+                        </p>
+                    </h:panelGroup>
+                    
+                    <h:panelGroup>
+                        <h:dataTable value="#{archiveBean.entries}" var="entry" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1 centered,dss1,dss1,dss1,dss1,dss1,dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:selectBooleanCheckbox class="jsHidden" onclick="toggleCheckboxes(this, document.getElementsByClassName('allSelectable'))"/>
+                                </f:facet>
+                                <h:selectBooleanCheckbox value="#{archiveBean.selectedIds[entry.uniqueId]}" class="allSelectable"/>
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Archive_ID']}"/>
+                                </f:facet>
+                                <h:outputText value="#{entry.archiveId}"/>
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Time']}"/>
+                                </f:facet>
+                                <h:outputText value="#{entry.time}"/>
+                            </h:column>
+                            
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Type']}"/>
+                                </f:facet>
+                                <h:outputText value="#{entry.typeName}"/>
+                            </h:column>
+                            
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Worker_ID']}"/>
+                                </f:facet>
+                                <h:link outcome="worker" value="#{entry.signerId}">
+                                    <f:param name="id" value="#{entry.signerId}"/>
+                                </h:link> 
+                            </h:column>
+                            
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Client_Cert_Serial_Number']}"/>
+                                </f:facet>
+                                <h:outputText value="#{entry.requestCertSerialNumber}"/>
+                            </h:column>
+                            
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Issuer_DN']}"/>
+                                </f:facet>
+                                <h:outputText value="#{entry.requestIssuerDN}"/>
+                            </h:column>
+                            
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['IP_Address']}"/>s
+                                </f:facet>
+                                <h:outputText value="#{entry.requestIP}"/>
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">
+                                </f:facet>
+                                <h:panelGroup>
+                                    <h:link value="#{text['Download']}" outcome="archive-download">
+                                        <f:param name="uniqueId" value="#{entry.uniqueId}"/>
+                                    </h:link>
+                                </h:panelGroup>
+                            </h:column>
+                            
+                            <f:facet name="footer">
+                                <p>
+                                    <h:commandButton class="buttonNeutral" value="#{text['Download_Selected_in_ZIP']}" action="#{archiveBean.downloadSelectedAction()}"/>
+                                </p>
+                                <p>
+                                    <h:commandButton class="buttonNeutral" value="#{text['First']}" action="#{archiveBean.firstAction()}" disabled="#{!archiveBean.enableFirst}"/> 
+                                    <h:commandButton class="buttonNeutral" value="#{text['Previous']}" action="#{archiveBean.previousAction()}" disabled="#{!archiveBean.enablePrevious}"/> 
+                                    <h:commandButton class="buttonFeatured" value="#{text['Reload']}" action="#{archiveBean.reloadAction()}"/> 
+                                    <h:commandButton class="buttonNeutral" value="#{text['Next']}" action="#{archiveBean.nextAction()}" disabled="#{!archiveBean.enableNext}"/> 
+                                    <h:outputFormat value="#{text['Displaying_results_X_to_Y']}">
+                                        <f:param value="#{archiveBean.fromIndex}"/>
+                                        <f:param value="#{archiveBean.queryingToIndex}"/>
+                                    </h:outputFormat>
+                                </p>
+                            </f:facet>
+                        </h:dataTable>
+                        
+                        
+                        
+                    </h:panelGroup>
+                    
+                </h:form>
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

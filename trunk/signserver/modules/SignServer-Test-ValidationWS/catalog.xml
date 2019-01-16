@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/home/markus/Documents/PrimeKey/SignServer/WebService/signserver31/ValidationWSService.wsdl" uri="xml-resources/web-service-references/ValidationWSService/wsdl/ValidationWSService.wsdl"/>
+    <system systemId="file:/home/markus/Documents/PrimeKey/SignServer/WebService/signserver31/ValidationWSService_schema1.xsd" uri="xml-resources/web-service-references/ValidationWSService/wsdl/ValidationWSService_schema1.xsd"/>
+</catalog>

@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.4.1</p>
+                    <p>Version: 5.0.0</p>
                 </div>
             </header>
 
@@ -1220,7 +1220,7 @@
         <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                             </ul>
-</div>            <h1 id="src-26776209"> <span>SignServer Installation</span></h1>
+</div>            <h1 id="src-34570254"> <span>SignServer Installation</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1229,60 +1229,61 @@
     <p  >For information on upgrading from an earlier version of SignServer, refer to the SIGNSERVER_HOME/doc/RELEASE_NOTES.txt and UPGRADE.txt. Information on implemented features and changes in the release can be found in the SIGNSERVER_HOME/doc/RELEASE_NOTES.txt.    </p>
     <p  >The SignServer installation is described in the following steps:    </p>
     <p  >    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-26776209_id-.SignServerInstallationv4.4.1-ServerInstallation">Server Installation</a>    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtMSlDaGVja1ByZXJlcXVpc2l0ZXM">1) Check Prerequisites</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtMilVbnBhY2tTaWduU2VydmVy">2) Unpack SignServer</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtMylCdWlsZFNpZ25TZXJ2ZXI">3) Build SignServer</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtNClTZXRFbnZpcm9ubWVudFZhcmlhYmxlcw">4) Set Environment Variables</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtNSlTZXR1cERhdGFiYXNl">5) Set up Database</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtNilDb25maWd1cmVXZWJTZXJ2ZXJLZXlTdG9yZXM">6) Configure Web Server Key Stores</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtNylDb25maWd1cmVBcHBsaWNhdGlvblNlcnZlcg">7) Configure Application Server</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtOClDb25maWd1cmVEZXBsb3ltZW50">8) Configure Deployment</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtOSlEZXBsb3lTaWduU2VydmVy">9) Deploy SignServer</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtMTApQWNjZXNzU2lnblNlcnZlcg">10) Access SignServer</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtU2lnblNlcnZlcl93aXRob3V0X0RCQWx0ZXJuYXRpdmVJbnN0YWxsYXRpb246U2lnblNlcnZlcndpdGhvdXREYXRhYmFzZQ">Alternative Installation: SignServer without Database</a>    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-26776209_id-.SignServerInstallationv4.4.1-Configuration">Configuration</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_id-.SignServerInstallationv4.4.1-StructureofData">Structure of Data</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtTWlncmF0aW5ndG8vZnJvbURhdGFiYXNl">Migrating to/from Database</a>    </p>
-</li></ul></li></ul>    <div class="section section-1" id="src-26776209_id-.SignServerInstallationv4.4.1-ServerInstallation">
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-ServerInstallation">Server Installation</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtMSlDaGVja1ByZXJlcXVpc2l0ZXM">1) Check Prerequisites</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtMilVbnBhY2tTaWduU2VydmVy">2) Unpack SignServer</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtMylCdWlsZFNpZ25TZXJ2ZXI">3) Build SignServer</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtNClTZXRFbnZpcm9ubWVudFZhcmlhYmxlcw">4) Set Environment Variables</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtNSlTZXR1cERhdGFiYXNl">5) Set up Database</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtNilDb25maWd1cmVXZWJTZXJ2ZXJLZXlTdG9yZXM">6) Configure Web Server Key Stores</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtNylDb25maWd1cmVBcHBsaWNhdGlvblNlcnZlcg">7) Configure Application Server</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtOClDb25maWd1cmVEZXBsb3ltZW50">8) Configure Deployment</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtOSlEZXBsb3lTaWduU2VydmVy">9) Deploy SignServer</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtMTApQWNjZXNzU2lnblNlcnZlcg">10) Access SignServer</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtU2lnblNlcnZlcl93aXRob3V0X0RCQWx0ZXJuYXRpdmVJbnN0YWxsYXRpb246U2lnblNlcnZlcndpdGhvdXREYXRhYmFzZQ">Alternative Installation: SignServer without Database</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-Configuration">Configuration</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-StructureofData">Structure of Data</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtTWlncmF0aW5ndG8vZnJvbURhdGFiYXNl">Migrating to/from Database</a>    </p>
+</li></ul></li></ul>    <div class="section section-1" id="src-34570254_id-.SignServerInstallationv5.0.0-ServerInstallation">
         <h1 class="heading "><span>Server Installation</span></h1>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
  Make sure you are reading the version of the manual corresponding to the software version you are about to install. The version of the manual is displayed on the top or bottom of this page.    </p>
     <p  >    </p>
-    <div class="section section-2" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtMSlDaGVja1ByZXJlcXVpc2l0ZXM">
+    <div class="section section-2" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtMSlDaGVja1ByZXJlcXVpc2l0ZXM">
         <h2 class="heading "><span>1) Check Prerequisites</span></h2>
-    <p  >Make sure all required software are installed:    </p>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">Java</strong>:<br/>OpenJDK 7, Oracle Java 7*, OpenJDK 8** or Oracle Java 8*    </p>
-</li><li class=" ">    <p  ><strong class=" ">Application server</strong>:<br/>JBoss AS 7.1.1, JBoss EAP 6.x, JBoss EAP 7.x, WildFly 9, WildFly 10, WildFly 11, or Payara Server 4.1.1.162***    </p>
-</li><li class=" ">    <p  ><strong class=" ">Database</strong>:<br/>MySQL or MariaDB 5.5, PostgreSQL 9.x, Oracle Database 10/11g or without****    </p>
-</li><li class=" ">    <p  ><strong class=" ">Deployment tool</strong>:<br/>Apache Ant 1.8.0 or later    </p>
-</li><li class=" ">    <p  ><strong class=" ">Build tool</strong> (optional*****)<strong class=" ">:</strong><br/>Apache Maven 3    </p>
-</li></ul>    <p  >* When using Oracle Java you must install the 'Unlimited Strength Jurisdiction Policy Files' for JDK for the parts of SignServer that makes use of strong crypto to work. The policy files can be found at the same place as the JDK download at Oracle. Further information on this can be found in the Oracle documentation on the JCE.<br/>** If supported by the application server.<br/>*** Experimental support for Payara. Currently uses EclipseLink instead of Hibernate.<br/>**** See <a   href="#src-26776209_id-.SignServerInstallationv4.4.1-SignServer_without_DB">SignServer without Database</a><br/>***** Only required when building the software from source    </p>
+    <p  >Make sure all required software is installed:    </p>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">Java</strong>:<br/>OpenJDK 8, or <a  class="external-link" href="https://www.oracle.com/technetwork/java/javase/overview/index.html">Oracle Java 8</a>*<br/><br/><strong class=" ">Application server</strong>:<br/>JBoss EAP 6.x and 7.x, <a  class="external-link" href="http://wildfly.org/downloads/">WildFly</a> 9, 10, 11, or <a  class="external-link" href="https://www.payara.fish/">Payara Server</a> 4.1.1.x<a  class="external-link" href="https://www.payara.fish/software/payara-server/"></a>    </p>
+</li><li class=" ">    <p  ><strong class=" ">Database</strong>:<br/>MySQL or MariaDB 5.5/10.3.12, PostgreSQL 9.x, Oracle Database 10/11g, or without database (***).    </p>
+</li><li class=" ">    <p  ><strong class=" ">Deployment tool</strong>:<br/>Apache <strong class=" ">Ant</strong> 1.9 or later    </p>
+</li><li class=" ">    <p  ><strong class=" ">Build tool</strong> (optional****)<strong class=" ">:</strong><br/>Apache <strong class=" ">Maven</strong> 3.x or later    </p>
+</li></ul>    <p  >* When using Oracle JDK the <a  class="external-link" href="https://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html"><i class=" ">Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files for JDK</i></a> need to be enabled via uncommenting the line crypto.policy=unlimited in jre/lib/security/java.security file, since parts of SignServer API make use of strong cryptography algorithms. Further information on this can be found in Oracle documentation on the JCE.<br/>** Experimental support for Payara. Currently uses EclipseLink instead of Hibernate.<br/>*** See <a   href="#src-34570254_id-.SignServerInstallationv5.0.0-SignServer_without_DB">SignServer without Database</a><br/>**** Only required when building the software from source    </p>
     </div>
-    <div class="section section-2" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtMilVbnBhY2tTaWduU2VydmVy">
+    <div class="section section-2" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtMilVbnBhY2tTaWduU2VydmVy">
         <h2 class="heading section"><span>2) Unpack SignServer</span></h2>
     <p  >Download and unzip the latest SignServer Enterprise Edition from your PrimeKey download area or use the latest <a  class="external-link" href="https://sourceforge.net/projects/signserver/files/signserver/">SignServer Community Edition</a> release archive from SourceForge.    </p>
     <p  >Note that SignServer is available in the following different distributions:    </p>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">signserver-4.x.y-bin.zip</strong>: The binary distribution (recommended).    </p>
-</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">signserver-4.x.y.zip: </strong>The mixed distribution. Contains the sources and all required libraries. This distribution requires you to build SignServer before deploying, see <a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtMylCdWlsZFNpZ25TZXJ2ZXI">3) Build SignServer</a>.    </p>
-</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">signserver-4.x.y-src.tar.gz: </strong>The source-only tarball distribution. This distribution cannot be deployed without first gathering all the dependencies and then building it. If you choose this one, you are on your own.    </p>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">signserver-5.x.y-bin.zip</strong>: The binary distribution (recommended).    </p>
+</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">signserver-5.x.y.zip: </strong>The mixed distribution. Contains the sources and all required libraries. This distribution requires you to build SignServer before deploying, see <a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtMylCdWlsZFNpZ25TZXJ2ZXI">3) Build SignServer</a>.    </p>
+</li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">signserver-5.x.y-src.tar.gz: </strong>The source-only tarball distribution. This distribution cannot be deployed without first gathering all the dependencies and then building it. If you choose this one, you are on your own.    </p>
 </li></ul>    <p  >    </p>
     <p  >Make sure to compare the checksums as provided on <a  class="external-link" href="https://www.signserver.org/download.html">https://signserver.org/download.html</a>, or from a by PrimeKey provided download site.    </p>
+    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">sha256sum signserver-</code><code class="value">4</code><code class="plain">.x.y-bin.zip</code></div>
-<div class="line"><code class="plain">unzip signserver-</code><code class="value">4</code><code class="plain">.x.y-bin.zip</code></div>
+<div class="line"><code class="plain">sha256sum signserver-</code><code class="value">5</code><code class="plain">.x.y-bin.zip</code></div>
+<div class="line"><code class="plain">unzip signserver-</code><code class="value">5</code><code class="plain">.x.y-bin.zip</code></div>
 </div>
     </div>
     <p  >Alternatively, you can checkout the latest unstable version from the <a  class="external-link" href="https://svn.cesecore.eu/svn/signserver/trunk/">Subversion (SVN) repository</a>. Note that as with the mixed distribution, the latest unstable version needs to be built before deploying.    </p>
     </div>
-    <div class="section section-2" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtMylCdWlsZFNpZ25TZXJ2ZXI">
+    <div class="section section-2" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtMylCdWlsZFNpZ25TZXJ2ZXI">
         <h2 class="heading "><span>3) Build SignServer</span></h2>
-    <p  >Skip this step if you downloaded the binary distribution (recommended) and proceed to step <a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtNClTZXRFbnZpcm9ubWVudFZhcmlhYmxlcw">4) Set Environment Variables</a>.    </p>
+    <p  >Skip this step if you downloaded the binary distribution (recommended) and proceed to step <a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtNClTZXRFbnZpcm9ubWVudFZhcmlhYmxlcw">4) Set Environment Variables</a>.    </p>
     <p  >If you instead downloaded the mixed distribution, or checked out the latest version from SVN and want to build SignServer yourself before copying it to the target server, you need to perform the following steps on your build machine.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
  Before running Maven (mvn) commands, make sure you have a secure Maven installation that does not contact the Central repository over insecure HTTP. Ensure that the URL for the Central repository is specified with HTTPS (and/or use an internal repository).    </p>
     <p  >For an example on how to override the default Maven settings in <tt class=" ">~/.m2/settings.xml</tt>, refer to the <tt class=" ">sample-maven-settings-community.xml</tt>.    </p>
+    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">mvn help:effective-settings</code></div>
@@ -1295,6 +1296,7 @@
 </div>
     </div>
     <p  >To build the sources run:    </p>
+    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">mvn install -DskipTests</code></div>
@@ -1302,21 +1304,21 @@
     </div>
     <p  >    </p>
     </div>
-    <div class="section section-2" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtNClTZXRFbnZpcm9ubWVudFZhcmlhYmxlcw">
+    <div class="section section-2" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtNClTZXRFbnZpcm9ubWVudFZhcmlhYmxlcw">
         <h2 class="heading "><span>4) Set Environment Variables</span></h2>
     <p  >    </p>
-    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-APPSRV_HOME">
+    <div class="section section-3" id="src-34570254_id-.SignServerInstallationv5.0.0-APPSRV_HOME">
         <h3 class="heading "><span>APPSRV_HOME</span></h3>
-    <p  >Set APPSRV_HOME to point to your application server installation (<tt class=" ">/opt/jboss</tt> could be a symbolic link):    </p>
+    <p  >Set APPSRV_HOME to point to your application server installation (<tt class=" ">/opt/{jboss, wildfly}</tt>, could be a symbolic link:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">export APPSRV_HOME=/opt/jboss</code></div>
+<div class="line"><code class="plain">export APPSRV_HOME=/opt/{jboss, wildfly}</code></div>
 </div>
     </div>
     <p  >The APPSRV_HOME variable is used when deploying to the application server and could for example be set in your <tt class=" ">.bashrc</tt> or similar file, or be provided every time the deploy command is executed.    </p>
     <p  >    </p>
     </div>
-    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-SIGNSERVER_NODEID">
+    <div class="section section-3" id="src-34570254_id-.SignServerInstallationv5.0.0-SIGNSERVER_NODEID">
         <h3 class="heading "><span>SIGNSERVER_NODEID</span></h3>
     <p  >Set SIGNSERVER_NODEID to a unique ID for the server:    </p>
     <div  class="confbox programlisting">
@@ -1327,52 +1329,55 @@
     <p  >The SIGNSERVER_NODEID variable should be available to the application server and might need to be set in <tt class=" ">/etc/environment</tt> or similar. The variable is generally not mandatory but if not set, warnings will be printed in the log.    </p>
     </div>
     </div>
-    <div class="section section-2" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtNSlTZXR1cERhdGFiYXNl">
+    <div class="section section-2" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtNSlTZXR1cERhdGFiYXNl">
         <h2 class="heading "><span>5) Set up Database</span></h2>
-    <p  >Skip this step and instead see <a   href="#src-26776209_id-.SignServerInstallationv4.4.1-SignServer_without_DB">SignServer without Database</a> if you want to run SignServer without a database management system.    </p>
+    <p  >Skip this step and instead see <a   href="#src-34570254_id-.SignServerInstallationv5.0.0-SignServer_without_DB">SignServer without Database</a> if you want to run SignServer without a database management system.    </p>
     <p  >If you are using a database, you will need to get a JDBC driver from the database vendor.    </p>
     <p  >The following is described in this step:    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="#src-26776209_id-.SignServerInstallationv4.4.1-Databaseaccount">Database Account</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_id-.SignServerInstallationv4.4.1-Tablecreationandindexes">Table Creation and Indexes</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_id-.SignServerInstallationv4.4.1-MariaDBbinlogformatconfiguration">MariaDB binlog Format Configuration</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JHbGFzc0Zpc2gvUGF5YXJh">Configure Database Driver for GlassFish/Payara</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JKQm9zc0FTNyxKQm9zc0VBUDZvcldpbGRGbHk">Configure Database Driver for JBoss AS 7, JBoss EAP 6 or WildFly</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtQ29uZmlndXJlZGF0YXNvdXJjZWZvckdsYXNzRmlzaC9QYXlhcmE">Configure Data Source for GlassFish/Payara</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_id-.SignServerInstallationv4.4.1-ConfiguredatasourceforJBossAS7.1">Configure Data Source for JBoss AS 7.1</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_id-.SignServerInstallationv4.4.1-ConfiguredatasourceforJBossEAP6orWildFly">Configure Data Source for JBoss EAP 6 or WildFly</a>    </p>
-</li></ul>    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-DatabaseAccountDatabaseaccount">
-        <h3 class="heading section"><span id="src-26776209_id-.SignServerInstallationv4.4.1-Databaseaccount" class="confluence-anchor-link"></span><span>Database Account </span></h3>
+<ul class=" "><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-Databaseaccount">Database Account</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-Tablecreationandindexes">Table Creation and Indexes</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-MariaDBbinlogformatconfiguration">MariaDB binlog Format Configuration</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JHbGFzc0Zpc2gvUGF5YXJh">Configure Database Driver for GlassFish/Payara</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JKQm9zc0FTNyxKQm9zc0VBUDZvcldpbGRGbHk">Configure Database Driver for JBoss EAP 6 or WildFly</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlZGF0YXNvdXJjZWZvckdsYXNzRmlzaC9QYXlhcmE">Configure Data Source for GlassFish/Payara</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-ConfiguredatasourceforJBossEAP6orWildFly">Configure Data Source for JBoss EAP 6 or WildFly</a>    </p>
+</li></ul>    <div class="section section-3" id="src-34570254_id-.SignServerInstallationv5.0.0-DatabaseAccountDatabaseaccount">
+        <h3 class="heading section"><span id="src-34570254_id-.SignServerInstallationv5.0.0-Databaseaccount" class="confluence-anchor-link"></span><span>Database Account </span></h3>
     <p  class="section">Create a database and database user for SignServer. For more information, refer to documentation from the respective database vendor.    </p>
     </div>
-    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-TableCreationandIndexesTablecreationandindexes">
-        <h3 class="heading section"><span id="src-26776209_id-.SignServerInstallationv4.4.1-Tablecreationandindexes" class="confluence-anchor-link"></span><span>Table Creation and Indexes </span></h3>
+    <div class="section section-3" id="src-34570254_id-.SignServerInstallationv5.0.0-TableCreationandIndexesTablecreationandindexes">
+        <h3 class="heading section"><span id="src-34570254_id-.SignServerInstallationv5.0.0-Tablecreationandindexes" class="confluence-anchor-link"></span><span>Table Creation and Indexes </span></h3>
     <p  class="section">The application server will attempt to create tables during startup of SignServer and if the database user does not have table create permissions, the tables must be created manually. For information on database schemas for different databases, refer to <tt class=" ">doc/sql-scripts/create-tables-signserver-*.sql</tt>.    </p>
     <p  class="section">In order to improve performance, the appropriate database indices should also be applied. This is extra important for the AuditRecordData table, which otherwise will make SignServer slower to start. Refer to <tt class=" ">doc/sql-scripts/create-index-signserver.sql</tt>.    </p>
     </div>
-    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-MariaDBbinlogFormatConfigurationMariaDBbinlogformatconfiguration">
-        <h3 class="heading section"><span id="src-26776209_id-.SignServerInstallationv4.4.1-MariaDBbinlogformatconfiguration" class="confluence-anchor-link"></span><span>MariaDB binlog Format Configuration </span></h3>
+    <div class="section section-3" id="src-34570254_id-.SignServerInstallationv5.0.0-MariaDBbinlogFormatConfigurationMariaDBbinlogformatconfiguration">
+        <h3 class="heading section"><span id="src-34570254_id-.SignServerInstallationv5.0.0-MariaDBbinlogformatconfiguration" class="confluence-anchor-link"></span><span>MariaDB binlog Format Configuration </span></h3>
     <p  class="section">For MariaDB, set <tt class=" ">binlog_format</tt> to &quot;row&quot;, for instance in <tt class=" ">/etc/mysql/my.cnf:</tt>    </p>
+    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">binlog_format=row</code></div>
 </div>
     </div>
     </div>
-    <div class="section section-3" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtQ29uZmlndXJlRGF0YWJhc2VEcml2ZXJmb3JHbGFzc0Zpc2gvUGF5YXJhQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JHbGFzc0Zpc2gvUGF5YXJh">
-        <h3 class="heading "><span id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JHbGFzc0Zpc2gvUGF5YXJh" class="confluence-anchor-link"></span><span>Configure Database Driver for GlassFish/Payara </span></h3>
-    <p  >Copy the driver for your database to the application server lib folder.    </p>
+    <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlRGF0YWJhc2VEcml2ZXJmb3JHbGFzc0Zpc2gvUGF5YXJhQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JHbGFzc0Zpc2gvUGF5YXJh">
+        <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JHbGFzc0Zpc2gvUGF5YXJh" class="confluence-anchor-link"></span><span>Configure Database Driver for GlassFish/Payara </span></h3>
+    <p  >Copy the driver for your database to the application server specific folder. For WildFly server driver jar file may be the placed into the following directory:    </p>
+    <p  >{APPSRV_HOME}/modules/system/layers/base/. For example, MySQL JDBC Driver must be placed into this directory:    </p>
+    <p  >    </p>
+    <p  ><strong class=" "><i class=" ">{APPSRV_HOME}/modules/system/layers/base/com/mysql/main/com.mysql.jdbc_5.1.5.jar</i></strong>    </p>
     </div>
-    <div class="section section-3" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtQ29uZmlndXJlRGF0YWJhc2VEcml2ZXJmb3JKQm9zc0FTNyxKQm9zc0VBUDZvcldpbGRGbHlDb25maWd1cmVkYXRhYmFzZWRyaXZlcmZvckpCb3NzQVM3LEpCb3NzRUFQNm9yV2lsZEZseQ">
-        <h3 class="heading "><span id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JKQm9zc0FTNyxKQm9zc0VBUDZvcldpbGRGbHk" class="confluence-anchor-link"></span><span>Configure Database Driver for JBoss AS 7, JBoss EAP 6 or WildFly </span></h3>
-    <p  >For JBoss AS 7, EAP6, and WildFly it is not sufficient to drop the JAR archive with a database JDBC driver into the deployments directory. Instead, the following steps need to be performed (for MySQL or MariaDB):    </p>
-<ol class=" "><li class=" ">    <p  >Create the necessary directories (relative to JBoss AS 7 base directory):    </p>
-<ul class=" "><li class=" ">    <p  >On JBoss AS 7.1.1 or EAP 6.0:    </p>
+    <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlRGF0YWJhc2VEcml2ZXJmb3JXaWxkRmx5LEdsYXNzRmlzaG9yUGFyYXlhQXBwbGljYXRpb25TZXJ2ZXI6Q29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JKQm9zc0FTNyxKQm9zc0VBUDZvcldpbGRGbHk">
+        <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JKQm9zc0FTNyxKQm9zc0VBUDZvcldpbGRGbHk" class="confluence-anchor-link"></span><span>Configure Database Driver for WildFly, GlassFish or Paraya Application Server:</span></h3>
+    <p  >For JBoss EAP6, and WildFly it is not sufficient to drop the JAR archive with a database JDBC driver into the deployments directory. Instead, the following steps need to be performed (for MySQL or MariaDB):    </p>
+<ol class=" "><li class=" ">    <p  >Create the necessary directories (relative to JBoss EAP base directory):    </p>
+<ul class=" "><li class=" ">    <p  >On JBoss EAP 6.0:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">mkdir -p modules/com/mysql/main/</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >On JBoss AS 7.2 or EAP 6.1:    </p>
+</li><li class=" ">    <p  >On WildFly Application Server:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">mkdir -p modules/system/layers/base/com/mysql/main/</code></div>
@@ -1384,22 +1389,22 @@
 <div class="line"><code class="plain">mkdir -p modules/org/mariadb/main/</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >On JBoss AS 7.2, EAP 6.1 (or later) or WildFly:    </p>
+</li><li class=" ">    <p  >On JBoss EAP 6.1 (or later) or WildFly:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">mkdir -p modules/system/layers/base/org/mariadb/main/</code></div>
 </div>
     </div>
-    <p  >    </p>
 </li></ul></li><li class=" ">    <p  >Place the <tt class=" ">mysql.jar</tt> or <tt class=" ">mariadb.jar</tt> file in the directory you just created.    </p>
 </li><li class=" ">    <p  >In the created directory, create the JDBC module configuration file <tt class=" ">module.xml</tt> with the following contents:    </p>
-<ul class=" "><li class=" ">    <p  >MySQL: Replace the path <tt class=" ">mysql.jar</tt> with the full name of your jar file, for example <tt class=" ">mysql-connector-java-5.1.18-bin.jar:</tt>    </p>
+<ul class=" "><li class=" ">    <p  >MySQL: Replace the path <tt class=" ">mysql.jar</tt> with the full name of your jar file, for example, com.mysql.jdbc_5.1.5.jar    </p>
+    <p  ><tt class=" ">:</tt>    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">&lt;?</code><code class="keyword">xml</code><code class="plain"> </code><code class="color1">version</code><code class="plain">=</code><code class="string">"1.0"</code><code class="plain"> </code><code class="color1">encoding</code><code class="plain">=</code><code class="string">"UTF-8"</code><code class="plain">?&gt;</code></div>
 <div class="line"><code class="plain">&lt;</code><code class="keyword">module</code><code class="plain"> </code><code class="color1">xmlns</code><code class="plain">=</code><code class="string">"urn:jboss:module:1.0"</code><code class="plain"> </code><code class="color1">name</code><code class="plain">=</code><code class="string">"com.mysql"</code><code class="plain">&gt;</code></div>
 <div class="line"><code class="plain">  &lt;</code><code class="keyword">resources</code><code class="plain">&gt;</code></div>
-<div class="line"><code class="plain">    &lt;</code><code class="keyword">resource</code><code class="plain">-root </code><code class="color1">path</code><code class="plain">=</code><code class="string">"mysql.jar"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">    &lt;</code><code class="keyword">resource</code><code class="plain">-root </code><code class="color1">path</code><code class="plain">=</code><code class="string">"com.mysql.jdbc_5.1.5.jar"</code><code class="plain">/&gt;</code></div>
 <div class="line"><code class="plain">  &lt;/</code><code class="keyword">resources</code><code class="plain">&gt;</code></div>
 <div class="line"><code class="plain">  &lt;</code><code class="keyword">dependencies</code><code class="plain">&gt;</code></div>
 <div class="line"><code class="plain">    &lt;</code><code class="keyword">module</code><code class="plain"> </code><code class="color1">name</code><code class="plain">=</code><code class="string">"javax.api"</code><code class="plain">/&gt;</code></div>
@@ -1409,13 +1414,13 @@
 </div>
     </div>
     <p  ><tt class=" "></tt>    </p>
-</li><li class=" ">    <p  >MariaDB: Use the full name of your jar file as path, for example <tt class=" ">mariadb-java-client-1.1.2.jar:</tt>    </p>
+</li><li class=" ">    <p  >MariaDB: Use the full name of your jar file as path, for example <tt class=" ">org.mariadb-java-client-1.1.2.jar:</tt>    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">&lt;?</code><code class="keyword">xml</code><code class="plain"> </code><code class="color1">version</code><code class="plain">=</code><code class="string">"1.0"</code><code class="plain"> </code><code class="color1">encoding</code><code class="plain">=</code><code class="string">"UTF-8"</code><code class="plain">?&gt;</code></div>
 <div class="line"><code class="plain">&lt;</code><code class="keyword">module</code><code class="plain"> </code><code class="color1">xmlns</code><code class="plain">=</code><code class="string">"urn:jboss:module:1.0"</code><code class="plain"> </code><code class="color1">name</code><code class="plain">=</code><code class="string">"org.mariadb"</code><code class="plain">&gt;</code></div>
 <div class="line"><code class="plain">  &lt;</code><code class="keyword">resources</code><code class="plain">&gt;</code></div>
-<div class="line"><code class="plain">    &lt;</code><code class="keyword">resource</code><code class="plain">-root </code><code class="color1">path</code><code class="plain">=</code><code class="string">"mariadb-java-client-1.1.2.jar"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">    &lt;</code><code class="keyword">resource</code><code class="plain">-root </code><code class="color1">path</code><code class="plain">=</code><code class="string">"org.mariadb-java-client-1.1.2.jar"</code><code class="plain">/&gt;</code></div>
 <div class="line"><code class="plain">  &lt;/</code><code class="keyword">resources</code><code class="plain">&gt;</code></div>
 <div class="line"><code class="plain">  &lt;</code><code class="keyword">dependencies</code><code class="plain">&gt;</code></div>
 <div class="line"><code class="plain">    &lt;</code><code class="keyword">module</code><code class="plain"> </code><code class="color1">name</code><code class="plain">=</code><code class="string">"javax.api"</code><code class="plain">/&gt;</code></div>
@@ -1424,14 +1429,13 @@
 <div class="line"><code class="plain">&lt;/</code><code class="keyword">module</code><code class="plain">&gt;</code></div>
 </div>
     </div>
-    <p  >    </p>
-</li><li class=" ">    <p  >PostgreSQL: Use the full name of your jar file as path, for example <tt class=" ">postgresql-9.1-903.jdbc4.jar:</tt>    </p>
+</li><li class=" ">    <p  >PostgreSQL: Use the full name of your jar file as path, for example <tt class=" ">org.postgresql-9.1-903.jdbc4.jar:</tt>    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">&lt;?</code><code class="keyword">xml</code><code class="plain"> </code><code class="color1">version</code><code class="plain">=</code><code class="string">"1.0"</code><code class="plain"> </code><code class="color1">encoding</code><code class="plain">=</code><code class="string">"UTF-8"</code><code class="plain">?&gt;</code></div>
 <div class="line"><code class="plain">&lt;</code><code class="keyword">module</code><code class="plain"> </code><code class="color1">xmlns</code><code class="plain">=</code><code class="string">"urn:jboss:module:1.0"</code><code class="plain"> </code><code class="color1">name</code><code class="plain">=</code><code class="string">"org.postgresql"</code><code class="plain">&gt;</code></div>
 <div class="line"><code class="plain">  &lt;</code><code class="keyword">resources</code><code class="plain">&gt;</code></div>
-<div class="line"><code class="plain">    &lt;</code><code class="keyword">resource</code><code class="plain">-root </code><code class="color1">path</code><code class="plain">=</code><code class="string">"postgresql-9.1-903.jdbc4.jar"</code><code class="plain">/&gt;</code></div>
+<div class="line"><code class="plain">    &lt;</code><code class="keyword">resource</code><code class="plain">-root </code><code class="color1">path</code><code class="plain">=</code><code class="string">"org.postgresql-9.1-903.jdbc4.jar"</code><code class="plain">/&gt;</code></div>
 <div class="line"><code class="plain">  &lt;/</code><code class="keyword">resources</code><code class="plain">&gt;</code></div>
 <div class="line"><code class="plain">  &lt;</code><code class="keyword">dependencies</code><code class="plain">&gt;</code></div>
 <div class="line"><code class="plain">    &lt;</code><code class="keyword">module</code><code class="plain"> </code><code class="color1">name</code><code class="plain">=</code><code class="string">"javax.api"</code><code class="plain">/&gt;</code></div>
@@ -1440,9 +1444,10 @@
 <div class="line"><code class="plain">&lt;/</code><code class="keyword">module</code><code class="plain">&gt;</code></div>
 </div>
     </div>
-    <p  >    </p>
 </li></ul></li><li class=" ">    <p  >Register the driver using the following commands:    </p>
-<ul class=" "><li class=" ">    <p  >Using JBoss AS 7 CLI administration tool, run:    </p>
+<ul class=" "><li class=" ">    <p  >Using JBoss EAP CLI administration tool, run script {APPSRV_HOME}/bin/jboss-cli.sh or similar:    </p>
+    <p  >and connect to the <i class=" ">running</i> Application Server, using the following command: [disconnected /] connect localhost .    </p>
+    <p  >Once connected, issue the following commands, to register your driver and <a  class="external-link" href="https://access.redhat.com/documentation/en-us/jboss_enterprise_application_platform/6/html/administration_and_configuration_guide/example_mysql_xa_datasource1">datasource</a>:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">/subsystem=datasources/jdbc-driver=com.mysql.jdbc.Driver:add(driver-name=com.mysql.jdbc.Driver,driver-module-name=com.mysql,driver-xa-datasource-</code><code class="keyword">class</code><code class="plain">-name=com.mysql.jdbc.jdbc.jdbc2.optional.MysqlXADataSource)</code></div>
@@ -1465,10 +1470,11 @@
     </div>
 </li></ul></li></ol>    <p  >    </p>
     </div>
-    <div class="section section-3" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtQ29uZmlndXJlRGF0YVNvdXJjZWZvckdsYXNzRmlzaC9QYXlhcmFDb25maWd1cmVkYXRhc291cmNlZm9yR2xhc3NGaXNoL1BheWFyYQ">
-        <h3 class="heading "><span id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtQ29uZmlndXJlZGF0YXNvdXJjZWZvckdsYXNzRmlzaC9QYXlhcmE" class="confluence-anchor-link"></span><span>Configure Data Source for GlassFish/Payara </span></h3>
+    <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlRGF0YVNvdXJjZWZvckdsYXNzRmlzaC9QYXlhcmFDb25maWd1cmVkYXRhc291cmNlZm9yR2xhc3NGaXNoL1BheWFyYQ">
+        <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlZGF0YXNvdXJjZWZvckdsYXNzRmlzaC9QYXlhcmE" class="confluence-anchor-link"></span><span>Configure Data Source for GlassFish/Payara </span></h3>
     <p  >For GlassFish/Payara, also configure a connection pool and JNDI resource:    </p>
-<ol class=" "><li class=" ">    <p  >Go to the Admin Console: <a  class="external-link" href="http://localhost:4848">http://localhost:4848.</a>    </p>
+    <p  >    </p>
+<ol class=" "><li class=" ">    <p  >Go to the Application Server Admin Console: <a  class="external-link" href="http://localhost:4848">http://localhost:4848.</a>    </p>
 </li><li class=" ">    <p  >Click <strong class=" ">Resources &gt; JDBC &gt; Connection Pools</strong>.    </p>
 </li><li class=" ">    <p  >Add a new Pool. For example, Name: MySQLPool.    </p>
 </li><li class=" ">    <p  >Specify the following:<br/>databaseName: signserver<br/>password: signserver<br/>portNumber 3306<br/>serverName: localhost<br/>user: signserver    </p>
@@ -1476,22 +1482,10 @@
 </li><li class=" ">    <p  >Click <strong class=" ">Resources &gt; JDBC &gt; JDBC Resources</strong>.    </p>
 </li><li class=" ">    <p  >Add new:<br/>JNDI Name: jdbc/SignServerDS<br/>Pool Name: MySQLPool    </p>
 </li></ol>    </div>
-    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-ConfigureDataSourceforJBossAS7.1ConfiguredatasourceforJBossAS7.1">
-        <h3 class="heading "><span id="src-26776209_id-.SignServerInstallationv4.4.1-ConfiguredatasourceforJBossAS7.1" class="confluence-anchor-link"></span><span>Configure Data Source for JBoss AS 7.1 </span></h3>
-    <p  >The following shows an example configuration of a MariaDB data source using the jboss-cli with the driver installed as described in the previous step <a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JKQm9zc0FTNyxKQm9zc0VBUDZvcldpbGRGbHk">Configure database driver for JBoss AS 7, JBoss EAP 6 or WildFly</a>.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
- Note that the <tt class=" ">--enabled=true</tt> option is omitted in the JBoss AS 7.1 configuration.    </p>
-    <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">data-source add --name=signserverds --driver-name=</code><code class="string">"org.mariadb.jdbc.Driver"</code><code class="plain"> --connection-url=</code><code class="string">"jdbc:mysql://127.0.0.1:3306/signserver"</code><code class="plain"> --jndi-name=</code><code class="string">"java:/SignServerDS"</code><code class="plain"> --use-ccm=</code><code class="keyword">true</code><code class="plain"> --driver-</code><code class="keyword">class</code><code class="plain">=</code><code class="string">"org.mariadb.jdbc.Driver"</code><code class="plain"> --user-name=</code><code class="string">"signserver"</code><code class="plain"> --password=</code><code class="string">"signserver"</code><code class="plain"> --validate-on-match=</code><code class="keyword">true</code><code class="plain"> --background-validation=</code><code class="keyword">false</code><code class="plain"> --prepared-statements-cache-size=</code><code class="value">50</code><code class="plain"> --share-prepared-statements=</code><code class="keyword">true</code><code class="plain"> --min-pool-size=</code><code class="value">5</code><code class="plain"> --max-pool-size=</code><code class="value">150</code><code class="plain"> --pool-prefill=</code><code class="keyword">true</code><code class="plain"> --transaction-isolation=TRANSACTION_READ_COMMITTED --check-valid-connection-sql=</code><code class="string">"select 1;"</code></div>
-</div>
-    </div>
-    <p  >Restart the application server.    </p>
-    </div>
-    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-ConfigureDataSourceforJBossEAP6orWildFlyConfiguredatasourceforJBossEAP6orWildFly">
-        <h3 class="heading "><span id="src-26776209_id-.SignServerInstallationv4.4.1-ConfiguredatasourceforJBossEAP6orWildFly" class="confluence-anchor-link"></span><span>Configure Data Source for JBoss EAP 6 or WildFly </span></h3>
-    <p  >The following shows an example configuration of a MariaDB data source using the jboss-cli with the driver installed as described in the previous step <a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JKQm9zc0FTNyxKQm9zc0VBUDZvcldpbGRGbHk">Configure database driver for JBoss AS 7, JBoss EAP 6 or WildFly</a>.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+    <div class="section section-3" id="src-34570254_id-.SignServerInstallationv5.0.0-ConfigureDataSourceforJBossEAP6orWildFlyConfiguredatasourceforJBossEAP6orWildFly">
+        <h3 class="heading "><span id="src-34570254_id-.SignServerInstallationv5.0.0-ConfiguredatasourceforJBossEAP6orWildFly" class="confluence-anchor-link"></span><span>Configure Data Source for JBoss EAP 6 or WildFly </span></h3>
+    <p  >The following shows an example configuration of a MariaDB data source using the {APPSRV_HOME}/bin/jboss-cli.sh with the driver installed as described in the previous step <a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JKQm9zc0FTNyxKQm9zc0VBUDZvcldpbGRGbHk">Configure database driver for JBoss EAP 6 or WildFly</a>.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
  Note that the <tt class=" ">--enabled=true</tt> option should be set for JBoss EAP 6.x.    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1501,20 +1495,20 @@
     <p  >Restart the application server.    </p>
     </div>
     </div>
-    <div class="section section-2" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtNilDb25maWd1cmVXZWJTZXJ2ZXJLZXlTdG9yZXM">
+    <div class="section section-2" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtNilDb25maWd1cmVXZWJTZXJ2ZXJLZXlTdG9yZXM">
         <h2 class="heading "><span>6) Configure Web Server Key Stores</span></h2>
     <p  >Configure the Web Server keystore following the instructions in one of the following sections:    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtR2xhc3NGaXNoL1BheWFyYVNTTGNvbmZpZ3VyYXRpb24">GlassFish/Payara SSL Configuration</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtSkJvc3M3L0VBUDZTU0xjb25maWd1cmF0aW9u">JBoss AS 7 / EAP 6 SSL Configuration</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtV2lsZEZseTkvRUFQNy4wU1NMY29uZmlndXJhdGlvbg">WildFly 9 / EAP 7.0 SSL Configuration</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtV2lsZEZseTEwLzExU1NMY29uZmlndXJhdGlvbg">WildFly 10/11 SSL Configuration</a>    </p>
+<ul class=" "><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtR2xhc3NGaXNoL1BheWFyYVNTTGNvbmZpZ3VyYXRpb24">GlassFish/Payara SSL Configuration</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtSkJvc3M3L0VBUDZTU0xjb25maWd1cmF0aW9u">JBoss EAP 6 SSL Configuration</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtV2lsZEZseTkvRUFQNy4wU1NMY29uZmlndXJhdGlvbg">WildFly 9 / EAP 7.0 SSL Configuration</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtV2lsZEZseTEwLzExU1NMY29uZmlndXJhdGlvbg">WildFly 10/11 SSL Configuration</a>    </p>
 </li></ul>    <p  >    </p>
-    <div class="section section-3" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtR2xhc3NGaXNoL1BheWFyYVNTTENvbmZpZ3VyYXRpb25HbGFzc0Zpc2gvUGF5YXJhU1NMY29uZmlndXJhdGlvbg">
-        <h3 class="heading "><span id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtR2xhc3NGaXNoL1BheWFyYVNTTGNvbmZpZ3VyYXRpb24" class="confluence-anchor-link"></span><span>GlassFish/Payara SSL Configuration </span></h3>
+    <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtR2xhc3NGaXNoL1BheWFyYVNTTENvbmZpZ3VyYXRpb25HbGFzc0Zpc2gvUGF5YXJhU1NMY29uZmlndXJhdGlvbg">
+        <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtR2xhc3NGaXNoL1BheWFyYVNTTGNvbmZpZ3VyYXRpb24" class="confluence-anchor-link"></span><span>GlassFish/Payara SSL Configuration </span></h3>
     <p  >For GlassFish/Payara, enable client authentication for <tt class=" ">http-listener-2</tt> and manually update the keystores with the right certificates.    </p>
     </div>
-    <div class="section section-3" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtSkJvc3NBUzcvRUFQNlNTTENvbmZpZ3VyYXRpb25KQm9zczcvRUFQNlNTTGNvbmZpZ3VyYXRpb24">
-        <h3 class="heading "><span id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtSkJvc3M3L0VBUDZTU0xjb25maWd1cmF0aW9u" class="confluence-anchor-link"></span><span>JBoss AS 7 / EAP 6 SSL Configuration </span></h3>
+    <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtSkJvc3NFQVA2U1NMQ29uZmlndXJhdGlvbkpCb3NzNy9FQVA2U1NMY29uZmlndXJhdGlvbg">
+        <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtSkJvc3M3L0VBUDZTU0xjb25maWd1cmF0aW9u" class="confluence-anchor-link"></span><span>JBoss EAP 6 SSL Configuration </span></h3>
 <ul class=" "><li class=" ">    <p  >Copy the keystore file as <tt class=" ">JBOSS7_HOME/standalone/configuration/keystore/keystore.jks</tt> and the trust store as <tt class=" ">JBOSS7_HOME/standalone/configuration/keystore/truststore.jks.</tt>    </p>
 </li><li class=" ">    <p  >Configure interfaces using the appropriate bind address (i.e. 0.0.0.0 or 127.0.0.1).    </p>
 </li></ul>    <div  class="confbox programlisting">
@@ -1556,8 +1550,8 @@
 </div>
     </div>
     </div>
-    <div class="section section-3" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtV2lsZEZseTkvRUFQNy4wU1NMQ29uZmlndXJhdGlvbldpbGRGbHk5L0VBUDcuMFNTTGNvbmZpZ3VyYXRpb24">
-        <h3 class="heading "><span id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtV2lsZEZseTkvRUFQNy4wU1NMY29uZmlndXJhdGlvbg" class="confluence-anchor-link"></span><span>WildFly 9 / EAP 7.0 SSL Configuration </span></h3>
+    <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtV2lsZEZseTkvSkJvc3NFQVA3LjBTU0xDb25maWd1cmF0aW9uV2lsZEZseTkvRUFQNy4wU1NMY29uZmlndXJhdGlvbg">
+        <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtV2lsZEZseTkvRUFQNy4wU1NMY29uZmlndXJhdGlvbg" class="confluence-anchor-link"></span><span>WildFly 9 / JBoss EAP 7.0 SSL Configuration </span></h3>
     <p  >Copy the keystore file as <tt class=" ">WILDFLY_HOME/standalone/configuration/keystore/keystore.jks</tt> and the trust store as <tt class=" ">WILDFLY_HOME/standalone/configuration/keystore/truststore.jks.</tt>    </p>
     <p  >Configure interfaces using the appropriate bind address (i.e. 0.0.0.0 or 127.0.0.1):    </p>
     <div  class="confbox programlisting">
@@ -1568,7 +1562,7 @@
 </div>
     </div>
     <p  >Note that WildFly by default imposes a limit of 10 MB on HTTP post size. To allow signing larger files, the limits may be increased on the HTTP/HTTPS listeners by updating the values of the <tt class=" ">max-post-size</tt> attribute in the following code examples.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
  If a larger limit than the default 10 MB is specified for HTTPS listeners, check that the <tt class=" ">max-post-size</tt> value was updated in the <tt class=" ">standalone.xml</tt> file after running the CLI command. If the value was not updated in the XML file, stop the application server and manually update the <tt class=" ">max-post-size</tt> value in the standalone.xml file before starting the application server again.    </p>
     <p  >Secure the CLI by removing the <tt class=" ">http-remoting-connector</tt> from using the http port and instead use a separate port 4447.    </p>
     <div  class="confbox programlisting">
@@ -1607,8 +1601,8 @@
     </div>
     <p  >    </p>
     </div>
-    <div class="section section-3" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtV2lsZEZseTEwLzExU1NMQ29uZmlndXJhdGlvbldpbGRGbHkxMC8xMVNTTGNvbmZpZ3VyYXRpb24">
-        <h3 class="heading "><span id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtV2lsZEZseTEwLzExU1NMY29uZmlndXJhdGlvbg" class="confluence-anchor-link"></span><span>WildFly 10/11 SSL Configuration </span></h3>
+    <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtV2lsZEZseTEwLzExU1NMQ29uZmlndXJhdGlvbldpbGRGbHkxMC8xMVNTTGNvbmZpZ3VyYXRpb24">
+        <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtV2lsZEZseTEwLzExU1NMY29uZmlndXJhdGlvbg" class="confluence-anchor-link"></span><span>WildFly 10/11 SSL Configuration </span></h3>
     <p  >Copy the keystore file as <tt class=" ">WILDFLY_HOME/standalone/configuration/keystore/keystore.jks</tt> and the trust store as <tt class=" ">WILDFLY_HOME/standalone/configuration/keystore/truststore.jks.</tt>    </p>
     <p  >Remove existing listeners to make Wildfly allow configuring httpspriv interface with 8443 port:    </p>
     <div  class="confbox programlisting">
@@ -1632,7 +1626,7 @@
 </div>
     </div>
     <p  >Note that WildFly by default imposes a limit of 10 MB on HTTP post size. To allow signing larger files, the limits may be increased on the HTTP/HTTPS listeners by updating the values of the <tt class=" ">max-post-size</tt> attribute in the following code examples.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
  On application server Wildfly 10: If a larger limit than the default 10 MB is specified for HTTPS listeners, check that the <tt class=" ">max-post-size</tt> value was updated in the <tt class=" ">standalone.xml</tt> file after running the CLI command. If the value was not updated in the XML file, stop the application server and manually update the <tt class=" ">max-post-size</tt> value in the standalone.xml file before starting the application server again.    </p>
     <p  >Configure httpspriv(https) listener:    </p>
     <p  >Set up the private port which requires client certificate. Use appropriate values for key-alias (hostname), password (keystore password), ca-certificate-password (truststore password), and supported protocols:    </p>
@@ -1658,6 +1652,7 @@
     </div>
     <p  >Configure httpspub(https) listener:    </p>
     <p  >Set up the public SSL port which does not require the client certificate:    </p>
+    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">/socket-binding-group=standard-sockets/socket-binding=httpspub:add(port=</code><code class="string">"8442"</code><code class="plain">,</code><code class="keyword">interface</code><code class="plain">=</code><code class="string">"httpspub"</code><code class="plain">)</code></div>
@@ -1677,19 +1672,18 @@
     <p  >    </p>
     </div>
     </div>
-    <div class="section section-2" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtNylDb25maWd1cmVBcHBsaWNhdGlvblNlcnZlcg">
+    <div class="section section-2" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtNylDb25maWd1cmVBcHBsaWNhdGlvblNlcnZlcg">
         <h2 class="heading "><span>7) Configure Application Server</span></h2>
     <p  >Configure the application server following the instructions in the sections:    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ">Fix web service problem in JBoss AS 7 / EAP 6 / WildFly</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtSkJvc3NBUzcvRUFQNi9XaWxkRmx5VVJJZW5jb2Rpbmc">JBoss AS 7/EAP 6/WildFly URI Encoding</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_id-.SignServerInstallationv4.4.1-JBoss7andOracleJDKBouncyCastleissues">JBoss AS 7 and Oracle JDK BouncyCastle Issues</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_id-.SignServerInstallationv4.4.1-FixXMLSecuritylibraryissue1inJBoss7">Fix XML Security Library Issue 1 in JBoss AS 7</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_id-.SignServerInstallationv4.4.1-FixXMLSecuritylibraryissue2inJBoss7">Fix XML Security Library Issue 2 in JBoss AS 7</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_id-.SignServerInstallationv4.4.1-CommonsCollectionsSecurityissueinJBoss7andearlier">Commons Collections Security issue in JBoss AS 7 and Earlier</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_id-.SignServerInstallationv4.4.1-FixSecurityissuesinJBossEAP">Fix Security Issues in JBoss EAP</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-26776209_id-.SignServerInstallationv4.4.1-InstallHibernateinGlassFish3">Install Hibernate in GlassFish 3</a>    </p>
-</li></ul>    <div class="section section-3" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtRml4V2ViU2VydmljZVByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseUZpeHdlYnNlcnZpY2Vwcm9ibGVtaW5KQm9zc0FTNy9FQVA2L1dpbGRGbHk">
-        <h3 class="heading "><span id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ" class="confluence-anchor-link"></span><span>Fix Web Service Problem in JBoss AS 7 / EAP 6 / WildFly </span></h3>
+<ul class=" "><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ">Fix web service problem in JBoss EAP 6 / WildFly</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtSkJvc3NBUzcvRUFQNi9XaWxkRmx5VVJJZW5jb2Rpbmc">Fix WildFly URI Encoding</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-FixXMLSecuritylibraryissue1inJBoss7">Fix XML Security Library Issue 1 in JBoss EAP</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-FixXMLSecuritylibraryissue2inJBoss7">Fix XML Security Library Issue 2 in JBoss EAP</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-CommonsCollectionsSecurityissueinJBoss7andearlier">Commons Collections Security issue in JBoss EAP</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-FixSecurityissuesinJBossEAP">Fix Security Issues in JBoss EAP</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-InstallHibernateinGlassFish3">Install Hibernate in GlassFish 3</a>    </p>
+</li></ul>    <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtRml4V2ViU2VydmljZVByb2JsZW1pbkpCb3NzRUFQNi9XaWxkRmx5Rml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ">
+        <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ" class="confluence-anchor-link"></span><span>Fix Web Service Problem in JBoss EAP 6 / WildFly </span></h3>
     <p  >Configure WSDL web-host rewriting to use the request host. Needed for webservices to work correctly when requiring client certificate.    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1705,8 +1699,8 @@
     </div>
     <p  >    </p>
     </div>
-    <div class="section section-3" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtSkJvc3NBUzcvRUFQNi9XaWxkRmx5VVJJRW5jb2RpbmdKQm9zc0FTNy9FQVA2L1dpbGRGbHlVUkllbmNvZGluZw">
-        <h3 class="heading "><span id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtSkJvc3NBUzcvRUFQNi9XaWxkRmx5VVJJZW5jb2Rpbmc" class="confluence-anchor-link"></span><span>JBoss AS 7 / EAP 6 / WildFly URI Encoding </span></h3>
+    <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtSkJvc3NFQVA2L1dpbGRGbHlVUklFbmNvZGluZ0pCb3NzQVM3L0VBUDYvV2lsZEZseVVSSWVuY29kaW5n">
+        <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtSkJvc3NBUzcvRUFQNi9XaWxkRmx5VVJJZW5jb2Rpbmc" class="confluence-anchor-link"></span><span>JBoss EAP 6 / WildFly URI Encoding </span></h3>
     <p  >Configure the URI encoding:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1718,40 +1712,33 @@
 </div>
     </div>
     </div>
-    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-JBossAS7andOracleJDKBouncyCastleIssuesJBoss7andOracleJDKBouncyCastleissues">
-        <h3 class="heading "><span id="src-26776209_id-.SignServerInstallationv4.4.1-JBoss7andOracleJDKBouncyCastleissues" class="confluence-anchor-link"></span><span>JBoss AS 7 and Oracle JDK BouncyCastle Issues </span></h3>
-    <p  >When using Oracle JDK and JBoss AS 7, you need to install BC jars as a module in JBoss AS 7. For more information, refer to the JBoss issue <a  class="external-link" href="https://issues.jboss.org/browse/JBAS-7882">JBAS-7882</a> and the <a  class="external-link" href="https://jboss-modules.github.io/jboss-modules/manual/">JBoss Modules Manual</a>.    </p>
-    <p  >    </p>
-    </div>
-    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-FixXMLSecurityLibraryIssue1inJBossAS7FixXMLSecuritylibraryissue1inJBoss7">
-        <h3 class="heading "><span id="src-26776209_id-.SignServerInstallationv4.4.1-FixXMLSecuritylibraryissue1inJBoss7" class="confluence-anchor-link"></span><span>Fix XML Security Library Issue 1 in JBoss AS 7 </span></h3>
-    <p  >JBoss AS 7 bundles version 1.5.1 of the XML Security library. The library bundled with SignServer is not properly overriding the JBoss-bundled version. To work around this issue, copy the JAR file from SignServer into JBoss' modules directory and modify the descriptor to use the new version.    </p>
+    <div class="section section-3" id="src-34570254_id-.SignServerInstallationv5.0.0-FixXMLSecurityLibraryIssue1inJBossEAPFixXMLSecuritylibraryissue1inJBoss7">
+        <h3 class="heading "><span id="src-34570254_id-.SignServerInstallationv5.0.0-FixXMLSecuritylibraryissue1inJBoss7" class="confluence-anchor-link"></span><span>Fix XML Security Library Issue 1 in JBoss EAP </span></h3>
+    <p  >JBoss EAP bundles version 1.5.1 of the XML Security library. The library bundled with SignServer is not properly overriding the JBoss-bundled version. To work around this issue, copy the JAR file from SignServer into JBoss' modules directory and modify the descriptor to use the new version.    </p>
     <p  >On Linux/Unix systems, use the following command:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">cp lib/ext/xmlsec-</code><code class="value">1.5</code><code class="plain">.</code><code class="value">8</code><code class="plain">.jar $APPSRV_HOME/modules/org/apache/santuario/xmlsec/main/</code></div>
+<div class="line"><code class="plain">cp lib/ext/xmlsec-</code><code class="value">1.5</code><code class="plain">.</code><code class="value">8</code><code class="plain">.jar ${APPSRV_HOME}/modules/org/apache/santuario/xmlsec/main/</code></div>
 </div>
     </div>
     <p  class="prettyprint">On Windows systems, use the following command:    </p>
+    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">copy lib\ext\xmlsec-</code><code class="value">1.5</code><code class="plain">.</code><code class="value">8</code><code class="plain">.jar %APPSRV_HOME%\modules\org\apache\santuario\xmlsec\main\</code></div>
 </div>
     </div>
-    <p  >Edit <tt class=" ">$APPSRV_HOME/modules/org/apache/santuario/xmlsec/main/module.xml</tt> to use the correct version:    </p>
+    <p  >Edit <tt class=" ">%APPSRV_HOME%/modules/org/apache/santuario/xmlsec/main/module.xml</tt> to use the correct version:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">&lt;resource-root path=</code><code class="string">"xmlsec-1.5.8.jar"</code><code class="plain">/&gt;</code></div>
 </div>
     </div>
-    </div>
-    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-FixXMLSecurityLibraryIssue2inJBossAS7FixXMLSecuritylibraryissue2inJBoss7">
-        <h3 class="heading "><span id="src-26776209_id-.SignServerInstallationv4.4.1-FixXMLSecuritylibraryissue2inJBoss7" class="confluence-anchor-link"></span><span>Fix XML Security Library Issue 2 in JBoss AS 7 </span></h3>
-    <p  >JBoss AS 7 bundles version 2.7.1 of the Xalan library. The library bundled with SignServer is not properly overriding the JBoss-bundled version. To work around this issue, copy the JAR files from SignServer into JBoss' modules directory and modify the descriptor to use the new version.    </p>
+    <p  >    </p>
     <p  >On Linux/Unix systems, use the following command:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">cp lib/ext/xalan-</code><code class="value">2.7</code><code class="plain">.</code><code class="value">2</code><code class="plain">.jar lib/ext/serializer-</code><code class="value">2.7</code><code class="plain">.</code><code class="value">2</code><code class="plain">.jar $APPSRV_HOME/modules/org/apache/xalan/main/</code></div>
+<div class="line"><code class="plain">cp lib/ext/xalan-</code><code class="value">2.7</code><code class="plain">.</code><code class="value">2</code><code class="plain">.jar lib/ext/serializer-</code><code class="value">2.7</code><code class="plain">.</code><code class="value">2</code><code class="plain">.jar ${APPSRV_HOME}/modules/org/apache/xalan/main/</code></div>
 </div>
     </div>
     <p  class="prettyprint">On Windows systems, use the following command:    </p>
@@ -1761,26 +1748,21 @@
 <div class="line"><code class="plain">copy lib\ext\serializer-</code><code class="value">2.7</code><code class="plain">.</code><code class="value">2</code><code class="plain">.jar %APPSRV_HOME%\modules\org\apache\xalan\main\</code></div>
 </div>
     </div>
-    <p  >Edit <tt class=" ">$APPSRV_HOME/modules/org/apache/xalan/main/module.xml</tt> to use the correct versions:    </p>
+    <p  >On Linux/Unix systems, edit <tt class=" ">${APPSRV_HOME}/modules/org/apache/xalan/main/module.xml</tt> file to set the correct driver jar versions:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">&lt;resource-root path=</code><code class="string">"serializer-2.7.2.jar"</code><code class="plain">/&gt;</code></div>
 <div class="line"><code class="plain">&lt;resource-root path=</code><code class="string">"xalan-2.7.2.jar"</code><code class="plain">/&gt;</code></div>
 </div>
     </div>
+    <p  >Fix Security Issues in JBoss EAP    </p>
+<span id="src-34570254_id-.SignServerInstallationv5.0.0-FixSecurityissuesinJBossEAP"></span>    <p  >Make sure to apply the relevant security patches from Red Hat and pay special attention to the XML Security and Commons Collections libraries.    </p>
     </div>
-    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-CommonsCollectionsSecurityIssueinJBossAS7andEarlierCommonsCollectionsSecurityissueinJBoss7andearlier">
-        <h3 class="heading "><span id="src-26776209_id-.SignServerInstallationv4.4.1-CommonsCollectionsSecurityissueinJBoss7andearlier" class="confluence-anchor-link"></span><span>Commons Collections Security Issue in JBoss AS 7 and Earlier </span></h3>
-    <p  >JBoss AS 7 bundles version 3.2.1 of Commons Collections, which has potential security issues. SignServer uses version 3.2.2. Perform similar changes as in the previous section to have JBoss use the 3.2.2 version instead.    </p>
-    </div>
-    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-FixSecurityIssuesinJBossEAPFixSecurityissuesinJBossEAP">
-        <h3 class="heading "><span id="src-26776209_id-.SignServerInstallationv4.4.1-FixSecurityissuesinJBossEAP" class="confluence-anchor-link"></span><span>Fix Security Issues in JBoss EAP </span></h3>
-    <p  >Make sure to apply the relevant security patches from Red Hat and pay special attention to the XML Security and Commons Collections libraries mentioned above.    </p>
-    </div>
-    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-InstallHibernateinGlassFish3InstallHibernateinGlassFish3">
-        <h3 class="heading "><span id="src-26776209_id-.SignServerInstallationv4.4.1-InstallHibernateinGlassFish3" class="confluence-anchor-link"></span><span>Install Hibernate in GlassFish 3 </span></h3>
+    <div class="section section-3" id="src-34570254_id-.SignServerInstallationv5.0.0-InstallHibernateinGlassFish3InstallHibernateinGlassFish3">
+        <h3 class="heading "><span id="src-34570254_id-.SignServerInstallationv5.0.0-InstallHibernateinGlassFish3" class="confluence-anchor-link"></span><span>Install Hibernate in GlassFish 3 </span></h3>
     <p  >If you are using GlassFish 3 and run with a database, it is recommended to install Hibernate.    </p>
     <p  >Run pkg<tt class=" "> install</tt> in the GlassFish folder:    </p>
+    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">./bin/pkg install hibernate</code></div>
@@ -1789,7 +1771,7 @@
     <p  >    </p>
     </div>
     </div>
-    <div class="section section-2" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtOClDb25maWd1cmVEZXBsb3ltZW50">
+    <div class="section section-2" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtOClDb25maWd1cmVEZXBsb3ltZW50">
         <h2 class="heading "><span>8) Configure Deployment</span></h2>
     <p  >Copy <tt class=" ">conf/signserver_deploy.properties.sample</tt> to <tt class=" ">conf/signserver_deploy.properties</tt> and open it for editing in a text editor.    </p>
     <div  class="confbox programlisting">
@@ -1797,7 +1779,7 @@
 <div class="line"><code class="plain">cp conf/signserver_deploy.properties.sample conf/signserver_deploy.properties</code></div>
 </div>
     </div>
-    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-DatabaseConfiguration">
+    <div class="section section-3" id="src-34570254_id-.SignServerInstallationv5.0.0-DatabaseConfiguration">
         <h3 class="heading "><span>Database Configuration</span></h3>
     <p  >Select database management system unless it is the default MySQL/MariaDB:    </p>
     <div  class="confbox programlisting">
@@ -1808,7 +1790,7 @@
     <p  >For information on how to configure for signed audit logs in the database, see <a   href="CESeCore_Security_Events_Logger.html">Signed log</a>.    </p>
     </div>
     </div>
-    <div class="section section-2" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtOSlEZXBsb3lTaWduU2VydmVy">
+    <div class="section section-2" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtOSlEZXBsb3lTaWduU2VydmVy">
         <h2 class="heading "><span>9) Deploy SignServer</span></h2>
     <p  >Run <tt class=" ">bin/ant deploy</tt> to build the configuration and deploy it to the selected application server:    </p>
     <div  class="confbox programlisting">
@@ -1818,21 +1800,22 @@
     </div>
     <p  >Start the application server and verify that SignServer was deployed.    </p>
     </div>
-    <div class="section section-2" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtMTApQWNjZXNzU2lnblNlcnZlcg">
+    <div class="section section-2" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtMTApQWNjZXNzU2lnblNlcnZlcg">
         <h2 class="heading "><span>10) Access SignServer</span></h2>
     <p  >After startup, you can use different user interfaces to access SignServer.    </p>
-    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-CommandLineInterface">
+    <div class="section section-3" id="src-34570254_id-.SignServerInstallationv5.0.0-CommandLineInterface">
         <h3 class="heading "><span>Command Line Interface</span></h3>
     <p  class="sv-pt-link confluence-link">For more information on the SignServer Administration CLI (AdminCLI), see <a   href="Administration_CLI.html">Administration CLI</a>.    </p>
     <p  >The SignServer Admin CLI is started using <tt class=" ">bin/signserver</tt> and can be tested using the following command:    </p>
+    <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">bin/signserver getstatus brief all</code></div>
-<div class="line"><code class="plain">Current version of server is: SignServer EE </code><code class="value">4.2</code><code class="plain">.</code><code class="value">0</code></div>
+<div class="line"><code class="plain">Current version of server is: SignServer EE </code><code class="value">5.0</code><code class="plain">.</code><code class="value">0</code></div>
 </div>
     </div>
     </div>
-    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-GraphicalUserInterface">
+    <div class="section section-3" id="src-34570254_id-.SignServerInstallationv5.0.0-GraphicalUserInterface">
         <h3 class="heading section"><span>Graphical User Interface</span></h3>
     <p  >For more information on the SignServer Administration GUI (AdminGUI), see <a   href="Administration_GUI.html">Administration GUI</a>.    </p>
     <p  >Start the SignServer AdminGUI using the following script:    </p>
@@ -1843,7 +1826,7 @@
     </div>
     <p  >    </p>
     </div>
-    <div class="section section-3" id="src-26776209_id-.SignServerInstallationv4.4.1-WebInterface">
+    <div class="section section-3" id="src-34570254_id-.SignServerInstallationv5.0.0-WebInterface">
         <h3 class="heading "><span>Web Interface</span></h3>
     <p  >Point your web browser to <a  class="external-link" href="http://localhost:8080/signserver">http://localhost:8080/signserver</a> for demo web pages, administration and local documentation.    </p>
     <p  >Run the following to temporarily allow all valid client certificates to administer the SignServer Administration GUI:    </p>
@@ -1857,15 +1840,15 @@
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtU2lnblNlcnZlcl93aXRob3V0X0RCQWx0ZXJuYXRpdmVJbnN0YWxsYXRpb246U2lnblNlcnZlcndpdGhvdXREYXRhYmFzZQ">
-        <h1 class="heading "><span id="src-26776209_id-.SignServerInstallationv4.4.1-SignServer_without_DB" class="confluence-anchor-link"></span><span>Alternative Installation: SignServer without Database</span></h1>
+    <div class="section section-1" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtU2lnblNlcnZlcl93aXRob3V0X0RCQWx0ZXJuYXRpdmVJbnN0YWxsYXRpb246U2lnblNlcnZlcndpdGhvdXREYXRhYmFzZQ">
+        <h1 class="heading "><span id="src-34570254_id-.SignServerInstallationv5.0.0-SignServer_without_DB" class="confluence-anchor-link"></span><span>Alternative Installation: SignServer without Database</span></h1>
     <p  >As of SignServer 3.2.3, it is possible to operate SignServer without a database management system and instead rely on SignServer to manage persistence using local files.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
- Note that all features of SignServer is not supported without having a database and the performance and scalability characteristics might differ. Currently, archiving to database is not supported.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
+ Note that all features of SignServer are not supported without having a database and the performance and scalability characteristics might differ. Currently, archiving to local files is not supported.    </p>
     <p  >To increase throughput it is recommended to disable the key usage counter, as every request would otherwise have to lock and update that file. For more information, see the property DISABLEKEYUSAGECOUNTER in the section <a   href="Limiting_the_number_of_signatures.html">Limiting the number of signatures</a>.    </p>
-    <p  >    <img  class="emoticon emoticon-cross" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/error.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/error.png"   />
+    <p  >    <img  class="emoticon emoticon-cross" src="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/error.svg" alt="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/error.svg"   />
  Upgrading to a later version should normally be handled automatically during the first startup. Please read the UPGRADE.txt document and create a backup of the file-based database files before attempting to run a later version.    </p>
-    <div class="section section-2" id="src-26776209_id-.SignServerInstallationv4.4.1-Configuration">
+    <div class="section section-2" id="src-34570254_id-.SignServerInstallationv5.0.0-Configuration">
         <h2 class="heading "><span>Configuration</span></h2>
     <p  >In <tt class=" ">signserver_deploy.properties,</tt> set database.name to <strong class=" ">nodb</strong>:    </p>
     <div  class="confbox programlisting">
@@ -1881,11 +1864,11 @@
     </div>
     <p  >Ensure to specify a path to a location where SignServer can write files. The default value is empty. If a relative path is used, it is most likely relative to the application server's working directory. The directory should either point to an existing SignServer file database, or be completely empty. If the directory is empty, SignServer will create the initial database structure at startup.    </p>
     </div>
-    <div class="section section-2" id="src-26776209_id-.SignServerInstallationv4.4.1-StructureofData">
+    <div class="section section-2" id="src-34570254_id-.SignServerInstallationv5.0.0-StructureofData">
         <h2 class="heading section"><span>Structure of Data</span></h2>
     <p  class="section">The file-based database uses a number of files in the specified directory. Read/write synchronization is handled internally in the application and it is thus not supported to manually change files while the application server is running. Generally, it is neither supported to have multiple application servers running with SignServer using the same database directory.    </p>
     </div>
-    <div class="section section-2" id="src-26776209_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NC40LjEtTWlncmF0aW5ndG8vZnJvbURhdGFiYXNl">
+    <div class="section section-2" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtTWlncmF0aW5ndG8vZnJvbURhdGFiYXNl">
         <h2 class="heading "><span>Migrating to/from Database</span></h2>
     <p  >When migrating either to or from another database management system, without setting up all worker configurations from scratch, it is recommended to use the admin command <tt class=" ">dumpproperties</tt> to dump the current configuration to a file, and then on the new system use <tt class=" ">setproperties</tt> followed by the <tt class=" ">reload</tt> command for every worker id.    </p>
     <p  >Note that the <tt class=" ">dumpproperties</tt> command will not include the list of authorized clients and these need to be set up again in the new system. To check for authorized clients, run the admin command <tt class=" ">listauthorizedclients.</tt>    </p>

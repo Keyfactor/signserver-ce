@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 4.4.1</p>
+                    <p>Version: 5.0.0</p>
                 </div>
             </header>
 
@@ -1251,7 +1251,7 @@
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Specifies the number of signatures allowed to be created with the same key by this worker. Default is <strong class=" ">-1</strong> = no limit.    </p>
     <p  >After the limit has been reached, the worker is considered offline.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
  Note that the counter is per key and not per worker. Thus, if multiple workers share the same key they will all increment the counter. This also means that the worker will be active again after it has gotten a new certificate/key.    </p>
             </td>
         </tr>
@@ -1261,7 +1261,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >By default, all key usages are counted, but by specifying this as <strong class=" ">TRUE,</strong> key usages performed by this worker will not be counted. Disabling the key usage counter can improve performance, as it means less database transaction. However, if you have requirements on the number of allowed signings for one worker, ensure not to use the same key with another worker for which the counter is disabled, as those uses will then be missed.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png" alt="images/s/en_GB/7202/8bb4a7d7a43e6723fe7875221f32b3124c55e6e1/_/images/icons/emoticons/warning.png"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
  The key usage counter cannot be disabled for a worker if KEYUSAGELIMIT is also specified.    </p>
             </td>
         </tr>

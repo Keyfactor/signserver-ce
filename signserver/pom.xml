@@ -212,6 +212,16 @@
                 <artifactId>cxf-rt-transports-http-jetty</artifactId>
                 <version>3.1.17</version>
             </dependency>
+	    <dependency>
+            	<groupId>org.codehaus.woodstox</groupId>
+            	<artifactId>woodstox-core-asl</artifactId>
+            	<version>4.4.1</version>
+            </dependency>
+	    <dependency>
+    		<groupId>org.apache.geronimo.specs</groupId>
+    		<artifactId>geronimo-osgi-locator</artifactId>
+    		<version>1.1</version>
+	    </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>

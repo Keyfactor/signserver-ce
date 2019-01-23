@@ -677,7 +677,7 @@ public class ModulesTestCase extends TestCase {
         return response;
     }
 
-    protected PublicKey getPublicKeyFromRequest(final PKCS10CertificationRequest req)
+    public PublicKey getPublicKeyFromRequest(final PKCS10CertificationRequest req)
             throws InvalidKeyException, NoSuchAlgorithmException {
         final JcaPKCS10CertificationRequest jcaPKCS10CertificationRequest =
                 new JcaPKCS10CertificationRequest(req);

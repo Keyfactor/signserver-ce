@@ -62,6 +62,9 @@ import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.Test;
 import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
@@ -92,7 +95,7 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Markus Kilås
  * @version $Id$
  */
-public class P11SignTest extends ModulesTestCase {
+public class P11SignTest {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(P11SignTest.class);
@@ -132,32 +135,28 @@ public class P11SignTest extends ModulesTestCase {
     private final File odfSampleFile;
     private final File ooxmlSampleFile;
 
-    private final WorkerSession workerSession = getWorkerSession();
-    private final ProcessSessionRemote processSession = getProcessSession();
-    private final GlobalConfigurationSessionRemote globalSession = getGlobalSession();
+    private final ModulesTestCase testCase = new ModulesTestCase();
+    
+    private final WorkerSession workerSession = testCase.getWorkerSession();
+    private final ProcessSessionRemote processSession = testCase.getProcessSession();
+    private final GlobalConfigurationSessionRemote globalSession = testCase.getGlobalSession();
     
     public P11SignTest() throws FileNotFoundException {
         final File home = PathUtil.getAppHome();
         pdfSampleFile = new File(home, "res/test/pdf/sample.pdf");
         odfSampleFile = new File(home, "res/test/test.odt");
         ooxmlSampleFile = new File(home, "res/test/test.docx");
-        sharedLibraryName = getConfig().getProperty("test.p11.sharedLibraryName");
-        sharedLibraryPath = getConfig().getProperty("test.p11.sharedLibraryPath");
-        slot = getConfig().getProperty("test.p11.slot");
-        pin = getConfig().getProperty("test.p11.pin");
-        existingKey1 = getConfig().getProperty("test.p11.existingkey1");
+        sharedLibraryName = testCase.getConfig().getProperty("test.p11.sharedLibraryName");
+        sharedLibraryPath = testCase.getConfig().getProperty("test.p11.sharedLibraryPath");
+        slot = testCase.getConfig().getProperty("test.p11.slot");
+        pin = testCase.getConfig().getProperty("test.p11.pin");
+        existingKey1 = testCase.getConfig().getProperty("test.p11.existingkey1");
     }
     
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {        
+        Assume.assumeFalse("P11NG".equalsIgnoreCase(testCase.getConfig().getProperty("test.p11.provider")));
         SignServerUtil.installBCProvider();
-    }
-
-    
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
     }
 
     private void setupCryptoTokenProperties(final int tokenId, final boolean cache) throws Exception {
@@ -198,6 +197,7 @@ public class P11SignTest extends ModulesTestCase {
     }
 
     /** Tests that the getCertificateRequest method generates a request. */
+    @Test
     public void testGenerateCSR() throws Exception {
         try {
             setPDFSignerWithCryptoProperties(WORKER_PDF, false);
@@ -205,10 +205,10 @@ public class P11SignTest extends ModulesTestCase {
             
             // Tests generating a CSR
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_PDF, null);
-            Base64SignerCertReqData csr = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(WORKER_PDF), certReqInfo, false);
+            Base64SignerCertReqData csr = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_PDF), certReqInfo, false);
             assertNotNull(csr);
             assertNotNull(csr.getBase64CertReq());
-            assertTrue(csr.getBase64CertReq().length > 0);
+            testCase.assertTrue(csr.getBase64CertReq().length > 0);
             
             // Test for an non-existing key label
             setPDFSignerWithCryptoProperties(WORKER_PDF, false);
@@ -216,17 +216,18 @@ public class P11SignTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKER_PDF);
             try {
                 certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_PDF, null);
-                getWorkerSession().getCertificateRequest(new WorkerIdentifier(WORKER_PDF), certReqInfo, false);
+                workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_PDF), certReqInfo, false);
                 fail("Should have thrown exception as the DEFAULTKEY does not exist");
             } catch (CryptoTokenOfflineException ok) { // NOPMD
                 // OK
             }
         } finally {
-            removeWorker(WORKER_PDF);
+            testCase.removeWorker(WORKER_PDF);
         }
     }
     
     /** Tests that the getCertificateRequest method generates a request. */
+    @Test
     public void testGenerateCSR_separateToken() throws Exception {
         try {
             setupCryptoTokenProperties(CRYPTO_TOKEN, false);
@@ -236,30 +237,31 @@ public class P11SignTest extends ModulesTestCase {
 
             // Tests generating a CSR
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_PDF, null);
-            Base64SignerCertReqData csr = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(WORKER_PDF), certReqInfo, false);
+            Base64SignerCertReqData csr = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_PDF), certReqInfo, false);
             assertNotNull(csr);
             assertNotNull(csr.getBase64CertReq());
-            assertTrue(csr.getBase64CertReq().length > 0);
+            testCase.assertTrue(csr.getBase64CertReq().length > 0);
 
             // Test for an non-existing key label
             workerSession.setWorkerProperty(WORKER_PDF, "DEFAULTKEY", "NON-EXISTING-KEY-LABEL");
             workerSession.reloadConfiguration(WORKER_PDF);
             try {
                 certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_PDF, null);
-                getWorkerSession().getCertificateRequest(new WorkerIdentifier(WORKER_PDF), certReqInfo, false);
+                workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_PDF), certReqInfo, false);
                 fail("Should have thrown exception as the DEFAULTKEY does not exist");
             } catch (CryptoTokenOfflineException ok) { // NOPMD
                 // OK
             }
         } finally {
-            removeWorker(CRYPTO_TOKEN);
-            removeWorker(WORKER_PDF);
+            testCase.removeWorker(CRYPTO_TOKEN);
+            testCase.removeWorker(WORKER_PDF);
         }
     }
 
     /**
      * Tests setting up a PDF Signer, giving it a certificate and sign a document.
      */
+    @Test
     public void testPDFSigner_uncached() throws Exception {
         try {
             setPDFSignerWithCryptoProperties(WORKER_PDF, false);
@@ -267,13 +269,14 @@ public class P11SignTest extends ModulesTestCase {
             
             pdfSignerTest();
         } finally {
-            removeWorker(WORKER_PDF);
+            testCase.removeWorker(WORKER_PDF);
         }
     }
 
     /**
      * Tests setting up a PDF Signer, giving it a certificate and sign a document.
      */
+    @Test
     public void testPDFSigner_uncached_separateToken() throws Exception {
         try {
             setupCryptoTokenProperties(CRYPTO_TOKEN, false);
@@ -283,14 +286,15 @@ public class P11SignTest extends ModulesTestCase {
 
             pdfSignerTest();
         } finally {
-            removeWorker(CRYPTO_TOKEN);
-            removeWorker(WORKER_PDF);
+            testCase.removeWorker(CRYPTO_TOKEN);
+            testCase.removeWorker(WORKER_PDF);
         }
     }
 
     /**
      * Tests setting up a PDF Signer, giving it a certificate and sign a document.
      */
+    @Test
     public void testPDFSigner_cached() throws Exception {
         try {
             setPDFSignerWithCryptoProperties(WORKER_PDF, true);
@@ -298,13 +302,14 @@ public class P11SignTest extends ModulesTestCase {
             
             pdfSignerTest();
         } finally {
-            removeWorker(WORKER_PDF);
+            testCase.removeWorker(WORKER_PDF);
         }
     }
 
     /**
      * Tests setting up a PDF Signer, giving it a certificate and sign a document.
      */
+    @Test
     public void testPDFSigner_cached_separateToken() throws Exception {
         try {
             setupCryptoTokenProperties(CRYPTO_TOKEN, true);
@@ -314,15 +319,15 @@ public class P11SignTest extends ModulesTestCase {
 
             pdfSignerTest();
         } finally {
-            removeWorker(CRYPTO_TOKEN);
-            removeWorker(WORKER_PDF);
+            testCase.removeWorker(CRYPTO_TOKEN);
+            testCase.removeWorker(WORKER_PDF);
         }
     }
     
     private void pdfSignerTest() throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_PDF, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(WORKER_PDF), certReqInfo, false);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_PDF), certReqInfo, false);
 
         // Issue certificate
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
@@ -339,7 +344,7 @@ public class P11SignTest extends ModulesTestCase {
         assertEquals("errors: " + errors, 0, errors.size());
 
         // Test signing
-        signGenericDocument(WORKER_PDF, readFile(pdfSampleFile));
+        testCase.signGenericDocument(WORKER_PDF, readFile(pdfSampleFile));
     }
     
     private byte[] readFile(File file) throws IOException {
@@ -370,7 +375,7 @@ public class P11SignTest extends ModulesTestCase {
         
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
 
         // Issue certificate
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
@@ -397,6 +402,7 @@ public class P11SignTest extends ModulesTestCase {
      * 
      * @throws Exception 
      */
+    @Test
     public void testTSSigner_keyUsageCounterCertInConfig() throws Exception {
         testTSSigner_keyUsageCounter(true);
     }
@@ -407,6 +413,7 @@ public class P11SignTest extends ModulesTestCase {
      * 
      * @throws Exception 
      */
+    @Test
     public void testTSSigner_keyUsageCounterCertInToken() throws Exception {
         testTSSigner_keyUsageCounter(false);
     }
@@ -433,7 +440,7 @@ public class P11SignTest extends ModulesTestCase {
             
             // Generate CSR
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_TSA_ALTKEY, null);
-            Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(WORKER_TSA_ALTKEY), certReqInfo, false);
+            Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_TSA_ALTKEY), certReqInfo, false);
 
             // Issue certificate
             PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
@@ -473,7 +480,7 @@ public class P11SignTest extends ModulesTestCase {
             
         } finally {
             workerSession.removeKey(new WorkerIdentifier(WORKER_TSA_ALTKEY), key);
-            removeWorker(WORKER_TSA_ALTKEY);
+            testCase.removeWorker(WORKER_TSA_ALTKEY);
         }
     }
     
@@ -481,30 +488,32 @@ public class P11SignTest extends ModulesTestCase {
     /**
      * Tests setting up a TimeStamp Signer, giving it a certificate and request a time-stamp token.
      */
+    @Test
     public void testTSSigner_uncached() throws Exception {
         try {
             setTimeStampSignerProperties(WORKER_TSA, false);
             workerSession.reloadConfiguration(WORKER_TSA);
             tsSigner();
         } finally {
-            removeWorker(WORKER_TSA);
+            testCase.removeWorker(WORKER_TSA);
         }
     }
     
+    @Test
     public void testTSSigner_cached() throws Exception {
         try {
             setTimeStampSignerProperties(WORKER_TSA, true);
             workerSession.reloadConfiguration(WORKER_TSA);
             tsSigner();
         } finally {
-            removeWorker(WORKER_TSA);
+            testCase.removeWorker(WORKER_TSA);
         }
     }
     
     private void tsSigner() throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_TSA, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(WORKER_TSA), certReqInfo, false);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_TSA), certReqInfo, false);
 
         // Issue certificate
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
@@ -552,6 +561,7 @@ public class P11SignTest extends ModulesTestCase {
     /**
      * Tests setting up a MRTD SOD Signer, giving it a certificate and requests an SOd.
      */
+    @Test
     public void testMRTDSODSigner_uncached() throws Exception {
         final int workerId = WORKER_SOD;
         try {
@@ -560,10 +570,11 @@ public class P11SignTest extends ModulesTestCase {
             
             mrtdsodSigner(workerId);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
+    @Test
     public void testMRTDSODSigner_cached() throws Exception {
         final int workerId = WORKER_SOD;
         try {
@@ -572,14 +583,14 @@ public class P11SignTest extends ModulesTestCase {
             
             mrtdsodSigner(workerId);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
     private void mrtdsodSigner(final int workerId) throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
 
         // Issue certificate
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
@@ -624,6 +635,7 @@ public class P11SignTest extends ModulesTestCase {
     /**
      * Tests setting up a CMS Signer, giving it a certificate and sign a file.
      */
+    @Test
     public void testCMSSigner_uncached() throws Exception {
         final int workerId = WORKER_CMS;
         try {
@@ -632,10 +644,11 @@ public class P11SignTest extends ModulesTestCase {
             
             cmsSigner(workerId);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
+    @Test
     public void testCMSSigner_cached() throws Exception {
         final int workerId = WORKER_CMS;
         try {
@@ -644,14 +657,14 @@ public class P11SignTest extends ModulesTestCase {
             
             cmsSigner(workerId);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
     private void cmsSigner(final int workerId) throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
 
         // Issue certificate
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
@@ -668,7 +681,7 @@ public class P11SignTest extends ModulesTestCase {
         assertEquals("errors: " + errors, 0, errors.size());
 
         // Test signing
-        signGenericDocument(workerId, "Sample data".getBytes());
+        testCase.signGenericDocument(workerId, "Sample data".getBytes());
     }
     
     private void setXMLSignerProperties(final int workerId, final boolean cache) throws IOException {
@@ -699,6 +712,7 @@ public class P11SignTest extends ModulesTestCase {
     /**
      * Tests setting up a XML Signer, giving it a certificate and sign a document.
      */
+    @Test
     public void testXMLSigner_uncached() throws Exception {
         final int workerId = WORKER_XML;
         try {
@@ -707,10 +721,11 @@ public class P11SignTest extends ModulesTestCase {
             
             xmlSigner(workerId);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
+    @Test
     public void testXMLSigner_cached() throws Exception {
         final int workerId = WORKER_XML;
         try {
@@ -719,7 +734,7 @@ public class P11SignTest extends ModulesTestCase {
             
             xmlSigner(workerId);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
 
@@ -728,6 +743,7 @@ public class P11SignTest extends ModulesTestCase {
      * cached (in the worker).
      * @throws Exception
      */
+    @Test
     public void testXMLSigner_cached_separateToken() throws Exception {
         final int workerId = WORKER_XML2;
         try {
@@ -739,14 +755,14 @@ public class P11SignTest extends ModulesTestCase {
 
             xmlSigner(workerId);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
 
     private void xmlSigner(final int workerId) throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
 
         // Issue certificate
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
@@ -763,14 +779,14 @@ public class P11SignTest extends ModulesTestCase {
         assertEquals("errors: " + errors, 0, errors.size());
 
         // Test signing
-        signGenericDocument(workerId, "<sampledata/>".getBytes());
+        testCase.signGenericDocument(workerId, "<sampledata/>".getBytes());
 
         // Test removing the DEFAULTKEY property, should result in a CryptoTokenOfflineException
         workerSession.removeWorkerProperty(workerId, "DEFAULTKEY");
         workerSession.reloadConfiguration(workerId);
 
         try {
-            signGenericDocument(workerId, "<sampledata/>".getBytes());
+            testCase.signGenericDocument(workerId, "<sampledata/>".getBytes());
             fail("Should throw a CryptoTokenOfflineException");
         } catch (CryptoTokenOfflineException e) {
             // expected
@@ -794,6 +810,7 @@ public class P11SignTest extends ModulesTestCase {
     /**
      * Tests setting up a ODF Signer, giving it a certificate and sign a document.
      */
+    @Test
     public void testODFSigner_uncached() throws Exception {
         final int workerId = WORKER_ODF;
         try {
@@ -802,10 +819,11 @@ public class P11SignTest extends ModulesTestCase {
             
             odfSigner(workerId);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
+    @Test
     public void testODFSigner_cached() throws Exception {
         final int workerId = WORKER_ODF;
         try {
@@ -814,14 +832,14 @@ public class P11SignTest extends ModulesTestCase {
             
             odfSigner(workerId);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
     private void odfSigner(final int workerId) throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
 
         // Issue certificate
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
@@ -838,7 +856,7 @@ public class P11SignTest extends ModulesTestCase {
         assertEquals("errors: " + errors, 0, errors.size());
 
         // Test signing
-        signGenericDocument(workerId, readFile(odfSampleFile));
+        testCase.signGenericDocument(workerId, readFile(odfSampleFile));
     }
     
     private void setOOXMLSignerProperties(final int workerId, final boolean cache) throws IOException {
@@ -858,6 +876,7 @@ public class P11SignTest extends ModulesTestCase {
     /**
      * Tests setting up a OOXML Signer, giving it a certificate and sign a document.
      */
+    @Test
     public void testOOXMLSigner_uncached() throws Exception {
         final int workerId = WORKER_OOXML;
         try {
@@ -865,10 +884,11 @@ public class P11SignTest extends ModulesTestCase {
             workerSession.reloadConfiguration(workerId);
             ooxmlSigner(workerId);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
+    @Test
     public void testOOXMLSigner_cached() throws Exception {
         final int workerId = WORKER_OOXML;
         try {
@@ -876,14 +896,14 @@ public class P11SignTest extends ModulesTestCase {
             workerSession.reloadConfiguration(workerId);
             ooxmlSigner(workerId);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
     private void ooxmlSigner(final int workerId) throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
 
         // Issue certificate
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
@@ -900,7 +920,7 @@ public class P11SignTest extends ModulesTestCase {
         assertEquals("errors: " + errors, 0, errors.size());
 
         // Test signing
-        signGenericDocument(workerId, readFile(ooxmlSampleFile));
+        testCase.signGenericDocument(workerId, readFile(ooxmlSampleFile));
     }
 
     private void setMSAuthTimeStampSignerProperties(final int workerId, final boolean cache) throws IOException {
@@ -921,6 +941,7 @@ public class P11SignTest extends ModulesTestCase {
     /**
      * Tests setting up a MSAuthCodeTimeStamp Signer, giving it a certificate and request a time-stamp token.
      */
+    @Test
     public void testMSAuthTSSigner_uncached() throws Exception {
         final int workerId = WORKER_MSA;
         try {
@@ -928,10 +949,11 @@ public class P11SignTest extends ModulesTestCase {
             workerSession.reloadConfiguration(workerId);
             msauthTSSigner(workerId);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
+    @Test
     public void testMSAuthTSSigner_cached() throws Exception {
         final int workerId = WORKER_MSA;
         try {
@@ -939,14 +961,14 @@ public class P11SignTest extends ModulesTestCase {
             workerSession.reloadConfiguration(workerId);
             msauthTSSigner(workerId);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
     private void msauthTSSigner(final int workerId) throws Exception {        
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
 
         // Issue certificate
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
@@ -996,6 +1018,7 @@ public class P11SignTest extends ModulesTestCase {
      * Test having default PKCS11CryptoToken properties.
      * Tests setting up a CMS Signer, giving it a certificate and sign a file.
      */
+    @Test
     public void testDefaultGlobalProperties() throws Exception {
         final int workerId = WORKER_CMS;
         try {
@@ -1013,7 +1036,7 @@ public class P11SignTest extends ModulesTestCase {
             
             cmsSigner(workerId);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
             globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "DEFAULT.SHAREDLIBRARY");
             globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "DEFAULT.SHAREDLIBRARYNAME");
             globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "DEFAULT.SLOT");
@@ -1029,6 +1052,7 @@ public class P11SignTest extends ModulesTestCase {
         return results;
     }
     
+    @Test
     public void testGenerateKey() throws Exception {
         LOG.info("testGenerateKey");
         
@@ -1065,7 +1089,7 @@ public class P11SignTest extends ModulesTestCase {
             try {
                 workerSession.removeKey(new WorkerIdentifier(workerId), TEST_KEY_ALIAS);
             } catch (SignServerException ignored) {}
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
@@ -1075,6 +1099,7 @@ public class P11SignTest extends ModulesTestCase {
      *
      * @throws Exception 
      */
+    @Test
     public void testGenerateKey_withCustomDN() throws Exception {
         LOG.info("testGenerateKey_withCustomDN");
         
@@ -1114,7 +1139,7 @@ public class P11SignTest extends ModulesTestCase {
             try {
                 workerSession.removeKey(new WorkerIdentifier(workerId), TEST_KEY_ALIAS);
             } catch (SignServerException ignored) {}
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
@@ -1142,7 +1167,7 @@ public class P11SignTest extends ModulesTestCase {
             final Collection<KeyTestResult> testResults =
                     workerSession.testKey(new WorkerIdentifier(workerId), "keywithexponent", pin.toCharArray());
             for (final KeyTestResult testResult : testResults) {
-                assertTrue("Testkey successful", testResult.isSuccess());
+                testCase.assertTrue("Testkey successful", testResult.isSuccess());
             }
             
             // Generate CSR, and check the public key's public exponent
@@ -1154,7 +1179,7 @@ public class P11SignTest extends ModulesTestCase {
             final PKCS10CertificationRequest req
                 = new PKCS10CertificationRequest(Base64.decode(reqBytes));
 
-            final RSAPublicKey pubKey = (RSAPublicKey) getPublicKeyFromRequest(req);
+            final RSAPublicKey pubKey = (RSAPublicKey) testCase.getPublicKeyFromRequest(req);
             
             assertEquals("Returned public exponent",
                          expected, pubKey.getPublicExponent());
@@ -1162,7 +1187,7 @@ public class P11SignTest extends ModulesTestCase {
             try {
                 workerSession.removeKey(new WorkerIdentifier(workerId), "keywithexponent");
             } catch (SignServerException ignored) {}
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
@@ -1171,6 +1196,7 @@ public class P11SignTest extends ModulesTestCase {
      *
      * @throws Exception 
      */
+    @Test
     public void testGenerateKeyWithPublicExponentCustom() throws Exception {
         testGenerateKeyWithPublicExponent("2048 exp 5", BigInteger.valueOf(5));
     }
@@ -1180,6 +1206,7 @@ public class P11SignTest extends ModulesTestCase {
      * 
      * @throws Exception 
      */
+    @Test
     public void testGenerateKeyWithPublicExponentDefault() throws Exception {
         testGenerateKeyWithPublicExponent("2048", BigInteger.valueOf(0x10001));
     }
@@ -1191,6 +1218,7 @@ public class P11SignTest extends ModulesTestCase {
      * generated.
      */
     @SuppressWarnings("ThrowableResultIgnored")
+    @Test
     public void testKeyGenerationLimit() throws Exception {
         LOG.info("testKeyGenerationLimit");
         
@@ -1245,10 +1273,11 @@ public class P11SignTest extends ModulesTestCase {
             try {
                 workerSession.removeKey(new WorkerIdentifier(workerId), TEST_KEY_ALIAS_2);
             } catch (SignServerException ignored) {}
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
 
+    @Test
     public void testGenerateKey_separateToken() throws Exception {
         LOG.info("testGenerateKey_separateToken");
 
@@ -1286,10 +1315,11 @@ public class P11SignTest extends ModulesTestCase {
             try {
                 workerSession.removeKey(new WorkerIdentifier(tokenId), TEST_KEY_ALIAS);
             } catch (SignServerException ignored) {}
-            removeWorker(tokenId);
+            testCase.removeWorker(tokenId);
         }
     }
     
+    @Test
     public void testRemoveKey() throws Exception {
         LOG.info("testRemoveKey");
         
@@ -1323,10 +1353,11 @@ public class P11SignTest extends ModulesTestCase {
             expected.remove(TEST_KEY_ALIAS);
             assertEquals("new key removed", expected, aliases2);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
 
+    @Test
     public void testRemoveKey_separateToken() throws Exception {
         LOG.info("testRemoveKey_separateToken");
 
@@ -1360,7 +1391,7 @@ public class P11SignTest extends ModulesTestCase {
             expected.remove(TEST_KEY_ALIAS);
             assertEquals("new key removed", expected, aliases2);
         } finally {
-            removeWorker(tokenId);
+            testCase.removeWorker(tokenId);
         }
     }
 
@@ -1370,6 +1401,7 @@ public class P11SignTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testNoSharedLibrary() throws Exception {
         LOG.info("testNoSharedLibrary");
         
@@ -1391,9 +1423,9 @@ public class P11SignTest extends ModulesTestCase {
                     break;
                 }
             }
-            assertTrue("Should contain error: " + errors, foundError);
+            testCase.assertTrue("Should contain error: " + errors, foundError);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
@@ -1403,6 +1435,7 @@ public class P11SignTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testNonExistingSharedLibrary() throws Exception {
         LOG.info("testNonExistingSharedLibrary");
         
@@ -1425,10 +1458,10 @@ public class P11SignTest extends ModulesTestCase {
                 }
             }
             
-            assertTrue("Should contain error about lib name but was: " + errors,
+            testCase.assertTrue("Should contain error about lib name but was: " + errors,
                         foundError);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
@@ -1436,6 +1469,7 @@ public class P11SignTest extends ModulesTestCase {
      * Test that specifying the old property SHAREDLIBRARY not pointing to
      * a value defined in the P11 library list will give a deprecation error.
      */
+    @Test
     public void testOldSharedLibraryPropertyPointingToUndefined() throws Exception {
         LOG.info("testOldSharedLibraryPropertyPointingToUndefined");
         
@@ -1458,10 +1492,10 @@ public class P11SignTest extends ModulesTestCase {
                     break;
                 }
             }
-            assertTrue("Should contain error about lib name but was: " + errors,
+            testCase.assertTrue("Should contain error about lib name but was: " + errors,
                     foundError);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
@@ -1471,6 +1505,7 @@ public class P11SignTest extends ModulesTestCase {
      * 
      * @throws Exception 
      */
+    @Test
     public void testOldSharedLibraryPropertyPointingToDefined() throws Exception {
         LOG.info("testOldSharedLibraryPropertyPointingToDefined");
         
@@ -1495,9 +1530,9 @@ public class P11SignTest extends ModulesTestCase {
                 }
             }
             
-            assertFalse("Should not contain error: " + errors, foundError);
+            testCase.assertFalse("Should not contain error: " + errors, foundError);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
@@ -1507,6 +1542,7 @@ public class P11SignTest extends ModulesTestCase {
      * 
      * @throws Exception 
      */
+    @Test
     public void testBothP11LibraryNameAndOldSharedLibraryProperty() throws Exception {
         LOG.info("testBothP11LibraryNameAndOldSharedLibraryProperty");
         
@@ -1531,9 +1567,9 @@ public class P11SignTest extends ModulesTestCase {
                 }
             }
             
-            assertTrue("Should contain error: " + errors, foundError);
+            testCase.assertTrue("Should contain error: " + errors, foundError);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
     
@@ -1544,6 +1580,7 @@ public class P11SignTest extends ModulesTestCase {
      * 
      * @throws Exception 
      */
+    @Test
     public void testBothP11LibraryNameAndOldSharedLibraryPropertyReferringSame() throws Exception {
         LOG.info("testBothP11LibraryNameAndOldSharedLibraryProperty");
         
@@ -1568,9 +1605,9 @@ public class P11SignTest extends ModulesTestCase {
                 }
             }
             
-            assertFalse("Should not contain error: " + errors, foundError);
+            testCase.assertFalse("Should not contain error: " + errors, foundError);
         } finally {
-            removeWorker(workerId);
+            testCase.removeWorker(workerId);
         }
     }
 }

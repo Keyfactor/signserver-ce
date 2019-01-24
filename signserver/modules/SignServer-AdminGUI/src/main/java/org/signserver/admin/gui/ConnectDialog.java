@@ -67,6 +67,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.util.CertTools;
@@ -908,10 +913,27 @@ public class ConnectDialog extends javax.swing.JDialog {
                     return true;
                 }
             });
-
+            
+            final URL resource =
+ 	 	 	getClass().getResource("/META-INF/wsdl/AdminWebServiceService.wsdl");
             AdminWSService service = new AdminWSService(
-                    new URL(urlstr), new QName("http://adminws.signserver.org/", "AdminWSService"));
+                    resource, new QName("http://adminws.signserver.org/", "AdminWSService"));
+        
             ws = service.getAdminWSPort();
+
+            final BindingProvider bp = (BindingProvider) ws;
+            final Map<String, Object> requestContext = bp.getRequestContext();
+
+            requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
+
+            if (factory != null) {
+                final Client client = ClientProxy.getClient(bp);
+                final HTTPConduit http = (HTTPConduit) client.getConduit();
+                final TLSClientParameters params = new TLSClientParameters();
+
+                params.setSSLSocketFactory(factory);
+                http.setTlsClientParameters(params);
+            }
 
             // Search the key managers for the selected certificate
             for (GUIKeyManager manager : guiKeyManagers) {

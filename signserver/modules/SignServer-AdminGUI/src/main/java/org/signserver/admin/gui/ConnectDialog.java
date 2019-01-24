@@ -99,7 +99,7 @@ public class ConnectDialog extends javax.swing.JDialog {
     private static final Logger LOG = Logger.getLogger(ConnectDialog.class);
 
     private static final String DEFAULT_URL = "https://localhost:8443/signserver";
-    private static final String WS_PATH = "/AdminWSService/AdminWS?wsdl";
+    private static final String WS_PATH = "/AdminWSService/AdminWS";
 
     private final ConnectSettings settings;
     private AdminWS ws;
@@ -924,7 +924,7 @@ public class ConnectDialog extends javax.swing.JDialog {
             final BindingProvider bp = (BindingProvider) ws;
             final Map<String, Object> requestContext = bp.getRequestContext();
 
-            requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
+            requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, urlstr);
 
             if (factory != null) {
                 final Client client = ClientProxy.getClient(bp);

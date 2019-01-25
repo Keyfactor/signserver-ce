@@ -98,7 +98,6 @@
             <artifactId>woodstox-core-asl</artifactId>
             <version>4.1.2_1</version>
         </dependency>
-                     
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
@@ -114,10 +113,9 @@
             <artifactId>jaxb-core</artifactId>
             <version>2.3.0.1</version>
        	</dependency>
-                    
         <dependency>
-            	<groupId>org.apache.cxf</groupId>
-            	<artifactId>cxf-rt-databinding-jaxb</artifactId>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-databinding-jaxb</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>

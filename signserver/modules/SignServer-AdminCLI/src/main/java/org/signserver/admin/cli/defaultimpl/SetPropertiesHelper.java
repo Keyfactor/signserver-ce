@@ -41,15 +41,30 @@ public class SetPropertiesHelper {
 
     public SetPropertiesHelper(PrintStream out) {
         this.out = out;
+        //System.out.println("\n\t +++ GM (SetPropHelper(PrintStream) =" + out.toString());//OK
     }
 
     public void process(Properties properties) throws RemoteException, Exception {
         // check first whether worker already exists with provided NAME(s)
-        if (!workerNameAlreadyExists(properties)) {
+        //if (!workerNameAlreadyExists(properties)) 
+        {
+            
+            /*for(String key : properties.stringPropertyNames()) {
+                String value = properties.getProperty(key);
+                System.out.println(key + " => " + value);
+                //System.out.println("\n\t +++ GM SPHelper55: Key:"+key+"-value:"+value);//NOP
+            }*/
+            
             Enumeration<?> iter = properties.keys();
+            
+            //System.out.println("\n\t +++ GM SPHelper.process57 iter="+iter.toString());//OK
+            
+            //GeoMat PROBLEMS start!
             while (iter.hasMoreElements()) {
                 String key = (String) iter.nextElement();
+                //System.out.println("\n\t +++ GM SPHelper52.process: Key="+key);//NOP
                 processKey(key.toUpperCase(), properties.getProperty(key));
+                //System.out.println("\n\t +++ GM(SetPropHelper54) Key:Property=" + key.toUpperCase()+":"+properties.getProperty(key));
             }
         }
     }
@@ -57,6 +72,7 @@ public class SetPropertiesHelper {
     public void processKey(String key, String value) throws RemoteException, Exception {
         if (isRemoveKey(key)) {
             String newkey = key.substring(REMOVE_PREFIX.length());
+            //System.out.println("\n +++ GM SPHelper64.processKey Key:Property="+key+", value="+value);//NOP
             processKey(key, newkey, value, false);
         } else {
             processKey(key, key, value, true);

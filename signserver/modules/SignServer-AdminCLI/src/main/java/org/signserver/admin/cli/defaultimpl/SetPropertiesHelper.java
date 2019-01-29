@@ -45,7 +45,7 @@ public class SetPropertiesHelper {
 
     public void process(Properties properties) throws RemoteException, Exception {
         // check first whether worker already exists with provided NAME(s)
-        //if (!workerNameAlreadyExists(properties)) 
+        if (!workerNameAlreadyExists(properties)) 
         {            
             Enumeration<?> iter = properties.keys();            
             //GeoMat PROBLEMS start!

@@ -60,8 +60,8 @@ public class SetPropertiesCommand extends AbstractAdminCommand {
             SetPropertiesHelper helper = new SetPropertiesHelper(getOutputStream());
             getOutputStream().println("Configuring properties as defined in the file : " + args[0]);
             helper.process(properties);
-
-            this.getOutputStream().println("\n\t\t === End of Set PropertiesCommand ====");
+            
+            this.getOutputStream().println("\n\n");
             return 0;
         } catch (Exception e) {
             if ("java.lang.ClassNotFoundException: javax.persistence.PersistenceException".equals(e.getMessage())) {

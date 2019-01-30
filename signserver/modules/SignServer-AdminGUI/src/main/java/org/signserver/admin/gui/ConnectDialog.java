@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyManagementException;
@@ -68,6 +69,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
+import org.apache.commons.io.IOUtils;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
@@ -1072,6 +1074,26 @@ public class ConnectDialog extends javax.swing.JDialog {
     public ConnectSettings getSettings() {
         return settings;
     }
+    
+    private static Provider getPKCS11ProviderUsingConfigMethod(final Method configMethod,
+                                                               final String config)
+            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        final Provider prototype = Security.getProvider("SunPKCS11");
+        final Provider provider = (Provider) configMethod.invoke(prototype, config);
+        
+        return provider;
+    }
+    
+    private static String getSunP11ConfigStringFromInputStream(final InputStream is) throws IOException {
+        final StringBuilder configBuilder = new StringBuilder();
+        
+        /* we need to prepend -- to indicate to the configure() method
+         * that the config is treated as a string
+         */
+        configBuilder.append("--").append(IOUtils.toString(is));
+        
+        return configBuilder.toString();
+    }
 
     private static KeyStore getLoadedKeystorePKCS11(final String name, final File library, final char[] authCode, KeyStore.CallbackHandlerProtection callbackHandlerProtection) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
         final String keystoreName = library.getCanonicalPath();
@@ -1085,15 +1107,33 @@ public class ConnectDialog extends javax.swing.JDialog {
                         .toString().getBytes());
 
             try {
-                    Class<?> klass = Class.forName("sun.security.pkcs11.SunPKCS11");
-                    // find constructor taking one argument of type InputStream
-                    Class<?>[] parTypes = new Class[1];
-                    parTypes[0] = InputStream.class;
+                    final Class<?> klass = Class.forName("sun.security.pkcs11.SunPKCS11");
+                    Provider provider;
+                    
+                    try {
+                        /* try getting the Java 9+ configure method first
+                         * if this fails, fall back to the old way, calling the
+                         * constructor
+                         */
+                        final Class[] paramString = new Class[1];    
+                        paramString[0] = String.class;
+                        final Method method =
+                                Provider.class.getDeclaredMethod("configure",
+                                                                 paramString);
+                        final String configString =
+                                getSunP11ConfigStringFromInputStream(config);
+                        
+                        provider = getPKCS11ProviderUsingConfigMethod(method, configString);
+                    } catch (NoSuchMethodException e) {
+                        // find constructor taking one argument of type InputStream
+                        Class<?>[] parTypes = new Class[1];
+                        parTypes[0] = InputStream.class;
 
-                    Constructor<?> ctor = klass.getConstructor(parTypes);	        
-                    Object[] argList = new Object[1];
-                    argList[0] = config;
-                    Provider provider = (Provider) ctor.newInstance(argList);
+                        Constructor<?> ctor = klass.getConstructor(parTypes);	        
+                        Object[] argList = new Object[1];
+                        argList[0] = config;
+                        provider = (Provider) ctor.newInstance(argList);
+                    }
 
                     Security.addProvider(provider);
 

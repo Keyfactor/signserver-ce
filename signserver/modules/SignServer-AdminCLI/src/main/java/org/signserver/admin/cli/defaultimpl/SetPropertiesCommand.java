@@ -13,8 +13,6 @@
 package org.signserver.admin.cli.defaultimpl;
 
 import java.io.FileInputStream;
-import java.io.*;
-import java.util.Enumeration;
 import java.util.Properties;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
@@ -47,20 +45,13 @@ public class SetPropertiesCommand extends AbstractAdminCommand {
             throw new IllegalCommandArgumentsException("Wrong number of arguments");
         }
         try {
-            
-            Properties properties = loadProperties(args[0]);
-            
-            //1. we create File with our new properties and check if File is readable
-            File propFile = new File(args[0]);            
-            
-            //2. now we create PrintStream object required for SetPropertiesHelper
-            PrintStream ps = new PrintStream(propFile);
-            InputStream is = new FileInputStream(propFile);
-            
+
             SetPropertiesHelper helper = new SetPropertiesHelper(getOutputStream());
+            Properties properties = loadProperties(args[0]);
+
             getOutputStream().println("Configuring properties as defined in the file : " + args[0]);
             helper.process(properties);
-            
+
             this.getOutputStream().println("\n\n");
             return 0;
         } catch (CommandFailureException ex) {
@@ -75,29 +66,14 @@ public class SetPropertiesCommand extends AbstractAdminCommand {
     }
 
     private Properties loadProperties(String path) {
-        
-        Properties props = new Properties();
-        
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            
-        // load NEW properties from file gmNEW.properties
-        InputStream stream = loader.getResourceAsStream(path);
-        
+        Properties retval = new Properties();
         try {
-            File propFile = new File(path);
-           
-            props.load(stream); //1. first load InputStream
-            props.load(new FileInputStream(path));// 2. load FileInputStream
-            
-            for(String key : props.stringPropertyNames()) {
-                String value = props.getProperty(key);
-        }
-            
+            retval.load(new FileInputStream(path));
         } catch (Exception e) {
             getOutputStream().println("Error reading property file : " + path);
             System.exit(-1);
         }
 
-        return props;
+        return retval;
     }
 }

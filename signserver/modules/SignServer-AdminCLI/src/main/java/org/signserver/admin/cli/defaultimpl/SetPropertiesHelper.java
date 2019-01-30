@@ -16,6 +16,7 @@ import org.bouncycastle.util.encoders.Base64;
 import java.io.PrintStream;
 import java.rmi.RemoteException;
 import java.util.*;
+import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.WorkerConfig;
@@ -45,10 +46,9 @@ public class SetPropertiesHelper {
 
     public void process(Properties properties) throws RemoteException, Exception {
         // check first whether worker already exists with provided NAME(s)
-        if (!workerNameAlreadyExists(properties)) 
+        if (workerNameAlreadyExists(properties) == Boolean.valueOf("true")) 
         {            
-            Enumeration<?> iter = properties.keys();            
-            //GeoMat PROBLEMS start!
+            Enumeration<?> iter = properties.keys();
             while (iter.hasMoreElements()) {
                 String key = (String) iter.nextElement();
                 processKey(key.toUpperCase(), properties.getProperty(key));
@@ -59,7 +59,6 @@ public class SetPropertiesHelper {
     public void processKey(String key, String value) throws RemoteException, Exception {
         if (isRemoveKey(key)) {
             String newkey = key.substring(REMOVE_PREFIX.length());
-            //System.out.println("\n +++ GM SPHelper64.processKey Key:Property="+key+", value="+value);//NOP
             processKey(key, newkey, value, false);
         } else {
             processKey(key, key, value, true);
@@ -283,7 +282,7 @@ public class SetPropertiesHelper {
         return workerDeclarations;
     }
     
-    private boolean workerNameAlreadyExists(Properties properties) throws RemoteException {
+    private boolean workerNameAlreadyExists(Properties properties) throws RemoteException, CommandFailureException {
         boolean workerWithNameAlreadyExists = false;
         StringBuffer errorMessage = new StringBuffer();
         errorMessage.append("Worker(s) with name already exists:");
@@ -306,6 +305,7 @@ public class SetPropertiesHelper {
             if (existingWorkerNamesInDB.contains(workerName)) {
                 workerWithNameAlreadyExists = true;
                 errorMessage.append(" ").append(workerName);
+                throw new CommandFailureException("Error: Worker with this Id already exists");                
             }
         }
         if (workerWithNameAlreadyExists) {

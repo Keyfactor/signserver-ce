@@ -63,6 +63,8 @@ public class SetPropertiesCommand extends AbstractAdminCommand {
             
             this.getOutputStream().println("\n\n");
             return 0;
+        } catch (CommandFailureException ex) {
+            throw ex;
         } catch (Exception e) {
             if ("java.lang.ClassNotFoundException: javax.persistence.PersistenceException".equals(e.getMessage())) {
                 throw new CommandFailureException("Persistence failure. Check that the worker name does not already exist.");
@@ -74,55 +76,22 @@ public class SetPropertiesCommand extends AbstractAdminCommand {
 
     private Properties loadProperties(String path) {
         
-        //GM init properties class
         Properties props = new Properties();
         
-        //GM get loader from current thread
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        //System.out.println("\n === GM SPComm loader: " + loader);//OK
             
         // load NEW properties from file gmNEW.properties
         InputStream stream = loader.getResourceAsStream(path);
-        //System.out.println("\n === GM SPComm stream : " + stream.toString());//OK?      
         
-        // GM: create File with New properties and check it!
         try {
             File propFile = new File(path);
-            //System.out.println("\n === GM File path: " + propFile.getAbsolutePath());//OK
-            //System.out.println("\n === GM File.canRead() : " + propFile.canRead());//true
-            //System.out.println("\n === GM File.length() : " + propFile.length());//1075
-            
-            //GM: Alternative way to load Properties using InputStream!!!
+           
             props.load(stream); //1. first load InputStream
             props.load(new FileInputStream(path));// 2. load FileInputStream
             
-            //System.out.println("\t === GM SPComm 115 props.Names : " + props.stringPropertyNames());//
-            
-            //GM: Print out ALL key=value properties that have been set
             for(String key : props.stringPropertyNames()) {
                 String value = props.getProperty(key);
-                //System.out.println("\t *** GM SPComm 120: Key:"+key+"-value:"+value);//
-            }
-            
-            // check ALL key=value pairs using Iterator!
-            Enumeration<?> iter = props.keys();
-            
-            //System.out.println("\n\t +++ GM SPComm126 props.keys()=iter="+iter.toString());//OK
-            
-            //GeoMat // check ALL key=value pairs using Iterator!
-            while (iter.hasMoreElements()) {
-                String key = (String) iter.nextElement();
-                //System.out.println("\t +++ GM SPComm131: Key="+key);//NOP
-                //processKey(key.toUpperCase(), props.getProperty(key));
-                //System.out.println("\t +++ GM(SPComm133) Key:Value=" + key.toUpperCase()+":"+props.getProperty(key));
-            }
-            
-            //System.out.println("\n === GM InputStream(stream).available : " + stream.available());//OK
-            //BufferedReader brf = new BufferedReader( new FileReader(path) );
-            //props.load(stream);// what do we get here???
-          
-            //System.out.println("\n === GM props.toString() :" + props.entrySet());//{}
-            
+        }
             
         } catch (Exception e) {
             getOutputStream().println("Error reading property file : " + path);

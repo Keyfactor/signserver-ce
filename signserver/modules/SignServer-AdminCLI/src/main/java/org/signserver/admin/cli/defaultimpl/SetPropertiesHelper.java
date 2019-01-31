@@ -16,7 +16,6 @@ import org.bouncycastle.util.encoders.Base64;
 import java.io.PrintStream;
 import java.rmi.RemoteException;
 import java.util.*;
-import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.WorkerConfig;
@@ -46,10 +45,7 @@ public class SetPropertiesHelper {
 
     public void process(Properties properties) throws RemoteException, Exception {
         // check first whether worker already exists with provided NAME(s)
-        // then go through ALL property keys and process Key=Value pairs
-        // as specified on CLI used
-        if (workerNameAlreadyExists(properties)) 
-        {            
+        if (!workerNameAlreadyExists(properties)) {
             Enumeration<?> iter = properties.keys();
             while (iter.hasMoreElements()) {
                 String key = (String) iter.nextElement();
@@ -249,7 +245,6 @@ public class SetPropertiesHelper {
                 } else {
                     out.println("Setting the property " + propertykey + " to " + propertyvalue + " for worker " + workerId);
                     helper.getWorkerSession().setWorkerProperty(workerId, propertykey, propertyvalue);
-                    System.out.println("\n\t *** GM SPHelp250: setting propertykey:"+propertykey+", to value:"+propertyvalue+", 4workerId>"+workerId+"<");
                 }
             }
         }
@@ -270,7 +265,6 @@ public class SetPropertiesHelper {
                 } else {
                     out.println("Removing the property " + propertykey + "  for worker " + workerId);
                     helper.getWorkerSession().removeWorkerProperty(workerId, propertykey);
-                    System.out.println("\n\t *** GM SPHelp271: removed propertykey:"+propertykey+", f workerId>"+workerId+"<");
                 }
             }
         }
@@ -286,7 +280,7 @@ public class SetPropertiesHelper {
         return workerDeclarations;
     }
     
-    private boolean workerNameAlreadyExists(Properties properties) throws RemoteException, CommandFailureException {
+    private boolean workerNameAlreadyExists(Properties properties) throws RemoteException {
         boolean workerWithNameAlreadyExists = false;
         StringBuffer errorMessage = new StringBuffer();
         errorMessage.append("Worker(s) with name already exists:");
@@ -309,9 +303,6 @@ public class SetPropertiesHelper {
             if (existingWorkerNamesInDB.contains(workerName)) {
                 workerWithNameAlreadyExists = true;
                 errorMessage.append(" ").append(workerName);
-                //GeoMat: commenting out CommandFailureException to pass Jenkins /SignServerCLITest.class test
-                // commenting out exception did NOT change system test result on localhost!
-                throw new CommandFailureException("Error: Worker with this Id already exists");                
             }
         }
         if (workerWithNameAlreadyExists) {

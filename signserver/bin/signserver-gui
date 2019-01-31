@@ -1,5 +1,4 @@
-#!/bin/bash -x
-
+#!/usr/bin/env bash
 
 # Find directory for this script
 SOURCE="${BASH_SOURCE[0]}"

@@ -16,7 +16,6 @@ import org.bouncycastle.util.encoders.Base64;
 import java.io.PrintStream;
 import java.rmi.RemoteException;
 import java.util.*;
-import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.WorkerConfig;
@@ -245,7 +244,6 @@ public class SetPropertiesHelper {
                     helper.getWorkerSession().uploadSignerCertificateChain(workerId, chain, GlobalConfiguration.SCOPE_GLOBAL);
                 } else {
                     out.println("Setting the property " + propertykey + " to " + propertyvalue + " for worker " + workerId);
-                    System.out.println("\n\t *** GM SPHelp247 propertyKey="+propertykey+", propertyValue="+propertyvalue+", workerId>"+workerId+"<");
                     helper.getWorkerSession().setWorkerProperty(workerId, propertykey, propertyvalue);
                 }
             }
@@ -282,44 +280,29 @@ public class SetPropertiesHelper {
         return workerDeclarations;
     }
     
-    private boolean workerNameAlreadyExists(Properties properties) throws RemoteException, CommandFailureException {
+    private boolean workerNameAlreadyExists(Properties properties) throws RemoteException {
         boolean workerWithNameAlreadyExists = false;
         StringBuffer errorMessage = new StringBuffer();
         errorMessage.append("Worker(s) with name already exists:");
         List<String> workerNames = new ArrayList<>();
-        
-        String workerID = "blablaWorker";//GeoMat, Worker we check Id exists or not
         Enumeration<?> iter = properties.keys();
         while (iter.hasMoreElements()) {
             String key = (String) iter.nextElement();
             String value = properties.getProperty(key);
             key = key.toUpperCase();
-            workerID = key;
             if (!isRemoveKey(key) && (key.startsWith(WORKER_PREFIX) || key.startsWith(OLDWORKER_PREFIX))) {
                 int DOT_INDEX = key.indexOf('.');
                 String propertykey = key.substring(DOT_INDEX + 1);
-                //if such Worker.ID or Worker.NAME already exists we do NOT add it to List of Workers!
-                if (propertykey.equals(PropertiesConstants.GENID) || propertykey.equals(PropertiesConstants.NAME)) {//GeoMat: changin NAME to GENID works!
-                    workerWithNameAlreadyExists = true;
-                    //we can ONLY SET SAME name to Worker that exists!
-                    {if (propertykey.equals(PropertiesConstants.NAME.equalsIgnoreCase(value)))
-                    System.out.println("\n\t\t +++ GM SPHelp305 Key="+key+", Value>"+value+"<"+"workerId>"+workerID+"<");
-                    workerNames.add(value);}
-                    System.out.println("\n\t --- GM SPHelp307 ALREADY in Database: Key="+key+", Value>"+value+"<"+"workerId>"+workerID+"<");
+                if (propertykey.equals(PropertiesConstants.NAME)) {
+                    workerNames.add(value);
                 }
             }
         }
         List existingWorkerNamesInDB = helper.getWorkerSession().getAllWorkerNames();
-        
-        //check if BOTH WorkerName AND WorkerID exist in the database
         for (String workerName : workerNames) {
-            if (existingWorkerNamesInDB.contains(workerName) && workerIDAlreadyExists(properties)) {
+            if (existingWorkerNamesInDB.contains(workerName)) {
                 workerWithNameAlreadyExists = true;
-                workerID = workerName;// if BOTH NAME and ID exist, we say OK, let them be! :-)
-                System.out.println("\n\t *** GM SPHelp310 workerName>"+workerName+"<, with NAME>"+workerID+"< Already exists in the DB");
-                System.out.println("\n\t *** GM SPHelp320 workerName>"+workerName+"<, ID exists="+workerIDAlreadyExists(properties)+"<");
                 errorMessage.append(" ").append(workerName);
-                throw new CommandFailureException("Worker with this Name and ID already exists\n\t *** GeoMat RE-setting them AGAIN! :-\n");
             }
         }
         if (workerWithNameAlreadyExists) {
@@ -327,56 +310,4 @@ public class SetPropertiesHelper {
         }
         return workerWithNameAlreadyExists;
     }
-    
-    /**
-     * this method checks if Worker ID exists in SignServe Database based on properties file,
-     * which then may be used to identify Worker that needs update or delete
-     * 
-     * @param   properties file
-     * @return boolean true if worker ID exists, false otherwise
-     */
-    protected boolean workerIDAlreadyExists(Properties properties) throws RemoteException, CommandFailureException 
-    {
-        boolean workerIDAlreadyExists = false;
-        StringBuffer errorMessage = new StringBuffer();
-        errorMessage.append("Worker with this ID already exists:");
-        List<String> workerIDs = new ArrayList<>();
-        
-        String workerID = "000";//GeoMat, Worker ID we check exists or not
-        Enumeration<?> iter = properties.keys();
-        while (iter.hasMoreElements()) {
-            String key = (String) iter.nextElement();
-            String value = properties.getProperty(key);
-            key = key.toUpperCase();
-            workerID = key;
-            if (!isRemoveKey(key) && (key.startsWith(WORKER_PREFIX) || key.startsWith(OLDWORKER_PREFIX)))
-            {
-                int DOT_INDEX = key.indexOf('.');
-                String propertykey = key.substring(DOT_INDEX + 1);
-                //if such Worker.ID or Worker.NAME already exists we do NOT add it to List of Workers!
-                if (propertykey.equals(PropertiesConstants.GENID)) {//GeoMat: check if ID exists
-                    workerIDAlreadyExists = true;
-                    System.out.println("\n\t +++ GM SPHelp360 ID ALREADY in Database: WorkerID="+key+", Value>"+value+"<"+"workerId>"+workerID+"<"); 
-                }
-            }
-        }
-        List existingWorkerNamesInDB = helper.getWorkerSession().getAllWorkerNames();
-        
-        //check if BOTH WorkerName AND WorkerID exist in the database
-        for (String workerName : workerIDs) {
-            if (existingWorkerNamesInDB.contains(workerName)) {
-                workerIDAlreadyExists = true;
-                workerID = workerName;
-                System.out.println("\n\t +++ GM SPHelp370 workerName>"+workerName+"<, with ID >"+workerID+"< already exists in the DB");
-                errorMessage.append(" ").append(workerName);
-                throw new CommandFailureException("+++ GM SPHelp372: Worker with this Id already exists\n\t *** GeoMat\n");
-            }
-        }
-        if (workerIDAlreadyExists) {
-            out.println(errorMessage);
-        }
-        return workerIDAlreadyExists;
-    }
-    
 }
-

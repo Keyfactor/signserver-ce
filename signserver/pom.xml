@@ -131,18 +131,23 @@
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>cesecore-entity</artifactId>
-                <version>6.8.0</version>
+                <version>7.0.0.1</version>
             </dependency>
             <dependency>
                 <artifactId>cesecore-common</artifactId>
                 <groupId>org.ejbca.cesecore</groupId>
                 <type>jar</type>
-                <version>6.8.0</version>
+                <version>7.0.0.1</version>
             </dependency>
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>cesecore-interfaces</artifactId>
-                <version>6.8.0</version>
+                <version>7.0.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ejbca.cesecore</groupId>
+                <artifactId>cesecore-ejb</artifactId>
+                <version>7.0.0.1</version>
             </dependency>
             <dependency>
                 <artifactId>cert-cvc</artifactId>

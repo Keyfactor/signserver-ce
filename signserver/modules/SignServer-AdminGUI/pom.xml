@@ -137,6 +137,10 @@
             <artifactId>SignServer-Module-Renewal-interfaces</artifactId>
             <version>5.0.0.Alpha2-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.ejbca.cesecore</groupId>
+            <artifactId>cesecore-interfaces</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

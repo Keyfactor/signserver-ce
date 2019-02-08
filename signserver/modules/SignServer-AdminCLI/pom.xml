@@ -47,6 +47,10 @@
             <artifactId>cesecore-entity</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.ejbca.cesecore</groupId>
+            <artifactId>cesecore-interfaces</artifactId>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SignServer-Module-Renewal-interfaces</artifactId>
             <version>${project.version}</version>

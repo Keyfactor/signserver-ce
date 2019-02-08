@@ -57,4 +57,9 @@ public class RoleDataMockSessionBean implements RoleDataSessionLocal {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void forceCacheExpire() {
+        throw new UnsupportedOperationException();
+    }
+
 }

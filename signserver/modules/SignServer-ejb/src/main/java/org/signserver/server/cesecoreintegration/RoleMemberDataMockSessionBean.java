@@ -123,4 +123,9 @@ public class RoleMemberDataMockSessionBean implements RoleMemberDataSessionLocal
         return ret;
     }
 
+    @Override
+    public void forceCacheExpire() {
+        // do nothing here
+    }
+
 }

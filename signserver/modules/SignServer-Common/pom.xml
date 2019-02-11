@@ -59,6 +59,11 @@
             <artifactId>cert-cvc</artifactId>
             <groupId>org.ejbca.cvc</groupId>
         </dependency>
+        <dependency>
+            <groupId>com.novell.ldap</groupId>
+            <artifactId>jldap</artifactId>
+            <version>4.3</version>
+        </dependency>
     </dependencies>
     <build>
         <!-- Filter SignServer version and edition in signservercompile.properties. -->

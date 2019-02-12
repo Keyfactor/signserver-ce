@@ -5,14 +5,14 @@
 963e1ee14f808ffb99897d848ddcdb28fa91ddda867eb18d303e82728f878349  ./ext/bcprov-jdk15on-1.56.jar;                          "Bouncy Castle"
 2c7b4e8d3af02d7410e350e20da92e65aa48c69250b855387721705f7dccfd99  ./ext/beansbinding-1.2.1.jar;                           "Swing Appframework"
 781d97e959f14fd314202221d5488bf30900b8f2bb991046cbce53dd1c56b6ed  ./ext/cert-cvc-1.4.6.jar;                               "EJBCA"
-2f800dfbe54aa14345aa5a41512838790b63502f38f5f047a0325dfbbeb0b195  ./ext/cesecore-ce/cesecore-common-6.8.0.jar;            "CESeCore"
-ea9d78cedf6000d32dcfa69b7cf6cf2e52206e1c3402a68826ef16d9dc74e46d  ./ext/cesecore-ce/cesecore-ejb-6.8.0.jar;               "CESeCore"
-f9d4a746578768d54b562c4b3ef059771159d2eaeda5e208ba843963630af987  ./ext/cesecore-ce/cesecore-entity-6.8.0.jar;            "CESeCore"
-bebb1a869c61c0dd865da1983b6e7f74a2412ba2234111890d3ac970c575c588  ./ext/cesecore-ce/cesecore-interfaces-6.8.0.jar;        "CESeCore"
-3bc23944f1e375605d31d1da9ed8d11f142dc88e8d3dde9848a0511c77931ecd  ./ext/cesecore-common-6.8.0.jar;                        "CESeCore"
-a8f7720e31d47e2745506a3f5be18008c3cdf326d2be2a0aaffb9094f7d8d8a0  ./ext/cesecore-ejb-6.8.0.jar;                           "CESeCore"
-7fb5eca2a09d315437e426d07baeb9672417886d2c2a5650f6174ee75424172a  ./ext/cesecore-entity-6.8.0.jar;                        "CESeCore"
-cc43123bb69117543079df65da5b880fb8bda136ca5b3ead2b986926d64fffba  ./ext/cesecore-interfaces-6.8.0.jar;                    "CESeCore"
+011e053de651ec42e3058d2513ad36e17034db931d8b149688c6a38bbe65e700  ./ext/cesecore-ce/cesecore-common-7.0.0.1.jar;          
+8edb513e1adc0883ca4c80a3a318b3f9dff0aced416fdcd649774786aecfd1ea  ./ext/cesecore-ce/cesecore-ejb-7.0.0.1.jar;             
+3f638e27315c5e963ce1faaaba2428197c88449c62b4249aa2b6cdfde39f2bac  ./ext/cesecore-ce/cesecore-entity-7.0.0.1.jar;          
+02ec01176c744895bf1c52293fdb743c9d417f2fdbaa8f7b206f8c3b191f0d79  ./ext/cesecore-ce/cesecore-interfaces-7.0.0.1.jar;      
+20aff0df4df1e5d68e4862d448ec60ec9773a861e5dfa1067c334eea9f272457  ./ext/cesecore-common-7.0.0.1.jar;                      
+73f91bc93a3f7ff40ed582282366817ad0299f0790763de527cca10438c3344b  ./ext/cesecore-ejb-interface-7.0.0.1.jar;               
+39a8b1e08a1adefe5356186a49661641a15809b199f656a958133030875e952a  ./ext/cesecore-entity-7.0.0.1.jar;                      
+73f91bc93a3f7ff40ed582282366817ad0299f0790763de527cca10438c3344b  ./ext/cesecore-interfaces-7.0.0.1.jar;                  
 3a2f057041aa6a8813f5b59b695f726c5e85014a703d208d7e1689098e92d8c0  ./ext/commons-cli-1.3.1.jar;                            "Apache Commons"
 4241dfa94e711d435f29a4604a3e2de5c4aa3c165e23bd066be6fc1fc4309569  ./ext/commons-codec-1.10.jar;                           "Apache Commons"
 eeeae917917144a68a741d4c0dff66aa5c5c5fd85593ff217bced3fc8ca783b8  ./ext/commons-collections-3.2.2.jar;                    "Apache Commons"
@@ -68,10 +68,10 @@ e45fbdb905a043849bbb8321bbc3e122b7ce7783a37b738cf70bc1603aace069  ./ext/jetty-ht
 a58a8e37eadfbd9a2b256a141e62be947b6c72eff6621665650090709a833bc5  ./ext/jetty-security-9.2.25.v20180606.jar;              "Eclipse Jetty"
 982b4289fb61ae5df0b6bebc6d69201862079c9ac4322a6d84fdefbbf18d5aa4  ./ext/jetty-server-9.2.25.v20180606.jar;                "Eclipse Jetty"
 39e09ab8810fd620bb37a04f0ccb2095797a16bbaf7a56dabd18f29d25b142b6  ./ext/jetty-util-9.2.25.v20180606.jar;                  "Eclipse Jetty"
+74cc3b16f27177a93e4b2bd952468b18aab6913e973b77bc4e1522a717247433  ./ext/jldap-4.3.jar;                                    
 7da7c61926fd9ecc5ea8511efb4687893410b75fe17d4815137b83e74e7648f5  ./ext/jna-3.3.0.jar;                                    "JNA"
 6dcd46f79ff8927172869cab26b1d86fb9a56880f8f756216378c87f34ea05af  ./ext/jnr-ffi-0.6.0.jar;                                "jnr-ffi"
 3b2096698f63fc6e5c452a9fc382314d17fcf4a8bbbc972338af1fb8d7b96083  ./ext/jsign-1.3-signserver4.1.jar;                      "Jsign"
-74cc3b16f27177a93e4b2bd952468b18aab6913e973b77bc4e1522a717247433  ./ext/ldap.jar;                                         "OpenLDAP"
 1d31696445697720527091754369082a6651bd49781b6005deb94e56753406f9  ./ext/log4j-1.2.17.jar;                                 "Log4j"
 78134c71aa9f9cebbc96a837f12c85590a4f2b587b51831a45faafb68381b1fc  ./ext/no-clover/clover.jar;                             "SignServer"
 5b3caf224a8c5a3c773de824137c4183cd911c303d5d3dd810ff9157a2fa5d56  ./ext/poi-3.15.jar;                                     "Apache POI"

@@ -18,7 +18,6 @@ import java.rmi.RemoteException;
 import java.util.*;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesConstants;
 import static org.signserver.common.util.PropertiesConstants.*;
@@ -285,46 +284,25 @@ public class SetPropertiesHelper {
         boolean workerWithNameAlreadyExists = false;
         StringBuffer errorMessage = new StringBuffer();
         errorMessage.append("Worker(s) with name already exists:");
-        final List<String> workerNames = new ArrayList<>();
-        final List<String> workerIds = new ArrayList<>();
+        List<String> workerNames = new ArrayList<>();
         Enumeration<?> iter = properties.keys();
         while (iter.hasMoreElements()) {
             String key = (String) iter.nextElement();
             String value = properties.getProperty(key);
             key = key.toUpperCase();
             if (!isRemoveKey(key) && (key.startsWith(WORKER_PREFIX) || key.startsWith(OLDWORKER_PREFIX))) {
-                final int dotIndex = key.indexOf('.');
-                String propertykey = key.substring(dotIndex + 1);
+                int DOT_INDEX = key.indexOf('.');
+                String propertykey = key.substring(DOT_INDEX + 1);
                 if (propertykey.equals(PropertiesConstants.NAME)) {
-                    // extract worker ID part
-                    final int prefixLength =
-                            key.startsWith(WORKER_PREFIX) ?
-                            WORKER_PREFIX.length() : OLDWORKER_PREFIX.length();
-                    final String workerId = key.substring(prefixLength, dotIndex);
-                    
-                    workerIds.add(workerId);
                     workerNames.add(value);
                 }
             }
         }
         List existingWorkerNamesInDB = helper.getWorkerSession().getAllWorkerNames();
-        for (int i = 0; i < workerNames.size(); i++) {
-            final String workerName = workerNames.get(i);
-            final String workerId = workerIds.get(i);
-            
+        for (String workerName : workerNames) {
             if (existingWorkerNamesInDB.contains(workerName)) {
-                // check worker ID of existing worker
-                try {
-                    final int workerIdInDB =
-                            helper.getWorkerSession().getWorkerId(workerName);
-                
-                    workerWithNameAlreadyExists = true;
-                    errorMessage.append(" ").append(workerName);
-                } catch (InvalidWorkerIdException e) {
-                    /* this shouldn't happen, since we got the list of worker
-                     *  names
-                     */
-                }
+                workerWithNameAlreadyExists = true;
+                errorMessage.append(" ").append(workerName);
             }
         }
         if (workerWithNameAlreadyExists) {

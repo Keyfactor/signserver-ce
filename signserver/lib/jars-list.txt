@@ -11,7 +11,6 @@
 02ec01176c744895bf1c52293fdb743c9d417f2fdbaa8f7b206f8c3b191f0d79  ./ext/cesecore-ce/cesecore-interfaces-7.0.0.1.jar;      "CESeCore"                     
 20aff0df4df1e5d68e4862d448ec60ec9773a861e5dfa1067c334eea9f272457  ./ext/cesecore-common-7.0.0.1.jar;                      "CESeCore"                        
 f8085952be75a91aecd0e79399aa4dd9bac34ba1defd7131682696c8a7a12f64  ./ext/cesecore-ejb-7.0.0.1.jar;                         "CESeCore"
-73f91bc93a3f7ff40ed582282366817ad0299f0790763de527cca10438c3344b  ./ext/cesecore-ejb-interface-7.0.0.1.jar;               "CESeCore"
 39a8b1e08a1adefe5356186a49661641a15809b199f656a958133030875e952a  ./ext/cesecore-entity-7.0.0.1.jar;                      "CESeCore"
 73f91bc93a3f7ff40ed582282366817ad0299f0790763de527cca10438c3344b  ./ext/cesecore-interfaces-7.0.0.1.jar;                  "CESeCore"
 3a2f057041aa6a8813f5b59b695f726c5e85014a703d208d7e1689098e92d8c0  ./ext/commons-cli-1.3.1.jar;                            "Apache Commons"

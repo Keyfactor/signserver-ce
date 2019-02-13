@@ -5,14 +5,15 @@
 963e1ee14f808ffb99897d848ddcdb28fa91ddda867eb18d303e82728f878349  ./ext/bcprov-jdk15on-1.56.jar;                          "Bouncy Castle"
 2c7b4e8d3af02d7410e350e20da92e65aa48c69250b855387721705f7dccfd99  ./ext/beansbinding-1.2.1.jar;                           "Swing Appframework"
 781d97e959f14fd314202221d5488bf30900b8f2bb991046cbce53dd1c56b6ed  ./ext/cert-cvc-1.4.6.jar;                               "EJBCA"
-011e053de651ec42e3058d2513ad36e17034db931d8b149688c6a38bbe65e700  ./ext/cesecore-ce/cesecore-common-7.0.0.1.jar;          
-8edb513e1adc0883ca4c80a3a318b3f9dff0aced416fdcd649774786aecfd1ea  ./ext/cesecore-ce/cesecore-ejb-7.0.0.1.jar;             
-3f638e27315c5e963ce1faaaba2428197c88449c62b4249aa2b6cdfde39f2bac  ./ext/cesecore-ce/cesecore-entity-7.0.0.1.jar;          
-02ec01176c744895bf1c52293fdb743c9d417f2fdbaa8f7b206f8c3b191f0d79  ./ext/cesecore-ce/cesecore-interfaces-7.0.0.1.jar;      
-20aff0df4df1e5d68e4862d448ec60ec9773a861e5dfa1067c334eea9f272457  ./ext/cesecore-common-7.0.0.1.jar;                      
-73f91bc93a3f7ff40ed582282366817ad0299f0790763de527cca10438c3344b  ./ext/cesecore-ejb-interface-7.0.0.1.jar;               
-39a8b1e08a1adefe5356186a49661641a15809b199f656a958133030875e952a  ./ext/cesecore-entity-7.0.0.1.jar;                      
-73f91bc93a3f7ff40ed582282366817ad0299f0790763de527cca10438c3344b  ./ext/cesecore-interfaces-7.0.0.1.jar;                  
+011e053de651ec42e3058d2513ad36e17034db931d8b149688c6a38bbe65e700  ./ext/cesecore-ce/cesecore-common-7.0.0.1.jar;          "CESeCore"
+9a281da56e24c3733d0f1f911d4c2df509d12f72532b5ec2f519fef1f39c68cb  ./ext/cesecore-ce/cesecore-ejb-7.0.0.1.jar;             "CESeCore"        
+3f638e27315c5e963ce1faaaba2428197c88449c62b4249aa2b6cdfde39f2bac  ./ext/cesecore-ce/cesecore-entity-7.0.0.1.jar;          "CESeCore"
+02ec01176c744895bf1c52293fdb743c9d417f2fdbaa8f7b206f8c3b191f0d79  ./ext/cesecore-ce/cesecore-interfaces-7.0.0.1.jar;      "CESeCore"                     
+20aff0df4df1e5d68e4862d448ec60ec9773a861e5dfa1067c334eea9f272457  ./ext/cesecore-common-7.0.0.1.jar;                      "CESeCore"                        
+f8085952be75a91aecd0e79399aa4dd9bac34ba1defd7131682696c8a7a12f64  ./ext/cesecore-ejb-7.0.0.1.jar;                         "CESeCore"
+73f91bc93a3f7ff40ed582282366817ad0299f0790763de527cca10438c3344b  ./ext/cesecore-ejb-interface-7.0.0.1.jar;               "CESeCore"
+39a8b1e08a1adefe5356186a49661641a15809b199f656a958133030875e952a  ./ext/cesecore-entity-7.0.0.1.jar;                      "CESeCore"
+73f91bc93a3f7ff40ed582282366817ad0299f0790763de527cca10438c3344b  ./ext/cesecore-interfaces-7.0.0.1.jar;                  "CESeCore"
 3a2f057041aa6a8813f5b59b695f726c5e85014a703d208d7e1689098e92d8c0  ./ext/commons-cli-1.3.1.jar;                            "Apache Commons"
 4241dfa94e711d435f29a4604a3e2de5c4aa3c165e23bd066be6fc1fc4309569  ./ext/commons-codec-1.10.jar;                           "Apache Commons"
 eeeae917917144a68a741d4c0dff66aa5c5c5fd85593ff217bced3fc8ca783b8  ./ext/commons-collections-3.2.2.jar;                    "Apache Commons"
@@ -61,14 +62,14 @@ d2ecba63615f317a11fb55c6468f6a9480f6411c10951d9881bafd9a9a8d0467  ./ext/jaxb-cor
 5ec7bb8dd5d36c9199131e06609409e4ea58bdd5d06fb361d8adfa8887b3c068  ./ext/jaxb-impl-2.3.0.1.jar;                            "JAXB"
 496755798224b0c8f0c4471177852f1bef296a524a2df7765ef9df5054e5ae9f  ./ext/jaxen-1.1.jar;                                    "Jaxen"
 dea2fe7895033bdbbe2c1688ad08a0588d9d9b0f17d53349081cc20dda31353e  ./ext/jboss-logging-3.1.0.GA.jar;                       "Hibernate dependencies"
-d9ccc72cdcf5450fcb8cc614b4930261d5cc5b40da6b3be783308cebcd100723  ./ext/jboss-transaction-api_1.1_spec-1.0.1.Final.jar;   "Hibernate dependencies"
+d9ccc72cdcf5450fcb8cc614b4930261d5cc5b40da6b3be783308cebcd100723  ./ext/jboss-transaction-api_1.1_spec-1.0.1.Final.jar;   "Hibernate dependencies"                       
 f52b4551ea648580675659a3872612c80ba9c1fa387664ce3b514dd919af8c93  ./ext/jetty-continuation-9.2.25.v20180606.jar;          "Eclipse Jetty"
 e45fbdb905a043849bbb8321bbc3e122b7ce7783a37b738cf70bc1603aace069  ./ext/jetty-http-9.2.25.v20180606.jar;                  "Eclipse Jetty"
 154d7cc11429551ecd35b15641a95e349ac28676e209b45183fef3b833948ab9  ./ext/jetty-io-9.2.25.v20180606.jar;                    "Eclipse Jetty"
 a58a8e37eadfbd9a2b256a141e62be947b6c72eff6621665650090709a833bc5  ./ext/jetty-security-9.2.25.v20180606.jar;              "Eclipse Jetty"
 982b4289fb61ae5df0b6bebc6d69201862079c9ac4322a6d84fdefbbf18d5aa4  ./ext/jetty-server-9.2.25.v20180606.jar;                "Eclipse Jetty"
 39e09ab8810fd620bb37a04f0ccb2095797a16bbaf7a56dabd18f29d25b142b6  ./ext/jetty-util-9.2.25.v20180606.jar;                  "Eclipse Jetty"
-74cc3b16f27177a93e4b2bd952468b18aab6913e973b77bc4e1522a717247433  ./ext/jldap-4.3.jar;                                    
+74cc3b16f27177a93e4b2bd952468b18aab6913e973b77bc4e1522a717247433  ./ext/jldap-4.3.jar;                                    "OpenLDAP"
 7da7c61926fd9ecc5ea8511efb4687893410b75fe17d4815137b83e74e7648f5  ./ext/jna-3.3.0.jar;                                    "JNA"
 6dcd46f79ff8927172869cab26b1d86fb9a56880f8f756216378c87f34ea05af  ./ext/jnr-ffi-0.6.0.jar;                                "jnr-ffi"
 3b2096698f63fc6e5c452a9fc382314d17fcf4a8bbbc972338af1fb8d7b96083  ./ext/jsign-1.3-signserver4.1.jar;                      "Jsign"

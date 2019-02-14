@@ -361,6 +361,48 @@ public class SignServerCLITest extends ModulesTestCase {
                     cli.execute("reload", "200"));
         }
     }
+    
+    /**
+     * Test that applying a properties file and then another with a different
+     * set of workers, should work.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test01SetpropertiesDifferentWorkers() throws Exception {
+        try {
+            assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers.properties").exists());
+            assertTrue(new File(getSignServerHome() + "/res/test/test_other_workers.properties").exists());
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("setproperties", getSignServerHome() + "/res/test/test_two_workers.properties"));
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Alice for worker 100");
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Bob for worker 200");
+
+            // apply the same properties again
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("setproperties", getSignServerHome() + "/res/test/test_other_workers.properties"));
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Cesar for worker 300");
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Daniel for worker 400");
+        } finally {
+            // remove workers
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("removeworker", "100"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("removeworker", "200"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("reload", "100"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("reload", "200"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("removeworker", "300"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("removeworker", "400"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("reload", "300"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("reload", "400"));
+        }
+    }
 
     @Test
     public void test01RemoveTimeStamp() throws Exception {

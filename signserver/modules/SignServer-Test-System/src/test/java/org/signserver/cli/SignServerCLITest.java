@@ -263,6 +263,104 @@ public class SignServerCLITest extends ModulesTestCase {
         String archiveId = tsr.getTimeStampToken().getTimeStampInfo().getSerialNumber().toString(16);
         assertNotNull(archiveId);
     }
+    
+    /**
+     * Test that applying the same properties twice works.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test01SetpropertiesTwice() throws Exception {
+        try {
+            assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers.properties").exists());
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("setproperties", getSignServerHome() + "/res/test/test_two_workers.properties"));
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Alice for worker 100");
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Bob for worker 200");
+
+            // apply the same properties again
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("setproperties", getSignServerHome() + "/res/test/test_two_workers.properties"));
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Alice for worker 100");
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Bob for worker 200");
+        } finally {
+            // remove workers
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("removeworker", "100"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("removeworker", "200"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("reload", "100"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("reload", "200"));
+        }
+    }
+    
+    /**
+     * Test that applying a properties file with a new worker with the same
+     * name as an existing worker fails.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test01SetpropertiesSameNameDifferentWorkerId() throws Exception {
+        try {
+            assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers.properties").exists());
+            assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers_same_name.properties").exists());
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("setproperties", getSignServerHome() + "/res/test/test_two_workers.properties"));
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Alice for worker 100");
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Bob for worker 200");
+
+            // try setting a properties containing a new worker with an existing name
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("setproperties", getSignServerHome() + "/res/test/test_two_workers_same_name.properties"));
+            assertPrinted("", cli.getOut(), "with name already exists: Bob");
+        } finally {
+            // remove workers
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("removeworker", "100"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("removeworker", "200"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("reload", "100"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("reload", "200"));
+        }
+    }
+    
+    /**
+     * Test that applying a properties file with a generated worker ID using
+     * the same name as an existing worker fails.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test01SetpropertiesSameNameGenId() throws Exception {
+        try {
+            assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers.properties").exists());
+            assertTrue(new File(getSignServerHome() + "/res/test/test_new_worker_genid.properties").exists());
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("setproperties", getSignServerHome() + "/res/test/test_two_workers.properties"));
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Alice for worker 100");
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Bob for worker 200");
+
+            // try setting a properties containing a new worker with an existing name
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("setproperties", getSignServerHome() + "/res/test/test_new_worker_genid.properties"));
+            assertPrinted("", cli.getOut(), "with name already exists: Alice");
+        } finally {
+            // remove workers
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("removeworker", "100"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("removeworker", "200"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("reload", "100"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("reload", "200"));
+        }
+    }
 
     @Test
     public void test01RemoveTimeStamp() throws Exception {

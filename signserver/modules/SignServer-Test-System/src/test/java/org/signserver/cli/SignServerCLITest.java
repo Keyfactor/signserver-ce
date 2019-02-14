@@ -313,7 +313,7 @@ public class SignServerCLITest extends ModulesTestCase {
             assertPrinted("", cli.getOut(), "Setting the property NAME to Bob for worker 200");
 
             // try setting a properties containing a new worker with an existing name
-            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            assertEquals("", CommandLineInterface.RETURN_ERROR, 
                     cli.execute("setproperties", getSignServerHome() + "/res/test/test_two_workers_same_name.properties"));
             assertPrinted("", cli.getOut(), "with name already exists: Bob");
         } finally {
@@ -346,7 +346,7 @@ public class SignServerCLITest extends ModulesTestCase {
             assertPrinted("", cli.getOut(), "Setting the property NAME to Bob for worker 200");
 
             // try setting a properties containing a new worker with an existing name
-            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+            assertEquals("", CommandLineInterface.RETURN_ERROR, 
                     cli.execute("setproperties", getSignServerHome() + "/res/test/test_new_worker_genid.properties"));
             assertPrinted("", cli.getOut(), "with name already exists: Alice");
         } finally {

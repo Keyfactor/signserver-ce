@@ -47,12 +47,12 @@ public class SetPropertiesHelper {
 
     public void process(Properties properties) throws RemoteException, Exception {
         // check first whether worker already exists with provided NAME(s)
-        if (!workerNameAlreadyExists(properties)) {
-            Enumeration<?> iter = properties.keys();
-            while (iter.hasMoreElements()) {
-                String key = (String) iter.nextElement();
-                processKey(key.toUpperCase(), properties.getProperty(key));
-            }
+        checkWorkerNamesAlreadyExists(properties);
+        
+        Enumeration<?> iter = properties.keys();
+        while (iter.hasMoreElements()) {
+            String key = (String) iter.nextElement();
+            processKey(key.toUpperCase(), properties.getProperty(key));
         }
     }
 
@@ -282,7 +282,8 @@ public class SetPropertiesHelper {
         return workerDeclarations;
     }
     
-    private boolean workerNameAlreadyExists(Properties properties) throws RemoteException {
+    private void checkWorkerNamesAlreadyExists(Properties properties)
+            throws RemoteException, CommandFailureException {
         boolean workerWithNameAlreadyExists = false;
         StringBuffer errorMessage = new StringBuffer();
         errorMessage.append("Worker(s) with name already exists:");
@@ -331,8 +332,7 @@ public class SetPropertiesHelper {
             }
         }
         if (workerWithNameAlreadyExists) {
-            out.println(errorMessage);
+            throw new CommandFailureException(errorMessage.toString());
         }
-        return workerWithNameAlreadyExists;
     }
 }

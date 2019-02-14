@@ -54,6 +54,8 @@ public class SetPropertiesCommand extends AbstractAdminCommand {
 
             this.getOutputStream().println("\n\n");
             return 0;
+        } catch (CommandFailureException e) {
+            throw e;
         } catch (Exception e) {
             if ("java.lang.ClassNotFoundException: javax.persistence.PersistenceException".equals(e.getMessage())) {
                 throw new CommandFailureException("Persistence failure. Check that the worker name does not already exist.");

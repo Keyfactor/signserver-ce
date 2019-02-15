@@ -433,7 +433,7 @@ public class SignServerCLITest extends ModulesTestCase {
             // try setting a properties swapping the names of two workers
             assertEquals("", CommandLineInterface.RETURN_ERROR, 
                     cli.execute("setproperties", getSignServerHome() + "/res/test/test_two_workers_swapped.properties"));
-            assertPrinted("", cli.getOut(), "with name already exists: Alice Bob");
+            assertPrinted(cli.getOut().toString(), cli.getOut(), "with name already exists: Alice Bob");
         } finally {
             // remove workers
             assertEquals("", CommandLineInterface.RETURN_SUCCESS, 

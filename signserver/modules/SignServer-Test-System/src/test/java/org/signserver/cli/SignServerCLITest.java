@@ -403,6 +403,42 @@ public class SignServerCLITest extends ModulesTestCase {
                     cli.execute("reload", "400"));
         }
     }
+    
+    /**
+     * Test that applying a properties file with the worker names of two existing
+     * workers swapped fails.
+     * Note: this case is currently expected to fail, but could theoretically
+     * be made to work in the future (when setting a set of properties is
+     * treated as an atomic operation).
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test01SetpropertiesSwappedWorkerNames() throws Exception {
+        try {
+            assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers.properties").exists());
+            assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers_swapped.properties").exists());
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("setproperties", getSignServerHome() + "/res/test/test_two_workers.properties"));
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Alice for worker 100");
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Bob for worker 200");
+
+            // try setting a properties containing a new worker with an existing name
+            assertEquals("", CommandLineInterface.RETURN_ERROR, 
+                    cli.execute("setproperties", getSignServerHome() + "/res/test/test_two_workers_swapped.properties"));
+            assertPrinted("", cli.getOut(), "with name already exists: Alice Bob");
+        } finally {
+            // remove workers
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("removeworker", "100"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("removeworker", "200"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("reload", "100"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("reload", "200"));
+        }
+    }
 
     @Test
     public void test01RemoveTimeStamp() throws Exception {

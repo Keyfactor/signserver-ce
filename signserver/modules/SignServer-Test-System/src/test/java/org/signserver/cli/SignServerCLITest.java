@@ -347,7 +347,7 @@ public class SignServerCLITest extends ModulesTestCase {
             assertPrinted("", cli.getOut(), "Setting the property NAME to Alice for worker 100");
             assertPrinted("", cli.getOut(), "Setting the property NAME to Bob for worker 200");
 
-            // try setting a properties containing a new worker with an existing name
+            // try setting a properties containing a new worker with an existing name using a generated ID
             assertEquals("", CommandLineInterface.RETURN_ERROR, 
                     cli.execute("setproperties", getSignServerHome() + "/res/test/test_new_worker_genid.properties"));
             assertPrinted("", cli.getOut(), "with name already exists: Alice");
@@ -380,7 +380,7 @@ public class SignServerCLITest extends ModulesTestCase {
             assertPrinted("", cli.getOut(), "Setting the property NAME to Alice for worker 100");
             assertPrinted("", cli.getOut(), "Setting the property NAME to Bob for worker 200");
 
-            // apply the same properties again
+            // apply two completely new workers
             assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
                     cli.execute("setproperties", getSignServerHome() + "/res/test/test_other_workers.properties"));
             assertPrinted("", cli.getOut(), "Setting the property NAME to Cesar for worker 300");
@@ -425,7 +425,7 @@ public class SignServerCLITest extends ModulesTestCase {
             assertPrinted("", cli.getOut(), "Setting the property NAME to Alice for worker 100");
             assertPrinted("", cli.getOut(), "Setting the property NAME to Bob for worker 200");
 
-            // try setting a properties containing a new worker with an existing name
+            // try setting a properties swapping the names of two workers
             assertEquals("", CommandLineInterface.RETURN_ERROR, 
                     cli.execute("setproperties", getSignServerHome() + "/res/test/test_two_workers_swapped.properties"));
             assertPrinted("", cli.getOut(), "with name already exists: Alice Bob");

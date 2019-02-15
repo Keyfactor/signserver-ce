@@ -441,6 +441,41 @@ public class SignServerCLITest extends ModulesTestCase {
                     cli.execute("reload", "200"));
         }
     }
+    
+    /**
+     * Test that changing name on two existing workers to completely new names
+     * works.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test01SetpropertiesRenameBoth() throws Exception {
+        try {
+            assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers.properties").exists());
+            assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers_new_names.properties").exists());
+
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("setproperties", getSignServerHome() + "/res/test/test_two_workers.properties"));
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Alice for worker 100");
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Bob for worker 200");
+
+            // apply with changed names
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("setproperties", getSignServerHome() + "/res/test/test_two_workers_new_names.properties"));
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Cesar for worker 100");
+            assertPrinted("", cli.getOut(), "Setting the property NAME to Daniel for worker 200");
+        } finally {
+            // remove workers
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("removeworker", "100"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("removeworker", "200"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("reload", "100"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                    cli.execute("reload", "200"));
+        }
+    }
 
     @Test
     public void test01RemoveTimeStamp() throws Exception {

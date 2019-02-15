@@ -316,6 +316,8 @@ public class SignServerCLITest extends ModulesTestCase {
             assertEquals("", CommandLineInterface.RETURN_ERROR, 
                     cli.execute("setproperties", getSignServerHome() + "/res/test/test_two_workers_same_name.properties"));
             assertPrinted("", cli.getOut(), "with name already exists: Bob");
+            // should not mention the the worker that was not updated
+            assertNotPrinted("", cli.getOut(), "Alice");
         } finally {
             // remove workers
             assertEquals("", CommandLineInterface.RETURN_SUCCESS, 

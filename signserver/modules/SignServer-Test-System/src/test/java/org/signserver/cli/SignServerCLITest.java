@@ -53,7 +53,7 @@ public class SignServerCLITest extends ModulesTestCase {
 
     @Test
     public void test01BasicSetup() throws Exception {
-        
+        LOG.info(">test01BasicSetup");
         assertEquals("No arguments", CommandLineInterface.RETURN_INVALID_ARGUMENTS, 
                 cli.execute("noarguments"));
         assertPrinted("Print usages", cli.getOut(), "use one of:");
@@ -115,7 +115,7 @@ public class SignServerCLITest extends ModulesTestCase {
 
     @Test
     public void test01SetupTimeStamp() throws Exception {
-
+        LOG.info(">test01SetupTimeStamp");
         assertTrue(new File(getSignServerHome() + "/res/test/test_add_timestamp_configuration.properties").exists());
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
                 cli.execute("setproperties", getSignServerHome() + "/res/test/test_add_timestamp_configuration.properties"));
@@ -271,6 +271,7 @@ public class SignServerCLITest extends ModulesTestCase {
      */
     @Test
     public void test01SetpropertiesTwice() throws Exception {
+        LOG.info(">test01SetpropertiesTwice");
         try {
             assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers.properties").exists());
             assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
@@ -304,6 +305,7 @@ public class SignServerCLITest extends ModulesTestCase {
      */
     @Test
     public void test01SetpropertiesSameNameDifferentWorkerId() throws Exception {
+        LOG.info(">test01SetpropertiesSameNameDifferentWorkerId");
         try {
             assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers.properties").exists());
             assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers_same_name.properties").exists());
@@ -339,6 +341,7 @@ public class SignServerCLITest extends ModulesTestCase {
      */
     @Test
     public void test01SetpropertiesSameNameGenId() throws Exception {
+        LOG.info(">test01SetpropertiesSameNameGenId");
         try {
             assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers.properties").exists());
             assertTrue(new File(getSignServerHome() + "/res/test/test_new_worker_genid.properties").exists());
@@ -372,6 +375,7 @@ public class SignServerCLITest extends ModulesTestCase {
      */
     @Test
     public void test01SetpropertiesDifferentWorkers() throws Exception {
+        LOG.info(">test01SetpropertiesDifferentWorkers");
         try {
             assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers.properties").exists());
             assertTrue(new File(getSignServerHome() + "/res/test/test_other_workers.properties").exists());
@@ -417,6 +421,7 @@ public class SignServerCLITest extends ModulesTestCase {
      */
     @Test
     public void test01SetpropertiesSwappedWorkerNames() throws Exception {
+        LOG.info(">test01SetpropertiesSwappedWorkerNames");
         try {
             assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers.properties").exists());
             assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers_swapped.properties").exists());
@@ -450,6 +455,7 @@ public class SignServerCLITest extends ModulesTestCase {
      */
     @Test
     public void test01SetpropertiesRenameBoth() throws Exception {
+        LOG.info(">test01SetpropertiesRenameBoth");
         try {
             assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers.properties").exists());
             assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers_new_names.properties").exists());
@@ -489,6 +495,7 @@ public class SignServerCLITest extends ModulesTestCase {
      */
     @Test
     public void test01SetpropertiesOneWithExistingName() throws Exception {
+        LOG.info(">test01SetpropertiesOneWithExistingName");
         try {
             assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers.properties").exists());
             assertTrue(new File(getSignServerHome() + "/res/test/test_two_workers_one_with_existing_name.properties").exists());
@@ -517,6 +524,7 @@ public class SignServerCLITest extends ModulesTestCase {
 
     @Test
     public void test01RemoveTimeStamp() throws Exception {
+        LOG.info(">test01RemoveTimeStamp");
         // Remove and restore
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
                 cli.execute("setproperties", getSignServerHome() + "/res/test/test_rem_timestamp_configuration.properties"));
@@ -540,6 +548,7 @@ public class SignServerCLITest extends ModulesTestCase {
      */
     @Test
     public void test01WSAdmins() throws Exception {
+        LOG.info(">test01WSAdmins");
     	// Test adding wsadmin using explicit parameters
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
             cli.execute("wsadmins", "-add", "-certserialno", "ef34242d2324",
@@ -641,6 +650,7 @@ public class SignServerCLITest extends ModulesTestCase {
      */
     @Test
     public void test01WSAdminsFromFile() throws Exception {
+        LOG.info(">test01WSAdminsFromFile");
     	// Test adding wsadmin using a PEM file
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsadmins", "-add",
@@ -666,6 +676,7 @@ public class SignServerCLITest extends ModulesTestCase {
      */
     @Test
     public void test01WSAuditors() throws Exception {
+        LOG.info(">test01WSAuditors");
     	// Test adding wsadmin using explicit parameters
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
             cli.execute("wsauditors", "-add", "-certserialno", "ef34343d2428",
@@ -743,6 +754,7 @@ public class SignServerCLITest extends ModulesTestCase {
      */
     @Test
     public void test01WSArchiveAuditors() throws Exception {
+        LOG.info(">test01WSArchiveAuditors");
         // Test adding wsadmin using explicit parameters
         assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
             cli.execute("wsarchiveauditors", "-add", "-certserialno", "ef34343d2428",
@@ -820,6 +832,7 @@ public class SignServerCLITest extends ModulesTestCase {
      */
     @Test
     public void test01WSAuditorsFromFile() throws Exception {
+        LOG.info(">test01WSAuditorsFromFile");
     	// Test adding wsadmin using a PEM file
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
         		cli.execute("wsauditors", "-add",
@@ -845,6 +858,7 @@ public class SignServerCLITest extends ModulesTestCase {
      */
     @Test
     public void test01WSArchiveAuditorsFromFile() throws Exception {
+        LOG.info(">test01WSArchiveAuditorsFromFile");
         // Test adding wsadmin using a PEM file
         assertEquals("", CommandLineInterface.RETURN_SUCCESS,
                         cli.execute("wsarchiveauditors", "-add",
@@ -870,6 +884,7 @@ public class SignServerCLITest extends ModulesTestCase {
      * @throws Exception
      */
     public void test01WSWithFileName() throws Exception {
+        LOG.info(">test01WSWithFileName");
     	// set up a test PDF signer using the file logger to log to a temporary file
     	File logFile = File.createTempFile("pdf-signer", ".log");
     	File outFile = File.createTempFile("dummy-output", ".pdf");

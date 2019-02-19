@@ -94,7 +94,7 @@ public class SODSignerTest extends ModulesTestCase {
     /**
      * Tests the sample use case a from the documentation.
      * <pre>
-     * a) signdatagroups -workername MRTDSODSigner -data "1=value1&2=value2&3=value3"
+     * a) signdatagroups -workername MRTDSODSigner -data "1=dmFsdWUxCg==&2=dmFsdWUyCg==&3=dmFsdWUzCg=="
      * </pre>
      * @throws Exception
      */
@@ -105,7 +105,7 @@ public class SODSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID);
         try {
             assertEquals(CommandLineInterface.RETURN_SUCCESS,
-                    clientCLI.execute("signdatagroups", "-workername", "TestMRTDSODSigner1", "-data", "1=value1&2=value2&3=value3"));
+                    clientCLI.execute("signdatagroups", "-workername", "TestMRTDSODSigner1", "-data", "1=dmFsdWUxCg==&2=dmFsdWUyCg==&3=dmFsdWUzCg=="));
             String res = clientCLI.getOut().toString();
             assertNotNull("non null result", res);
             assertTrue("non empty result: " + res.length(), res.length() > 50);
@@ -118,7 +118,7 @@ public class SODSignerTest extends ModulesTestCase {
     /**
      * Tests signing using ClientWS.
      * <pre>
-     * signdatagroups -workername MRTDSODSigner -data "1=value1&2=value2&3=value3" -protocol CLIENTWS
+     * signdatagroups -workername MRTDSODSigner -data "1=dmFsdWUxCg==&2=dmFsdWUyCg==&3=dmFsdWUzCg==" -protocol CLIENTWS
      * </pre>
      * @throws Exception
      */
@@ -129,7 +129,7 @@ public class SODSignerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID);
         try {
             assertEquals(CommandLineInterface.RETURN_SUCCESS,
-                    clientCLI.execute("signdatagroups", "-workername", "TestMRTDSODSigner1", "-data", "1=value1&2=value2&3=value3", "-protocol", "CLIENTWS",
+                    clientCLI.execute("signdatagroups", "-workername", "TestMRTDSODSigner1", "-data", "1=dmFsdWUxCg==&2=dmFsdWUyCg==&3=dmFsdWUzCg==", "-protocol", "CLIENTWS",
                             "-truststore", getSignServerHome() + "/p12/truststore.jks", "-truststorepwd", "changeit", "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort())));
             String res = clientCLI.getOut().toString();
             assertNotNull("non null result", res);
@@ -137,9 +137,9 @@ public class SODSignerTest extends ModulesTestCase {
             byte[] resBytes = clientCLI.getOut().toByteArray();
             SODFile sod = new SODFile(new ByteArrayInputStream(resBytes));
             Map<Integer, byte[]> dataGroupHashes = sod.getDataGroupHashes();
-            assertEquals("DG1", new String(digestHelper("value1".getBytes(), "SHA256")), new String(dataGroupHashes.get(1)));
-            assertEquals("DG2", new String(digestHelper("value2".getBytes(), "SHA256")), new String(dataGroupHashes.get(2)));
-            assertEquals("DG3", new String(digestHelper("value3".getBytes(), "SHA256")), new String(dataGroupHashes.get(3)));
+            assertEquals("DG1", new String(digestHelper("dmFsdWUxCg==".getBytes(), "SHA256")), new String(dataGroupHashes.get(1)));
+            assertEquals("DG2", new String(digestHelper("dmFsdWUyCg==".getBytes(), "SHA256")), new String(dataGroupHashes.get(2)));
+            assertEquals("DG3", new String(digestHelper("dmFsdWUzCg==".getBytes(), "SHA256")), new String(dataGroupHashes.get(3)));
         } finally {
             workerSession.setWorkerProperty(WORKERID, "DODATAGROUPHASHING", "false");
             workerSession.reloadConfiguration(WORKERID);
@@ -155,7 +155,7 @@ public class SODSignerTest extends ModulesTestCase {
     public void test03signDataMetadata() throws Exception {
         LOG.info("test03signDataMetadata");
         assertEquals(CommandLineInterface.RETURN_SUCCESS, 
-                clientCLI.execute("signdatagroups", "-workername", "EchoRequestMetadataSigner", "-data", "1=value1&2=value2&3=value3",
+                clientCLI.execute("signdatagroups", "-workername", "EchoRequestMetadataSigner", "-data", "1=dmFsdWUxCg==&2=dmFsdWUyCg==&3=dmFsdWUzCg==",
                         "-metadata", "foo=bar"));
         final String res = clientCLI.getOut().toString();
     
@@ -171,7 +171,7 @@ public class SODSignerTest extends ModulesTestCase {
     public void test04signDataMetadataMultipleParams() throws Exception {
         LOG.info("test04signDataMetadataMultipleParams");
         assertEquals(CommandLineInterface.RETURN_SUCCESS, 
-                clientCLI.execute("signdatagroups", "-workername", "EchoRequestMetadataSigner", "-data", "1=value1&2=value2&3=value3",
+                clientCLI.execute("signdatagroups", "-workername", "EchoRequestMetadataSigner", "-data", "1=dmFsdWUxCg==&2=dmFsdWUyCg==&3=dmFsdWUzCg==",
                         "-metadata", "foo=bar", "-metadata", "foo2=bar2"));
         final String res = clientCLI.getOut().toString();
     
@@ -188,7 +188,7 @@ public class SODSignerTest extends ModulesTestCase {
     public void test05signDataMetadataOverClientWS() throws Exception {
         LOG.info("test05signDataMetadataOverClientWS");
         assertEquals(CommandLineInterface.RETURN_SUCCESS, 
-                clientCLI.execute("signdatagroups", "-workername", "EchoRequestMetadataSigner", "-data", "1=value1&2=value2&3=value3", "-protocol", "CLIENTWS", 
+                clientCLI.execute("signdatagroups", "-workername", "EchoRequestMetadataSigner", "-data", "1=dmFsdWUxCg==&2=dmFsdWUyCg==&3=dmFsdWUzCg==", "-protocol", "CLIENTWS", 
                 "-truststore", getSignServerHome() + "/p12/truststore.jks", "-truststorepwd", "changeit", "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()),
                 "-metadata", "foo=bar", "-metadata", "foo2=bar2"));
         final String res = clientCLI.getOut().toString();

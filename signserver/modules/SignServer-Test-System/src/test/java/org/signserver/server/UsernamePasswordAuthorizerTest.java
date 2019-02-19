@@ -226,7 +226,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(getSignerIdSODSigner1());
         try {
             byte[] res = execute(new SignDataGroupsCommand(), "signdatagroups", "-workerid",
-                    String.valueOf(getSignerIdSODSigner1()), "-data", "1=value1&2=value2&3=value3",
+                    String.valueOf(getSignerIdSODSigner1()), "-data", "1=dmFsdWUxCg==&2=dmFsdWUyCg==&3=dmFsdWUzCg==",
                     "-username", "user3", "-password", "foo123", "-protocol", "CLIENTWS",
                     "-truststore", new File(getSignServerHome(), "p12/truststore.jks").getAbsolutePath(), "-truststorepwd", "changeit",
                     "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()));
@@ -247,7 +247,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
         workerSession.reloadConfiguration(getSignerIdSODSigner1());
         try {
             byte[] res = execute(new SignDataGroupsCommand(), "signdatagroups", "-workerid",
-                    String.valueOf(getSignerIdSODSigner1()), "-data", "1=value1&2=value2&3=value3",
+                    String.valueOf(getSignerIdSODSigner1()), "-data", "1=dmFsdWUxCg==&2=dmFsdWUyCg==&3=dmFsdWUzCg==",
                     "-username", "user3", "-password", "foo123", "-protocol", "HTTP",
                     "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPPort()));
             assertNotNull("No result", res);

@@ -309,7 +309,8 @@ public class SetPropertiesHelper {
                 }
             }
         }
-        List existingWorkerNamesInDB = helper.getWorkerSession().getAllWorkerNames();
+        final List<String> existingWorkerNamesInDB = helper.getWorkerSession().getAllWorkerNames();
+        final List<String> alreadyExistingWorkerNames = new ArrayList<String>();
         for (int i = 0; i < workerNames.size(); i++) {
             final String workerName = workerNames.get(i);
             final String workerId = workerIds.get(i);
@@ -322,7 +323,7 @@ public class SetPropertiesHelper {
                 
                     if (!workerIdInDB.equals(workerId)) {
                         workerWithNameAlreadyExists = true;
-                        errorMessage.append(" ").append(workerName);
+                        alreadyExistingWorkerNames.add(workerName);
                     }
                 } catch (InvalidWorkerIdException e) {
                     /* this shouldn't happen, since we got the list of worker
@@ -331,6 +332,14 @@ public class SetPropertiesHelper {
                 }
             }
         }
+        
+        // sort already found worker names to keep error message deterministic
+        Collections.sort(alreadyExistingWorkerNames);
+
+        alreadyExistingWorkerNames.forEach((name) -> {
+            errorMessage.append(" ").append(name);
+        });
+        
         if (workerWithNameAlreadyExists) {
             throw new CommandFailureException(errorMessage.toString());
         }

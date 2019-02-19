@@ -43,13 +43,13 @@
             <dependency>
                 <artifactId>${bouncycastle.bcpkix.artifact}</artifactId>
                 <groupId>org.bouncycastle</groupId>
-                <version>1.56</version>
+                <version>1.60</version>
             </dependency>
             <dependency>
                 <artifactId>${bouncycastle.bcprov.artifact}</artifactId>
                 <groupId>org.bouncycastle</groupId>
                 <type>jar</type>
-                <version>1.56</version>
+                <version>1.60</version>
             </dependency>
             
             <dependency>

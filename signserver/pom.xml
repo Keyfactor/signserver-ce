@@ -157,9 +157,9 @@
             </dependency>
             
             <dependency>
-                <groupId>org.signserver.jsign</groupId>
-                <artifactId>jsign</artifactId>
-                <version>1.3-signserver4.1</version>
+                <groupId>net.jsign</groupId>
+                <artifactId>jsign-core</artifactId>
+                <version>2.1</version>
             </dependency>
 
             <dependency>

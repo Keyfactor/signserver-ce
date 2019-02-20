@@ -220,7 +220,7 @@
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-http-jetty</artifactId>
-                <version>3.1.17</version>
+                <version>3.3.0</version>
             </dependency>
 	    <dependency>
             	<groupId>org.codehaus.woodstox</groupId>

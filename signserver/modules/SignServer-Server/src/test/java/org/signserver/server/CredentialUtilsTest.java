@@ -46,6 +46,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -595,6 +596,21 @@ public class CredentialUtilsTest {
 
         @Override
         public AsyncContext startAsync(ServletRequest request, ServletResponse response) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public String changeSessionId() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public <T extends HttpUpgradeHandler> T upgrade(Class<T> type) throws IOException, ServletException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public long getContentLengthLong() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 

@@ -35,7 +35,7 @@
             <version>1.0.3</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.openejb</groupId>
+            <groupId>org.apache.tomee</groupId>
             <artifactId>javaee-api</artifactId>
             <scope>compile</scope>
         </dependency>

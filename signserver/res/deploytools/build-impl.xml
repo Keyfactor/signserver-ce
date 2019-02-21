@@ -148,7 +148,7 @@ database.nodb.location              = ${database.nodb.location}
         <echo/>
 
         <!-- Use Hibernate Persistence Provider by default -->
-        <property name="persistence.provider" value="org.hibernate.ejb.HibernatePersistence"/>
+        <property name="persistence.provider" value="org.hibernate.jpa.HibernatePersistenceProvider"/>
 
         <condition property="allEnabled">
             <istrue value="${includemodulesinbuild}"/>

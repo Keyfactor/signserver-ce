@@ -81,7 +81,7 @@ a2f1abd5c81ee856c9d3c6fe0764cc48de0c7d79f61a4d5d05e94fb741fd240b  ./ext/jsign-co
 e3dab03c5c81f885f6a643aec5fe2257cfba3cb244f26cceb4011e7492cb76c9  ./ext/poi-4.0.1.jar;                                    "Apache POI"
 739b70bc472f91cbaa8e3e4ce5ec5c8354a43b0d4b16516319f3ffcd7b05920a  ./ext/quartz-2.2.2.jar;                                 "Quartz Scheduler"
 e8f5b4340d3b12a0cfa44ac2db4be4e0639e479ae847df04c4ed8b521734bb4a  ./ext/serializer-2.7.2.jar;                             "Santuario"
-3263031ada62232de8c3302035329734efc3e97c68a11fe78524a32c98a9d0a4  ./ext/slf4j-log4j12-1.7.24.jar;                         "SLF4J"                                   
+ddb343954deb6f046f862606c534178730c02ed23d0b7f6ca1012c1e3fa74273  ./ext/slf4j-log4j12-1.7.25.jar;                         "SLF4J"
 86d7c0b775a7c9b454cc6ba61d40a8eb3b99cc129f832eb9b977a3755b4b338e  ./ext/stax2-api-3.1.4.jar;                              "Stax2 API"
 20522549056e9e50aa35ef0b445a2e47a53d06be0b0a9467d704e2483ffb049a  ./ext/stax-ex-1.8.1.jar;                                "Hibernate dependencies"
 e46c71858674db7c0a258e6dfbe6b072b37c842a2e8ddf2480f0eb8f92b6988c  ./ext/swing-worker-1.1.jar;                             "Swing Appframework"

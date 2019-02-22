@@ -70,7 +70,7 @@ d152ecac457b35fbb1e5dec31cb72161f53b77d17021cdf5f0a28ebfb074bb74  ./ext/jetty-co
 20547da653be9942cc63f57e632a732608559aebde69753bc7312cfe16e8d9c0  ./ext/jetty-http-9.4.12.v20180830.jar;                  "Eclipse Jetty"
 ab1784abbb9e0ed0869ab6568fe46f1faa79fb5e948cf96450daecd9d27ba1db  ./ext/jetty-io-9.4.12.v20180830.jar;                    "Eclipse Jetty"
 513184970c785ac830424a9c62c2fadfa77a630f44aa0bdd792f00aaa092887e  ./ext/jetty-security-9.4.12.v20180830.jar;              "Eclipse Jetty"
-f2e9bd1674a61e0926e8a9322d5b32f8bba66ea132ddf2fe445b9d737901f05b  ./ext/jetty-server-9.4.7.v20170914.jar;                 "Eclipse Jetty"
+4833644e5c5a09bbddc85f75c53e0c8ed750de120ba248fffd8508028528252d  ./ext/jetty-server-9.4.12.v20180830.jar;                 "Eclipse Jetty"
 02469929c448d4a3197dc69c5a6b9296bd37d12bcafd2b576ec8fe47ee42ef8f  ./ext/jetty-util-9.4.14.v20181114.jar;                  "Eclipse Jetty"
 74cc3b16f27177a93e4b2bd952468b18aab6913e973b77bc4e1522a717247433  ./ext/jldap-4.3.jar;                                    "OpenLDAP"
 7da7c61926fd9ecc5ea8511efb4687893410b75fe17d4815137b83e74e7648f5  ./ext/jna-3.3.0.jar;                                    "JNA"

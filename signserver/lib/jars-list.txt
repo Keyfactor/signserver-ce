@@ -51,7 +51,7 @@ f430af5bd8aa3a1e136c2c93eec766d2c0964d23c8800df1307be767e6a1d060  ./ext/hibernat
 807e9c73f27a4b19dd04b1b67126532fc74b0a37bd8d13fbad073ad74d078330  ./ext/httpclient-4.5.7.jar;                             "Apache HttpComponents"
 d799522d579aac06b170603f8f080f6e3248dadc01f9652cdd7ea7bc318c21ce  ./ext/httpcore-4.4.11.jar;                              "Apache HttpComponents"
 fc19576301e39f7f8854ca7f718c0b6b794fc52a650b62bf316c0ff99efce7bd  ./ext/httpmime-4.5.7.jar;                               "Apache HttpComponents"
-6443e10ba2e259fb821d9b6becf10db5316285fc30c53cec9d7b19a3877e7fdf  ./ext/istack-commons-runtime-3.0.7.jar;                 "Hibernate dependencies"
+4ffabb06be454a05e4398e20c77fa2b6308d4b88dfbef7ca30a76b5b7d5505ef  ./ext/istack-commons-runtime-3.0.8.jar;                 "Hibernate dependencies"
 056914f558e9766d41a09aebffede952059d2e81092f9b983392e788a2d006e9  ./ext/jacknji11-1.0-20180109-6d6503f.jar;               "JackNJI11"
 9112a9c33175b8c64b999ecf47b649fdf1cd6fa8262d0677895e976ed2891f0b  ./ext/jandex-2.0.5.Final.jar;                           "Hibernate dependencies"
 c1c7aaf27683dba8e3736fd1d0074e7a59a4766dfc201b641bd2f2327ebcc2cf  ./ext/javaee-api-7.0-1.jar;                             "Apache OpenEJB"   						                          

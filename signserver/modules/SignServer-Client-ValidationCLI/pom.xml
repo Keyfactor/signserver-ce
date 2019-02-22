@@ -84,11 +84,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>jfree</groupId>
-            <artifactId>jfreechart</artifactId>
-            <version>1.0.9</version>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SignServer-ejb-SignServerWS</artifactId>
             <version>${project.version}</version>

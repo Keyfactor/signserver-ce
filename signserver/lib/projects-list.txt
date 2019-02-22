@@ -22,7 +22,6 @@
 "JackNJI11";                  "MIT";                                           "https://github.com/joelhockey/jacknji11/";             "Alternative PKCS#11 provider/wrapper implementation." ;  "Yes, added support for multiple libraries and with different names etc. Patches has been contributed to upstreams." ;
 "JAXB";                       "CDDL with classpath execption";                 "https://github.com/javaee/jaxb-v2";                    "Needed for client CLI webservices on Java 10+";  "No." ;
 "Jaxen";                      "BSD";                                           "http://jaxen.codehaus.org";                            "Dependency of OpenXML4J.";            "No.";
-"JFreeChart";                 "LGPLv2.1+";                                     "http://jfree.org";                                     "Used for plotting diagrams in performance test.";  "No.";
 "JNA";                        "Apache 2.0";                                    "https://github.com/java-native-access/jna";            "Dependency of JackNJI11" ;            "No." ;
 "jnr-ffi";                    "Apache 2.0";                                    "https://github.com/jnr/jnr-ffi";                       "Dependency of JackNJI11";             "No." ;
 "Jsign";                      "Apache 2.0";                                    "https://ebourg.github.io/jsign";                       "Used by MSAuthCodeSigner to sign Portable Executables";  "No.";

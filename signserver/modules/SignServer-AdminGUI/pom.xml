@@ -93,9 +93,8 @@
             <version>2.2.3</version>
         </dependency>
         <dependency>
-           <groupId>org.apache.geronimo.bundles</groupId>
+           <groupId>org.codehaus.woodstox</groupId>
             <artifactId>woodstox-core-asl</artifactId>
-            <version>4.1.2_1</version>
         </dependency>
         <dependency>
             <groupId>javax.xml.bind</groupId>

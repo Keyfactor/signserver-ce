@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <definitions name='AdminWSService' targetNamespace='http://adminws.signserver.org/' xmlns='http://schemas.xmlsoap.org/wsdl/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:tns='http://adminws.signserver.org/' xmlns:xsd='http://www.w3.org/2001/XMLSchema'>
  <types>
   <xs:schema targetNamespace='http://adminws.signserver.org/' version='1.0' xmlns:tns='http://adminws.signserver.org/' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
@@ -1836,7 +1837,7 @@
  </binding>
  <service name='AdminWSService'>
   <port binding='tns:AdminWSBinding' name='AdminWSPort'>
-   <soap:address location='http://localhost:8080/signserver/AdminWSService/AdminWS'/>
+   <soap:address location='https://localhost:8443/signserver/AdminWSService/AdminWS'/>
   </port>
  </service>
 </definitions>

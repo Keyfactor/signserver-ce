@@ -1004,14 +1004,14 @@ SHA-512 checksum: ${zip.bin.sha512}
                 <include name="ext/ext/jboss*.jar"/>
                 
                 <!-- CLI (both client and admin) -->
-                <include name="ext/commons-cli-1.3.1.jar"/>
+                <include name="ext/commons-cli-1.4.jar"/>
                 
                 <!-- Common (all) -->
                 <include name="ext/cert-cvc.jar"/>
                 <include name="ext/commons-collections-3.2.2.jar"/>
-                <include name="ext/commons-io-1.4.jar"/>
+                <include name="ext/commons-io-2.5.jar"/>
                 <include name="ext/commons-lang-2.6.jar"/>
-                <include name="ext/commons-logging-1.1.1.jar"/>
+                <include name="ext/commons-logging-12.jar"/>
                 <include name="ext/commons-configuration.jar"/>
                 <include name="ext/ejbca-util.jar"/>
                 <include name="ext/log4j-1.2.14.jar"/>

@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.module.tsa;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -98,26 +97,6 @@ public class TimeStampSignerTest extends ModulesTestCase {
     /** Worker ID for test worker. */
     private static final WorkerIdentifier WORKER20 = new WorkerIdentifier(8920);
 
-    /** BASE64-encoded cert for WORKER1 */
-    private static String CERTSTRING = "MIIDjDCCAnSgAwIBAgIINj1ol0TMjXEwDQYJKoZIhvcNAQELBQAwTDEWMBQGA1UE\n" +
-                                        "AwwNRFNTIFN1YiBDQSAxMTEQMA4GA1UECwwHVGVzdGluZzETMBEGA1UECgwKU2ln\n" +
-                                        "blNlcnZlcjELMAkGA1UEBhMCU0UwHhcNMTcxMTEzMDgxOTU0WhcNMTkxMTEzMDgx\n" +
-                                        "OTU0WjBGMRAwDgYDVQQDDAd0czAwMDAzMRAwDgYDVQQLDAdUZXN0aW5nMRMwEQYD\n" +
-                                        "VQQKDApTaWduU2VydmVyMQswCQYDVQQGEwJTRTCCASIwDQYJKoZIhvcNAQEBBQAD\n" +
-                                        "ggEPADCCAQoCggEBAKd9BLnJFsqpzJECkn1YF1R/e6oFa5J8E5WYg/MNe5wV9bqq\n" +
-                                        "wUCI82B+N2yi9aole4CL9hMKuaDw6aYYHzX+qt4M58WGLP4PEmcqCHiX4aRhF4L+\n" +
-                                        "rTM22sZNMpq7jC+nFfOBUWqUE2hpDsyE0VGR6HjxvJ9Lwd4E019P7Tz/dmONAJQg\n" +
-                                        "8940qvLEmRlgEsibNL2dzvdLUJKJheuS0aYot+l6y6RmE6wUliIE4xfm0qH9Ka5v\n" +
-                                        "Z6OzrEHSSHyxlX+EKWQu1fILo+a9uaP8F85fotzW7aIcgH9YGEaqktUDmd7y6fEu\n" +
-                                        "uMU6lGZNvIphi6in4m0BdSI3v8DW5gbKB56VwkECAwEAAaN4MHYwDAYDVR0TAQH/\n" +
-                                        "BAIwADAfBgNVHSMEGDAWgBQcYEFK3pit5dYDiuhmgql+sPIChzAWBgNVHSUBAf8E\n" +
-                                        "DDAKBggrBgEFBQcDCDAdBgNVHQ4EFgQUJMLKwuQOYfaTPEtmCQgdpXMUxJowDgYD\n" +
-                                        "VR0PAQH/BAQDAgeAMA0GCSqGSIb3DQEBCwUAA4IBAQATIbGLrOoqUPmTfP46Vbtq\n" +
-                                        "u1VNJ6aPCVYrwgzZeWdDCs1pdlTpxeKr2jZhQx4HNIk+3bwO718fh3vgz8iCvTOz\n" +
-                                        "bjwPbHRv1MSj3VniMO1oca42tqjyv0TUjKIxmVgESuTz80tUb9Bv/RMITrTYWsxn\n" +
-                                        "Yyq6Xxh31NjuHOMMvj26xQvpZUEoZ2+DMEcxsRadRe+rOlUjZhJ9MaipF5jFGS2w\n" +
-                                        "+s1dVA9W6ZQLk/QiBtPj9nuD4qey9btEXIicMDtPzPQ5dnV/6psCvY/1eCNcp41d\n" +
-                                        "Q/oHejSOzaeBvDG1N0K0Pgj0foloHTzLcfreACrzTskOse0sF5FkFFtuHZgR5NvQ";
     /** Dummy OID used for testing an invalid hashing algorithm */
     private static String DUMMY_OID = "1.42.42.42.42";
     
@@ -420,8 +399,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
                     WORKER1, signRequest, new RemoteRequestContext());
 
             final CertificateFactory factory = CertificateFactory.getInstance("X.509");
-            final X509Certificate cert =
-                    (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(Base64.decode(CERTSTRING.getBytes())));
+            final X509Certificate cert = (X509Certificate) workerSession.getSignerCertificate(WORKER1);
 
             TimeStampResponse timeStampResponse = null;
             try {

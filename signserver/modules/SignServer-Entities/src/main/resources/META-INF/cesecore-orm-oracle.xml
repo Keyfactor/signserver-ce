@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings version="2.1"
-    xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm orm_2_1.xsd">
 
     <!-- 
          This file contains mappings specific to Oracle 9.x or 10.x and the JDBC driver version 10.1.0.2.

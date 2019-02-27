@@ -1252,11 +1252,12 @@
     <div class="section section-2" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtMSlDaGVja1ByZXJlcXVpc2l0ZXM">
         <h2 class="heading "><span>1) Check Prerequisites</span></h2>
     <p  >Make sure all required software is installed:    </p>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">Java</strong>:<br/>OpenJDK 8, or <a  class="external-link" href="https://www.oracle.com/technetwork/java/javase/overview/index.html">Oracle Java 8</a>*<br/><br/><strong class=" ">Application server</strong>:<br/>JBoss EAP 6.x and 7.x, <a  class="external-link" href="http://wildfly.org/downloads/">WildFly</a> 9, 10, 11, or <a  class="external-link" href="https://www.payara.fish/">Payara Server</a> 4.1.1.x<a  class="external-link" href="https://www.payara.fish/software/payara-server/"></a>    </p>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">Java</strong>:<br/>OpenJDK 8, <a  class="external-link" href="https://www.oracle.com/technetwork/java/javase/overview/index.html">Oracle Java 8</a><strong class=" ">, </strong>or OpenJDK 11*****    </p>
+</li><li class=" ">    <p  ><strong class=" ">Application server</strong>:<br/>JBoss EAP 7.x, <a  class="external-link" href="http://wildfly.org/downloads/">WildFly</a> 9, 10, 11, 14, or <a  class="external-link" href="https://www.payara.fish/">Payara Server</a> 4.1.1.x**    </p>
 </li><li class=" ">    <p  ><strong class=" ">Database</strong>:<br/>MySQL or MariaDB 5.5/10.3.12, PostgreSQL 9.x, Oracle Database 10/11g, or without database (***).    </p>
 </li><li class=" ">    <p  ><strong class=" ">Deployment tool</strong>:<br/>Apache <strong class=" ">Ant</strong> 1.9 or later    </p>
 </li><li class=" ">    <p  ><strong class=" ">Build tool</strong> (optional****)<strong class=" ">:</strong><br/>Apache <strong class=" ">Maven</strong> 3.x or later    </p>
-</li></ul>    <p  >* When using Oracle JDK the <a  class="external-link" href="https://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html"><i class=" ">Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files for JDK</i></a> need to be enabled via uncommenting the line crypto.policy=unlimited in jre/lib/security/java.security file, since parts of SignServer API make use of strong cryptography algorithms. Further information on this can be found in Oracle documentation on the JCE.<br/>** Experimental support for Payara. Currently uses EclipseLink instead of Hibernate.<br/>*** See <a   href="#src-34570254_id-.SignServerInstallationv5.0.0-SignServer_without_DB">SignServer without Database</a><br/>**** Only required when building the software from source    </p>
+</li></ul>    <p  >* When using Oracle JDK the <a  class="external-link" href="https://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html"><i class=" ">Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files for JDK</i></a> need to be enabled via uncommenting the line crypto.policy=unlimited in jre/lib/security/java.security file, since parts of SignServer API make use of strong cryptography algorithms. Further information on this can be found in Oracle documentation on the JCE.<br/>** Experimental support for Payara. Currently uses EclipseLink instead of Hibernate.<br/>*** See <a   href="#src-34570254_id-.SignServerInstallationv5.0.0-SignServer_without_DB">SignServer without Database</a><br/>**** Only required when building the software from source<br/>***** Building is currently only supported with Java 8 and running on Java 11 is only supported with an application server that supports Java 11, such as WildFly 14.    </p>
     </div>
     <div class="section section-2" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtMilVbnBhY2tTaWduU2VydmVy">
         <h2 class="heading section"><span>2) Unpack SignServer</span></h2>
@@ -1295,7 +1296,7 @@
 <div class="line"><code class="plain">bin/ant init</code></div>
 </div>
     </div>
-    <p  >To build the sources run:    </p>
+    <p  >To build from the sources run:    </p>
     <p  >    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1338,9 +1339,9 @@
 </li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-Tablecreationandindexes">Table Creation and Indexes</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-MariaDBbinlogformatconfiguration">MariaDB binlog Format Configuration</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JHbGFzc0Zpc2gvUGF5YXJh">Configure Database Driver for GlassFish/Payara</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JKQm9zc0FTNyxKQm9zc0VBUDZvcldpbGRGbHk">Configure Database Driver for JBoss EAP 6 or WildFly</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JKQm9zc0FTNyxKQm9zc0VBUDZvcldpbGRGbHk">Configure Database Driver for JBoss EAP 7 or WildFly</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlZGF0YXNvdXJjZWZvckdsYXNzRmlzaC9QYXlhcmE">Configure Data Source for GlassFish/Payara</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-ConfiguredatasourceforJBossEAP6orWildFly">Configure Data Source for JBoss EAP 6 or WildFly</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-ConfiguredatasourceforJBossEAP6orWildFly">Configure Data Source for JBoss EAP 7 or WildFly</a>    </p>
 </li></ul>    <div class="section section-3" id="src-34570254_id-.SignServerInstallationv5.0.0-DatabaseAccountDatabaseaccount">
         <h3 class="heading section"><span id="src-34570254_id-.SignServerInstallationv5.0.0-Databaseaccount" class="confluence-anchor-link"></span><span>Database Account </span></h3>
     <p  class="section">Create a database and database user for SignServer. For more information, refer to documentation from the respective database vendor.    </p>
@@ -1369,15 +1370,10 @@
     </div>
     <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlRGF0YWJhc2VEcml2ZXJmb3JXaWxkRmx5LEdsYXNzRmlzaG9yUGFyYXlhQXBwbGljYXRpb25TZXJ2ZXI6Q29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JKQm9zc0FTNyxKQm9zc0VBUDZvcldpbGRGbHk">
         <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JKQm9zc0FTNyxKQm9zc0VBUDZvcldpbGRGbHk" class="confluence-anchor-link"></span><span>Configure Database Driver for WildFly, GlassFish or Paraya Application Server:</span></h3>
-    <p  >For JBoss EAP6, and WildFly it is not sufficient to drop the JAR archive with a database JDBC driver into the deployments directory. Instead, the following steps need to be performed (for MySQL or MariaDB):    </p>
+    <p  >For JBoss EAP7, and WildFly it is not sufficient to drop the JAR archive with a database JDBC driver into the deployments directory. Instead, the following steps need to be performed (for MySQL or MariaDB):    </p>
 <ol class=" "><li class=" ">    <p  >Create the necessary directories (relative to JBoss EAP base directory):    </p>
-<ul class=" "><li class=" ">    <p  >On JBoss EAP 6.0:    </p>
-    <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">mkdir -p modules/com/mysql/main/</code></div>
-</div>
-    </div>
-</li><li class=" ">    <p  >On WildFly Application Server:    </p>
+    <p  >    </p>
+<ul class=" "><li class=" ">    <p  >On WildFly Application Server:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">mkdir -p modules/system/layers/base/com/mysql/main/</code></div>
@@ -1389,7 +1385,7 @@
 <div class="line"><code class="plain">mkdir -p modules/org/mariadb/main/</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >On JBoss EAP 6.1 (or later) or WildFly:    </p>
+</li><li class=" ">    <p  >On JBoss EAP 7.0 (or later) or WildFly:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">mkdir -p modules/system/layers/base/org/mariadb/main/</code></div>
@@ -1482,11 +1478,11 @@
 </li><li class=" ">    <p  >Click <strong class=" ">Resources &gt; JDBC &gt; JDBC Resources</strong>.    </p>
 </li><li class=" ">    <p  >Add new:<br/>JNDI Name: jdbc/SignServerDS<br/>Pool Name: MySQLPool    </p>
 </li></ol>    </div>
-    <div class="section section-3" id="src-34570254_id-.SignServerInstallationv5.0.0-ConfigureDataSourceforJBossEAP6orWildFlyConfiguredatasourceforJBossEAP6orWildFly">
-        <h3 class="heading "><span id="src-34570254_id-.SignServerInstallationv5.0.0-ConfiguredatasourceforJBossEAP6orWildFly" class="confluence-anchor-link"></span><span>Configure Data Source for JBoss EAP 6 or WildFly </span></h3>
-    <p  >The following shows an example configuration of a MariaDB data source using the {APPSRV_HOME}/bin/jboss-cli.sh with the driver installed as described in the previous step <a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JKQm9zc0FTNyxKQm9zc0VBUDZvcldpbGRGbHk">Configure database driver for JBoss EAP 6 or WildFly</a>.    </p>
+    <div class="section section-3" id="src-34570254_id-.SignServerInstallationv5.0.0-ConfigureDataSourceforJBossEAP7orWildFlyConfiguredatasourceforJBossEAP6orWildFly">
+        <h3 class="heading "><span id="src-34570254_id-.SignServerInstallationv5.0.0-ConfiguredatasourceforJBossEAP6orWildFly" class="confluence-anchor-link"></span><span>Configure Data Source for JBoss EAP 7 or WildFly </span></h3>
+    <p  >The following shows an example configuration of a MariaDB data source using the {APPSRV_HOME}/bin/jboss-cli.sh with the driver installed as described in the previous step <a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtQ29uZmlndXJlZGF0YWJhc2Vkcml2ZXJmb3JKQm9zc0FTNyxKQm9zc0VBUDZvcldpbGRGbHk">Configure database driver for JBoss EAP 7 or WildFly</a>.    </p>
     <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_GB/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
- Note that the <tt class=" ">--enabled=true</tt> option should be set for JBoss EAP 6.x.    </p>
+ Note that the <tt class=" ">--enabled=true</tt> option should be set for JBoss EAP 7.x.    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
 <div class="line"><code class="plain">data-source add --name=signserverds --driver-name=</code><code class="string">"org.mariadb.jdbc.Driver"</code><code class="plain"> --connection-url=</code><code class="string">"jdbc:mysql://127.0.0.1:3306/signserver"</code><code class="plain"> --jndi-name=</code><code class="string">"java:/SignServerDS"</code><code class="plain"> --use-ccm=</code><code class="keyword">true</code><code class="plain"> --driver-</code><code class="keyword">class</code><code class="plain">=</code><code class="string">"org.mariadb.jdbc.Driver"</code><code class="plain"> --user-name=</code><code class="string">"signserver"</code><code class="plain"> --password=</code><code class="string">"signserver"</code><code class="plain"> --validate-on-match=</code><code class="keyword">true</code><code class="plain"> --background-validation=</code><code class="keyword">false</code><code class="plain"> --prepared-statements-cache-size=</code><code class="value">50</code><code class="plain"> --share-prepared-statements=</code><code class="keyword">true</code><code class="plain"> --min-pool-size=</code><code class="value">5</code><code class="plain"> --max-pool-size=</code><code class="value">150</code><code class="plain"> --pool-prefill=</code><code class="keyword">true</code><code class="plain"> --transaction-isolation=TRANSACTION_READ_COMMITTED --check-valid-connection-sql=</code><code class="string">"select 1;"</code><code class="plain"> --enabled=</code><code class="keyword">true</code></div>
@@ -1499,56 +1495,12 @@
         <h2 class="heading "><span>6) Configure Web Server Key Stores</span></h2>
     <p  >Configure the Web Server keystore following the instructions in one of the following sections:    </p>
 <ul class=" "><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtR2xhc3NGaXNoL1BheWFyYVNTTGNvbmZpZ3VyYXRpb24">GlassFish/Payara SSL Configuration</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtSkJvc3M3L0VBUDZTU0xjb25maWd1cmF0aW9u">JBoss EAP 6 SSL Configuration</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtV2lsZEZseTkvRUFQNy4wU1NMY29uZmlndXJhdGlvbg">WildFly 9 / EAP 7.0 SSL Configuration</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtV2lsZEZseTEwLzExU1NMY29uZmlndXJhdGlvbg">WildFly 10/11 SSL Configuration</a>    </p>
 </li></ul>    <p  >    </p>
     <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtR2xhc3NGaXNoL1BheWFyYVNTTENvbmZpZ3VyYXRpb25HbGFzc0Zpc2gvUGF5YXJhU1NMY29uZmlndXJhdGlvbg">
         <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtR2xhc3NGaXNoL1BheWFyYVNTTGNvbmZpZ3VyYXRpb24" class="confluence-anchor-link"></span><span>GlassFish/Payara SSL Configuration </span></h3>
     <p  >For GlassFish/Payara, enable client authentication for <tt class=" ">http-listener-2</tt> and manually update the keystores with the right certificates.    </p>
-    </div>
-    <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtSkJvc3NFQVA2U1NMQ29uZmlndXJhdGlvbkpCb3NzNy9FQVA2U1NMY29uZmlndXJhdGlvbg">
-        <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtSkJvc3M3L0VBUDZTU0xjb25maWd1cmF0aW9u" class="confluence-anchor-link"></span><span>JBoss EAP 6 SSL Configuration </span></h3>
-<ul class=" "><li class=" ">    <p  >Copy the keystore file as <tt class=" ">JBOSS7_HOME/standalone/configuration/keystore/keystore.jks</tt> and the trust store as <tt class=" ">JBOSS7_HOME/standalone/configuration/keystore/truststore.jks.</tt>    </p>
-</li><li class=" ">    <p  >Configure interfaces using the appropriate bind address (i.e. 0.0.0.0 or 127.0.0.1).    </p>
-</li></ul>    <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">/interfaces=/</code><code class="keyword">interface</code><code class="plain">=http:add(inet-address=</code><code class="string">"0.0.0.0"</code><code class="plain">)</code></div>
-<div class="line"><code class="plain">/interfaces=/</code><code class="keyword">interface</code><code class="plain">=httpspub:add(inet-address=</code><code class="string">"0.0.0.0"</code><code class="plain">)</code></div>
-<div class="line"><code class="plain">/interfaces=/</code><code class="keyword">interface</code><code class="plain">=httpspriv:add(inet-address=</code><code class="string">"0.0.0.0"</code><code class="plain">)</code></div>
-</div>
-    </div>
-<ul class=" "><li class=" ">    <p  >Set up the private port which requires client certificate. Use appropriate values for key-alias (hostname), password (keystore password), ca-certificate-password (truststore password), and supported protocols:    </p>
-</li></ul>    <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">/socket-binding-group=standard-sockets/socket-binding=httpspriv:add(port=</code><code class="string">"8443"</code><code class="plain">,</code><code class="keyword">interface</code><code class="plain">=</code><code class="string">"httpspriv"</code><code class="plain">)</code></div>
-<div class="line"><code class="plain">/subsystem=web/connector=httpspriv:add(protocol=HTTP/</code><code class="value">1.1</code><code class="plain">, scheme=https, socket-binding=httpspriv, secure=</code><code class="keyword">true</code><code class="plain">)</code></div>
-<div class="line"><code class="plain">/subsystem=web/connector=httpspriv/ssl=configuration:add(key-alias=</code><code class="string">"localhost"</code><code class="plain">)</code></div>
-<div class="line"><code class="plain">/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=password, value=</code><code class="string">"serverpwd"</code><code class="plain">)</code></div>
-<div class="line"><code class="plain">/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=certificate-key-file, value=</code><code class="string">"${jboss.server.config.dir}/keystore/keystore.jks"</code><code class="plain">)</code></div>
-<div class="line"><code class="plain">/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=verify-client, value=</code><code class="keyword">true</code><code class="plain">)</code></div>
-<div class="line"><code class="plain">/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=ca-certificate-password, value=</code><code class="string">"changeit"</code><code class="plain">)</code></div>
-<div class="line"><code class="plain">/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=ca-certificate-file, value=</code><code class="string">"${jboss.server.config.dir}/keystore/truststore.jks"</code><code class="plain">)</code></div>
-<div class="line"><code class="plain">/subsystem=web/connector=httpspriv/ssl=configuration:write-attribute(name=protocol,value=</code><code class="string">"TLSv1,TLSv1.1,TLSv1.2"</code><code class="plain">)</code></div>
-</div>
-    </div>
-<ul class=" "><li class=" ">    <p  >Set up the public SSL port which does not require the client certificate. Use appropriate values for key-alias (hostname), password (keystore password), and supported protocols.    </p>
-</li></ul>    <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">/socket-binding-group=standard-sockets/socket-binding=httpspub:add(port=</code><code class="string">"8442"</code><code class="plain">,</code><code class="keyword">interface</code><code class="plain">=</code><code class="string">"httpspub"</code><code class="plain">)</code></div>
-<div class="line"><code class="plain">/subsystem=web/connector=httpspub:add(protocol=HTTP/</code><code class="value">1.1</code><code class="plain">, scheme=https, socket-binding=httpspub, secure=</code><code class="keyword">true</code><code class="plain">)</code></div>
-<div class="line"><code class="plain">/subsystem=web/connector=httpspub/ssl=configuration:add(key-alias=</code><code class="string">"localhost"</code><code class="plain">)</code></div>
-<div class="line"><code class="plain">/subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=password, value=</code><code class="string">"serverpwd"</code><code class="plain">)</code></div>
-<div class="line"><code class="plain">/subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=certificate-key-file, value=</code><code class="string">"${jboss.server.config.dir}/keystore/keystore.jks"</code><code class="plain">)</code></div>
-<div class="line"><code class="plain">/subsystem=web/connector=httpspub/ssl=configuration:write-attribute(name=protocol,value=</code><code class="string">"TLSv1,TLSv1.1,TLSv1.2"</code><code class="plain">)</code></div>
-</div>
-    </div>
-<ul class=" "><li class=" ">    <p  >If the server is slow, make sure to wait before reloading:    </p>
-</li></ul>    <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">:reload</code></div>
-</div>
-    </div>
     </div>
     <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtV2lsZEZseTkvSkJvc3NFQVA3LjBTU0xDb25maWd1cmF0aW9uV2lsZEZseTkvRUFQNy4wU1NMY29uZmlndXJhdGlvbg">
         <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtV2lsZEZseTkvRUFQNy4wU1NMY29uZmlndXJhdGlvbg" class="confluence-anchor-link"></span><span>WildFly 9 / JBoss EAP 7.0 SSL Configuration </span></h3>
@@ -1601,8 +1553,8 @@
     </div>
     <p  >    </p>
     </div>
-    <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtV2lsZEZseTEwLzExU1NMQ29uZmlndXJhdGlvbldpbGRGbHkxMC8xMVNTTGNvbmZpZ3VyYXRpb24">
-        <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtV2lsZEZseTEwLzExU1NMY29uZmlndXJhdGlvbg" class="confluence-anchor-link"></span><span>WildFly 10/11 SSL Configuration </span></h3>
+    <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtV2lsZEZseTEwLzExLzE0U1NMQ29uZmlndXJhdGlvbldpbGRGbHkxMC8xMVNTTGNvbmZpZ3VyYXRpb24">
+        <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtV2lsZEZseTEwLzExU1NMY29uZmlndXJhdGlvbg" class="confluence-anchor-link"></span><span>WildFly 10/11/14 SSL Configuration </span></h3>
     <p  >Copy the keystore file as <tt class=" ">WILDFLY_HOME/standalone/configuration/keystore/keystore.jks</tt> and the trust store as <tt class=" ">WILDFLY_HOME/standalone/configuration/keystore/truststore.jks.</tt>    </p>
     <p  >Remove existing listeners to make Wildfly allow configuring httpspriv interface with 8443 port:    </p>
     <div  class="confbox programlisting">
@@ -1675,15 +1627,15 @@
     <div class="section section-2" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtNylDb25maWd1cmVBcHBsaWNhdGlvblNlcnZlcg">
         <h2 class="heading "><span>7) Configure Application Server</span></h2>
     <p  >Configure the application server following the instructions in the sections:    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ">Fix web service problem in JBoss EAP 6 / WildFly</a>    </p>
+<ul class=" "><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ">Fix web service problem in JBoss EAP 7 / WildFly</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtSkJvc3NBUzcvRUFQNi9XaWxkRmx5VVJJZW5jb2Rpbmc">Fix WildFly URI Encoding</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-FixXMLSecuritylibraryissue1inJBoss7">Fix XML Security Library Issue 1 in JBoss EAP</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-FixXMLSecuritylibraryissue2inJBoss7">Fix XML Security Library Issue 2 in JBoss EAP</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-CommonsCollectionsSecurityissueinJBoss7andearlier">Commons Collections Security issue in JBoss EAP</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-FixSecurityissuesinJBossEAP">Fix Security Issues in JBoss EAP</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-34570254_id-.SignServerInstallationv5.0.0-InstallHibernateinGlassFish3">Install Hibernate in GlassFish 3</a>    </p>
-</li></ul>    <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtRml4V2ViU2VydmljZVByb2JsZW1pbkpCb3NzRUFQNi9XaWxkRmx5Rml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ">
-        <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ" class="confluence-anchor-link"></span><span>Fix Web Service Problem in JBoss EAP 6 / WildFly </span></h3>
+</li></ul>    <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtRml4V2ViU2VydmljZVByb2JsZW1pbkpCb3NzRUFQNy9XaWxkRmx5Rml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ">
+        <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ" class="confluence-anchor-link"></span><span>Fix Web Service Problem in JBoss EAP 7 / WildFly </span></h3>
     <p  >Configure WSDL web-host rewriting to use the request host. Needed for webservices to work correctly when requiring client certificate.    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1699,8 +1651,8 @@
     </div>
     <p  >    </p>
     </div>
-    <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtSkJvc3NFQVA2L1dpbGRGbHlVUklFbmNvZGluZ0pCb3NzQVM3L0VBUDYvV2lsZEZseVVSSWVuY29kaW5n">
-        <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtSkJvc3NBUzcvRUFQNi9XaWxkRmx5VVJJZW5jb2Rpbmc" class="confluence-anchor-link"></span><span>JBoss EAP 6 / WildFly URI Encoding </span></h3>
+    <div class="section section-3" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtSkJvc3NFQVA3L1dpbGRGbHlVUklFbmNvZGluZ0pCb3NzQVM3L0VBUDYvV2lsZEZseVVSSWVuY29kaW5n">
+        <h3 class="heading "><span id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtSkJvc3NBUzcvRUFQNi9XaWxkRmx5VVJJZW5jb2Rpbmc" class="confluence-anchor-link"></span><span>JBoss EAP 7 / WildFly URI Encoding </span></h3>
     <p  >Configure the URI encoding:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1711,30 +1663,10 @@
 <div class="line"><code class="plain">:reload</code></div>
 </div>
     </div>
+    <p  >    </p>
     </div>
     <div class="section section-3" id="src-34570254_id-.SignServerInstallationv5.0.0-FixXMLSecurityLibraryIssue1inJBossEAPFixXMLSecuritylibraryissue1inJBoss7">
         <h3 class="heading "><span id="src-34570254_id-.SignServerInstallationv5.0.0-FixXMLSecuritylibraryissue1inJBoss7" class="confluence-anchor-link"></span><span>Fix XML Security Library Issue 1 in JBoss EAP </span></h3>
-    <p  >JBoss EAP bundles version 1.5.1 of the XML Security library. The library bundled with SignServer is not properly overriding the JBoss-bundled version. To work around this issue, copy the JAR file from SignServer into JBoss' modules directory and modify the descriptor to use the new version.    </p>
-    <p  >On Linux/Unix systems, use the following command:    </p>
-    <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">cp lib/ext/xmlsec-</code><code class="value">1.5</code><code class="plain">.</code><code class="value">8</code><code class="plain">.jar ${APPSRV_HOME}/modules/org/apache/santuario/xmlsec/main/</code></div>
-</div>
-    </div>
-    <p  class="prettyprint">On Windows systems, use the following command:    </p>
-    <p  >    </p>
-    <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">copy lib\ext\xmlsec-</code><code class="value">1.5</code><code class="plain">.</code><code class="value">8</code><code class="plain">.jar %APPSRV_HOME%\modules\org\apache\santuario\xmlsec\main\</code></div>
-</div>
-    </div>
-    <p  >Edit <tt class=" ">%APPSRV_HOME%/modules/org/apache/santuario/xmlsec/main/module.xml</tt> to use the correct version:    </p>
-    <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
-<div class="line"><code class="plain">&lt;resource-root path=</code><code class="string">"xmlsec-1.5.8.jar"</code><code class="plain">/&gt;</code></div>
-</div>
-    </div>
-    <p  >    </p>
     <p  >On Linux/Unix systems, use the following command:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1768,7 +1700,6 @@
 <div class="line"><code class="plain">./bin/pkg install hibernate</code></div>
 </div>
     </div>
-    <p  >    </p>
     </div>
     </div>
     <div class="section section-2" id="src-34570254_safe-id-aWQtLlNpZ25TZXJ2ZXJJbnN0YWxsYXRpb252NS4wLjAtOClDb25maWd1cmVEZXBsb3ltZW50">

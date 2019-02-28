@@ -4,7 +4,9 @@ SignServer 5.0.0
 Notice:
 - Building and running SignServer on Java 7 is no longer supported.
 - SignServer now requires a Java EE 7+ application server. Support for JBoss AS 7 has thus been dropped.
-
+- Due to a bug in the Apache POI library, signing MSI files using SignClient in client-side hashing
+  mode when running on Windows using Java 9, or later, leaves open files handles until the Java process
+  exists.
 
 SignServer 4.4.1
 ----------------

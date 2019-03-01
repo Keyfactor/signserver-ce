@@ -23,7 +23,6 @@ import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.BaseWorkerLogger;
 import org.signserver.server.log.EjbcaPatternLogger;
 import org.signserver.server.log.IWorkerLogger;
-import org.signserver.server.log.Loggable;
 import org.signserver.server.log.WorkerLoggerException;
 
 /**

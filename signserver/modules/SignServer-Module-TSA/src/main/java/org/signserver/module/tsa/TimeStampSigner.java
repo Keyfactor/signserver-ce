@@ -622,7 +622,7 @@ public class TimeStampSigner extends BaseSigner {
                     return String.valueOf(timeStampRequest.getNonCriticalExtensionOIDs());
                 }
             });
-            logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_NOUNCE,
+            logMap.put(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_NONCE,
                     new Loggable() {
                 @Override
                 public String toString() {

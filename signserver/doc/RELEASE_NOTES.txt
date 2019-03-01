@@ -7,6 +7,8 @@ Notice:
 - Due to a bug in the Apache POI library, signing MSI files using SignClient in client-side hashing
   mode when running on Windows using Java 9, or later, leaves open files handles until the Java process
   exits.
+- The log field "TSA_TIMESTAMPREQUEST_NOUNCE" has been renamed to "TSA_TIMESTAMPREQUEST_NONCE".
+
 
 SignServer 4.4.1
 ----------------

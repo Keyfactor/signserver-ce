@@ -569,7 +569,6 @@ public class PropertiesApplierTest extends TestCase {
 
         @Override
         protected void checkWorkerNamesAlreadyExists(List<String> workerNames, List<String> workerIds) throws PropertiesApplierException {
-            // do nothing
             boolean workerWithNameAlreadyExists = false;
             StringBuffer errorMessage = new StringBuffer();
             final List<String> alreadyExistingWorkerNames = new ArrayList<String>();

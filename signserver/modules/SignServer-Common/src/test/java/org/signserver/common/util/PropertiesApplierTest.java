@@ -14,18 +14,20 @@ package org.signserver.common.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.AuthorizedClient;
-import org.signserver.common.util.PropertiesApplier;
-import org.signserver.common.util.PropertiesConstants;
 import org.signserver.common.util.PropertiesParser.GlobalProperty;
 import org.signserver.common.util.PropertiesParser.WorkerProperty;
 
@@ -108,6 +110,77 @@ public class PropertiesApplierTest extends TestCase {
             "GLOB.WORKERGENIDXXX.SIGNERTOKEN.CLASSPATH = foo.bar.Token\n" +
             "WORKERGENIDXXX.NAME = Worker3";
     
+    private static String test_two_workers_same_name
+            = "WORKER100.TYPE=PROCESSABLE\n"
+            + "WORKER100.IMPLEMENTATION_CLASS = org.signserver.module.tsa.TimeStampSigner\n"
+            + "WORKER100.NAME=Alice\n"
+            + "WORKER100.AUTHTYPE=NOAUTH\n"
+            
+            + "WORKER300.TYPE=PROCESSABLE\n"
+            + "WORKER300.IMPLEMENTATION_CLASS = org.signserver.module.tsa.TimeStampSigner\n"
+            + "WORKER300.NAME=Bob\n"
+            + "WORKER300.AUTHTYPE=NOAUTH";
+    
+    private static String test_new_worker_genid
+            = "WORKERGENID1.TYPE=PROCESSABLE\n"
+            + "WORKERGENID1.IMPLEMENTATION_CLASS = org.signserver.module.tsa.TimeStampSigner\n"
+            + "WORKERGENID1.NAME=Alice\n"
+            + "WORKERGENID1.AUTHTYPE=NOAUTH";
+
+    private static String test_two_workers_swapped
+            = "WORKER100.TYPE=PROCESSABLE\n"
+            + "WORKER100.IMPLEMENTATION_CLASS = org.signserver.module.tsa.TimeStampSigner\n"
+            + "WORKER100.NAME=Bob\n"
+            + "WORKER100.AUTHTYPE=NOAUTH\n"
+            
+            + "WORKER200.TYPE=PROCESSABLE\n"
+            + "WORKER200.IMPLEMENTATION_CLASS = org.signserver.module.tsa.TimeStampSigner\n"
+            + "WORKER200.NAME=Alice\n"
+            + "WORKER200.AUTHTYPE=NOAUTH";
+    
+    private static String test_two_workers_one_with_existing_name
+            = "WORKER100.TYPE=PROCESSABLE\n"
+            + "WORKER100.IMPLEMENTATION_CLASS = org.signserver.module.tsa.TimeStampSigner\n"
+            + "WORKER100.NAME=Cesar\n"
+            + "WORKER100.AUTHTYPE=NOAUTH\n"
+            
+            + "WORKER200.TYPE=PROCESSABLE\n"
+            + "WORKER200.IMPLEMENTATION_CLASS = org.signserver.module.tsa.TimeStampSigner\n"
+            + "WORKER200.NAME=Alice\n"
+            + "WORKER200.AUTHTYPE=NOAUTH";
+    
+    private static String test_two_workers
+            = "WORKER100.TYPE=PROCESSABLE\n"
+            + "WORKER100.IMPLEMENTATION_CLASS = org.signserver.module.tsa.TimeStampSigner\n"
+            + "WORKER100.NAME=Alice\n"
+            + "WORKER100.AUTHTYPE=NOAUTH\n"
+            
+            + "WORKER200.TYPE=PROCESSABLE\n"
+            + "WORKER200.IMPLEMENTATION_CLASS = org.signserver.module.tsa.TimeStampSigner\n"
+            + "WORKER200.NAME=Bob\n"
+            + "WORKER200.AUTHTYPE=NOAUTH";
+    
+    private static String test_other_workers
+            = "WORKER300.TYPE=PROCESSABLE\n"
+            + "WORKER300.IMPLEMENTATION_CLASS = org.signserver.module.tsa.TimeStampSigner\n"
+            + "WORKER300.NAME=Cesar\n"
+            + "WORKER300.AUTHTYPE=NOAUTH\n"
+            
+            + "WORKER400.TYPE=PROCESSABLE\n"
+            + "WORKER400.IMPLEMENTATION_CLASS = org.signserver.module.tsa.TimeStampSigner\n"
+            + "WORKER400.NAME=Daniel\n"
+            + "WORKER400.AUTHTYPE=NOAUTH";
+    
+    private static String test_two_workers_new_names
+            = "WORKER100.TYPE=PROCESSABLE\n"
+            + "WORKER100.IMPLEMENTATION_CLASS = org.signserver.module.tsa.TimeStampSigner\n"
+            + "WORKER100.NAME=Cesar\n"
+            + "WORKER100.AUTHTYPE=NOAUTH\n"
+            
+            + "WORKER200.TYPE=PROCESSABLE\n"
+            + "WORKER200.IMPLEMENTATION_CLASS = org.signserver.module.tsa.TimeStampSigner\n"
+            + "WORKER200.NAME=Daniel\n"
+            + "WORKER200.AUTHTYPE=NOAUTH";
     /**
      * Test setting up global and worker properties.
      * Using both new WORKER and old SIGNER prefixes.
@@ -247,6 +320,136 @@ public class PropertiesApplierTest extends TestCase {
     }
     
     /**
+     * Test that applying a properties file with a new worker with the same
+     * name as an existing worker fails.
+     * 
+     * @throws Exception 
+     */
+    public void testSetpropertiesSameNameDifferentWorkerId() throws Exception {
+        final PropertiesParser parser = new PropertiesParser();
+        final Properties prop = new Properties();
+
+        prop.load(new ByteArrayInputStream(test_two_workers_same_name.getBytes()));
+        parser.process(prop);
+        applier.apply(parser);
+
+        assertEquals("Error message: " + applier.getError(), "Worker(s) with name already exists: Bob",
+                applier.getError());
+        assertTrue("Has errors", applier.hasError());
+    }
+    
+    /**
+     * Test that applying a properties file with a generated worker ID using the
+     * same name as an existing worker fails.
+     *
+     * @throws Exception
+     */
+    public void testSetpropertiesSameNameGenId() throws Exception {
+        final PropertiesParser parser = new PropertiesParser();
+        final Properties prop = new Properties();
+
+        prop.load(new ByteArrayInputStream(test_new_worker_genid.getBytes()));
+        parser.process(prop);
+        applier.apply(parser);
+
+        assertEquals("Error message: " + applier.getError(), "Worker(s) with name already exists: Alice",
+                applier.getError());
+        assertTrue("Has errors", applier.hasError());
+    }
+    
+    /**
+     * Test that applying a properties file with the worker names of two existing
+     * workers swapped fails.
+     * Note: this case is currently expected to fail, but could theoretically
+     * be made to work in the future (when setting a set of properties is
+     * treated as an atomic operation).
+     * 
+     * @throws Exception 
+     */
+    public void testSetpropertiesSwappedWorkerNames() throws Exception {
+        final PropertiesParser parser = new PropertiesParser();
+        final Properties prop = new Properties();
+
+        prop.load(new ByteArrayInputStream(test_two_workers_swapped.getBytes()));
+        parser.process(prop);
+        applier.apply(parser);
+
+        assertEquals("Error message: " + applier.getError(), "Worker(s) with name already exists: Alice Bob",
+                applier.getError());
+        assertTrue("Has errors", applier.hasError());
+    }
+    
+    /**
+     * Test that applying the same properties twice works - one set of properties already in DB.
+     * 
+     * @throws Exception 
+     */
+    public void test01SetpropertiesTwice() throws Exception {
+        final PropertiesParser parser = new PropertiesParser();
+        final Properties prop = new Properties();
+        
+        prop.load(new ByteArrayInputStream(test_two_workers.getBytes()));
+        parser.process(prop);
+        applier.apply(parser);
+        assertFalse("Has errors", applier.hasError());
+    }
+    
+    /**
+     * Test that applying a properties file where a worker's name is set
+     * to a worker name already existing fails even in the case where that worker
+     * was also renamed.
+     * Note: this case could be made to work (in case setting a set of properties
+     * would be treated as an atomic operation), but for now we don't support
+     * this case. With the option of being more lenient in the future.
+     * 
+     * @throws Exception 
+     */
+    public void testSetpropertiesOneWithExistingName() throws Exception {
+        final PropertiesParser parser = new PropertiesParser();
+        final Properties prop = new Properties();
+
+        prop.load(new ByteArrayInputStream(test_two_workers_one_with_existing_name.getBytes()));
+        parser.process(prop);
+        applier.apply(parser);
+
+        assertEquals("Error message: " + applier.getError(), "Worker(s) with name already exists: Alice",
+                applier.getError());
+        assertTrue("Has errors", applier.hasError());
+    }
+    
+    /**
+     * Test that applying a properties file and then another with a different
+     * set of workers, should work.
+     * 
+     * @throws Exception 
+     */
+    public void testSetpropertiesDifferentWorkers() throws Exception {
+        final PropertiesParser parser = new PropertiesParser();
+        final Properties prop = new Properties();
+
+        prop.load(new ByteArrayInputStream(test_other_workers.getBytes()));
+        parser.process(prop);
+        applier.apply(parser);
+        assertFalse("Has errors", applier.hasError());
+    }
+    
+    /**
+     * Test that changing name on two existing workers to completely new names
+     * works.
+     * 
+     * @throws Exception 
+     */
+    public void testSetpropertiesRenameBoth() throws Exception {
+        final PropertiesParser parser = new PropertiesParser();
+        final Properties prop = new Properties();
+
+        prop.load(new ByteArrayInputStream(test_two_workers_new_names.getBytes()));
+        parser.process(prop);
+        applier.apply(parser);
+        assertFalse("Has errors", applier.hasError());
+    }   
+        
+    /**
      * Mock implementation of the PropertiesApplier.
      * 
      */
@@ -257,6 +460,11 @@ public class PropertiesApplierTest extends TestCase {
         private Map<Integer, Set<AuthorizedClient>> authClients = new HashMap<>();
         private Map<Integer, byte[]> signerCerts = new HashMap<>();
         private Map<Integer, List<byte[]>> signerCertChains = new HashMap<>();
+        
+        private Map<String, String> mockedWokersInDB = Stream.of(new String[][]{
+            {"100", "Alice"},
+            {"200", "Bob"},}).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+               
         
         public static int FIRST_GENERATED_ID = 1000;
         
@@ -360,8 +568,46 @@ public class PropertiesApplierTest extends TestCase {
         }
 
         @Override
-        protected void workerNameAlreadyExists(List<String> workerNames) throws PropertiesApplierException {
+        protected void checkWorkerNamesAlreadyExists(List<String> workerNames, List<String> workerIds) throws PropertiesApplierException {
             // do nothing
+            boolean workerWithNameAlreadyExists = false;
+            StringBuffer errorMessage = new StringBuffer();
+            final List<String> alreadyExistingWorkerNames = new ArrayList<String>();
+            errorMessage.append("Worker(s) with name already exists:");
+
+            List existingWorkerNamesInDB = mockedWokersInDB.values().stream().collect(Collectors.toList());
+            for (int i = 0; i < workerNames.size(); i++) {
+                final String workerName = workerNames.get(i);
+                final String workerId = workerIds.get(i);
+                if (existingWorkerNamesInDB.contains(workerName)) {
+                    final String workerIdInDB = getWorkerIdByName(workerName);
+                    if (!workerIdInDB.equals(workerId)) {
+                        alreadyExistingWorkerNames.add(workerName);
+                        workerWithNameAlreadyExists = true;
+                    }
+                }
+            }
+
+            // sort already found worker names to keep error message deterministic
+            Collections.sort(alreadyExistingWorkerNames);
+
+            alreadyExistingWorkerNames.forEach((name) -> {
+                errorMessage.append(" ").append(name);
+            });
+            if (workerWithNameAlreadyExists) {
+                throw new PropertiesApplierException(errorMessage.toString());
+            }
+        }
+    
+        
+        private String getWorkerIdByName(String workerName) {
+            String workerId = null;
+            for (Map.Entry<String, String> entry : mockedWokersInDB.entrySet()) {
+                if (workerName.equals(entry.getValue())) {
+                    workerId = entry.getKey();
+                }
+            }
+            return workerId;
         }
         
     }

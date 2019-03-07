@@ -134,7 +134,8 @@ public class PropertiesParser {
     
     private final List<String> errors = new LinkedList<>();
     private final List<String> messages = new LinkedList<>();
-    private final List<String> workerNames = new ArrayList<>();    
+    private final List<String> workerNames = new ArrayList<>();  
+    private final List<String> workerIds = new ArrayList<>();
     private final Map<GlobalProperty, String> setGlobalProperties = new HashMap<>();
     private final List<GlobalProperty> removeGlobalProperties = new LinkedList<>();
     private final Map<WorkerProperty, String> setWorkerProperties = new HashMap<>();
@@ -186,7 +187,7 @@ public class PropertiesParser {
                     String strippedKey = key.substring(WORKER_PREFIX.length());
                     processWorkerProperty(originalKey, strippedKey, value, add);
                 } else {
-                    if (key.startsWith(OLDWORKER_PREFIX)) {
+                    if (key.startsWith(OLDWORKER_PREFIX)) { 
                         String strippedKey = key.substring(OLDWORKER_PREFIX.length());
                         processWorkerProperty(originalKey, strippedKey, value, add);
                     } else {
@@ -283,7 +284,8 @@ public class PropertiesParser {
                     }
                     signerCertificateChains.put(workerIdOrName, chain);
                 } else {
-                    if (propertykey.equals(PropertiesConstants.NAME)) {
+                    if (propertykey.equals(PropertiesConstants.NAME)) {                        
+                        workerIds.add(workerIdOrName);
                         workerNames.add(propertyvalue);
                     }
                     messages.add("Setting the property " + propertykey + " to " + propertyvalue + " for worker " + workerIdOrName);
@@ -374,5 +376,9 @@ public class PropertiesParser {
     
     public List<String> getWorkerNames() {
         return workerNames;
+    }
+
+    public List<String> getWorkerIds() {
+        return workerIds;
     }
 }

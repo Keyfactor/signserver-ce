@@ -171,7 +171,7 @@ public class AdminGUIPropertiesApplier extends PropertiesApplier {
     }
 
     @Override
-    protected void workerNameAlreadyExists(List<String> workerNames) throws PropertiesApplierException {
+    protected void checkWorkerNamesAlreadyExists(List<String> workerNames, List<String> workerIds) throws PropertiesApplierException {
         // TODO: Add findAllWorkerNames() logic in AdminWS for support in Admin GUI
     }
 

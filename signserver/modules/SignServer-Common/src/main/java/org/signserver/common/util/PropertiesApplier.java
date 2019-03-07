@@ -71,7 +71,7 @@ public abstract class PropertiesApplier {
      */
     public void apply(final PropertiesParser parser) {       
         try {
-            workerNameAlreadyExists(parser.getWorkerNames());
+            checkWorkerNamesAlreadyExists(parser.getWorkerNames(), parser.getWorkerIds());
             // prepare ID for the first generated worker ID, if needed later on
             firstGeneratedWorkerId = genFreeWorkerId();
            
@@ -333,7 +333,7 @@ public abstract class PropertiesApplier {
      */
     protected abstract void removeAuthorizedClient(final int workerId, final AuthorizedClient ac) throws PropertiesApplierException;
     
-    protected abstract void workerNameAlreadyExists(final List<String> workerNames) throws PropertiesApplierException;       
+    protected abstract void checkWorkerNamesAlreadyExists(final List<String> workerNames, final List<String> workerIds) throws PropertiesApplierException;       
     
     /**
      * Get the worker ID for an indexed generated worker ID.

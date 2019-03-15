@@ -19,6 +19,7 @@ import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.KeyTestResult;
 import org.signserver.common.OperationUnsupportedException;
 import org.signserver.common.QueryException;
 import org.signserver.common.SignServerException;
@@ -126,8 +128,8 @@ public class PatchedJreP11Test {
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
-    
-    private void setupCryptoTokenProperties(final int tokenId) throws Exception {
+     
+    private void setupCryptoTokenProperties(final int tokenId, final String signatureAlgorithm) throws Exception {
         // Setup token
         workerSession.setWorkerProperty(tokenId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.server.signers.CryptoWorker");
         workerSession.setWorkerProperty(tokenId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
@@ -137,7 +139,7 @@ public class PatchedJreP11Test {
         workerSession.setWorkerProperty(tokenId, "SLOTLABELVALUE", slot);
         workerSession.setWorkerProperty(tokenId, "PIN", pin);
         workerSession.setWorkerProperty(tokenId, "DEFAULTKEY", existingKey1); // Test key
-        workerSession.setWorkerProperty(tokenId, "SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
+        workerSession.setWorkerProperty(tokenId, "SIGNATUREALGORITHM", signatureAlgorithm);
         workerSession.setWorkerProperty(tokenId, "ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS", "CKM_RSA_PKCS_PSS, CKM_SHA256_RSA_PKCS_PSS, CKM_SHA384_RSA_PKCS_PSS, CKM_SHA512_RSA_PKCS_PSS");
         workerSession.setWorkerProperty(tokenId, "ATTRIBUTES",
             "attributes(generate,CKO_PUBLIC_KEY,*) = {\n" +
@@ -172,7 +174,7 @@ public class PatchedJreP11Test {
         final String testKeyName = "_test_modifable_key";
         
         try {
-            setupCryptoTokenProperties(CRYPTO_TOKEN);
+            setupCryptoTokenProperties(CRYPTO_TOKEN, "SHA256withRSA");
             workerSession.reloadConfiguration(CRYPTO_TOKEN);
             
             // Remove old key (if one)
@@ -212,7 +214,7 @@ public class PatchedJreP11Test {
         Assume.assumeTrue("Test requires patched JRE", CryptoTokenHelper.isJREPatched());
         LOG.info(">testGetTokenEntries");
         try {
-            setupCryptoTokenProperties(CRYPTO_TOKEN);
+            setupCryptoTokenProperties(CRYPTO_TOKEN, "SHA256withRSA");
             workerSession.reloadConfiguration(CRYPTO_TOKEN);
 
             // Remove old key (if one)
@@ -236,6 +238,51 @@ public class PatchedJreP11Test {
         }
     }
     
-    // TODO: Future: If the HSM supports it, we should also test the RSASSA-PSS algorithm
+    /**
+     * Test signing by SunPKCS11 with SHA256withRSAandMGF1 signature algorithm.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testSign_SHA256withRSAandMGF1_SunPKCS11() throws Exception {
+        signTestWithPSSAlgorithm("SHA256withRSAandMGF1");
+    }
+
+    /**
+     * Test signing by SunPKCS11 with SHA256withRSAandMGF1 signature algorithm.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testSign_SHA384withRSAandMGF1_SunPKCS11() throws Exception {
+        signTestWithPSSAlgorithm("SHA384withRSAandMGF1");
+    }
+
+    /**
+     * Test signing by SunPKCS11 with SHA256withRSAandMGF1 signature algorithm.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testSign_SHA512withRSAandMGF1_SunPKCS11() throws Exception {
+        signTestWithPSSAlgorithm("SHA512withRSAandMGF1");
+    }
+    
+    private void signTestWithPSSAlgorithm(String algorithm) throws Exception {
+        Assume.assumeTrue("Test requires patched JRE", CryptoTokenHelper.isJREPatched());
+        Assume.assumeTrue("Test requires HSM that supports RSASSA-PSS", "true".equalsIgnoreCase(base.getConfig().getProperty("test.p11.PSS_SIGNATURE_ALGORITHM_SUPPORTED")));
+        LOG.info("signTestWithPSSAlgorithm: " + algorithm);
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN, algorithm);
+            workerSession.reloadConfiguration(CRYPTO_TOKEN);
+            Collection<KeyTestResult> results = workerSession.testKey(new WorkerIdentifier(CRYPTO_TOKEN), existingKey1, pin.toCharArray());
+            assertEquals("Results size: " + results, 1, results.size());
+            for (KeyTestResult result : results) {
+                assertTrue("Success for " + result, result.isSuccess());
+            }
+        } finally {
+            base.removeWorker(CRYPTO_TOKEN);
+        }
+    }
 
 }

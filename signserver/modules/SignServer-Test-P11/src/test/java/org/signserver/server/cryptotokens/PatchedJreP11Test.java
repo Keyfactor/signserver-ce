@@ -162,6 +162,7 @@ public class PatchedJreP11Test {
     @Test
     public void testGenerateUnmodifiableKey() throws Exception {
         Assume.assumeTrue("Test requires patched JRE", CryptoTokenHelper.isJREPatched());
+        Assume.assumeTrue("Test requires HSM that supports making a key unmodifiable", "true".equalsIgnoreCase(base.getConfig().getProperty("test.p11.MAKE_UNMODIFIABLE_SUPPORTED")));
         LOG.info(">testGenerateUnmodifiableKey");
         Properties properties = new Properties();
         try (FileInputStream fin = new FileInputStream(new File(PathUtil.getAppHome(), "conf/cesecore.properties"))) {

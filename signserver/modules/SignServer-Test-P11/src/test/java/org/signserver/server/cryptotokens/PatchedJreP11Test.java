@@ -29,6 +29,7 @@ import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -200,5 +201,41 @@ public class PatchedJreP11Test {
             base.removeWorker(CRYPTO_TOKEN);
         }
     }
+    
+    /**
+     * Tests that if the JRE is patched we have access to the PKCS#11 attributes that the patch is supposed to give us.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testGetTokenEntries() throws Exception {
+        Assume.assumeTrue("Test requires patched JRE", CryptoTokenHelper.isJREPatched());
+        LOG.info(">testGetTokenEntries");
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN);
+            workerSession.reloadConfiguration(CRYPTO_TOKEN);
+
+            // Remove old key (if one)
+            TokenSearchResults searchResults = base.searchTokenEntries(0, 1, QueryCriteria.create().add(new Term(RelationalOperator.EQ, CryptoTokenHelper.TokenEntryFields.keyAlias.name(), existingKey1)), true);
+            List<TokenEntry> entries = searchResults.getEntries();
+            if (entries.isEmpty()) {
+                throw new Exception("Unable to find existing key: " + existingKey1);
+            }
+
+            TokenEntry entry = entries.get(0);
+
+            // Should contain attributes
+            String infoAttributes = entry.getInfo().get(CryptoTokenHelper.INFO_KEY_PKCS11_ATTRIBUTES);
+            assertTrue("attributes: " + infoAttributes, infoAttributes != null && !infoAttributes.isEmpty());
+
+            // Should contain modifiable flag
+            String infoModifiable = entry.getInfo().get(CryptoTokenHelper.INFO_KEY_MODIFIABLE);
+            assertTrue("modifieable: " + infoModifiable, "true".equalsIgnoreCase(infoModifiable) || "false".equalsIgnoreCase(infoModifiable));            
+        } finally {
+            base.removeWorker(CRYPTO_TOKEN);
+        }
+    }
+    
+    // TODO: Future: If the HSM supports it, we should also test the RSASSA-PSS algorithm
 
 }

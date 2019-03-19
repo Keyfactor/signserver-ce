@@ -492,11 +492,7 @@ public class WorkerConfig extends UpgradeableDataHashMap {
 
         if (authClients != null) {
             for (final CertificateMatchingRule authClient : authClients) {
-                if (authClient.getMatchSubjectWithValue().equals(client.getMatchSubjectWithValue())
-                        && authClient.getMatchIssuerWithValue().equals(client.getMatchIssuerWithValue())
-                        && authClient.getMatchSubjectWithType().equals(client.getMatchSubjectWithType())
-                        && authClient.getMatchIssuerWithType().equals(client.getMatchIssuerWithType())
-                        && authClient.getDescription().equals(client.getDescription())) {
+                if (authClient.equals(client)) {
                     return authClients.remove(authClient);
                 }
             }

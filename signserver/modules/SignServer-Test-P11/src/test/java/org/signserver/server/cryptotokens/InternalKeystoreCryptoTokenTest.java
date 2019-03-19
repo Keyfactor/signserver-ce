@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.AuthorizedClient;
+import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -211,9 +212,19 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
                     public void addAuthorizedClient(AdminInfo adminInfo, int signerId, AuthorizedClient authClient) {
                         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                     }
+                    
+                    @Override
+                    public void addAuthorizedClientGen2(AdminInfo adminInfo, int signerId, CertificateMatchingRule authClient) {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    }
 
                     @Override
                     public boolean removeAuthorizedClient(AdminInfo adminInfo, int signerId, AuthorizedClient authClient) {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    }
+                    
+                    @Override
+                    public boolean removeAuthorizedClientGen2(AdminInfo adminInfo, int signerId, CertificateMatchingRule authClient) {
                         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                     }
 
@@ -321,14 +332,29 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
                     public Collection<AuthorizedClient> getAuthorizedClients(int signerId) {
                         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                     }
+                    
+                    @Override
+                    public Collection<CertificateMatchingRule> getAuthorizedClientsGen2(int signerId) {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    }
 
                     @Override
                     public void addAuthorizedClient(int signerId, AuthorizedClient authClient) {
                         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                     }
+                    
+                    @Override
+                    public void addAuthorizedClientGen2(int signerId, CertificateMatchingRule authClient) {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    }
 
                     @Override
                     public boolean removeAuthorizedClient(int signerId, AuthorizedClient authClient) {
+                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                    }
+                    
+                    @Override
+                    public boolean removeAuthorizedClientGen2(int signerId, CertificateMatchingRule authClient) {
                         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                     }
 

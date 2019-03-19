@@ -24,6 +24,7 @@ import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.AuthorizedClient;
+import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
@@ -109,10 +110,22 @@ public class WorkerSessionMock implements WorkerSessionLocal,
             AuthorizedClient authClient) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    @Override
+    public void addAuthorizedClientGen2(AdminInfo adminInfo, int signerId,
+            CertificateMatchingRule authClient) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     @Override
     public boolean removeAuthorizedClient(AdminInfo adminInfo, int signerId,
             AuthorizedClient authClient) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    public boolean removeAuthorizedClientGen2(AdminInfo adminInfo, int signerId,
+            CertificateMatchingRule authClient) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -231,15 +244,31 @@ public class WorkerSessionMock implements WorkerSessionLocal,
     public Collection<AuthorizedClient> getAuthorizedClients(int signerId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    @Override
+    public Collection<CertificateMatchingRule> getAuthorizedClientsGen2(int signerId) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     @Override
     public void addAuthorizedClient(int signerId, AuthorizedClient authClient) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    public void addAuthorizedClientGen2(int signerId, CertificateMatchingRule authClient) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public boolean removeAuthorizedClient(int signerId,
             AuthorizedClient authClient) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    public boolean removeAuthorizedClientGen2(int signerId,
+            CertificateMatchingRule authClient) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

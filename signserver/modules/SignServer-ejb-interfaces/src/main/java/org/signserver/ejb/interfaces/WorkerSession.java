@@ -26,6 +26,7 @@ import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.ArchiveDataVO;
 import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.AuthorizedClient;
+import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
@@ -161,6 +162,15 @@ public interface WorkerSession {
      * @return Sorted collection of authorized clients
      */
     Collection<AuthorizedClient> getAuthorizedClients(int signerId);
+    
+    /**
+     * Method that returns a collection of AuthorizedClient of
+     * client certificate sn and issuerid accepted for a given signer.
+     *
+     * @param signerId
+     * @return Sorted collection of authorized clients
+     */
+    Collection<CertificateMatchingRule> getAuthorizedClientsGen2(int signerId);
 
     /**
      * Method adding an authorized client to a signer.
@@ -169,6 +179,14 @@ public interface WorkerSession {
      * @param authClient
      */
     void addAuthorizedClient(int signerId, AuthorizedClient authClient);
+    
+    /**
+     * Method adding an authorized client to a signer.
+
+     * @param signerId
+     * @param authClient
+     */
+    void addAuthorizedClientGen2(int signerId, CertificateMatchingRule authClient);
 
     /**
      * Removes an authorized client from a signer.
@@ -178,6 +196,15 @@ public interface WorkerSession {
      * @return true if the client was found and removed
      */
     boolean removeAuthorizedClient(int signerId, AuthorizedClient authClient);
+    
+    /**
+     * Removes an authorized client from a signer.
+     *
+     * @param signerId
+     * @param authClient
+     * @return true if the client was found and removed
+     */
+    boolean removeAuthorizedClientGen2(int signerId, CertificateMatchingRule authClient);
 
     /**
      * Method used to let a signer generate a certificate request

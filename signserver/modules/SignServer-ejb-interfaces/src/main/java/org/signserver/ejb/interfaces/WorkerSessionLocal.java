@@ -26,6 +26,7 @@ import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.AuthorizedClient;
+import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
@@ -148,6 +149,15 @@ public interface WorkerSessionLocal extends WorkerSession {
      * @param authClient
      */
     void addAuthorizedClient(final AdminInfo adminInfo, int signerId, AuthorizedClient authClient);
+    
+    /**
+     * Method adding an authorized client to a signer.
+     *
+     * @param adminInfo
+     * @param signerId
+     * @param authClient
+     */
+    void addAuthorizedClientGen2(final AdminInfo adminInfo, int signerId, CertificateMatchingRule authClient);
 
     /**
      * Method removing an authorized client to a signer.
@@ -159,6 +169,17 @@ public interface WorkerSessionLocal extends WorkerSession {
      */
     boolean removeAuthorizedClient(final AdminInfo adminInfo, int signerId,
             AuthorizedClient authClient);
+    
+    /**
+     * Method removing an authorized client to a signer.
+     *
+     * @param adminInfo
+     * @param signerId
+     * @param authClient
+     * @return true if the client was authorized to the signer
+     */
+    boolean removeAuthorizedClientGen2(final AdminInfo adminInfo, int signerId,
+            CertificateMatchingRule authClient);
 
     /**
      * Method used to let a signer generate a certificate request using the

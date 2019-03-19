@@ -731,10 +731,20 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     public Collection<AuthorizedClient> getAuthorizedClients(int signerId) {
         return getWorkerConfig(signerId).getAuthorizedClients();
     }
+    
+    @Override
+    public Collection<CertificateMatchingRule> getAuthorizedClientsGen2(int signerId) {
+        return getWorkerConfig(signerId).getAuthorizedClientsGen2();
+    }
 
     @Override
     public void addAuthorizedClient(int signerId, AuthorizedClient authClient) {
     	addAuthorizedClient(new AdminInfo("CLI user", null, null), signerId, authClient);
+    }
+    
+    @Override
+    public void addAuthorizedClientGen2(int signerId, CertificateMatchingRule authClient) {
+    	addAuthorizedClientGen2(new AdminInfo("CLI user", null, null), signerId, authClient);
     }
     
     /* (non-Javadoc)
@@ -747,10 +757,22 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         setWorkerConfig(adminInfo, signerId, config, "added:authorized_client",
         		"SN: " + authClient.getCertSN() + ", issuer DN: " + authClient.getIssuerDN());
     }
+    
+    @Override
+    public void addAuthorizedClientGen2(final AdminInfo adminInfo, int signerId, CertificateMatchingRule authClient) {
+        WorkerConfig config = getWorkerConfig(signerId);
+        config.addAuthorizedClientGen2(authClient);
+        setWorkerConfig(adminInfo, signerId, config, "added:authorized_client", authClient.toString());
+    }
 
     @Override
     public boolean removeAuthorizedClient(int signerId, AuthorizedClient authClient) {
     	return removeAuthorizedClient(new AdminInfo("CLI user", null, null), signerId, authClient);
+    }
+    
+    @Override
+    public boolean removeAuthorizedClientGen2(int signerId, CertificateMatchingRule authClient) {
+    	return removeAuthorizedClientGen2(new AdminInfo("CLI user", null, null), signerId, authClient);
     }
     
     @Override
@@ -763,6 +785,17 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         result = config.removeAuthorizedClient(authClient);
         setWorkerConfig(adminInfo, signerId, config, "removed:authorized_client",
         		"SN: " + authClient.getCertSN() + ", issuer DN: " + authClient.getIssuerDN());
+        return result;
+    }
+    
+    @Override
+    public boolean removeAuthorizedClientGen2(final AdminInfo adminInfo, int signerId,
+            CertificateMatchingRule authClient) {
+        boolean result;
+        WorkerConfig config = getWorkerConfig(signerId);
+
+        result = config.removeAuthorizedClientGen2(authClient);
+        setWorkerConfig(adminInfo, signerId, config, "removed:authorized_client", authClient.toString());
         return result;
     }
 

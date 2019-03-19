@@ -37,6 +37,7 @@ public interface PropertiesConstants {
     String GENID = "GENID";
     
     String AUTHORIZED_CLIENTS = "AUTHORIZED_CLIENTS";
+    String AUTHORIZED_CLIENTS_GEN2 = "AUTHORIZED_CLIENTS_GEN2";
     String SIGNERCERT = "SIGNERCERT";
     String SIGNERCERTCHAIN = "SIGNERCERTCHAIN";
     String NAME = "NAME";

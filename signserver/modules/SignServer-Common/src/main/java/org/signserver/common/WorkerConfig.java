@@ -36,6 +36,7 @@ import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.internal.UpgradeableDataHashMap;
 import org.cesecore.util.CertTools;
 import static org.signserver.common.util.PropertiesConstants.AUTHORIZED_CLIENTS;
+import static org.signserver.common.util.PropertiesConstants.AUTHORIZED_CLIENTS_GEN2;
 import static org.signserver.common.util.PropertiesConstants.KEYSTORE_DATA;
 import static org.signserver.common.util.PropertiesConstants.SIGNERCERT;
 import static org.signserver.common.util.PropertiesConstants.SIGNERCERTCHAIN;
@@ -446,6 +447,16 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     }
     
     /**
+     * Adds a Certificate SN to the collection of authorized clients	  
+     * 
+     * @param client the AuthorizedClient to add
+     */
+    @SuppressWarnings("unchecked")
+    public void addAuthorizedClientGen2(CertificateMatchingRule client) {
+        ((HashSet<CertificateMatchingRule>) get(AUTHORIZED_CLIENTS_GEN2)).add(client);
+    }
+    
+    /**
      * Removes a Certificate SN from the collection of authorized clients	  
      * 
      * @param client the AuthorizedClient to remove
@@ -469,6 +480,32 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     }
     
     /**
+     * Removes a Certificate SN from the collection of authorized clients
+     *
+     * @param client the AuthorizedClient to remove
+     * @return true if the client was found and removed
+     */
+    @SuppressWarnings("unchecked")
+    public boolean removeAuthorizedClientGen2(CertificateMatchingRule client) {
+        final HashSet<CertificateMatchingRule> authClients
+                = (HashSet<CertificateMatchingRule>) get(AUTHORIZED_CLIENTS_GEN2);
+
+        if (authClients != null) {
+            for (final CertificateMatchingRule authClient : authClients) {
+                if (authClient.getMatchSubjectWithValue().equals(client.getMatchSubjectWithValue())
+                        && authClient.getMatchIssuerWithValue().equals(client.getMatchIssuerWithValue())
+                        && authClient.getMatchSubjectWithType().equals(client.getMatchSubjectWithType())
+                        && authClient.getMatchIssuerWithType().equals(client.getMatchIssuerWithType())
+                        && authClient.getDescription().equals(client.getDescription())) {
+                    return authClients.remove(authClient);
+                }
+            }
+        }
+
+        return false;
+    }
+    
+    /**
      * 	  
      * Gets a collection of authorized client certificates
      * 
@@ -482,6 +519,28 @@ public class WorkerConfig extends UpgradeableDataHashMap {
         
         if (authClients != null) {
             for (final AuthorizedClient client : authClients) {
+                result.add(client);
+            }
+        }
+
+        Collections.sort(result);
+        return result;
+    }
+    
+    /**
+     *
+     * Gets a collection of authorized client certificates
+     *
+     * @return a Collection of String containing the certificate serial number.
+     */
+    @SuppressWarnings("unchecked")
+    public Collection<CertificateMatchingRule> getAuthorizedClientsGen2() {
+        final ArrayList<CertificateMatchingRule> result = new ArrayList<>();
+        final HashSet<CertificateMatchingRule> authClients
+                = (HashSet<CertificateMatchingRule>) get(AUTHORIZED_CLIENTS_GEN2);
+
+        if (authClients != null) {
+            for (final CertificateMatchingRule client : authClients) {
                 result.add(client);
             }
         }

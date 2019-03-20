@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.0.0.Final-SNAPSHOT</version>
+        <version>5.1.0.Alpha1-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-Module-CMSSigner</artifactId>
     <name>SignServer-Module-CMSSigner</name>

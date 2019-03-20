@@ -29,6 +29,9 @@ public class CertificateMatchingRule implements Comparable<Object>, Serializable
         this.description = description;
     }
 
+    public CertificateMatchingRule() {
+    }
+
     public MatchSubjectWithType getMatchSubjectWithType() {
         return matchSubjectWithType;
     }
@@ -47,6 +50,26 @@ public class CertificateMatchingRule implements Comparable<Object>, Serializable
 
     public String getDescription() {
         return description;
+    }
+
+    public void setMatchSubjectWithType(MatchSubjectWithType matchSubjectWithType) {
+        this.matchSubjectWithType = matchSubjectWithType;
+    }
+
+    public void setMatchIssuerWithType(MatchIssuerWithType matchIssuerWithType) {
+        this.matchIssuerWithType = matchIssuerWithType;
+    }
+
+    public void setMatchSubjectWithValue(String matchSubjectWithValue) {
+        this.matchSubjectWithValue = matchSubjectWithValue;
+    }
+
+    public void setMatchIssuerWithValue(String matchIssuerWithValue) {
+        this.matchIssuerWithValue = matchIssuerWithValue;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

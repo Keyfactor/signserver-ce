@@ -138,6 +138,10 @@ public class WorkerConfig extends UpgradeableDataHashMap {
         if (get(AUTHORIZED_CLIENTS) == null) {
             put(AUTHORIZED_CLIENTS, new HashSet<AuthorizedClient>());
         }
+        
+        if (get(AUTHORIZED_CLIENTS_GEN2) == null) {
+            put(AUTHORIZED_CLIENTS_GEN2, new HashSet<CertificateMatchingRule>());
+        }
     }
 
     /**
@@ -453,7 +457,12 @@ public class WorkerConfig extends UpgradeableDataHashMap {
      */
     @SuppressWarnings("unchecked")
     public void addAuthorizedClientGen2(CertificateMatchingRule client) {
-        ((HashSet<CertificateMatchingRule>) get(AUTHORIZED_CLIENTS_GEN2)).add(client);
+        Serializable o = get(AUTHORIZED_CLIENTS_GEN2);
+        if (o == null ) {
+            o = new HashSet<CertificateMatchingRule>();
+            put(AUTHORIZED_CLIENTS_GEN2, o);
+        }
+        ((HashSet<CertificateMatchingRule>) o).add(client);
     }
     
     /**

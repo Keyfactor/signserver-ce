@@ -1,16 +1,25 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
+import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collection;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.log4j.Logger;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
@@ -19,10 +28,16 @@ import org.signserver.common.MatchIssuerWithType;
 import org.signserver.common.MatchSubjectWithType;
 
 /**
+ * Command for adding, removing and listing a worker's client authorization
+ * rules.
  *
- * @author user
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class ClientsAuthorizationCommand extends AbstractAdminCommand {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(ClientsAuthorizationCommand.class);
 
     public static final String ADD = "add";
     public static final String REMOVE = "remove";
@@ -78,32 +93,37 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
         
         worker = line.getOptionValue(WORKER, null);
 
+        int operations = 0;
         if (line.hasOption(ADD)) {
             operation = ADD;
-        } else if (line.hasOption(REMOVE)) {
+            operations++;
+        }
+        if (line.hasOption(REMOVE)) {
             operation = REMOVE;
-        } else if (line.hasOption(LIST)) {
+            operations++;
+        }
+        if (line.hasOption(LIST)) {
             operation = LIST;
+            operations++;
+        }
+        if (operations != 1) {
+            throw new IllegalCommandArgumentsException("Please specify one and only one of -add, -remove or -list");
         }
         
         final String matchSubjectWithTypeString = line.getOptionValue(MATCH_SUBJECT_WITH_TYPE, null);
         if (matchSubjectWithTypeString != null) {
-            // TODO try catch
-            matchSubjectWithType = MatchSubjectWithType.valueOf(matchSubjectWithTypeString);
+            try {
+                matchSubjectWithType = MatchSubjectWithType.valueOf(matchSubjectWithTypeString);
+            } catch (IllegalArgumentException ex) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Unknown matchSubjectWithType: " + ex.getMessage());
+                }
+                throw new IllegalCommandArgumentsException("Unknown " + MATCH_SUBJECT_WITH_TYPE + " value provided. Possible values are: " + Arrays.toString(MatchSubjectWithType.values()));
+            }
         }
         
-        final String matchSubjectWithValueString = line.getOptionValue(MATCH_SUBJECT_WITH_VALUE, null);
-        if (matchSubjectWithValueString != null) {
-            // TODO
-            matchSubjectWithValue = matchSubjectWithValueString;
-        }
-        
-        final String matchIssuerWithValueString = line.getOptionValue(MATCH_ISSUER_WITH_VALUE, null);
-        if (matchIssuerWithValueString != null) {
-            // TODO
-            matchIssuerWithValue = matchIssuerWithValueString;
-        }
-        
+        matchSubjectWithValue = line.getOptionValue(MATCH_SUBJECT_WITH_VALUE, null);
+        matchIssuerWithValue = line.getOptionValue(MATCH_ISSUER_WITH_VALUE, null);
         description = line.getOptionValue(DESCRIPTION, null);
     }
 
@@ -115,9 +135,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
             throw new IllegalCommandArgumentsException("Missing -worker");
         }
         
-        if (operation == null) {
-            throw new IllegalCommandArgumentsException("Missing operation: -add, -remove or -list");
-        } else switch (operation) {
+        switch (operation) {
             case ADD:
             case REMOVE: {
                 if (matchSubjectWithType == null) {
@@ -125,6 +143,9 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
                 }
                 if (matchSubjectWithValue == null) {
                     throw new IllegalCommandArgumentsException("Missing -matchSubjectWithValue");
+                }
+                if (matchIssuerWithValue == null) {
+                    throw new IllegalCommandArgumentsException("Missing -matchIssuerWithValue");
                 }
             }
         }
@@ -170,7 +191,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
 
         } catch (IllegalArgumentException ex) {
             throw new IllegalCommandArgumentsException(ex.getMessage());  
-        } catch (Exception e) {
+        } catch (RemoteException | IllegalCommandArgumentsException e) {
             throw new UnexpectedCommandFailureException(e);
         }
     }

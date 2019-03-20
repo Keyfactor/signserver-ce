@@ -5,29 +5,32 @@
  */
 package org.signserver.admin.cli.defaultimpl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
-import org.signserver.common.AuthorizedClient;
+import org.signserver.common.CertificateMatchingRule;
+import org.signserver.common.MatchIssuerWithType;
 import org.signserver.common.MatchSubjectWithType;
 
 /**
  *
  * @author user
  */
-public class ClientsAuthorizationCommand extends AbstractCommand {
+public class ClientsAuthorizationCommand extends AbstractAdminCommand {
 
     public static final String ADD = "add";
     public static final String REMOVE = "remove";
     public static final String LIST = "list";
+    public static final String WORKER = "worker";
     public static final String MATCH_SUBJECT_WITH_TYPE = "matchSubjectWithType";
     public static final String MATCH_SUBJECT_WITH_VALUE = "matchSubjectWithValue";
+    public static final String MATCH_ISSUER_WITH_VALUE = "matchIssuerWithValue";
     public static final String DESCRIPTION = "description";
     
     /** The command line options. */
@@ -39,14 +42,18 @@ public class ClientsAuthorizationCommand extends AbstractCommand {
         OPTIONS.addOption(REMOVE, false, "Remove a client authorization rule");
         OPTIONS.addOption(LIST, false, "List all client authorization rules");
 
+        OPTIONS.addOption(WORKER, true, "Worker name or ID");
         OPTIONS.addOption(MATCH_SUBJECT_WITH_TYPE, true, "Match subject with type");
         OPTIONS.addOption(MATCH_SUBJECT_WITH_VALUE, true, "Match subject with value");
+        OPTIONS.addOption(MATCH_ISSUER_WITH_VALUE, true, "Match issuer with value");
         OPTIONS.addOption(DESCRIPTION, true, "A textual representation");
     }
-    
+
     private String operation;
+    private String worker;
     private MatchSubjectWithType matchSubjectWithType;
     private String matchSubjectWithValue;
+    private String matchIssuerWithValue;
     private String description;
     
     @Override
@@ -56,8 +63,9 @@ public class ClientsAuthorizationCommand extends AbstractCommand {
 
     @Override
     public String getUsages() {
-        return "Usage: signserver clients <-add/-remove/list> -worker <worker name or ID> -matchSubjectWithType <MATCH_TYPE> -matchSubjectWithValue <value> -matchIssuerWithValue <issuer DN> [-description <textual description>]\n"
-                    + "Example 1: clients -add -worker CMSSigner -matchSubjectWithType RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithValue \"CN=AdminCA1, C=SE\" -description \"my rule\"\n\n";
+        return "Usage: signserver clients -worker <worker name or ID> <-add/-remove/list> -matchSubjectWithType <MATCH_TYPE> -matchSubjectWithValue <value> -matchIssuerWithValue <issuer DN> [-description <textual description>]\n"
+                    + "Example 1: clients -worker CMSSigner -list\n"
+                    + "Example 2: clients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithValue \"CN=AdminCA1, C=SE\" -description \"my rule\"\n\n";
     }
     
     /**
@@ -68,6 +76,8 @@ public class ClientsAuthorizationCommand extends AbstractCommand {
     private void parseCommandLine(final CommandLine line)
         throws IllegalCommandArgumentsException {
         
+        worker = line.getOptionValue(WORKER, null);
+
         if (line.hasOption(ADD)) {
             operation = ADD;
         } else if (line.hasOption(REMOVE)) {
@@ -88,6 +98,12 @@ public class ClientsAuthorizationCommand extends AbstractCommand {
             matchSubjectWithValue = matchSubjectWithValueString;
         }
         
+        final String matchIssuerWithValueString = line.getOptionValue(MATCH_ISSUER_WITH_VALUE, null);
+        if (matchIssuerWithValueString != null) {
+            // TODO
+            matchIssuerWithValue = matchIssuerWithValueString;
+        }
+        
         description = line.getOptionValue(DESCRIPTION, null);
     }
 
@@ -95,6 +111,10 @@ public class ClientsAuthorizationCommand extends AbstractCommand {
      * Checks that all mandatory options are given.
      */
     private void validateOptions() throws IllegalCommandArgumentsException {
+        if (worker == null) {
+            throw new IllegalCommandArgumentsException("Missing -worker");
+        }
+        
         if (operation == null) {
             throw new IllegalCommandArgumentsException("Missing operation: -add, -remove or -list");
         } else switch (operation) {
@@ -123,25 +143,27 @@ public class ClientsAuthorizationCommand extends AbstractCommand {
             throw e;
         }
         validateOptions();
-
-        switch (operation) {
-            case LIST: {
-                this.getOutputStream().println("TODO: List"); // TODO
-                break;
-            }
-            case ADD: {
-                this.getOutputStream().println("TODO: Add"); // TODO
-                break;
-            }
-            case REMOVE: {
-                this.getOutputStream().println("TODO: Remove"); // TODO
-                break;
-            }
-        }
-
+        
         try {
-            // TODO getWorkerSession().addAuthorizedClientGen2(signerid, authClient);
-            // TODO printAuthorizedClients(getWorkerSession().getAuthorizedClientsGen2(signerid));
+            
+            switch (operation) {
+                case LIST: {
+                    printAuthorizedClientsGen2(getWorkerSession().getAuthorizedClientsGen2(getWorkerId(worker)));
+                    break;
+                }
+                case ADD: {
+                    CertificateMatchingRule rule = new CertificateMatchingRule(matchSubjectWithType, MatchIssuerWithType.ISSUER_DN_BCSTYLE, matchSubjectWithValue, matchIssuerWithValue, description);
+                    getWorkerSession().addAuthorizedClientGen2(getWorkerId(worker), rule);
+                    printAuthorizedClientsGen2(Arrays.asList(rule));
+                    break;
+                }
+                case REMOVE: {
+                    CertificateMatchingRule rule = new CertificateMatchingRule(matchSubjectWithType, MatchIssuerWithType.ISSUER_DN_BCSTYLE, matchSubjectWithValue, matchIssuerWithValue, description);
+                    getWorkerSession().removeAuthorizedClientGen2(getWorkerId(worker), rule);
+                    printAuthorizedClientsGen2(Arrays.asList(rule));
+                    break;
+                }
+            }
 
             this.getOutputStream().println("\n\n");
             return 0;
@@ -157,9 +179,9 @@ public class ClientsAuthorizationCommand extends AbstractCommand {
      * Prints the list of authorized clients to the output stream.
      * @param authClients Clients to print
      */
-    protected void printAuthorizedClients(final Collection<AuthorizedClient> authClients) {
-        for (final AuthorizedClient client : authClients) {
-            this.getOutputStream().println("  " + client.getCertSN() + ", " + client.getIssuerDN() + "\n");
+    protected void printAuthorizedClientsGen2(final Collection<CertificateMatchingRule> authClients) {
+        for (final CertificateMatchingRule client : authClients) {
+            this.getOutputStream().println("  " + client.getMatchSubjectWithType() + ": " + client.getMatchSubjectWithValue() + ", " + client.getMatchIssuerWithType() + ": " + client.getMatchIssuerWithValue() + " Description: " + client.getDescription() + "\n");
         }
     }
 }

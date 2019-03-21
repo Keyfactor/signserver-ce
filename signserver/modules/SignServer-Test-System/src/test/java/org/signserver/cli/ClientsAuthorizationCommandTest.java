@@ -193,4 +193,47 @@ public class ClientsAuthorizationCommandTest {
             test.removeWorker(test.getSignerIdCMSSigner1());
         }
     }
+
+    /**
+     * Tests the format for the output.
+     * @throws Exception 
+     */
+    @Test
+    public void testListFormat() throws Exception {
+        LOG.info("testListFormat");
+        try {
+            test.addCMSSigner1();
+            
+            // Add
+            assertEquals("execute add", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-add", 
+                    "-matchSubjectWithType", "SUBJECT_RDN_CN",
+                    "-matchSubjectWithValue", "Client Two",
+                    "-matchIssuerWithValue", "CN=ManagementCA1, C=SE",
+                    "-description", "My description"));
+            assertPrinted("prints new rule", cli.getOut(), "  SUBJECT_RDN_CN: Client Two | ISSUER_DN_BCSTYLE: CN=ManagementCA1, C=SE | Description: My description");
+            
+            // List
+            assertEquals("execute list", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-list"));
+            assertPrinted("prints rule 1", cli.getOut(), "  SUBJECT_RDN_CN: Client Two | ISSUER_DN_BCSTYLE: CN=ManagementCA1, C=SE | Description: My description");
+            
+            // Add one more
+            assertEquals("execute add 2", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-add", 
+                    "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
+                    "-matchSubjectWithValue", "123456",
+                    "-matchIssuerWithValue", "CN=ManagementCA2, OU=Testing, C=SE",
+                    "-description", "Other description"));
+            assertPrinted("prints new rule with CERTIFICATE_SERIALNO", cli.getOut(), "  CERTIFICATE_SERIALNO: 123456 | ISSUER_DN_BCSTYLE: CN=ManagementCA2, OU=Testing, C=SE | Description: Other description");
+            
+            // List both entries
+            assertEquals("execute list 2", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-list"));
+            assertPrinted("prints rule 1", cli.getOut(), "  SUBJECT_RDN_CN: Client Two | ISSUER_DN_BCSTYLE: CN=ManagementCA1, C=SE | Description: My description");
+            assertPrinted("prints rule 2", cli.getOut(), "  CERTIFICATE_SERIALNO: 123456 | ISSUER_DN_BCSTYLE: CN=ManagementCA2, OU=Testing, C=SE | Description: Other description");
+        } finally {
+            test.removeWorker(test.getSignerIdCMSSigner1());
+        }
+    }
 }

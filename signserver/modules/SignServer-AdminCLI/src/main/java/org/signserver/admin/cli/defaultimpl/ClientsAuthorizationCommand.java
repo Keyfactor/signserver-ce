@@ -26,6 +26,8 @@ import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.MatchIssuerWithType;
 import org.signserver.common.MatchSubjectWithType;
+import org.signserver.common.WorkerConfig;
+import org.signserver.common.util.PropertiesConstants;
 
 /**
  * Command for adding, removing and listing a worker's client authorization
@@ -166,21 +168,27 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
         validateOptions();
         
         try {
-            
+            // Check that worker exists. An existing worker has a name.
+            final int workerId = getWorkerId(worker);
+            final WorkerConfig config = getWorkerSession().getCurrentWorkerConfig(workerId);
+            if (config.getProperty(PropertiesConstants.NAME) == null) {
+                throw new IllegalCommandArgumentsException("Error: No worker with the given Id could be found");
+            }
+
             switch (operation) {
                 case LIST: {
-                    printAuthorizedClientsGen2(getWorkerSession().getAuthorizedClientsGen2(getWorkerId(worker)));
+                    printAuthorizedClientsGen2(getWorkerSession().getAuthorizedClientsGen2(workerId));
                     break;
                 }
                 case ADD: {
                     CertificateMatchingRule rule = new CertificateMatchingRule(matchSubjectWithType, MatchIssuerWithType.ISSUER_DN_BCSTYLE, matchSubjectWithValue, matchIssuerWithValue, description);
-                    getWorkerSession().addAuthorizedClientGen2(getWorkerId(worker), rule);
+                    getWorkerSession().addAuthorizedClientGen2(workerId, rule);
                     printAuthorizedClientsGen2(Arrays.asList(rule));
                     break;
                 }
                 case REMOVE: {
                     CertificateMatchingRule rule = new CertificateMatchingRule(matchSubjectWithType, MatchIssuerWithType.ISSUER_DN_BCSTYLE, matchSubjectWithValue, matchIssuerWithValue, description);
-                    getWorkerSession().removeAuthorizedClientGen2(getWorkerId(worker), rule);
+                    getWorkerSession().removeAuthorizedClientGen2(workerId, rule);
                     printAuthorizedClientsGen2(Arrays.asList(rule));
                     break;
                 }
@@ -190,8 +198,8 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
             return 0;
 
         } catch (IllegalArgumentException ex) {
-            throw new IllegalCommandArgumentsException(ex.getMessage());  
-        } catch (RemoteException | IllegalCommandArgumentsException e) {
+            throw new IllegalCommandArgumentsException(ex.getMessage());
+        } catch (RemoteException e) {
             throw new UnexpectedCommandFailureException(e);
         }
     }

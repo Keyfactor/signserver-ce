@@ -26,10 +26,10 @@ import org.signserver.cli.spi.IllegalCommandArgumentsException;
  * @author Markus Kilås
  * @version $Id$
  */
-public class ClientsAuthorizationCommandTest {
+public class ClientsAuthorizationCommandUnitTest {
 
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(ClientsAuthorizationCommandTest.class);
+    private static final Logger LOG = Logger.getLogger(ClientsAuthorizationCommandUnitTest.class);
 
     /**
      * Tests that an unknown argument gives an argument exception.

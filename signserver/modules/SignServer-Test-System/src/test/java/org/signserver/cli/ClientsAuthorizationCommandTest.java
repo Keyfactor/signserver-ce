@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.signserver.testutils.CLITestHelper;
+import static org.signserver.testutils.CLITestHelper.assertNotPrinted;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -108,5 +109,88 @@ public class ClientsAuthorizationCommandTest {
         int code = cli.execute("clients", "-worker", "112244", "-list");
         assertEquals("return code", -1, code);
         assertPrinted("error message", cli.getOut(), "Error: No worker with the given Id could be found");
+    }
+    
+    /**
+     * Tests adding, listing, adding one more entry, listing again, removing 
+     * entry and then listing again.
+     * @throws Exception 
+     */
+    @Test
+    public void testAddListAndRemove() throws Exception {
+        LOG.info("testAddListAndRemove");
+        try {
+            test.addCMSSigner1();
+            
+            // Add
+            assertEquals("execute add", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-add", 
+                    "-matchSubjectWithType", "SUBJECT_RDN_CN",
+                    "-matchSubjectWithValue", "Client Two",
+                    "-matchIssuerWithValue", "CN=ManagementCA1, C=SE",
+                    "-description", "My description"));
+            assertPrinted("prints new rule with SUBJECT_RDN_CN", cli.getOut(), "SUBJECT_RDN_CN");
+            assertPrinted("prints new rule with Client Two", cli.getOut(), "Client Two");
+            assertPrinted("prints new rule with CN=ManagementCA1, C=SE", cli.getOut(), "CN=ManagementCA1, C=SE");
+            
+            // List
+            assertEquals("execute list", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-list"));
+            assertPrinted("prints rule with SUBJECT_RDN_CN", cli.getOut(), "SUBJECT_RDN_CN");
+            assertPrinted("prints rule with Client Two", cli.getOut(), "Client Two");
+            assertPrinted("prints rule with CN=ManagementCA1, C=SE", cli.getOut(), "CN=ManagementCA1, C=SE");
+            assertPrinted("prints rule with My description", cli.getOut(), "My description");
+            
+            // Add one more
+            assertEquals("execute add 2", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-add", 
+                    "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
+                    "-matchSubjectWithValue", "123456",
+                    "-matchIssuerWithValue", "CN=ManagementCA2, OU=Testing, C=SE",
+                    "-description", "Other description"));
+            assertPrinted("prints new rule with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
+            assertPrinted("prints new rule with 123456", cli.getOut(), "123456");
+            assertPrinted("prints new rule with CN=ManagementCA2, OU=Testing, C=SE", cli.getOut(), "CN=ManagementCA2, OU=Testing, C=SE");
+            assertPrinted("prints new rule with Other description", cli.getOut(), "Other description");
+            
+            // List both entries
+            assertEquals("execute list 2", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-list"));
+            assertPrinted("prints rule 1 with SUBJECT_RDN_CN", cli.getOut(), "SUBJECT_RDN_CN");
+            assertPrinted("prints rule 1 with Client Two", cli.getOut(), "Client Two");
+            assertPrinted("prints rule 1 with CN=ManagementCA1, C=SE", cli.getOut(), "CN=ManagementCA1, C=SE");
+            assertPrinted("prints rule 1 with My description", cli.getOut(), "My description");
+            
+            assertPrinted("prints rule 2 with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
+            assertPrinted("prints rule 2 with 123456", cli.getOut(), "123456");
+            assertPrinted("prints rule 2 with CN=ManagementCA2, OU=Testing, C=SE", cli.getOut(), "CN=ManagementCA2, OU=Testing, C=SE");
+            assertPrinted("prints rule 2 with Other description", cli.getOut(), "Other description");
+            
+            // Remove first entry
+            assertEquals("execute remove", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-remove", 
+                    "-matchSubjectWithType", "SUBJECT_RDN_CN",
+                    "-matchSubjectWithValue", "Client Two",
+                    "-matchIssuerWithValue", "CN=ManagementCA1, C=SE",
+                    "-description", "My description")); // TODO: Currently the description field has to be provided. Should it be like that?
+            assertPrinted("prints new rule with SUBJECT_RDN_CN", cli.getOut(), "SUBJECT_RDN_CN");
+            assertPrinted("prints new rule with Client Two", cli.getOut(), "Client Two");
+            assertPrinted("prints new rule with CN=ManagementCA1, C=SE", cli.getOut(), "CN=ManagementCA1, C=SE");
+            
+            // List second entry only now
+            assertEquals("execute list 2", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-list"));
+            assertNotPrinted("prints rule 1 with SUBJECT_RDN_CN", cli.getOut(), "SUBJECT_RDN_CN");
+            assertNotPrinted("prints rule 1 with Client Two", cli.getOut(), "Client Two");
+            assertNotPrinted("prints rule 1 with CN=ManagementCA1, C=SE", cli.getOut(), "CN=ManagementCA1, C=SE");
+            assertNotPrinted("prints rule 1 with My description", cli.getOut(), "My description");
+            
+            assertPrinted("prints rule 2 with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
+            assertPrinted("prints rule 2 with 123456", cli.getOut(), "123456");
+            assertPrinted("prints rule 2 with CN=ManagementCA2, OU=Testing, C=SE", cli.getOut(), "CN=ManagementCA2, OU=Testing, C=SE");
+            assertPrinted("prints rule 2 with Other description", cli.getOut(), "Other description");
+        } finally {
+            test.removeWorker(test.getSignerIdCMSSigner1());
+        }
     }
 }

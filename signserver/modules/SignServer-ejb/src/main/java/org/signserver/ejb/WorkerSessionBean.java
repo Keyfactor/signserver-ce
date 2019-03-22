@@ -762,7 +762,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     public void addAuthorizedClientGen2(final AdminInfo adminInfo, int signerId, CertificateMatchingRule authClient) {
         WorkerConfig config = getWorkerConfig(signerId);
         config.addAuthorizedClientGen2(authClient);
-        setWorkerConfig(adminInfo, signerId, config, "added:authorized_client", authClient.toString());
+        setWorkerConfig(adminInfo, signerId, config, "added:authorized_client_gen2", authClient.toString());
     }
 
     @Override
@@ -795,7 +795,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         WorkerConfig config = getWorkerConfig(signerId);
 
         result = config.removeAuthorizedClientGen2(authClient);
-        setWorkerConfig(adminInfo, signerId, config, "removed:authorized_client", authClient.toString());
+        setWorkerConfig(adminInfo, signerId, config, "removed:authorized_client_gen2", authClient.toString());
         return result;
     }
 

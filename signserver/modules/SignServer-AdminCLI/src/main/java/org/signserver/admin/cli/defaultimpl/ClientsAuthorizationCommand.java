@@ -177,6 +177,12 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
 
             switch (operation) {
                 case LIST: {
+                    this.getOutputStream().println(
+                    "OBSERVE that this command displays the current configuration which\n"
+                    + "doesn't have to be the same as the active configuration.\n"
+                    + "Configurations are activated with the reload command. \n\n"
+                    + "The current list of authorized clients to worker " + workerId + " are :\n");
+
                     printAuthorizedClientsGen2(getWorkerSession().getAuthorizedClientsGen2(workerId));
                     break;
                 }
@@ -203,14 +209,22 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
             throw new UnexpectedCommandFailureException(e);
         }
     }
-    
+
     /**
      * Prints the list of authorized clients to the output stream.
      * @param authClients Clients to print
      */
     protected void printAuthorizedClientsGen2(final Collection<CertificateMatchingRule> authClients) {
-        for (final CertificateMatchingRule client : authClients) {
-            this.getOutputStream().println("  " + client.getMatchSubjectWithType() + ": " + client.getMatchSubjectWithValue() + ", " + client.getMatchIssuerWithType() + ": " + client.getMatchIssuerWithValue() + " Description: " + client.getDescription() + "\n");
+        if (authClients.isEmpty()) {
+            this.getOutputStream().println("  No authorized clients exists.\n");
+        } else {
+            for (final CertificateMatchingRule client : authClients) {
+                this.getOutputStream().println("  " 
+                        + client.getMatchSubjectWithType() + ": " + client.getMatchSubjectWithValue() + " | "
+                        + client.getMatchIssuerWithType() + ": " + client.getMatchIssuerWithValue() + " | "
+                        + (client.getDescription() == null ? "" : "Description: " + client.getDescription())
+                        + "\n");
+            }
         }
     }
 }

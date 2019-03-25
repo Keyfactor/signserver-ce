@@ -12,18 +12,10 @@
  *************************************************************************/
 package org.signserver.server;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.NoSuchProviderException;
 import java.security.Security;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.cesecore.util.CertTools;
 import static org.junit.Assert.assertEquals;
@@ -36,8 +28,6 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.data.Request;
-import org.signserver.test.utils.builders.CertBuilder;
-import org.signserver.test.utils.builders.CertBuilderException;
 
 
 /**

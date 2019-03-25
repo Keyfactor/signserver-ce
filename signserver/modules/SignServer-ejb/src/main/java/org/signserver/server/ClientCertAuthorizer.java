@@ -97,15 +97,32 @@ public class ClientCertAuthorizer implements IAuthorizer {
     }
 
     private boolean authorizedToRequestSignature(final X509Certificate clientCert) {
-        final String clientDN = CertTools.stringToBCDNString(
-                clientCert.getIssuerX500Principal().getName());
+        boolean ruleMatched = false;
 
-        MatchSubjectWithType matchSubjectWithType = MatchSubjectWithType.CERTIFICATE_SERIALNO;
+        // Only one MatchIssuerType is supported now
         MatchIssuerWithType matchIssuerWithType = MatchIssuerWithType.ISSUER_DN_BCSTYLE;
+        final String clientIssuerDN = CertTools.stringToBCDNString(clientCert.getIssuerX500Principal().getName());
 
-        final AuthorizedClientEntry client
-                = new AuthorizedClientEntry(clientCert.getSerialNumber(), clientDN, matchSubjectWithType, matchIssuerWithType);
+        for (final AuthorizedClientEntry authClient : authorizedClients) {
+            MatchSubjectWithType matchSubjectWithType = authClient.getMatchSubjectWithType();
+            switch (matchSubjectWithType) {
+                case CERTIFICATE_SERIALNO:
+                    final AuthorizedClientEntry client
+                            = new AuthorizedClientEntry(clientCert.getSerialNumber(), clientIssuerDN, MatchSubjectWithType.CERTIFICATE_SERIALNO, matchIssuerWithType);
+                    if (authorizedClients.contains(client)) {
+                        ruleMatched = true;
+                        break;
+                    }
+                case SUBJECT_RDN_CN:
+                    break;
+                case SUBJECT_RDN_SERIALNO:
+                    break;
+                default:
+                    throw new AssertionError(matchSubjectWithType.name());
+            }
 
-        return authorizedClients.contains(client);
+        }
+
+        return ruleMatched;
     }
 }

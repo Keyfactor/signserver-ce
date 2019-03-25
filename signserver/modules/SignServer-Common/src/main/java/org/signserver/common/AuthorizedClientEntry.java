@@ -81,6 +81,10 @@ public class AuthorizedClientEntry {
         return result;
     }
 
+    public MatchSubjectWithType getMatchSubjectWithType() {
+        return matchSubjectWithType;
+    }
+
     @Override
     public int hashCode() {
         int hash = 5;

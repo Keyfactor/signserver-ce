@@ -18,7 +18,7 @@ package org.signserver.common;
  * @version $Id$
  */
 public enum MatchIssuerWithType {
-    ISSUER_DN_BINARY,
+    // ISSUER_DN_BINARY,
     ISSUER_DN_BCSTYLE,
-    ISSUER_DN_LDAPSTYLE
+    // ISSUER_DN_LDAPSTYLE
 }

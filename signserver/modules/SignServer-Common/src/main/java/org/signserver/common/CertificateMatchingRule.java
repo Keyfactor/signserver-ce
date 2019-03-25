@@ -82,11 +82,10 @@ public class CertificateMatchingRule implements Comparable<Object>, Serializable
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 47 * hash + Objects.hashCode(this.matchSubjectWithType);
-        hash = 47 * hash + Objects.hashCode(this.matchIssuerWithType);
-        hash = 47 * hash + Objects.hashCode(this.matchSubjectWithValue);
-        hash = 47 * hash + Objects.hashCode(this.matchIssuerWithValue);
-        hash = 47 * hash + Objects.hashCode(this.description);
+        hash = 29 * hash + Objects.hashCode(this.matchSubjectWithType);
+        hash = 29 * hash + Objects.hashCode(this.matchIssuerWithType);
+        hash = 29 * hash + Objects.hashCode(this.matchSubjectWithValue);
+        hash = 29 * hash + Objects.hashCode(this.matchIssuerWithValue);
         return hash;
     }
 
@@ -108,9 +107,6 @@ public class CertificateMatchingRule implements Comparable<Object>, Serializable
         if (!Objects.equals(this.matchIssuerWithValue, other.matchIssuerWithValue)) {
             return false;
         }
-        if (!Objects.equals(this.description, other.description)) {
-            return false;
-        }
         if (this.matchSubjectWithType != other.matchSubjectWithType) {
             return false;
         }
@@ -119,6 +115,8 @@ public class CertificateMatchingRule implements Comparable<Object>, Serializable
         }
         return true;
     }
+
+    
 
     @Override
     public String toString() {

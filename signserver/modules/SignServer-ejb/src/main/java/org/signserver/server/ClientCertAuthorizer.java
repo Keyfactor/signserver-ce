@@ -19,8 +19,10 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
-import org.signserver.common.ClientEntry;
+import org.signserver.common.AuthorizedClientEntry;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.MatchIssuerWithType;
+import org.signserver.common.MatchSubjectWithType;
 import org.signserver.common.ProcessRequest;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
@@ -40,7 +42,7 @@ public class ClientCertAuthorizer implements IAuthorizer {
     
     private int workerId;
 
-    private Set<ClientEntry> authorizedClients;
+    private Set<AuthorizedClientEntry> authorizedClients;
     
     /**
      * Initialize a ClientCertAuthorizer.
@@ -55,7 +57,7 @@ public class ClientCertAuthorizer implements IAuthorizer {
             final EntityManager em)  throws SignServerException {
         this.workerId = workerId;
         this.authorizedClients =
-                ClientEntry.clientEntriesFromAuthClients(workerConfig.getAuthorizedClients());
+                AuthorizedClientEntry.clientEntriesFromAuthClients(workerConfig.getAuthorizedClientsGen2());
         if (LOG.isDebugEnabled()) {
             LOG.debug("Configured clients: " + authorizedClients);
         }
@@ -98,9 +100,12 @@ public class ClientCertAuthorizer implements IAuthorizer {
         final String clientDN = CertTools.stringToBCDNString(
                 clientCert.getIssuerX500Principal().getName());
 
-        final ClientEntry client =
-                new ClientEntry(clientCert.getSerialNumber(), clientDN);
-        
+        MatchSubjectWithType matchSubjectWithType = MatchSubjectWithType.CERTIFICATE_SERIALNO;
+        MatchIssuerWithType matchIssuerWithType = MatchIssuerWithType.ISSUER_DN_BCSTYLE;
+
+        final AuthorizedClientEntry client
+                = new AuthorizedClientEntry(clientCert.getSerialNumber(), clientDN, matchSubjectWithType, matchIssuerWithType);
+
         return authorizedClients.contains(client);
     }
 }

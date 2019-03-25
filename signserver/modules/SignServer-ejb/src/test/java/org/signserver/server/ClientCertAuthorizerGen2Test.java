@@ -40,6 +40,8 @@ public class ClientCertAuthorizerGen2Test {
     private static final String TEST_SERIALNUMBER = "123456789ab";
     private static final String TEST_SERIALNUMBER_WITH_LEADING_ZERO =
             "0123456789ab";
+    private static final String TEST_SERIALNUMBER_UPPER_CASE =
+            "123456789AB";
     private static final String TEST_ISSUER = "CN=foo,O=TestOrganization,C=SE";
     private static final String TEST_DESCRIPTION = "Test description";
     
@@ -121,6 +123,23 @@ public class ClientCertAuthorizerGen2Test {
                 new CertificateMatchingRule(MatchSubjectWithType.CERTIFICATE_SERIALNO,
                                             MatchIssuerWithType.ISSUER_DN_BCSTYLE,
                                             TEST_SERIALNUMBER_WITH_LEADING_ZERO,
+                                            TEST_ISSUER, TEST_DESCRIPTION);
+        testAuthorized(cert, Arrays.asList(rule), true);
+    }
+    
+    /**
+     * Test matching on subject serial number with upper case hex digits and issuer DN expressed in BC style.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testMatchSubjectSerialNumberUpperCaseIssuerDNBCStyle() throws Exception {
+        final X509Certificate cert =
+                ClientCertAuthorizerTestHelper.createBCCert(TEST_SERIALNUMBER, TEST_ISSUER);
+        final CertificateMatchingRule rule =
+                new CertificateMatchingRule(MatchSubjectWithType.CERTIFICATE_SERIALNO,
+                                            MatchIssuerWithType.ISSUER_DN_BCSTYLE,
+                                            TEST_SERIALNUMBER_UPPER_CASE,
                                             TEST_ISSUER, TEST_DESCRIPTION);
         testAuthorized(cert, Arrays.asList(rule), true);
     }

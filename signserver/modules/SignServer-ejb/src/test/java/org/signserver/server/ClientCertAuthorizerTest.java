@@ -71,48 +71,6 @@ public class ClientCertAuthorizerTest {
     }
 
     /**
-     * Constructs a test certificate implemented by Sun classes.
-     * @param serialNo to use
-     * @param issuerDN to use
-     * @return X.509 cert implemented by Sun
-     * @throws CertBuilderException
-     * @throws CertificateException
-     */
-    private X509Certificate createCert(String serialNo, String issuerDN) throws CertBuilderException, CertificateException {
-        final CertBuilder builder = new CertBuilder();
-        builder.setSerialNumber(new BigInteger(serialNo, 16));
-        builder.setIssuer(issuerDN);
-        X509Certificate cert = new JcaX509CertificateConverter().getCertificate(builder.build());
-        if (!cert.getClass().getName().startsWith("sun.")) {
-            throw new RuntimeException("Error in test case, should have been Sun certificate: " + cert.getClass().getName());
-        }
-        return cert;
-    }
-
-    /**
-     * Constructs a test certificate implemented by BC classes.
-     * @param serialNo to use
-     * @param issuerDN to use
-     * @return X.509 cert implemented by BC
-     * @throws CertBuilderException
-     * @throws CertificateException
-     */
-    private X509Certificate createBCCert(String serialNo, String issuerDN) throws CertBuilderException, CertificateException, NoSuchProviderException, IOException {
-        final CertBuilder builder = new CertBuilder();
-        builder.setSerialNumber(new BigInteger(serialNo, 16));
-        builder.setIssuer(issuerDN);
-        X509CertificateHolder cert = builder.build();
-
-        CertificateFactory cf = CertificateFactory.getInstance("X.509", "BC");
-        X509Certificate x509cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(cert.getEncoded()));
-
-        if (!x509cert.getClass().getName().startsWith("org.bouncycastle")) {
-            throw new RuntimeException("Error in test case, should have been BC certificate: " + x509cert.getClass().getName());
-        }
-        return x509cert;
-    }
-
-    /**
      * Test assumed accepted request with specified configured auth client.
      * 
      * @param authClients List of authorized clients
@@ -176,7 +134,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void test01AcceptedCert() throws Exception {
-        testAuthorized(createCert(TEST_SERIALNUMBER, TEST_ISSUER),
+        testAuthorized(ClientCertAuthorizerTestHelper.createCert(TEST_SERIALNUMBER, TEST_ISSUER),
                 TEST_SERIALNUMBER, TEST_ISSUER, true);
     }
     
@@ -187,7 +145,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void test02AcceptedWithLeadingZero() throws Exception {
-        testAuthorized(createCert(TEST_SERIALNUMBER, TEST_ISSUER),
+        testAuthorized(ClientCertAuthorizerTestHelper.createCert(TEST_SERIALNUMBER, TEST_ISSUER),
                 TEST_SERIALNUMBER_WITH_LEADING_ZERO, TEST_ISSUER, true);
     }
     
@@ -199,7 +157,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void test03NotAcceptedWithNoAuthorizedClients() throws Exception {
-        testAuthorized(createCert(TEST_SERIALNUMBER, TEST_ISSUER),
+        testAuthorized(ClientCertAuthorizerTestHelper.createCert(TEST_SERIALNUMBER, TEST_ISSUER),
                 null, false);
     }
     
@@ -210,7 +168,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void test04AcceptedWithUpperCaseHex() throws Exception {
-        testAuthorized(createCert(TEST_SERIALNUMBER, TEST_ISSUER),
+        testAuthorized(ClientCertAuthorizerTestHelper.createCert(TEST_SERIALNUMBER, TEST_ISSUER),
                 TEST_SERIALNUMBER_UPPER_CASE, TEST_ISSUER, true);
     }
     
@@ -222,7 +180,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void test05AcceptedWithAddionalAuthClient() throws Exception {
-       testAuthorized(createCert(TEST_SERIALNUMBER, TEST_ISSUER), Arrays.asList(
+       testAuthorized(ClientCertAuthorizerTestHelper.createCert(TEST_SERIALNUMBER, TEST_ISSUER), Arrays.asList(
                new AuthorizedClient(OTHER_SERIALNUMBER, OTHER_ISSUER),
                new AuthorizedClient(TEST_SERIALNUMBER, TEST_ISSUER)), true);
     }
@@ -235,7 +193,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void test06NotAcceptedWithOtherClient() throws Exception {
-       testAuthorized(createCert(TEST_SERIALNUMBER, TEST_ISSUER),
+       testAuthorized(ClientCertAuthorizerTestHelper.createCert(TEST_SERIALNUMBER, TEST_ISSUER),
                OTHER_SERIALNUMBER, OTHER_ISSUER, false);
     }
 
@@ -248,8 +206,8 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void testSameDNWithSunAndBCCerts_simple() throws Exception {
-        X509Certificate certSun = createCert(TEST_SERIALNUMBER, TEST_ISSUER);
-        X509Certificate certBC = createBCCert(TEST_SERIALNUMBER, TEST_ISSUER);
+        X509Certificate certSun = ClientCertAuthorizerTestHelper.createCert(TEST_SERIALNUMBER, TEST_ISSUER);
+        X509Certificate certBC = ClientCertAuthorizerTestHelper.createBCCert(TEST_SERIALNUMBER, TEST_ISSUER);
 
         String rfc2253Sun = certSun.getIssuerX500Principal().getName();
         String rfc2253BC = certBC.getIssuerX500Principal().getName();
@@ -271,8 +229,8 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void testSameDNWithSunAndBCCerts_escaped() throws Exception {
-        X509Certificate certSun = createCert(TEST_SERIALNUMBER2, TEST_ISSUER2);
-        X509Certificate certBC = createBCCert(TEST_SERIALNUMBER2, TEST_ISSUER2);
+        X509Certificate certSun = ClientCertAuthorizerTestHelper.createCert(TEST_SERIALNUMBER2, TEST_ISSUER2);
+        X509Certificate certBC = ClientCertAuthorizerTestHelper.createBCCert(TEST_SERIALNUMBER2, TEST_ISSUER2);
 
         String rfc2253Sun = certSun.getIssuerX500Principal().getName();
         String rfc2253BC = certBC.getIssuerX500Principal().getName();
@@ -295,8 +253,8 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void testSameDNWithSunAndBCCerts_escapedReversed() throws Exception {
-        X509Certificate certSun = createCert(TEST_SERIALNUMBER3, TEST_ISSUER3);
-        X509Certificate certBC = createBCCert(TEST_SERIALNUMBER3, TEST_ISSUER3);
+        X509Certificate certSun = ClientCertAuthorizerTestHelper.createCert(TEST_SERIALNUMBER3, TEST_ISSUER3);
+        X509Certificate certBC = ClientCertAuthorizerTestHelper.createBCCert(TEST_SERIALNUMBER3, TEST_ISSUER3);
 
         String rfc2253Sun = certSun.getIssuerX500Principal().getName();
         String rfc2253BC = certBC.getIssuerX500Principal().getName();
@@ -316,7 +274,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void testAcceptedIssuerWithComma_bc() throws Exception {
-        testAuthorized(createBCCert(TEST_SERIALNUMBER2, TEST_ISSUER2),
+        testAuthorized(ClientCertAuthorizerTestHelper.createBCCert(TEST_SERIALNUMBER2, TEST_ISSUER2),
                 TEST_SERIALNUMBER2, TEST_ISSUER2, true);
     }
 
@@ -328,7 +286,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void testNoAcceptedIssuerWithCommaOtherClient_bc() throws Exception {
-        String message = testAuthorized(createBCCert(TEST_SERIALNUMBER2, TEST_ISSUER2),
+        String message = testAuthorized(ClientCertAuthorizerTestHelper.createBCCert(TEST_SERIALNUMBER2, TEST_ISSUER2),
                 TEST_SERIALNUMBER2, OTHER_ISSUER2, false);
 
         // Check that the DN in the error message is represented as expected.
@@ -342,7 +300,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void testAcceptedIssuerWithComma_sun() throws Exception {
-        testAuthorized(createCert(TEST_SERIALNUMBER2, TEST_ISSUER2),
+        testAuthorized(ClientCertAuthorizerTestHelper.createCert(TEST_SERIALNUMBER2, TEST_ISSUER2),
                 TEST_SERIALNUMBER2, TEST_ISSUER2, true);
     }
 
@@ -354,7 +312,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void testNoAcceptedIssuerWithCommaOtherClient_sun() throws Exception {
-        String message = testAuthorized(createCert(TEST_SERIALNUMBER2, TEST_ISSUER2),
+        String message = testAuthorized(ClientCertAuthorizerTestHelper.createCert(TEST_SERIALNUMBER2, TEST_ISSUER2),
                 TEST_SERIALNUMBER2, OTHER_ISSUER2, false);
 
         // Check that the DN in the error message is represented as expected.

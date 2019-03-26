@@ -12,7 +12,6 @@
  ************************************************************************ */
 package org.signserver.common;
 
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -31,20 +30,20 @@ public class AuthorizedClientEntry {
      * Logger for this class.
      */
     private static Logger LOG = Logger.getLogger(AuthorizedClientEntry.class);
-
-    private final BigInteger serialNumber;
-    private final String issuerDN;
+    
     private final MatchSubjectWithType matchSubjectWithType;
     private final MatchIssuerWithType matchIssuerWithType;
+    private final String matchSubjectWithValue;
+    private final String matchIssuerWithValue;
 
     /**
      * Construct a client entry given an instance of AuthorizedClient.
      *
      * @param client
      */
-    public AuthorizedClientEntry(final CertificateMatchingRule client) {
-        this.serialNumber = new BigInteger(client.getMatchSubjectWithValue(), 16);
-        this.issuerDN = client.getMatchIssuerWithValue();
+    public AuthorizedClientEntry(final CertificateMatchingRule client) {        
+        this.matchSubjectWithValue = client.getMatchSubjectWithValue();
+        this.matchIssuerWithValue = client.getMatchIssuerWithValue();
         this.matchSubjectWithType = client.getMatchSubjectWithType();
         this.matchIssuerWithType = client.getMatchIssuerWithType();
     }
@@ -52,13 +51,14 @@ public class AuthorizedClientEntry {
     /**
      * Construct a client entry given certificate serial number and issuer.
      *
-     * @param serialNumber Certificate serial number
-     * @param issuerDN Issuer DN
+     * @param matchSubjectWithValue
+     * @param matchIssuerWithValue
      * @param matchSubjectWithType
+     * @param matchIssuerWithType
      */
-    public AuthorizedClientEntry(final BigInteger serialNumber, final String issuerDN, final MatchSubjectWithType matchSubjectWithType, final MatchIssuerWithType matchIssuerWithType) {
-        this.serialNumber = serialNumber;
-        this.issuerDN = issuerDN;
+    public AuthorizedClientEntry(final String matchSubjectWithValue, final String matchIssuerWithValue, final MatchSubjectWithType matchSubjectWithType, final MatchIssuerWithType matchIssuerWithType) {
+        this.matchSubjectWithValue = matchSubjectWithValue;
+        this.matchIssuerWithValue = matchIssuerWithValue;
         this.matchSubjectWithType = matchSubjectWithType;
         this.matchIssuerWithType = matchIssuerWithType;
     }
@@ -88,8 +88,8 @@ public class AuthorizedClientEntry {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 53 * hash + Objects.hashCode(this.serialNumber);
-        hash = 53 * hash + Objects.hashCode(this.issuerDN);
+        hash = 53 * hash + Objects.hashCode(this.matchSubjectWithValue);
+        hash = 53 * hash + Objects.hashCode(this.matchIssuerWithValue);
         hash = 53 * hash + Objects.hashCode(this.matchSubjectWithType);
         hash = 53 * hash + Objects.hashCode(this.matchIssuerWithType);
         return hash;
@@ -107,10 +107,10 @@ public class AuthorizedClientEntry {
             return false;
         }
         final AuthorizedClientEntry other = (AuthorizedClientEntry) obj;
-        if (!Objects.equals(this.issuerDN, other.issuerDN)) {
+        if (!Objects.equals(this.matchIssuerWithValue, other.matchIssuerWithValue)) {
             return false;
         }
-        if (!Objects.equals(this.serialNumber, other.serialNumber)) {
+        if (!Objects.equals(this.matchSubjectWithValue, other.matchSubjectWithValue)) {
             return false;
         }
         if (this.matchSubjectWithType != other.matchSubjectWithType) {

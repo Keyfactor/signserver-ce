@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server;
 
+import java.math.BigInteger;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.List;
@@ -107,8 +108,10 @@ public class ClientCertAuthorizer implements IAuthorizer {
             MatchSubjectWithType matchSubjectWithType = authClient.getMatchSubjectWithType();
             switch (matchSubjectWithType) {
                 case CERTIFICATE_SERIALNO:
+                    final BigInteger sn = clientCert.getSerialNumber();
+                    String matchSubjectwithValueToBeUsed = sn.toString(16);
                     final AuthorizedClientEntry client
-                            = new AuthorizedClientEntry(clientCert.getSerialNumber(), clientIssuerDN, MatchSubjectWithType.CERTIFICATE_SERIALNO, matchIssuerWithType);
+                            = new AuthorizedClientEntry(matchSubjectwithValueToBeUsed, clientIssuerDN, MatchSubjectWithType.CERTIFICATE_SERIALNO, matchIssuerWithType);
                     if (authorizedClients.contains(client)) {
                         ruleMatched = true;
                         break;

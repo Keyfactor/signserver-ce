@@ -44,6 +44,9 @@ public class ClientCertAuthorizerGen2Test {
             "123456789AB";
     private static final String TEST_ISSUER = "CN=foo,O=TestOrganization,C=SE";
     private static final String TEST_DESCRIPTION = "Test description";
+    private static final String OTHER_SERIALNUMBER = "a987654321";
+    private static final String OTHER_ISSUER = "CN=other,O=OtherOrganization,C=SE";
+    private static final String OTHER_DESCRIPTION = "Other description";
     
     @Before
     public void setUp() throws Exception {
@@ -154,5 +157,27 @@ public class ClientCertAuthorizerGen2Test {
     public void test03NotAcceptedWithNoAuthorizedClients() throws Exception {
         testAuthorized(ClientCertAuthorizerTestHelper.createCert(TEST_SERIALNUMBER, TEST_ISSUER),
                 null, false);
+    }
+    
+    /**
+     * Test matching on subject serial number and issuer DN expressed in BC style.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testWithAdditionalAuthorizedClient() throws Exception {
+        final X509Certificate cert =
+                ClientCertAuthorizerTestHelper.createBCCert(TEST_SERIALNUMBER, TEST_ISSUER);
+        final CertificateMatchingRule rule =
+                new CertificateMatchingRule(MatchSubjectWithType.CERTIFICATE_SERIALNO,
+                                            MatchIssuerWithType.ISSUER_DN_BCSTYLE,
+                                            TEST_SERIALNUMBER, TEST_ISSUER,
+                                            TEST_DESCRIPTION);
+        final CertificateMatchingRule otherRule =
+                new CertificateMatchingRule(MatchSubjectWithType.CERTIFICATE_SERIALNO,
+                                            MatchIssuerWithType.ISSUER_DN_BCSTYLE,
+                                            OTHER_SERIALNUMBER, OTHER_ISSUER,
+                                            OTHER_DESCRIPTION);
+        testAuthorized(cert, Arrays.asList(otherRule, rule), true);
     }
 }

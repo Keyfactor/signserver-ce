@@ -13,12 +13,24 @@
 package org.signserver.common;
 
 /**
+ * Types for matching issuer DN with.
  *
  * @author Vinay Singh
  * @version $Id$
  */
 public enum MatchIssuerWithType {
-    // ISSUER_DN_BINARY,
+
+    /**
+     * Issuer DN in the EJBCA BC DN style.
+     *
+     * Example for getting this format:
+     * <pre>
+     * CertTools.stringToBCDNString(cert.getIssuerX500Principal().getName())
+     * </pre>
+     */
     ISSUER_DN_BCSTYLE,
-    // ISSUER_DN_LDAPSTYLE
+
+    // Future: Issuer DN as binary/DER encoded X500Name: ISSUER_DN_BINARY, ?
+    // Future: ISSUER_DN_LDAPSTYLE ?
+
 }

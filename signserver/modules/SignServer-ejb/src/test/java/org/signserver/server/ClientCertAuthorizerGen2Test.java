@@ -143,4 +143,16 @@ public class ClientCertAuthorizerGen2Test {
                                             TEST_ISSUER, TEST_DESCRIPTION);
         testAuthorized(cert, Arrays.asList(rule), true);
     }
+    
+    /**
+     * Test that requests are not authorized when there is no authorized clients
+     * set.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void test03NotAcceptedWithNoAuthorizedClients() throws Exception {
+        testAuthorized(ClientCertAuthorizerTestHelper.createCert(TEST_SERIALNUMBER, TEST_ISSUER),
+                null, false);
+    }
 }

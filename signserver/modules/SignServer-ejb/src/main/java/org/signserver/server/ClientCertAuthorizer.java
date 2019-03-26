@@ -99,6 +99,8 @@ public class ClientCertAuthorizer implements IAuthorizer {
 
     private boolean authorizedToRequestSignature(final X509Certificate clientCert) {
         boolean ruleMatched = false;
+        String matchSubjectwithValue;
+        AuthorizedClientEntry client = null;
 
         // Only one MatchIssuerType is supported now
         MatchIssuerWithType matchIssuerWithType = MatchIssuerWithType.ISSUER_DN_BCSTYLE;
@@ -109,19 +111,21 @@ public class ClientCertAuthorizer implements IAuthorizer {
             switch (matchSubjectWithType) {
                 case CERTIFICATE_SERIALNO:
                     final BigInteger sn = clientCert.getSerialNumber();
-                    String matchSubjectwithValueToBeUsed = sn.toString(16);
-                    final AuthorizedClientEntry client
-                            = new AuthorizedClientEntry(matchSubjectwithValueToBeUsed, clientIssuerDN, MatchSubjectWithType.CERTIFICATE_SERIALNO, matchIssuerWithType);
-                    if (authorizedClients.contains(client)) {
-                        ruleMatched = true;
-                        break;
-                    }
+                    matchSubjectwithValue = sn.toString(16);
+                    client = new AuthorizedClientEntry(matchSubjectwithValue, clientIssuerDN, MatchSubjectWithType.CERTIFICATE_SERIALNO, matchIssuerWithType);
+                    break;
                 case SUBJECT_RDN_CN:
+                     matchSubjectwithValue = CertTools.stringToBCDNString(clientCert.getSubjectX500Principal().getName());
+                     client = new AuthorizedClientEntry(matchSubjectwithValue, clientIssuerDN, MatchSubjectWithType.SUBJECT_RDN_CN, matchIssuerWithType);
                     break;
                 case SUBJECT_RDN_SERIALNO:
                     break;
-                default:
+                default: // It should not happen though
                     throw new AssertionError(matchSubjectWithType.name());
+            }
+            if (authorizedClients.contains(client)) {
+                ruleMatched = true;
+                break;
             }
 
         }

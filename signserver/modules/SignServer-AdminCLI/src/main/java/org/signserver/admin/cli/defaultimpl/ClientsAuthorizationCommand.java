@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.admin.cli.defaultimpl;
 
+import java.math.BigInteger;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -187,7 +188,22 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
                     break;
                 }
                 case ADD: {
-                    CertificateMatchingRule rule = new CertificateMatchingRule(matchSubjectWithType, MatchIssuerWithType.ISSUER_DN_BCSTYLE, matchSubjectWithValue, matchIssuerWithValue, description);
+                    if (matchSubjectWithType == MatchSubjectWithType.CERTIFICATE_SERIALNO) {
+                        // normalize serial number
+                        try {
+                            final BigInteger sn =
+                                    new BigInteger(matchSubjectWithValue, 16);
+                            matchSubjectWithValue = sn.toString(16);
+                        } catch (NumberFormatException e) {
+                            throw new IllegalArgumentException("Illegal serial number: " + matchSubjectWithValue);
+                        }
+                    }
+                    CertificateMatchingRule rule =
+                            new CertificateMatchingRule(matchSubjectWithType,
+                                                        MatchIssuerWithType.ISSUER_DN_BCSTYLE,
+                                                        matchSubjectWithValue,
+                                                        matchIssuerWithValue,
+                                                        description);
                     getWorkerSession().addAuthorizedClientGen2(workerId, rule);
                     printAuthorizedClientsGen2(Arrays.asList(rule));
                     break;

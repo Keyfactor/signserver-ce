@@ -17,6 +17,7 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collection;
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -159,7 +160,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
         final CommandLine line;
         try {
             // Parse the command line
-            line = new GnuParser().parse(OPTIONS, args);
+            line = new DefaultParser().parse(OPTIONS, args);
             parseCommandLine(line);
         } catch (ParseException ex) {
             throw new IllegalCommandArgumentsException(ex.getMessage());
@@ -205,18 +206,23 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
                                                         matchIssuerWithValue,
                                                         description);
                     getWorkerSession().addAuthorizedClientGen2(workerId, rule);
+                    this.getOutputStream().println();
                     printAuthorizedClientsGen2(Arrays.asList(rule));
                     break;
                 }
                 case REMOVE: {
                     CertificateMatchingRule rule = new CertificateMatchingRule(matchSubjectWithType, MatchIssuerWithType.ISSUER_DN_BCSTYLE, matchSubjectWithValue, matchIssuerWithValue, description);
-                    getWorkerSession().removeAuthorizedClientGen2(workerId, rule);
-                    printAuthorizedClientsGen2(Arrays.asList(rule));
+                    if (getWorkerSession().removeAuthorizedClientGen2(workerId, rule)) {
+                        this.getOutputStream().println();
+                        printAuthorizedClientsGen2(Arrays.asList(rule));
+                    } else {
+                        throw new CommandFailureException("Rule did not exist or could not be removed");
+                    }
                     break;
                 }
             }
 
-            this.getOutputStream().println("\n\n");
+            this.getOutputStream().println();
             return 0;
 
         } catch (IllegalArgumentException ex) {
@@ -234,13 +240,12 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
         if (authClients.isEmpty()) {
             this.getOutputStream().println("  No authorized clients exists.\n");
         } else {
-            for (final CertificateMatchingRule client : authClients) {
+            authClients.forEach((client) -> {
                 this.getOutputStream().println("  " 
                         + client.getMatchSubjectWithType() + ": " + client.getMatchSubjectWithValue() + " | "
                         + client.getMatchIssuerWithType() + ": " + client.getMatchIssuerWithValue() + " | "
-                        + (client.getDescription() == null ? "" : "Description: " + client.getDescription())
-                        + "\n");
-            }
+                        + (client.getDescription() == null ? "" : "Description: " + client.getDescription()));
+            });
         }
     }
 }

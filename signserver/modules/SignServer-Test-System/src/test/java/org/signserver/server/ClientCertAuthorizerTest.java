@@ -29,7 +29,7 @@ public class ClientCertAuthorizerTest {
     private final String SUBJECT_SERIALNUMBER = "723507815f93333";
     private final String SUBJECT_SERIALNUMBER_WITH_LEADING_ZERO = "0723507815f93333";
     private final String SUBJECT_SERIALNUMBER_UPPERCASE = "723507815F93333";
-    private final String SUBJECT_RDN = "CN=Admin One,OU=Testing,O=SignServer,C=SE";
+    private final String SUBJECT_RDN_CN = "Admin One";
     private final String SUBJECT_SERIALNUMBER_OTHER = "123456789ab";
     private final String ISSUER_DN = "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE";
     private final String DESCRIPTION = "Test auth client";
@@ -41,6 +41,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void testSerialNumber() throws Exception {
+        LOG.info("testSerialNumber");
         try {
             final int signerId = test.getSignerIdCMSSigner1();
             final String dss10Path = test.getSignServerHome().getAbsolutePath() +
@@ -88,6 +89,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void testSerialNumberWithLeadingZero() throws Exception {
+        LOG.info("testSerialNumberWithLeadingZero");
         try {
             final int signerId = test.getSignerIdCMSSigner1();
             final String dss10Path = test.getSignServerHome().getAbsolutePath() +
@@ -135,6 +137,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void testSerialNumberUppercase() throws Exception {
+        LOG.info("testSerialNumberUppercase");
         try {
             final int signerId = test.getSignerIdCMSSigner1();
             final String dss10Path = test.getSignServerHome().getAbsolutePath() +
@@ -182,6 +185,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void testSerialNumberWithAdditionalRule() throws Exception {
+        LOG.info("testSerialNumberWithAdditionalRule");
         try {
             final int signerId = test.getSignerIdCMSSigner1();
             final String dss10Path = test.getSignServerHome().getAbsolutePath() +
@@ -236,6 +240,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void testSerialNumberNotMatching() throws Exception {
+        LOG.info("testSerialNumberNotMatching");
         try {
             final int signerId = test.getSignerIdCMSSigner1();
             final String dss10Path = test.getSignServerHome().getAbsolutePath() +
@@ -282,6 +287,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void testSubject_RDN_CN() throws Exception {
+        LOG.info("testSubject_RDN_CN");
         try {
             final int signerId = test.getSignerIdCMSSigner1();
             final String dss10Path = test.getSignServerHome().getAbsolutePath() +
@@ -299,7 +305,7 @@ public class ClientCertAuthorizerTest {
                     cli.execute("clients", "-worker", String.valueOf(signerId),
                     "-add", 
                     "-matchSubjectWithType", "SUBJECT_RDN_CN",
-                    "-matchSubjectWithValue", SUBJECT_RDN,
+                    "-matchSubjectWithValue", SUBJECT_RDN_CN,
                     "-matchIssuerWithValue", ISSUER_DN,
                     "-description", DESCRIPTION));
             test.getWorkerSession().reloadConfiguration(signerId);

@@ -496,18 +496,25 @@ public class WorkerConfig extends UpgradeableDataHashMap {
      */
     @SuppressWarnings("unchecked")
     public boolean removeAuthorizedClientGen2(CertificateMatchingRule client) {
+        boolean matchFoundAndRemoved = false;
         final HashSet<CertificateMatchingRule> authClients
                 = (HashSet<CertificateMatchingRule>) get(AUTHORIZED_CLIENTS_GEN2);
 
         if (authClients != null) {
             for (final CertificateMatchingRule authClient : authClients) {
                 if (authClient.equals(client)) {
-                    return authClients.remove(authClient);
+                    matchFoundAndRemoved = authClients.remove(authClient);
+                    break;
                 }
             }
         }
 
-        return false;
+        if (!matchFoundAndRemoved) { // Check if this is legacy rule and remove it from legacy structure
+            AuthorizedClient legacyClient = new AuthorizedClient(client.getMatchSubjectWithValue(), client.getMatchIssuerWithValue());
+            return removeAuthorizedClient(legacyClient);
+        } else {
+            return matchFoundAndRemoved;  // or True
+        }
     }
     
     /**
@@ -540,18 +547,38 @@ public class WorkerConfig extends UpgradeableDataHashMap {
      */
     @SuppressWarnings("unchecked")
     public Collection<CertificateMatchingRule> getAuthorizedClientsGen2() {
-        final ArrayList<CertificateMatchingRule> result = new ArrayList<>();
+        final ArrayList<CertificateMatchingRule> matchingRules = new ArrayList<>();
+        final ArrayList<CertificateMatchingRule> legacyRulesInNewFormat = new ArrayList<>();
+
         final HashSet<CertificateMatchingRule> authClients
                 = (HashSet<CertificateMatchingRule>) get(AUTHORIZED_CLIENTS_GEN2);
 
         if (authClients != null) {
-            for (final CertificateMatchingRule client : authClients) {
-                result.add(client);
-            }
+            authClients.forEach((client) -> {
+                matchingRules.add(client);
+            });
         }
 
-        Collections.sort(result);
-        return result;
+        Collections.sort(matchingRules);
+
+        // Also check for legacy rules and convert them into new rule structure
+        Collection<AuthorizedClient> legacy_rules = getAuthorizedClients();
+        if (legacy_rules != null && !legacy_rules.isEmpty()) {
+            legacy_rules.stream().map((legacy_rule) -> new CertificateMatchingRule(MatchSubjectWithType.CERTIFICATE_SERIALNO, MatchIssuerWithType.ISSUER_DN_BCSTYLE, legacy_rule.getCertSN(), legacy_rule.getIssuerDN(), "Legacy rule")).forEachOrdered((matchingRule) -> {
+                legacyRulesInNewFormat.add(matchingRule);
+            });
+        }
+
+        if (legacyRulesInNewFormat.isEmpty()) {
+            return matchingRules;
+        } else {
+            ArrayList<CertificateMatchingRule> mergedLegacyAndNewRules = new ArrayList<>();
+            mergedLegacyAndNewRules.addAll(legacyRulesInNewFormat);
+            mergedLegacyAndNewRules.addAll(matchingRules);
+            Collections.sort(mergedLegacyAndNewRules);
+            return mergedLegacyAndNewRules;
+        }
+
     }
     
     /**

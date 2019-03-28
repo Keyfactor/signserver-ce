@@ -734,7 +734,28 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     
     @Override
     public Collection<CertificateMatchingRule> getAuthorizedClientsGen2(int signerId) {
-        return getWorkerConfig(signerId).getAuthorizedClientsGen2();
+        Collection<CertificateMatchingRule> legacyRulesInNewFormat = new ArrayList<>();
+        Collection<CertificateMatchingRule> matchingRules;
+
+        // first check for legacy rules and convert them into new rule structure
+        Collection<AuthorizedClient> legacy_rules = getAuthorizedClients(signerId);
+        if (legacy_rules != null && !legacy_rules.isEmpty()) {
+            legacy_rules.stream().map((legacy_rule) -> new CertificateMatchingRule(MatchSubjectWithType.CERTIFICATE_SERIALNO, MatchIssuerWithType.ISSUER_DN_BCSTYLE, legacy_rule.getCertSN(), legacy_rule.getIssuerDN(), "Legacy rule")).forEachOrdered((matchingRule) -> {
+                legacyRulesInNewFormat.add(matchingRule);
+            });
+        }
+
+        // get new rules
+        matchingRules = getWorkerConfig(signerId).getAuthorizedClientsGen2();
+
+        if (legacyRulesInNewFormat.isEmpty()) {
+            return matchingRules;
+        } else {
+            Collection<CertificateMatchingRule> mergedLegacyAndNewRules = new ArrayList<>();
+            mergedLegacyAndNewRules.addAll(legacyRulesInNewFormat);
+            mergedLegacyAndNewRules.addAll(matchingRules);
+            return mergedLegacyAndNewRules;
+        }
     }
 
     @Override
@@ -795,7 +816,12 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         WorkerConfig config = getWorkerConfig(signerId);
 
         result = config.removeAuthorizedClientGen2(authClient);
-        setWorkerConfig(adminInfo, signerId, config, "removed:authorized_client_gen2", authClient.toString());
+        if (result) {
+            setWorkerConfig(adminInfo, signerId, config, "removed:authorized_client_gen2", authClient.toString());
+        } else { // Check if this is legacy rule and remove it from legacy structure
+            AuthorizedClient legacyClient = new AuthorizedClient(authClient.getMatchSubjectWithValue(), authClient.getMatchIssuerWithValue());
+            result = removeAuthorizedClient(adminInfo, signerId, legacyClient);
+        }
         return result;
     }
 

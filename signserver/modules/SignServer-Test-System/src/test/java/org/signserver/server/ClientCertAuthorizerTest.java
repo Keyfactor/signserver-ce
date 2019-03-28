@@ -8,6 +8,7 @@ package org.signserver.server;
 import java.io.File;
 import org.apache.log4j.Logger;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import org.junit.Test;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
@@ -210,6 +211,53 @@ public class ClientCertAuthorizerTest {
             test.getWorkerSession().reloadConfiguration(signerId);
             
             assertEquals("execute signdocument", 0,
+                    client.execute("signdocument", "-workerid", String.valueOf(signerId),
+                                   "-data", "foo", "-protocol", "CLIENTWS",
+                                   "-host", "localhost",
+                                   "-port", "8443",
+                                   "-keystore",
+                                   dss10Path + File.separator + "dss10_admin1.p12",
+                                   "-keystorepwd", "foo123",
+                                   "-truststore",
+                                   dss10Path + File.separator + "dss10_truststore.jks",
+                                   "-truststorepwd", "changeit"));
+                                           
+        } finally {
+            test.removeWorker(test.getSignerIdCMSSigner1());
+        }
+    }
+    
+    /**
+     * Test authorization with a subject serial number rule with a non-matching
+     * SN.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testSerialNumberNotMatching() throws Exception {
+        try {
+            final int signerId = test.getSignerIdCMSSigner1();
+            final String dss10Path = test.getSignServerHome().getAbsolutePath() +
+                                           File.separator + "res" +
+                                           File.separator + "test" +
+                                           File.separator + "dss10";
+            
+            test.addCMSSigner1();
+            test.getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE",
+                                                      "org.signserver.server.ClientCertAuthorizer");
+            test.getWorkerSession().reloadConfiguration(signerId);
+            
+            // Add
+            assertEquals("execute add", 0,
+                    cli.execute("clients", "-worker", String.valueOf(signerId),
+                    "-add", 
+                    "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
+                    "-matchSubjectWithValue", SUBJECT_SERIALNUMBER_OTHER,
+                    "-matchIssuerWithValue", ISSUER_DN,
+                    "-description", DESCRIPTION));
+            test.getWorkerSession().reloadConfiguration(signerId);
+            
+            assertNotEquals("execute signdocument", 0,
                     client.execute("signdocument", "-workerid", String.valueOf(signerId),
                                    "-data", "foo", "-protocol", "CLIENTWS",
                                    "-host", "localhost",

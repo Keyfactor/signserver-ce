@@ -84,10 +84,10 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
 
     @Override
     public String getUsages() {
-        return "Usage: signserver clients -worker <worker name or ID> <-add/-remove/list> -matchSubjectWithType <SUBJECT_MATCH_TYPE> -matchSubjectWithValue <value> [-matchIssuerWithType <ISSUER_MATCH_TYPE>] -matchIssuerWithValue <issuer DN> [-description <textual description>]\n"
-                    + "Example 1: clients -worker CMSSigner -list\n"
-                    + "Example 2: clients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithValue \"CN=AdminCA1, C=SE\"\n"
-                    + "Example 3: clients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithType ISSUER_DN_BCSTYLE -matchIssuerWithValue \"CN=AdminCA1, C=SE\" -description \"my rule\"\n\n";
+        return "Usage: signserver authorizedclients -worker <worker name or ID> <-add/-remove/list> -matchSubjectWithType <SUBJECT_MATCH_TYPE> -matchSubjectWithValue <value> [-matchIssuerWithType <ISSUER_MATCH_TYPE>] -matchIssuerWithValue <issuer DN> [-description <textual description>]\n"
+                    + "Example 1: authorizedclients -worker CMSSigner -list\n"
+                    + "Example 2: authorizedclients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithValue \"CN=AdminCA1, C=SE\"\n"
+                    + "Example 3: authorizedclients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithType ISSUER_DN_BCSTYLE -matchIssuerWithValue \"CN=AdminCA1, C=SE\" -description \"my rule\"\n\n";
     }
 
     /**

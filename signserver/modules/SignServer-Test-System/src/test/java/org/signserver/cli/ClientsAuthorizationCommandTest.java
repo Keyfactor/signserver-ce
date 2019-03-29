@@ -43,7 +43,7 @@ public class ClientsAuthorizationCommandTest {
     @Test
     public void testAddWithUnknownWorkerName() throws Exception {
         LOG.info("testAddWithUnknownWorkerName");
-        int code = cli.execute("clients", "-worker", "_NonExistingWorkerName_", "-add", "-matchSubjectWithType", "SUBJECT_RDN_CN", "-matchSubjectWithValue", "Client One", "-matchIssuerWithValue", "CN=AdminCA1, C=SE", "-description", "my rule");
+        int code = cli.execute("authorizedclients", "-worker", "_NonExistingWorkerName_", "-add", "-matchSubjectWithType", "SUBJECT_RDN_CN", "-matchSubjectWithValue", "Client One", "-matchIssuerWithValue", "CN=AdminCA1, C=SE", "-description", "my rule");
         assertEquals("return code", -1, code);
         assertPrinted("error message", cli.getOut(), "No worker with the given name could be found");
     }
@@ -55,7 +55,7 @@ public class ClientsAuthorizationCommandTest {
     @Test
     public void testRemoveWithUnknownWorkerName() throws Exception {
         LOG.info("testRemoveWithUnknownWorkerName");
-        int code = cli.execute("clients", "-worker", "_NonExistingWorkerName_", "-remove", "-matchSubjectWithType", "SUBJECT_RDN_CN", "-matchSubjectWithValue", "Client One", "-matchIssuerWithValue", "CN=AdminCA1, C=SE", "-description", "my rule");
+        int code = cli.execute("authorizedclients", "-worker", "_NonExistingWorkerName_", "-remove", "-matchSubjectWithType", "SUBJECT_RDN_CN", "-matchSubjectWithValue", "Client One", "-matchIssuerWithValue", "CN=AdminCA1, C=SE", "-description", "my rule");
         assertEquals("return code", -1, code);
         assertPrinted("error message", cli.getOut(), "No worker with the given name could be found");
     }
@@ -67,7 +67,7 @@ public class ClientsAuthorizationCommandTest {
     @Test
     public void testListWithUnknownWorkerName() throws Exception {
         LOG.info("testListWithUnknownWorkerName");
-        int code = cli.execute("clients", "-worker", "_NonExistingWorkerName_", "-list");
+        int code = cli.execute("authorizedclients", "-worker", "_NonExistingWorkerName_", "-list");
         assertEquals("return code", -1, code);
         assertPrinted("error message", cli.getOut(), "No worker with the given name could be found");
     }
@@ -80,7 +80,7 @@ public class ClientsAuthorizationCommandTest {
     @Test
     public void testAddWithUnknownWorkerId() throws Exception {
         LOG.info("testAddWithUnknownWorkerId");
-        int code = cli.execute("clients", "-worker", "112244", "-add", "-matchSubjectWithType", "SUBJECT_RDN_CN", "-matchSubjectWithValue", "Client One", "-matchIssuerWithValue", "CN=AdminCA1, C=SE", "-description", "my rule");
+        int code = cli.execute("authorizedclients", "-worker", "112244", "-add", "-matchSubjectWithType", "SUBJECT_RDN_CN", "-matchSubjectWithValue", "Client One", "-matchIssuerWithValue", "CN=AdminCA1, C=SE", "-description", "my rule");
         assertEquals("return code", -1, code);
         assertPrinted("error message", cli.getOut(), "Error: No worker with the given Id could be found");
     }
@@ -93,7 +93,7 @@ public class ClientsAuthorizationCommandTest {
     @Test
     public void testRemoveWithUnknownWorkerId() throws Exception {
         LOG.info("testAddWithUnknownWorkerId");
-        int code = cli.execute("clients", "-worker", "112244", "-remove", "-matchSubjectWithType", "SUBJECT_RDN_CN", "-matchSubjectWithValue", "Client One", "-matchIssuerWithValue", "CN=AdminCA1, C=SE", "-description", "my rule");
+        int code = cli.execute("authorizedclients", "-worker", "112244", "-remove", "-matchSubjectWithType", "SUBJECT_RDN_CN", "-matchSubjectWithValue", "Client One", "-matchIssuerWithValue", "CN=AdminCA1, C=SE", "-description", "my rule");
         assertEquals("return code", -1, code);
         assertPrinted("error message", cli.getOut(), "Error: No worker with the given Id could be found");
     }
@@ -106,7 +106,7 @@ public class ClientsAuthorizationCommandTest {
     @Test
     public void testListWithUnknownWorkerId() throws Exception {
         LOG.info("testAddWithUnknownWorkerId");
-        int code = cli.execute("clients", "-worker", "112244", "-list");
+        int code = cli.execute("authorizedclients", "-worker", "112244", "-list");
         assertEquals("return code", -1, code);
         assertPrinted("error message", cli.getOut(), "Error: No worker with the given Id could be found");
     }
@@ -123,7 +123,7 @@ public class ClientsAuthorizationCommandTest {
             test.addCMSSigner1();
             
             // Add
-            assertEquals("execute add", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+            assertEquals("execute add", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-add", 
                     "-matchSubjectWithType", "SUBJECT_RDN_CN",
                     "-matchSubjectWithValue", "Client Two",
@@ -134,7 +134,7 @@ public class ClientsAuthorizationCommandTest {
             assertPrinted("prints new rule with CN=ManagementCA1, C=SE", cli.getOut(), "CN=ManagementCA1, C=SE");
             
             // List
-            assertEquals("execute list", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+            assertEquals("execute list", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
             assertPrinted("prints rule with SUBJECT_RDN_CN", cli.getOut(), "SUBJECT_RDN_CN");
             assertPrinted("prints rule with Client Two", cli.getOut(), "Client Two");
@@ -142,7 +142,7 @@ public class ClientsAuthorizationCommandTest {
             assertPrinted("prints rule with My description", cli.getOut(), "My description");
             
             // Add one more + also explicitly specify matchIssuerWithType
-            assertEquals("execute add 2", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+            assertEquals("execute add 2", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-add", 
                     "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
                     "-matchSubjectWithValue", "123456",
@@ -155,7 +155,7 @@ public class ClientsAuthorizationCommandTest {
             assertPrinted("prints new rule with Other description", cli.getOut(), "Other description");
             
             // List both entries
-            assertEquals("execute list 2", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+            assertEquals("execute list 2", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
             assertPrinted("prints rule 1 with SUBJECT_RDN_CN", cli.getOut(), "SUBJECT_RDN_CN");
             assertPrinted("prints rule 1 with Client Two", cli.getOut(), "Client Two");
@@ -168,7 +168,7 @@ public class ClientsAuthorizationCommandTest {
             assertPrinted("prints rule 2 with Other description", cli.getOut(), "Other description");
             
             // Remove first entry
-            assertEquals("execute remove", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+            assertEquals("execute remove", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-remove", 
                     "-matchSubjectWithType", "SUBJECT_RDN_CN",
                     "-matchSubjectWithValue", "Client Two",
@@ -179,7 +179,7 @@ public class ClientsAuthorizationCommandTest {
             assertPrinted("prints new rule with CN=ManagementCA1, C=SE", cli.getOut(), "CN=ManagementCA1, C=SE");
             
             // List second entry only now
-            assertEquals("execute list 2", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+            assertEquals("execute list 2", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
             assertNotPrinted("prints rule 1 with SUBJECT_RDN_CN", cli.getOut(), "SUBJECT_RDN_CN");
             assertNotPrinted("prints rule 1 with Client Two", cli.getOut(), "Client Two");
@@ -206,7 +206,7 @@ public class ClientsAuthorizationCommandTest {
             test.addCMSSigner1();
             
             // Add
-            assertEquals("execute add", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+            assertEquals("execute add", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-add", 
                     "-matchSubjectWithType", "SUBJECT_RDN_CN",
                     "-matchSubjectWithValue", "Client Two",
@@ -215,12 +215,12 @@ public class ClientsAuthorizationCommandTest {
             assertPrinted("prints new rule", cli.getOut(), "  SUBJECT_RDN_CN: Client Two | ISSUER_DN_BCSTYLE: CN=ManagementCA1, C=SE | Description: My description");
             
             // List
-            assertEquals("execute list", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+            assertEquals("execute list", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
             assertPrinted("prints rule 1", cli.getOut(), "  SUBJECT_RDN_CN: Client Two | ISSUER_DN_BCSTYLE: CN=ManagementCA1, C=SE | Description: My description");
             
             // Add one more
-            assertEquals("execute add 2", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+            assertEquals("execute add 2", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-add", 
                     "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
                     "-matchSubjectWithValue", "123456",
@@ -229,7 +229,7 @@ public class ClientsAuthorizationCommandTest {
             assertPrinted("prints new rule with CERTIFICATE_SERIALNO", cli.getOut(), "  CERTIFICATE_SERIALNO: 123456 | ISSUER_DN_BCSTYLE: CN=ManagementCA2, OU=Testing, C=SE | Description: Other description");
             
             // List both entries
-            assertEquals("execute list 2", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+            assertEquals("execute list 2", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
             assertPrinted("prints rule 1", cli.getOut(), "  SUBJECT_RDN_CN: Client Two | ISSUER_DN_BCSTYLE: CN=ManagementCA1, C=SE | Description: My description");
             assertPrinted("prints rule 2", cli.getOut(), "  CERTIFICATE_SERIALNO: 123456 | ISSUER_DN_BCSTYLE: CN=ManagementCA2, OU=Testing, C=SE | Description: Other description");

@@ -56,7 +56,7 @@ public class ClientCertAuthorizerTest {
             
             // Add
             assertEquals("execute add", 0,
-                    cli.execute("clients", "-worker", String.valueOf(signerId),
+                    cli.execute("authorizedclients", "-worker", String.valueOf(signerId),
                     "-add", 
                     "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
                     "-matchSubjectWithValue", SUBJECT_SERIALNUMBER,
@@ -104,7 +104,7 @@ public class ClientCertAuthorizerTest {
             
             // Add
             assertEquals("execute add", 0,
-                    cli.execute("clients", "-worker", String.valueOf(signerId),
+                    cli.execute("authorizedclients", "-worker", String.valueOf(signerId),
                     "-add", 
                     "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
                     "-matchSubjectWithValue", SUBJECT_SERIALNUMBER_WITH_LEADING_ZERO,
@@ -152,7 +152,7 @@ public class ClientCertAuthorizerTest {
             
             // Add
             assertEquals("execute add", 0,
-                    cli.execute("clients", "-worker", String.valueOf(signerId),
+                    cli.execute("authorizedclients", "-worker", String.valueOf(signerId),
                     "-add", 
                     "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
                     "-matchSubjectWithValue", SUBJECT_SERIALNUMBER_UPPERCASE,
@@ -200,14 +200,14 @@ public class ClientCertAuthorizerTest {
             
             // Add
             assertEquals("execute add", 0,
-                    cli.execute("clients", "-worker", String.valueOf(signerId),
+                    cli.execute("authorizedclients", "-worker", String.valueOf(signerId),
                     "-add", 
                     "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
                     "-matchSubjectWithValue", SUBJECT_SERIALNUMBER,
                     "-matchIssuerWithValue", ISSUER_DN,
                     "-description", DESCRIPTION));
             assertEquals("execute add", 0,
-                    cli.execute("clients", "-worker", String.valueOf(signerId),
+                    cli.execute("authorizedclients", "-worker", String.valueOf(signerId),
                     "-add", 
                     "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
                     "-matchSubjectWithValue", SUBJECT_SERIALNUMBER_OTHER,
@@ -255,7 +255,7 @@ public class ClientCertAuthorizerTest {
             
             // Add
             assertEquals("execute add", 0,
-                    cli.execute("clients", "-worker", String.valueOf(signerId),
+                    cli.execute("authorizedclients", "-worker", String.valueOf(signerId),
                     "-add", 
                     "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
                     "-matchSubjectWithValue", SUBJECT_SERIALNUMBER_OTHER,
@@ -302,7 +302,7 @@ public class ClientCertAuthorizerTest {
             
             // Add
             assertEquals("execute add", 0,
-                    cli.execute("clients", "-worker", String.valueOf(signerId),
+                    cli.execute("authorizedclients", "-worker", String.valueOf(signerId),
                     "-add", 
                     "-matchSubjectWithType", "SUBJECT_RDN_CN",
                     "-matchSubjectWithValue", SUBJECT_RDN_CN,

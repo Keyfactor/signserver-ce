@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import org.signserver.common.MatchSubjectWithType;
 
 /**
  * Unit tests for the ClientsAuthorizationCommand.
@@ -187,6 +188,22 @@ public class ClientsAuthorizationCommandUnitTest {
             fail("Expected IllegalCommandArgumentsException due to incorrect type");
         } catch (IllegalCommandArgumentsException expected) {
             assertEquals("Unknown matchSubjectWithType value provided. Possible values are: [CERTIFICATE_SERIALNO, SUBJECT_RDN_CN, SUBJECT_RDN_SERIALNO]", expected.getMessage());
+        }
+    }
+    
+    /**
+     * Tests that there is an error if an incorrect matchIssuerWithType is specified.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testAddUnknownMatchIssuerWithType() throws Exception {
+        try {
+            LOG.info("testAddUnknownMatchIssuerWithType");
+            ClientsAuthorizationCommand instance = new ClientsAuthorizationCommand();
+            instance.execute("-worker", "SampleSigner", "-add", "-matchSubjectWithType", MatchSubjectWithType.SUBJECT_RDN_CN.name(), "-matchSubjectWithValue", "Client One", "-matchIssuerWithType", "_incorrectIssuerType_", "-matchIssuerWithValue", "CN=AdminCA1, C=SE", "-description", "my rule");
+            fail("Expected IllegalCommandArgumentsException due to incorrect type");
+        } catch (IllegalCommandArgumentsException expected) {
+            assertEquals("Unknown matchIssuerWithType value provided. Possible values are: [ISSUER_DN_BCSTYLE]", expected.getMessage());
         }
     }
 

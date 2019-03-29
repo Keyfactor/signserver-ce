@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
@@ -49,12 +48,13 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
     public static final String WORKER = "worker";
     public static final String MATCH_SUBJECT_WITH_TYPE = "matchSubjectWithType";
     public static final String MATCH_SUBJECT_WITH_VALUE = "matchSubjectWithValue";
+    public static final String MATCH_ISSUER_WITH_TYPE = "matchIssuerWithType";
     public static final String MATCH_ISSUER_WITH_VALUE = "matchIssuerWithValue";
     public static final String DESCRIPTION = "description";
-    
+
     /** The command line options. */
     private static final Options OPTIONS;
-    
+
     static {
         OPTIONS = new Options();
         OPTIONS.addOption(ADD, false, "Add a new client authorization rule");
@@ -62,19 +62,21 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
         OPTIONS.addOption(LIST, false, "List all client authorization rules");
 
         OPTIONS.addOption(WORKER, true, "Worker name or ID");
-        OPTIONS.addOption(MATCH_SUBJECT_WITH_TYPE, true, "Match subject with type");
+        OPTIONS.addOption(MATCH_SUBJECT_WITH_TYPE, true, "Match subject with type. One of " + Arrays.toString(MatchSubjectWithType.values()) + ".");
         OPTIONS.addOption(MATCH_SUBJECT_WITH_VALUE, true, "Match subject with value");
+        OPTIONS.addOption(MATCH_ISSUER_WITH_TYPE, true, "Match issuer with type. One of " + Arrays.toString(MatchIssuerWithType.values()) + ".");
         OPTIONS.addOption(MATCH_ISSUER_WITH_VALUE, true, "Match issuer with value");
-        OPTIONS.addOption(DESCRIPTION, true, "A textual representation");
+        OPTIONS.addOption(DESCRIPTION, true, "An optional description text");
     }
 
     private String operation;
     private String worker;
     private MatchSubjectWithType matchSubjectWithType;
     private String matchSubjectWithValue;
+    private MatchIssuerWithType matchIssuerWithType = MatchIssuerWithType.ISSUER_DN_BCSTYLE;
     private String matchIssuerWithValue;
     private String description;
-    
+
     @Override
     public String getDescription() {
         return "Authorizes clients";
@@ -82,11 +84,12 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
 
     @Override
     public String getUsages() {
-        return "Usage: signserver clients -worker <worker name or ID> <-add/-remove/list> -matchSubjectWithType <MATCH_TYPE> -matchSubjectWithValue <value> -matchIssuerWithValue <issuer DN> [-description <textual description>]\n"
+        return "Usage: signserver clients -worker <worker name or ID> <-add/-remove/list> -matchSubjectWithType <SUBJECT_MATCH_TYPE> -matchSubjectWithValue <value> [-matchIssuerWithType <ISSUER_MATCH_TYPE>] -matchIssuerWithValue <issuer DN> [-description <textual description>]\n"
                     + "Example 1: clients -worker CMSSigner -list\n"
-                    + "Example 2: clients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithValue \"CN=AdminCA1, C=SE\" -description \"my rule\"\n\n";
+                    + "Example 2: clients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithValue \"CN=AdminCA1, C=SE\"\n"
+                    + "Example 3: clients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithType ISSUER_DN_BCSTYLE -matchIssuerWithValue \"CN=AdminCA1, C=SE\" -description \"my rule\"\n\n";
     }
-    
+
     /**
      * Reads all the options from the command line.
      *
@@ -94,7 +97,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
      */
     private void parseCommandLine(final CommandLine line)
         throws IllegalCommandArgumentsException {
-        
+
         worker = line.getOptionValue(WORKER, null);
 
         int operations = 0;
@@ -113,7 +116,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
         if (operations != 1) {
             throw new IllegalCommandArgumentsException("Please specify one and only one of -add, -remove or -list");
         }
-        
+
         final String matchSubjectWithTypeString = line.getOptionValue(MATCH_SUBJECT_WITH_TYPE, null);
         if (matchSubjectWithTypeString != null) {
             try {
@@ -125,7 +128,19 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
                 throw new IllegalCommandArgumentsException("Unknown " + MATCH_SUBJECT_WITH_TYPE + " value provided. Possible values are: " + Arrays.toString(MatchSubjectWithType.values()));
             }
         }
-        
+
+        final String matchIssuerWithTypeString = line.getOptionValue(MATCH_ISSUER_WITH_TYPE, null);
+        if (matchIssuerWithTypeString != null) {
+            try {
+                matchIssuerWithType = MatchIssuerWithType.valueOf(matchIssuerWithTypeString);
+            } catch (IllegalArgumentException ex) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Unknown matchIssuerWithType: " + ex.getMessage());
+                }
+                throw new IllegalCommandArgumentsException("Unknown " + MATCH_ISSUER_WITH_TYPE + " value provided. Possible values are: " + Arrays.toString(MatchIssuerWithType.values()));
+            }
+        }
+
         matchSubjectWithValue = line.getOptionValue(MATCH_SUBJECT_WITH_VALUE, null);
         matchIssuerWithValue = line.getOptionValue(MATCH_ISSUER_WITH_VALUE, null);
         description = line.getOptionValue(DESCRIPTION, null);
@@ -138,7 +153,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
         if (worker == null) {
             throw new IllegalCommandArgumentsException("Missing -worker");
         }
-        
+
         switch (operation) {
             case ADD:
             case REMOVE: {
@@ -168,7 +183,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
             throw e;
         }
         validateOptions();
-        
+
         try {
             // Check that worker exists. An existing worker has a name.
             final int workerId = getWorkerId(worker);
@@ -201,7 +216,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
                     }
                     CertificateMatchingRule rule =
                             new CertificateMatchingRule(matchSubjectWithType,
-                                                        MatchIssuerWithType.ISSUER_DN_BCSTYLE,
+                                                        matchIssuerWithType,
                                                         matchSubjectWithValue,
                                                         matchIssuerWithValue,
                                                         description);
@@ -211,7 +226,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
                     break;
                 }
                 case REMOVE: {
-                    CertificateMatchingRule rule = new CertificateMatchingRule(matchSubjectWithType, MatchIssuerWithType.ISSUER_DN_BCSTYLE, matchSubjectWithValue, matchIssuerWithValue, description);
+                    CertificateMatchingRule rule = new CertificateMatchingRule(matchSubjectWithType, matchIssuerWithType, matchSubjectWithValue, matchIssuerWithValue, description);
                     if (getWorkerSession().removeAuthorizedClientGen2(workerId, rule)) {
                         this.getOutputStream().println();
                         printAuthorizedClientsGen2(Arrays.asList(rule));
@@ -241,7 +256,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
             this.getOutputStream().println("  No authorized clients exists.\n");
         } else {
             authClients.forEach((client) -> {
-                this.getOutputStream().println("  " 
+                this.getOutputStream().println("  "
                         + client.getMatchSubjectWithType() + ": " + client.getMatchSubjectWithValue() + " | "
                         + client.getMatchIssuerWithType() + ": " + client.getMatchIssuerWithValue() + " | "
                         + (client.getDescription() == null ? "" : "Description: " + client.getDescription()));

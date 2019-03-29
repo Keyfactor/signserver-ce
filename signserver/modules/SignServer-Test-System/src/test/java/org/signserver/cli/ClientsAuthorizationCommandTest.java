@@ -141,11 +141,12 @@ public class ClientsAuthorizationCommandTest {
             assertPrinted("prints rule with CN=ManagementCA1, C=SE", cli.getOut(), "CN=ManagementCA1, C=SE");
             assertPrinted("prints rule with My description", cli.getOut(), "My description");
             
-            // Add one more
+            // Add one more + also explicitly specify matchIssuerWithType
             assertEquals("execute add 2", 0, cli.execute("clients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-add", 
                     "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
                     "-matchSubjectWithValue", "123456",
+                    "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
                     "-matchIssuerWithValue", "CN=ManagementCA2, OU=Testing, C=SE",
                     "-description", "Other description"));
             assertPrinted("prints new rule with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");

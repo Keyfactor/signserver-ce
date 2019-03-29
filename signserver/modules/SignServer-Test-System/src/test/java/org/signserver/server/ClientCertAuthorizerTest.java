@@ -360,7 +360,7 @@ public class ClientCertAuthorizerTest {
 
             X509Certificate caCert =
                     (X509Certificate) ks.getCertificate("SignatureKeyAlias");
-            PrivateKey issuerPrivKey = (PrivateKey)ks.getKey("EncryptionKeyAlias", "foo123".toCharArray());
+            PrivateKey issuerPrivKey = (PrivateKey)ks.getKey("SignatureKeyAlias", "foo123".toCharArray());
 
             final CertBuilder builder =
                     generateCertBuilderWithAdditionalDNComponent(caCert, issuerPrivKey,

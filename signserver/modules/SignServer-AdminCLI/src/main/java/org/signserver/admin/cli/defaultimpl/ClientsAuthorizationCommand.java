@@ -227,9 +227,10 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
                 }
                 case REMOVE: {
                     CertificateMatchingRule rule = new CertificateMatchingRule(matchSubjectWithType, matchIssuerWithType, matchSubjectWithValue, matchIssuerWithValue, description);
+                    this.getOutputStream().println();
+                    printAuthorizedClientsGen2(Arrays.asList(rule));
                     if (getWorkerSession().removeAuthorizedClientGen2(workerId, rule)) {
-                        this.getOutputStream().println();
-                        printAuthorizedClientsGen2(Arrays.asList(rule));
+                        this.getOutputStream().println("Rule removed");
                     } else {
                         throw new CommandFailureException("Rule did not exist or could not be removed");
                     }

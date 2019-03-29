@@ -6,10 +6,27 @@
 package org.signserver.server;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.Enumeration;
 import org.apache.log4j.Logger;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.X500NameBuilder;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import org.junit.Test;
+import org.signserver.test.utils.builders.CertBuilder;
+import org.signserver.test.utils.builders.CertBuilderException;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -325,5 +342,105 @@ public class ClientCertAuthorizerTest {
         } finally {
             test.removeWorker(test.getSignerIdCMSSigner1());
         }
+    }
+    
+    @Test
+    public void testWithSubjectDNSerialNumber() throws Exception {
+        try {
+            final int signerId = test.getSignerIdCMSSigner1();
+            final String dss10Path = test.getSignServerHome().getAbsolutePath() +
+                                               File.separator + "res" +
+                                               File.separator + "test" +
+                                               File.separator + "dss10";
+            Security.addProvider(new BouncyCastleProvider());
+            final KeyStore ks = KeyStore.getInstance("PKCS12", "BC");
+            final String ksPath = dss10Path + File.separator + "DSSRootCA10.p12";
+
+            ks.load(new FileInputStream(ksPath), "foo123".toCharArray());
+
+            X509Certificate caCert =
+                    (X509Certificate) ks.getCertificate("SignatureKeyAlias");
+            PrivateKey issuerPrivKey = (PrivateKey)ks.getKey("EncryptionKeyAlias", "foo123".toCharArray());
+
+            final CertBuilder builder =
+                    generateCertBuilderWithAdditionalDNComponent(caCert, issuerPrivKey,
+                                                          BCStyle.SERIALNUMBER,
+                                                          "123456789ab");
+            final X509Certificate clientCert =
+                    new JcaX509CertificateConverter().getCertificate(builder.build());
+            final PrivateKey clientPrivKey = builder.getSubjectKeyPair().getPrivate();
+            
+            // store client cert in a keystore
+            final File tmpFile = File.createTempFile("client", "p12");
+            final KeyStore clientKs = KeyStore.getInstance("PKCS12", "BC");
+            final Certificate[] chain = {clientCert, caCert};
+            
+            clientKs.load(null, "foo123".toCharArray());
+            clientKs.setCertificateEntry("Admin Three", clientCert);
+            clientKs.setKeyEntry("Admin Three", clientPrivKey, "foo123".toCharArray(), chain);
+            clientKs.store(new FileOutputStream(tmpFile), "foo123".toCharArray());
+            
+            Enumeration<String> aliases = clientKs.aliases();
+            
+            while (aliases.hasMoreElements()) {
+                System.out.println("alias: " + aliases.nextElement());
+            }
+            
+            test.addCMSSigner1();
+            test.getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE",
+                                                      "org.signserver.server.ClientCertAuthorizer");
+            test.getWorkerSession().reloadConfiguration(signerId);
+
+            // Add
+            assertEquals("execute add", 0,
+                    cli.execute("clients", "-worker", String.valueOf(signerId),
+                    "-add", 
+                    "-matchSubjectWithType", "SUBJECT_RDN_SERIALNO",
+                    "-matchSubjectWithValue", "123456789ab",
+                    "-matchIssuerWithValue", ISSUER_DN,
+                    "-description", DESCRIPTION));
+            test.getWorkerSession().reloadConfiguration(signerId);
+
+            assertEquals("execute signdocument", 0,
+                    client.execute("signdocument", "-workerid", String.valueOf(signerId),
+                                   "-data", "foo", "-protocol", "CLIENTWS",
+                                   "-host", "localhost",
+                                   "-port", "8443",
+                                   "-keystore",
+                                   tmpFile.getAbsolutePath(),
+                                   "-keystorepwd", "foo123",
+                                   "-truststore",
+                                   dss10Path + File.separator + "dss10_truststore.jks",
+                                   "-truststorepwd", "changeit"));
+        } finally {
+            test.removeWorker(test.getSignerIdCMSSigner1());
+        }
+        
+    }
+        
+    
+    private static CertBuilder generateCertBuilderWithAdditionalDNComponent(
+            final X509Certificate caCert,
+            final PrivateKey caPrivKey,
+            final ASN1ObjectIdentifier additionalDNComponent,
+            final String additionalDNValue)
+            throws CertBuilderException, CertificateException {
+        final CertBuilder builder = new CertBuilder();
+        
+        X500NameBuilder nameBuilder = new X500NameBuilder(BCStyle.INSTANCE);
+        nameBuilder.addRDN(BCStyle.CN, "Admin Three");
+        nameBuilder.addRDN(BCStyle.O, "SignServer Testing");
+        nameBuilder.addRDN(BCStyle.C, "SE");
+        nameBuilder.addRDN(additionalDNComponent, additionalDNValue);
+        
+        final X500Name subject = nameBuilder.build();
+        
+        builder.setIssuerPrivateKey(caPrivKey);
+        builder.setIssuer(caCert.getIssuerDN().getName());
+        builder.setSubject(subject);
+        
+        return builder;
+        
+        //return new JcaX509CertificateConverter().getCertificate(builder.build());
     }
 }

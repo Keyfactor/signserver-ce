@@ -393,7 +393,7 @@ public class ClientCertAuthorizerTest {
 
             // Add
             assertEquals("execute add", 0,
-                    cli.execute("clients", "-worker", String.valueOf(signerId),
+                    cli.execute("authorizedclients", "-worker", String.valueOf(signerId),
                     "-add", 
                     "-matchSubjectWithType", "SUBJECT_RDN_SERIALNO",
                     "-matchSubjectWithValue", "123456789ab",

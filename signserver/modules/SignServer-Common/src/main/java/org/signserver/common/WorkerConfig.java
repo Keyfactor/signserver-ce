@@ -451,7 +451,7 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     }
     
     /**
-     * Adds a Certificate SN to the collection of authorized clients	  
+     * Adds a client to the collection of authorized clients.	  
      * 
      * @param client the AuthorizedClient to add
      */
@@ -489,7 +489,7 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     }
     
     /**
-     * Removes a Certificate SN from the collection of authorized clients
+     * Removes a client from the collection of authorized clients.
      *
      * @param client the AuthorizedClient to remove
      * @return true if the client was found and removed
@@ -497,28 +497,22 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     @SuppressWarnings("unchecked")
     public boolean removeAuthorizedClientGen2(CertificateMatchingRule client) {
         boolean matchFoundAndRemoved = false;
-        boolean legacyMatchFoundAndRemoved=false;
-        
+        boolean legacyMatchFoundAndRemoved = false;
+
         final HashSet<CertificateMatchingRule> authClients
                 = (HashSet<CertificateMatchingRule>) get(AUTHORIZED_CLIENTS_GEN2);
 
         if (authClients != null) {
-            for (final CertificateMatchingRule authClient : authClients) {
-                if (authClient.equals(client)) {
-                    matchFoundAndRemoved = authClients.remove(authClient);
-                    break;
-                }
-            }
-        }        
-        
+            matchFoundAndRemoved = authClients.remove(client);
+        }
+
         // Check also if this is legacy rule and remove it from legacy structure
         if (client.getMatchSubjectWithType() == MatchSubjectWithType.CERTIFICATE_SERIALNO && client.getMatchIssuerWithType() == MatchIssuerWithType.ISSUER_DN_BCSTYLE) {
             AuthorizedClient legacyClient = new AuthorizedClient(client.getMatchSubjectWithValue(), client.getMatchIssuerWithValue());
             legacyMatchFoundAndRemoved = removeAuthorizedClient(legacyClient);
         }
-        
-        matchFoundAndRemoved = matchFoundAndRemoved || legacyMatchFoundAndRemoved;
-        return matchFoundAndRemoved;
+
+        return matchFoundAndRemoved || legacyMatchFoundAndRemoved;
     }
     
     /**
@@ -545,9 +539,9 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     
     /**
      *
-     * Gets a collection of authorized client certificates
+     * Gets a collection of matching rules for authorized client certificates.
      *
-     * @return a Collection of String containing the certificate serial number.
+     * @return a Collection of matching rules for authorized client certificates.
      */
     @SuppressWarnings("unchecked")
     public Collection<CertificateMatchingRule> getAuthorizedClientsGen2() {

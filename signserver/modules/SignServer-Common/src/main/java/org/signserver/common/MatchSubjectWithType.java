@@ -12,6 +12,8 @@
  *************************************************************************/
 package org.signserver.common;
 
+import java.math.BigInteger;
+
 /**
  * Class representing all allowed Subject types for trusted client certs.
  *
@@ -19,7 +21,22 @@ package org.signserver.common;
  * @version $Id$
  */
 public enum MatchSubjectWithType {
+
+    /**
+     * Serial number of the certificate.
+     *
+     * Encoding should be as output from BigInteger.toString(16).
+     * @see BigInteger#toString(int)
+     */
     CERTIFICATE_SERIALNO,
+
+    /**
+     * Common Name (CN) RDN in textual representation from Subject DN.
+     */
     SUBJECT_RDN_CN,
+
+    /**
+     * Serial number (serialNumber/SN) RDN in textual representation from Subject DN.
+     */
     SUBJECT_RDN_SERIALNO;
 }

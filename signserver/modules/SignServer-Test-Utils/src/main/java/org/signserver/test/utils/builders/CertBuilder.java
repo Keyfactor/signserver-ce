@@ -125,6 +125,13 @@ public class CertBuilder implements Cloneable {
         return subjectPublicKey;
     }
 
+    public KeyPair getSubjectKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException {
+        if (_subjectKeyPair == null) {
+            _subjectKeyPair = CryptoUtils.generateRSA(1024);
+        }
+        return _subjectKeyPair;
+    }
+
     public CertBuilder setSubjectPublicKey(PublicKey subjectPublicKey) {
         this.subjectPublicKey = subjectPublicKey;
         return this;

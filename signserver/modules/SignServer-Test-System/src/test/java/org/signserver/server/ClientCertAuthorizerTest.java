@@ -344,6 +344,11 @@ public class ClientCertAuthorizerTest {
         }
     }
     
+    /**
+     * Test authorization with RDN SERIALNUMBER.
+     * 
+     * @throws Exception 
+     */
     @Test
     public void testWithSubjectDNSerialNumber() throws Exception {
         try {
@@ -379,13 +384,7 @@ public class ClientCertAuthorizerTest {
             clientKs.setCertificateEntry("Admin Three", clientCert);
             clientKs.setKeyEntry("Admin Three", clientPrivKey, "foo123".toCharArray(), chain);
             clientKs.store(new FileOutputStream(tmpFile), "foo123".toCharArray());
-            
-            Enumeration<String> aliases = clientKs.aliases();
-            
-            while (aliases.hasMoreElements()) {
-                System.out.println("alias: " + aliases.nextElement());
-            }
-            
+
             test.addCMSSigner1();
             test.getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE",
                                                       "org.signserver.server.ClientCertAuthorizer");
@@ -440,7 +439,5 @@ public class ClientCertAuthorizerTest {
         builder.setSubject(subject);
         
         return builder;
-        
-        //return new JcaX509CertificateConverter().getCertificate(builder.build());
     }
 }

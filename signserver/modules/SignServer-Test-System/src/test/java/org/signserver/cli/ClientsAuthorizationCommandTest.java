@@ -13,7 +13,9 @@
 package org.signserver.cli;
 
 import org.apache.log4j.Logger;
+import org.cesecore.util.CertTools;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.signserver.testutils.CLITestHelper;
 import static org.signserver.testutils.CLITestHelper.assertNotPrinted;
@@ -233,6 +235,91 @@ public class ClientsAuthorizationCommandTest {
                     "-list"));
             assertPrinted("prints rule 1", cli.getOut(), "  SUBJECT_RDN_CN: Client Two | ISSUER_DN_BCSTYLE: CN=ManagementCA1, C=SE | Description: My description");
             assertPrinted("prints rule 2", cli.getOut(), "  CERTIFICATE_SERIALNO: 123456 | ISSUER_DN_BCSTYLE: CN=ManagementCA2, OU=Testing, C=SE | Description: Other description");
+        } finally {
+            test.removeWorker(test.getSignerIdCMSSigner1());
+        }
+    }
+    
+    
+    /**
+     * Tests upgrading of rules from the legacy rules by first adding some old
+     * rules, then testing listing and removing.
+     * @throws Exception 
+     */
+    @Test
+    public void testUpgradeListAndRemove() throws Exception {
+        LOG.info("testUpgradeListAndRemove");
+        try {
+            test.addCMSSigner1();
+            
+            // Add legacy rule 1
+            assertEquals("execute legacy add 1", 0, cli.execute("addauthorizedclient", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "00123Ab", "CN=ManagementCA1, C=SE"));
+            
+            // Add legacy rule 2
+            assertEquals("execute legacy add 2", 0, cli.execute("addauthorizedclient", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "789abcdef", "CN=foo2,O=Organization 2\\, inc.,C=SE"));
+            
+            // List
+            assertEquals("execute list", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-list"));
+            assertPrinted("prints rule with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
+            assertPrinted("prints rule with 789abcdef", cli.getOut(), "789abcdef");
+            assertPrinted("prints rule with 123ab", cli.getOut(), "123ab");
+            assertPrinted("prints rule with CN=ManagementCA1, C=SE", cli.getOut(), CertTools.stringToBCDNString("CN=ManagementCA1, C=SE"));
+            assertTrue("prints rule with CN=foo2,O=Organization 2\\, inc.,C=SE", cli.getOut().toString().contains("CN=foo2,O=Organization 2\\, inc.,C=SE"));
+            
+            // Add one more but of new type
+            assertEquals("execute new add 1", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-add", 
+                    "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
+                    "-matchSubjectWithValue", "123456",
+                    "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
+                    "-matchIssuerWithValue", "CN=ManagementCA2, OU=Testing, C=SE",
+                    "-description", "Other description"));
+            assertPrinted("prints new rule with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
+            assertPrinted("prints new rule with 123456", cli.getOut(), "123456");
+            assertPrinted("prints new rule with CN=ManagementCA2, OU=Testing, C=SE", cli.getOut(), "CN=ManagementCA2, OU=Testing, C=SE");
+            assertPrinted("prints new rule with Other description", cli.getOut(), "Other description");
+            
+            // List all entries
+            assertEquals("execute list 2", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-list"));
+            assertPrinted("prints rule with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
+            assertPrinted("prints rule with 789abcdef", cli.getOut(), "789abcdef");
+            assertPrinted("prints rule with 123ab", cli.getOut(), "123ab");
+            assertPrinted("prints rule with CN=ManagementCA1,C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
+            assertTrue("prints rule with CN=foo2,O=Organization 2\\, inc.,C=SE", cli.getOut().toString().contains("CN=foo2,O=Organization 2\\, inc.,C=SE"));
+            
+            assertPrinted("prints new rule 1 with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
+            assertPrinted("prints new rule 1 with 123456", cli.getOut(), "123456");
+            assertPrinted("prints new rule 1 with CN=ManagementCA2, OU=Testing, C=SE", cli.getOut(), "CN=ManagementCA2, OU=Testing, C=SE");
+            assertPrinted("prints new rule 1 with Other description", cli.getOut(), "Other description");
+            
+            // Remove first legacy entry
+            assertEquals("execute remove", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-remove", 
+                    "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
+                    "-matchSubjectWithValue", "123ab",
+                    "-matchIssuerWithValue", "CN=ManagementCA1,C=SE",
+                    "-description", "My description")); // TODO: Currently the description field has to be provided. Should it be like that?
+            assertPrinted("prints removed rule with SUBJECT_RDN_CN", cli.getOut(), "CERTIFICATE_SERIALNO");
+            assertPrinted("prints removed rule with Client Two", cli.getOut(), "123ab");
+            assertPrinted("prints removed rule with CN=ManagementCA1,C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
+            
+            // List second entry only now
+            assertEquals("execute list 3", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-list"));
+            assertPrinted("prints rule with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
+            assertPrinted("prints rule with 789abcdef", cli.getOut(), "789abcdef");
+            assertNotPrinted("prints rule with 123ab", cli.getOut(), "123ab");
+            assertNotPrinted("prints rule with CN=ManagementCA1,C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
+            assertTrue("prints rule with CN=foo2,O=Organization 2\\, inc.,C=SE", cli.getOut().toString().contains("CN=foo2,O=Organization 2\\, inc.,C=SE"));
+            
+            assertPrinted("prints new rule 1 with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
+            assertPrinted("prints new rule 1 with 123456", cli.getOut(), "123456");
+            assertPrinted("prints new rule 1 with CN=ManagementCA2, OU=Testing, C=SE", cli.getOut(), "CN=ManagementCA2, OU=Testing, C=SE");
+            assertPrinted("prints new rule 1 with Other description", cli.getOut(), "Other description");
         } finally {
             test.removeWorker(test.getSignerIdCMSSigner1());
         }

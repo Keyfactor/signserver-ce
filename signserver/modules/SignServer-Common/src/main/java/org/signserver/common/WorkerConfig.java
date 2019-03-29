@@ -497,6 +497,8 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     @SuppressWarnings("unchecked")
     public boolean removeAuthorizedClientGen2(CertificateMatchingRule client) {
         boolean matchFoundAndRemoved = false;
+        boolean legacyMatchFoundAndRemoved=false;
+        
         final HashSet<CertificateMatchingRule> authClients
                 = (HashSet<CertificateMatchingRule>) get(AUTHORIZED_CLIENTS_GEN2);
 
@@ -507,14 +509,16 @@ public class WorkerConfig extends UpgradeableDataHashMap {
                     break;
                 }
             }
-        }
-
-        if (!matchFoundAndRemoved) { // Check if this is legacy rule and remove it from legacy structure
+        }        
+        
+        // Check also if this is legacy rule and remove it from legacy structure
+        if (client.getMatchSubjectWithType() == MatchSubjectWithType.CERTIFICATE_SERIALNO && client.getMatchIssuerWithType() == MatchIssuerWithType.ISSUER_DN_BCSTYLE) {
             AuthorizedClient legacyClient = new AuthorizedClient(client.getMatchSubjectWithValue(), client.getMatchIssuerWithValue());
-            return removeAuthorizedClient(legacyClient);
-        } else {
-            return matchFoundAndRemoved;  // or True
+            legacyMatchFoundAndRemoved = removeAuthorizedClient(legacyClient);
         }
+        
+        matchFoundAndRemoved = matchFoundAndRemoved || legacyMatchFoundAndRemoved;
+        return matchFoundAndRemoved;
     }
     
     /**

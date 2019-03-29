@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -562,8 +563,10 @@ public class WorkerConfig extends UpgradeableDataHashMap {
         // Also check for legacy rules and convert them into new rule structure
         Collection<AuthorizedClient> legacy_rules = getAuthorizedClients();
         if (legacy_rules != null && !legacy_rules.isEmpty()) {
-            legacy_rules.stream().map((legacy_rule) -> new CertificateMatchingRule(MatchSubjectWithType.CERTIFICATE_SERIALNO, MatchIssuerWithType.ISSUER_DN_BCSTYLE, legacy_rule.getCertSN(), legacy_rule.getIssuerDN(), "Legacy rule")).forEachOrdered((matchingRule) -> {
-                legacyRulesInNewFormat.add(matchingRule);
+            legacy_rules.forEach((legacyRule) -> {
+                final BigInteger sn = new BigInteger(legacyRule.getCertSN(), 16);
+                String matchSubjectwithValueToBeUsed = sn.toString(16);
+                legacyRulesInNewFormat.add(new CertificateMatchingRule(MatchSubjectWithType.CERTIFICATE_SERIALNO, MatchIssuerWithType.ISSUER_DN_BCSTYLE, matchSubjectwithValueToBeUsed, legacyRule.getIssuerDN(), "Legacy rule"));
             });
         }
 

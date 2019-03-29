@@ -13,6 +13,7 @@
 package org.signserver.common;
 
 /**
+ * Class representing all allowed Subject types for trusted client certs.
  *
  * @author Vinay Singh
  * @version $Id$

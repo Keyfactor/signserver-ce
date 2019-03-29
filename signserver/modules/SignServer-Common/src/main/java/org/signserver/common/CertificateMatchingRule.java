@@ -16,6 +16,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
+ * Class representing an authorized client containing the Subject type, Subject
+ * value, Issuer Type and Issue Value of trusted client certs.
  *
  * @author Vinay Singh
  * @version $Id$

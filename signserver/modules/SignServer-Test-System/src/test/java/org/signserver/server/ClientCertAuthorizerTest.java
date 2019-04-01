@@ -305,7 +305,7 @@ public class ClientCertAuthorizerTest {
     }
     
     /**
-     * Test authorization with a subject serial number rule.
+     * Test authorization with a subject RDN common name.
      * 
      * @throws Exception 
      */
@@ -358,6 +358,7 @@ public class ClientCertAuthorizerTest {
      */
     @Test
     public void testWithSubjectDNSerialNumber() throws Exception {
+        LOG.info("testWithSubjectDNSerialNumber");
         try {
             final int signerId = test.getSignerIdCMSSigner1();
             final String dss10Path = test.getSignServerHome().getAbsolutePath() +

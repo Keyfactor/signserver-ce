@@ -19,6 +19,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 /**
+ * Class representing admin or client authorization.
  *
  * @author Vinay Singh
  * @version $Id$

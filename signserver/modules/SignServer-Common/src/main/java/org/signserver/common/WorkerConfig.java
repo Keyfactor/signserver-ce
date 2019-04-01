@@ -561,9 +561,9 @@ public class WorkerConfig extends UpgradeableDataHashMap {
         Collections.sort(matchingRules);
 
         // Also check for legacy rules and convert them into new rule structure
-        Collection<AuthorizedClient> legacy_rules = getAuthorizedClients();
-        if (legacy_rules != null && !legacy_rules.isEmpty()) {
-            legacy_rules.forEach((legacyRule) -> {
+        Collection<AuthorizedClient> legacyRules = getAuthorizedClients();
+        if (legacyRules != null && !legacyRules.isEmpty()) {
+            legacyRules.forEach((legacyRule) -> {
                 final BigInteger sn = new BigInteger(legacyRule.getCertSN(), 16);
                 String matchSubjectwithValueToBeUsed = sn.toString(16);
                 legacyRulesInNewFormat.add(new CertificateMatchingRule(MatchSubjectWithType.CERTIFICATE_SERIALNO, MatchIssuerWithType.ISSUER_DN_BCSTYLE, matchSubjectwithValueToBeUsed, legacyRule.getIssuerDN(), "Legacy rule"));

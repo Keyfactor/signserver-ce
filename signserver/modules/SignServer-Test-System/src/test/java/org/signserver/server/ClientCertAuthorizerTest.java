@@ -424,8 +424,96 @@ public class ClientCertAuthorizerTest {
         }
         
     }
-        
     
+    /**
+     * Test upgrade of authorization with a subject serial number rule. Specifying SN
+     * with hex upper-case digits.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testSerialNumberUppercase_upgrade() throws Exception {
+        LOG.info("testSerialNumberUppercase_upgrade");
+        try {
+            final int signerId = test.getSignerIdCMSSigner1();
+            final String dss10Path = test.getSignServerHome().getAbsolutePath() +
+                                           File.separator + "res" +
+                                           File.separator + "test" +
+                                           File.separator + "dss10";
+            
+            test.addCMSSigner1();
+            test.getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE",
+                                                      "org.signserver.server.ClientCertAuthorizer");
+            test.getWorkerSession().reloadConfiguration(signerId);
+            
+            // Add using legacy command
+            assertEquals("execute add", 0,
+                    cli.execute("addauthorizedclient", String.valueOf(signerId),
+                    SUBJECT_SERIALNUMBER_UPPERCASE, ISSUER_DN));
+            test.getWorkerSession().reloadConfiguration(signerId);
+            
+            // Test signing
+            assertEquals("execute signdocument", 0,
+                    client.execute("signdocument", "-workerid", String.valueOf(signerId),
+                                   "-data", "foo", "-protocol", "CLIENTWS",
+                                   "-host", "localhost",
+                                   "-port", "8443",
+                                   "-keystore",
+                                   dss10Path + File.separator + "dss10_admin1.p12",
+                                   "-keystorepwd", "foo123",
+                                   "-truststore",
+                                   dss10Path + File.separator + "dss10_truststore.jks",
+                                   "-truststorepwd", "changeit"));
+                                           
+        } finally {
+            test.removeWorker(test.getSignerIdCMSSigner1());
+        }
+    }
+    
+    /**
+     * Test upgrade of authorization with a subject serial number rule with a non-matching
+     * SN.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testSerialNumberNotMatching_upgrade() throws Exception {
+        LOG.info("testSerialNumberNotMatching_upgrade");
+        try {
+            final int signerId = test.getSignerIdCMSSigner1();
+            final String dss10Path = test.getSignServerHome().getAbsolutePath() +
+                                           File.separator + "res" +
+                                           File.separator + "test" +
+                                           File.separator + "dss10";
+            
+            test.addCMSSigner1();
+            test.getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE",
+                                                      "org.signserver.server.ClientCertAuthorizer");
+            test.getWorkerSession().reloadConfiguration(signerId);
+            
+            // Add legacy way
+            assertEquals("execute add", 0,
+                    cli.execute("addauthorizedclient", String.valueOf(signerId),
+                    SUBJECT_SERIALNUMBER_OTHER, ISSUER_DN));
+            test.getWorkerSession().reloadConfiguration(signerId);
+            
+            assertNotEquals("execute signdocument", 0,
+                    client.execute("signdocument", "-workerid", String.valueOf(signerId),
+                                   "-data", "foo", "-protocol", "CLIENTWS",
+                                   "-host", "localhost",
+                                   "-port", "8443",
+                                   "-keystore",
+                                   dss10Path + File.separator + "dss10_admin1.p12",
+                                   "-keystorepwd", "foo123",
+                                   "-truststore",
+                                   dss10Path + File.separator + "dss10_truststore.jks",
+                                   "-truststorepwd", "changeit"));
+                                           
+        } finally {
+            test.removeWorker(test.getSignerIdCMSSigner1());
+        }
+    }
+
     private static CertBuilder generateCertBuilderWithAdditionalDNComponent(
             final X509Certificate caCert,
             final PrivateKey caPrivKey,

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.1.0.Alpha1-SNAPSHOT</version>
+        <version>5.1.0.Alpha1</version>
     </parent>
     <artifactId>SignServer-Client-SigningAndValidationAPI</artifactId>
     <name>SignServer-Client-SigningAndValidationAPI</name>

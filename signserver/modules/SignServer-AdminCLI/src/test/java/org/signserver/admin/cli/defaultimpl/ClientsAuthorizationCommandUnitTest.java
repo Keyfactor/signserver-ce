@@ -187,7 +187,7 @@ public class ClientsAuthorizationCommandUnitTest {
             instance.execute("-worker", "SampleSigner", "-add", "-matchSubjectWithType", "_incorrectType_", "-matchSubjectWithValue", "Client One", "-matchIssuerWithValue", "CN=AdminCA1, C=SE", "-description", "my rule");
             fail("Expected IllegalCommandArgumentsException due to incorrect type");
         } catch (IllegalCommandArgumentsException expected) {
-            assertEquals("Unknown matchSubjectWithType value provided. Possible values are: [CERTIFICATE_SERIALNO, SUBJECT_RDN_CN, SUBJECT_RDN_SERIALNO]", expected.getMessage());
+            assertEquals("Unknown matchSubjectWithType value provided. Possible values are: [CERTIFICATE_SERIALNO, SUBJECT_RDN_CN, SUBJECT_RDN_SERIALNO, SUBJECT_RDN_DC, SUBJECT_RDN_ST, SUBJECT_RDN_L, SUBJECT_RDN_O, SUBJECT_RDN_OU, SUBJECT_RDN_TITLE, SUBJECT_RDN_UID, SUBJECT_RDN_E, SUBJECT_ALTNAME_RFC822NAME, SUBJECT_ALTNAME_MSUPN]", expected.getMessage());
         }
     }
     

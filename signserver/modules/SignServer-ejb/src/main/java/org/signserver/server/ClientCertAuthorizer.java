@@ -130,6 +130,36 @@ public class ClientCertAuthorizer implements IAuthorizer {
                     String serialNoInDN = getDNAttributeValueByProperty(SERIAL_NO_IN_DN, matchSubjectwithValue);
                     client = new AuthorizedClientEntry(serialNoInDN, clientIssuerDN, MatchSubjectWithType.SUBJECT_RDN_SERIALNO, matchIssuerWithType);
                     break;
+                case SUBJECT_RDN_DC:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_RDN_ST:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_RDN_L:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_RDN_O:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_RDN_OU:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_RDN_TITLE:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_RDN_UID:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_RDN_E:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_ALTNAME_RFC822NAME:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_ALTNAME_MSUPN:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
                 default: // It should not happen though
                     throw new AssertionError(matchSubjectWithType.name());
             }

@@ -20,8 +20,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
+import org.cesecore.certificates.util.DNFieldExtractor;
 import org.cesecore.util.CertTools;
 import org.signserver.common.AuthorizedClientEntry;
 import org.signserver.common.IllegalRequestException;
@@ -43,13 +45,12 @@ public class ClientCertAuthorizer implements IAuthorizer {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ClientCertAuthorizer.class);
+
+    private static final Pattern SERIAL_PATTERN = Pattern.compile("\\bSERIALNUMBER=", Pattern.CASE_INSENSITIVE);
     
     private int workerId;
 
     private Set<AuthorizedClientEntry> authorizedClients;
-    
-    private final String CN_IN_DN="CN";
-    private final String SERIAL_NO_IN_DN ="SN";
     
     /**
      * Initialize a ClientCertAuthorizer.
@@ -106,68 +107,89 @@ public class ClientCertAuthorizer implements IAuthorizer {
     private boolean authorizedToRequestSignature(final X509Certificate clientCert) {
         boolean ruleMatched = false;
         String matchSubjectwithValue;
-        AuthorizedClientEntry client = null;
+        AuthorizedClientEntry client;
 
         // Only one MatchIssuerType is supported now
         MatchIssuerWithType matchIssuerWithType = MatchIssuerWithType.ISSUER_DN_BCSTYLE;
         final String clientIssuerDN = CertTools.stringToBCDNString(clientCert.getIssuerX500Principal().getName());
-
+        
         for (final AuthorizedClientEntry authClient : authorizedClients) {
             MatchSubjectWithType matchSubjectWithType = authClient.getMatchSubjectWithType();
-            switch (matchSubjectWithType) {
-                case CERTIFICATE_SERIALNO:
-                    final BigInteger sn = clientCert.getSerialNumber();
-                    matchSubjectwithValue = sn.toString(16);
-                    client = new AuthorizedClientEntry(matchSubjectwithValue, clientIssuerDN, MatchSubjectWithType.CERTIFICATE_SERIALNO, matchIssuerWithType);
-                    break;
-                case SUBJECT_RDN_CN:
-                    matchSubjectwithValue = CertTools.stringToBCDNString(clientCert.getSubjectX500Principal().getName());
-                    String cn = getDNAttributeValueByProperty(CN_IN_DN, matchSubjectwithValue);
-                    client = new AuthorizedClientEntry(cn, clientIssuerDN, MatchSubjectWithType.SUBJECT_RDN_CN, matchIssuerWithType);
-                    break;
-                case SUBJECT_RDN_SERIALNO:
-                    matchSubjectwithValue = CertTools.stringToBCDNString(clientCert.getSubjectX500Principal().getName());
-                    String serialNoInDN = getDNAttributeValueByProperty(SERIAL_NO_IN_DN, matchSubjectwithValue);
-                    client = new AuthorizedClientEntry(serialNoInDN, clientIssuerDN, MatchSubjectWithType.SUBJECT_RDN_SERIALNO, matchIssuerWithType);
-                    break;
-                case SUBJECT_RDN_DC:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-                case SUBJECT_RDN_ST:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-                case SUBJECT_RDN_L:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-                case SUBJECT_RDN_O:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-                case SUBJECT_RDN_OU:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-                case SUBJECT_RDN_TITLE:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-                case SUBJECT_RDN_UID:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-                case SUBJECT_RDN_E:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-                case SUBJECT_ALTNAME_RFC822NAME:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-                case SUBJECT_ALTNAME_MSUPN:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-                default: // It should not happen though
-                    throw new AssertionError(matchSubjectWithType.name());
-            }
-            if (client != null && authorizedClients.contains(client)) {
-                ruleMatched = true;
-                break;
-            }
 
+            if (matchSubjectWithType == MatchSubjectWithType.CERTIFICATE_SERIALNO) {
+                final BigInteger sn = clientCert.getSerialNumber();
+                matchSubjectwithValue = sn.toString(16);
+                client = new AuthorizedClientEntry(matchSubjectwithValue, clientIssuerDN, MatchSubjectWithType.CERTIFICATE_SERIALNO, matchIssuerWithType);
+                
+                if (authorizedClients.contains(client)) {
+                    ruleMatched = true;
+                    break;
+                }
+            } else {
+                // See X509CertificateAuthenticationToken in EJBCA/CESeCore
+                String certstring = CertTools.getSubjectDN(clientCert);
+                certstring = SERIAL_PATTERN.matcher(certstring).replaceAll("SN=");
+                final String altNameString = CertTools.getSubjectAlternativeName(clientCert);
+                DNFieldExtractor dnExtractor = new DNFieldExtractor(certstring, DNFieldExtractor.TYPE_SUBJECTDN);
+                DNFieldExtractor anExtractor = new DNFieldExtractor(altNameString, DNFieldExtractor.TYPE_SUBJECTALTNAME);
+                int parameter = DNFieldExtractor.CN;
+                DNFieldExtractor usedExtractor = dnExtractor;
+                
+                switch (matchSubjectWithType) {
+                    case SUBJECT_RDN_CN:
+                        parameter = DNFieldExtractor.CN;
+                        break;
+                    case SUBJECT_RDN_SERIALNO:
+                        parameter = DNFieldExtractor.SN;
+                        break;
+                    case SUBJECT_RDN_DC:
+                        // TODO: Implement
+                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    case SUBJECT_RDN_ST:
+                        // TODO: Implement
+                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    case SUBJECT_RDN_L:
+                        // TODO: Implement
+                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    case SUBJECT_RDN_O:
+                        // TODO: Implement
+                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    case SUBJECT_RDN_OU:
+                        // TODO: Implement
+                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    case SUBJECT_RDN_TITLE:
+                        // TODO: Implement
+                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    case SUBJECT_RDN_UID:
+                        // TODO: Implement
+                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    case SUBJECT_RDN_E:
+                        // TODO: Implement
+                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    case SUBJECT_ALTNAME_RFC822NAME:
+                        usedExtractor = anExtractor;
+                        // TODO: Implement
+                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    case SUBJECT_ALTNAME_MSUPN:
+                        usedExtractor = anExtractor;
+                        // TODO: Implement
+                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    default: // It should not happen though
+                        throw new AssertionError(matchSubjectWithType.name());
+                }
+                
+                int size = usedExtractor.getNumberOfFields(parameter);
+                AuthorizedClientEntry[] clientstrings = new AuthorizedClientEntry[size];
+                for (int i = 0; i < size; i++) {
+                    String value = usedExtractor.getField(parameter, i);
+                    clientstrings[i] = new AuthorizedClientEntry(value, clientIssuerDN, matchSubjectWithType, matchIssuerWithType);
+                    
+                    if (authorizedClients.contains(clientstrings[i])) {
+                        ruleMatched = true;
+                        break;
+                    }
+                }
+            }
         }
 
         return ruleMatched;

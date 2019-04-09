@@ -14,19 +14,25 @@ package org.signserver.admin.cli.defaultimpl;
 
 import java.math.BigInteger;
 import java.rmi.RemoteException;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.regex.Pattern;
+import javax.security.auth.x500.X500Principal;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
+import org.cesecore.certificates.util.DNFieldExtractor;
+import org.cesecore.util.CertTools;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.MatchIssuerWithType;
 import org.signserver.common.MatchSubjectWithType;
+import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesConstants;
 
@@ -51,9 +57,12 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
     public static final String MATCH_ISSUER_WITH_TYPE = "matchIssuerWithType";
     public static final String MATCH_ISSUER_WITH_VALUE = "matchIssuerWithValue";
     public static final String DESCRIPTION = "description";
+    public static final String CERT = "cert";
 
     /** The command line options. */
     private static final Options OPTIONS;
+    
+    private static final Pattern SERIAL_PATTERN = Pattern.compile("\\bSERIALNUMBER=", Pattern.CASE_INSENSITIVE);
 
     static {
         OPTIONS = new Options();
@@ -67,6 +76,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
         OPTIONS.addOption(MATCH_ISSUER_WITH_TYPE, true, "Match issuer with type. One of " + Arrays.toString(MatchIssuerWithType.values()) + ".");
         OPTIONS.addOption(MATCH_ISSUER_WITH_VALUE, true, "Match issuer with value");
         OPTIONS.addOption(DESCRIPTION, true, "An optional description text");
+        OPTIONS.addOption(CERT, true, "Certificate providing match values");
     }
 
     private String operation;
@@ -76,6 +86,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
     private MatchIssuerWithType matchIssuerWithType = MatchIssuerWithType.ISSUER_DN_BCSTYLE;
     private String matchIssuerWithValue;
     private String description;
+    private X509Certificate cert;
 
     @Override
     public String getDescription() {
@@ -87,7 +98,8 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
         return "Usage: signserver authorizedclients -worker <worker name or ID> <-add/-remove/list> -matchSubjectWithType <SUBJECT_MATCH_TYPE> -matchSubjectWithValue <value> [-matchIssuerWithType <ISSUER_MATCH_TYPE>] -matchIssuerWithValue <issuer DN> [-description <textual description>]\n"
                     + "Example 1: authorizedclients -worker CMSSigner -list\n"
                     + "Example 2: authorizedclients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithValue \"CN=AdminCA1, C=SE\"\n"
-                    + "Example 3: authorizedclients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithType ISSUER_DN_BCSTYLE -matchIssuerWithValue \"CN=AdminCA1, C=SE\" -description \"my rule\"\n\n";
+                    + "Example 3: authorizedclients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithType ISSUER_DN_BCSTYLE -matchIssuerWithValue \"CN=AdminCA1, C=SE\" -description \"my rule\"\n\n"
+                    + "Example 4: authorizedclients -worker CMSSigner -add -matchSubjectWithType SUBJECT_SERIALNO -matchIssuerWithType ISSUER_DN_LDAPSTYLE -cert /tmp/admin.pem";
     }
 
     /**
@@ -144,6 +156,14 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
         matchSubjectWithValue = line.getOptionValue(MATCH_SUBJECT_WITH_VALUE, null);
         matchIssuerWithValue = line.getOptionValue(MATCH_ISSUER_WITH_VALUE, null);
         description = line.getOptionValue(DESCRIPTION, null);
+        
+        final String certString = line.getOptionValue(CERT, null);
+
+        if (certString != null) {
+            cert = SignServerUtil.getCertFromFile(certString);
+        } else {
+            cert = null;
+        }
     }
 
     /**
@@ -160,11 +180,14 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
                 if (matchSubjectWithType == null) {
                     throw new IllegalCommandArgumentsException("Missing -matchSubjectWithType");
                 }
-                if (matchSubjectWithValue == null) {
-                    throw new IllegalCommandArgumentsException("Missing -matchSubjectWithValue");
+                if (cert != null &&
+                    (matchSubjectWithValue != null || matchIssuerWithValue != null)) {
+                    throw new IllegalCommandArgumentsException("Can not specify -cert at the same time as -matchSubjectWithValue and/or -matchIssuerWithValue");
                 }
-                if (matchIssuerWithValue == null) {
-                    throw new IllegalCommandArgumentsException("Missing -matchIssuerWithValue");
+                if (cert == null) {
+                    if (matchSubjectWithValue == null || matchIssuerWithValue == null) {
+                        throw new IllegalCommandArgumentsException("Must specify -matchSubjectWithValue and -matchIssuerWithValue when not spcifying -cert");
+                    }
                 }
             }
         }
@@ -204,29 +227,14 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
                     break;
                 }
                 case ADD: {
-                    if (matchSubjectWithType == MatchSubjectWithType.CERTIFICATE_SERIALNO) {
-                        // normalize serial number
-                        try {
-                            final BigInteger sn =
-                                    new BigInteger(matchSubjectWithValue, 16);
-                            matchSubjectWithValue = sn.toString(16);
-                        } catch (NumberFormatException e) {
-                            throw new IllegalArgumentException("Illegal serial number: " + matchSubjectWithValue);
-                        }
-                    }
-                    CertificateMatchingRule rule =
-                            new CertificateMatchingRule(matchSubjectWithType,
-                                                        matchIssuerWithType,
-                                                        matchSubjectWithValue,
-                                                        matchIssuerWithValue,
-                                                        description);
+                    final CertificateMatchingRule rule = getRuleFromParams();
                     getWorkerSession().addAuthorizedClientGen2(workerId, rule);
                     this.getOutputStream().println();
                     printAuthorizedClientsGen2(Arrays.asList(rule));
                     break;
                 }
                 case REMOVE: {
-                    CertificateMatchingRule rule = new CertificateMatchingRule(matchSubjectWithType, matchIssuerWithType, matchSubjectWithValue, matchIssuerWithValue, description);
+                    final CertificateMatchingRule rule = getRuleFromParams();
                     this.getOutputStream().println();
                     printAuthorizedClientsGen2(Arrays.asList(rule));
                     if (getWorkerSession().removeAuthorizedClientGen2(workerId, rule)) {
@@ -247,7 +255,105 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
             throw new UnexpectedCommandFailureException(e);
         }
     }
+    
+    private CertificateMatchingRule getRuleFromParams()
+            throws CommandFailureException {
+        String subjectValue =
+                cert == null ? matchSubjectWithValue : getSubjectValueFromCert();
+        final String issuerValue =
+                cert == null ? matchIssuerWithValue : getIssuerValueFromCert();
 
+        if (matchSubjectWithType == MatchSubjectWithType.CERTIFICATE_SERIALNO) {
+            // normalize serial number
+            try {
+                final BigInteger sn =
+                        new BigInteger(subjectValue, 16);
+                subjectValue = sn.toString(16);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Illegal serial number: " + matchSubjectWithValue);
+            }
+        }
+        CertificateMatchingRule rule =
+                new CertificateMatchingRule(matchSubjectWithType,
+                                            matchIssuerWithType,
+                                            subjectValue,
+                                            issuerValue,
+                                            description);
+
+        return rule;
+    }
+    
+    private String getSubjectValueFromCert() throws CommandFailureException {
+        String certstring = CertTools.getSubjectDN(cert);
+        certstring = SERIAL_PATTERN.matcher(certstring).replaceAll("SN=");
+        final String altNameString = CertTools.getSubjectAlternativeName(cert);
+        final DNFieldExtractor dnExtractor = new DNFieldExtractor(certstring, DNFieldExtractor.TYPE_SUBJECTDN);
+        final DNFieldExtractor anExtractor = new DNFieldExtractor(altNameString, DNFieldExtractor.TYPE_SUBJECTALTNAME);
+        int parameter = DNFieldExtractor.CN;
+        DNFieldExtractor usedExtractor = dnExtractor;
+
+        switch (matchSubjectWithType) {
+            case SUBJECT_RDN_CN:
+                parameter = DNFieldExtractor.CN;
+                break;
+            case SUBJECT_RDN_SERIALNO:
+                parameter = DNFieldExtractor.SN;
+                break;
+            case SUBJECT_RDN_DC:
+                // TODO: Implement
+                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+            case SUBJECT_RDN_ST:
+                // TODO: Implement
+                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+            case SUBJECT_RDN_L:
+                // TODO: Implement
+                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+            case SUBJECT_RDN_O:
+                // TODO: Implement
+                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+            case SUBJECT_RDN_OU:
+                // TODO: Implement
+                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+            case SUBJECT_RDN_TITLE:
+                // TODO: Implement
+                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+            case SUBJECT_RDN_UID:
+                // TODO: Implement
+                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+            case SUBJECT_RDN_E:
+                // TODO: Implement
+                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+            case SUBJECT_ALTNAME_RFC822NAME:
+                usedExtractor = anExtractor;
+                // TODO: Implement
+                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+            case SUBJECT_ALTNAME_MSUPN:
+                usedExtractor = anExtractor;
+                // TODO: Implement
+                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+            default: // It should not happen though
+                throw new AssertionError(matchSubjectWithType.name());
+        }
+        
+        final int size = usedExtractor.getNumberOfFields(parameter);
+        final String matchSubjectName = matchSubjectWithType.name();
+        
+        if (size == 0) {
+            throw new CommandFailureException("DN field " + matchSubjectName +
+                                              " not found in subject DN of certificate");
+        } else if (size > 1) {
+            LOG.warn("More than one component matching " + matchSubjectName +
+                     ", picking the first one");
+        }
+
+        return usedExtractor.getField(parameter, 0);
+    }
+
+    private String getIssuerValueFromCert() {
+        // Only one MatchIssuerType is supported now
+        return CertTools.stringToBCDNString(cert.getIssuerX500Principal().getName());
+    }
+    
     /**
      * Prints the list of authorized clients to the output stream.
      * @param authClients Clients to print

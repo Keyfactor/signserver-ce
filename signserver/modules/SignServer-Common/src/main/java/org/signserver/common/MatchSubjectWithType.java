@@ -41,6 +41,11 @@ public enum MatchSubjectWithType {
     SUBJECT_RDN_SERIALNO,
 
     /**
+     * Country (C) RDN in textual representation from Subject DN.
+     */
+    SUBJECT_RDN_C,
+
+    /**
      * Domain Component (DC) RDN in textual representation from Subject DN.
      */
     SUBJECT_RDN_DC,

@@ -130,52 +130,57 @@ public class ClientCertAuthorizer implements IAuthorizer {
                 String certstring = CertTools.getSubjectDN(clientCert);
                 certstring = SERIAL_PATTERN.matcher(certstring).replaceAll("SN=");
                 final String altNameString = CertTools.getSubjectAlternativeName(clientCert);
-                DNFieldExtractor dnExtractor = new DNFieldExtractor(certstring, DNFieldExtractor.TYPE_SUBJECTDN);
-                DNFieldExtractor anExtractor = new DNFieldExtractor(altNameString, DNFieldExtractor.TYPE_SUBJECTALTNAME);
-                int parameter = DNFieldExtractor.CN;
+                final DNFieldExtractor dnExtractor = new DNFieldExtractor(certstring, DNFieldExtractor.TYPE_SUBJECTDN);
+                final DNFieldExtractor anExtractor = new DNFieldExtractor(altNameString, DNFieldExtractor.TYPE_SUBJECTALTNAME);
+                final int parameter;
                 DNFieldExtractor usedExtractor = dnExtractor;
                 
                 switch (matchSubjectWithType) {
-                    case SUBJECT_RDN_CN:
-                        parameter = DNFieldExtractor.CN;
+                    case SUBJECT_RDN_C:
+                        parameter = DNFieldExtractor.C;
+                        break;
+                    case SUBJECT_RDN_DC:
+                        parameter = DNFieldExtractor.DC;
+                        break;
+                    case SUBJECT_RDN_ST:
+                        parameter = DNFieldExtractor.ST;
+                        break;
+                    case SUBJECT_RDN_L:
+                        parameter = DNFieldExtractor.L;
+                        break;
+                    case SUBJECT_RDN_O:
+                        parameter = DNFieldExtractor.O;
+                        break;
+                    case SUBJECT_RDN_OU:
+                        parameter = DNFieldExtractor.OU;
+                        break;
+                    case SUBJECT_RDN_TITLE:
+                        parameter = DNFieldExtractor.T;
                         break;
                     case SUBJECT_RDN_SERIALNO:
                         parameter = DNFieldExtractor.SN;
                         break;
-                    case SUBJECT_RDN_DC:
-                        // TODO: Implement
-                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-                    case SUBJECT_RDN_ST:
-                        // TODO: Implement
-                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-                    case SUBJECT_RDN_L:
-                        // TODO: Implement
-                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-                    case SUBJECT_RDN_O:
-                        // TODO: Implement
-                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-                    case SUBJECT_RDN_OU:
-                        // TODO: Implement
-                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-                    case SUBJECT_RDN_TITLE:
-                        // TODO: Implement
-                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    case SUBJECT_RDN_CN:
+                        parameter = DNFieldExtractor.CN;
+                        break;
                     case SUBJECT_RDN_UID:
-                        // TODO: Implement
-                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                        parameter = DNFieldExtractor.UID;
+                        break;
                     case SUBJECT_RDN_E:
-                        // TODO: Implement
-                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                        parameter = DNFieldExtractor.E;
+                        break;
                     case SUBJECT_ALTNAME_RFC822NAME:
+                        parameter = DNFieldExtractor.RFC822NAME;
                         usedExtractor = anExtractor;
-                        // TODO: Implement
-                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                        break;
                     case SUBJECT_ALTNAME_MSUPN:
+                        parameter = DNFieldExtractor.UPN;
                         usedExtractor = anExtractor;
-                        // TODO: Implement
-                        throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-                    default: // It should not happen though
-                        throw new AssertionError(matchSubjectWithType.name());
+                        break;
+                    default:
+                        // Do not match on supported match types
+                        LOG.warn("Unsupported " + MatchSubjectWithType.class.getSimpleName() + " : " + matchSubjectWithType);
+                        continue;
                 }
                 
                 int size = usedExtractor.getNumberOfFields(parameter);

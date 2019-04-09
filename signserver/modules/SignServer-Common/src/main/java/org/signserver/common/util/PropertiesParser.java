@@ -14,8 +14,12 @@ package org.signserver.common.util;
 
 import org.bouncycastle.util.encoders.Base64;
 import java.util.*;
+import org.apache.commons.lang.StringUtils;
 import org.signserver.common.AuthorizedClient;
+import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.MatchIssuerWithType;
+import org.signserver.common.MatchSubjectWithType;
 import org.signserver.common.WorkerConfig;
 import static org.signserver.common.util.PropertiesConstants.*;
 
@@ -144,8 +148,13 @@ public class PropertiesParser {
     private final Map<String, List<AuthorizedClient>> addAuthorizedClients = new HashMap<>();
     private final Map<String, List<AuthorizedClient>> removeAuthorizedClients = new HashMap<>();
     
+    private final Map<String, List<CertificateMatchingRule>> addAuthorizedClientsGen2 = new HashMap<>();
+    private final Map<String, List<CertificateMatchingRule>> removeAuthorizedClientsGen2 = new HashMap<>();
+    
     private final Map<String, byte[]> signerCertificates = new HashMap<>();
     private final Map<String, List<byte[]>> signerCertificateChains = new HashMap<>();
+    
+    private final Map<String, AuthClientEntry> authClientGen2EntryMap = new HashMap<>();
 
     /**
      * Parse a set of properties.
@@ -158,6 +167,9 @@ public class PropertiesParser {
             String key = (String) iter.nextElement();
             processKey(key.toUpperCase(), properties.getProperty(key));
         }
+        
+        // Process Gen2 auth client rules if exist
+        processGen2AuthClientRules();
     }
 
     private void processKey(String key, String value) {
@@ -259,16 +271,30 @@ public class PropertiesParser {
         addWorkerDataToList(addAuthorizedClients, workerIdOrName, ac);
     }
     
+    private void addAuthorizedClientGen2(final String workerIdOrName, final CertificateMatchingRule ac) {
+        addWorkerDataToList(addAuthorizedClientsGen2, workerIdOrName, ac);
+    }
+    
     private void removeAuthorizedClient(final String workerIdOrName, final AuthorizedClient ac) {
         addWorkerDataToList(removeAuthorizedClients, workerIdOrName, ac);
     }
+    
+    private void removeAuthorizedClientGen2(final String workerIdOrName, final CertificateMatchingRule ac) {
+        addWorkerDataToList(removeAuthorizedClientsGen2, workerIdOrName, ac);
+    }
 
     private void setWorkerProperty(final String workerIdOrName, String propertykey, String propertyvalue) {
-        if (propertykey.startsWith(DOT_AUTHCLIENT.substring(1))) {
-            String values[] = propertyvalue.split(";");
-            AuthorizedClient ac = new AuthorizedClient(values[0], values[1]);
-            messages.add("Adding Authorized Client with certificate serial " + ac.getCertSN() + " and issuer DN " + ac.getIssuerDN() + " to " + propertyvalue + " for worker " + workerIdOrName);
-            addAuthorizedClient(workerIdOrName, ac);
+        if (propertykey.startsWith(AUTHCLIENT)) {
+
+            if (propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_TYPE) || propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_VALUE)) {
+                // This is new format auth client so do it new way
+                populateGen2AuthClientEntries(workerIdOrName, propertykey, propertyvalue, true);
+            } else { // This is legacy auth client so do it old way
+                String values[] = propertyvalue.split(";");
+                AuthorizedClient ac = new AuthorizedClient(values[0], values[1]);
+                messages.add("Adding Authorized Client with certificate serial " + ac.getCertSN() + " and issuer DN " + ac.getIssuerDN() + " to " + propertyvalue + " for worker " + workerIdOrName);
+                addAuthorizedClient(workerIdOrName, ac);
+            }
         } else {
             if (propertykey.startsWith(DOT_SIGNERCERTIFICATE.substring(1))) {
                 signerCertificates.put(workerIdOrName, Base64.decode(propertyvalue.getBytes()));
@@ -284,7 +310,7 @@ public class PropertiesParser {
                     }
                     signerCertificateChains.put(workerIdOrName, chain);
                 } else {
-                    if (propertykey.equals(PropertiesConstants.NAME)) {                        
+                    if (propertykey.equals(PropertiesConstants.NAME)) {
                         workerIds.add(workerIdOrName);
                         workerNames.add(propertyvalue);
                     }
@@ -296,11 +322,16 @@ public class PropertiesParser {
     }
 
     private void removeWorkerProperty(final String workerIdOrName, String propertykey, String propertyvalue) {
-        if (propertykey.startsWith(DOT_AUTHCLIENT.substring(1))) {
-            String values[] = propertyvalue.split(";");
-            AuthorizedClient ac = new AuthorizedClient(values[0], values[1]);
-            messages.add("Removing authorized client with certificate serial " + ac.getCertSN() + " and issuer DN " + ac.getIssuerDN() + " from " + propertyvalue + " for worker " + workerIdOrName);
-            removeAuthorizedClient(workerIdOrName, ac);
+        if (propertykey.startsWith(AUTHCLIENT)) {
+            if (propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_TYPE) || propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_VALUE)) {
+                // This is new format auth client so do it new way
+                populateGen2AuthClientEntries(workerIdOrName, propertykey, propertyvalue, false);
+            } else { // This is legacy auth client so do it old way
+                String values[] = propertyvalue.split(";");
+                AuthorizedClient ac = new AuthorizedClient(values[0], values[1]);
+                messages.add("Removing authorized client with certificate serial " + ac.getCertSN() + " and issuer DN " + ac.getIssuerDN() + " from " + propertyvalue + " for worker " + workerIdOrName);
+                removeAuthorizedClient(workerIdOrName, ac);
+            }
         } else {
             if (propertykey.startsWith(DOT_SIGNERCERTIFICATE.substring(1))) {
                 messages.add("Removal of signing certificates isn't supported, skipped.");
@@ -313,6 +344,63 @@ public class PropertiesParser {
                 }
             }
         }
+    }
+    
+    private void processGen2AuthClientRules() {
+        Iterator it = authClientGen2EntryMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, AuthClientEntry> pair = (Map.Entry) it.next();
+            String seqNO = pair.getKey();
+            AuthClientEntry entry = pair.getValue();
+            CertificateMatchingRule rule = entry.getCm();
+            if (allMandatoryFieldsExistInProvidedRule(rule)) {
+                rule.setDescription("Imported rule");
+                String workerIdOrName = entry.getWorkerIdOrName();
+                if (entry.isAdd()) {
+                    addAuthorizedClientGen2(workerIdOrName, rule);
+                    messages.add("Adding Authorized Client with rule " + rule.toString() + " for worker " + workerIdOrName);
+                } else {
+                    messages.add("Removing Authorized Client with rule " + rule.toString() + " for worker " + workerIdOrName);
+                    removeAuthorizedClientGen2(workerIdOrName, rule);
+                }
+            } else {
+                errors.add("All mandatory fields are not provided for " + AUTHCLIENT + " " + seqNO);
+                break;
+            }
+
+            it.remove();
+        }
+    }
+    
+    private void populateGen2AuthClientEntries(String workerIdOrName, String propertykey, String propertyvalue, boolean add) {
+        String clientRuleSeq = propertykey.substring(AUTHCLIENT.length(), AUTHCLIENT.length() + 1);
+
+        AuthClientEntry entry = authClientGen2EntryMap.get(clientRuleSeq);
+        if (entry == null) {
+            entry = new AuthClientEntry(new CertificateMatchingRule(), add, workerIdOrName);
+            authClientGen2EntryMap.put(clientRuleSeq, entry);
+        }
+
+        String authClientRuleProperty = propertykey.substring(AUTHCLIENT.length() + 1);
+        switch (authClientRuleProperty) {
+            case AUTHORIZED_CLIENTS_DOT_SUBJECT_DOT_TYPE:
+                entry.getCm().setMatchSubjectWithType(MatchSubjectWithType.valueOf(propertyvalue));
+                break;
+            case AUTHORIZED_CLIENTS_DOT_SUBJECT_DOT_VALUE:
+                entry.getCm().setMatchSubjectWithValue(propertyvalue);
+                break;
+            case AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_TYPE:
+                entry.getCm().setMatchIssuerWithType(MatchIssuerWithType.valueOf(propertyvalue));
+                break;
+            case AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_VALUE:
+                entry.getCm().setMatchIssuerWithValue(propertyvalue);
+                break;
+        }
+    }
+    
+    private boolean allMandatoryFieldsExistInProvidedRule(CertificateMatchingRule rule) {
+        return rule.getMatchSubjectWithType() != null && rule.getMatchIssuerWithType() != null && rule.getMatchSubjectWithValue() != null
+                && rule.getMatchIssuerWithValue() != null;
     }
 
     /**
@@ -370,8 +458,16 @@ public class PropertiesParser {
         return addAuthorizedClients;
     }
     
+    public Map<String, List<CertificateMatchingRule>> getAddAuthorizedClientsGen2() {
+        return addAuthorizedClientsGen2;
+    }
+    
     public Map<String, List<AuthorizedClient>> getRemoveAuthorizedClients() {
         return removeAuthorizedClients;
+    }
+    
+    public Map<String, List<CertificateMatchingRule>> getRemoveAuthorizedClientsGen2() {
+        return removeAuthorizedClientsGen2;
     }
     
     public List<String> getWorkerNames() {
@@ -380,5 +476,45 @@ public class PropertiesParser {
 
     public List<String> getWorkerIds() {
         return workerIds;
+    }
+    
+    class AuthClientEntry {
+
+      private  CertificateMatchingRule cm;
+      private  boolean add;
+      private  String workerIdOrName;
+
+        public CertificateMatchingRule getCm() {
+            return cm;
+        }
+
+        public void setCm(CertificateMatchingRule cm) {
+            this.cm = cm;
+        }
+
+        public boolean isAdd() {
+            return add;
+        }
+
+        public void setAdd(boolean add) {
+            this.add = add;
+        }
+
+        public String getWorkerIdOrName() {
+            return workerIdOrName;
+        }
+
+        public void setWorkerIdOrName(String workerIdOrName) {
+            this.workerIdOrName = workerIdOrName;
+        }
+
+        public AuthClientEntry(CertificateMatchingRule cm, boolean add, String workerIdOrName) {
+            this.cm = cm;
+            this.add = add;
+            this.workerIdOrName = workerIdOrName;
+        }
+
+        public AuthClientEntry() {
+        }
     }
 }

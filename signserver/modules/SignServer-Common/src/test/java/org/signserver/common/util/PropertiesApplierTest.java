@@ -32,6 +32,7 @@ import org.signserver.common.util.PropertiesParser.GlobalProperty;
 import org.signserver.common.util.PropertiesParser.WorkerProperty;
 
 import junit.framework.TestCase;
+import org.signserver.common.CertificateMatchingRule;
 
 /**
  * Tests for the property applier used for loading configuration property files.
@@ -458,6 +459,7 @@ public class PropertiesApplierTest extends TestCase {
         private Map<GlobalProperty, String> globalProperties = new HashMap<>();
         private Map<WorkerProperty, String> workerProperties = new HashMap<>();
         private Map<Integer, Set<AuthorizedClient>> authClients = new HashMap<>();
+        private Map<Integer, Set<CertificateMatchingRule>> authClientsGen2 = new HashMap<>();
         private Map<Integer, byte[]> signerCerts = new HashMap<>();
         private Map<Integer, List<byte[]>> signerCertChains = new HashMap<>();
         
@@ -536,10 +538,31 @@ public class PropertiesApplierTest extends TestCase {
             
             acs.add(ac);
         }
+        
+        @Override
+        protected void addAuthorizedClientGen2(int workerId, CertificateMatchingRule ac) {
+            Set<CertificateMatchingRule> acs = authClientsGen2.get(workerId);
+            
+            if (acs == null) {
+                acs = new HashSet<>();
+                authClientsGen2.put(workerId, acs);
+            }
+            
+            acs.add(ac);
+        }
 
         @Override
         protected void removeAuthorizedClient(int workerId, AuthorizedClient ac) {
             final Set<AuthorizedClient> acs = authClients.get(workerId);
+            
+            if (acs != null) {
+                acs.remove(ac);
+            }
+        }
+        
+        @Override
+        protected void removeAuthorizedClientGen2(int workerId, CertificateMatchingRule ac) {
+            final Set<CertificateMatchingRule> acs = authClientsGen2.get(workerId);
             
             if (acs != null) {
                 acs.remove(ac);

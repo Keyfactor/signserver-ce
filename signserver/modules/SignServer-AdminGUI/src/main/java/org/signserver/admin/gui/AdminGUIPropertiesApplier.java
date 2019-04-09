@@ -19,6 +19,7 @@ import javax.xml.ws.soap.SOAPFaultException;
 import org.signserver.admin.gui.adminws.gen.AdminNotAuthorizedException_Exception;
 import org.signserver.admin.gui.adminws.gen.IllegalRequestException_Exception;
 import org.signserver.common.AuthorizedClient;
+import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesApplier;
@@ -173,6 +174,16 @@ public class AdminGUIPropertiesApplier extends PropertiesApplier {
     @Override
     protected void checkWorkerNamesAlreadyExists(List<String> workerNames, List<String> workerIds) throws PropertiesApplierException {
         // TODO: Add findAllWorkerNames() logic in AdminWS for support in Admin GUI
+    }
+
+    @Override
+    protected void addAuthorizedClientGen2(int workerId, CertificateMatchingRule ac) throws PropertiesApplierException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    protected void removeAuthorizedClientGen2(int workerId, CertificateMatchingRule ac) throws PropertiesApplierException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

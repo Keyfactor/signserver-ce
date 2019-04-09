@@ -21,7 +21,6 @@ import java.util.Properties;
 
 import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.AuthorizedClient;
-import org.signserver.common.util.PropertiesParser;
 import org.signserver.common.util.PropertiesParser.GlobalProperty;
 import org.signserver.common.util.PropertiesParser.WorkerProperty;
 

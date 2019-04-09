@@ -21,6 +21,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.signserver.common.AuthorizedClient;
+import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.WorkerConfig;
 import static org.signserver.common.util.PropertiesConstants.GENID;
 import static org.signserver.common.util.PropertiesConstants.OLDWORKER_PREFIX;
@@ -90,8 +91,12 @@ public abstract class PropertiesApplier {
                     translateWorkerDatas(parser.getSignerCertificateChains());
             final Map<Integer, List<AuthorizedClient>> addAuthorizedClients =
                     translateWorkerDatas(parser.getAddAuthorizedClients());
+            final Map<Integer, List<CertificateMatchingRule>> addAuthorizedClientsGen2 =
+                    translateWorkerDatas(parser.getAddAuthorizedClientsGen2());
             final Map<Integer, List<AuthorizedClient>> removeAuthorizedClients =
                     translateWorkerDatas(parser.getRemoveAuthorizedClients());
+            final Map<Integer, List<CertificateMatchingRule>> removeAuthorizedClientsGen2 =
+                    translateWorkerDatas(parser.getRemoveAuthorizedClientsGen2());
             final ArrayList<PropertiesParser.WorkerProperty> delayedSetWorkerProperties = new ArrayList<>();
             
             // apply the configuration
@@ -137,9 +142,21 @@ public abstract class PropertiesApplier {
                 }
             }
             
+            for (final int workerId : addAuthorizedClientsGen2.keySet()) {
+                for (final CertificateMatchingRule ac : addAuthorizedClientsGen2.get(workerId)) {
+                    addAuthorizedClientGen2(workerId, ac);
+                }
+            }
+            
             for (final int workerId : removeAuthorizedClients.keySet()) {
                 for (final AuthorizedClient ac : removeAuthorizedClients.get(workerId)) {
                     removeAuthorizedClient(workerId, ac);
+                }
+            }
+            
+            for (final int workerId : removeAuthorizedClientsGen2.keySet()) {
+                for (final CertificateMatchingRule ac : removeAuthorizedClientsGen2.get(workerId)) {
+                    removeAuthorizedClientGen2(workerId, ac);
                 }
             }
             
@@ -325,6 +342,15 @@ public abstract class PropertiesApplier {
     protected abstract void addAuthorizedClient(final int workerId, final AuthorizedClient ac) throws PropertiesApplierException;
     
     /**
+     * Add an authorized client for a worker.
+     * 
+     * @param workerId Worker ID
+     * @param ac Authorized client to add
+     * @throws PropertiesApplierException If there was a failure
+     */
+    protected abstract void addAuthorizedClientGen2(final int workerId, final CertificateMatchingRule ac) throws PropertiesApplierException;
+    
+    /**
      * Remove an authorized client for a worker.
      * 
      * @param workerId Worker ID
@@ -332,6 +358,15 @@ public abstract class PropertiesApplier {
      * @throws PropertiesApplierException If there was a failure
      */
     protected abstract void removeAuthorizedClient(final int workerId, final AuthorizedClient ac) throws PropertiesApplierException;
+    
+    /**
+     * Remove an authorized client for a worker.
+     * 
+     * @param workerId Worker ID
+     * @param ac Authorized client to remove
+     * @throws PropertiesApplierException If there was a failure
+     */
+    protected abstract void removeAuthorizedClientGen2(final int workerId, final CertificateMatchingRule ac) throws PropertiesApplierException;
     
     protected abstract void checkWorkerNamesAlreadyExists(final List<String> workerNames, final List<String> workerIds) throws PropertiesApplierException;       
     

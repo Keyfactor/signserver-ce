@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.signserver.common.AuthorizedClient;
+import org.signserver.common.CertificateMatchingRule;
 import static org.signserver.common.util.PropertiesConstants.*;
 
 /**
@@ -101,6 +102,62 @@ public class PropertiesDumper {
             int i = 1;
             for (AuthorizedClient client : authorizedClients) {
                 outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i, client.getCertSN() + ";" + client.getIssuerDN());
+                i++;
+            }
+        }
+    }
+    
+    /**
+     * Extracts a worker's global and worker properties.
+     * @param workerId Id of worker to get the properties from
+     * @param gc the global configuration properties
+     * @param workerConfig the worker configuration properties
+     * @param authorizedClients
+     * @param outProps to write the properties to
+     * @throws CertificateEncodingException in case of certificate encoding errors
+     */
+    public static void dumpWorkerPropertiesGen2(final int workerId, final Properties gc, final Properties workerConfig, final Collection<CertificateMatchingRule> authorizedClients, final Properties outProps) throws CertificateEncodingException {
+        Enumeration<String> en = (Enumeration<String>) gc.propertyNames();
+        while (en.hasMoreElements()) {
+            String next = en.nextElement();
+            if (next.substring(5).startsWith("WORKER" + workerId)) {
+                outProps.put(next, gc.getProperty(next));
+            }
+        }
+
+        for (String key : workerConfig.stringPropertyNames()) {
+            outProps.setProperty("WORKER" + workerId + "." + key, workerConfig.getProperty(key));
+        }
+
+        // Also dump Authorized Clients and/or signer certificates
+        X509Certificate signerCertificate = getSignerCertificate(workerConfig);
+        if (signerCertificate != null) {
+            outProps.setProperty("WORKER" + workerId + DOT_SIGNERCERTIFICATE, new String(Base64.encode(signerCertificate.getEncoded(), false)));
+        }
+        List<Certificate> signerCertificateChain = getSignerCertificateChain(workerConfig);
+        if (signerCertificateChain != null) {
+            Iterator<Certificate> iter2 = signerCertificateChain.iterator();
+            String chainValue = "";
+            while (iter2.hasNext()) {
+                Certificate cert = iter2.next();
+                String certData = new String(Base64.encode(cert.getEncoded(), false));
+                if (chainValue.equals("")) {
+                    chainValue = certData;
+                } else {
+                    chainValue += ";" + certData;
+                }
+            }
+
+            outProps.setProperty("WORKER" + workerId + DOT_SIGNERCERTCHAIN, chainValue);
+        }
+
+        if (authorizedClients.size() > 0) {
+            int i = 1;
+            for (CertificateMatchingRule client : authorizedClients) {
+                outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_SUBJECT_DOT_TYPE, client.getMatchSubjectWithType().toString());
+                outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_SUBJECT_DOT_VALUE, client.getMatchSubjectWithValue());
+                outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_TYPE, client.getMatchIssuerWithType().toString());
+                outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_VALUE, client.getMatchIssuerWithValue());
                 i++;
             }
         }

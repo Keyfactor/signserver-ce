@@ -29,6 +29,7 @@ import org.cesecore.util.CertTools;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
+import org.signserver.common.AuthorizedClientEntry;
 import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.MatchIssuerWithType;
 import org.signserver.common.MatchSubjectWithType;
@@ -288,61 +289,66 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
         int parameter = DNFieldExtractor.CN;
         DNFieldExtractor usedExtractor = dnExtractor;
 
-        switch (matchSubjectWithType) {
-            case SUBJECT_RDN_CN:
-                parameter = DNFieldExtractor.CN;
-                break;
-            case SUBJECT_RDN_SERIALNO:
-                parameter = DNFieldExtractor.SN;
-                break;
-            case SUBJECT_RDN_DC:
-                // TODO: Implement
-                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-            case SUBJECT_RDN_ST:
-                // TODO: Implement
-                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-            case SUBJECT_RDN_L:
-                // TODO: Implement
-                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-            case SUBJECT_RDN_O:
-                // TODO: Implement
-                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-            case SUBJECT_RDN_OU:
-                // TODO: Implement
-                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-            case SUBJECT_RDN_TITLE:
-                // TODO: Implement
-                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-            case SUBJECT_RDN_UID:
-                // TODO: Implement
-                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-            case SUBJECT_RDN_E:
-                // TODO: Implement
-                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-            case SUBJECT_ALTNAME_RFC822NAME:
-                usedExtractor = anExtractor;
-                // TODO: Implement
-                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-            case SUBJECT_ALTNAME_MSUPN:
-                usedExtractor = anExtractor;
-                // TODO: Implement
-                throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
-            default: // It should not happen though
-                throw new AssertionError(matchSubjectWithType.name());
-        }
+        if (matchSubjectWithType == MatchSubjectWithType.CERTIFICATE_SERIALNO) {
+            final BigInteger sn = x509Cert.getSerialNumber();
+            return sn.toString(16);
+        } else {
+            switch (matchSubjectWithType) {
+                case SUBJECT_RDN_CN:
+                    parameter = DNFieldExtractor.CN;
+                    break;
+                case SUBJECT_RDN_SERIALNO:
+                    parameter = DNFieldExtractor.SN;
+                    break;
+                case SUBJECT_RDN_DC:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_RDN_ST:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_RDN_L:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_RDN_O:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_RDN_OU:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_RDN_TITLE:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_RDN_UID:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_RDN_E:
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_ALTNAME_RFC822NAME:
+                    usedExtractor = anExtractor;
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                case SUBJECT_ALTNAME_MSUPN:
+                    usedExtractor = anExtractor;
+                    // TODO: Implement
+                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                default: // It should not happen though
+                    throw new AssertionError(matchSubjectWithType.name());
+            }
+            
+            final int size = usedExtractor.getNumberOfFields(parameter);
+            final String matchSubjectName = matchSubjectWithType.name();
         
-        final int size = usedExtractor.getNumberOfFields(parameter);
-        final String matchSubjectName = matchSubjectWithType.name();
-        
-        if (size == 0) {
-            throw new CommandFailureException("DN field " + matchSubjectName +
+            if (size == 0) {
+                throw new CommandFailureException("DN field " + matchSubjectName +
                                               " not found in subject DN of certificate");
-        } else if (size > 1) {
-            LOG.warn("More than one component matching " + matchSubjectName +
-                     ", picking the first one");
-        }
+            } else if (size > 1) {
+                LOG.warn("More than one component matching " + matchSubjectName +
+                         ", picking the first one");
+            }
 
-        return usedExtractor.getField(parameter, 0);
+            return usedExtractor.getField(parameter, 0);
+        }
     }
 
     private String getIssuerValueFromCert(final X509Certificate x509Cert) {

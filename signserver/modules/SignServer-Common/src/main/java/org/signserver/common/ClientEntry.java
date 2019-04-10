@@ -13,7 +13,6 @@
 package org.signserver.common;
 
 import java.math.BigInteger;
-import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;

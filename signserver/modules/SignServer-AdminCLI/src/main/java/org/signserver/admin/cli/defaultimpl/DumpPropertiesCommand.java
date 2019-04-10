@@ -18,9 +18,8 @@ import java.util.*;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
-import org.signserver.common.AuthorizedClient;
+import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesDumper;
 import org.signserver.ejb.interfaces.WorkerSession;
 
@@ -107,9 +106,9 @@ public class DumpPropertiesCommand extends AbstractAdminCommand {
         final Properties globalProps =
                 getGlobalConfigurationSession().getGlobalConfiguration().getConfig();
         final Properties workerProps = ws.exportWorkerConfig(workerId);
-        final Collection<AuthorizedClient> authClients = ws.getAuthorizedClients(workerId);
+        final Collection<CertificateMatchingRule> authClients = ws.getAuthorizedClientsGen2(workerId);
         
-        PropertiesDumper.dumpWorkerProperties(workerId, globalProps, workerProps,
+        PropertiesDumper.dumpWorkerPropertiesGen2(workerId, globalProps, workerProps,
                 authClients, outProps);
     }
 }

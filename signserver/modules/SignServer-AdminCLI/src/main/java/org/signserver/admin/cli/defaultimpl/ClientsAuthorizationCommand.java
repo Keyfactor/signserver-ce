@@ -100,7 +100,8 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
                     + "Example 1: authorizedclients -worker CMSSigner -list\n"
                     + "Example 2: authorizedclients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithValue \"CN=AdminCA1, C=SE\"\n"
                     + "Example 3: authorizedclients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithType ISSUER_DN_BCSTYLE -matchIssuerWithValue \"CN=AdminCA1, C=SE\" -description \"my rule\"\n\n"
-                    + "Example 4: authorizedclients -worker CMSSigner -add -matchSubjectWithType SUBJECT_SERIALNO -matchIssuerWithType ISSUER_DN_LDAPSTYLE -cert /tmp/admin.pem";
+                    + "Example 4: authorizedclients -worker CMSSigner -add -matchSubjectWithType CERTIFICATE_SERIALNO -matchIssuerWithType ISSUER_DN_LDAPSTYLE -cert /tmp/admin.pem"
+                    + "Example 5: authorizedclients -worker CMSSigner -remove -matchSubjectWithType CERTIFICATE_SERIALNO -matchIssuerWithType ISSUER_DN_LDAPSTYLE -cert /tmp/admin.pem";
     }
 
     /**

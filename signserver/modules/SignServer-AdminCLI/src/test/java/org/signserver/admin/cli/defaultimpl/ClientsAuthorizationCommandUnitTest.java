@@ -206,5 +206,25 @@ public class ClientsAuthorizationCommandUnitTest {
             assertEquals("Unknown matchIssuerWithType value provided. Possible values are: [ISSUER_DN_BCSTYLE]", expected.getMessage());
         }
     }
+    
+    /**
+     * Tests that setting both -matchSubjectWithValue and -cert at the same time
+     * is not allowed.
+     * 
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testBothMatchSubjectWithValueAndCertNotAllowed() throws Exception {
+        try {
+            LOG.info("testAddUnknownMatchIssuerWithType");
+            ClientsAuthorizationCommand instance = new ClientsAuthorizationCommand();
+            instance.execute("-worker", "SampleSigner", "-add", "-matchSubjectWithType", MatchSubjectWithType.SUBJECT_RDN_CN.name(),
+                             "-matchSubjectWithValue", "Client One", "-cert", "/tmp/cert.pem", "-description", "my rule");
+            fail("Expected IllegalCommandArgumentsException due to conflicting parameters");
+        } catch (IllegalCommandArgumentsException expected) {
+            assertEquals("Can not specify -cert at the same time as -matchSubjectWithValue and/or -matchIssuerWithValue",
+                         expected.getMessage());
+        }
+    }
 
 }

@@ -424,4 +424,51 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             test.removeWorker(test.getSignerIdCMSSigner1());
         }
     }
+    
+    /**
+     * Test adding an authorization rule matching on subject serial number
+     * by specifying a certificate and then remove the same role. 
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testAddFromCertAndRemove() throws Exception {
+        LOG.info("testAddFromCertWithSubjectTypeCERTIFICATE_SERIALNO");
+        try {
+            final String certPath =
+                    getSignServerHome().getAbsolutePath() + File.separator +
+                    "res" + File.separator + "test" + File.separator +
+                    "dss10" + File.separator + "DSSSubCA11.cacert.pem";
+
+            test.addCMSSigner1();
+            assertEquals("execute add", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-add", 
+                    "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
+                    "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
+                    "-cert", certPath,
+                    "-description", "Description"));
+            assertPrinted("prints new rule", cli.getOut(), "CERTIFICATE_SERIALNO: 3519c898bfef0d7e | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+
+            assertEquals("execute list", 0, cli.execute("authorizedclients",
+                    "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-list"));
+            assertPrinted("prints new rule", cli.getOut(), "CERTIFICATE_SERIALNO: 3519c898bfef0d7e | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+        
+            assertEquals("execute remove", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-remove", 
+                    "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
+                    "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
+                    "-cert", certPath,
+                    "-description", "Description"));
+            assertPrinted("prints rule", cli.getOut(), "SUBJECT_RDN_CN: DSS Sub CA 11 | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: my rule");
+            assertPrinted("prints removed", cli.getOut(), "Rule removed");
+            
+            assertEquals("execute list", 0, cli.execute("authorizedclients",
+                    "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-list"));
+            assertPrinted("prints empty", cli.getOut(), "No authorized clients exists.");
+        } finally {
+            test.removeWorker(test.getSignerIdCMSSigner1());
+        }
+    }
 }

@@ -131,6 +131,11 @@ public class CertBuilder implements Cloneable {
         }
         return _subjectKeyPair;
     }
+    
+    public CertBuilder setSubjectKeyPair(KeyPair keyPair) {
+        _subjectKeyPair = keyPair;
+        return this;
+    }
 
     public CertBuilder setSubjectPublicKey(PublicKey subjectPublicKey) {
         this.subjectPublicKey = subjectPublicKey;

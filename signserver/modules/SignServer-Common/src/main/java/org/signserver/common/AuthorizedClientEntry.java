@@ -86,6 +86,18 @@ public class AuthorizedClientEntry {
         return matchSubjectWithType;
     }
 
+    public MatchIssuerWithType getMatchIssuerWithType() {
+        return matchIssuerWithType;
+    }
+
+    public String getMatchSubjectWithValue() {
+        return matchSubjectWithValue;
+    }
+
+    public String getMatchIssuerWithValue() {
+        return matchIssuerWithValue;
+    }
+
     @Override
     public int hashCode() {
         int hash = 5;

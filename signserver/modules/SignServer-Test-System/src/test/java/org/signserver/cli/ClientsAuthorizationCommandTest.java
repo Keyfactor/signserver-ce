@@ -360,14 +360,14 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     }
     
     /**
-     * Test adding an authorization rule matching on subject DN
+     * Test adding an authorization rule matching on subject DN CN field
      * by specifying a certificate.
      * 
      * @throws Exception 
      */
     @Test
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_CN() throws Exception {
-        LOG.info("testAddFromCertWithSubjectTypeCERTIFICATE_SERIALNO");
+        LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_CN");
         try {
             final String certPath =
                     getSignServerHome().getAbsolutePath() + File.separator +
@@ -387,6 +387,39 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
                     "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
             assertPrinted("prints new rule", cli.getOut(), "SUBJECT_RDN_CN: DSS Sub CA 11 | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+        } finally {
+            test.removeWorker(test.getSignerIdCMSSigner1());
+        }
+    }
+    
+    /**
+     * Test adding an authorization rule matching on subject DN field not present
+     * in the certificate
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testAddFromCertWithNonExistingDNField() throws Exception {
+        LOG.info("testAddFromCertWithNonExistingDNField");
+        try {
+            final String certPath =
+                    getSignServerHome().getAbsolutePath() + File.separator +
+                    "res" + File.separator + "test" + File.separator +
+                    "dss10" + File.separator + "DSSSubCA11.cacert.pem";
+
+            test.addCMSSigner1();
+            assertEquals("execute add", -2, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-add", 
+                    "-matchSubjectWithType", "SUBJECT_RDN_SERIALNO",
+                    "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
+                    "-cert", certPath,
+                    "-description", "Description"));
+            assertPrinted("error message", cli.getOut(), "DN field SUBJECT_RDN_SERIALNO not found in subject DN of certificate");
+
+            assertEquals("execute list", 0, cli.execute("authorizedclients",
+                    "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-list"));
+            assertNotPrinted("does not print new rule", cli.getOut(), "SUBJECT_RDN_SERIALNO");
         } finally {
             test.removeWorker(test.getSignerIdCMSSigner1());
         }

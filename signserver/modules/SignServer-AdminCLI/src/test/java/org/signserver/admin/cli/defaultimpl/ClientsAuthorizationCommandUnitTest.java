@@ -227,4 +227,43 @@ public class ClientsAuthorizationCommandUnitTest {
         }
     }
 
+    /**
+     * Tests that setting both -matchIssuerWithValue and -cert at the same time
+     * is not allowed.
+     * 
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testBothMatchIssuerWithValueAndCertNotAllowed() throws Exception {
+        try {
+            LOG.info("testAddUnknownMatchIssuerWithType");
+            ClientsAuthorizationCommand instance = new ClientsAuthorizationCommand();
+            instance.execute("-worker", "SampleSigner", "-add", "-matchSubjectWithType", MatchSubjectWithType.SUBJECT_RDN_CN.name(),
+                             "-matchIssuerWithValue", "CN=Issuing CA, O=SignServer, C=SE", "-cert", "/tmp/cert.pem", "-description", "my rule");
+            fail("Expected IllegalCommandArgumentsException due to conflicting parameters");
+        } catch (IllegalCommandArgumentsException expected) {
+            assertEquals("Can not specify -cert at the same time as -matchSubjectWithValue and/or -matchIssuerWithValue",
+                         expected.getMessage());
+        }
+    }
+    
+    /**
+     * Tests that setting both -matchSubjectWithValue, -matchIssuerWithValue and -cert at the same time
+     * is not allowed.
+     * 
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testBothMatchSubjectWithValueAndIssuerWithValueAndCertNotAllowed() throws Exception {
+        try {
+            LOG.info("testAddUnknownMatchIssuerWithType");
+            ClientsAuthorizationCommand instance = new ClientsAuthorizationCommand();
+            instance.execute("-worker", "SampleSigner", "-add", "-matchSubjectWithType", MatchSubjectWithType.SUBJECT_RDN_CN.name(),
+                             "-matchIssuerWithValue", "CN=Issuing CA, O=SignServer, C=SE", "-cert", "/tmp/cert.pem", "-description", "my rule");
+            fail("Expected IllegalCommandArgumentsException due to conflicting parameters");
+        } catch (IllegalCommandArgumentsException expected) {
+            assertEquals("Can not specify -cert at the same time as -matchSubjectWithValue and/or -matchIssuerWithValue",
+                         expected.getMessage());
+        }
+    }
 }

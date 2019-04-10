@@ -86,7 +86,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
     private MatchIssuerWithType matchIssuerWithType = MatchIssuerWithType.ISSUER_DN_BCSTYLE;
     private String matchIssuerWithValue;
     private String description;
-    private X509Certificate cert;
+    private String cert;
 
     @Override
     public String getDescription() {
@@ -156,14 +156,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
         matchSubjectWithValue = line.getOptionValue(MATCH_SUBJECT_WITH_VALUE, null);
         matchIssuerWithValue = line.getOptionValue(MATCH_ISSUER_WITH_VALUE, null);
         description = line.getOptionValue(DESCRIPTION, null);
-        
-        final String certString = line.getOptionValue(CERT, null);
-
-        if (certString != null) {
-            cert = SignServerUtil.getCertFromFile(certString);
-        } else {
-            cert = null;
-        }
+        cert = line.getOptionValue(CERT, null);
     }
 
     /**
@@ -257,11 +250,14 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
     }
     
     private CertificateMatchingRule getRuleFromParams()
-            throws CommandFailureException {
-        String subjectValue =
-                cert == null ? matchSubjectWithValue : getSubjectValueFromCert();
-        final String issuerValue =
-                cert == null ? matchIssuerWithValue : getIssuerValueFromCert();
+            throws CommandFailureException, IllegalArgumentException {
+        final X509Certificate x509Cert =
+                cert != null ? SignServerUtil.getCertFromFile(cert) : null;
+        
+        String subjectValue = x509Cert == null ? matchSubjectWithValue :
+                                                 getSubjectValueFromCert(x509Cert);
+        final String issuerValue = x509Cert == null ? matchIssuerWithValue :
+                                                      getIssuerValueFromCert(x509Cert);
 
         if (matchSubjectWithType == MatchSubjectWithType.CERTIFICATE_SERIALNO) {
             // normalize serial number
@@ -283,10 +279,10 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
         return rule;
     }
     
-    private String getSubjectValueFromCert() throws CommandFailureException {
-        String certstring = CertTools.getSubjectDN(cert);
+    private String getSubjectValueFromCert(final X509Certificate x509Cert) throws CommandFailureException {
+        String certstring = CertTools.getSubjectDN(x509Cert);
         certstring = SERIAL_PATTERN.matcher(certstring).replaceAll("SN=");
-        final String altNameString = CertTools.getSubjectAlternativeName(cert);
+        final String altNameString = CertTools.getSubjectAlternativeName(x509Cert);
         final DNFieldExtractor dnExtractor = new DNFieldExtractor(certstring, DNFieldExtractor.TYPE_SUBJECTDN);
         final DNFieldExtractor anExtractor = new DNFieldExtractor(altNameString, DNFieldExtractor.TYPE_SUBJECTALTNAME);
         int parameter = DNFieldExtractor.CN;
@@ -349,9 +345,9 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
         return usedExtractor.getField(parameter, 0);
     }
 
-    private String getIssuerValueFromCert() {
+    private String getIssuerValueFromCert(final X509Certificate x509Cert) {
         // Only one MatchIssuerType is supported now
-        return CertTools.stringToBCDNString(cert.getIssuerX500Principal().getName());
+        return CertTools.stringToBCDNString(x509Cert.getIssuerX500Principal().getName());
     }
     
     /**

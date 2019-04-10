@@ -302,37 +302,37 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
                     parameter = DNFieldExtractor.SN;
                     break;
                 case SUBJECT_RDN_DC:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    parameter = DNFieldExtractor.DC;
+                    break;
                 case SUBJECT_RDN_ST:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    parameter = DNFieldExtractor.ST;
+                    break;
                 case SUBJECT_RDN_L:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    parameter = DNFieldExtractor.L;
+                    break;
                 case SUBJECT_RDN_O:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    parameter = DNFieldExtractor.O;
+                    break;
                 case SUBJECT_RDN_OU:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    parameter = DNFieldExtractor.OU;
+                    break;
                 case SUBJECT_RDN_TITLE:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    parameter = DNFieldExtractor.T;
+                    break;
                 case SUBJECT_RDN_UID:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    parameter = DNFieldExtractor.UID;
+                    break;
                 case SUBJECT_RDN_E:
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    parameter = DNFieldExtractor.E;
+                    break;
                 case SUBJECT_ALTNAME_RFC822NAME:
+                    parameter = DNFieldExtractor.RFC822NAME;
                     usedExtractor = anExtractor;
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    break;
                 case SUBJECT_ALTNAME_MSUPN:
+                    parameter = DNFieldExtractor.UPN;
                     usedExtractor = anExtractor;
-                    // TODO: Implement
-                    throw new UnsupportedOperationException("MatchSubjectWithType not supported yet: " + matchSubjectWithType);
+                    break;
                 default: // It should not happen though
                     throw new AssertionError(matchSubjectWithType.name());
             }

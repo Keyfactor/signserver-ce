@@ -33,6 +33,8 @@ import org.signserver.common.util.PropertiesParser.WorkerProperty;
 
 import junit.framework.TestCase;
 import org.signserver.common.CertificateMatchingRule;
+import org.signserver.common.MatchIssuerWithType;
+import org.signserver.common.MatchSubjectWithType;
 
 /**
  * Tests for the property applier used for loading configuration property files.
@@ -102,6 +104,34 @@ public class PropertiesApplierTest extends TestCase {
      */
     private static String config6 =
             "-WORKER42.AUTHCLIENT1 = 123456789;CN=Authorized";
+    
+    /**
+     *
+     * /**
+     * A properties file that should pass.
+     */
+    private static String authClientGen2Config1
+            = "WORKER42.AUTHCLIENT1.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n"
+            + "WORKER42.AUTHCLIENT1.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
+            + "WORKER42.AUTHCLIENT1.SUBJECT.VALUE=723507815f93666666\n"
+            + "WORKER42.AUTHCLIENT1.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE\n"
+            
+            + "WORKER42.AUTHCLIENT2.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n"
+            + "WORKER42.AUTHCLIENT2.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
+            + "WORKER42.AUTHCLIENT2.SUBJECT.VALUE=12345678\n"
+            + "WORKER42.AUTHCLIENT2.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE";    
+        
+    /**
+     *
+     * /**
+     * A properties file that should pass.
+     */
+    private static String authClientGen2Config2
+            = "-WORKER42.AUTHCLIENT1.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n"
+            + "-WORKER42.AUTHCLIENT1.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
+            + "-WORKER42.AUTHCLIENT1.SUBJECT.VALUE=12345678\n"
+            + "-WORKER42.AUTHCLIENT1.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE";
+    
     
     /**
      * Test config with a malformed GENID.
@@ -260,6 +290,33 @@ public class PropertiesApplierTest extends TestCase {
             
             assertFalse("Not authorized", applier.isAuthorized(42, new AuthorizedClient("123456789", "CN=Authorized")));
             assertTrue("Authorized client", applier.isAuthorized(42, new AuthorizedClient("987654321", "CN=AlsoAuthorized")));
+            assertFalse("No errors", applier.hasError());
+            
+            // test adding gen2 auth clients
+            parser = new PropertiesParser();
+            prop.clear();
+            prop.load(new ByteArrayInputStream(authClientGen2Config1.getBytes()));
+            parser.process(prop);
+            applier.apply(parser);
+
+            CertificateMatchingRule cmrToBeAdded1 = new CertificateMatchingRule(MatchSubjectWithType.valueOf("CERTIFICATE_SERIALNO"),
+                    MatchIssuerWithType.valueOf("ISSUER_DN_BCSTYLE"), "723507815f93666666", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", "Imported rule");
+            CertificateMatchingRule cmrToBeAdded2 = new CertificateMatchingRule(MatchSubjectWithType.valueOf("CERTIFICATE_SERIALNO"),
+                    MatchIssuerWithType.valueOf("ISSUER_DN_BCSTYLE"), "12345678", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", "Imported rule");
+
+            assertTrue("Authorized client", applier.isAuthorizedGen2(42, cmrToBeAdded1));
+            assertTrue("Authorized client", applier.isAuthorizedGen2(42, cmrToBeAdded2));
+            assertFalse("No errors", applier.hasError());
+            
+            // test removing an gen2 auth client
+            parser = new PropertiesParser();
+            prop.clear();
+            prop.load(new ByteArrayInputStream(authClientGen2Config2.getBytes()));
+            parser.process(prop);
+            applier.apply(parser);
+            
+            assertFalse("Not authorized", applier.isAuthorizedGen2(42, cmrToBeAdded2));
+            assertTrue("Authorized client", applier.isAuthorizedGen2(42, cmrToBeAdded1));
             assertFalse("No errors", applier.hasError());
             
         } catch (IOException e) {
@@ -485,6 +542,16 @@ public class PropertiesApplierTest extends TestCase {
                 return acs.contains(ac);
             }
             
+            return false;
+        }
+        
+        public boolean isAuthorizedGen2(final int workerId, final CertificateMatchingRule ac) {
+            final Set<CertificateMatchingRule> acs = authClientsGen2.get(workerId);
+
+            if (acs != null) {
+                return acs.contains(ac);
+            }
+
             return false;
         }
         

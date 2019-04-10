@@ -94,7 +94,7 @@ public class PropertiesParserTest extends TestCase {
     /**
      *
      * /**
-     * A properties file that should generate parser errors.
+     * A properties file that should pass.
      */
     private static String correctAuthClientGen2Config
             = "WORKER42.AUTHCLIENT1.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n"

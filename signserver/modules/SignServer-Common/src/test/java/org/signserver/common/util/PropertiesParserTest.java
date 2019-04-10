@@ -25,6 +25,9 @@ import org.signserver.common.util.PropertiesParser.GlobalProperty;
 import org.signserver.common.util.PropertiesParser.WorkerProperty;
 
 import junit.framework.TestCase;
+import org.signserver.common.CertificateMatchingRule;
+import org.signserver.common.MatchIssuerWithType;
+import org.signserver.common.MatchSubjectWithType;
 
 /**
  * Unit tests for the properties parser.
@@ -54,7 +57,15 @@ public class PropertiesParserTest extends TestCase {
             "-WORKER42.REMOVED = REMOVEDVALUE\n" +
             "SIGNER4711.OLDKEY = OLDVALUE\n" +
             "WORKER42.AUTHCLIENT1 = 12345678;CN=Authorized\n" +
-            "WORKER42.AUTHCLIENT2 = 23456789;CN=Authorized2\n" +
+            "WORKER42.AUTHCLIENT2 = 23456789;CN=Authorized2\n" +            
+            "WORKER42.AUTHCLIENT3.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n" +
+            "WORKER42.AUTHCLIENT3.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"+
+            "WORKER42.AUTHCLIENT3.SUBJECT.VALUE=723507815f93666666\n"+
+            "WORKER42.AUTHCLIENT3.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE\n"+
+            "-WORKER42.AUTHCLIENT4.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n" +
+            "-WORKER42.AUTHCLIENT4.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"+
+            "-WORKER42.AUTHCLIENT4.SUBJECT.VALUE=12345678\n"+
+            "-WORKER42.AUTHCLIENT4.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE\n"+
             "WORKER42.SIGNERCERTIFICATE = " + SIGNER_CERT + "\n" +
             "WORKER42.SIGNERCERTCHAIN = " + SIGNER_CERT_CHAIN + "\n" +
             "-WORKER42.AUTHCLIENT = 987654321;CN=Denied\n" +
@@ -69,6 +80,39 @@ public class PropertiesParserTest extends TestCase {
             "FOO.BAR = FOOBAR\n" +
             "VALUE\n";
     
+    /**
+     *
+     * /**
+     * A properties file that should generate parser errors.
+     */
+    private static String incorrectAuthClientGen2ConfigWithMissingMandatoryFields
+            = "WORKER42.AUTHCLIENT1.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n"
+            + "WORKER42.AUTHCLIENT2.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
+            + "WORKER42.AUTHCLIENT1.SUBJECT.VALUE=723507815f93666666\n"
+            + "WORKER42.AUTHCLIENT2.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE";
+    
+    /**
+     *
+     * /**
+     * A properties file that should generate parser errors.
+     */
+    private static String correctAuthClientGen2Config
+            = "WORKER42.AUTHCLIENT1.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n"
+            + "WORKER42.AUTHCLIENT1.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
+            + "WORKER42.AUTHCLIENT1.SUBJECT.VALUE=723507815f93666666\n"
+            + "WORKER42.AUTHCLIENT1.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE";
+    /**
+     *
+     * /**
+     * A properties file that should generate parser errors.
+     */
+    private static String incorrectAuthClientGen2ConfigWithDifferentPrefix
+            = "WORKER42.AUTHCLIENT1.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n"
+            + "-WORKER42.AUTHCLIENT3.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
+            + "-WORKER42.AUTHCLIENT3.SUBJECT.VALUE=723507815f93666666\n"
+            + "WORKER42.AUTHCLIENT3.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE";
+    
+
     /**
      * A property file trying to remove a certificate and certificate chain.
      * Is currently not implemented, and the commands are ignored and reports parser messages.
@@ -152,6 +196,25 @@ public class PropertiesParserTest extends TestCase {
         }
         return false;
     }
+    
+    /**
+     * Check if a given auth client is included in the mapping given a worker ID or name, as given by the parser.
+     * 
+     * @param workerIdOrName
+     * @param authClient Auth client to match
+     * @param authClients Map of worker ID or name to list of authclients
+     * @return True if the authclient is found for the given worker
+     */
+    private boolean containsAuthClientGen2ForWorker(final String workerIdOrName,
+            final CertificateMatchingRule authClient,
+            final Map<String, List<CertificateMatchingRule>> authClients) {
+        final List<CertificateMatchingRule> acs = authClients.get(workerIdOrName);
+
+        if (acs != null) {
+            return acs.contains(authClient);
+        }
+        return false;
+    }
             
     /**
      * Test parsing a valid configuration setting and removing global properties
@@ -172,7 +235,9 @@ public class PropertiesParserTest extends TestCase {
             final Map<WorkerProperty, String> setWorkerProps = parser.getSetWorkerProperties();
             final List<WorkerProperty> removeWorkerProps = parser.getRemoveWorkerProperties();
             final Map<String, List<AuthorizedClient>> addAuthClients = parser.getAddAuthorizedClients();
+            final Map<String, List<CertificateMatchingRule>> addAuthClientsGen2 = parser.getAddAuthorizedClientsGen2();
             final Map<String, List<AuthorizedClient>> removeAuthClients = parser.getRemoveAuthorizedClients();
+            final Map<String, List<CertificateMatchingRule>> removeAuthClientsGen2 = parser.getRemoveAuthorizedClientsGen2();
             
             final Map<String, byte[]> certs = parser.getSignerCertificates();
             final Map<String, List<byte[]>> certChains = parser.getSignerCertificateChains();
@@ -199,14 +264,30 @@ public class PropertiesParserTest extends TestCase {
                     containsWorkerProperty("42", "REMOVED", removeWorkerProps));
             assertTrue("Should contain worker property",
                     containsWorkerProperty("4711", "OLDKEY", "OLDVALUE", setWorkerProps));
+            
             assertEquals("Workers with added auth clients", 1, addAuthClients.size());
             assertTrue("Should contain auth client",
                     containsAuthClientForWorker("42", new AuthorizedClient("12345678", "CN=Authorized"), addAuthClients));
             assertTrue("Should contain auth client",
                     containsAuthClientForWorker("42", new AuthorizedClient("23456789", "CN=Authorized2"), addAuthClients));
+            
+            CertificateMatchingRule cmrToBeAdded = new CertificateMatchingRule(MatchSubjectWithType.valueOf("CERTIFICATE_SERIALNO"),
+                    MatchIssuerWithType.valueOf("ISSUER_DN_BCSTYLE"), "723507815f93666666", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", "Imported rule");
+            assertEquals("Workers with added auth clients", 1, addAuthClientsGen2.size());
+            assertTrue("Should contain auth client",
+                    containsAuthClientGen2ForWorker("42", cmrToBeAdded, addAuthClientsGen2));
+            
             assertEquals("Workers with removed auth clients", 1, removeAuthClients.size());
             assertTrue("Should contain auth client",
                     containsAuthClientForWorker("42", new AuthorizedClient("987654321", "CN=Denied"), removeAuthClients));
+            
+            CertificateMatchingRule cmrToBeRemoved = new CertificateMatchingRule(MatchSubjectWithType.valueOf("CERTIFICATE_SERIALNO"),
+                    MatchIssuerWithType.valueOf("ISSUER_DN_BCSTYLE"), "12345678", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", "Imported rule");
+            assertEquals("Workers with removed auth clients", 1, removeAuthClientsGen2.size());
+            assertTrue("Should contain auth client",
+                    containsAuthClientGen2ForWorker("42", cmrToBeRemoved, removeAuthClientsGen2));
+            
+            
             assertTrue("Should contain global property with NODE prefix",
                     containsGlobalProperty("NODE.", "NODE1.KEY", "VALUE", setGlobalProps));
             assertTrue("Should contain removed global property",
@@ -242,6 +323,66 @@ public class PropertiesParserTest extends TestCase {
             assertTrue("Error message", errorMessages.contains("Error in propertyfile syntax, check : FOO.BAR"));
             assertTrue("Error message", errorMessages.contains("Error in propertyfile syntax, check : VALUE"));
             
+        } catch (IOException e) {
+            fail("Failed to parse properties: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Test parsing an correct config.
+     *
+     * @throws Exception
+     */
+    public void test02ParsingCorrectWithAuthClientGen2Fields() throws Exception {
+        final Properties prop = new Properties();
+        final PropertiesParser parser = new PropertiesParser();
+
+        prop.load(new ByteArrayInputStream(correctAuthClientGen2Config.getBytes()));
+        parser.process(prop);
+
+        assertFalse("Should not have errors", parser.hasErrors());
+    }
+    
+    /**
+     * Test parsing an incorrect config where all mandatory fields are not provided for AUTHCLIENT.
+     *
+     * @throws Exception
+     */
+    public void test02ParsingIncorrectMandatoryFieldsAbsent() throws Exception {
+        final Properties prop = new Properties();
+        final PropertiesParser parser = new PropertiesParser();
+
+        try {
+            prop.load(new ByteArrayInputStream(incorrectAuthClientGen2ConfigWithMissingMandatoryFields.getBytes()));
+            parser.process(prop);
+
+            final List<String> errorMessages = parser.getErrors();
+            assertTrue("Has errors", parser.hasErrors());            
+            assertTrue("Error message", errorMessages.contains("Either all mandatory fields are not provided or same prefix is not provided for AUTHCLIENT 1"));
+
+        } catch (IOException e) {
+            fail("Failed to parse properties: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Test parsing an incorrect config where prefix is not same for AUTHCLIENT
+     * mandatory fields (some fields indicate removal some indicate addition).
+     *
+     * @throws Exception
+     */
+    public void test02ParsingIncorrectDifferentPrefix() throws Exception {
+        final Properties prop = new Properties();
+        final PropertiesParser parser = new PropertiesParser();
+
+        try {
+            prop.load(new ByteArrayInputStream(incorrectAuthClientGen2ConfigWithDifferentPrefix.getBytes()));
+            parser.process(prop);
+
+            final List<String> errorMessages = parser.getErrors();
+            assertTrue("Has errors", parser.hasErrors());
+            assertTrue("Error message", errorMessages.contains("Either all mandatory fields are not provided or same prefix is not provided for AUTHCLIENT 1"));
+
         } catch (IOException e) {
             fail("Failed to parse properties: " + e.getMessage());
         }

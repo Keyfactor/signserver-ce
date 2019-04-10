@@ -62,3 +62,6 @@ TLS Client keystores:
     dss10_admin2.p12
         This file can be imported into your browser or used by the Administration GUI to connect to SignServer when DSSRootCA10 is trusted by the server.
         Password: foo123
+    dss10_client1.p12
+        This file can be imported into your browser or used by the Administration GUI to connect to SignServer when DSSRootCA10 is trusted by the server.
+        Password:foo123

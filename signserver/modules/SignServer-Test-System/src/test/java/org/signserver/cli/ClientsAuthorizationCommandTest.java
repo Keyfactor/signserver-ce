@@ -328,7 +328,8 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     }
     
     private void testAddFromCertWithMatchType(final String matchSubjectWithType,
-                                              final String expected)
+                                              final String expected,
+                                              boolean expectDuplicate)
             throws Exception {
         try {
             final String certPath =
@@ -343,6 +344,16 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
                     "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
                     "-cert", certPath,
                     "-description", "Description"));
+            if (expectDuplicate) {
+                assertPrinted("warning message", cli.getOut(),
+                              "More than one component matching " +
+                              matchSubjectWithType + ", picking the first one");
+            } else {
+                assertNotPrinted("warning message", cli.getOut(),
+                                 "More than one component matching " +
+                                 matchSubjectWithType + ", picking the first one");
+            }
+            
             assertPrintedLitterally("prints new rule", cli.getOut(), expected);
 
             assertEquals("execute list", 0, cli.execute("authorizedclients",
@@ -364,7 +375,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     public void testAddFromCertWithSubjectTypeCERTIFICATE_SERIALNO() throws Exception {
         LOG.info("testAddFromCertWithSubjectTypeCERTIFICATE_SERIALNO");
         testAddFromCertWithMatchType("CERTIFICATE_SERIALNO",
-                "CERTIFICATE_SERIALNO: 7577817a5a5199add001ee0edf4db3a3a139bfdd | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+                "CERTIFICATE_SERIALNO: 7577817a5a5199add001ee0edf4db3a3a139bfdd | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description", false);
     }
 
     /**
@@ -377,7 +388,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_CN() throws Exception {
         LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_CN");
         testAddFromCertWithMatchType("SUBJECT_RDN_CN",
-                "SUBJECT_RDN_CN: Client 1 | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+                "SUBJECT_RDN_CN: Client 1 | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description", false);
     }
     
     /**
@@ -390,7 +401,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_DC() throws Exception {
         LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_DC");
         testAddFromCertWithMatchType("SUBJECT_RDN_DC",
-                "SUBJECT_RDN_DC: primekey.com | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+                "SUBJECT_RDN_DC: primekey.com | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description", false);
 
     }
 
@@ -404,7 +415,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_ST() throws Exception {
         LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_ST");
         testAddFromCertWithMatchType("SUBJECT_RDN_ST",
-                "SUBJECT_RDN_ST: Stockholm | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+                "SUBJECT_RDN_ST: Stockholm | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description", false);
 
     }
 
@@ -418,7 +429,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_L() throws Exception {
         LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_L");
         testAddFromCertWithMatchType("SUBJECT_RDN_L",
-                "SUBJECT_RDN_L: Solna | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+                "SUBJECT_RDN_L: Solna | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description", false);
 
     }
     
@@ -432,7 +443,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_O() throws Exception {
         LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_O");
         testAddFromCertWithMatchType("SUBJECT_RDN_O",
-                "SUBJECT_RDN_O: PrimeKey | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+                "SUBJECT_RDN_O: PrimeKey | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description", false);
 
     }    
     
@@ -446,7 +457,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_OU() throws Exception {
         LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_OU");
         testAddFromCertWithMatchType("SUBJECT_RDN_OU",
-                "SUBJECT_RDN_OU: SignServer Testing | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+                "SUBJECT_RDN_OU: SignServer Testing | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description", false);
 
     }
 
@@ -460,7 +471,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_TITLE() throws Exception {
         LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_TILE");
         testAddFromCertWithMatchType("SUBJECT_RDN_TITLE",
-                "SUBJECT_RDN_TITLE: All Fields End Entity | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+                "SUBJECT_RDN_TITLE: All Fields End Entity | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description", false);
 
     }
 
@@ -474,7 +485,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_UID() throws Exception {
         LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_UID");
         testAddFromCertWithMatchType("SUBJECT_RDN_UID",
-                "SUBJECT_RDN_UID: 123123123 | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+                "SUBJECT_RDN_UID: 123123123 | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description", false);
 
     }
 
@@ -488,7 +499,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     public void testAddFromCertWithSubjectTypeSUBJECT_ALTNAME_RFC822NAME() throws Exception {
         LOG.info("testAddFromCertWithSubjectTypeSUBJECT_ALTNAME_RFC822NAME");
         testAddFromCertWithMatchType("SUBJECT_ALTNAME_RFC822NAME",
-                "SUBJECT_ALTNAME_RFC822NAME: noreply@primekey.com | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+                "SUBJECT_ALTNAME_RFC822NAME: noreply@primekey.com | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description", false);
 
     }
     
@@ -502,9 +513,24 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     public void testAddFromCertWithSubjectTypeSUBJECT_ALTNAME_MSUPN() throws Exception {
         LOG.info("testAddFromCertWithSubjectTypeSUBJECT_ALTNAME_MSUPN");
         testAddFromCertWithMatchType("SUBJECT_ALTNAME_MSUPN",
-                "SUBJECT_ALTNAME_MSUPN: myupn@example.org | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+                "SUBJECT_ALTNAME_MSUPN: myupn@example.org | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description", false);
 
     }
+    
+    /**
+     * Test adding an authorization rule matching on subject SAN SUBJECT_ALTNAME_MSUPN field
+     * by specifying a certificate.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testAddFromCertWithSubjectTypeSUBJECT_RDN_SERIALNO() throws Exception {
+        LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_SERIALNO");
+        testAddFromCertWithMatchType("SUBJECT_RDN_SERIALNO",
+                "SUBJECT_RDN_SERIALNO: 123-4567abc | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description",
+                true);
+
+    }    
     
     /**
      * Test adding an authorization rule matching on subject DN field not present

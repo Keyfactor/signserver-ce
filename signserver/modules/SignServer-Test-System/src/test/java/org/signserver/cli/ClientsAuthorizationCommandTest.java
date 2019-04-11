@@ -619,4 +619,38 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             test.removeWorker(test.getSignerIdCMSSigner1());
         }
     }
+
+    /**
+     * Test adding a rule from a certificate specifying a field that is not
+     * existing in the subject DN.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testAddFromCertWithNonExistingField() throws Exception {
+        try {
+            final String certPath =
+                    getSignServerHome().getAbsolutePath() + File.separator +
+                    "res" + File.separator + "test" + File.separator +
+                    "dss10" + File.separator + "DSSSubCA11.cacert.pem";
+
+            test.addCMSSigner1();
+            assertEquals("execute add", -2, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-add", 
+                    "-matchSubjectWithType", "SUBJECT_RDN_TITLE",
+                    "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
+                    "-cert", certPath,
+                    "-description", "Description"));
+            
+            assertPrintedLitterally("prints not found", cli.getOut(),
+                    "DN field SUBJECT_RDN_TITLE not found in subject DN of certificate");
+
+            assertEquals("execute list", 0, cli.execute("authorizedclients",
+                    "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-list"));
+            assertNotPrinted("does not mention new rule", cli.getOut(), "SUBJECT_RDN_TITLE");
+        } finally {
+            test.removeWorker(test.getSignerIdCMSSigner1());
+        }
+    }
 }

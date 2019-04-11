@@ -353,7 +353,7 @@ public class PropertiesParser {
             Map.Entry<String, AuthClientEntry> pair = (Map.Entry) it.next();
             String seqNO = pair.getKey();
             AuthClientEntry entry = pair.getValue();
-            CertificateMatchingRule rule = entry.getCm();
+            CertificateMatchingRule rule = entry.getRule();
             if (allMandatoryFieldsExistInProvidedRule(rule)) {
                 rule.setDescription("Imported rule");
                 String workerIdOrName = entry.getWorkerIdOrName();
@@ -398,16 +398,16 @@ public class PropertiesParser {
         String authClientRuleProperty = propertykey.substring(authClientLength + 1);
         switch (authClientRuleProperty) {
             case AUTHORIZED_CLIENTS_DOT_SUBJECT_DOT_TYPE:
-                entry.getCm().setMatchSubjectWithType(MatchSubjectWithType.valueOf(propertyvalue));
+                entry.getRule().setMatchSubjectWithType(MatchSubjectWithType.valueOf(propertyvalue));
                 break;
             case AUTHORIZED_CLIENTS_DOT_SUBJECT_DOT_VALUE:
-                entry.getCm().setMatchSubjectWithValue(propertyvalue);
+                entry.getRule().setMatchSubjectWithValue(propertyvalue);
                 break;
             case AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_TYPE:
-                entry.getCm().setMatchIssuerWithType(MatchIssuerWithType.valueOf(propertyvalue));
+                entry.getRule().setMatchIssuerWithType(MatchIssuerWithType.valueOf(propertyvalue));
                 break;
             case AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_VALUE:
-                entry.getCm().setMatchIssuerWithValue(propertyvalue);
+                entry.getRule().setMatchIssuerWithValue(propertyvalue);
                 break;
         }
     }
@@ -491,18 +491,26 @@ public class PropertiesParser {
     public List<String> getWorkerIds() {
         return workerIds;
     }
-    
-    class AuthClientEntry {
 
-      private  CertificateMatchingRule cm;      
-      private  String workerIdOrName;
+    static private class AuthClientEntry {
 
-        public CertificateMatchingRule getCm() {
-            return cm;
+        private CertificateMatchingRule rule;
+        private String workerIdOrName;
+
+        public AuthClientEntry(CertificateMatchingRule rule, String workerIdOrName) {
+            this.rule = rule;
+            this.workerIdOrName = workerIdOrName;
         }
 
-        public void setCm(CertificateMatchingRule cm) {
-            this.cm = cm;
+        public AuthClientEntry() {
+        }
+
+        public CertificateMatchingRule getRule() {
+            return rule;
+        }
+
+        public void setRule(CertificateMatchingRule rule) {
+            this.rule = rule;
         }
 
         public String getWorkerIdOrName() {
@@ -511,14 +519,6 @@ public class PropertiesParser {
 
         public void setWorkerIdOrName(String workerIdOrName) {
             this.workerIdOrName = workerIdOrName;
-        }
-
-        public AuthClientEntry(CertificateMatchingRule cm, String workerIdOrName) {
-            this.cm = cm;            
-            this.workerIdOrName = workerIdOrName;
-        }
-
-        public AuthClientEntry() {
         }
     }
 }

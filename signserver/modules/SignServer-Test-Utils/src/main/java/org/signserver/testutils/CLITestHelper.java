@@ -80,4 +80,9 @@ public class CLITestHelper {
         TestCase.assertFalse(message + ", should not match: " + searchString, grep(stream, searchString));
     }
     
+    public static void assertPrintedLitterally(String message, ByteArrayOutputStream stream,
+                                               String searchString) {
+        TestCase.assertTrue(message + ", expected: " + searchString, stream.toString().contains(searchString));
+    }
+    
 }

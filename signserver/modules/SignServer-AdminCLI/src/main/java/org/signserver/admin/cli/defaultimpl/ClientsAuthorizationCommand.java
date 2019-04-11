@@ -344,7 +344,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
                 throw new CommandFailureException("DN field " + matchSubjectName +
                                               " not found in subject DN of certificate");
             } else if (size > 1) {
-                LOG.warn("More than one component matching " + matchSubjectName +
+                this.getOutputStream().println("More than one component matching " + matchSubjectName +
                          ", picking the first one");
             }
 

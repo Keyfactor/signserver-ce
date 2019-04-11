@@ -567,7 +567,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             assertEquals("execute list", 0, cli.execute("authorizedclients",
                     "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
-            assertNotPrinted("does not print new rule", cli.getOut(), "SUBJECT_RDN_SERIALNO");
+            assertPrinted("prints no auth clients", cli.getOut(), "No authorized clients exists.");
         } finally {
             test.removeWorker(test.getSignerIdCMSSigner1());
         }

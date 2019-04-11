@@ -98,13 +98,12 @@ public class PropertiesDumper {
             outProps.setProperty("WORKER" + workerId + DOT_SIGNERCERTCHAIN, chainValue);
         }
 
-        if (authorizedClients.size() > 0) {
-            int i = 1;
-            for (AuthorizedClient client : authorizedClients) {
-                outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i, client.getCertSN() + ";" + client.getIssuerDN());
-                i++;
-            }
+        int i = 1;
+        for (AuthorizedClient client : authorizedClients) {
+            outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i, client.getCertSN() + ";" + client.getIssuerDN());
+            i++;
         }
+
     }
     
     /**
@@ -151,16 +150,14 @@ public class PropertiesDumper {
             outProps.setProperty("WORKER" + workerId + DOT_SIGNERCERTCHAIN, chainValue);
         }
 
-        if (authorizedClients.size() > 0) {
-            int i = 1;
-            for (CertificateMatchingRule client : authorizedClients) {
-                outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_SUBJECT_DOT_TYPE, client.getMatchSubjectWithType().toString());
-                outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_SUBJECT_DOT_VALUE, client.getMatchSubjectWithValue());
-                outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_TYPE, client.getMatchIssuerWithType().toString());
-                outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_VALUE, client.getMatchIssuerWithValue());
-                outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_DESCRIPTION, client.getDescription());
-                i++;
-            }
+        int i = 1;
+        for (CertificateMatchingRule client : authorizedClients) {            
+            outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_SUBJECT_DOT_TYPE, client.getMatchSubjectWithType().toString());
+            outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_SUBJECT_DOT_VALUE, client.getMatchSubjectWithValue());
+            outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_TYPE, client.getMatchIssuerWithType().toString());
+            outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_VALUE, client.getMatchIssuerWithValue());
+            outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_DESCRIPTION, client.getDescription());
+            i++;
         }
     }
     

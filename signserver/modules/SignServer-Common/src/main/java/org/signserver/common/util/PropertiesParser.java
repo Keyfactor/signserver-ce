@@ -287,7 +287,8 @@ public class PropertiesParser {
     private void setWorkerProperty(final String workerIdOrName, String propertykey, String propertyvalue) {
         if (propertykey.startsWith(AUTHCLIENT)) {
 
-            if (propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_TYPE) || propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_VALUE)) {
+            if (propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_TYPE) || propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_VALUE)
+                    || propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_DESCRIPTION)) {
                 // This is new format auth client so do it new way
                 populateGen2AuthClientEntries(workerIdOrName, propertykey, propertyvalue, true);
             } else { // This is legacy auth client so do it old way
@@ -355,7 +356,9 @@ public class PropertiesParser {
             AuthClientEntry entry = pair.getValue();
             CertificateMatchingRule rule = entry.getRule();
             if (allMandatoryFieldsExistInProvidedRule(rule)) {
-                rule.setDescription("Imported rule");
+                if (rule.getDescription() == null) {
+                    rule.setDescription("Imported rule");
+                }
                 String workerIdOrName = entry.getWorkerIdOrName();
                 if (add) {
                     addAuthorizedClientGen2(workerIdOrName, rule);
@@ -408,6 +411,9 @@ public class PropertiesParser {
                 break;
             case AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_VALUE:
                 entry.getRule().setMatchIssuerWithValue(propertyvalue);
+                break;
+            case AUTHORIZED_CLIENTS_DOT_DESCRIPTION:
+                entry.getRule().setDescription(propertyvalue);
                 break;
         }
     }

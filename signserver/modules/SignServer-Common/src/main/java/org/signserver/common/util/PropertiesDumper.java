@@ -158,6 +158,7 @@ public class PropertiesDumper {
                 outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_SUBJECT_DOT_VALUE, client.getMatchSubjectWithValue());
                 outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_TYPE, client.getMatchIssuerWithType().toString());
                 outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_VALUE, client.getMatchIssuerWithValue());
+                outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_DESCRIPTION, client.getDescription());
                 i++;
             }
         }

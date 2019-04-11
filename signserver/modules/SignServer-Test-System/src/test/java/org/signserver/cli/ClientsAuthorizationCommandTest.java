@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.signserver.testutils.CLITestHelper;
 import static org.signserver.testutils.CLITestHelper.assertNotPrinted;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
+import static org.signserver.testutils.CLITestHelper.assertPrintedLitterally;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
@@ -326,6 +327,33 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
         }
     }
     
+    private void testAddFromCertWithMatchType(final String matchSubjectWithType,
+                                              final String expected)
+            throws Exception {
+        try {
+            final String certPath =
+                    getSignServerHome().getAbsolutePath() + File.separator +
+                    "res" + File.separator + "test" + File.separator +
+                    "dss10" + File.separator + "dss10_client1.pem";
+
+            test.addCMSSigner1();
+            assertEquals("execute add", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-add", 
+                    "-matchSubjectWithType", matchSubjectWithType,
+                    "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
+                    "-cert", certPath,
+                    "-description", "Description"));
+            assertPrintedLitterally("prints new rule", cli.getOut(), expected);
+
+            assertEquals("execute list", 0, cli.execute("authorizedclients",
+                    "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
+                    "-list"));
+            assertPrintedLitterally("prints new rule", cli.getOut(), expected);
+        } finally {
+            test.removeWorker(test.getSignerIdCMSSigner1());
+        }
+    }
+
     /**
      * Test adding an authorization rule matching on subject serial number
      * by specifying a certificate.
@@ -335,30 +363,10 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     @Test
     public void testAddFromCertWithSubjectTypeCERTIFICATE_SERIALNO() throws Exception {
         LOG.info("testAddFromCertWithSubjectTypeCERTIFICATE_SERIALNO");
-        try {
-            final String certPath =
-                    getSignServerHome().getAbsolutePath() + File.separator +
-                    "res" + File.separator + "test" + File.separator +
-                    "dss10" + File.separator + "DSSSubCA11.cacert.pem";
-
-            test.addCMSSigner1();
-            assertEquals("execute add", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
-                    "-add", 
-                    "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
-                    "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
-                    "-cert", certPath,
-                    "-description", "Description"));
-            assertPrinted("prints new rule", cli.getOut(), "CERTIFICATE_SERIALNO: 3519c898bfef0d7e | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
-
-            assertEquals("execute list", 0, cli.execute("authorizedclients",
-                    "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
-                    "-list"));
-            assertPrinted("prints new rule", cli.getOut(), "CERTIFICATE_SERIALNO: 3519c898bfef0d7e | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
-        } finally {
-            test.removeWorker(test.getSignerIdCMSSigner1());
-        }
+        testAddFromCertWithMatchType("CERTIFICATE_SERIALNO",
+                "CERTIFICATE_SERIALNO: 7577817a5a5199add001ee0edf4db3a3a139bfdd | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
     }
-    
+
     /**
      * Test adding an authorization rule matching on subject DN CN field
      * by specifying a certificate.
@@ -368,28 +376,8 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     @Test
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_CN() throws Exception {
         LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_CN");
-        try {
-            final String certPath =
-                    getSignServerHome().getAbsolutePath() + File.separator +
-                    "res" + File.separator + "test" + File.separator +
-                    "dss10" + File.separator + "DSSSubCA11.cacert.pem";
-
-            test.addCMSSigner1();
-            assertEquals("execute add", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
-                    "-add", 
-                    "-matchSubjectWithType", "SUBJECT_RDN_CN",
-                    "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
-                    "-cert", certPath,
-                    "-description", "Description"));
-            assertPrinted("prints new rule", cli.getOut(), "SUBJECT_RDN_CN: DSS Sub CA 11 | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
-
-            assertEquals("execute list", 0, cli.execute("authorizedclients",
-                    "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
-                    "-list"));
-            assertPrinted("prints new rule", cli.getOut(), "SUBJECT_RDN_CN: DSS Sub CA 11 | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
-        } finally {
-            test.removeWorker(test.getSignerIdCMSSigner1());
-        }
+        testAddFromCertWithMatchType("SUBJECT_RDN_CN",
+                "SUBJECT_RDN_CN: Client 1 | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
     }
     
     /**

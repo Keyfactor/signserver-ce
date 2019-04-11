@@ -283,6 +283,68 @@ public class ClientCertAuthorizerRdnTest {
             }
         }
     }
+   
+    private void standardTestOfOneRDN(MatchSubjectWithType type, ASN1ObjectIdentifier typeOid, String simpleName, String complicatedName, ASN1ObjectIdentifier otherType) throws Exception {
+        
+        // Setup authorizations
+        final List<AuthorizedClientEntry> authorizations = Arrays.asList(
+            // Basic rule to match against
+            new AuthorizedClientEntry(simpleName, ISSUER_DN_ROOTCA10, type, MatchIssuerWithType.ISSUER_DN_BCSTYLE),
+                
+            // A rule that should not match (different CA)
+            new AuthorizedClientEntry(simpleName, ISSUER_DN_OTHERCA, type, MatchIssuerWithType.ISSUER_DN_BCSTYLE),
+            
+            // A more complicated value to match against
+            new AuthorizedClientEntry(complicatedName, ISSUER_DN_ROOTCA10, type, MatchIssuerWithType.ISSUER_DN_BCSTYLE)
+        );
+        
+        // Certificates that should work
+        final Collection<File> goodKeyStores = Arrays.asList(
+                // Simplest case
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, simpleName))),
+                
+                // One more RDN
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, simpleName), new RDN(otherType, "Organization One"))),
+                
+                // Second CN should match
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Name 1"), new RDN(otherType, "Organization One"), new RDN(typeOid, simpleName))),
+                
+                // Should also be okay with the complicated name
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, complicatedName), new RDN(otherType, "Testing")))
+        );
+        
+        // Certificates that should not work
+        Collection<File> badKeyStores = Arrays.asList(
+                // No CN at all
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherType, simpleName))),
+
+                // No DN
+                ca.issueKeyStoreFile(Arrays.asList(new RDN[0])),
+
+                // Space only
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, " "))),
+
+                // Different CN
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin Two"))),
+
+                // Different case
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin OnE"))), 
+
+                // Different case and other RDN
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin OnE"), new RDN(otherType, simpleName))),
+
+                // Starting with "Admin One" but incorrect and multiple
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin One2"), new RDN(typeOid, "Admin One3"), new RDN(otherType, simpleName))),
+                
+                // Starting with "Admin Four " but incorrect
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin Four ")))
+        );
+
+        // Execute tests
+        performTest(authorizations, goodKeyStores, badKeyStores);
+    }
+    
+    // TODO: Duplicate and implement the above testSUBJECT_RDN_CN method for all other RDNs and alt names
 
     /**
      * Tests authorization with CommonName (CN).
@@ -292,67 +354,119 @@ public class ClientCertAuthorizerRdnTest {
     @Test
     public void testSUBJECT_RDN_CN() throws Exception {
         LOG.info("testSUBJECT_RDN_CN");
-        
-        // Setup authorizations
-        final String simpleName = "Admin One";
-        final String complicatedName = "Admin Four !#%&,+\\$*.";
-        final List<AuthorizedClientEntry> authorizations = Arrays.asList(
-            // Basic rule to match against
-            new AuthorizedClientEntry(simpleName, ISSUER_DN_ROOTCA10, MatchSubjectWithType.SUBJECT_RDN_CN, MatchIssuerWithType.ISSUER_DN_BCSTYLE),
-                
-            // A rule that should not match (different CA)
-            new AuthorizedClientEntry(simpleName, ISSUER_DN_OTHERCA, MatchSubjectWithType.SUBJECT_RDN_CN, MatchIssuerWithType.ISSUER_DN_BCSTYLE),
-            
-            // A more complicated value to match against
-            new AuthorizedClientEntry(complicatedName, ISSUER_DN_ROOTCA10, MatchSubjectWithType.SUBJECT_RDN_CN, MatchIssuerWithType.ISSUER_DN_BCSTYLE)
-        );
-        
-        // Certificates that should work
-        final Collection<File> goodKeyStores = Arrays.asList(
-                // Simplest case
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(BCStyle.CN, simpleName))),
-                
-                // One more RDN
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(BCStyle.CN, "Admin One"), new RDN(BCStyle.O, "Organization One"))),
-                
-                // Second CN should match
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(BCStyle.CN, "Name 1"), new RDN(BCStyle.O, "Organization One"), new RDN(BCStyle.CN, "Admin One"))),
-                
-                // Should also be okay with the complicated name
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(BCStyle.CN, complicatedName), new RDN(BCStyle.O, "Testing")))
-        );
-        
-        // Certificates that should not work
-        Collection<File> badKeyStores = Arrays.asList(
-                // No CN at all
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(BCStyle.UID, "Admin One"))),
+        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_CN, BCStyle.CN, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.O);
+    }
 
-                // No DN
-                ca.issueKeyStoreFile(Arrays.asList(new RDN[0])),
+    /**
+     * Tests authorization with Serial number (serialNumber/SN).
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testSUBJECT_RDN_SERIALNO() throws Exception {
+        LOG.info("testSUBJECT_RDN_SERIALNO");
+        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_SERIALNO, BCStyle.SERIALNUMBER, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+    }
 
-                // Space only
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(BCStyle.CN, " "))),
-
-                // Different CN
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(BCStyle.CN, "Admin Two"))),
-
-                // Different case
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(BCStyle.CN, "Admin OnE"))), 
-
-                // Different case and other RDN
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(BCStyle.CN, "Admin OnE"), new RDN(BCStyle.O, "Admin One"))),
-
-                // Starting with "Admin One" but incorrect and multiple
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(BCStyle.CN, "Admin One2"), new RDN(BCStyle.CN, "Admin One3"), new RDN(BCStyle.O, "Admin One"))),
-                
-                // Starting with "Admin Four " but incorrect
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(BCStyle.CN, "Admin Four ")))
-        );
-
-        // Execute tests
-        performTest(authorizations, goodKeyStores, badKeyStores);
+    /**
+     * Tests authorization with Country (C).
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testSUBJECT_RDN_C() throws Exception {
+        LOG.info("testSUBJECT_RDN_C");
+        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_C, BCStyle.C, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
     }
     
-    // TODO: Duplicate and implement the above testSUBJECT_RDN_CN method for all other RDNs and alt names
+    /**
+     * Tests authorization with Domain Component (DC).
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testSUBJECT_RDN_DC() throws Exception {
+        LOG.info("testSUBJECT_RDN_DC");
+        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_DC, BCStyle.DC, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+    }
     
+    /**
+     * Tests authorization with State or Province (ST).
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testSUBJECT_RDN_ST() throws Exception {
+        LOG.info("testSUBJECT_RDN_ST");
+        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_ST, BCStyle.ST, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+    }
+    
+    /**
+     * Tests authorization with Locality (L).
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testSUBJECT_RDN_L() throws Exception {
+        LOG.info("testSUBJECT_RDN_L");
+        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_L, BCStyle.L, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+    }
+    
+    /**
+     * Tests authorization with Organization (O).
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testSUBJECT_RDN_O() throws Exception {
+        LOG.info("testSUBJECT_RDN_O");
+        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_O, BCStyle.O, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+    }
+    
+    /**
+     * Tests authorization with Organizational Unit (OU).
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testSUBJECT_RDN_OU() throws Exception {
+        LOG.info("testSUBJECT_RDN_OU");
+        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_OU, BCStyle.OU, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+    }
+    
+    /**
+     * Tests authorization with Title (title).
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testSUBJECT_RDN_TITLE() throws Exception {
+        LOG.info("testSUBJECT_RDN_TITLE");
+        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_TITLE, BCStyle.T, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+    }
+    
+    /**
+     * Tests authorization with Unique ID (UID).
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testSUBJECT_RDN_UID() throws Exception {
+        LOG.info("testSUBJECT_RDN_UID");
+        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_UID, BCStyle.UID, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+    }
+    
+    /**
+     * Tests authorization with E-mail address in DN.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testSUBJECT_RDN_E() throws Exception {
+        LOG.info("testSUBJECT_RDN_E");
+        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_E, BCStyle.E, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+    }
+
+    // TODO SUBJECT_ALTNAME_RFC822NAME
+    // TODO SUBJECT_ALTNAME_MSUPN
 }

@@ -381,6 +381,132 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     }
     
     /**
+     * Test adding an authorization rule matching on subject DN DC field
+     * by specifying a certificate.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testAddFromCertWithSubjectTypeSUBJECT_RDN_DC() throws Exception {
+        LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_DC");
+        testAddFromCertWithMatchType("SUBJECT_RDN_DC",
+                "SUBJECT_RDN_DC: primekey.com | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+
+    }
+
+    /**
+     * Test adding an authorization rule matching on subject DN ST field
+     * by specifying a certificate.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testAddFromCertWithSubjectTypeSUBJECT_RDN_ST() throws Exception {
+        LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_ST");
+        testAddFromCertWithMatchType("SUBJECT_RDN_ST",
+                "SUBJECT_RDN_ST: Stockholm | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+
+    }
+
+    /**
+     * Test adding an authorization rule matching on subject DN L field
+     * by specifying a certificate.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testAddFromCertWithSubjectTypeSUBJECT_RDN_L() throws Exception {
+        LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_L");
+        testAddFromCertWithMatchType("SUBJECT_RDN_L",
+                "SUBJECT_RDN_L: Solna | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+
+    }
+    
+/**
+     * Test adding an authorization rule matching on subject DN O field
+     * by specifying a certificate.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testAddFromCertWithSubjectTypeSUBJECT_RDN_O() throws Exception {
+        LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_O");
+        testAddFromCertWithMatchType("SUBJECT_RDN_O",
+                "SUBJECT_RDN_O: PrimeKey | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+
+    }    
+    
+/**
+     * Test adding an authorization rule matching on subject DN OU field
+     * by specifying a certificate.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testAddFromCertWithSubjectTypeSUBJECT_RDN_OU() throws Exception {
+        LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_OU");
+        testAddFromCertWithMatchType("SUBJECT_RDN_OU",
+                "SUBJECT_RDN_OU: SignServer Testing | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+
+    }
+
+/**
+     * Test adding an authorization rule matching on subject DN TITLE field
+     * by specifying a certificate.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testAddFromCertWithSubjectTypeSUBJECT_RDN_TITLE() throws Exception {
+        LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_TILE");
+        testAddFromCertWithMatchType("SUBJECT_RDN_TITLE",
+                "SUBJECT_RDN_TITLE: All Fields End Entity | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+
+    }
+
+    /**
+     * Test adding an authorization rule matching on subject DN UID field
+     * by specifying a certificate.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testAddFromCertWithSubjectTypeSUBJECT_RDN_UID() throws Exception {
+        LOG.info("testAddFromCertWithSubjectTypeSUBJECT_RDN_UID");
+        testAddFromCertWithMatchType("SUBJECT_RDN_UID",
+                "SUBJECT_RDN_UID: 123123123 | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+
+    }
+
+    /**
+     * Test adding an authorization rule matching on subject SAN SUBJECT_ALTNAME_RFC822NAME field
+     * by specifying a certificate.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testAddFromCertWithSubjectTypeSUBJECT_ALTNAME_RFC822NAME() throws Exception {
+        LOG.info("testAddFromCertWithSubjectTypeSUBJECT_ALTNAME_RFC822NAME");
+        testAddFromCertWithMatchType("SUBJECT_ALTNAME_RFC822NAME",
+                "SUBJECT_ALTNAME_RFC822NAME: noreply@primekey.com | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+
+    }
+    
+    /**
+     * Test adding an authorization rule matching on subject SAN SUBJECT_ALTNAME_MSUPN field
+     * by specifying a certificate.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testAddFromCertWithSubjectTypeSUBJECT_ALTNAME_MSUPN() throws Exception {
+        LOG.info("testAddFromCertWithSubjectTypeSUBJECT_ALTNAME_MSUPN");
+        testAddFromCertWithMatchType("SUBJECT_ALTNAME_MSUPN",
+                "SUBJECT_ALTNAME_MSUPN: myupn@example.org | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
+
+    }
+    
+    /**
      * Test adding an authorization rule matching on subject DN field not present
      * in the certificate
      * 

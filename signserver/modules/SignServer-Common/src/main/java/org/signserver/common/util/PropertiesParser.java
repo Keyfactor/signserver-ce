@@ -378,11 +378,9 @@ public class PropertiesParser {
     
     private void populateGen2AuthClientEntries(String workerIdOrName, String propertykey, String propertyvalue, boolean add) {
         int authClientLength = AUTHCLIENT.length();
-        String clientRuleSeq = propertykey.substring(authClientLength, authClientLength + 1);
-        if (clientRuleSeq.equals(".")) {  // In case AUTHCLIENT.SUBJECT.VALUE instead of AUTHCLIENT1.SUBJECT.VALUE
-            clientRuleSeq = "";
-            authClientLength = authClientLength - 1;
-        }
+        int nextDotIndex = propertykey.indexOf(".");
+        String clientRuleSeq = propertykey.substring(authClientLength, nextDotIndex);
+        // In case AUTHCLIENT.SUBJECT.VALUE instead of AUTHCLIENT1.SUBJECT.VALUE provided, clientRuleSeq would be empty string ""
 
         AuthClientEntry entry;
         if (add) {
@@ -399,7 +397,7 @@ public class PropertiesParser {
             }
         }
 
-        String authClientRuleProperty = propertykey.substring(authClientLength + 1);
+        String authClientRuleProperty = propertykey.substring(authClientLength + clientRuleSeq.length());
         switch (authClientRuleProperty) {
             case AUTHORIZED_CLIENTS_DOT_SUBJECT_DOT_TYPE:
                 entry.getRule().setMatchSubjectWithType(MatchSubjectWithType.valueOf(propertyvalue));

@@ -380,7 +380,7 @@ public class PropertiesParser {
         int authClientLength = AUTHCLIENT.length();
         String clientRuleSeq = propertykey.substring(authClientLength, authClientLength + 1);
         if (clientRuleSeq.equals(".")) {  // In case AUTHCLIENT.SUBJECT.VALUE instead of AUTHCLIENT1.SUBJECT.VALUE
-            clientRuleSeq = "0";
+            clientRuleSeq = "";
             authClientLength = authClientLength - 1;
         }
 

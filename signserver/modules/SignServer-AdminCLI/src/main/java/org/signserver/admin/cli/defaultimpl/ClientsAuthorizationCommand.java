@@ -186,7 +186,7 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
                 }
                 if (cert == null) {
                     if (matchSubjectWithValue == null || matchIssuerWithValue == null) {
-                        throw new IllegalCommandArgumentsException("Must specify -matchSubjectWithValue and -matchIssuerWithValue when not spcifying -cert");
+                        throw new IllegalCommandArgumentsException("Must specify -matchSubjectWithValue and -matchIssuerWithValue when not specifying -cert");
                     }
                 }
             }

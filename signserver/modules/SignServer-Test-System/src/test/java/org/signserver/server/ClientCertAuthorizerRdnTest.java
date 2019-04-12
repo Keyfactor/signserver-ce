@@ -27,16 +27,26 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.cesecore.certificates.util.DNFieldExtractor;
+import org.cesecore.util.CertTools;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
@@ -46,6 +56,7 @@ import org.signserver.common.MatchIssuerWithType;
 import org.signserver.common.MatchSubjectWithType;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertBuilderException;
+import org.signserver.test.utils.builders.CertExt;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
@@ -214,7 +225,7 @@ public class ClientCertAuthorizerRdnTest {
          * @throws KeyStoreException
          * @throws IOException 
          */
-        public KeyStore issueKeyStore(List<RDN> subjectRdns) throws CertBuilderException, CertificateException, NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, IOException {
+        public KeyStore issueKeyStore(List<RDN> subjectRdns, List<GeneralName> altNames) throws CertBuilderException, CertificateException, NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, IOException {
             final CertBuilder builder = new CertBuilder();
 
             X500NameBuilder nameBuilder = new X500NameBuilder(BCStyle.INSTANCE);
@@ -228,6 +239,12 @@ public class ClientCertAuthorizerRdnTest {
             builder.setIssuer(certificate.getIssuerDN().getName());
             builder.setSubject(subject);
             builder.setSubjectKeyPair(CryptoUtils.generateRSA(2048));
+
+            // Subject Alternative Name
+            if (altNames != null) {
+                GeneralNames subjectAltName = new GeneralNames(altNames.toArray(new GeneralName[0]));
+                builder.addExtension(new CertExt(Extension.subjectAlternativeName, subjectRdns == null || subjectRdns.isEmpty(), subjectAltName));
+            }
 
             final PrivateKey clientPrivKey = builder.getSubjectKeyPair().getPrivate();
 
@@ -261,11 +278,11 @@ public class ClientCertAuthorizerRdnTest {
          * @throws NoSuchProviderException 
          * @see #cleanUp() 
          */
-        public File issueKeyStoreFile(List<RDN> subjectRdns) throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException, CertBuilderException, NoSuchProviderException {
+        public File issueKeyStoreFile(List<RDN> subjectRdns, List<GeneralName> subjectAltNames) throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException, CertBuilderException, NoSuchProviderException {
             final File file = File.createTempFile("ca-issued-client", "p12");
             tempFiles.add(file);
             
-            final KeyStore keystore = issueKeyStore(subjectRdns);
+            final KeyStore keystore = issueKeyStore(subjectRdns, subjectAltNames);
             try (FileOutputStream out = new FileOutputStream(file)) {
                 keystore.store(out, "foo123".toCharArray());
             }
@@ -284,7 +301,7 @@ public class ClientCertAuthorizerRdnTest {
         }
     }
    
-    private void standardTestOfOneRDN(MatchSubjectWithType type, ASN1ObjectIdentifier typeOid, String simpleName, String complicatedName, ASN1ObjectIdentifier otherType) throws Exception {
+    private void standardTestOfARdn(MatchSubjectWithType type, ASN1ObjectIdentifier typeOid, String simpleName, String complicatedName, ASN1ObjectIdentifier otherType) throws Exception {
         
         // Setup authorizations
         final List<AuthorizedClientEntry> authorizations = Arrays.asList(
@@ -301,50 +318,119 @@ public class ClientCertAuthorizerRdnTest {
         // Certificates that should work
         final Collection<File> goodKeyStores = Arrays.asList(
                 // Simplest case
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, simpleName))),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, simpleName)), Collections.emptyList()),
                 
                 // One more RDN
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, simpleName), new RDN(otherType, "Organization One"))),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, simpleName), new RDN(otherType, "Organization One")), Collections.emptyList()),
                 
                 // Second CN should match
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Name 1"), new RDN(otherType, "Organization One"), new RDN(typeOid, simpleName))),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Name 1"), new RDN(otherType, "Organization One"), new RDN(typeOid, simpleName)), Collections.emptyList()),
                 
                 // Should also be okay with the complicated name
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, complicatedName), new RDN(otherType, "Testing")))
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, complicatedName), new RDN(otherType, "Testing")), Collections.emptyList())
         );
         
         // Certificates that should not work
         Collection<File> badKeyStores = Arrays.asList(
                 // No CN at all
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherType, simpleName))),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherType, simpleName)), Collections.emptyList()),
 
                 // No DN
-                ca.issueKeyStoreFile(Arrays.asList(new RDN[0])),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN[0]), null),
 
                 // Space only
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, " "))),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, " ")), Collections.emptyList()),
 
                 // Different CN
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin Two"))),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin Two")), Collections.emptyList()),
 
                 // Different case
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin OnE"))), 
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin OnE")), Collections.emptyList()), 
 
                 // Different case and other RDN
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin OnE"), new RDN(otherType, simpleName))),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin OnE"), new RDN(otherType, simpleName)), Collections.emptyList()),
 
                 // Starting with "Admin One" but incorrect and multiple
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin One2"), new RDN(typeOid, "Admin One3"), new RDN(otherType, simpleName))),
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin One2"), new RDN(typeOid, "Admin One3"), new RDN(otherType, simpleName)), Collections.emptyList()),
                 
-                // Starting with "Admin Four " but incorrect
-                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin Four ")))
+                // Starting with "Admin Four " but incorrect + altname
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(typeOid, "Admin Four ")), Arrays.asList(createGeneralName(GeneralName.rfc822Name, simpleName)))
         );
 
         // Execute tests
         performTest(authorizations, goodKeyStores, badKeyStores);
     }
     
-    // TODO: Duplicate and implement the above testSUBJECT_RDN_CN method for all other RDNs and alt names
+    private void standardTestOfAltName(MatchSubjectWithType type, int typeTag, String simpleName, String complicatedName, ASN1ObjectIdentifier otherRdnType, int otherAltType) throws Exception {
+        
+        // Setup authorizations
+        final List<AuthorizedClientEntry> authorizations = Arrays.asList(
+            // Basic rule to match against
+            new AuthorizedClientEntry(simpleName, ISSUER_DN_ROOTCA10, type, MatchIssuerWithType.ISSUER_DN_BCSTYLE),
+                
+            // A rule that should not match (different CA)
+            new AuthorizedClientEntry(simpleName, ISSUER_DN_OTHERCA, type, MatchIssuerWithType.ISSUER_DN_BCSTYLE),
+            
+            // A more complicated value to match against
+            new AuthorizedClientEntry(complicatedName, ISSUER_DN_ROOTCA10, type, MatchIssuerWithType.ISSUER_DN_BCSTYLE)
+        );
+        
+        // Certificates that should work
+        final Collection<File> goodKeyStores = Arrays.asList(
+                // Simplest case
+                ca.issueKeyStoreFile(Collections.emptyList(), Arrays.asList(createGeneralName(typeTag, simpleName))),
+                
+                // Simple case
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherRdnType, simpleName)), Arrays.asList(createGeneralName(typeTag, simpleName))),
+                
+                // One more altname
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherRdnType, simpleName)), Arrays.asList(createGeneralName(typeTag, simpleName), createGeneralName(otherAltType, "Admin Three"))),
+                
+                // Second alt name should match
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherRdnType, "Name 1")), Arrays.asList(createGeneralName(otherAltType, "Other name"), createGeneralName(typeTag, simpleName))),
+                
+                // Should also be okay with the complicated name
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherRdnType, "Name 2")), Arrays.asList(createGeneralName(typeTag, complicatedName)))
+        );
+        
+        // Certificates that should not work
+        Collection<File> badKeyStores = Arrays.asList(
+                // No subject alt name at all
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherRdnType, simpleName)), null),
+
+                // Empty alt name
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherRdnType, simpleName)), Collections.emptyList()),
+
+                // Space only
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherRdnType, simpleName)), Arrays.asList(createGeneralName(typeTag, " "))),
+
+                // Different altname
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherRdnType, "Admin Two")), Arrays.asList(createGeneralName(typeTag, "Admin Two"))),
+
+                // Different case
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherRdnType, "Admin OnE")), Arrays.asList(createGeneralName(typeTag, "Admin OnE"))), 
+
+                // Different case and other alt name
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherRdnType, "Admin OnE")), Arrays.asList(createGeneralName(typeTag, "Admin OnE"), createGeneralName(otherAltType, simpleName))),
+
+                // Starting with "Admin One" but incorrect and multiple
+                ca.issueKeyStoreFile(Arrays.asList(new RDN(otherRdnType, "Admin One2")), Arrays.asList(createGeneralName(typeTag, "Admin One "), createGeneralName(otherAltType, simpleName)))
+        );
+
+        // Execute tests
+        performTest(authorizations, goodKeyStores, badKeyStores);
+    }
+    
+    private GeneralName createGeneralName(int typeTag, String value) {
+        if (typeTag == DNFieldExtractor.UPN) {
+            // Special handling as OtherName implementation
+            final ASN1EncodableVector v = new ASN1EncodableVector();
+            v.add(new ASN1ObjectIdentifier(CertTools.UPN_OBJECTID));
+            v.add(new DERTaggedObject(true, 0, new DERUTF8String(value)));
+            return GeneralName.getInstance(new DERTaggedObject(false, 0, new DERSequence(v)));
+        }
+        return new GeneralName(typeTag, value);
+    }
 
     /**
      * Tests authorization with CommonName (CN).
@@ -354,7 +440,7 @@ public class ClientCertAuthorizerRdnTest {
     @Test
     public void testSUBJECT_RDN_CN() throws Exception {
         LOG.info("testSUBJECT_RDN_CN");
-        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_CN, BCStyle.CN, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.O);
+        standardTestOfARdn(MatchSubjectWithType.SUBJECT_RDN_CN, BCStyle.CN, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.O);
     }
 
     /**
@@ -365,7 +451,7 @@ public class ClientCertAuthorizerRdnTest {
     @Test
     public void testSUBJECT_RDN_SERIALNO() throws Exception {
         LOG.info("testSUBJECT_RDN_SERIALNO");
-        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_SERIALNO, BCStyle.SERIALNUMBER, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+        standardTestOfARdn(MatchSubjectWithType.SUBJECT_RDN_SERIALNO, BCStyle.SERIALNUMBER, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
     }
 
     /**
@@ -376,7 +462,7 @@ public class ClientCertAuthorizerRdnTest {
     @Test
     public void testSUBJECT_RDN_C() throws Exception {
         LOG.info("testSUBJECT_RDN_C");
-        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_C, BCStyle.C, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+        standardTestOfARdn(MatchSubjectWithType.SUBJECT_RDN_C, BCStyle.C, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
     }
     
     /**
@@ -387,7 +473,7 @@ public class ClientCertAuthorizerRdnTest {
     @Test
     public void testSUBJECT_RDN_DC() throws Exception {
         LOG.info("testSUBJECT_RDN_DC");
-        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_DC, BCStyle.DC, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+        standardTestOfARdn(MatchSubjectWithType.SUBJECT_RDN_DC, BCStyle.DC, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
     }
     
     /**
@@ -398,7 +484,7 @@ public class ClientCertAuthorizerRdnTest {
     @Test
     public void testSUBJECT_RDN_ST() throws Exception {
         LOG.info("testSUBJECT_RDN_ST");
-        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_ST, BCStyle.ST, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+        standardTestOfARdn(MatchSubjectWithType.SUBJECT_RDN_ST, BCStyle.ST, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
     }
     
     /**
@@ -409,7 +495,7 @@ public class ClientCertAuthorizerRdnTest {
     @Test
     public void testSUBJECT_RDN_L() throws Exception {
         LOG.info("testSUBJECT_RDN_L");
-        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_L, BCStyle.L, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+        standardTestOfARdn(MatchSubjectWithType.SUBJECT_RDN_L, BCStyle.L, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
     }
     
     /**
@@ -420,7 +506,7 @@ public class ClientCertAuthorizerRdnTest {
     @Test
     public void testSUBJECT_RDN_O() throws Exception {
         LOG.info("testSUBJECT_RDN_O");
-        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_O, BCStyle.O, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+        standardTestOfARdn(MatchSubjectWithType.SUBJECT_RDN_O, BCStyle.O, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
     }
     
     /**
@@ -431,7 +517,7 @@ public class ClientCertAuthorizerRdnTest {
     @Test
     public void testSUBJECT_RDN_OU() throws Exception {
         LOG.info("testSUBJECT_RDN_OU");
-        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_OU, BCStyle.OU, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+        standardTestOfARdn(MatchSubjectWithType.SUBJECT_RDN_OU, BCStyle.OU, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
     }
     
     /**
@@ -442,7 +528,7 @@ public class ClientCertAuthorizerRdnTest {
     @Test
     public void testSUBJECT_RDN_TITLE() throws Exception {
         LOG.info("testSUBJECT_RDN_TITLE");
-        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_TITLE, BCStyle.T, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+        standardTestOfARdn(MatchSubjectWithType.SUBJECT_RDN_TITLE, BCStyle.T, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
     }
     
     /**
@@ -453,7 +539,7 @@ public class ClientCertAuthorizerRdnTest {
     @Test
     public void testSUBJECT_RDN_UID() throws Exception {
         LOG.info("testSUBJECT_RDN_UID");
-        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_UID, BCStyle.UID, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+        standardTestOfARdn(MatchSubjectWithType.SUBJECT_RDN_UID, BCStyle.UID, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
     }
     
     /**
@@ -464,9 +550,29 @@ public class ClientCertAuthorizerRdnTest {
     @Test
     public void testSUBJECT_RDN_E() throws Exception {
         LOG.info("testSUBJECT_RDN_E");
-        standardTestOfOneRDN(MatchSubjectWithType.SUBJECT_RDN_E, BCStyle.E, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+        standardTestOfARdn(MatchSubjectWithType.SUBJECT_RDN_E, BCStyle.E, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN);
+    }
+    
+    /**
+     * Tests authorization with RFC822Name Subject Alternative Name.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testSUBJECT_ALTNAME_RFC822NAME() throws Exception {
+        LOG.info("testSUBJECT_ALTNAME_RFC822NAME");
+        standardTestOfAltName(MatchSubjectWithType.SUBJECT_ALTNAME_RFC822NAME, GeneralName.rfc822Name, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN, GeneralName.dNSName);
     }
 
-    // TODO SUBJECT_ALTNAME_RFC822NAME
-    // TODO SUBJECT_ALTNAME_MSUPN
+    /**
+     * Tests authorization with RFC822Name Subject Alternative Name.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testSUBJECT_ALTNAME_MSUPN() throws Exception {
+        LOG.info("testSUBJECT_ALTNAME_MSUPN");
+        standardTestOfAltName(MatchSubjectWithType.SUBJECT_ALTNAME_MSUPN, DNFieldExtractor.UPN, "Admin One", "Admin Four !#%&,+\\$*.", BCStyle.CN, GeneralName.dNSName);
+    }
+
 }

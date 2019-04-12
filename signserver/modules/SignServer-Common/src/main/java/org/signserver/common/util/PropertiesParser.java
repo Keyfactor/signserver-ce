@@ -326,7 +326,8 @@ public class PropertiesParser {
 
     private void removeWorkerProperty(final String workerIdOrName, String propertykey, String propertyvalue) {
         if (propertykey.startsWith(AUTHCLIENT)) {
-            if (propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_TYPE) || propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_VALUE)) {
+            if (propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_TYPE) || propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_VALUE)
+                    || propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_DESCRIPTION)) {
                 // This is new format auth client so do it new way
                 populateGen2AuthClientEntries(workerIdOrName, propertykey, propertyvalue, false);
             } else { // This is legacy auth client so do it old way

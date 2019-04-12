@@ -16,10 +16,14 @@ import org.bouncycastle.util.encoders.Base64;
 import java.io.PrintStream;
 import java.rmi.RemoteException;
 import java.util.*;
+import org.apache.commons.lang.StringUtils;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.common.AuthorizedClient;
+import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.MatchIssuerWithType;
+import org.signserver.common.MatchSubjectWithType;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PropertiesConstants;
 import static org.signserver.common.util.PropertiesConstants.*;
@@ -40,6 +44,8 @@ public class SetPropertiesHelper {
     private PrintStream out;
     private AdminCommandHelper helper = new AdminCommandHelper();
     private List<Integer> workerDeclarations = new ArrayList<>();
+    private final Map<String, AuthClientEntry> addAuthClientGen2EntryMap = new HashMap<>();
+    private final Map<String, AuthClientEntry> removeAuthClientGen2EntryMap = new HashMap<>();
 
     public SetPropertiesHelper(PrintStream out) {
         this.out = out;
@@ -54,6 +60,10 @@ public class SetPropertiesHelper {
             String key = (String) iter.nextElement();
             processKey(key.toUpperCase(), properties.getProperty(key));
         }
+        
+        // Process Gen2 auth client rules if exist
+        processGen2AuthClientRules(addAuthClientGen2EntryMap, true);
+        processGen2AuthClientRules(removeAuthClientGen2EntryMap, false);
     }
 
     public void processKey(String key, String value) throws RemoteException, Exception {
@@ -225,11 +235,18 @@ public class SetPropertiesHelper {
     }
 
     private void setWorkerProperty(int workerId, String propertykey, String propertyvalue) throws RemoteException, Exception {
-        if (propertykey.startsWith(DOT_AUTHCLIENT.substring(1))) {
-            String values[] = propertyvalue.split(";");
-            AuthorizedClient ac = new AuthorizedClient(values[0], values[1]);
-            out.println("Adding Authorized Client with certificate serial " + ac.getCertSN() + " and issuer DN " + ac.getIssuerDN() + " to " + propertyvalue + " for worker " + workerId);
-            helper.getWorkerSession().addAuthorizedClient(workerId, ac);
+        if (propertykey.startsWith(AUTHCLIENT)) {
+
+            if (propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_TYPE) || propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_VALUE)
+                    || propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_DESCRIPTION)) {
+                // This is new format auth client so do it new way
+                populateGen2AuthClientEntries(workerId, propertykey, propertyvalue, true);
+            } else { // This is legacy auth client so do it old way
+                String values[] = propertyvalue.split(";");
+                AuthorizedClient ac = new AuthorizedClient(values[0], values[1]);
+                out.println("Adding Authorized Client with certificate serial " + ac.getCertSN() + " and issuer DN " + ac.getIssuerDN() + " to " + propertyvalue + " for worker " + workerId);
+                helper.getWorkerSession().addAuthorizedClient(workerId, ac);
+            }
         } else {
             if (propertykey.startsWith(DOT_SIGNERCERTIFICATE.substring(1))) {
                 helper.getWorkerSession().uploadSignerCertificate(workerId, Base64.decode(propertyvalue.getBytes()), GlobalConfiguration.SCOPE_GLOBAL);
@@ -253,11 +270,18 @@ public class SetPropertiesHelper {
     }
 
     private void removeWorkerProperty(int workerId, String propertykey, String propertyvalue) throws RemoteException, Exception {
-        if (propertykey.startsWith(DOT_AUTHCLIENT.substring(1))) {
-            String values[] = propertyvalue.split(";");
-            AuthorizedClient ac = new AuthorizedClient(values[0], values[1]);
-            out.println("Removing authorized client with certificate serial " + ac.getCertSN() + " and issuer DN " + ac.getIssuerDN() + " from " + propertyvalue + " for worker " + workerId);
-            helper.getWorkerSession().removeAuthorizedClient(workerId, ac);
+        if (propertykey.startsWith(AUTHCLIENT)) {
+
+            if (propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_TYPE) || propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_VALUE)
+                    || propertykey.endsWith(AUTHORIZED_CLIENTS_DOT_DESCRIPTION)) {
+                // This is new format auth client so do it new way
+                populateGen2AuthClientEntries(workerId, propertykey, propertyvalue, false);
+            } else { // This is legacy auth client so do it old way
+                String values[] = propertyvalue.split(";");
+                AuthorizedClient ac = new AuthorizedClient(values[0], values[1]);
+                out.println("Removing authorized client with certificate serial " + ac.getCertSN() + " and issuer DN " + ac.getIssuerDN() + " from " + propertyvalue + " for worker " + workerId);
+                helper.getWorkerSession().removeAuthorizedClient(workerId, ac);
+            }
         } else {
             if (propertykey.startsWith(DOT_SIGNERCERTIFICATE.substring(1))) {
                 out.println("Removal of signing certificates isn't supported, skipped.");
@@ -270,6 +294,79 @@ public class SetPropertiesHelper {
                 }
             }
         }
+    }
+    
+    private void processGen2AuthClientRules(Map<String, AuthClientEntry> authClientGen2EntryMap, boolean add) throws RemoteException {
+        Iterator it = authClientGen2EntryMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, AuthClientEntry> pair = (Map.Entry) it.next();
+            String seqNO = pair.getKey();
+            AuthClientEntry entry = pair.getValue();
+            CertificateMatchingRule rule = entry.getRule();
+            if (allMandatoryFieldsExistInProvidedRule(rule)) {
+                if (StringUtils.isBlank(rule.getDescription())) {
+                    rule.setDescription("Imported rule");
+                }
+                int workerId = entry.getWorkerId();
+                if (add) {
+                    helper.getWorkerSession().addAuthorizedClientGen2(workerId, rule);
+                    out.println("Adding Authorized Client with rule " + rule.toString() + " for worker " + workerId);
+                } else {
+                    out.println("Removing Authorized Client with rule " + rule.toString() + " for worker " + workerId);
+                    helper.getWorkerSession().removeAuthorizedClientGen2(workerId, rule);
+                }
+            } else {
+                out.println("Either all mandatory fields are not provided or same prefix is not provided for " + AUTHCLIENT + " " + seqNO);
+                // break;
+            }
+            it.remove();
+        }
+    }
+    
+    private void populateGen2AuthClientEntries(int workerId, String propertykey, String propertyvalue, boolean add) {
+        int authClientLength = AUTHCLIENT.length();
+        int nextDotIndex = propertykey.indexOf(".");
+        String clientRuleSeq = propertykey.substring(authClientLength, nextDotIndex);
+        // In case AUTHCLIENT.SUBJECT.VALUE instead of AUTHCLIENT1.SUBJECT.VALUE provided, clientRuleSeq would be empty string ""
+
+        AuthClientEntry entry;
+        if (add) {
+            entry = addAuthClientGen2EntryMap.get(clientRuleSeq);
+            if (entry == null) {
+                entry = new AuthClientEntry(new CertificateMatchingRule(), workerId);
+                addAuthClientGen2EntryMap.put(clientRuleSeq, entry);
+            }
+        } else {
+            entry = removeAuthClientGen2EntryMap.get(clientRuleSeq);
+            if (entry == null) {
+                entry = new AuthClientEntry(new CertificateMatchingRule(), workerId);
+                removeAuthClientGen2EntryMap.put(clientRuleSeq, entry);
+            }
+        }
+
+        String authClientRuleProperty = propertykey.substring(authClientLength + clientRuleSeq.length());
+        switch (authClientRuleProperty) {
+            case AUTHORIZED_CLIENTS_DOT_SUBJECT_DOT_TYPE:
+                entry.getRule().setMatchSubjectWithType(MatchSubjectWithType.valueOf(propertyvalue));
+                break;
+            case AUTHORIZED_CLIENTS_DOT_SUBJECT_DOT_VALUE:
+                entry.getRule().setMatchSubjectWithValue(propertyvalue);
+                break;
+            case AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_TYPE:
+                entry.getRule().setMatchIssuerWithType(MatchIssuerWithType.valueOf(propertyvalue));
+                break;
+            case AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_VALUE:
+                entry.getRule().setMatchIssuerWithValue(propertyvalue);
+                break;
+            case AUTHORIZED_CLIENTS_DOT_DESCRIPTION:
+                entry.getRule().setDescription(propertyvalue);
+                break;
+        }
+    }
+    
+    private boolean allMandatoryFieldsExistInProvidedRule(CertificateMatchingRule rule) {
+        return rule.getMatchSubjectWithType() != null && rule.getMatchIssuerWithType() != null && rule.getMatchSubjectWithValue() != null
+                && rule.getMatchIssuerWithValue() != null;
     }
 
     /**
@@ -342,6 +439,36 @@ public class SetPropertiesHelper {
         
         if (workerWithNameAlreadyExists) {
             throw new CommandFailureException(errorMessage.toString());
+        }
+    }
+    
+    private static class AuthClientEntry {
+
+        private CertificateMatchingRule rule;
+        private int workerId;
+
+        public AuthClientEntry(CertificateMatchingRule rule, int workerId) {
+            this.rule = rule;
+            this.workerId = workerId;
+        }
+
+        public AuthClientEntry() {
+        }
+
+        public CertificateMatchingRule getRule() {
+            return rule;
+        }
+
+        public void setRule(CertificateMatchingRule rule) {
+            this.rule = rule;
+        }
+
+        public int getWorkerId() {
+            return workerId;
+        }
+
+        public void setWorkerIdOrName(int workerId) {
+            this.workerId = workerId;
         }
     }
 }

@@ -266,4 +266,15 @@ public class ClientsAuthorizationCommandUnitTest {
                          expected.getMessage());
         }
     }
+    
+    /**
+     * Tests that -add with incorrect issuer DN gives an error.
+     * @throws Exception
+     */
+    @Test(expected = IllegalCommandArgumentsException.class)
+    public void testAddIncorrectIssuerDN() throws Exception {
+        LOG.info("testRemoveMissingArgumentMatchSubjectWithValue");
+        ClientsAuthorizationCommand instance = new ClientsAuthorizationCommand();
+        instance.execute("-worker", "SampleSigner", "-add", "-matchSubjectWithType", "SUBJECT_RDN_CN", "-matchSubjectWithValue", "Client One", "-matchIssuerWithValue", "CN=AdminCA1, C=SE,", "-description", "my rule"); // Incorrect issuer DN (ends with ',')
+    }
 }

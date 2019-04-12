@@ -155,6 +155,13 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
 
         matchSubjectWithValue = line.getOptionValue(MATCH_SUBJECT_WITH_VALUE, null);
         matchIssuerWithValue = line.getOptionValue(MATCH_ISSUER_WITH_VALUE, null);
+        if (matchIssuerWithValue != null) {
+            try {
+                matchIssuerWithValue = CertTools.stringToBCDNString(matchIssuerWithValue);
+            } catch (IllegalArgumentException | StringIndexOutOfBoundsException ex) {
+                throw new IllegalCommandArgumentsException("Invalid " + MATCH_ISSUER_WITH_VALUE + " value provided: " + matchIssuerWithValue);
+            }
+        }
         description = line.getOptionValue(DESCRIPTION, null);
         cert = line.getOptionValue(CERT, null);
     }

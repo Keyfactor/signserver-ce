@@ -14,6 +14,7 @@ package org.signserver.common.util;
 
 import org.bouncycastle.util.encoders.Base64;
 import java.util.*;
+import org.apache.commons.lang.StringUtils;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.CertificateMatchingRule;
 import org.signserver.common.GlobalConfiguration;
@@ -356,7 +357,7 @@ public class PropertiesParser {
             AuthClientEntry entry = pair.getValue();
             CertificateMatchingRule rule = entry.getRule();
             if (allMandatoryFieldsExistInProvidedRule(rule)) {
-                if (rule.getDescription() == null) {
+                if (StringUtils.isBlank(rule.getDescription())) {
                     rule.setDescription("Imported rule");
                 }
                 String workerIdOrName = entry.getWorkerIdOrName();
@@ -498,7 +499,7 @@ public class PropertiesParser {
         return workerIds;
     }
 
-    static private class AuthClientEntry {
+    private static class AuthClientEntry {
 
         private CertificateMatchingRule rule;
         private String workerIdOrName;

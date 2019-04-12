@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.AuthorizedClient;
 import org.signserver.common.CertificateMatchingRule;
@@ -151,12 +152,14 @@ public class PropertiesDumper {
         }
 
         int i = 1;
-        for (CertificateMatchingRule client : authorizedClients) {            
+        for (CertificateMatchingRule client : authorizedClients) {
             outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_SUBJECT_DOT_TYPE, client.getMatchSubjectWithType().toString());
             outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_SUBJECT_DOT_VALUE, client.getMatchSubjectWithValue());
             outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_TYPE, client.getMatchIssuerWithType().toString());
             outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_ISSUER_DOT_VALUE, client.getMatchIssuerWithValue());
-            outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_DESCRIPTION, client.getDescription());
+            if (!StringUtils.isBlank(client.getDescription())) {
+                outProps.setProperty("WORKER" + workerId + DOT_AUTHCLIENT + i + AUTHORIZED_CLIENTS_DOT_DESCRIPTION, client.getDescription());
+            }
             i++;
         }
     }

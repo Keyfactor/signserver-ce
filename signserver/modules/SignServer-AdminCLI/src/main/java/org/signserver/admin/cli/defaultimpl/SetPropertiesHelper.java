@@ -46,6 +46,8 @@ public class SetPropertiesHelper {
     private List<Integer> workerDeclarations = new ArrayList<>();
     private final Map<String, AuthClientEntry> addAuthClientGen2EntryMap = new HashMap<>();
     private final Map<String, AuthClientEntry> removeAuthClientGen2EntryMap = new HashMap<>();
+    private List<AuthClientEntry> addAuthClientGen2Entries = new ArrayList<>();
+    private List<AuthClientEntry> removeAuthClientGen2Entries = new ArrayList<>();
 
     public SetPropertiesHelper(PrintStream out) {
         this.out = out;
@@ -61,9 +63,12 @@ public class SetPropertiesHelper {
             processKey(key.toUpperCase(), properties.getProperty(key));
         }
         
-        // Process Gen2 auth client rules if exist
-        processGen2AuthClientRules(addAuthClientGen2EntryMap, true);
-        processGen2AuthClientRules(removeAuthClientGen2EntryMap, false);
+        // Check if all Gen2 auth client rules valid
+        checkAllGen2AuthClientRulesValid(addAuthClientGen2EntryMap, true);
+        checkAllGen2AuthClientRulesValid(removeAuthClientGen2EntryMap, false);
+        
+        // Process all Gen2 auth client rules
+        processGen2AuthClientRules();
     }
 
     public void processKey(String key, String value) throws RemoteException, Exception {
@@ -296,7 +301,9 @@ public class SetPropertiesHelper {
         }
     }
     
-    private void processGen2AuthClientRules(Map<String, AuthClientEntry> authClientGen2EntryMap, boolean add) throws RemoteException {
+    private void checkAllGen2AuthClientRulesValid(Map<String, AuthClientEntry> authClientGen2EntryMap, boolean add) throws RemoteException, CommandFailureException {
+        boolean allRulesValild = true;
+        StringBuilder errorMessage = new StringBuilder();
         Iterator it = authClientGen2EntryMap.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, AuthClientEntry> pair = (Map.Entry) it.next();
@@ -307,19 +314,31 @@ public class SetPropertiesHelper {
                 if (StringUtils.isBlank(rule.getDescription())) {
                     rule.setDescription("Imported rule");
                 }
-                int workerId = entry.getWorkerId();
                 if (add) {
-                    helper.getWorkerSession().addAuthorizedClientGen2(workerId, rule);
-                    out.println("Adding Authorized Client with rule " + rule.toString() + " for worker " + workerId);
+                    addAuthClientGen2Entries.add(entry);
                 } else {
-                    out.println("Removing Authorized Client with rule " + rule.toString() + " for worker " + workerId);
-                    helper.getWorkerSession().removeAuthorizedClientGen2(workerId, rule);
+                    removeAuthClientGen2Entries.add(entry);
                 }
             } else {
-                out.println("Either all mandatory fields are not provided or same prefix is not provided for " + AUTHCLIENT + " " + seqNO);
-                // break;
+                errorMessage.append("Either all mandatory fields are not provided or same prefix is not provided for " + AUTHCLIENT + " ").append(seqNO).append("\n");
+                allRulesValild = false;
             }
             it.remove();
+        }
+
+        if (!allRulesValild) {
+            throw new CommandFailureException(errorMessage.toString());
+        }
+    }
+    
+    private void processGen2AuthClientRules() throws RemoteException {
+        for (AuthClientEntry entry : addAuthClientGen2Entries) {
+            helper.getWorkerSession().addAuthorizedClientGen2(entry.getWorkerId(), entry.getRule());
+            out.println("Adding Authorized Client with rule " + entry.getRule().toString() + " for worker " + entry.getWorkerId());
+        }
+        for (AuthClientEntry entry : removeAuthClientGen2Entries) {
+            helper.getWorkerSession().removeAuthorizedClientGen2(entry.getWorkerId(), entry.getRule());
+            out.println("Removing Authorized Client with rule " + entry.getRule().toString() + " for worker " + entry.getWorkerId());
         }
     }
     

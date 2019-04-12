@@ -115,6 +115,7 @@ public class PropertiesApplierTest extends TestCase {
             + "WORKER42.AUTHCLIENT1.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
             + "WORKER42.AUTHCLIENT1.SUBJECT.VALUE=723507815f93666666\n"
             + "WORKER42.AUTHCLIENT1.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE\n"
+            + "WORKER42.AUTHCLIENT1.DESCRIPTION= test rule 1\n"
             
             + "WORKER42.AUTHCLIENT2.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n"
             + "WORKER42.AUTHCLIENT2.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
@@ -125,11 +126,12 @@ public class PropertiesApplierTest extends TestCase {
             + "WORKER42.AUTHCLIENT11.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
             + "WORKER42.AUTHCLIENT11.SUBJECT.VALUE=987654321\n"
             + "WORKER42.AUTHCLIENT11.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE\n"
+            + "WORKER42.AUTHCLIENT11.DESCRIPTION= test rule 2\n"
             
             + "WORKER42.AUTHCLIENT111.ISSUER.TYPE = ISSUER_DN_BCSTYLE\n"
             + "WORKER42.AUTHCLIENT111.SUBJECT.TYPE=CERTIFICATE_SERIALNO\n"
             + "WORKER42.AUTHCLIENT111.SUBJECT.VALUE=1212121212\n"
-            + "WORKER42.AUTHCLIENT111.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE"; 
+            + "WORKER42.AUTHCLIENT111.ISSUER.VALUE=CN\\=DSS Root CA 10,OU\\=Testing,O\\=SignServer,C\\=SE";
         
     /**
      *
@@ -310,11 +312,11 @@ public class PropertiesApplierTest extends TestCase {
             applier.apply(parser);            
             
             CertificateMatchingRule cmrToBeAdded1 = new CertificateMatchingRule(MatchSubjectWithType.valueOf("CERTIFICATE_SERIALNO"),
-                    MatchIssuerWithType.valueOf("ISSUER_DN_BCSTYLE"), "723507815f93666666", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", "Imported rule");
+                    MatchIssuerWithType.valueOf("ISSUER_DN_BCSTYLE"), "723507815f93666666", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", "test rule 1");
             CertificateMatchingRule cmrToBeAdded2 = new CertificateMatchingRule(MatchSubjectWithType.valueOf("CERTIFICATE_SERIALNO"),
                     MatchIssuerWithType.valueOf("ISSUER_DN_BCSTYLE"), "12345678", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", "Imported rule");
             CertificateMatchingRule cmrToBeAdded3 = new CertificateMatchingRule(MatchSubjectWithType.valueOf("CERTIFICATE_SERIALNO"),
-                    MatchIssuerWithType.valueOf("ISSUER_DN_BCSTYLE"), "987654321", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", "Imported rule");
+                    MatchIssuerWithType.valueOf("ISSUER_DN_BCSTYLE"), "987654321", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", "test rule 2");
             CertificateMatchingRule cmrToBeAdded4 = new CertificateMatchingRule(MatchSubjectWithType.valueOf("CERTIFICATE_SERIALNO"),
                     MatchIssuerWithType.valueOf("ISSUER_DN_BCSTYLE"), "1212121212", "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE", "Imported rule");
 

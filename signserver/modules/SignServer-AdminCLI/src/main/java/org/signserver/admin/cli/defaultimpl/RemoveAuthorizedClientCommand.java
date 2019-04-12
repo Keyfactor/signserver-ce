@@ -27,7 +27,7 @@ public class RemoveAuthorizedClientCommand extends AbstractAdminCommand {
 
     @Override
     public String getDescription() {
-        return "Removes an authorized client from a given signer";
+        return "Removes a legacy client authorization rule. Deprecated: Use 'authorizedclients' instead.";
     }
 
     @Override

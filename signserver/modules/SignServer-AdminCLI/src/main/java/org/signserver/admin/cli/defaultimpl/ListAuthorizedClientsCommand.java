@@ -27,7 +27,7 @@ public class ListAuthorizedClientsCommand extends AbstractAdminCommand {
 
     @Override
     public String getDescription() {
-        return "Gets the current configurations list of authorized clients";
+        return "List legacy client authorization rules. Deprecated: Use 'authorizedclients' instead.";
     }
 
     @Override

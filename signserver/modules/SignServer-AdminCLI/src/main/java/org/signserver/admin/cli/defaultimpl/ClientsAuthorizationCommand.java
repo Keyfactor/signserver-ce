@@ -89,17 +89,19 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
 
     @Override
     public String getDescription() {
-        return "Authorizes clients";
+        return "Add/list/remove client authorization rules.";
     }
 
     @Override
     public String getUsages() {
-        return "Usage: signserver authorizedclients -worker <worker name or ID> <-add/-remove/list> -matchSubjectWithType <SUBJECT_MATCH_TYPE> -matchSubjectWithValue <value> [-matchIssuerWithType <ISSUER_MATCH_TYPE>] -matchIssuerWithValue <issuer DN> [-description <textual description>]\n"
-                    + "Example 1: authorizedclients -worker CMSSigner -list\n"
-                    + "Example 2: authorizedclients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithValue \"CN=AdminCA1, C=SE\"\n"
-                    + "Example 3: authorizedclients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithType ISSUER_DN_BCSTYLE -matchIssuerWithValue \"CN=AdminCA1, C=SE\" -description \"my rule\"\n\n"
-                    + "Example 4: authorizedclients -worker CMSSigner -add -matchSubjectWithType CERTIFICATE_SERIALNO -matchIssuerWithType ISSUER_DN_BCSTYLE -cert /tmp/admin.pem"
-                    + "Example 5: authorizedclients -worker CMSSigner -remove -matchSubjectWithType CERTIFICATE_SERIALNO -matchIssuerWithType ISSUER_DN_BCSTYLE -cert /tmp/admin.pem";
+        return "Usage: signserver authorizedclients -worker <worker name or ID> -list \n"
+             + "       signserver authorizedclients -worker <worker name or ID> <-add/-remove> -matchSubjectWithType <SUBJECT_MATCH_TYPE> -matchSubjectWithValue <value> [-matchIssuerWithType <ISSUER_MATCH_TYPE>] -matchIssuerWithValue <issuer DN> [-description <textual description>]\n"
+             + "       signserver authorizedclients -worker <worker name or ID> <-add/-remove> -matchSubjectWithType <SUBJECT_MATCH_TYPE> [-matchIssuerWithType <ISSUER_MATCH_TYPE>] [-description <textual description>] -cert <PEM file>\n"
+             + "Example 1: authorizedclients -worker CMSSigner -list\n"
+             + "Example 2: authorizedclients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithValue \"CN=AdminCA1, C=SE\"\n"
+             + "Example 3: authorizedclients -worker CMSSigner -add -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue \"Client One\" -matchIssuerWithType ISSUER_DN_BCSTYLE -matchIssuerWithValue \"CN=AdminCA1, C=SE\" -description \"my rule\"\n"
+             + "Example 4: authorizedclients -worker CMSSigner -add -matchSubjectWithType CERTIFICATE_SERIALNO -matchIssuerWithType ISSUER_DN_BCSTYLE -cert /tmp/admin.pem\n"
+             + "Example 5: authorizedclients -worker CMSSigner -remove -matchSubjectWithType CERTIFICATE_SERIALNO -matchIssuerWithType ISSUER_DN_BCSTYLE -cert /tmp/admin.pem";
     }
 
     /**

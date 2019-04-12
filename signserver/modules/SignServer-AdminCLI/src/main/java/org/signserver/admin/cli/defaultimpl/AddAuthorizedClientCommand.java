@@ -32,7 +32,7 @@ public class AddAuthorizedClientCommand extends AbstractAdminCommand {
     
     @Override
     public String getDescription() {
-        return "Authorizes a client";
+        return "Add a legacy client authorization rule. Deprecated: Use 'authorizedclients' instead.";
     }
 
     @Override

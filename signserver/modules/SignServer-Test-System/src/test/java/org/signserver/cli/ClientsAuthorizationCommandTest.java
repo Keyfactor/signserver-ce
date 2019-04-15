@@ -129,18 +129,18 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
                     "-add", 
                     "-matchSubjectWithType", "SUBJECT_RDN_CN",
                     "-matchSubjectWithValue", "Client Two",
-                    "-matchIssuerWithValue", "CN=ManagementCA1, C=SE",
+                    "-matchIssuerWithValue", "CN=ManagementCA1,C=SE",
                     "-description", "My description"));
             assertPrinted("prints new rule with SUBJECT_RDN_CN", cli.getOut(), "SUBJECT_RDN_CN");
             assertPrinted("prints new rule with Client Two", cli.getOut(), "Client Two");
-            assertPrinted("prints new rule with CN=ManagementCA1, C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
+            assertPrinted("prints new rule with CN=ManagementCA1,C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
             
             // List
             assertEquals("execute list", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
             assertPrinted("prints rule with SUBJECT_RDN_CN", cli.getOut(), "SUBJECT_RDN_CN");
             assertPrinted("prints rule with Client Two", cli.getOut(), "Client Two");
-            assertPrinted("prints rule with CN=ManagementCA1, C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
+            assertPrinted("prints rule with CN=ManagementCA1,C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
             assertPrinted("prints rule with My description", cli.getOut(), "My description");
             
             // Add one more + also explicitly specify matchIssuerWithType
@@ -161,7 +161,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
                     "-list"));
             assertPrinted("prints rule 1 with SUBJECT_RDN_CN", cli.getOut(), "SUBJECT_RDN_CN");
             assertPrinted("prints rule 1 with Client Two", cli.getOut(), "Client Two");
-            assertPrinted("prints rule 1 with CN=ManagementCA1, C=SE", cli.getOut(), "CN=ManagementCA1, C=SE");
+            assertPrinted("prints rule 1 with CN=ManagementCA1,C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
             assertPrinted("prints rule 1 with My description", cli.getOut(), "My description");
             
             assertPrinted("prints rule 2 with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
@@ -178,14 +178,14 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
                     "-description", "My description")); // TODO: Currently the description field has to be provided. Should it be like that?
             assertPrinted("prints new rule with SUBJECT_RDN_CN", cli.getOut(), "SUBJECT_RDN_CN");
             assertPrinted("prints new rule with Client Two", cli.getOut(), "Client Two");
-            assertPrinted("prints new rule with CN=ManagementCA1, C=SE", cli.getOut(), "CN=ManagementCA1, C=SE");
+            assertPrinted("prints new rule with CN=ManagementCA1,C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
             
             // List second entry only now
             assertEquals("execute list 2", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
             assertNotPrinted("prints rule 1 with SUBJECT_RDN_CN", cli.getOut(), "SUBJECT_RDN_CN");
             assertNotPrinted("prints rule 1 with Client Two", cli.getOut(), "Client Two");
-            assertNotPrinted("prints rule 1 with CN=ManagementCA1, C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
+            assertNotPrinted("prints rule 1 with CN=ManagementCA1,C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
             assertNotPrinted("prints rule 1 with My description", cli.getOut(), "My description");
             
             assertPrinted("prints rule 2 with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
@@ -214,12 +214,12 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
                     "-matchSubjectWithValue", "Client Two",
                     "-matchIssuerWithValue", "CN=ManagementCA1, C=SE",
                     "-description", "My description"));
-            assertPrinted("prints new rule", cli.getOut(), "  SUBJECT_RDN_CN: Client Two | ISSUER_DN_BCSTYLE: CN=ManagementCA1, C=SE | Description: My description");
+            assertPrinted("prints new rule", cli.getOut(), "  SUBJECT_RDN_CN: Client Two | ISSUER_DN_BCSTYLE: CN=ManagementCA1,C=SE | Description: My description");
             
             // List
             assertEquals("execute list", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
-            assertPrinted("prints rule 1", cli.getOut(), "  SUBJECT_RDN_CN: Client Two | ISSUER_DN_BCSTYLE: CN=ManagementCA1, C=SE | Description: My description");
+            assertPrinted("prints rule 1", cli.getOut(), "  SUBJECT_RDN_CN: Client Two | ISSUER_DN_BCSTYLE: CN=ManagementCA1,C=SE | Description: My description");
             
             // Add one more
             assertEquals("execute add 2", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
@@ -233,7 +233,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             // List both entries
             assertEquals("execute list 2", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
-            assertPrinted("prints rule 1", cli.getOut(), "  SUBJECT_RDN_CN: Client Two | ISSUER_DN_BCSTYLE: CN=ManagementCA1, C=SE | Description: My description");
+            assertPrinted("prints rule 1", cli.getOut(), "  SUBJECT_RDN_CN: Client Two | ISSUER_DN_BCSTYLE: CN=ManagementCA1,C=SE | Description: My description");
             assertPrinted("prints rule 2", cli.getOut(), "  CERTIFICATE_SERIALNO: 123456 | ISSUER_DN_BCSTYLE: CN=ManagementCA2, OU=Testing, C=SE | Description: Other description");
         } finally {
             test.removeWorker(test.getSignerIdCMSSigner1());
@@ -279,7 +279,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
                     "-description", "Other description"));
             assertPrinted("prints new rule with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
             assertPrinted("prints new rule with 123456", cli.getOut(), "123456");
-            assertPrinted("prints new rule with CN=ManagementCA2, OU=Testing, C=SE", cli.getOut(), "CN=ManagementCA2, OU=Testing, C=SE");
+            assertPrinted("prints new rule with CN=ManagementCA2,OU=Testing,C=SE", cli.getOut(), "CN=ManagementCA2,OU=Testing,C=SE");
             assertPrinted("prints new rule with Other description", cli.getOut(), "Other description");
             
             // List all entries
@@ -293,7 +293,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             
             assertPrinted("prints new rule 1 with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
             assertPrinted("prints new rule 1 with 123456", cli.getOut(), "123456");
-            assertPrinted("prints new rule 1 with CN=ManagementCA2, OU=Testing, C=SE", cli.getOut(), "CN=ManagementCA2, OU=Testing, C=SE");
+            assertPrinted("prints new rule 1 with CN=ManagementCA2,OU=Testing,C=SE", cli.getOut(), "CN=ManagementCA2,OU=Testing,C=SE");
             assertPrinted("prints new rule 1 with Other description", cli.getOut(), "Other description");
             
             // Remove first legacy entry
@@ -318,7 +318,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             
             assertPrinted("prints new rule 1 with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
             assertPrinted("prints new rule 1 with 123456", cli.getOut(), "123456");
-            assertPrinted("prints new rule 1 with CN=ManagementCA2, OU=Testing, C=SE", cli.getOut(), "CN=ManagementCA2, OU=Testing, C=SE");
+            assertPrinted("prints new rule 1 with CN=ManagementCA2,OU=Testing,C=SE", cli.getOut(), "CN=ManagementCA2,OU=Testing,C=SE");
             assertPrinted("prints new rule 1 with Other description", cli.getOut(), "Other description");
         } finally {
             test.removeWorker(test.getSignerIdCMSSigner1());

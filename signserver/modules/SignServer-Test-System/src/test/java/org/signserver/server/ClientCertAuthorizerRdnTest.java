@@ -65,7 +65,7 @@ import org.signserver.testutils.ModulesTestCase;
  * Additional System tests for the ClientCertAuthorizer with different RDN and
  * alternative names.
  *
- * For more system tests see the ClientCertAuthorizer.java.
+ * For more system tests see the ClientCertAuthorizerTest.java.
  * 
  * For unit tests see the ClientsAuthorizationCommandUnitTest class.
  *

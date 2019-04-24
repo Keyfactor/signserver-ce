@@ -228,7 +228,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 context.setServices(services);
                 ICryptoInstance instance = null;
                 try {
-                    instance = acquireDefaultCryptoInstance(context);
+                    instance = acquireDefaultCryptoInstance(Collections.<String, Object>emptyMap(), context);
                     if (publicKeyEquals(instance.getPublicKey(), certFromConfig.getPublicKey())) {
                         log.info("Activate: Signer " + workerId
                             + ": Certificate matches key");
@@ -479,7 +479,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 context.setServices(services);
                 ICryptoInstance crypto = null;
                 try {
-                    crypto = acquireDefaultCryptoInstance(alias, context);
+                    crypto = acquireDefaultCryptoInstance(Collections.<String, Object>emptyMap(), alias, context);
                     result = crypto.getCertificate();
                 } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | SignServerException ex) {
                     throw new CryptoTokenOfflineException("Unable to get certificate from token: " + ex.getLocalizedMessage(), ex);
@@ -543,7 +543,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
                 context.setServices(services);
                 ICryptoInstance crypto = null;
                 try {
-                    crypto = acquireDefaultCryptoInstance(alias, context);
+                    crypto = acquireDefaultCryptoInstance(Collections.<String, Object>emptyMap(), alias, context);
                     result = crypto.getCertificateChain();
                 } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | SignServerException ex) {
                     throw new CryptoTokenOfflineException("Unable to get certificate chain from token: " + ex.getLocalizedMessage(), ex);
@@ -818,12 +818,12 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         return result;
     }
 
-    protected ICryptoInstance acquireDefaultCryptoInstance(RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {
-        return acquireDefaultCryptoInstance(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY), context);
+    protected ICryptoInstance acquireDefaultCryptoInstance(Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {
+        return acquireDefaultCryptoInstance(params, config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY), context);
     }
     
     // XXX: Should not be needed, XXX: Mostly duplicated
-    protected ICryptoInstance acquireDefaultCryptoInstance(String alias, RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {
+    protected ICryptoInstance acquireDefaultCryptoInstance(Map<String, Object> params, String alias, RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {
         final ICryptoInstance result;
 
         ICryptoTokenV4 token = getCryptoToken(context.getServices());
@@ -831,7 +831,7 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             throw new CryptoTokenOfflineException("Crypto token not available");
         }
         try {
-            result = token.acquireCryptoInstance(alias, Collections.<String, Object>emptyMap(), context);
+            result = token.acquireCryptoInstance(alias, params, context);
         } catch (NoSuchAliasException ex) {
             throw new CryptoTokenOfflineException("Key not available: " + ex.getMessage());
         }

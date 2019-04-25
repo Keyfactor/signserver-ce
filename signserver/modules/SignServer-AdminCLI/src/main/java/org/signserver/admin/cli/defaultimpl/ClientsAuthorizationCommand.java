@@ -22,6 +22,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.certificates.util.DNFieldExtractor;
 import org.cesecore.util.CertTools;
@@ -375,8 +376,8 @@ public class ClientsAuthorizationCommand extends AbstractAdminCommand {
             authClients.forEach((client) -> {
                 this.getOutputStream().println("  "
                         + client.getMatchSubjectWithType() + ": " + client.getMatchSubjectWithValue() + " | "
-                        + client.getMatchIssuerWithType() + ": " + client.getMatchIssuerWithValue() + " | "
-                        + (client.getDescription() == null ? "" : "Description: " + client.getDescription()));
+                        + client.getMatchIssuerWithType() + ": " + client.getMatchIssuerWithValue()
+                        + (StringUtils.isBlank(client.getDescription()) ? "" : " | Description: " + client.getDescription()));
             });
         }
     }

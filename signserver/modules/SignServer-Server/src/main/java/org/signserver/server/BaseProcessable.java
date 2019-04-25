@@ -818,6 +818,10 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         return result;
     }
 
+    protected ICryptoInstance acquireDefaultCryptoInstance(RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {
+        return acquireDefaultCryptoInstance(Collections.<String, Object>emptyMap(), context);
+    }
+
     protected ICryptoInstance acquireDefaultCryptoInstance(Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {
         return acquireDefaultCryptoInstance(params, config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY), context);
     }

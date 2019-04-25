@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import javax.persistence.EntityManager;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -193,10 +194,12 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
 
         // Clients
         final StringBuilder clientsValue = new StringBuilder();
-        for (AuthorizedClient client : config.getAuthorizedClients()) {
-            clientsValue.append(client.getCertSN()).append(", ").append(client.getIssuerDN()).append("\n");
-        }
-        completeEntries.add(new WorkerStatusInfo.Entry("Authorized clients (serial number, issuer DN)", clientsValue.toString()));
+        config.getAuthorizedClientsGen2().forEach((client) -> {
+            clientsValue.append(client.getMatchSubjectWithType()).append(": ").append(client.getMatchSubjectWithValue()).append(" | ")
+                    .append(client.getMatchIssuerWithType()).append(": ").append(client.getMatchIssuerWithValue())
+                    .append(StringUtils.isBlank(client.getDescription()) ? "" : " | Description: " + client.getDescription()).append("\n");
+        });
+        completeEntries.add(new WorkerStatusInfo.Entry("Authorized clients", clientsValue.toString()));
 
         // Certificate
         if (!isNoCertificates()) {

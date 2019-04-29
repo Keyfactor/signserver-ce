@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.0.0</p>
+                    <p>Version: 5.1.0</p>
                 </div>
             </header>
 
@@ -121,9 +121,33 @@
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
-                                                <li class="leaf">
+                                                <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Introduction.html">SignServer Introduction</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_Architecture_and_Concepts.html">SignServer Architecture and Concepts</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_Interoperability.html">SignServer Interoperability</a>
+
+            </li>
+                            </ul>
             </li>
                                                 <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Installation.html">SignServer Installation</a>
@@ -258,6 +282,10 @@
 
             </li>
                             </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>
+
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
@@ -1357,7 +1385,7 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Release_Information.html">SignServer Release Information</a></li>
                                                             </ul>
-</div>            <h1 id="src-43974895"> <span>SignServer Upgrade Notes</span></h1>
+</div>            <h1 id="src-65110075"> <span>SignServer Upgrade Notes</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1365,25 +1393,42 @@
     <p  >The following SignServer Upgrade Notes provide important information on changes and requirements to be aware of when upgrading SignServer.    </p>
     <p  >Upgrading to a major version may require manual changes in the database structures, and changes needed are listed in the respective <strong class=" ">Database Schema Change</strong> section per release below. Minor releases are generally plug-in upgrades performed by deploying the new software. These changes are described in the <strong class=" ">Notice</strong> section per minor release below.    </p>
     <p  >For details of new features and improvements in a respective release, see the <a   href="SignServer_Release_Notes.html">SignServer Release Notes</a> and for instructions on upgrading SignServer, see <a   href="Upgrade_SignServer.html">Upgrade SignServer</a>.    </p>
-    <div class="section section-1" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-UpgradeNotes">
+    <div class="section section-1" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-UpgradeNotes">
         <h1 class="heading "><span>Upgrade Notes</span></h1>
     <p  >    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer4.4.xtoSignServer5.0.x">SignServer 4.4.x to SignServer 5.0.x</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer4.3.xtoSignServer4.4.x">SignServer 4.3.x to SignServer 4.4.x</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer4.2.xtoSignServer4.3.x">SignServer 4.2.x to SignServer 4.3.x</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer4.1.xtoSignServer4.2.x">SignServer 4.1.x to SignServer 4.2.x</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer4.0.xtoSignServer4.1.x">SignServer 4.0.x to SignServer 4.1.x</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.7.xtoSignServer4.0.x">SignServer 3.7.x to SignServer 4.0.x</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.6.xtoSignServer3.7.x">SignServer 3.6.x to SignServer 3.7.x</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.5.xtoSignServer3.6.x">SignServer 3.5.x to SignServer 3.6.x</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.4.xtoSignServer3.5.x">SignServer 3.4.x to SignServer 3.5.x</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.3.xtoSignServer3.4.x">SignServer 3.3.x to SignServer 3.4.x</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.2.xtoSignServer3.3.x">SignServer 3.2.x to SignServer 3.3.x</a>    </p>
-</li></ul>    <div class="section section-2" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer4.4.xtoSignServer5.0.x">
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer5.0.xtoSignServer5.1.x">SignServer 5.0.x to SignServer 5.1.x</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer4.4.xtoSignServer5.0.x">SignServer 4.4.x to SignServer 5.0.x</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer4.3.xtoSignServer4.4.x">SignServer 4.3.x to SignServer 4.4.x</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer4.2.xtoSignServer4.3.x">SignServer 4.2.x to SignServer 4.3.x</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer4.1.xtoSignServer4.2.x">SignServer 4.1.x to SignServer 4.2.x</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer4.0.xtoSignServer4.1.x">SignServer 4.0.x to SignServer 4.1.x</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.7.xtoSignServer4.0.x">SignServer 3.7.x to SignServer 4.0.x</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.6.xtoSignServer3.7.x">SignServer 3.6.x to SignServer 3.7.x</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.5.xtoSignServer3.6.x">SignServer 3.5.x to SignServer 3.6.x</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.4.xtoSignServer3.5.x">SignServer 3.4.x to SignServer 3.5.x</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.3.xtoSignServer3.4.x">SignServer 3.3.x to SignServer 3.4.x</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.2.xtoSignServer3.3.x">SignServer 3.2.x to SignServer 3.3.x</a>    </p>
+</li></ul>    <div class="section section-2" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer5.0.xtoSignServer5.1.x">
+        <h2 class="heading "><span>SignServer 5.0.x to SignServer 5.1.x</span></h2>
+<hr>
+    <p  >No database changes required.    </p>
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer5.1.0Notice">
+        <h3 class="heading "><span>SignServer 5.1.0 Notice</span></h3>
+<ul class=" "><li class=" ">    <p  >The internal format for client authorization rules has changed in version 5.1.0 when support for matching on RDN and alternative names was added.    </p>
+<ul class=" "><li class=" ">    <p  >Existing rules will be available as before.    </p>
+</li><li class=" ">    <p  >Existing rules will be upgraded to the new format when/if they are edited.    </p>
+</li><li class=" ">    <p  >New rules will be added in the new format when using Admin Web. If using the Admin CLI for editing client authorization rules, please use the new <i class=" ">authorizedclients </i><a   href="Administration_CLI.html">Administration CLI</a> command and not the legacy ones (<i class=" ">addauthorizedclient</i>, <i class=" ">removeauthorizedclient</i> and <i class=" ">listauthorizedclient</i>) as those will not see the new type of rules.    </p>
+</li><li class=" ">    <p  >If running in a cluster (i.e. multiple nodes with shared database), keep in mind that:    </p>
+<ul class=" "><li class=" ">    <p  >Rules in the new format will not be available to nodes running a older version until they are upgraded.    </p>
+</li><li class=" ">    <p  >Making a configuration change in a node running an older version overwrites any new rules added from a node with the new version. Recommendation is to avoid making configuration changes in workers until all nodes has been upgraded to the same version.    </p>
+</li></ul></li></ul></li></ul>    <p  >    </p>
+    </div>
+    </div>
+    <div class="section section-2" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer4.4.xtoSignServer5.0.x">
         <h2 class="heading "><span>SignServer 4.4.x to SignServer 5.0.x</span></h2>
 <hr>
     <p  >No database changes required.    </p>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer5.0.0Notice">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer5.0.0Notice">
         <h3 class="heading "><span>SignServer 5.0.0 Notice</span></h3>
 <ul class=" "><li class=" ">    <p  >Building and running SignServer on Java 7 is no longer supported. See the <a   href="Prerequisites.html">Prerequisites</a> section of the installation guide.    </p>
 </li><li class=" ">    <p  >SignServer now requires a Java EE 7+ application server. Support for JBoss AS 7 and JBoss EAP 6 has thus been dropped. For more information on required software, see the <a   href="Prerequisites.html">Prerequisites</a> section of the installation guide.    </p>
@@ -1391,58 +1436,58 @@
 </li><li class=" ">    <p  >Due to an Apache POI library issue, signing MSI files using SignClient in client-side hashing mode when running on Windows using Java 9 or later, leaves open files handles until the Java process exits.    </p>
 </li></ul>    </div>
     </div>
-    <div class="section section-2" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer4.3.xtoSignServer4.4.x">
+    <div class="section section-2" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer4.3.xtoSignServer4.4.x">
         <h2 class="heading "><span>SignServer 4.3.x to SignServer 4.4.x</span></h2>
 <hr>
     <p  >No database changes required.    </p>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer4.4.1Notice">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer4.4.1Notice">
         <h3 class="heading "><span>SignServer 4.4.1 Notice</span></h3>
 <ul class="alternate "><li class=" ">    <p  >Running SignClient with SignServer running on GlassFish V3 has not been completely tested for this release.    </p>
 </li></ul>    </div>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer4.4.0Notice">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer4.4.0Notice">
         <h3 class="heading "><span>SignServer 4.4.0 Notice</span></h3>
 <ul class="alternate "><li class=" ">    <p  >By default CACHE_PRIVATEKEY is now enabled for all signers. To get the old behavior for a signer, set CACHE_PRIVATEKEY=false.    </p>
 </li><li class=" ">    <p  >By default the CESeCore keystore cache is now disabled. To get the old behavior it needs to be explicitly enabled in conf/cesecore.properties<br/>Note that it cannot be enabled when using the new one-time crypto and is a global setting.    </p>
 </li></ul>    </div>
     </div>
-    <div class="section section-2" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer4.2.xtoSignServer4.3.x">
+    <div class="section section-2" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer4.2.xtoSignServer4.3.x">
         <h2 class="heading "><span>SignServer 4.2.x to SignServer 4.3.x</span></h2>
 <hr>
-    <div class="section section-3" id="src-43974895_safe-id-aWQtLlNpZ25TZXJ2ZXJVcGdyYWRlTm90ZXN2NS4wLjAtRGF0YWJhc2VTY2hlbWFDaGFuZ2VzOnRhYmxlYWRkZWQ6IktleURhdGEi">
+    <div class="section section-3" id="src-65110075_safe-id-aWQtLlNpZ25TZXJ2ZXJVcGdyYWRlTm90ZXN2NS4xLjAtRGF0YWJhc2VTY2hlbWFDaGFuZ2VzOnRhYmxlYWRkZWQ6IktleURhdGEi">
         <h3 class="heading "><span>Database Schema Changes: table added: &quot;KeyData&quot;</span></h3>
     <p  >Hibernate will try to add this table during startup of the application server. However, if the database user used by the data store does not have enough privileges the table has to be created manually. Refer to doc/sql-scripts/create-tables-signserver-*.sql for the definitions for your DBMS.    </p>
     </div>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-ChangedDefaultValuesforAlgorithms">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-ChangedDefaultValuesforAlgorithms">
         <h3 class="heading "><span>Changed Default Values for Algorithms</span></h3>
     <p  >Default values for digest and signature algorithms have now changed to use SHA-256. Explicitly specified algorithms will remain with the specified values.    </p>
     </div>
     </div>
-    <div class="section section-2" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer4.1.xtoSignServer4.2.x">
+    <div class="section section-2" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer4.1.xtoSignServer4.2.x">
         <h2 class="heading "><span>SignServer 4.1.x to SignServer 4.2.x </span></h2>
 <hr>
     <p  >No database changes required.    </p>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer4.2.0Notice">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer4.2.0Notice">
         <h3 class="heading "><span>SignServer 4.2.0 Notice</span></h3>
     <p  >The security audit logger (configured in databaseprotection.properties) is now case sensitive when it comes to the key aliases. Make sure your keys are pointed out with the right name. Specifically, if the default sample keystore with alias 'dbstorekey' was used it should now be changed to 'dbStoreKey' as that is the correct name in the keystore.    </p>
     </div>
     </div>
-    <div class="section section-2" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer4.0.xtoSignServer4.1.x">
+    <div class="section section-2" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer4.0.xtoSignServer4.1.x">
         <h2 class="heading "><span>SignServer 4.0.x to SignServer 4.1.x</span></h2>
 <hr>
     <p  >No database changes required.    </p>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer4.1.0Notice">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer4.1.0Notice">
         <h3 class="heading "><span>SignServer 4.1.0 Notice</span></h3>
 <ul class="alternate "><li class=" ">    <p  >There is now a web-based administration interface that by default is enabled and available on an URL like <a  class="external-link" href="https://localhost:8443/signserver/adminweb">https://localhost:8443/signserver/adminweb</a>.    </p>
 </li><li class=" ">    <p  >If you are customizing the SignServer public web to be embedded in a frame, note that SignServer now uses the X-FRAME-OPTIONS HTTP header, preventing web GUIs from being framed in modern browsers.    </p>
 </li></ul>    </div>
     </div>
-    <div class="section section-2" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.7.xtoSignServer4.0.x">
+    <div class="section section-2" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.7.xtoSignServer4.0.x">
         <h2 class="heading "><span>SignServer 3.7.x to SignServer 4.0.x</span></h2>
 <hr>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-DatabaseSchemaChanges">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-DatabaseSchemaChanges">
         <h3 class="heading "><span>Database Schema Changes</span></h3>
     <p  >Two new columns in the signerconfigdata table were added. Hibernate will try to add those columns during startup of the application server. However, if the database user used by the data store does not have enough privileges (i.e. no alter table rights), the table has to be altered manually according to the following.    </p>
-    <div class="section section-4" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-ForOracle">
+    <div class="section section-4" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-ForOracle">
         <h4 class="heading "><span>For Oracle</span></h4>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1451,7 +1496,7 @@
 </div>
     </div>
     </div>
-    <div class="section section-4" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-ForMySQL">
+    <div class="section section-4" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-ForMySQL">
         <h4 class="heading "><span>For MySQL</span></h4>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1469,7 +1514,7 @@
     </div>
     </div>
     </div>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer4.0.0Notice">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer4.0.0Notice">
         <h3 class="heading "><span>SignServer 4.0.0 Notice </span></h3>
 <ul class="alternate "><li class=" ">    <p  >The way to specify a worker's implementation class name in properties form has changed. Previously it was specified as: <tt class=" ">GLOB.WORKER4711.CLASSPATH=org.signserver.module.pdfsigner.PDFSigner</tt> but should now be specified as a worker property: <tt class=" ">WORKER4711.IMPLEMENTATION_CLASS=org.signserver.module.pdfsigner.PDFSigner</tt>. Exported configurations might have to be adapted. SignServer will try to upgrade existing configurations during startup.    </p>
 </li><li class=" ">    <p  >Each worker configuration should now contain a worker property TYPE, specifying the type of worker such as UNKNOWN, PROCESSABLE, TIMED_SERVICE, SPECIAL or CRYPTO_WORKER. Existing workers will get this worker property populated during the startup.    </p>
@@ -1479,86 +1524,86 @@
 </li><li class=" ">    <p  >Deprecated scripts in the bin folder have been removed. Use the following replacement scripts available:<br/>admingui.sh =&gt; signserver-gui<br/>client.sh =&gt; signclient<br/>signserver.sh =&gt; signserver    </p>
 </li></ul>    </div>
     </div>
-    <div class="section section-2" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.6.xtoSignServer3.7.x">
+    <div class="section section-2" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.6.xtoSignServer3.7.x">
         <h2 class="heading "><span>SignServer 3.6.x to SignServer 3.7.x</span></h2>
 <hr>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-Configurationfilenamechange">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-Configurationfilenamechange">
         <h3 class="heading "><span>Configuration file name change</span></h3>
     <p  >The SignServer build/deployment configuration file has been renamed from signserver_build.properties to signserver_deploy.properties. When upgrading from an earlier version the existing configuration file should be renamed accordingly. The Ant script will complain if a file with the old name is found.    </p>
     </div>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-Changesneededwhenusingsoftkeystorecryptotokens">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-Changesneededwhenusingsoftkeystorecryptotokens">
         <h3 class="heading "><span>Changes needed when using soft keystore crypto tokens</span></h3>
     <p  >Pay attention to changes needed when using soft keystore crypto tokens as described in the Notice section below.    </p>
     </div>
-    <div class="section section-3" id="src-43974895_safe-id-aWQtLlNpZ25TZXJ2ZXJVcGdyYWRlTm90ZXN2NS4wLjAtQ2hhbmdlc25lZWRlZGZvclBLQ1MjMTFjcnlwdG90b2tlbmxpYnJhcnlkZWZpbml0aW9ucw">
+    <div class="section section-3" id="src-65110075_safe-id-aWQtLlNpZ25TZXJ2ZXJVcGdyYWRlTm90ZXN2NS4xLjAtQ2hhbmdlc25lZWRlZGZvclBLQ1MjMTFjcnlwdG90b2tlbmxpYnJhcnlkZWZpbml0aW9ucw">
         <h3 class="heading "><span>Changes needed for PKCS#11 crypto token library definitions</span></h3>
     <p  >The old way of specifying PKCS#11 libraries by referencing the path to the dynamic library as a worker property for a crypto worker has been deprecated in favor of using named library definitions.    </p>
     <p  >To continue using the old way, you need to make sure there is a defined named library using the same path as manually specified by the worker. If the library is not among the pre-defined libraries, it is possible to add new definitions in the deploy properties.    </p>
     <p  >For security reasons, it is also possible to disable any of the pre-defined library definitions.    </p>
     </div>
-    <div class="section section-3" id="src-43974895_safe-id-aWQtLlNpZ25TZXJ2ZXJVcGdyYWRlTm90ZXN2NS4wLjAtRGVwZW5kZW5jeVVwZ3JhZGVkOlhNTFNlY3VyaXR5TGlicmFyeQ">
+    <div class="section section-3" id="src-65110075_safe-id-aWQtLlNpZ25TZXJ2ZXJVcGdyYWRlTm90ZXN2NS4xLjAtRGVwZW5kZW5jeVVwZ3JhZGVkOlhNTFNlY3VyaXR5TGlicmFyeQ">
         <h3 class="heading "><span>Dependency Upgraded: XML Security Library</span></h3>
     <p  >The XML Security library has been updated to version 1.5.8 and its dependency to version 2.7.2. This fixes a potential security vulnerability in earlier versions and requires special handling if JBoss is used. See: <a  class="external-link" href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0107">https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0107</a>    </p>
     </div>
-    <div class="section section-3" id="src-43974895_safe-id-aWQtLlNpZ25TZXJ2ZXJVcGdyYWRlTm90ZXN2NS4wLjAtRGVwZW5kZW5jeVVwZ3JhZGVkOkNvbW1vbnNDb2xsZWN0aW9uc0xpYnJhcnk">
+    <div class="section section-3" id="src-65110075_safe-id-aWQtLlNpZ25TZXJ2ZXJVcGdyYWRlTm90ZXN2NS4xLjAtRGVwZW5kZW5jeVVwZ3JhZGVkOkNvbW1vbnNDb2xsZWN0aW9uc0xpYnJhcnk">
         <h3 class="heading "><span>Dependency Upgraded: Commons Collections Library</span></h3>
     <p  >The Commons Collections library has been updated to version 3.2.2. This might also need to be take care of in the application server. See the Notice section below.    </p>
     </div>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.7.0Notice">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.7.0Notice">
         <h3 class="heading "><span>SignServer 3.7.0 Notice</span></h3>
 <ul class="alternate "><li class=" ">    <p  >The new KeystoreInConfigCryptoToken is not supported under GlassFish 2.    </p>
 </li><li class=" ">    <p  >HardCodedCryptoToken is no longer supported for most use cases. Previously, the token could have been configured in Certificate or Document validators as those required a token to function. Since long this has not been required and if any of your validators has this token configured it should be removed or they might give an error.    </p>
 </li><li class=" ">    <p  >SoftCryptoToken is no longer supported. The token was mainly used for quick demo setups but does not support the API in 3.7. Use KeystoreCryptoToken or KeystoreInConfigCryptoToken instead.    </p>
 </li><li class=" ">    <p  >The KeystoreCryptoToken will no longer use the first available key when signing if DEFAULTKEY has not been set. Please configure your KeystoreCryptoTokens to have a DEFAULTKEY property set. Having a defined DEFAULTKEY is not needed if using runtime-decided keys (using the AliasSelector interfaces).    </p>
 </li></ul>    </div>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.7.1Notice">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.7.1Notice">
         <h3 class="heading "><span>SignServer 3.7.1 Notice</span></h3>
     <p  >The Commons Collections library has been updated to version 3.2.2.    </p>
     <p  >This fixes a potential security vulnerability in earlier versions. See also the relevant &quot;Fix Commons Collections Security issue in JBoss 7 and earlier&quot; and &quot;Fix Security issues in JBoss EAP&quot; sections of the installation guide to make sure the issue is also addressed in the application server.    </p>
     </div>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.7.3Notice">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.7.3Notice">
         <h3 class="heading "><span>SignServer 3.7.3 Notice</span></h3>
 <ul class="alternate "><li class=" ">    <p  >The renewsigner admin CLI command will no longer prompt for an authcode when the -authcode CLI argument is omitted, use the new -authprompt option to get an interactive prompt. When the authcode is not given (or prompted for), the command will not automatically (re)activate the token.    </p>
 </li></ul>    </div>
     </div>
-    <div class="section section-2" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.5.xtoSignServer3.6.x">
+    <div class="section section-2" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.5.xtoSignServer3.6.x">
         <h2 class="heading "><span>SignServer 3.5.x to SignServer 3.6.x</span></h2>
 <hr>
     <p  >No database changes required.    </p>
     <p  >    </p>
     </div>
-    <div class="section section-2" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.4.xtoSignServer3.5.x">
+    <div class="section section-2" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.4.xtoSignServer3.5.x">
         <h2 class="heading "><span>SignServer 3.4.x to SignServer 3.5.x</span></h2>
 <hr>
-    <div class="section section-3" id="src-43974895_safe-id-aWQtLlNpZ25TZXJ2ZXJVcGdyYWRlTm90ZXN2NS4wLjAtRGF0YWJhc2VTY2hlbWFDaGFuZ2VzOnRhYmxlc3JlbW92ZWQ">
+    <div class="section section-3" id="src-65110075_safe-id-aWQtLlNpZ25TZXJ2ZXJVcGdyYWRlTm90ZXN2NS4xLjAtRGF0YWJhc2VTY2hlbWFDaGFuZ2VzOnRhYmxlc3JlbW92ZWQ">
         <h3 class="heading "><span>Database Schema Changes: tables removed</span></h3>
     <p  >The following tables are no longer used by SignServer and can optionally be removed:    </p>
 <ul class=" "><li class=" ">    <p  >enckeydata    </p>
 </li><li class=" ">    <p  >groupkeydata    </p>
 </li></ul>    </div>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-DependencyUpgraded">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-DependencyUpgraded">
         <h3 class="heading "><span>Dependency Upgraded</span></h3>
     <p  >The XML Security library has been updated. See the Notice section below.    </p>
     </div>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.5.2Notice">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.5.2Notice">
         <h3 class="heading "><span>SignServer 3.5.2 Notice</span></h3>
 <ul class="alternate "><li class=" ">    <p  >The XML Security library has been updated to version 1.5.7. This fixes security vulnerability in earlier versions as well as a performance issue. See: <a  class="external-link" href="https://santuario.apache.org/secadv.data/cve-2013-4517.txt.asc">CVE-2013-4517: Java XML Signature DoS Attack</a>. See also the &quot;Fix XML Security library issue&quot; sections in the Install Guide for the extra steps needed when using JBoss 5 and 7 respectively.    </p>
 </li></ul>    </div>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.5.0Notice">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.5.0Notice">
         <h3 class="heading "><span>SignServer 3.5.0 Notice</span></h3>
 <ul class="alternate "><li class=" ">    <p  >The XML Security library has been updated to version 1.5.5. This version is not compatible with the version bundled with JBoss 5. For the XML support to work when running on JBoss 5 the XML Security library and its dependencies should be put in JBOSS_HOME/lib/endorsed. To help with that an Ant target can be run: $ bin/ant j2ee:copy-xmlsec    </p>
 </li><li class=" ">    <p  >Support for the group key framework has been discontinued.    </p>
 </li></ul>    </div>
     </div>
-    <div class="section section-2" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.3.xtoSignServer3.4.x">
+    <div class="section section-2" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.3.xtoSignServer3.4.x">
         <h2 class="heading "><span>SignServer 3.3.x to SignServer 3.4.x</span></h2>
 <hr>
-    <div class="section section-3" id="src-43974895_safe-id-aWQtLlNpZ25TZXJ2ZXJVcGdyYWRlTm90ZXN2NS4wLjAtRGF0YWJhc2VTY2hlbWFDaGFuZ2U6dGFibGVyZW5hbWVk">
+    <div class="section section-3" id="src-65110075_safe-id-aWQtLlNpZ25TZXJ2ZXJVcGdyYWRlTm90ZXN2NS4xLjAtRGF0YWJhc2VTY2hlbWFDaGFuZ2U6dGFibGVyZW5hbWVk">
         <h3 class="heading "><span>Database Schema Change: table renamed</span></h3>
     <p  >A table was renamed to GlobalConfigData. For Oracle, this table was previously called &quot;GLOBALCONFIG&quot; while for all other it was called &quot;GlobalConfigurationData&quot;.    </p>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">Oracle:</strong> &quot;GLOBALCONFIG&quot; was renamed to &quot;GlobalConfigData&quot;    </p>
 </li><li class=" ">    <p  ><strong class=" ">Databases other than Oracle</strong>: &quot;GlobalConfigurationData&quot; was renamed to &quot;GlobalConfigData&quot;    </p>
-</li></ul>    <div class="section section-4" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-ForOracle.1">
+</li></ul>    <div class="section section-4" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-ForOracle.1">
         <h4 class="heading "><span>For Oracle</span></h4>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1566,7 +1611,7 @@
 </div>
     </div>
     </div>
-    <div class="section section-4" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-ForMySQL.1">
+    <div class="section section-4" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-ForMySQL.1">
         <h4 class="heading "><span>For MySQL</span></h4>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1574,27 +1619,27 @@
 </div>
     </div>
     </div>
-    <div class="section section-4" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-Hibernate">
+    <div class="section section-4" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-Hibernate">
         <h4 class="heading "><span>Hibernate</span></h4>
     <p  >Hibernate will not rename this table but add it as a new one. For an existing installation, it is instead recommended to manually rename the table (using the RENAME statements described above) to not loose the existing configuration.    </p>
     </div>
     </div>
-    <div class="section section-3" id="src-43974895_safe-id-aWQtLlNpZ25TZXJ2ZXJVcGdyYWRlTm90ZXN2NS4wLjAtRGF0YWJhc2VTY2hlbWFDaGFuZ2U6dGFibGVhZGRlZDpBdWRpdFJlY29yZERhdGE">
+    <div class="section section-3" id="src-65110075_safe-id-aWQtLlNpZ25TZXJ2ZXJVcGdyYWRlTm90ZXN2NS4xLjAtRGF0YWJhc2VTY2hlbWFDaGFuZ2U6dGFibGVhZGRlZDpBdWRpdFJlY29yZERhdGE">
         <h3 class="heading "><span>Database Schema Change: table added: AuditRecordData</span></h3>
     <p  >Hibernate will try to add this table during startup of the application server. However, if the database user used by the data store does not have enough privileges the table has to be created manually. See doc/sql-scripts/create-tables-signserver34-*.sql for the definitions for your DBMS.    </p>
     </div>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.4.0Notice">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.4.0Notice">
         <h3 class="heading "><span>SignServer 3.4.0 Notice</span></h3>
 <ul class="alternate "><li class=" ">    <p  >The category for the system logger has changed from org.signserver.server.log.ISystemLogger to org.signserver.server.log.SignServerLog4jDevice.    </p>
 </li></ul>    </div>
     </div>
-    <div class="section section-2" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.2.xtoSignServer3.3.x">
+    <div class="section section-2" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.2.xtoSignServer3.3.x">
         <h2 class="heading "><span>SignServer 3.2.x to SignServer 3.3.x</span></h2>
 <hr>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-DatabaseSchemaChange">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-DatabaseSchemaChange">
         <h3 class="heading "><span>Database Schema Change</span></h3>
     <p  >A new column in the ArchiveData table were added. Hibernate will try to add this column during startup of the application server. However, if the database user used by the data store does not have enough privileges (ie. no alter table rights) the table has to be altered manually according to the following examples. Note that after manually changing the database schema, the application server should be restarted.    </p>
-    <div class="section section-4" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-ForOracle.2">
+    <div class="section section-4" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-ForOracle.2">
         <h4 class="heading "><span>For Oracle</span></h4>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1602,7 +1647,7 @@
 </div>
     </div>
     </div>
-    <div class="section section-4" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-ForMySQL.2">
+    <div class="section section-4" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-ForMySQL.2">
         <h4 class="heading "><span>For MySQL</span></h4>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
@@ -1611,11 +1656,11 @@
     </div>
     </div>
     </div>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-DependencyUpgraded.1">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-DependencyUpgraded.1">
         <h3 class="heading "><span>Dependency Upgraded</span></h3>
     <p  >The BouncyCastle library has been upgraded to version 1.47. Users running Oracle JDK and JBoss will have to replace all bc*.jar copied to JBoss with the 1.47 version jars available under lib/ext/1.6/.    </p>
     </div>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.3.0Notice">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.3.0Notice">
         <h3 class="heading "><span>SignServer 3.3.0 Notice</span></h3>
 <ul class="alternate "><li class=" ">    <p  >Apache Ant 1.8.0 or later is now required to build SignServer.    </p>
 </li><li class=" ">    <p  >The property &quot;custom.commandfactory&quot; is no longer supported. See the manual for how to add custom Admin or Client CLI commands.    </p>
@@ -1623,17 +1668,17 @@
 </li><li class=" ">    <p  >The default archiver called OldDatabaseArchiver has changed the format of the data part of the XML serialized ArchiveData from an byte array to a base64 encoded String. The change is transparent for Java clients using SignServer-Common.jar for parsing the ArchiveData but other clients might need to be updated.    </p>
 </li><li class=" ">    <p  >As an alternative to the OldDatabaseArchiver a new archiver called Base64DatabaseArchiver can also be used.    </p>
 </li></ul>    </div>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.2.3Notice">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.2.3Notice">
         <h3 class="heading "><span>SignServer 3.2.3 Notice</span></h3>
 <ul class="alternate "><li class=" ">    <p  >Same internal API changes has been done as part of DSS-528. If you have custom code some changes might be required.    </p>
 </li></ul>    </div>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.2.2Notice">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.2.2Notice">
         <h3 class="heading "><span>SignServer 3.2.2 Notice</span></h3>
 <ul class="alternate "><li class=" ">    <p  >Support for the cluster classloader has been deprecated and support for it will be dropped in a future release.    </p>
 </li><li class=" ">    <p  >The status property &quot;INSYNC&quot; is now called &quot;TIMESOURCE0_INSYNC&quot;. Applications relaying on the name of this property should be updated.    </p>
 </li><li class=" ">    <p  >The time stamp signer will now log PROCESS_SUCCESS with the value false in case the response has a status other than GRANTED.    </p>
 </li></ul>    </div>
-    <div class="section section-3" id="src-43974895_id-.SignServerUpgradeNotesv5.0.0-SignServer3.2.1Notice">
+    <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer3.2.1Notice">
         <h3 class="heading "><span>SignServer 3.2.1 Notice</span></h3>
 <ul class="alternate "><li class=" ">    <p  >In signserver_build.properties the property &quot;useclusterclassloader&quot; now defaults to false. To still use the deprecated clusterclassloader this needs to be set explicitly to true.    </p>
 </li><li class=" ">    <p  >In signserver_build.properties the property &quot;includemodulesinbuild&quot; now defaults to true. To not have all modules built in this needs to be set to explicitly to false.    </p>

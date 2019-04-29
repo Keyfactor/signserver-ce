@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.0.0</p>
+                    <p>Version: 5.1.0</p>
                 </div>
             </header>
 
@@ -121,9 +121,33 @@
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
-                                                <li class="leaf">
+                                                <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Introduction.html">SignServer Introduction</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_Architecture_and_Concepts.html">SignServer Architecture and Concepts</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_Interoperability.html">SignServer Interoperability</a>
+
+            </li>
+                            </ul>
             </li>
                                                 <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Installation.html">SignServer Installation</a>
@@ -258,6 +282,10 @@
 
             </li>
                             </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>
+
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
@@ -1360,12 +1388,12 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="Common_Configuration.html">Common Configuration</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277248"> <span>Authorization Type</span></h1>
+</div>            <h1 id="src-50626669"> <span>Authorization Type</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >By default (if the property is not set) is client-certificate authentication required for a signature request to be processed. This can be changed with the AUTHTYPE property.    </p>
+    <p  >By default (and if the property is not set), client-certificate authentication is required for a signature request to be processed. This can be changed using the AUTHTYPE property.    </p>
     <div  class="tablewrap">
         <table class="wrapped fixed-table confluenceTable">
                     <colgroup>
@@ -1395,7 +1423,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  ><strong class=" ">Client certificate authentication</strong>    </p>
-    <p  >(default) requires a certificate of all the clients. The certificates must be in the application server's truststore. Authorized clients is configured manually using the CLI interface.    </p>
+    <p  >Default value. Requires a certificate of all the clients. The certificates must be in the application server's truststore. Authorized clients is configured manually using the CLI interface.    </p>
             </td>
         </tr>
     <tr>

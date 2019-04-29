@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.signserver</groupId>
     <artifactId>SignServer</artifactId>
-    <version>5.2.0.Alpha1-SNAPSHOT</version>
+    <version>5.1.0.Beta1</version>
     <packaging>pom</packaging>
     <name>SignServer</name>
     <properties>
@@ -50,12 +50,6 @@
                 <groupId>org.bouncycastle</groupId>
                 <type>jar</type>
                 <version>1.60</version>
-            </dependency>
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcpg-jdk15on</artifactId>
-                <version>1.60</version>
-                <type>jar</type>
             </dependency>
             
             <dependency>

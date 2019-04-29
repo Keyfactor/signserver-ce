@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.0.0</p>
+                    <p>Version: 5.1.0</p>
                 </div>
             </header>
 
@@ -121,9 +121,33 @@
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
-                                                <li class="leaf">
+                                                <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Introduction.html">SignServer Introduction</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_Architecture_and_Concepts.html">SignServer Architecture and Concepts</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_Interoperability.html">SignServer Interoperability</a>
+
+            </li>
+                            </ul>
             </li>
                                                 <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Installation.html">SignServer Installation</a>
@@ -258,6 +282,10 @@
 
             </li>
                             </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>
+
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
@@ -1362,17 +1390,18 @@
                                                                                                          <li class="shortcut"><a href="Workers_Page.html">Workers Page</a></li>
                                                                                      <li><a href="Worker_Page.html">Worker Page</a></li>
                                                             </ul>
-</div>            <h1 id="src-5282766"> <span>Worker Authorization Page</span></h1>
+</div>            <h1 id="src-61833218"> <span>Worker Authorization Page</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div class="section section-1" id="src-5282766_id-.WorkerAuthorizationPagev4.1.0-Clients">
+    <div class="section section-1" id="src-61833218_id-.WorkerAuthorizationPagev5.1.0-Clients">
         <h1 class="heading "><span>Clients</span></h1>
-    <p  >Lists the clients authorized to access this worker using client certificate authentication (if used) and offers the ability to edit it.    </p>
-    <p  >Note that the authorization list is always present even if the worker is configured with a different AUTHTYPE and the list will not be used.    </p>
+    <p  >Lists the clients authorized to access this worker using client certificate authentication (if used) and allows to edit or remove them.    </p>
+    <p  >Note that the authorization list is present even if the worker is configured with a different AUTHTYPE and therefore not using the list.    </p>
+    <p  >For step-by-step configuration instructions, see <a   href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>.    </p>
     <div  class="tablewrap">
-        <table class="confluenceTable">
+        <table class="wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />
@@ -1391,9 +1420,10 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Adds a new client authorization rule.    </p>
-    <p  >Fill in the <strong class=" ">Certificate serial number</strong> in hex format and the <strong class=" ">Issuer DN</strong>.    </p>
-    <p  >Alternatively use the <strong class=" ">...</strong> (browse) button to upload a certificate to load it from or use the <strong class=" ">Load Current</strong> button to fill in the values from your administrator certificate.    </p>
-    <p  >Click the <strong class=" ">Submit</strong> button to have the new rule saved.    </p>
+    <p  >Select what <strong class=" ">Subject</strong> field from the certificate to match on, for example, <strong class=" ">Certificate Serial Number</strong> or <strong class=" ">RDN: CN, commonName</strong>. Specify the expected value for the chosen field. For Certificate Serial Number it should be provided in hexadecimal form, while the other fields expect the values in textual representation. Additionally, specify the DN in EJBCA style textual representation for the <strong class=" ">Issuer</strong>.    </p>
+    <p  >Alternatively chose to import from certificate by clicking <strong class=" ">From File</strong> and provide a certificate file, or click <strong class=" ">Load Current</strong> to load your administrator certificate. You then have the option to choose which of the existing fields to match on.    </p>
+    <p  >Optionally, specify a free-text description of the rule.    </p>
+    <p  >Click <strong class=" ">Submit</strong> to save the new rule.    </p>
             </td>
         </tr>
     <tr>
@@ -1401,9 +1431,8 @@
         <p  >Edit    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >For an existing authorization rule the corresponding <strong class=" ">Edit</strong> button allows for changing the values.    </p>
-    <p  >Make the wanted changes to the <strong class=" ">Certificate serial number</strong> and/or <strong class=" ">Issuer DN</strong> field.    </p>
-    <p  >Click the <strong class=" ">Submit</strong> button to have the updated rule saved.    </p>
+        <p  >For an existing authorization rule, the corresponding <strong class=" ">Edit</strong> link allows updating a rule.    </p>
+    <p  >Edit the fields <strong class=" ">for Subject</strong> and/or <strong class=" ">Issuer</strong> or description, and click <strong class=" ">Submit</strong> to save the updated rule.    </p>
             </td>
         </tr>
     <tr>
@@ -1411,7 +1440,7 @@
         <p  >Remove    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >For an existing authorization rule the corresponding Remove button allows to remove a rule.    </p>
+        <p  >For an existing authorization rule, the corresponding <strong class=" ">Remove</strong> link allows removing a rule.    </p>
     <p  >Confirm the removal by clicking the <strong class=" ">Remove</strong> button.    </p>
             </td>
         </tr>

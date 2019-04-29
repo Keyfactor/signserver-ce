@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.0.0</p>
+                    <p>Version: 5.1.0</p>
                 </div>
             </header>
 
@@ -121,9 +121,33 @@
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
-                                                <li class="leaf">
+                                                <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Introduction.html">SignServer Introduction</a>
 
+                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
+                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#CCCCCC">
+                        <rect x="11" y="7" width="2" height="10"></rect>
+                        <rect x="7" y="11" width="10" height="2"></rect>
+                    </g>
+                </svg>
+            </span>
+
+            <ul class="nav ht-pages-nav-sub">
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_Architecture_and_Concepts.html">SignServer Architecture and Concepts</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_Interoperability.html">SignServer Interoperability</a>
+
+            </li>
+                            </ul>
             </li>
                                                 <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Installation.html">SignServer Installation</a>
@@ -258,6 +282,10 @@
 
             </li>
                             </ul>
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>
+
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
@@ -1424,7 +1452,7 @@
         <p  >SHAREDLIBRARY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
+        <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
  This property is deprecated.    </p>
     <p  >Full path to the library containing the PKCS11 interface. From version 3.7.0 this must point to a file declared in signserver_deploy.properties (or using the built-in values). If this property is defined at the same time as SHAREDLIBRARYNAME they must point to the same library on the file system.    </p>
             </td>
@@ -1502,9 +1530,9 @@
 <div class="line"><code class="plain">}</code></div>
 </div>
     </div>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
  The PKCS#11 attributes configuration is global per shared library. If specified in multiple workers, only the configuration from the first worker loaded will be used. Changing the property might not take effect without restarting the application server.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
  For a Thales nCipher 'module protected' slot (slot index 0), CKA_PRIVATE must be false for the CKO_PRIVATEKEY to allow the key to be used without a login. Otherwise the key generation will fail with a CKR_USER_NOT_LOGGED_IN PKCS#11 error.    </p>
             </td>
         </tr>
@@ -1524,7 +1552,7 @@
 <div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS=CKM_RSA_PKCS, CKM_SHA256_RSA_PKCS, </code><code class="value">0x00000043</code><code class="plain">, CKM_SHA256_RSA_PKCS_PSS</code></div>
 </div>
     </div>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
  This feature requires a patched Java Runtime Environment.    </p>
             </td>
         </tr>
@@ -1534,9 +1562,9 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >If set to true, the private key and certificate is cached in the worker so that they are not queried for each signature. This could potentially improve performance in some environments, typically where network HSMs or HSM slots with many keys are used. Default: true.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
  This worker property is to be specified in the worker where the key to be used is specified by the DEFAULTKEY property. It is that key that will be cached locally in the worker. It is important to remember this if the crypto token is configured in a separate worker in which case this property should be specified in the worker that will be using the crypto token and not necessarily in the one having the crypto token configuration.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
  When enabled, the signer certificate is also cached if taken from the token and not overridden by specifying it in the configuration. This means that if the certificate in the token is changed, the old certificate will still be used until the worker is reloaded, clearing the cache.    </p>
             </td>
         </tr>

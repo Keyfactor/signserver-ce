@@ -4,11 +4,11 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer</artifactId>
-        <version>5.2.0.Alpha1-SNAPSHOT</version>
+        <version>5.1.0.Beta1</version>
     </parent>
     <groupId>org.signserver</groupId>
     <artifactId>SignServer-Modules</artifactId>
-    <version>5.2.0.Alpha1-SNAPSHOT</version>
+    <version>5.1.0.Beta1</version>
     <packaging>pom</packaging>
     <name>SignServer Modules</name>
     <properties>
@@ -74,7 +74,6 @@
         <module>SignServer-Module-MRTDSODSigner</module>
         <module>SignServer-Module-ODFSigner</module>
         <module>SignServer-Module-OOXMLSigner</module>
-        <module>SignServer-Module-OpenPGP</module>
         <module>SignServer-Module-PDFSigner</module>
         <module>SignServer-Module-Renewal-interface</module>
         <module>SignServer-Module-Renewal</module>

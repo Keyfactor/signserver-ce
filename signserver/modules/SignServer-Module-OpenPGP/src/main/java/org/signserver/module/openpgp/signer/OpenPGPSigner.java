@@ -1,4 +1,4 @@
-/*************************************************************************
+/** ***********************************************************************
  *                                                                       *
  *  SignServer: The OpenSource Automated Signing Server                  *
  *                                                                       *
@@ -9,7 +9,7 @@
  *                                                                       *
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
- *************************************************************************/
+ ************************************************************************ */
 package org.signserver.module.openpgp.signer;
 
 import org.signserver.common.OpenPgpCertReqData;
@@ -31,13 +31,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
 import org.bouncycastle.bcpg.PublicKeyAlgorithmTags;
-import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
@@ -54,8 +52,8 @@ import org.bouncycastle.openpgp.*;
 import org.bouncycastle.openpgp.jcajce.JcaPGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyConverter;
+import org.bouncycastle.openpgp.operator.jcajce.JcaPGPPrivateKey;
 import org.bouncycastle.util.encoders.Hex;
-import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.NoSuchAliasException;
@@ -73,22 +71,12 @@ import static org.signserver.server.cryptotokens.CryptoTokenHelper.PROPERTY_SELF
 import static org.signserver.server.cryptotokens.ICryptoTokenV4.PARAM_INCLUDE_DUMMYCERTIFICATE;
 
 /**
- * Skeleton signer...
+ * Signer for OpenPGP.
  *
-  * <p>
- * The signer has the following worker properties:
- * </p>
- * <ul>
- *    <li>
- *       <b>SIGNATUREALGORITHM</b> = Algorithm for signing
- *       (Optional, default: "SHA256withRSA")
- *    </li>
- *    <li>
- *       <b>PROPERTY_NAME...</b> = Description...
- *       (Optional/required, default: ...)
- *    </li>
- * </ul>
- * @author ...
+ * Input: Content to sign
+ * Output: OpenPGP ASCII Armored signature
+ *
+ * @author Markus Kilås
  * @version $Id: SkeletonSigner.java 7050 2016-02-17 14:49:30Z netmackan $
  */
 public class OpenPGPSigner extends BaseSigner {
@@ -97,20 +85,17 @@ public class OpenPGPSigner extends BaseSigner {
     private static final Logger LOG = Logger.getLogger(OpenPGPSigner.class);
 
     // Worker properties
-    public static final String PROPERTY_SIGNATUREALGORITHM
-            = "SIGNATUREALGORITHM";
-    //...
+    public static final String PROPERTY_SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
 
     // Log fields
     //...
 
     // Default values
     private static final String DEFAULT_SIGNATUREALGORITHM = "SHA256withRSA";
-    //...
 
     // Content types
-    private static final String REQUEST_CONTENT_TYPE = ""; //...
-    private static final String RESPONSE_CONTENT_TYPE = "text/plain"; //...
+    private static final String REQUEST_CONTENT_TYPE = "application/octet-stream";
+    private static final String RESPONSE_CONTENT_TYPE = "application/pgp-signature"; // [https://tools.ietf.org/html/rfc3156]
 
     // Configuration errors
     private final LinkedList<String> configErrors = new LinkedList<>();
@@ -132,26 +117,21 @@ public class OpenPGPSigner extends BaseSigner {
             signatureAlgorithm = DEFAULT_SIGNATUREALGORITHM;
         }
 
-        // Read properties
-        //...
-        
         // Optional property PGPPUBLICKEY
-        String publicKeyValue = config.getProperty("PGPPUBLICKEY");
+        final String publicKeyValue = config.getProperty("PGPPUBLICKEY");
         if (publicKeyValue != null) {
-            try (InputStream in = org.bouncycastle.openpgp.PGPUtil.getDecoderStream(new ByteArrayInputStream(publicKeyValue.getBytes(StandardCharsets.US_ASCII)))) {
-
-                JcaPGPPublicKeyRingCollection pgpPub = new JcaPGPPublicKeyRingCollection(in);
+            try (InputStream in = PGPUtil.getDecoderStream(new ByteArrayInputStream(publicKeyValue.getBytes(StandardCharsets.US_ASCII)))) {
+                final JcaPGPPublicKeyRingCollection pgpPub = new JcaPGPPublicKeyRingCollection(in);
 
                 PGPPublicKey key = null;
-                Iterator<PGPPublicKeyRing> rIt = pgpPub.getKeyRings();
-                while (key == null && rIt.hasNext()) {
-                    PGPPublicKeyRing kRing = rIt.next();
-                    Iterator<PGPPublicKey> kIt = kRing.getPublicKeys();
-                    while (key == null && kIt.hasNext()) {
-                        key = kIt.next();
+                final Iterator<PGPPublicKeyRing> ringIterator = pgpPub.getKeyRings();
+                while (key == null && ringIterator.hasNext()) {
+                    final PGPPublicKeyRing ring = ringIterator.next();
+                    final Iterator<PGPPublicKey> keyIterator = ring.getPublicKeys();
+                    while (key == null && keyIterator.hasNext()) {
+                        key = keyIterator.next();
                     }
                 }
-                
                 if (key == null) {
                     configErrors.add("No public key found in worker property " + "PGPPUBLICKEY");
                 } else {
@@ -160,10 +140,10 @@ public class OpenPGPSigner extends BaseSigner {
             } catch (IOException | PGPException ex) {
                 configErrors.add("Unable to parse public key in worker property " + "PGPPUBLICKEY" + ": " + ex.getLocalizedMessage());
             }
-            
         }
-        
-        String validityValue = config.getProperty(PROPERTY_SELFSIGNED_VALIDITY);
+
+        // Optional property SELFSIGNED_VALIDITY
+        final String validityValue = config.getProperty(PROPERTY_SELFSIGNED_VALIDITY);
         if (validityValue != null && !validityValue.trim().isEmpty()) {
             selfsignedValidity = Long.parseLong(validityValue);
         }
@@ -182,90 +162,40 @@ public class OpenPGPSigner extends BaseSigner {
                         "Received request wasn't an expected GenericSignRequest.");
             }
             final SignatureRequest sReq = (SignatureRequest) signRequest;
-            
+
             // Get the data from request
             final ReadableData requestData = sReq.getRequestData();
             final WritableData responseData = sReq.getResponseData();
             //...
-            
+
             // Log anything interesting from the request to the worker logger
             //...
 
             // Produce the result, ie doing the work...
             Certificate signerCert = null;
             ICryptoInstance cryptoInstance = null;
-            Map<String, Object> params = new HashMap<>();
-            params.put(PARAM_INCLUDE_DUMMYCERTIFICATE, true);
             try (BCPGOutputStream bOut = new BCPGOutputStream(new ArmoredOutputStream(responseData.getAsOutputStream()))) {
-                cryptoInstance = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN,
-                        signRequest, params, requestContext);
+                final Map<String, Object> params = new HashMap<>();
+                params.put(PARAM_INCLUDE_DUMMYCERTIFICATE, true);
+                cryptoInstance = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, params, requestContext);
 
                 // signature value
                 final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
-                X509Certificate x509Cert = (X509Certificate) getSigningCertificate(cryptoInstance);
-                PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(getKeyAlg(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
-                
-                
-                //PGPPrivateKey pgpPrivateKey = conv.getPGPPrivateKey(pgpPublicKey, cryptoInstance.getPrivateKey());
-                
-                PGPSignatureGenerator signatureGenerator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), PGPUtil.SHA256).setProvider(cryptoInstance.getProvider()).setDigestProvider("BC"));
-                
-                signatureGenerator.init(PGPSignature.BINARY_DOCUMENT, new org.bouncycastle.openpgp.operator.jcajce.JcaPGPPrivateKey(pgpPublicKey, cryptoInstance.getPrivateKey()));
+                final X509Certificate x509Cert = (X509Certificate) getSigningCertificate(cryptoInstance);
+                final PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(getKeyAlg(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
 
-                signatureGenerator.update(requestData.getAsByteArray()); // TODO
-                signatureGenerator.generate().encode(bOut);
-                
-//		signatureGenerator.init(PGPSignature.BINARY_DOCUMENT, pgpPrivateKey);
-//                
-//		@SuppressWarnings("unchecked")
-//		Iterator<String> it = pgpPublicKey.getUserIDs();
-//		if (it.hasNext()) {
-//			PGPSignatureSubpacketGenerator  spGen = new PGPSignatureSubpacketGenerator();
-//			spGen.setSignerUserID(false, it.next());
-//			signatureGenerator.setHashedSubpackets(spGen.generate());
-//		}
-//		
-//		OutputStream outputStream = null;
-//                boolean asciiArmor = true;
-//                ByteArrayOutputStream bout = new ByteArrayOutputStream();
-//		if (asciiArmor) {
-//			outputStream = new ArmoredOutputStream(bout);
-//		}
-//		else {
-//			outputStream = bout;
-//		}
-//		
-//		PGPCompressedDataGenerator  compressDataGenerator = new PGPCompressedDataGenerator(PGPCompressedData.ZLIB);
-//		BCPGOutputStream bcOutputStream = new BCPGOutputStream(compressDataGenerator.open(outputStream));
-//		signatureGenerator.generateOnePassVersion(false).encode(bcOutputStream);
-//
-//		PGPLiteralDataGenerator literalDataGenerator = new PGPLiteralDataGenerator();
-//		OutputStream literalDataGenOutputStream = literalDataGenerator.open(bcOutputStream, PGPLiteralData.BINARY, fileToSign);
-//		FileInputStream fis = new FileInputStream(fileToSign);
-//		
-//                literalDataGenOutputStream.write(data);
-//		literalDataGenerator.close();
-//		fis.close();
-//
-//		signatureGenerator.generate().encode(bcOutputStream);
-//		compressDataGenerator.close();
-//		outputStream.close();
-                
-                // Format the results...
-                /*bOut.close();
-                
-                System.out.println("is master key: " + pgpPublicKey.isMasterKey());
-                
-                ArmoredOutputStream out2 = new ArmoredOutputStream(out);
-                pgpPublicKey.encode(out2);
-                out2.close();*/
-                
+                final PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), PGPUtil.SHA256).setProvider(cryptoInstance.getProvider()).setDigestProvider("BC"));
+
+                generator.init(PGPSignature.BINARY_DOCUMENT, new org.bouncycastle.openpgp.operator.jcajce.JcaPGPPrivateKey(pgpPublicKey, cryptoInstance.getPrivateKey()));
+
+                generator.update(requestData.getAsByteArray()); // TODO: getAsInputStream()
+                generator.generate().encode(bOut);
             } catch (PGPException ex) {
                 throw new SignServerException("PGP exception", ex);
             } catch (InvalidAlgorithmParameterException ex) {
-                java.util.logging.Logger.getLogger(OpenPGPSigner.class.getName()).log(Level.SEVERE, null, ex);
+                throw new SignServerException("Error initializing signer", ex);
             } catch (UnsupportedCryptoTokenParameter ex) {
-                java.util.logging.Logger.getLogger(OpenPGPSigner.class.getName()).log(Level.SEVERE, null, ex);
+                throw new SignServerException("Error initializing signer", ex);
             } finally {
                 releaseCryptoInstance(cryptoInstance, requestContext);
             }
@@ -275,11 +205,9 @@ public class OpenPGPSigner extends BaseSigner {
             final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, RESPONSE_CONTENT_TYPE, responseData.toReadableData(), archiveId));
 
             // Suggest new file name
-            final Object fileNameOriginal = requestContext.get(
-                    RequestContext.FILENAME);
+            final Object fileNameOriginal = requestContext.get(RequestContext.FILENAME);
             if (fileNameOriginal instanceof String) {
-                requestContext.put(RequestContext.RESPONSE_FILENAME,
-                        fileNameOriginal + ".asc");
+                requestContext.put(RequestContext.RESPONSE_FILENAME, fileNameOriginal + ".asc");
             }
 
             // As everyting went well, the client can be charged for the request
@@ -289,18 +217,10 @@ public class OpenPGPSigner extends BaseSigner {
             return new SignatureResponse(sReq.getRequestID(), responseData, signerCert, archiveId, archivables, RESPONSE_CONTENT_TYPE);
         } catch (UnsupportedEncodingException ex) {
             // This is a server-side error
-            throw new SignServerException("Encoding not supported: "
-                    + ex.getLocalizedMessage(), ex);
+            throw new SignServerException("Encoding not supported: " + ex.getLocalizedMessage(), ex);
         } catch (IOException ex) {
             throw new SignServerException("Encoding error", ex);
-        } /*catch (NoSuchAlgorithmException ex) {
-            throw new SignServerException("Configured algorithm not supported",
-                    ex);
-        } catch (InvalidKeyException ex) {
-            throw new SignServerException("Error signing", ex);
-        } catch (SignatureException ex) {
-            throw new SignServerException("Error signing", ex);
-        }*/
+        }
     }
 
     @Override
@@ -327,64 +247,57 @@ public class OpenPGPSigner extends BaseSigner {
         if (LOG.isTraceEnabled()) {
             LOG.trace(">genCertificateRequest");
         }
-        ICertReqData result;
-        
-        RequestContext context = new RequestContext(false);
+
+        final RequestContext context = new RequestContext(false);
         context.setServices(services);
-        
+
         ICryptoInstance crypto = null;
         ICryptoTokenV4 token = null;
         try {
             token = getCryptoToken(services);
-            
+
             if (token == null) {
                 throw new CryptoTokenOfflineException("Crypto token offline");
             }
-            
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Found a crypto token of type: " + token.getClass().getName());
             }
-            
-            final ICertReqData data;
-            
-            Map<String, Object> params = new HashMap<>();
+
+            // Acquire crypto instance
+            final Map<String, Object> params = new HashMap<>();
             params.put(PARAM_INCLUDE_DUMMYCERTIFICATE, true);
             crypto = token.acquireCryptoInstance(keyAlias, params, context);
-            
-            PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info;
-            
-            final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
-                X509Certificate x509Cert = (X509Certificate) getSigningCertificate(crypto);
-                PGPPublicKey pgpPublicKey = pgpCertificate != null ? pgpCertificate : conv.getPGPPublicKey(getKeyAlg(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
-                
-                
-                //PGPPrivateKey pgpPrivateKey = conv.getPGPPrivateKey(pgpPublicKey, crypto.getPrivateKey());
-                
-                PGPSignatureGenerator signatureGenerator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), PGPUtil.SHA256).setProvider(crypto.getProvider()).setDigestProvider("BC"));
-                
-                // TODO: is this the right signatureType?
-                signatureGenerator.init(PGPSignature.DEFAULT_CERTIFICATION, new org.bouncycastle.openpgp.operator.jcajce.JcaPGPPrivateKey(pgpPublicKey, crypto.getPrivateKey()));
-                
-                if (selfsignedValidity != null) {
-                    
-                    PGPSignatureSubpacketGenerator subGenerator = new PGPSignatureSubpacketGenerator();
-                    subGenerator.setKeyExpirationTime(true, selfsignedValidity);
-                    
-                    
-                    signatureGenerator.setHashedSubpackets(subGenerator.generate());
-                } else {
-                    LOG.error("No SELFSIGNED_VALIDITY so not setting any expiration");
-                }
 
-                final PGPSignature certification = signatureGenerator.generateCertification(reqInfo.getSubjectDN(), pgpPublicKey);                
-                final PGPPublicKey certifiedKey = PGPPublicKey.addCertification(pgpPublicKey, reqInfo.getSubjectDN(), certification);
-            
-                result = new OpenPgpCertReqData(certifiedKey);
+            PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info;
+
+            final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
+            final X509Certificate x509Cert = (X509Certificate) getSigningCertificate(crypto);
+            final PGPPublicKey pgpPublicKey = pgpCertificate != null ? pgpCertificate : conv.getPGPPublicKey(getKeyAlg(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
+
+            PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), PGPUtil.SHA256).setProvider(crypto.getProvider()).setDigestProvider("BC"));
+
+            // TODO: is this the right signatureType?
+            generator.init(PGPSignature.DEFAULT_CERTIFICATION, new JcaPGPPrivateKey(pgpPublicKey, crypto.getPrivateKey()));
+
+            // Validity time
+            if (selfsignedValidity != null) {
+                PGPSignatureSubpacketGenerator subGenerator = new PGPSignatureSubpacketGenerator();
+                subGenerator.setKeyExpirationTime(true, selfsignedValidity);
+                generator.setHashedSubpackets(subGenerator.generate());
+            } else {
+                LOG.error("No SELFSIGNED_VALIDITY so not setting any expiration");
+            }
+
+            // Generate and add certification
+            final PGPSignature certification = generator.generateCertification(reqInfo.getSubjectDN(), pgpPublicKey);
+            final PGPPublicKey certifiedKey = PGPPublicKey.addCertification(pgpPublicKey, reqInfo.getSubjectDN(), certification);
+
+            final ICertReqData result = new OpenPgpCertReqData(certifiedKey);
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("<genCertificateRequest");
             }
-            
+
             return result;
         } catch (SignServerException e) {
             LOG.error("FAILED_TO_GET_CRYPTO_TOKEN_" + e.getMessage());
@@ -415,109 +328,98 @@ public class OpenPGPSigner extends BaseSigner {
     public WorkerStatusInfo getStatus(final List<String> additionalFatalErrors, final IServices services) {
         final List<String> fatalErrors = new LinkedList<>(additionalFatalErrors);
         WorkerStatusInfo status = (WorkerStatusInfo) super.getStatus(additionalFatalErrors, services);
-        
-        {
-            RequestContext context = new RequestContext(true);
-            context.setServices(services);
-            ICryptoInstance crypto = null;
-            try {
-                Map<String, Object> params = new HashMap<>();
-                params.put(PARAM_INCLUDE_DUMMYCERTIFICATE, true);
-                crypto = acquireDefaultCryptoInstance(params, context);
 
-                X509Certificate signerCertificate =
-                        (X509Certificate) crypto.getCertificate();
-                if (signerCertificate != null) {
-                    
-                    final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
-                    X509Certificate x509Cert = (X509Certificate) getSigningCertificate(crypto);
-                    
-                    PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(getKeyAlg(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
-                    
-                    
-                    status.getCompleteEntries().add(new WorkerStatusInfo.Entry("Key ID", String.format("%X", pgpPublicKey.getKeyID())));
-                    status.getCompleteEntries().add(new WorkerStatusInfo.Entry("Primary key fingerprint", Hex.toHexString(pgpPublicKey.getFingerprint()).toUpperCase(Locale.ENGLISH)));
-                    
-                    // Empty public key
-                    if (pgpCertificate != null) {
-                        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-                        ArmoredOutputStream out2 = new ArmoredOutputStream(bout);
-                        pgpCertificate.encode(out2);
-                        out2.close();
+        final RequestContext context = new RequestContext(true);
+        context.setServices(services);
+        ICryptoInstance crypto = null;
+        try {
+            final Map<String, Object> params = new HashMap<>();
+            params.put(PARAM_INCLUDE_DUMMYCERTIFICATE, true);
+            crypto = acquireDefaultCryptoInstance(params, context);
 
-                        status.getCompleteEntries().add(new WorkerStatusInfo.Entry("PGP Public key", new String(bout.toByteArray(), StandardCharsets.US_ASCII)));
-                        
-                        status.getCompleteEntries().add(new WorkerStatusInfo.Entry("PGP Key ID", String.format("%X", pgpCertificate.getKeyID())));
-                        
-                        final StringBuilder sb = new StringBuilder();
-                        
-                        int algorithm = pgpCertificate.getAlgorithm();
-                        int bitStrength = pgpCertificate.getBitStrength();
-                        Date creationTime = pgpCertificate.getCreationTime();
-                        long validSeconds = pgpCertificate.getValidSeconds();
-                        boolean masterKey = pgpCertificate.isMasterKey();
-                        int version = pgpCertificate.getVersion();
-                        
-                        sb.append("Master key: ").append(masterKey).append("\n");
-                        sb.append("Version: ").append(version).append("\n");
-                        sb.append("Algorithm: ").append(algorithm).append("\n");
-                        sb.append("Bit length: ").append(bitStrength).append("\n");
-                        sb.append("Creation time: ").append(creationTime).append("\n");
-                        sb.append("Expire time: ").append(validSeconds == 0 ? "n/a" : new Date(creationTime.getTime() + 1000L * validSeconds)).append("\n");
-                        
-                        sb.append("User IDs:").append("\n");
-                        Iterator userIDs = pgpCertificate.getUserIDs();
-                        while (userIDs.hasNext()) {
-                            Object o = userIDs.next();
-                            if (o instanceof String) {
-                                sb.append("   ").append((String) o).append("\n");
-                            }
+            X509Certificate signerCertificate = (X509Certificate) crypto.getCertificate();
+            if (signerCertificate != null) {
+
+                final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
+                X509Certificate x509Cert = (X509Certificate) getSigningCertificate(crypto);
+
+                PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(getKeyAlg(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
+
+                status.getCompleteEntries().add(new WorkerStatusInfo.Entry("Key ID", String.format("%X", pgpPublicKey.getKeyID())));
+                status.getCompleteEntries().add(new WorkerStatusInfo.Entry("Primary key fingerprint", Hex.toHexString(pgpPublicKey.getFingerprint()).toUpperCase(Locale.ENGLISH)));
+
+                // Empty public key
+                if (pgpCertificate != null) {
+                    ByteArrayOutputStream bout = new ByteArrayOutputStream();
+                    ArmoredOutputStream out2 = new ArmoredOutputStream(bout);
+                    pgpCertificate.encode(out2);
+                    out2.close();
+
+                    status.getCompleteEntries().add(new WorkerStatusInfo.Entry("PGP Public key", new String(bout.toByteArray(), StandardCharsets.US_ASCII)));
+
+                    status.getCompleteEntries().add(new WorkerStatusInfo.Entry("PGP Key ID", String.format("%X", pgpCertificate.getKeyID())));
+
+                    final StringBuilder sb = new StringBuilder();
+
+                    int algorithm = pgpCertificate.getAlgorithm();
+                    int bitStrength = pgpCertificate.getBitStrength();
+                    Date creationTime = pgpCertificate.getCreationTime();
+                    long validSeconds = pgpCertificate.getValidSeconds();
+                    boolean masterKey = pgpCertificate.isMasterKey();
+                    int version = pgpCertificate.getVersion();
+
+                    sb.append("Master key: ").append(masterKey).append("\n");
+                    sb.append("Version: ").append(version).append("\n");
+                    sb.append("Algorithm: ").append(algorithm).append("\n");
+                    sb.append("Bit length: ").append(bitStrength).append("\n");
+                    sb.append("Creation time: ").append(creationTime).append("\n");
+                    sb.append("Expire time: ").append(validSeconds == 0 ? "n/a" : new Date(creationTime.getTime() + 1000L * validSeconds)).append("\n");
+
+                    sb.append("User IDs:").append("\n");
+                    Iterator userIDs = pgpCertificate.getUserIDs();
+                    while (userIDs.hasNext()) {
+                        Object o = userIDs.next();
+                        if (o instanceof String) {
+                            sb.append("   ").append((String) o).append("\n");
                         }
-                        
-                        sb.append("Signatures:").append("\n");
-                        Iterator signatures = pgpCertificate.getSignatures();
-                        while (signatures.hasNext()) {
-                            Object o = signatures.next();
-                            if (o instanceof PGPSignature) {
-                                PGPSignature sig = (PGPSignature) o;
-                                //sig.getHashedSubPackets().
-                                sb.append("   ")
-                                        .append(sig.getCreationTime())
-                                        .append(" by key ID ")
-                                        .append(String.format("%X", sig.getKeyID())).append("\n");
-                            }
-                        }
-                        
-                        status.getCompleteEntries().add(new WorkerStatusInfo.Entry("PGP Public key", sb.toString()));
                     }
-                    
-                    
-                    
-                    
-                }
-            } catch (CryptoTokenOfflineException e) {} // the error will have been picked up by getCryptoTokenFatalErrors already
 
-            catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | SignServerException ex) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Unable to obtain certificate from token", ex);
-                }
-            } catch (PGPException ex) {
-                java.util.logging.Logger.getLogger(OpenPGPSigner.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(OpenPGPSigner.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                if (crypto != null) {
-                    try {
-                        releaseCryptoInstance(crypto, context);
-                    } catch (SignServerException ex) {
-                        LOG.warn("Unable to release crypto instance", ex);
+                    sb.append("Signatures:").append("\n");
+                    Iterator signatures = pgpCertificate.getSignatures();
+                    while (signatures.hasNext()) {
+                        Object o = signatures.next();
+                        if (o instanceof PGPSignature) {
+                            PGPSignature sig = (PGPSignature) o;
+                            sb.append("   ")
+                                    .append(sig.getCreationTime())
+                                    .append(" by key ID ")
+                                    .append(String.format("%X", sig.getKeyID())).append("\n");
+                        }
                     }
+
+                    status.getCompleteEntries().add(new WorkerStatusInfo.Entry("PGP Public key", sb.toString()));
+                }
+
+            }
+        } catch (CryptoTokenOfflineException e) {} // the error will have been picked up by getCryptoTokenFatalErrors already
+        catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter | IllegalRequestException | SignServerException ex) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unable to obtain certificate from token", ex);
+            }
+        } catch (PGPException ex) {
+            LOG.error("Unable to parse PGP public key", ex);
+        } catch (IOException ex) {
+            LOG.error("Unable to encode PGP public key", ex);
+        } finally {
+            if (crypto != null) {
+                try {
+                    releaseCryptoInstance(crypto, context);
+                } catch (SignServerException ex) {
+                    LOG.warn("Unable to release crypto instance", ex);
                 }
             }
         }
-        
-        
-        
+
         return status;
     }
 

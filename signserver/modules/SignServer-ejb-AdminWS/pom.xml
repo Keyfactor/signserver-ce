@@ -70,6 +70,10 @@
             <artifactId>SignServer-Admin-Common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpg-jdk15on</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

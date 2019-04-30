@@ -56,7 +56,6 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
-import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
 import org.cesecore.util.CertTools;
@@ -67,13 +66,13 @@ import org.cesecore.util.query.clauses.Order;
 import org.cesecore.util.query.elems.LogicOperator;
 import org.cesecore.util.query.elems.Operation;
 import org.cesecore.util.query.elems.Term;
-import org.signserver.common.Base64SignerCertReqData;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
+import org.signserver.common.Pkcs10CertReqData;
 import org.signserver.common.QueryException;
 import org.signserver.common.SignServerConstants;
 import org.signserver.common.SignServerException;
@@ -386,7 +385,7 @@ public class CryptoTokenHelper {
             final PrivateKey privateKey, final String signatureProvider, PublicKey publicKey,
             final boolean explicitEccParameters) throws IllegalArgumentException {
         LOG.debug(">genCertificateRequest");
-        final Base64SignerCertReqData retval;
+        final Pkcs10CertReqData retval;
         if (info instanceof PKCS10CertReqInfo) {
             PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info;
             PKCS10CertificationRequest pkcs10;
@@ -417,7 +416,7 @@ public class CryptoTokenHelper {
                 final JcaPKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(CertTools.stringToBcX500Name(reqInfo.getSubjectDN()), publicKey);
                 final ContentSigner contentSigner = new JcaContentSignerBuilder(reqInfo.getSignatureAlgorithm()).setProvider(signatureProvider).build(privateKey);
                 pkcs10 = builder.build(contentSigner);
-                retval = new Base64SignerCertReqData(Base64.encode(pkcs10.getEncoded()));
+                retval = new Pkcs10CertReqData(pkcs10);
             } catch (IOException | OperatorCreationException | NoSuchAlgorithmException | NoSuchProviderException e) {
                 throw new IllegalArgumentException("Certificate request error: " + e.getMessage(), e);
             }

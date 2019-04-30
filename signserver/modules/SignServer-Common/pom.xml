@@ -70,6 +70,10 @@
             <version>2.4.0-b180830.0359</version>
             <scope>provided</scope>
        	</dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpg-jdk15on</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <!-- Filter SignServer version and edition in signservercompile.properties. -->

@@ -15,10 +15,14 @@ package org.signserver.common;
 /**
  * General implementation of a ISignerCertReqData that
  * contains a Base64 encoded byte array containing the certificate
- * request data
+ * request data.
+ * 
+ * Legacy class, use AbstractCertReqData or Pkcs10CertReqData instead.
  * 
  * @author Philip Vendil 2007 feb 19
  * @version $Id$
+ * @see AbstractCertReqData
+ * @see Pkcs10CertReqData
  */
 public class Base64SignerCertReqData implements ICertReqData {
 

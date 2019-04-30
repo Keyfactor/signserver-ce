@@ -388,10 +388,17 @@ public class AdminWS {
         
         final ICertReqData data = worker.getCertificateRequest(adminInfo, new WorkerIdentifier(signerId),
                 certReqInfo, explicitEccParameters);
-        if (!(data instanceof Base64SignerCertReqData)) {
+        if (data instanceof AbstractCertReqData) {
+            try {
+                return new Base64SignerCertReqData(Base64.encode(((AbstractCertReqData) data).toBinaryForm()));
+            } catch (IOException ex) {
+                throw new RuntimeException("Unable to encode cert req data", ex);
+            }
+        } else if (data instanceof Base64SignerCertReqData) {
+            return (Base64SignerCertReqData) data;
+        } else {
             throw new RuntimeException("Unsupported cert req data");
         }
-        return (Base64SignerCertReqData) data;
     }
 
     /**
@@ -424,10 +431,62 @@ public class AdminWS {
         
         final ICertReqData data = worker.getCertificateRequest(adminInfo, new WorkerIdentifier(signerId),
                 certReqInfo, explicitEccParameters, defaultKey);
-        if (!(data instanceof Base64SignerCertReqData)) {
+        if (data instanceof AbstractCertReqData) {
+            try {
+                return new Base64SignerCertReqData(Base64.encode(((AbstractCertReqData) data).toBinaryForm()));
+            } catch (IOException ex) {
+                throw new RuntimeException("Unable to encode cert req data", ex);
+            }
+        } else if (data instanceof Base64SignerCertReqData) {
+            return (Base64SignerCertReqData) data;
+        } else {
             throw new RuntimeException("Unsupported cert req data");
         }
-        return (Base64SignerCertReqData) data;
+    }
+    
+    /**
+     * Generate a PKCS#10 certificate signing request either for the current key
+     * or the next key.
+     *
+     * @param signerId id of the signer
+     * @param certReqInfo information used by the worker to create the request
+     * @param explicitEccParameters false should be default and will use
+     * NamedCurve encoding of ECC public keys (IETF recommendation), use true
+     * to include all parameters explicitly (ICAO ePassport requirement).
+     * @param defaultKey true if the default key should be used otherwise for
+     * instance use next key.
+     * @return Base64 encoded certificate signing request
+     * @throws CryptoTokenOfflineException 
+     * @throws InvalidWorkerIdException 
+     * @throws AdminNotAuthorizedException 
+     */
+    @WebMethod(operationName = "getPKCS10CertificateRequestForKey2")
+    public CertReqData getPKCS10CertificateRequestForKey2(
+            @WebParam(name = "signerId") final int signerId,
+            @WebParam(name = "certReqInfo") final PKCS10CertReqInfo certReqInfo,
+            @WebParam(name = "explicitEccParameters")
+                final boolean explicitEccParameters,
+            @WebParam(name = "defaultKey") final boolean defaultKey)
+                throws CryptoTokenOfflineException, InvalidWorkerIdException,
+                AdminNotAuthorizedException {
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(), "getPKCS10CertificateRequestForKey",
+                String.valueOf(signerId));
+        
+        ICertReqData data = worker.getCertificateRequest(adminInfo, new WorkerIdentifier(signerId),
+                certReqInfo, explicitEccParameters, defaultKey);
+
+        if (!(data instanceof AbstractCertReqData)) {
+            throw new RuntimeException("Unsupported cert req data");
+        }
+        
+        try {
+            CertReqData fullData = new CertReqData();
+            fullData.setBinary(((AbstractCertReqData) data).toBinaryForm());
+            fullData.setArmored(((AbstractCertReqData) data).toArmoredForm());
+            return fullData;
+        } catch (IOException ex) {
+            throw new RuntimeException("Unable to encode cert req data", ex);
+        }
     }
 
     /**
@@ -463,6 +522,49 @@ public class AdminWS {
             throw new RuntimeException("Unsupported cert req data");
         }
         return (Base64SignerCertReqData) data;
+    }
+    
+    /**
+     * Generate a PKCS#10 certificate signing request for the specified key
+     * alias.
+     * @param signerId ID of worker
+     * @param certReqInfo information used by the worker to create the request
+     * @param explicitEccParameters false should be default and will use
+     * NamedCurve encoding of ECC public keys (IETF recommendation), use true
+     * to include all parameters explicitly (ICAO ePassport requirement).
+     * @param keyAlias to generate the request for
+     * @return Base64 encoded certificate signing request
+     * @throws CryptoTokenOfflineException
+     * @throws InvalidWorkerIdException
+     * @throws AdminNotAuthorizedException 
+     */
+    @WebMethod(operationName = "getPKCS10CertificateRequestForAlias2")
+    public CertReqData getPKCS10CertificateRequestForAlias2(
+            @WebParam(name = "signerId") final int signerId,
+            @WebParam(name = "certReqInfo") final PKCS10CertReqInfo certReqInfo,
+            @WebParam(name = "explicitEccParameters")
+                final boolean explicitEccParameters,
+            @WebParam(name = "keyAlias") final String keyAlias)
+                throws CryptoTokenOfflineException, InvalidWorkerIdException,
+                    AdminNotAuthorizedException {
+        
+        final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(), "getPKCS10CertificateRequestForKey",
+                String.valueOf(signerId));
+        
+        final ICertReqData data = worker.getCertificateRequest(adminInfo, new WorkerIdentifier(signerId),
+                certReqInfo, explicitEccParameters, keyAlias);
+        if (!(data instanceof AbstractCertReqData)) {
+            throw new RuntimeException("Unsupported cert req data");
+        }
+        
+        try {
+            CertReqData fullData = new CertReqData();
+            fullData.setBinary(((AbstractCertReqData) data).toBinaryForm());
+            fullData.setArmored(((AbstractCertReqData) data).toArmoredForm());
+            return fullData;
+        } catch (IOException ex) {
+            throw new RuntimeException("Unable to encode cert req data", ex);
+        }
     }
     
     /**

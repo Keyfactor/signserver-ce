@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.openpgp.signer;
 
+import org.signserver.common.OpenPgpCertReqData;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -375,28 +376,10 @@ public class OpenPGPSigner extends BaseSigner {
                     LOG.error("No SELFSIGNED_VALIDITY so not setting any expiration");
                 }
 
-                ByteArrayOutputStream bout = new ByteArrayOutputStream();
-                BCPGOutputStream         bOut = new BCPGOutputStream(new ArmoredOutputStream(bout));
-
-                PGPSignature certification = signatureGenerator.generateCertification(reqInfo.getSubjectDN(), pgpPublicKey);
-                
-                
-                PGPPublicKey.addCertification(pgpPublicKey, reqInfo.getSubjectDN(), certification).encode(bOut);
-                
-                // Format the results...
-                bOut.close();
-                
-                //ArmoredOutputStream out2 = new ArmoredOutputStream(bout);
-                //pgpPublicKey.encode(out2);
-                //out2.close();
-                
+                final PGPSignature certification = signatureGenerator.generateCertification(reqInfo.getSubjectDN(), pgpPublicKey);                
+                final PGPPublicKey certifiedKey = PGPPublicKey.addCertification(pgpPublicKey, reqInfo.getSubjectDN(), certification);
             
-                // TODO: The request will be wrapped in P10 PEM format, 
-                // we should instead return some other type and change the interfaces to handle it differently
-                // the AdminWS would probably have to get an other operation which returns an object including the
-                // type of the response, i.e. PKCS#10 or PGP Public Key
-                result = new Base64SignerCertReqData(Base64.encode(bout.toByteArray()));
-            
+                result = new OpenPgpCertReqData(certifiedKey);
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("<genCertificateRequest");

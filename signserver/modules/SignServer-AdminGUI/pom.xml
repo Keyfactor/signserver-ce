@@ -139,6 +139,11 @@
             <groupId>org.ejbca.cesecore</groupId>
             <artifactId>cesecore-interfaces</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SignServer-Module-OpenPGP</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

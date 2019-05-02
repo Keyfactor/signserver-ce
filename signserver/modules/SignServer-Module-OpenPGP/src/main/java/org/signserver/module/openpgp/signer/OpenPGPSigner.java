@@ -37,6 +37,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
+import org.bouncycastle.bcpg.HashAlgorithmTags;
 import org.bouncycastle.bcpg.PublicKeyAlgorithmTags;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -87,14 +88,15 @@ public class OpenPGPSigner extends BaseSigner {
     private static final Logger LOG = Logger.getLogger(OpenPGPSigner.class);
 
     // Worker properties
-    public static final String PROPERTY_SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
+    public static final String PROPERTY_DIGEST_ALGORITHM = "DIGEST_ALGORITHM";
     public static final String PROPERTY_RESPONSE_FORMAT = "RESPONSE_FORMAT";
 
     // Log fields
     //...
 
     // Default values
-    private static final String DEFAULT_SIGNATUREALGORITHM = "SHA256withRSA";
+    private static final ResponseFormat DEFAULT_RESPONSE_FORMAT = ResponseFormat.ARMORED;
+    private static final int DEFAULT_DIGEST_ALGORITHM = PGPUtil.SHA256;
 
     // Content types
     private static final String REQUEST_CONTENT_TYPE = "application/octet-stream";
@@ -104,10 +106,10 @@ public class OpenPGPSigner extends BaseSigner {
     private final LinkedList<String> configErrors = new LinkedList<>();
 
     // Configuration values
-    private String signatureAlgorithm;
+    private int digestAlgorithm = DEFAULT_DIGEST_ALGORITHM;
     private PGPPublicKey pgpCertificate;
     private Long selfsignedValidity;
-    private ResponseFormat responseFormat = ResponseFormat.ARMORED;
+    private ResponseFormat responseFormat = DEFAULT_RESPONSE_FORMAT;
     //...
 
     @Override
@@ -115,10 +117,21 @@ public class OpenPGPSigner extends BaseSigner {
             WorkerContext workerContext, EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
 
-        // Optional property SIGNATUREALGORITHM
-        signatureAlgorithm = config.getProperty(PROPERTY_SIGNATUREALGORITHM);
-        if (signatureAlgorithm == null || signatureAlgorithm.trim().isEmpty()) {
-            signatureAlgorithm = DEFAULT_SIGNATUREALGORITHM;
+        // Optional property DIGEST_ALGORITHM
+        final String digestAlgorithmValue = config.getProperty(PROPERTY_DIGEST_ALGORITHM);
+        if (!StringUtils.isBlank(digestAlgorithmValue)) {
+            try {
+                if (StringUtils.isNumeric(digestAlgorithmValue.trim())) {
+                    digestAlgorithm = Integer.parseInt(digestAlgorithmValue.trim());
+                } else {
+                    digestAlgorithm = getDigestFromString(digestAlgorithmValue.trim());
+                }
+            } catch (NumberFormatException | PGPException ex) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Illegal value for " + PROPERTY_DIGEST_ALGORITHM, ex);
+                }
+                configErrors.add("Illegal value for " + PROPERTY_DIGEST_ALGORITHM + ". Possible values are numeric or textual OpenPGP Hash Algorithms");
+            }
         }
 
         // Optional property PGPPUBLICKEY
@@ -201,7 +214,7 @@ public class OpenPGPSigner extends BaseSigner {
                 final X509Certificate x509Cert = (X509Certificate) getSigningCertificate(cryptoInstance);
                 final PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(getKeyAlg(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
 
-                final PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), PGPUtil.SHA256).setProvider(cryptoInstance.getProvider()).setDigestProvider("BC"));
+                final PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), digestAlgorithm).setProvider(cryptoInstance.getProvider()).setDigestProvider("BC"));
 
                 generator.init(PGPSignature.BINARY_DOCUMENT, new org.bouncycastle.openpgp.operator.jcajce.JcaPGPPrivateKey(pgpPublicKey, cryptoInstance.getPrivateKey()));
 
@@ -291,7 +304,7 @@ public class OpenPGPSigner extends BaseSigner {
             final X509Certificate x509Cert = (X509Certificate) getSigningCertificate(crypto);
             final PGPPublicKey pgpPublicKey = pgpCertificate != null ? pgpCertificate : conv.getPGPPublicKey(getKeyAlg(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
 
-            PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), PGPUtil.SHA256).setProvider(crypto.getProvider()).setDigestProvider("BC"));
+            PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), digestAlgorithm).setProvider(crypto.getProvider()).setDigestProvider("BC"));
 
             // TODO: is this the right signatureType?
             generator.init(PGPSignature.DEFAULT_CERTIFICATION, new JcaPGPPrivateKey(pgpPublicKey, crypto.getPrivateKey()));
@@ -466,6 +479,35 @@ public class OpenPGPSigner extends BaseSigner {
                 return new BCPGOutputStream(out);
             default:
                 throw new UnsupportedOperationException("Unsupported response format: " + responseFormat);
+        }
+    }
+
+    /**
+     * Get the OpenPGP Hash Algorithm from its textual representation.
+     *
+     * @param digest in text-form
+     * @return Hash Algorithm ID
+     * @throws PGPException for unsupported input
+     */
+    private int getDigestFromString(String digest) throws PGPException {
+        switch (digest) {
+            case "SHA1":
+            case "SHA-1":
+                return HashAlgorithmTags.SHA1;
+            case "SHA256":
+            case "SHA-256":
+                return HashAlgorithmTags.SHA256;
+            case "SHA384":
+            case "SHA-384":
+                return HashAlgorithmTags.SHA384;
+            case "SHA224":
+            case "SHA-224":
+                return HashAlgorithmTags.SHA224;
+            case "SHA512":
+            case "SHA-512":
+                return HashAlgorithmTags.SHA512;
+        default:
+            throw new PGPException("Unsupported OpenPGP Hash Algorithm");
         }
     }
 

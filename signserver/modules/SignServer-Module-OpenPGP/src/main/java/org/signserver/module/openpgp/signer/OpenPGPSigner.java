@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.persistence.EntityManager;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
@@ -86,6 +88,7 @@ public class OpenPGPSigner extends BaseSigner {
 
     // Worker properties
     public static final String PROPERTY_SIGNATUREALGORITHM = "SIGNATUREALGORITHM";
+    public static final String PROPERTY_RESPONSE_FORMAT = "RESPONSE_FORMAT";
 
     // Log fields
     //...
@@ -104,6 +107,7 @@ public class OpenPGPSigner extends BaseSigner {
     private String signatureAlgorithm;
     private PGPPublicKey pgpCertificate;
     private Long selfsignedValidity;
+    private ResponseFormat responseFormat = ResponseFormat.ARMORED;
     //...
 
     @Override
@@ -147,6 +151,19 @@ public class OpenPGPSigner extends BaseSigner {
         if (validityValue != null && !validityValue.trim().isEmpty()) {
             selfsignedValidity = Long.parseLong(validityValue);
         }
+        
+        // Optional property RESPONSE_FORMAT
+        final String responseFormatValue = config.getProperty(PROPERTY_RESPONSE_FORMAT);
+        if (!StringUtils.isBlank(responseFormatValue)) {
+            try {
+                responseFormat = ResponseFormat.valueOf(responseFormatValue.trim());
+            } catch (IllegalArgumentException ex) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Illegal value for " + PROPERTY_RESPONSE_FORMAT, ex);
+                }
+                configErrors.add("Illegal value for " + PROPERTY_RESPONSE_FORMAT + ". Possible values are: " + Arrays.toString(ResponseFormat.values()));
+            }
+        }
     }
 
     @Override
@@ -174,7 +191,7 @@ public class OpenPGPSigner extends BaseSigner {
             // Produce the result, ie doing the work...
             Certificate signerCert = null;
             ICryptoInstance cryptoInstance = null;
-            try (BCPGOutputStream bOut = new BCPGOutputStream(new ArmoredOutputStream(responseData.getAsOutputStream()))) {
+            try (BCPGOutputStream bOut = createOutputStream(responseData.getAsOutputStream(), responseFormat)) {
                 final Map<String, Object> params = new HashMap<>();
                 params.put(PARAM_INCLUDE_DUMMYCERTIFICATE, true);
                 cryptoInstance = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, params, requestContext);
@@ -222,7 +239,7 @@ public class OpenPGPSigner extends BaseSigner {
             throw new SignServerException("Encoding error", ex);
         }
     }
-
+    
     @Override
     protected List<String> getFatalErrors(final IServices services) {
         // Add our errors to the list of errors
@@ -441,4 +458,25 @@ public class OpenPGPSigner extends BaseSigner {
         return keyAlg;
     }
 
+    private BCPGOutputStream createOutputStream(OutputStream out, ResponseFormat responseFormat) {
+        switch (responseFormat) {
+            case ARMORED:
+                return new BCPGOutputStream(new ArmoredOutputStream(out));
+            case BINARY:
+                return new BCPGOutputStream(out);
+            default:
+                throw new UnsupportedOperationException("Unsupported response format: " + responseFormat);
+        }
+    }
+
+    /**
+     * Response format.
+     */
+    public enum ResponseFormat {
+        /** Binary OpenPGP format. */
+        BINARY,
+        
+        /** ASCII armored format. */
+        ARMORED
+    }
 }

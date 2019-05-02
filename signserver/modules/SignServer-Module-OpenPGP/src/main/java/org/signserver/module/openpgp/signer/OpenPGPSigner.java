@@ -1,4 +1,4 @@
-/** ***********************************************************************
+/*************************************************************************
  *                                                                       *
  *  SignServer: The OpenSource Automated Signing Server                  *
  *                                                                       *
@@ -9,7 +9,7 @@
  *                                                                       *
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
- ************************************************************************ */
+ *************************************************************************/
 package org.signserver.module.openpgp.signer;
 
 import org.signserver.common.OpenPgpCertReqData;

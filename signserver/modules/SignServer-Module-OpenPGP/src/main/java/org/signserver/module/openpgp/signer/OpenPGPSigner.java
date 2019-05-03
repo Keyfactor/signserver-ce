@@ -84,6 +84,7 @@ public class OpenPGPSigner extends BaseSigner {
     // Worker properties
     public static final String PROPERTY_DIGEST_ALGORITHM = "DIGEST_ALGORITHM";
     public static final String PROPERTY_RESPONSE_FORMAT = "RESPONSE_FORMAT";
+    public static final String PROPERTY_PGPPUBLICKEY = "PGPPUBLICKEY";
 
     // Log fields
     //...
@@ -129,12 +130,12 @@ public class OpenPGPSigner extends BaseSigner {
         }
 
         // Optional property PGPPUBLICKEY
-        final String publicKeyValue = config.getProperty("PGPPUBLICKEY");
+        final String publicKeyValue = config.getProperty(PROPERTY_PGPPUBLICKEY);
         if (publicKeyValue != null) {
             try {
                 final List<PGPPublicKey> keys = OpenPGPUtils.parsePublicKeys(publicKeyValue);
                 if (keys.isEmpty()) {
-                    configErrors.add("No public key found in worker property " + "PGPPUBLICKEY");
+                    configErrors.add("No public key found in worker property " + PROPERTY_PGPPUBLICKEY);
                 } else {
                     if (keys.size() > 1) {
                         LOG.warn("More than one public keys in PGPPUBLICKEY property.");
@@ -142,7 +143,7 @@ public class OpenPGPSigner extends BaseSigner {
                     pgpCertificate = keys.get(0);
                 }
             } catch (IOException | PGPException ex) {
-                configErrors.add("Unable to parse public key in worker property " + "PGPPUBLICKEY" + ": " + ex.getLocalizedMessage());
+                configErrors.add("Unable to parse public key in worker property " + PROPERTY_PGPPUBLICKEY + ": " + ex.getLocalizedMessage());
             }
         }
 
@@ -242,11 +243,36 @@ public class OpenPGPSigner extends BaseSigner {
     
     @Override
     protected List<String> getFatalErrors(final IServices services) {
-        // Add our errors to the list of errors
-        final LinkedList<String> errors = new LinkedList<>(
-                super.getFatalErrors(services));
-        errors.addAll(configErrors);
-        return errors;
+        final List<String> result = new LinkedList<>();
+        result.addAll(super.getFatalErrors(services));
+        result.addAll(configErrors);
+
+        // Check that PGPPUBLICKEY matches key
+        if (pgpCertificate != null) {
+            try {
+                final X509Certificate signerCert = (X509Certificate) getSigningCertificate(services);
+                final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
+                final PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm(signerCert), signerCert.getPublicKey(), signerCert.getNotBefore());
+
+                if (!Arrays.equals(pgpPublicKey.getPublicKeyPacket().getKey().getEncoded(), pgpCertificate.getPublicKeyPacket().getKey().getEncoded())) {
+                    result.add("Configured " + PROPERTY_PGPPUBLICKEY + " not matching the key");
+                }
+            } catch (CryptoTokenOfflineException ex) {
+                if (isCryptoTokenActive(services)) {
+                    result.add("No signer certificate available");
+                }
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Signer " + workerId + ": Could not get signer certificate: " + ex.getMessage());
+                }
+            } catch (SignServerException | PGPException ex) {
+                result.add("Unable to parse OpenPGP public key: " + ex.getMessage());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Unable to parse OpenPGP public key", ex);
+                }
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -342,10 +368,9 @@ public class OpenPGPSigner extends BaseSigner {
         newParams.put(PARAM_INCLUDE_DUMMYCERTIFICATE, true);
         return super.acquireDefaultCryptoInstance(newParams, alias, context);
     }
-
+    
     @Override
     public WorkerStatusInfo getStatus(final List<String> additionalFatalErrors, final IServices services) {
-        final List<String> fatalErrors = new LinkedList<>(additionalFatalErrors);
         WorkerStatusInfo status = (WorkerStatusInfo) super.getStatus(additionalFatalErrors, services);
 
         final RequestContext context = new RequestContext(true);

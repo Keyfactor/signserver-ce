@@ -144,6 +144,25 @@ public class OpenPGPSignerUnitTest {
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("DIGEST_ALGORITHM"));
     }
+
+    /**
+     * Test that providing an incorrect value for GENERATE_REVOCATION_CERTIFICATE
+     * gives a fatal error.
+     * @throws Exception
+     */
+    @Test
+    public void testInit_incorrectGenerateRevocationCertificateValue()
+            throws Exception {
+        LOG.info("testInit_incorrectGenerateRevocationCertificateValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TYPE", "PROCESSABLE");
+        config.setProperty("GENERATE_REVOCATION_CERTIFICATE", "_incorrect-value--");
+        OpenPGPSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("GENERATE_REVOCATION_CERTIFICATE"));
+    }
     
     /**
      * Test that providing an incorrect value for RESPONSE_FORMAT

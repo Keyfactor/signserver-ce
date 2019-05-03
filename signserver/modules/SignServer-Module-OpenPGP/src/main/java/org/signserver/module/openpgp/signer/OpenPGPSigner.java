@@ -85,6 +85,8 @@ public class OpenPGPSigner extends BaseSigner {
     public static final String PROPERTY_DIGEST_ALGORITHM = "DIGEST_ALGORITHM";
     public static final String PROPERTY_RESPONSE_FORMAT = "RESPONSE_FORMAT";
     public static final String PROPERTY_PGPPUBLICKEY = "PGPPUBLICKEY";
+    public static final String PROPERTY_GENERATE_REVOCATION_CERTIFICATE =
+            "GENERATE_REVOCATION_CERTIFICATE";
 
     // Log fields
     //...
@@ -105,6 +107,7 @@ public class OpenPGPSigner extends BaseSigner {
     private PGPPublicKey pgpCertificate;
     private Long selfsignedValidity;
     private ResponseFormat responseFormat = DEFAULT_RESPONSE_FORMAT;
+    private boolean generateRevocationCertificate;
     //...
 
     @Override
@@ -163,6 +166,26 @@ public class OpenPGPSigner extends BaseSigner {
                     LOG.debug("Illegal value for " + PROPERTY_RESPONSE_FORMAT, ex);
                 }
                 configErrors.add("Illegal value for " + PROPERTY_RESPONSE_FORMAT + ". Possible values are: " + Arrays.toString(ResponseFormat.values()));
+            }
+        }
+
+        // Optional property GENERATE_REVOCATION_CERTIFICATE
+        final String generateRevocationCertificateValue =
+                config.getProperty(PROPERTY_GENERATE_REVOCATION_CERTIFICATE);
+        if (!StringUtils.isBlank(generateRevocationCertificateValue)) {
+            if (Boolean.TRUE.toString().equalsIgnoreCase(generateRevocationCertificateValue)) {
+                generateRevocationCertificate = true;
+            } else if (Boolean.FALSE.toString().equalsIgnoreCase(generateRevocationCertificateValue)) {
+                generateRevocationCertificate = false;
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Illegal value for " +
+                              PROPERTY_GENERATE_REVOCATION_CERTIFICATE + ": " +
+                              generateRevocationCertificateValue);
+                }
+                configErrors.add("Illegal value for " +
+                                 PROPERTY_GENERATE_REVOCATION_CERTIFICATE +
+                                 ". Specify boolean (true or false)");
             }
         }
     }

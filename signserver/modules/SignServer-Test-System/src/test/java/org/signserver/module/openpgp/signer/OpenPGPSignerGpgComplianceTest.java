@@ -246,7 +246,7 @@ public class OpenPGPSignerGpgComplianceTest {
             // Trust public key
             // Equaivalent of Bash: echo -e "trust\n5\ny\nsave\n" | gpg --command-fd 0 --edit-key F7B50A4D55F6E703
             res = ComplianceTestUtils.executeWriting("trust\n5\ny\nsave\n".getBytes(), "gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
-                    "--command-fd", "0", "--edit-key", OpenPGPUtils.formatKeyID(pgpPublicKey.getKeyID()));
+                    "--command-fd", "0", "--no-tty", "--edit-key", OpenPGPUtils.formatKeyID(pgpPublicKey.getKeyID()));
             assertEquals("gpg2 --edit-key: " + res.getErrorMessage(), 0, res.getExitValue());
 
             // Sign

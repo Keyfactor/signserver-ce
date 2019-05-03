@@ -13,7 +13,9 @@
 package org.signserver.module.openpgp.signer;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.Security;
 import java.security.cert.Certificate;
@@ -23,6 +25,8 @@ import java.util.Date;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import org.apache.log4j.Logger;
+import org.bouncycastle.bcpg.ArmoredInputStream;
+import org.bouncycastle.bcpg.BCPGInputStream;
 import org.bouncycastle.bcpg.PublicKeyAlgorithmTags;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -33,6 +37,7 @@ import org.bouncycastle.openpgp.PGPUtil;
 import org.bouncycastle.openpgp.jcajce.JcaPGPObjectFactory;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyConverter;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 import org.junit.BeforeClass;
@@ -140,6 +145,24 @@ public class OpenPGPSignerUnitTest {
         assertTrue("conf errs: " + errors, errors.contains("DIGEST_ALGORITHM"));
     }
     
+    /**
+     * Test that providing an incorrect value for RESPONSE_FORMAT
+     * gives a fatal error.
+     * @throws Exception
+     */
+    @Test
+    public void testInit_incorrectResponseFormatValue() throws Exception {
+        LOG.info("testInit_incorrectResponseFormatValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TYPE", "PROCESSABLE");
+        config.setProperty("RESPONSE_FORMAT", "_incorrect-value--");
+        OpenPGPSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("RESPONSE_FORMAT"));
+    }
+
     // TODO: more testInit_*
     
     
@@ -157,7 +180,7 @@ public class OpenPGPSignerUnitTest {
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        signAndVerify(data, tokenRSA, config, null, false);
+        signAndVerify(data, tokenRSA, config, null, false, true);
         fail("Should have thrown exception");
     }
     
@@ -168,11 +191,48 @@ public class OpenPGPSignerUnitTest {
         if (digestAlgorithmConfig != null) {
             config.setProperty(OpenPGPSigner.PROPERTY_DIGEST_ALGORITHM, digestAlgorithmConfig);
         }
+        boolean armored = true;
 
         final byte[] data = "my-data".getBytes("ASCII");
         
-        SimplifiedResponse response = signAndVerify(data, token, config, new RequestContext(), true);
+        SimplifiedResponse response = signAndVerify(data, token, config, new RequestContext(), true, armored);
         assertEquals("hash algorithm", expectedDigestAlgorithm, response.getSignature().getHashAlgorithm());
+    }
+
+    /**
+     * Tests signing with RESPONSE_FORMAT=BINARY.
+     * @throws Exception 
+     */
+    @Test
+    public void testSignWithResponseFormatBinary() throws Exception {
+        LOG.info("testSignWithResponseFormatBinary");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TYPE", "PROCESSABLE");
+        config.setProperty("RESPONSE_FORMAT", "BINARY");
+        boolean armored = false;
+        OpenPGPSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        signAndVerify(data, tokenRSA, config, null, false, armored);
+    }
+    
+    /**
+     * Tests signing with RESPONSE_FORMAT=ARMORED.
+     * @throws Exception 
+     */
+    @Test
+    public void testSignWithResponseFormatArmored() throws Exception {
+        LOG.info("testSignWithResponseFormatArmored");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TYPE", "PROCESSABLE");
+        config.setProperty("RESPONSE_FORMAT", "ARMORED");
+        boolean armored = true;
+        OpenPGPSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        final byte[] data = "my-data".getBytes("ASCII");
+        signAndVerify(data, tokenRSA, config, null, false, armored);
     }
     
     /**
@@ -340,8 +400,8 @@ public class OpenPGPSignerUnitTest {
         return new MockedOpenPGPSigner(token);
     }
     
-    private SimplifiedResponse signAndVerify(final byte[] data, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached) throws Exception {
-        return signAndVerify(data, data, token, config, requestContext, detached);
+    private SimplifiedResponse signAndVerify(final byte[] data, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached, boolean armored) throws Exception {
+        return signAndVerify(data, data, token, config, requestContext, detached, armored);
     }
     
     /**
@@ -359,7 +419,7 @@ public class OpenPGPSignerUnitTest {
      * @return
      * @throws Exception 
      */
-    private SimplifiedResponse signAndVerify(final byte[] data, final byte[] originalData, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached) throws Exception {
+    private SimplifiedResponse signAndVerify(final byte[] data, final byte[] originalData, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached, boolean armored) throws Exception {
         final OpenPGPSigner instance = createMockSigner(token);
         instance.init(1, config, new SignServerContext(), null);
 
@@ -376,12 +436,17 @@ public class OpenPGPSignerUnitTest {
             SignatureResponse response = (SignatureResponse) instance.processData(request, requestContext);
 
             byte[] signedBytes = responseData.toReadableData().getAsByteArray();
-            Certificate signerCertificate = response.getSignerCertificate();
-            
-            
+            String signed = new String(signedBytes, StandardCharsets.US_ASCII);
+                
+            if (armored) {
+                assertTrue("expecting armored: " + signed, signed.startsWith("-----BEGIN PGP SIGNATURE-----"));
+            } else {
+                assertFalse("expecting binary: " + signed, signed.startsWith("-----BEGIN PGP SIGNATURE-----"));
+            }
+
             PGPSignature sig;
             
-            try (InputStream in = new org.bouncycastle.bcpg.ArmoredInputStream (new ByteArrayInputStream(signedBytes))) {
+            try (InputStream in = createInputStream(new ByteArrayInputStream(signedBytes), armored)) {
                 JcaPGPObjectFactory objectFactory = new JcaPGPObjectFactory(in);
                 PGPSignatureList p3 = (PGPSignatureList) objectFactory.nextObject();
                 sig = p3.get(0);
@@ -418,4 +483,8 @@ public class OpenPGPSignerUnitTest {
         return keyAlg;
     }
     
+    private BCPGInputStream createInputStream(InputStream in, boolean armored) throws IOException {
+        return new BCPGInputStream(armored ? new ArmoredInputStream(in) : in);
+    }
+
 }

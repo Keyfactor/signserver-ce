@@ -13,10 +13,8 @@
 package org.signserver.module.openpgp.signer;
 
 import org.signserver.common.OpenPgpCertReqData;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -38,7 +36,6 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
 import org.bouncycastle.bcpg.HashAlgorithmTags;
-import org.bouncycastle.bcpg.PublicKeyAlgorithmTags;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
@@ -52,7 +49,6 @@ import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.signers.BaseSigner;
 import org.bouncycastle.openpgp.*;
-import org.bouncycastle.openpgp.jcajce.JcaPGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyConverter;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPPrivateKey;
@@ -124,7 +120,7 @@ public class OpenPGPSigner extends BaseSigner {
                 if (StringUtils.isNumeric(digestAlgorithmValue.trim())) {
                     digestAlgorithm = Integer.parseInt(digestAlgorithmValue.trim());
                 } else {
-                    digestAlgorithm = getDigestFromString(digestAlgorithmValue.trim());
+                    digestAlgorithm = OpenPGPUtils.getDigestFromString(digestAlgorithmValue.trim());
                 }
             } catch (NumberFormatException | PGPException ex) {
                 if (LOG.isDebugEnabled()) {
@@ -137,22 +133,15 @@ public class OpenPGPSigner extends BaseSigner {
         // Optional property PGPPUBLICKEY
         final String publicKeyValue = config.getProperty("PGPPUBLICKEY");
         if (publicKeyValue != null) {
-            try (InputStream in = PGPUtil.getDecoderStream(new ByteArrayInputStream(publicKeyValue.getBytes(StandardCharsets.US_ASCII)))) {
-                final JcaPGPPublicKeyRingCollection pgpPub = new JcaPGPPublicKeyRingCollection(in);
-
-                PGPPublicKey key = null;
-                final Iterator<PGPPublicKeyRing> ringIterator = pgpPub.getKeyRings();
-                while (key == null && ringIterator.hasNext()) {
-                    final PGPPublicKeyRing ring = ringIterator.next();
-                    final Iterator<PGPPublicKey> keyIterator = ring.getPublicKeys();
-                    while (key == null && keyIterator.hasNext()) {
-                        key = keyIterator.next();
-                    }
-                }
-                if (key == null) {
+            try {
+                final List<PGPPublicKey> keys = OpenPGPUtils.parsePublicKeys(publicKeyValue);
+                if (keys.isEmpty()) {
                     configErrors.add("No public key found in worker property " + "PGPPUBLICKEY");
                 } else {
-                    pgpCertificate = key;
+                    if (keys.size() > 1) {
+                        LOG.warn("More than one public keys in PGPPUBLICKEY property.");
+                    }
+                    pgpCertificate = keys.get(0);
                 }
             } catch (IOException | PGPException ex) {
                 configErrors.add("Unable to parse public key in worker property " + "PGPPUBLICKEY" + ": " + ex.getLocalizedMessage());
@@ -212,7 +201,7 @@ public class OpenPGPSigner extends BaseSigner {
                 // signature value
                 final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
                 final X509Certificate x509Cert = (X509Certificate) getSigningCertificate(cryptoInstance);
-                final PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(getKeyAlg(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
+                final PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
 
                 final PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), digestAlgorithm).setProvider(cryptoInstance.getProvider()).setDigestProvider("BC"));
 
@@ -302,7 +291,7 @@ public class OpenPGPSigner extends BaseSigner {
 
             final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
             final X509Certificate x509Cert = (X509Certificate) getSigningCertificate(crypto);
-            final PGPPublicKey pgpPublicKey = pgpCertificate != null ? pgpCertificate : conv.getPGPPublicKey(getKeyAlg(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
+            final PGPPublicKey pgpPublicKey = pgpCertificate != null ? pgpCertificate : conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
 
             PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), digestAlgorithm).setProvider(crypto.getProvider()).setDigestProvider("BC"));
 
@@ -373,9 +362,9 @@ public class OpenPGPSigner extends BaseSigner {
                 final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
                 X509Certificate x509Cert = (X509Certificate) getSigningCertificate(crypto);
 
-                PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(getKeyAlg(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
+                PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
 
-                status.getCompleteEntries().add(new WorkerStatusInfo.Entry("Key ID", String.format("%X", pgpPublicKey.getKeyID())));
+                status.getCompleteEntries().add(new WorkerStatusInfo.Entry("Key ID", OpenPGPUtils.formatKeyID(pgpPublicKey.getKeyID())));
                 status.getCompleteEntries().add(new WorkerStatusInfo.Entry("Primary key fingerprint", Hex.toHexString(pgpPublicKey.getFingerprint()).toUpperCase(Locale.ENGLISH)));
 
                 // Empty public key
@@ -387,7 +376,7 @@ public class OpenPGPSigner extends BaseSigner {
 
                     status.getCompleteEntries().add(new WorkerStatusInfo.Entry("PGP Public key", new String(bout.toByteArray(), StandardCharsets.US_ASCII)));
 
-                    status.getCompleteEntries().add(new WorkerStatusInfo.Entry("PGP Key ID", String.format("%X", pgpCertificate.getKeyID())));
+                    status.getCompleteEntries().add(new WorkerStatusInfo.Entry("PGP Key ID", OpenPGPUtils.formatKeyID(pgpCertificate.getKeyID())));
 
                     final StringBuilder sb = new StringBuilder();
 
@@ -453,24 +442,6 @@ public class OpenPGPSigner extends BaseSigner {
         return status;
     }
 
-    private int getKeyAlg(X509Certificate x509Cert) throws SignServerException {
-        final int keyAlg;
-        switch (x509Cert.getPublicKey().getAlgorithm()) {
-            case "RSA":
-                keyAlg = PublicKeyAlgorithmTags.RSA_SIGN;
-                break;
-            case "EC":
-                keyAlg = PublicKeyAlgorithmTags.ECDSA;
-                break;
-            case "DSA":
-                keyAlg = PublicKeyAlgorithmTags.DSA;
-                break;
-            default:
-                throw new SignServerException("Unsupported key algorithm: " + x509Cert.getPublicKey().getAlgorithm());
-        }
-        return keyAlg;
-    }
-
     private BCPGOutputStream createOutputStream(OutputStream out, ResponseFormat responseFormat) {
         switch (responseFormat) {
             case ARMORED:
@@ -479,35 +450,6 @@ public class OpenPGPSigner extends BaseSigner {
                 return new BCPGOutputStream(out);
             default:
                 throw new UnsupportedOperationException("Unsupported response format: " + responseFormat);
-        }
-    }
-
-    /**
-     * Get the OpenPGP Hash Algorithm from its textual representation.
-     *
-     * @param digest in text-form
-     * @return Hash Algorithm ID
-     * @throws PGPException for unsupported input
-     */
-    private int getDigestFromString(String digest) throws PGPException {
-        switch (digest) {
-            case "SHA1":
-            case "SHA-1":
-                return HashAlgorithmTags.SHA1;
-            case "SHA256":
-            case "SHA-256":
-                return HashAlgorithmTags.SHA256;
-            case "SHA384":
-            case "SHA-384":
-                return HashAlgorithmTags.SHA384;
-            case "SHA224":
-            case "SHA-224":
-                return HashAlgorithmTags.SHA224;
-            case "SHA512":
-            case "SHA-512":
-                return HashAlgorithmTags.SHA512;
-        default:
-            throw new PGPException("Unsupported OpenPGP Hash Algorithm");
         }
     }
 

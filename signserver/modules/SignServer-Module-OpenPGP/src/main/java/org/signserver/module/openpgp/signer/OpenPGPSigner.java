@@ -19,7 +19,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,7 +34,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
-import org.bouncycastle.bcpg.HashAlgorithmTags;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
@@ -191,7 +189,7 @@ public class OpenPGPSigner extends BaseSigner {
             //...
 
             // Produce the result, ie doing the work...
-            Certificate signerCert = null;
+            X509Certificate signerCert = null;
             ICryptoInstance cryptoInstance = null;
             try (BCPGOutputStream bOut = createOutputStream(responseData.getAsOutputStream(), responseFormat)) {
                 final Map<String, Object> params = new HashMap<>();
@@ -200,8 +198,8 @@ public class OpenPGPSigner extends BaseSigner {
 
                 // signature value
                 final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
-                final X509Certificate x509Cert = (X509Certificate) getSigningCertificate(cryptoInstance);
-                final PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
+                signerCert = (X509Certificate) getSigningCertificate(cryptoInstance);
+                final PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm(signerCert), signerCert.getPublicKey(), signerCert.getNotBefore());
 
                 final PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), digestAlgorithm).setProvider(cryptoInstance.getProvider()).setDigestProvider("BC"));
 
@@ -339,8 +337,10 @@ public class OpenPGPSigner extends BaseSigner {
     }
 
     @Override
-    protected boolean isNoCertificates() {
-        return true;
+    protected ICryptoInstance acquireDefaultCryptoInstance(Map<String, Object> params, String alias, RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {
+        final Map<String, Object> newParams = new HashMap<>(params);
+        newParams.put(PARAM_INCLUDE_DUMMYCERTIFICATE, true);
+        return super.acquireDefaultCryptoInstance(newParams, alias, context);
     }
 
     @Override

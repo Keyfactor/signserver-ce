@@ -20,8 +20,10 @@ import java.security.KeyPair;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import org.apache.log4j.Logger;
@@ -45,13 +47,18 @@ import org.junit.Test;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerStatusInfo;
 import org.signserver.common.data.SignatureRequest;
 import org.signserver.common.data.SignatureResponse;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.server.IServices;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CryptoUtils;
+import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
+import org.signserver.test.utils.mock.KeyUsageCounterServiceMock;
 import org.signserver.test.utils.mock.MockedCryptoToken;
 import org.signserver.test.utils.mock.MockedServicesImpl;
 import org.signserver.testutils.ModulesTestCase;
@@ -70,6 +77,7 @@ public class OpenPGPSignerUnitTest {
     private static MockedCryptoToken tokenRSA;
     private static MockedCryptoToken tokenDSA;
     private static MockedCryptoToken tokenECDSA;
+    private static MockedCryptoToken tokenNonExisting;
  
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -107,6 +115,9 @@ public class OpenPGPSignerUnitTest {
                         .build())};
         final Certificate signerCertificateECDSA = certChainECDSA[0];
         tokenECDSA = new MockedCryptoToken(signerKeyPairECDSA.getPrivate(), signerKeyPairECDSA.getPublic(), signerCertificateECDSA, Arrays.asList(certChainECDSA), "BC");
+
+        // Simulating a non-existing key
+        tokenNonExisting = new MockedCryptoToken();
     }
     
     /**
@@ -413,7 +424,42 @@ public class OpenPGPSignerUnitTest {
         LOG.info("testSign_ECDSA_SHA512");
         signWithAlgorithm(tokenECDSA, "SHA-512", PGPUtil.SHA512);
     }
-    
+
+    /**
+     * Tests that worker status is active with the default configuration.
+     * @throws Exception 
+     */
+    @Test
+    public void testGetStatus_active() throws Exception {
+        final OpenPGPSigner instance = createMockSigner(tokenRSA);
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TYPE", "PROCESSABLE");
+        instance.init(1, config, new SignServerContext(null, new KeyUsageCounterServiceMock()), null);
+        
+        final IServices services = new MockedServicesImpl().with(GlobalConfigurationSessionLocal.class, new GlobalConfigurationSessionMock());
+        
+        WorkerStatusInfo status = instance.getStatus(new ArrayList<>(), services);
+        List<String> fatalErrors = status.getFatalErrors();
+        assertEquals("Status ACTIVE", "[]", fatalErrors.toString());
+    }
+
+    /**
+     * Tests that there is a fatal error if key is not available.
+     * @throws Exception 
+     */
+    @Test
+    public void testGetStatus_wrongKey() throws Exception {
+        final OpenPGPSigner instance = createMockSigner(tokenNonExisting);
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TYPE", "PROCESSABLE");
+        instance.init(1, config, new SignServerContext(null, new KeyUsageCounterServiceMock()), null);
+        
+        final IServices services = new MockedServicesImpl().with(GlobalConfigurationSessionLocal.class, new GlobalConfigurationSessionMock());
+        
+        WorkerStatusInfo status = instance.getStatus(new ArrayList<>(), services);
+        List<String> fatalErrors = status.getFatalErrors();
+        assertEquals("Status OFFLINE", "[Crypto Token is disconnected]", fatalErrors.toString());
+    }
 
     protected OpenPGPSigner createMockSigner(final MockedCryptoToken token) {
         return new MockedOpenPGPSigner(token);
@@ -441,7 +487,7 @@ public class OpenPGPSignerUnitTest {
     private SimplifiedResponse signAndVerify(final byte[] data, final byte[] originalData, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached, boolean armored) throws Exception {
         final OpenPGPSigner instance = createMockSigner(token);
         instance.init(1, config, new SignServerContext(), null);
-
+        
         if (requestContext == null) {
             requestContext = new RequestContext();
         }

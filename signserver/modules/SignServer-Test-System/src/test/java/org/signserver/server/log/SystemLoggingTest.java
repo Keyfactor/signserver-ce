@@ -50,7 +50,7 @@ import org.cesecore.util.CertTools;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.AuthorizedClient;
-import org.signserver.common.Base64SignerCertReqData;
+import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ICertReqData;
@@ -641,8 +641,8 @@ public class SystemLoggingTest extends ModulesTestCase {
             
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=testkeyalias10,C=SE", null);
             ICertReqData req = workerSession.getCertificateRequest(new WorkerIdentifier(WORKERID_CRYPTOWORKER1), certReqInfo, false, alias);
-            Base64SignerCertReqData reqData = (Base64SignerCertReqData) req;
-            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+            AbstractCertReqData reqData = (AbstractCertReqData) req;
+            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
             
             int linesBefore = readEntriesCount(auditLogFile);
 
@@ -815,7 +815,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             // Test gencsr
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=TS Signer 1,C=SE", null);
             ICertReqData req = workerSession.getCertificateRequest(new WorkerIdentifier(p12SignerId), certReqInfo, false);
-            Base64SignerCertReqData reqData = (Base64SignerCertReqData) req;
+            AbstractCertReqData reqData = (AbstractCertReqData) req;
             lines = readEntries(auditLogFile, linesBefore + 4, 1);
             LOG.info(lines);
             line = lines.get(0);
@@ -825,11 +825,11 @@ public class SystemLoggingTest extends ModulesTestCase {
             assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + signerName));
             assertTrue("Contains key alias: " + line, line.contains("KEYALIAS: " + keyInKeystore));
             assertTrue("Contains for default key: " + line, line.contains("FOR_DEFAULTKEY: true"));
-            assertTrue("Contains csr", line.contains("CSR: " + new String(reqData.getBase64CertReq())));
+            assertTrue("Contains csr", line.contains("CSR: " + Base64.toBase64String(reqData.toBinaryForm())));
             
             // Test gencsr            
             req = workerSession.getCertificateRequest(new WorkerIdentifier(p12SignerId), certReqInfo, false, "ts_key00004");
-            reqData = (Base64SignerCertReqData) req;
+            reqData = (AbstractCertReqData) req;
             lines = readEntries(auditLogFile, linesBefore + 5, 1);
             LOG.info(lines);
             line = lines.get(0);
@@ -839,7 +839,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + signerName));
             assertTrue("Contains key alias: " + line, line.contains("KEYALIAS: ts_key00004"));
             assertTrue("Contains for default key: " + line, line.contains("FOR_DEFAULTKEY: false"));
-            assertTrue("Contains csr", line.contains("CSR: " + new String(reqData.getBase64CertReq())));
+            assertTrue("Contains csr", line.contains("CSR: " + Base64.toBase64String(reqData.toBinaryForm())));
             
             // Test remove key
             workerSession.removeKey(new WorkerIdentifier(p12SignerId), "ts_key00004");
@@ -941,7 +941,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             // Test gencsr
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=TS Signer 1,C=SE", null);
             ICertReqData req = workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false, "ts_key00004");
-            Base64SignerCertReqData reqData = (Base64SignerCertReqData) req;
+            AbstractCertReqData reqData = (AbstractCertReqData) req;
             lines = readEntries(auditLogFile, linesBefore + 4, 1);
             LOG.info(lines);
             line = lines.get(0);
@@ -951,7 +951,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             assertTrue("Contains crypto token", line.contains("CRYPTOTOKEN: " + tokenName));
             assertTrue("Contains key alias", line.contains("KEYALIAS: ts_key00004"));
             assertTrue("Contains for default key: " + line, line.contains("FOR_DEFAULTKEY: false"));
-            assertTrue("Contains csr", line.contains("CSR: " + new String(reqData.getBase64CertReq())));
+            assertTrue("Contains csr", line.contains("CSR: " + Base64.toBase64String(reqData.toBinaryForm())));
             
             // Test remove key
             workerSession.removeKey(new WorkerIdentifier(workerId), "ts_key00004");

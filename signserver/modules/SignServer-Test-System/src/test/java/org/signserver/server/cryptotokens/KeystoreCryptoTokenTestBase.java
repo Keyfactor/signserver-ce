@@ -27,8 +27,7 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.bouncycastle.util.encoders.Base64;
-import org.signserver.common.Base64SignerCertReqData;
+import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
@@ -58,10 +57,10 @@ public abstract class KeystoreCryptoTokenTestBase extends ModulesTestCase {
     protected void cmsSigner(final int workerId, final boolean expectActive) throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+        AbstractCertReqData reqData = (AbstractCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
 
         // Issue certificate
-        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
         X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 

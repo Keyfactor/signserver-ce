@@ -88,12 +88,6 @@
       <groupId>org.signserver.jacknji11</groupId>
       <artifactId>jacknji11</artifactId>
     </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>SignServer-Test-Utils</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 </project>
 

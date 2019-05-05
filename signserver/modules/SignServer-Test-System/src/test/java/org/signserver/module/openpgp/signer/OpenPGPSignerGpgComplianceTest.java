@@ -262,7 +262,7 @@ public class OpenPGPSignerGpgComplianceTest {
 
             final String output = res.getErrorMessage();
 
-            assertTrue("Expecting Good signature: " + output, output.contains("gpg: Good signature from \"User 1 (Code Signing) <user1@example.com>\" [ultimate]"));
+            assertTrue("Expecting Good signature: " + output, output.contains("gpg: Good signature from \"User 1 (Code Signing) <user1@example.com>\""));
             assertEquals("return code", 0, res.getExitValue());
 
             assertTrue("Expecting digest algorithm " + expectedDigestAlgorithm + ": " + output, output.contains("digest algorithm " + expectedDigestAlgorithm));

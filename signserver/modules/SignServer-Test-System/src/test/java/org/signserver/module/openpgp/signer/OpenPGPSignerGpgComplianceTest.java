@@ -13,6 +13,7 @@
 package org.signserver.module.openpgp.signer;
 
 import java.io.File;
+import java.io.IOException;
 import static junit.framework.TestCase.assertTrue;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -20,6 +21,7 @@ import org.bouncycastle.openpgp.PGPPublicKey;
 import static org.junit.Assert.assertEquals;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.common.AbstractCertReqData;
@@ -49,10 +51,24 @@ public class OpenPGPSignerGpgComplianceTest {
 
     private final ModulesTestCase helper = new ModulesTestCase();
     private static final CLITestHelper CLI = new CLITestHelper(ClientCLI.class);
+    
+    private static boolean enabled;
+    private static boolean ecdsaSupported;
 
+    @BeforeClass
+    public static void setUpClass() throws IOException {
+        enabled = Boolean.valueOf(new ModulesTestCase().getConfig().getProperty(GPG_ENABLED));
+        if (enabled) {
+            final ComplianceTestUtils.ProcResult res =
+                ComplianceTestUtils.execute("gpg2", "--version");
+            final String output = ComplianceTestUtils.toString(res.getOutput());
+            LOG.info("GPG version output: " + output);
+            ecdsaSupported = output.contains("ECDSA");
+        }
+    }
+    
     @Before
     public void setUpTest() {
-        final boolean enabled = Boolean.valueOf(helper.getConfig().getProperty(GPG_ENABLED));
         Assume.assumeTrue("GPG enabled", enabled);
     }
 
@@ -100,28 +116,33 @@ public class OpenPGPSignerGpgComplianceTest {
 
     @Test
     public void testSigning_ECDSA_SHA256() throws Exception {
+        Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
         signAndVerify("nistp256", "SHA-256");
     }
 
     // Note: GPG won't accept SHA-1 with a 256-bit curve
     //@Test
     //public void testSigning_ECDSA_SHA1() throws Exception {
+    //    Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
     //    signAndVerify("nistp256", "SHA-1");
     //}
 
     // Note: GPG won't accept SHA-224 with a 256-bit curve
     //@Test
     //public void testSigning_ECDSA_SHA224() throws Exception {
+    //    Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
     //    signAndVerify("nistp256", "SHA-224");
     //}
 
     @Test
     public void testSigning_ECDSA_SHA384() throws Exception {
+        Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
         signAndVerify("nistp256", "SHA-384");
     }
 
     @Test
     public void testSigning_ECDSA_SHA512() throws Exception {
+        Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
         signAndVerify("nistp256", "SHA-512");
     }
 

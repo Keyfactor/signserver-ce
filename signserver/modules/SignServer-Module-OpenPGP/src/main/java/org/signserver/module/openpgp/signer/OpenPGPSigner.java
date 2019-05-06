@@ -107,7 +107,9 @@ public class OpenPGPSigner extends BaseSigner {
     private PGPPublicKey pgpCertificate;
     private Long selfsignedValidity;
     private ResponseFormat responseFormat = DEFAULT_RESPONSE_FORMAT;
-    private boolean generateRevocationCertificate;
+    private boolean generateRevocationCertificate;  
+    private boolean detachedSignature; // property declared for future ticket
+    public static final String DETACHEDSIGNATURE_PROPERTY = "DETACHEDSIGNATURE";
     //...
 
     @Override
@@ -187,6 +189,16 @@ public class OpenPGPSigner extends BaseSigner {
                                  PROPERTY_GENERATE_REVOCATION_CERTIFICATE +
                                  ". Specify boolean (true or false)");
             }
+        }
+        
+        // Detached signature
+        final String detachedSignatureValue = config.getProperty(DETACHEDSIGNATURE_PROPERTY, Boolean.TRUE.toString()); // TODO: change default to false after clear text signature support
+        if (Boolean.FALSE.toString().equalsIgnoreCase(detachedSignatureValue)) {
+            configErrors.add("Currently only " + DETACHEDSIGNATURE_PROPERTY + " as TRUE supported"); // TODO: remove after clear text signature support
+        } else if (Boolean.TRUE.toString().equalsIgnoreCase(detachedSignatureValue)) {
+            detachedSignature = true;
+        } else {
+            configErrors.add("Incorrect value for property " + DETACHEDSIGNATURE_PROPERTY + ". Expecting TRUE or FALSE.");
         }
     }
 

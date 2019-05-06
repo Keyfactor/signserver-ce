@@ -155,6 +155,25 @@ public class OpenPGPSignerUnitTest {
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("DIGEST_ALGORITHM"));
     }
+    
+    /**
+     * Test that providing an incorrect value for DETACHEDSIGNATURE gives a
+     * fatal error.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testInit_incorrectDetachedSignatureValue() throws Exception {
+        LOG.info("testInit_incorrectDetachedSignatureValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TYPE", "PROCESSABLE");
+        config.setProperty("DETACHEDSIGNATURE", "_incorrect-value--");
+        OpenPGPSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("DETACHEDSIGNATURE"));
+    }
 
     /**
      * Test that providing an incorrect value for GENERATE_REVOCATION_CERTIFICATE

@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
 import org.bouncycastle.openpgp.PGPPublicKey;
+import org.bouncycastle.openpgp.PGPSignature;
 
 /**
  * Represents an OpenPGP public key in a form that is the same as for
@@ -37,6 +38,13 @@ public class OpenPgpCertReqData extends AbstractCertReqData {
         super("application/pgp-keys", ".asc");
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
         publicKey.encode(bout);
+        this.data = bout.toByteArray();
+    }
+    
+    public OpenPgpCertReqData(PGPSignature sig) throws IOException {
+        super("application/pgp-keys", ".asc");
+        final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        sig.encode(bout);
         this.data = bout.toByteArray();
     }
 

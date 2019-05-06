@@ -266,7 +266,11 @@ public class OpenPGPSignerGpgComplianceTest {
             assertEquals("return code", 0, res.getExitValue());
 
             assertTrue("Expecting digest algorithm " + expectedDigestAlgorithm + ": " + output, output.contains("digest algorithm " + expectedDigestAlgorithm));
-            assertTrue("Expecting key algorithm " + expectedKeyAlgorithm + ": " + output, output.contains("key algorithm " + expectedKeyAlgorithm));
+            
+            // Check key algorithm but only if it exists as this is not available in older gpg versions
+            if (output.contains("key algorithm ")) {
+                assertTrue("Expecting key algorithm " + expectedKeyAlgorithm + ": " + output, output.contains("key algorithm " + expectedKeyAlgorithm));
+            }
 
         } finally {
             helper.removeWorker(workerId);

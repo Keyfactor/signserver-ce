@@ -355,22 +355,39 @@ public class OpenPGPSigner extends BaseSigner {
             PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), digestAlgorithm).setProvider(crypto.getProvider()).setDigestProvider("BC"));
 
             // TODO: is this the right signatureType?
-            generator.init(PGPSignature.DEFAULT_CERTIFICATION, new JcaPGPPrivateKey(pgpPublicKey, crypto.getPrivateKey()));
+            generator.init(generateRevocationCertificate ?
+                           PGPSignature.KEY_REVOCATION :
+                           PGPSignature.DEFAULT_CERTIFICATION,
+                           new JcaPGPPrivateKey(pgpPublicKey, crypto.getPrivateKey()));
 
+            PGPSignatureSubpacketGenerator subGenerator = new PGPSignatureSubpacketGenerator();
+            PGPSignatureSubpacketGenerator nonHashedSubGenerator = new PGPSignatureSubpacketGenerator();
+            
             // Validity time
-            if (selfsignedValidity != null) {
-                PGPSignatureSubpacketGenerator subGenerator = new PGPSignatureSubpacketGenerator();
+            if (selfsignedValidity != null) {    
                 subGenerator.setKeyExpirationTime(true, selfsignedValidity);
-                generator.setHashedSubpackets(subGenerator.generate());
             } else {
                 LOG.error("No SELFSIGNED_VALIDITY so not setting any expiration");
             }
+
+            if (generateRevocationCertificate) {
+                subGenerator.setRevocationReason(false, (byte) 0x00, "");
+                nonHashedSubGenerator.setIssuerKeyID(false, pgpPublicKey.getKeyID());
+            }
+
+            generator.setHashedSubpackets(subGenerator.generate());
+            generator.setUnhashedSubpackets(nonHashedSubGenerator.generate());
 
             // Generate and add certification
             final PGPSignature certification = generator.generateCertification(reqInfo.getSubjectDN(), pgpPublicKey);
             final PGPPublicKey certifiedKey = PGPPublicKey.addCertification(pgpPublicKey, reqInfo.getSubjectDN(), certification);
 
-            final ICertReqData result = new OpenPgpCertReqData(certifiedKey);
+            final OpenPgpCertReqData result;
+            if (generateRevocationCertificate) {
+                result = new OpenPgpCertReqData(certification);
+            } else {
+                result = new OpenPgpCertReqData(certifiedKey);
+            }
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("<genCertificateRequest");

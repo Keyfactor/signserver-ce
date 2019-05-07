@@ -34,6 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
+import org.bouncycastle.bcpg.sig.RevocationReasonTags;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
@@ -383,7 +384,10 @@ public class OpenPGPSigner extends BaseSigner {
             }
 
             if (generateRevocationCertificate) {
-                subGenerator.setRevocationReason(false, (byte) 0x00, "");
+                // TODO: make the reason and description configurable?
+                subGenerator.setRevocationReason(false,
+                                                 RevocationReasonTags.NO_REASON,
+                                                 "");
                 nonHashedSubGenerator.setIssuerKeyID(false, pgpPublicKey.getKeyID());
             }
 

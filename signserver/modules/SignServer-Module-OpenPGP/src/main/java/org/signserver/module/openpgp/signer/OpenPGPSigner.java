@@ -192,13 +192,18 @@ public class OpenPGPSigner extends BaseSigner {
         }
         
         // Detached signature
-        final String detachedSignatureValue = config.getProperty(DETACHEDSIGNATURE_PROPERTY, Boolean.TRUE.toString()); // TODO: change default to false after clear text signature support
-        if (Boolean.FALSE.toString().equalsIgnoreCase(detachedSignatureValue)) {
-            configErrors.add("Currently only " + DETACHEDSIGNATURE_PROPERTY + " as TRUE supported"); // TODO: remove after clear text signature support
-        } else if (Boolean.TRUE.toString().equalsIgnoreCase(detachedSignatureValue)) {
-            detachedSignature = true;
+        final String detachedSignatureValue = config.getProperty(DETACHEDSIGNATURE_PROPERTY);
+        if (detachedSignatureValue == null) {
+            configErrors.add("Please provide " + DETACHEDSIGNATURE_PROPERTY + " as TRUE or FALSE");
         } else {
-            configErrors.add("Incorrect value for property " + DETACHEDSIGNATURE_PROPERTY + ". Expecting TRUE or FALSE.");
+            if (Boolean.FALSE.toString().equalsIgnoreCase(detachedSignatureValue)) {
+                detachedSignature = false;
+                configErrors.add("Currently only " + DETACHEDSIGNATURE_PROPERTY + " as TRUE supported"); // TODO: remove after clear text signature support
+            } else if (Boolean.TRUE.toString().equalsIgnoreCase(detachedSignatureValue)) {
+                detachedSignature = true;
+            } else {
+                configErrors.add("Incorrect value for property " + DETACHEDSIGNATURE_PROPERTY + ". Expecting TRUE or FALSE.");
+            }
         }
     }
 

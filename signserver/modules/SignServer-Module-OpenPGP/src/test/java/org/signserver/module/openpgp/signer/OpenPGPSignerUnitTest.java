@@ -174,6 +174,23 @@ public class OpenPGPSignerUnitTest {
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("DETACHEDSIGNATURE"));
     }
+    
+    /**
+     * Test that not providing DETACHEDSIGNATURE gives a fatal error.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testInit_NoDetachedSignatureValue() throws Exception {
+        LOG.info("testInit_incorrectDetachedSignatureValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TYPE", "PROCESSABLE");
+        OpenPGPSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("DETACHEDSIGNATURE"));
+    }
 
     /**
      * Test that providing an incorrect value for GENERATE_REVOCATION_CERTIFICATE
@@ -236,7 +253,8 @@ public class OpenPGPSignerUnitTest {
     
     private void signWithAlgorithm(MockedCryptoToken token, String digestAlgorithmConfig, int expectedDigestAlgorithm) throws Exception {
         WorkerConfig config = new WorkerConfig();
-        config.setProperty("TYPE", "PROCESSABLE");
+        config.setProperty("TYPE", "PROCESSABLE"); 
+        config.setProperty("DETACHEDSIGNATURE", "TRUE");
         if (digestAlgorithmConfig != null) {
             config.setProperty(OpenPGPSigner.PROPERTY_DIGEST_ALGORITHM, digestAlgorithmConfig);
         }
@@ -257,6 +275,7 @@ public class OpenPGPSignerUnitTest {
         LOG.info("testSignWithResponseFormatBinary");
         WorkerConfig config = new WorkerConfig();
         config.setProperty("TYPE", "PROCESSABLE");
+        config.setProperty("DETACHEDSIGNATURE", "TRUE");
         config.setProperty("RESPONSE_FORMAT", "BINARY");
         boolean armored = false;
         OpenPGPSigner instance = createMockSigner(tokenRSA);
@@ -276,6 +295,7 @@ public class OpenPGPSignerUnitTest {
         WorkerConfig config = new WorkerConfig();
         config.setProperty("TYPE", "PROCESSABLE");
         config.setProperty("RESPONSE_FORMAT", "ARMORED");
+        config.setProperty("DETACHEDSIGNATURE", "TRUE");
         boolean armored = true;
         OpenPGPSigner instance = createMockSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
@@ -453,6 +473,7 @@ public class OpenPGPSignerUnitTest {
         final OpenPGPSigner instance = createMockSigner(tokenRSA);
         WorkerConfig config = new WorkerConfig();
         config.setProperty("TYPE", "PROCESSABLE");
+        config.setProperty("DETACHEDSIGNATURE", "TRUE");
         instance.init(1, config, new SignServerContext(null, new KeyUsageCounterServiceMock()), null);
         
         final IServices services = new MockedServicesImpl().with(GlobalConfigurationSessionLocal.class, new GlobalConfigurationSessionMock());
@@ -471,6 +492,7 @@ public class OpenPGPSignerUnitTest {
         final OpenPGPSigner instance = createMockSigner(tokenNonExisting);
         WorkerConfig config = new WorkerConfig();
         config.setProperty("TYPE", "PROCESSABLE");
+        config.setProperty("DETACHEDSIGNATURE", "TRUE");
         instance.init(1, config, new SignServerContext(null, new KeyUsageCounterServiceMock()), null);
         
         final IServices services = new MockedServicesImpl().with(GlobalConfigurationSessionLocal.class, new GlobalConfigurationSessionMock());

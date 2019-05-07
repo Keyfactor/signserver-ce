@@ -387,7 +387,9 @@ public class OpenPGPSigner extends BaseSigner {
             final OpenPgpCertReqData result;
             if (generateRevocationCertificate) {
                 final PGPSignature certification = generator.generateCertification(pgpPublicKey);
-                result = new OpenPgpCertReqData(certification, true, ".rev");
+                final String revocationHeader = getRevocationHeader(pgpPublicKey);
+                result = new OpenPgpCertReqData(certification, true, ".rev",
+                                                revocationHeader);
             } else {
                 final PGPSignature certification = generator.generateCertification(reqInfo.getSubjectDN(), pgpPublicKey);
                 final PGPPublicKey certifiedKey = PGPPublicKey.addCertification(pgpPublicKey, reqInfo.getSubjectDN(), certification);
@@ -419,6 +421,35 @@ public class OpenPGPSigner extends BaseSigner {
         }
     }
 
+    private String getRevocationHeader(final PGPPublicKey publicKey) {
+        final StringBuilder sb = new StringBuilder();
+
+        sb.append("This is a revocation certificate for the OpenPGP key:")
+          .append("\n")
+          .append("Fingerprint: ").append(Hex.toHexString(publicKey.getFingerprint()).toUpperCase(Locale.ENGLISH))
+          .append("\n")
+          .append("User IDs:").append("\n");
+
+        final Iterator userIDs = publicKey.getUserIDs();
+        while (userIDs.hasNext()) {
+            Object o = userIDs.next();
+            if (o instanceof String) {
+                sb.append("   ").append((String) o).append("\n");
+            }
+        }
+
+        sb.append("\n")
+          .append("To avoid an accidental use of this file,")
+          .append("\n")
+          .append("a colon has been inserted before the five dashes")
+          .append("\n")
+          .append("Remove this colon before using the revocation certificate")
+          .append("\n")
+          .append(":");
+
+        return sb.toString();
+    }
+    
     @Override
     protected ICryptoInstance acquireDefaultCryptoInstance(Map<String, Object> params, String alias, RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {
         final Map<String, Object> newParams = new HashMap<>(params);

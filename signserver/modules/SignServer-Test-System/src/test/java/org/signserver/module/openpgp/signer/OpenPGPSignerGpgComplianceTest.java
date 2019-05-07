@@ -14,6 +14,7 @@ package org.signserver.module.openpgp.signer;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import static junit.framework.TestCase.assertTrue;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -23,6 +24,7 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.signserver.admin.cli.AdminCLI;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.PKCS10CertReqInfo;
@@ -51,6 +53,7 @@ public class OpenPGPSignerGpgComplianceTest {
 
     private final ModulesTestCase helper = new ModulesTestCase();
     private static final CLITestHelper CLI = new CLITestHelper(ClientCLI.class);
+    private static final CLITestHelper AdminCLI = new CLITestHelper(AdminCLI.class);
     
     private static boolean enabled;
     private static boolean ecdsaSupported;
@@ -91,33 +94,33 @@ public class OpenPGPSignerGpgComplianceTest {
 
     @Test
     public void testSigning_RSA_SHA256() throws Exception {
-        signAndVerify("rsa2048", "SHA-256");
+        signAndVerify("rsa2048", "SHA-256", false);
     }
 
     @Test
     public void testSigning_RSA_SHA1() throws Exception {
-        signAndVerify("rsa2048", "SHA-1");
+        signAndVerify("rsa2048", "SHA-1", false);
     }
 
     @Test
     public void testSigning_RSA_SHA224() throws Exception {
-        signAndVerify("rsa2048", "SHA-224");
+        signAndVerify("rsa2048", "SHA-224", false);
     }
 
     @Test
     public void testSigning_RSA_SHA384() throws Exception {
-        signAndVerify("rsa2048", "SHA-384");
+        signAndVerify("rsa2048", "SHA-384", false);
     }
 
     @Test
     public void testSigning_RSA_SHA512() throws Exception {
-        signAndVerify("rsa2048", "SHA-512");
+        signAndVerify("rsa2048", "SHA-512", false);
     }
 
     @Test
     public void testSigning_ECDSA_SHA256() throws Exception {
         Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
-        signAndVerify("nistp256", "SHA-256");
+        signAndVerify("nistp256", "SHA-256", false);
     }
 
     // Note: GPG won't accept SHA-1 with a 256-bit curve
@@ -137,53 +140,53 @@ public class OpenPGPSignerGpgComplianceTest {
     @Test
     public void testSigning_ECDSA_SHA384() throws Exception {
         Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
-        signAndVerify("nistp256", "SHA-384");
+        signAndVerify("nistp256", "SHA-384", false);
     }
 
     @Test
     public void testSigning_ECDSA_SHA512() throws Exception {
         Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
-        signAndVerify("nistp256", "SHA-512");
+        signAndVerify("nistp256", "SHA-512", false);
     }
 
     @Test
     public void testSigning_RSA4096_SHA256() throws Exception {
-        signAndVerify("rsa4096", "SHA-256");
+        signAndVerify("rsa4096", "SHA-256", false);
     }
 
     @Test
     public void testSigning_RSA4096_SHA1() throws Exception {
-        signAndVerify("rsa4096", "SHA-1");
+        signAndVerify("rsa4096", "SHA-1", false);
     }
 
     @Test
     public void testSigning_RSA4096_SHA224() throws Exception {
-        signAndVerify("rsa4096", "SHA-224");
+        signAndVerify("rsa4096", "SHA-224", false);
     }
 
     @Test
     public void testSigning_RSA4096_SHA384() throws Exception {
-        signAndVerify("rsa4096", "SHA-384");
+        signAndVerify("rsa4096", "SHA-384", false);
     }
 
     @Test
     public void testSigning_RSA4096_SHA512() throws Exception {
-        signAndVerify("rsa4096", "SHA-512");
+        signAndVerify("rsa4096", "SHA-512", false);
     }
 
     @Test
     public void testSigning_DSA1024_SHA256() throws Exception {
-        signAndVerify("dsa1024", "SHA-256");
+        signAndVerify("dsa1024", "SHA-256", false);
     }
 
     @Test
     public void testSigning_DSA1024_SHA1() throws Exception {
-        signAndVerify("dsa1024", "SHA-1");
+        signAndVerify("dsa1024", "SHA-1", false);
     }
 
     @Test
     public void testSigning_DSA1024_SHA224() throws Exception {
-        signAndVerify("dsa1024", "SHA-224");
+        signAndVerify("dsa1024", "SHA-224", false);
     }
 
     // Note: Not supported with SUN/JKS:
@@ -197,6 +200,11 @@ public class OpenPGPSignerGpgComplianceTest {
     //public void testSigning_DSA1024_SHA512() throws Exception {
     //    signAndVerify("dsa1024", "SHA-512");
     //}
+    
+    @Test
+    public void testSigning_RSA_SHA256withRevocation() throws Exception {
+        signAndVerify("rsa2048", "SHA-256", true);
+    }
 
     /**
      * Sets up a signer using a key with the chosen algorithm, 
@@ -208,9 +216,12 @@ public class OpenPGPSignerGpgComplianceTest {
      *
      * @param expectedKeyAlgorithm in gpg format
      * @param digestAlgorithm to use
+     * @param revokeAfter if true, issue and import a revocation certificate afterwards
      * @throws Exception 
      */
-    private void signAndVerify(final String expectedKeyAlgorithm, final String digestAlgorithm) throws Exception {
+    private void signAndVerify(final String expectedKeyAlgorithm,
+                               final String digestAlgorithm,
+                               final boolean revokeAfter) throws Exception {
         final int workerId = 42;
         final String workerName = "OpenPGPSigner-" + expectedKeyAlgorithm + "-" + digestAlgorithm ;
         final File inFile = new File(helper.getSignServerHome(), "res/test/HelloJar.jar");
@@ -291,6 +302,56 @@ public class OpenPGPSignerGpgComplianceTest {
             // Check key algorithm but only if it exists as this is not available in older gpg versions
             if (output.contains("key algorithm ")) {
                 assertTrue("Expecting key algorithm " + expectedKeyAlgorithm + ": " + output, output.contains("key algorithm " + expectedKeyAlgorithm));
+            }
+            
+            if (revokeAfter) {
+                final File csrFile = File.createTempFile("csr", ".rev");
+                final File revocationFile = File.createTempFile("revocation", ".rev");
+                
+                // set to generate revocation certificate on generate CSR
+                helper.getWorkerSession().setWorkerProperty(workerId,
+                                                            "GENERATE_REVOCATION_CERTIFICATE",
+                                                            "true");
+                helper.getWorkerSession().reloadConfiguration(workerId);
+                
+                // Issue a CSR
+                assertEquals("Status code", ClientCLI.RETURN_SUCCESS,
+                             AdminCLI.execute("generatecertreq",
+                                              Integer.toString(workerId),
+                                              "Revocation",
+                                              "SHA256withRSA",
+                                              revocationFile.getAbsolutePath()));
+
+                // remove short-cicuit colon
+                String csrString =
+                        FileUtils.readFileToString(csrFile, StandardCharsets.UTF_8);
+                
+                // check that the file contains the short-circuited PGP header
+                assertTrue("Contains colon-prefixed PGP header: " + csrString,
+                           csrString.contains(":-----BEGIN PGP PUBLIC KEY BLOCK-----"));
+                
+                csrString = csrString.replaceFirst("\n:", "\n");
+                FileUtils.writeStringToFile(revocationFile, csrString,
+                                            StandardCharsets.UTF_8);
+                
+                // import revocation certificate
+                res = ComplianceTestUtils.execute("gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
+                    "--import", revocationFile.getAbsolutePath());
+                assertEquals("gpg2 --import: " + res.getErrorMessage(), 0, res.getExitValue());
+
+                final String importRevocationOutput = res.getErrorMessage();
+                assertTrue("Expecting revocation: " + importRevocationOutput,
+                           importRevocationOutput.contains("revocation certificate imported"));
+                
+                // Verify
+                res = ComplianceTestUtils.execute("gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
+                        "--verbose", "--verify", outFile.getAbsolutePath(), inFile.getAbsolutePath());
+
+                final String verifyAfterRevokeOutput = res.getErrorMessage();
+
+                assertTrue("Expecting revocation warning: " + verifyAfterRevokeOutput,
+                           verifyAfterRevokeOutput.contains("gpg: WARNING: This key has been revoked by its owner!"));
+
             }
 
         } finally {

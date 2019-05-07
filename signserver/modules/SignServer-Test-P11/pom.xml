@@ -43,6 +43,13 @@
             <artifactId>javaee-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.signserver</groupId>
+            <artifactId>SignServer-Module-OpenPGP</artifactId>
+            <version>5.2.0.Alpha1-SNAPSHOT</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

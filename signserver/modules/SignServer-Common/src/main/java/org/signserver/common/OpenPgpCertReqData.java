@@ -33,19 +33,22 @@ import org.bouncycastle.openpgp.PGPSignature;
 public class OpenPgpCertReqData extends AbstractCertReqData {
 
     private final byte[] data;
+    private final boolean reEncodeAsPublicKey;
 
     public OpenPgpCertReqData(PGPPublicKey publicKey) throws IOException {
         super("application/pgp-keys", ".asc");
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
         publicKey.encode(bout);
         this.data = bout.toByteArray();
+        this.reEncodeAsPublicKey = false;
     }
     
-    public OpenPgpCertReqData(PGPSignature sig) throws IOException {
+    public OpenPgpCertReqData(PGPSignature sig, boolean reEncodeAsPublicKey) throws IOException {
         super("application/pgp-keys", ".asc");
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
         sig.encode(bout);
         this.data = bout.toByteArray();
+        this.reEncodeAsPublicKey = reEncodeAsPublicKey;
     }
 
     @Override
@@ -55,7 +58,11 @@ public class OpenPgpCertReqData extends AbstractCertReqData {
             final BCPGOutputStream bOut = new BCPGOutputStream(armOut);
             bOut.write(data);
         }
-        return new String(bout.toByteArray(), StandardCharsets.UTF_8);
+        String result = new String(bout.toByteArray(), StandardCharsets.UTF_8);
+        if (reEncodeAsPublicKey) {
+            result = result.replace("-----BEGIN PGP SIGNATURE-----", "-----BEGIN PGP PUBLIC KEY BLOCK-----").replace("-----END PGP SIGNATURE-----", "-----END PGP PUBLIC KEY BLOCK-----");
+        }
+        return result;
     }
 
     @Override

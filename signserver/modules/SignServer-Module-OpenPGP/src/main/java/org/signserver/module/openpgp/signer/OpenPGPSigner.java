@@ -379,13 +379,13 @@ public class OpenPGPSigner extends BaseSigner {
             generator.setUnhashedSubpackets(nonHashedSubGenerator.generate());
 
             // Generate and add certification
-            final PGPSignature certification = generator.generateCertification(reqInfo.getSubjectDN(), pgpPublicKey);
-            final PGPPublicKey certifiedKey = PGPPublicKey.addCertification(pgpPublicKey, reqInfo.getSubjectDN(), certification);
-
             final OpenPgpCertReqData result;
             if (generateRevocationCertificate) {
-                result = new OpenPgpCertReqData(certification);
+                final PGPSignature certification = generator.generateCertification(pgpPublicKey);
+                result = new OpenPgpCertReqData(certification, true);
             } else {
+                final PGPSignature certification = generator.generateCertification(reqInfo.getSubjectDN(), pgpPublicKey);
+                final PGPPublicKey certifiedKey = PGPPublicKey.addCertification(pgpPublicKey, reqInfo.getSubjectDN(), certification);
                 result = new OpenPgpCertReqData(certifiedKey);
             }
 

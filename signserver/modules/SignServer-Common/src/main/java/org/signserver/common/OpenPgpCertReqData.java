@@ -72,10 +72,16 @@ public class OpenPgpCertReqData extends AbstractCertReqData {
             final BCPGOutputStream bOut = new BCPGOutputStream(armOut);
             bOut.write(data);
         }
+
         String result = new String(bout.toByteArray(), StandardCharsets.UTF_8);
+
         if (reEncodeAsPublicKey) {
-            result = result.replace("-----BEGIN PGP SIGNATURE-----", "-----BEGIN PGP PUBLIC KEY BLOCK-----").replace("-----END PGP SIGNATURE-----", "-----END PGP PUBLIC KEY BLOCK-----");
+            result = result.replace("-----BEGIN PGP SIGNATURE-----",
+                                    "-----BEGIN PGP PUBLIC KEY BLOCK-----")
+                           .replace("-----END PGP SIGNATURE-----",
+                                    "-----END PGP PUBLIC KEY BLOCK-----");
         }
+
         return result;
     }
 

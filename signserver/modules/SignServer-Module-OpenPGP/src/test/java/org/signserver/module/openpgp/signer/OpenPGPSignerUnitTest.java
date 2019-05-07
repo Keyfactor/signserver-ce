@@ -229,6 +229,43 @@ public class OpenPGPSignerUnitTest {
         assertTrue("conf errs: " + errors, errors.contains("RESPONSE_FORMAT"));
     }
 
+    /**
+     * Test that providing an incorrect value for PGPPUBLICKEY gives a fatal
+     * error.
+     * @throws Exception
+     */
+    @Test
+    public void testInit_incorrectPgpPublicKeyValue() throws Exception {
+        LOG.info("testInit_incorrectPgpPublicKeyValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TYPE", "PROCESSABLE");
+        config.setProperty("PGPPUBLICKEY", "_incorrect-value--");
+        OpenPGPSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("PGPPUBLICKEY"));
+    }
+    
+    /**
+     * Test that providing an incorrect value for SELFSIGNED_VALIDITY gives a 
+     * fatal error.
+     * @throws Exception
+     */
+    @Test
+    public void testInit_incorrectSelfsignedValidityValue() throws Exception {
+        LOG.info("testInit_incorrectSelfsignedValidityValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TYPE", "PROCESSABLE");
+        config.setProperty("SELFSIGNED_VALIDITY", "_incorrect-value--");
+        OpenPGPSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("SELFSIGNED_VALIDITY"));
+    }
+    
+    
     // TODO: more testInit_*
     
     

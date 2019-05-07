@@ -155,7 +155,14 @@ public class OpenPGPSigner extends BaseSigner {
         // Optional property SELFSIGNED_VALIDITY
         final String validityValue = config.getProperty(PROPERTY_SELFSIGNED_VALIDITY);
         if (validityValue != null && !validityValue.trim().isEmpty()) {
-            selfsignedValidity = Long.parseLong(validityValue);
+            try {
+                selfsignedValidity = Long.parseLong(validityValue);
+            } catch (NumberFormatException ex) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Illegal value for " + PROPERTY_SELFSIGNED_VALIDITY, ex);
+                }
+                configErrors.add("Illegal value for " + PROPERTY_SELFSIGNED_VALIDITY + ". Please enter a numberic value.");
+            }
         }
         
         // Optional property RESPONSE_FORMAT

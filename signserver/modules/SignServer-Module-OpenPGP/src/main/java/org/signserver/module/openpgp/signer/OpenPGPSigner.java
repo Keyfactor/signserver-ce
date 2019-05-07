@@ -389,7 +389,8 @@ public class OpenPGPSigner extends BaseSigner {
                 final PGPSignature certification = generator.generateCertification(pgpPublicKey);
                 final String revocationHeader = getRevocationHeader(pgpPublicKey);
                 result = new OpenPgpCertReqData(certification, true, ".rev",
-                                                revocationHeader);
+                                                revocationHeader,
+                                                "This is a revocation certificate");
             } else {
                 final PGPSignature certification = generator.generateCertification(reqInfo.getSubjectDN(), pgpPublicKey);
                 final PGPPublicKey certifiedKey = PGPPublicKey.addCertification(pgpPublicKey, reqInfo.getSubjectDN(), certification);

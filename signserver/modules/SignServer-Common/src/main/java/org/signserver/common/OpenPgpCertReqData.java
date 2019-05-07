@@ -35,6 +35,7 @@ public class OpenPgpCertReqData extends AbstractCertReqData {
     private final byte[] data;
     private final boolean reEncodeAsPublicKey;
     private final String header;
+    private final String comment;
 
     public OpenPgpCertReqData(final PGPPublicKey publicKey) throws IOException {
         this(publicKey, ".asc");
@@ -42,18 +43,20 @@ public class OpenPgpCertReqData extends AbstractCertReqData {
 
     public OpenPgpCertReqData(final PGPPublicKey publicKey,
                               final String extension) throws IOException {
-        this(publicKey, extension, null);
+        this(publicKey, extension, null, null);
     }
     
     public OpenPgpCertReqData(final PGPPublicKey publicKey,
                               final String extension,
-                              final String header) throws IOException {
+                              final String header,
+                              final String comment) throws IOException {
         super("application/pgp-keys", extension);
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
         publicKey.encode(bout);
         this.data = bout.toByteArray();
         this.reEncodeAsPublicKey = false;
         this.header = header;
+        this.comment = comment;
     }
     
     public OpenPgpCertReqData(final PGPSignature sig,
@@ -65,19 +68,21 @@ public class OpenPgpCertReqData extends AbstractCertReqData {
     public OpenPgpCertReqData(final PGPSignature sig,
                               final boolean reEncodeAsPublicKey,
                               final String extension) throws IOException {
-        this(sig, reEncodeAsPublicKey, extension, null);
+        this(sig, reEncodeAsPublicKey, extension, null, null);
     }
     
     public OpenPgpCertReqData(final PGPSignature sig,
                               final boolean reEncodeAsPublicKey,
                               final String extension,
-                              final String header) throws IOException {
+                              final String header,
+                              final String comment) throws IOException {
         super("application/pgp-keys", extension);
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
         sig.encode(bout);
         this.data = bout.toByteArray();
         this.reEncodeAsPublicKey = reEncodeAsPublicKey;
         this.header = header;
+        this.comment = comment;
     }
 
     @Override
@@ -87,6 +92,13 @@ public class OpenPgpCertReqData extends AbstractCertReqData {
 
         try (final ArmoredOutputStream armOut = new ArmoredOutputStream(bout)) {
             final BCPGOutputStream bOut = new BCPGOutputStream(armOut);
+
+            armOut.setHeader(ArmoredOutputStream.VERSION_HDR,
+                             CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION));
+
+            if (comment != null) {
+                armOut.setHeader("Comment", comment);
+            }
 
             bOut.write(data);
         }

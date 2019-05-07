@@ -119,25 +119,7 @@ public class OpenPGPSignerUnitTest {
         // Simulating a non-existing key
         tokenNonExisting = new MockedCryptoToken();
     }
-    
-    /**
-     * Test that providing an incorrect value for DETACHEDSIGNATURE
-     * gives a fatal error.
-     * @throws Exception
-     */
-    /*For DSS-1969: @Test
-    public void testInit_incorrectDetachedSignatureValue() throws Exception {
-        LOG.info("testInit_incorrectDetachedSignatureValue");
-        WorkerConfig config = new WorkerConfig();
-        config.setProperty("TYPE", "PROCESSABLE");
-        config.setProperty("DETACHEDSIGNATURE", "_incorrect-value--");
-        OpenPGPSigner instance = createMockSigner(tokenRSA);
-        instance.init(1, config, new SignServerContext(), null);
 
-        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
-        assertTrue("conf errs: " + errors, errors.contains("DETACHEDSIGNATURE"));
-    }*/
-    
     /**
      * Test that providing an incorrect value for DIGEST_ALGORITHM
      * gives a fatal error.

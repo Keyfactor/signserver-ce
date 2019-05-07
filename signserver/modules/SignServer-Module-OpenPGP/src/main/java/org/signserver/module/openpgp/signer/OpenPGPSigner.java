@@ -12,13 +12,16 @@
  *************************************************************************/
 package org.signserver.module.openpgp.signer;
 
+import java.io.BufferedInputStream;
 import org.signserver.common.OpenPgpCertReqData;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.SignatureException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
 import javax.persistence.EntityManager;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -206,7 +210,9 @@ public class OpenPGPSigner extends BaseSigner {
         } else {
             if (Boolean.FALSE.toString().equalsIgnoreCase(detachedSignatureValue)) {
                 detachedSignature = false;
-                configErrors.add("Currently only " + DETACHEDSIGNATURE_PROPERTY + " as TRUE supported"); // TODO: remove after clear text signature support
+                if (responseFormat == ResponseFormat.BINARY) {
+                    configErrors.add(PROPERTY_RESPONSE_FORMAT + " can be only set as " + ResponseFormat.ARMORED.toString() + " when " + DETACHEDSIGNATURE_PROPERTY + " is FALSE");
+                }
             } else if (Boolean.TRUE.toString().equalsIgnoreCase(detachedSignatureValue)) {
                 detachedSignature = true;
             } else {
@@ -240,7 +246,7 @@ public class OpenPGPSigner extends BaseSigner {
             // Produce the result, ie doing the work...
             X509Certificate signerCert = null;
             ICryptoInstance cryptoInstance = null;
-            try (BCPGOutputStream bOut = createOutputStream(responseData.getAsOutputStream(), responseFormat)) {
+            try {
                 final Map<String, Object> params = new HashMap<>();
                 params.put(PARAM_INCLUDE_DUMMYCERTIFICATE, true);
                 cryptoInstance = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, params, requestContext);
@@ -249,18 +255,53 @@ public class OpenPGPSigner extends BaseSigner {
                 final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
                 signerCert = (X509Certificate) getSigningCertificate(cryptoInstance);
                 final PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm(signerCert), signerCert.getPublicKey(), signerCert.getNotBefore());
+                PGPPrivateKey pgpPrivateKey = new org.bouncycastle.openpgp.operator.jcajce.JcaPGPPrivateKey(pgpPublicKey, cryptoInstance.getPrivateKey());
 
                 final PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), digestAlgorithm).setProvider(cryptoInstance.getProvider()).setDigestProvider("BC"));
 
-                generator.init(PGPSignature.BINARY_DOCUMENT, new org.bouncycastle.openpgp.operator.jcajce.JcaPGPPrivateKey(pgpPublicKey, cryptoInstance.getPrivateKey()));
+                if (detachedSignature) {
+                    try (BCPGOutputStream bOut = createOutputStreamForDetachedSignature(responseData.getAsOutputStream(), responseFormat)) {
+                        generator.init(PGPSignature.BINARY_DOCUMENT, pgpPrivateKey);
 
-                generator.update(requestData.getAsByteArray()); // TODO: getAsInputStream()
-                generator.generate().encode(bOut);
-            } catch (PGPException ex) {
+                        generator.update(requestData.getAsByteArray()); // TODO: getAsInputStream()
+                        generator.generate().encode(bOut);
+                    }
+                } else {
+                    PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
+                    generator.init(PGPSignature.CANONICAL_TEXT_DOCUMENT, pgpPrivateKey);
+
+                    Iterator it = pgpPublicKey.getUserIDs();
+                    if (it.hasNext()) {
+                        spGen.setSignerUserID(false, (String) it.next());
+                        generator.setHashedSubpackets(spGen.generate());
+                    }
+
+                    try (InputStream fIn = new BufferedInputStream(requestData.getAsInputStream());
+                            ArmoredOutputStream aOut = new ArmoredOutputStream(responseData.getAsOutputStream())) {
+                        aOut.beginClearText(digestAlgorithm);
+                        ByteArrayOutputStream lineOut = new ByteArrayOutputStream();
+                        int lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, fIn);
+                        ClearSignedFileProcessorUtils.processLine(aOut, generator, lineOut.toByteArray());
+                        if (lookAhead != -1) {
+                            do {
+                                lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, lookAhead, fIn);
+
+                                generator.update((byte) '\r');
+                                generator.update((byte) '\n');
+
+                                ClearSignedFileProcessorUtils.processLine(aOut, generator, lineOut.toByteArray());
+                            } while (lookAhead != -1);
+                        }
+
+                        aOut.endClearText();
+                        BCPGOutputStream bOut = new BCPGOutputStream(aOut);
+                        generator.generate().encode(bOut);
+                    }
+                }
+               
+            } catch (PGPException | SignatureException ex) {
                 throw new SignServerException("PGP exception", ex);
-            } catch (InvalidAlgorithmParameterException ex) {
-                throw new SignServerException("Error initializing signer", ex);
-            } catch (UnsupportedCryptoTokenParameter ex) {
+            } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter ex) {
                 throw new SignServerException("Error initializing signer", ex);
             } finally {
                 releaseCryptoInstance(cryptoInstance, requestContext);
@@ -567,7 +608,7 @@ public class OpenPGPSigner extends BaseSigner {
         return status;
     }
 
-    private BCPGOutputStream createOutputStream(OutputStream out, ResponseFormat responseFormat) {
+    private BCPGOutputStream createOutputStreamForDetachedSignature(OutputStream out, ResponseFormat responseFormat) {
         switch (responseFormat) {
             case ARMORED:
                 return new BCPGOutputStream(new ArmoredOutputStream(out));

@@ -173,6 +173,26 @@ public class OpenPGPSignerUnitTest {
         String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
         assertTrue("conf errs: " + errors, errors.contains("DETACHEDSIGNATURE"));
     }
+    
+    /**
+     * Test that setting RESPONSE_FORMAT as BINARY & DETACHEDSIGNATURE as FALSE
+     * gives a fatal error.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testInit_DetachedFalseWithBinaryResponseFormat() throws Exception {
+        LOG.info("testInit_incorrectDetachedSignatureValue");
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TYPE", "PROCESSABLE");
+        config.setProperty("DETACHEDSIGNATURE", "FALSE");
+        config.setProperty("RESPONSE_FORMAT", "BINARY");
+        OpenPGPSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+
+        String errors = instance.getFatalErrors(new MockedServicesImpl()).toString();
+        assertTrue("conf errs: " + errors, errors.contains("DETACHEDSIGNATURE"));
+    }
 
     /**
      * Test that providing an incorrect value for GENERATE_REVOCATION_CERTIFICATE

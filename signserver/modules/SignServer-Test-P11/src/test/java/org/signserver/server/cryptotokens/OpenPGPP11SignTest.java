@@ -33,7 +33,6 @@ import org.bouncycastle.openpgp.PGPSignatureList;
 import org.bouncycastle.openpgp.jcajce.JcaPGPObjectFactory;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 import static org.junit.Assert.assertNotEquals;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.AbstractCertReqData;
@@ -60,43 +59,37 @@ import org.signserver.testutils.ModulesTestCase;
 public class OpenPGPP11SignTest {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(OpenPGPP11SignTest.class);
-    
+
     private static final int CRYPTO_TOKEN = 30100;
     private static final int WORKER_OPENPGPSIGNER = 30000;
-    
-    private static final String TEST_KEY_ALIAS = "openpgp_p11testkey1234";
+
     private static final String CRYPTO_TOKEN_NAME = "TestCryptoTokenOpenPGPP11";
-    
+
     private final String sharedLibraryName;
-    private final String sharedLibraryPath;
     private final String slot;
     private final String pin;
     private final String existingKey1;
-    
+
     private final File pdfSampleFile;
-    
+
     private final ModulesTestCase testCase = new ModulesTestCase();
-    
     private final WorkerSession workerSession = testCase.getWorkerSession();
-    private final ProcessSessionRemote processSession = testCase.getProcessSession();
-    private final GlobalConfigurationSessionRemote globalSession = testCase.getGlobalSession();
-    
+
     public OpenPGPP11SignTest() throws FileNotFoundException {
         final File home = PathUtil.getAppHome();
         pdfSampleFile = new File(home, "res/test/pdf/sample.pdf");
         sharedLibraryName = testCase.getConfig().getProperty("test.p11.sharedLibraryName");
-        sharedLibraryPath = testCase.getConfig().getProperty("test.p11.sharedLibraryPath");
         slot = testCase.getConfig().getProperty("test.p11.slot");
         pin = testCase.getConfig().getProperty("test.p11.pin");
         existingKey1 = testCase.getConfig().getProperty("test.p11.existingkey1");
     }
-    
+
     @Before
-    public void setUp() throws Exception {        
+    public void setUp() throws Exception {
         //Assume.assumeFalse("P11NG".equalsIgnoreCase(testCase.getConfig().getProperty("test.p11.provider")));
         SignServerUtil.installBCProvider();
     }
-    
+
     private void setupCryptoTokenProperties(final int tokenId, final boolean cache) throws Exception {
         // Setup token
         workerSession.setWorkerProperty(tokenId, WorkerConfig.TYPE, WorkerType.CRYPTO_WORKER.name());
@@ -120,11 +113,11 @@ public class OpenPGPP11SignTest {
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
         workerSession.setWorkerProperty(workerId, "DETACHEDSIGNATURE", "true");
     }
-    
+
     /**
      * Tests adding a User Id to the public key, sign something and verifying it.
      *
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testAddUserIdSignAndVerify() throws Exception {
@@ -143,11 +136,11 @@ public class OpenPGPP11SignTest {
             String publicKeyArmored = csr.toArmoredForm();
             assertTrue("public key header: " + publicKeyArmored, publicKeyArmored.contains("-----BEGIN PGP PUBLIC KEY BLOCK-----"));
             assertTrue("public key footer: " + publicKeyArmored, publicKeyArmored.contains("-----END PGP PUBLIC KEY BLOCK-----"));
-            
+
             // Store the updated public key
             workerSession.setWorkerProperty(WORKER_OPENPGPSIGNER, "PGPPUBLICKEY", publicKeyArmored);
             workerSession.reloadConfiguration(WORKER_OPENPGPSIGNER);
-            
+
             // Check the status has no errors and that the user id is printed
             WorkerStatus status = workerSession.getStatus(new WorkerIdentifier(WORKER_OPENPGPSIGNER));
             assertEquals("fatal errors", "[]", status.getFatalErrors().toString());
@@ -160,7 +153,7 @@ public class OpenPGPP11SignTest {
             final byte[] originalData = FileUtils.readFileToByteArray(pdfSampleFile);
             GenericSignResponse response = testCase.signGenericDocument(WORKER_OPENPGPSIGNER, originalData);
             final byte[] signedBytes = response.getProcessedData();
-            
+
             // Verify signature
             PGPSignature sig;
             try (InputStream in = createInputStream(new ByteArrayInputStream(signedBytes), true)) {
@@ -178,9 +171,9 @@ public class OpenPGPP11SignTest {
             testCase.removeWorker(WORKER_OPENPGPSIGNER);
         }
     }
-    
+
     private BCPGInputStream createInputStream(InputStream in, boolean armored) throws IOException {
         return new BCPGInputStream(armored ? new ArmoredInputStream(in) : in);
     }
-    
+
 }

@@ -44,8 +44,6 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
-import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
-import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.module.openpgp.signer.OpenPGPUtils;
 import org.signserver.testutils.ModulesTestCase;

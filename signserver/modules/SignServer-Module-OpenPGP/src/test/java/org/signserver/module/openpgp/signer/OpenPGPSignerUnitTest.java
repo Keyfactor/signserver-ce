@@ -308,6 +308,7 @@ public class OpenPGPSignerUnitTest {
         }
         boolean armored = true;
         
+        // data with new line
         final byte[] data = "my-data\r\n".getBytes("ASCII");
         
         SimplifiedResponse response = signAndVerify(data, token, config, new RequestContext(), detachedSignature, armored);
@@ -348,9 +349,9 @@ public class OpenPGPSignerUnitTest {
         config.setProperty("DETACHEDSIGNATURE", Boolean.toString(detachedSignature));
         boolean armored = true;
         OpenPGPSigner instance = createMockSigner(tokenRSA);
-        instance.init(1, config, new SignServerContext(), null);
+        instance.init(1, config, new SignServerContext(), null);        
         
-        final byte[] data = "my-data\r\n".getBytes("ASCII");
+        final byte[] data = "my-data".getBytes("ASCII");
         signAndVerify(data, tokenRSA, config, null, detachedSignature, armored);
     }
     
@@ -371,7 +372,8 @@ public class OpenPGPSignerUnitTest {
         OpenPGPSigner instance = createMockSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
         
-        final byte[] data = "my-data\r\n".getBytes("ASCII");
+        // data without new line
+        final byte[] data = "my-data".getBytes("ASCII");
         signAndVerify(data, tokenRSA, config, null, detachedSignature, armored);
     }
     

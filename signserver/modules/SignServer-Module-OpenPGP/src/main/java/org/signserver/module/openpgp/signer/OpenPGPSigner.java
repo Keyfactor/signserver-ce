@@ -55,6 +55,7 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyConverter;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPPrivateKey;
 import org.bouncycastle.util.encoders.Hex;
+import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.NoSuchAliasException;
@@ -277,6 +278,7 @@ public class OpenPGPSigner extends BaseSigner {
 
                     try (InputStream fIn = new BufferedInputStream(requestData.getAsInputStream());
                             ArmoredOutputStream aOut = new ArmoredOutputStream(responseData.getAsOutputStream())) {
+                        aOut.setHeader(ArmoredOutputStream.VERSION_HDR, CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION));
                         aOut.beginClearText(digestAlgorithm);
                         ByteArrayOutputStream lineOut = new ByteArrayOutputStream();
                         int lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, fIn);

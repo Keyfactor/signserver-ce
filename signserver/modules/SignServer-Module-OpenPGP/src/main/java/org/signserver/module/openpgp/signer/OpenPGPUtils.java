@@ -84,6 +84,9 @@ public class OpenPGPUtils {
         // In case this is a signature algorithm of form HASHwithKEYALG
         String hash = signatureAlgorithm;
         int i = hash.indexOf("with");
+        if (i == -1) {
+            i = hash.indexOf("With");
+        }
         if (i > 0) {
             hash = signatureAlgorithm.substring(0, i);
         }

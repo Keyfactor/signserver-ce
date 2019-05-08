@@ -162,7 +162,7 @@ public class OpenPGPP11SignTest {
             final PGPPublicKey pgpPublicKey = OpenPGPUtils.parsePublicKeys(publicKeyArmored).get(0);
             sig.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), pgpPublicKey);
             sig.update(originalData);
-            assertNotEquals("verified", sig.verify());
+            assertTrue("verified", sig.verify());
 
         } finally {
             testCase.removeWorker(CRYPTO_TOKEN);

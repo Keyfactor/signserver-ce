@@ -401,12 +401,12 @@ public class OpenPGPSigner extends BaseSigner {
             crypto = token.acquireCryptoInstance(keyAlias, params, context);
 
             PKCS10CertReqInfo reqInfo = (PKCS10CertReqInfo) info;
-
+            
             final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
             final X509Certificate x509Cert = (X509Certificate) getSigningCertificate(crypto);
             final PGPPublicKey pgpPublicKey = pgpCertificate != null ? pgpCertificate : conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
 
-            PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), digestAlgorithm).setProvider(crypto.getProvider()).setDigestProvider("BC"));
+            PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), OpenPGPUtils.getHashAlgorithm(reqInfo.getSignatureAlgorithm())).setProvider(crypto.getProvider()).setDigestProvider("BC"));
 
             // TODO: is this the right signatureType?
             generator.init(generateRevocationCertificate ?

@@ -20,6 +20,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.bcpg.HashAlgorithmTags;
 import org.bouncycastle.bcpg.PublicKeyAlgorithmTags;
 import org.bouncycastle.openpgp.PGPException;
@@ -42,7 +43,7 @@ public class OpenPGPUtils {
      *
      * @param x509Cert to get public key algorithm from
      * @return the OpenPGP Key Algorithm ID
-     * @throws SignServerException 
+     * @throws SignServerException
      */
     public static int getKeyAlgorithm(X509Certificate x509Cert) throws SignServerException {
         final int keyAlg;
@@ -61,7 +62,59 @@ public class OpenPGPUtils {
         }
         return keyAlg;
     }
-    
+
+    /**
+     * Get the OpenPGP Hash Algorithm ID from the provided signature name, hash
+     * name or OpenPGP Hash Algorithm ID.
+     *
+     * @param signatureAlgorithm signature or hash algorithm name or numeric id
+     * @return Numeric hash algorithm ID
+     * @throws SignServerException in case the name is unknown or the integer can not be parsed
+     */
+    public static int getHashAlgorithm(final String signatureAlgorithm) throws SignServerException {
+        // Check if it is already a nummeric value
+        if (StringUtils.isNumeric(signatureAlgorithm)) {
+            try {
+                return Integer.parseInt(signatureAlgorithm);
+            } catch (NumberFormatException ex) {
+                throw new SignServerException("Unable to parse OpenPGP Hash Algorithm as nummeric value: " + ex.getMessage());
+            }
+        }
+
+        // In case this is a signature algorithm of form HASHwithKEYALG
+        String hash = signatureAlgorithm;
+        int i = hash.indexOf("with");
+        if (i > 0) {
+            hash = signatureAlgorithm.substring(0, i);
+        }
+
+        // Normalize the hash algorithm name
+        hash = hash.replace("-", "");
+
+        switch (hash) {
+            case "SHA1":
+                return HashAlgorithmTags.SHA1;
+            case "MD2":
+                return HashAlgorithmTags.MD2;
+            case "MD5":
+                return HashAlgorithmTags.MD5;
+            case "RIPEMD160":
+                return HashAlgorithmTags.RIPEMD160;
+            case "SHA256":
+                return HashAlgorithmTags.SHA256;
+            case "SHA384":
+                return HashAlgorithmTags.SHA384;
+            case "SHA512":
+                return HashAlgorithmTags.SHA512;
+            case "SHA224":
+                return HashAlgorithmTags.SHA224;
+            case "TIGER":
+                return HashAlgorithmTags.TIGER_192;
+        default:
+            throw new SignServerException("Unknown hash algorithm: " + hash);
+        }
+    }
+
     /**
      * Read public keys from the provided ASCII armored public key.
      *
@@ -89,7 +142,7 @@ public class OpenPGPUtils {
         }
         return results;
     }
-    
+
     /**
      * Format the provided value as a Key ID (i.e. in hex and with leading zero
      * if needed).
@@ -104,7 +157,7 @@ public class OpenPGPUtils {
         }
         return result;
     }
-    
+
     /**
      * Get the OpenPGP Hash Algorithm from its textual representation.
      *

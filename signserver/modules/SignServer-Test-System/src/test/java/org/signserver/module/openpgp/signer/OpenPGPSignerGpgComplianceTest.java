@@ -261,6 +261,8 @@ public class OpenPGPSignerGpgComplianceTest {
         final File ringFile = File.createTempFile("pubring", ".gpg");
         final File trustFile = File.createTempFile("trustdb", ".gpg");
         final File publicKeyFile = File.createTempFile("pubkey", ".gpg");
+        final File csrFile = File.createTempFile("csr", ".rev");
+        final File revocationFile = File.createTempFile("revocation", ".rev");
         final String userId = "User 1 (Code Signing) <user1@example.com>";
         final String expectedDigestAlgorithm = digestAlgorithm.replace("-", "");
 
@@ -338,9 +340,6 @@ public class OpenPGPSignerGpgComplianceTest {
             }
             
             if (revokeAfter) {
-                final File csrFile = File.createTempFile("csr", ".rev");
-                final File revocationFile = File.createTempFile("revocation", ".rev");
-                
                 // set to generate revocation certificate on generate CSR
                 helper.getWorkerSession().setWorkerProperty(workerId,
                                                             "GENERATE_REVOCATION_CERTIFICATE",
@@ -364,7 +363,7 @@ public class OpenPGPSignerGpgComplianceTest {
                 assertTrue("Contains colon-prefixed PGP header: " + csrString,
                            csrString.contains(":-----BEGIN PGP PUBLIC KEY BLOCK-----"));
                 
-                // remove short-cicuit colon
+                // remove short-circuit colon
                 csrString = csrString.replaceFirst("\n:", "\n");
                 FileUtils.writeStringToFile(revocationFile, csrString,
                                             StandardCharsets.UTF_8);
@@ -395,6 +394,8 @@ public class OpenPGPSignerGpgComplianceTest {
             FileUtils.deleteQuietly(ringFile);
             FileUtils.deleteQuietly(trustFile);
             FileUtils.deleteQuietly(publicKeyFile);
+            FileUtils.deleteQuietly(csrFile);
+            FileUtils.deleteQuietly(revocationFile);
         }
     }
 

@@ -293,6 +293,12 @@ public class OpenPGPSigner extends BaseSigner {
                             } while (lookAhead != -1);
                         }
 
+                        // Add new line before signature if needed
+                        byte[] lastBytes = lineOut.toByteArray();
+                        if (lastBytes.length > 0 && (lastBytes[lastBytes.length - 1] != '\r' && lastBytes[lastBytes.length - 1] != '\n')) {
+                            aOut.write("\r\n".getBytes(StandardCharsets.US_ASCII));
+                        }
+
                         aOut.endClearText();
                         BCPGOutputStream bOut = new BCPGOutputStream(aOut);
                         generator.generate().encode(bOut);

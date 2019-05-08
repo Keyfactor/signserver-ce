@@ -235,7 +235,7 @@ public class OpenPGPSignerGpgComplianceTest {
         try {
 
             helper.addSigner("org.signserver.module.openpgp.signer.OpenPGPSigner", workerId, workerName, true);
-            helper.getWorkerSession().setWorkerProperty(workerId, "DETACHEDSIGNATURE", "ts40003");
+            helper.getWorkerSession().setWorkerProperty(workerId, "DETACHEDSIGNATURE", "true");
             switch (expectedKeyAlgorithm) {
                 case "rsa2048": {
                     helper.getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY", "signer00001");

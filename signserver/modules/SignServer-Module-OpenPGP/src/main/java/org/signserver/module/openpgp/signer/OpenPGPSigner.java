@@ -498,9 +498,9 @@ public class OpenPGPSigner extends BaseSigner {
         sb.append("\n")
           .append("To avoid an accidental use of this file,")
           .append("\n")
-          .append("a colon has been inserted before the five dashes")
+          .append("a colon has been inserted before the five dashes.")
           .append("\n")
-          .append("Remove this colon before using the revocation certificate")
+          .append("Remove this colon before using the revocation certificate.")
           .append("\n")
           .append(":");
 

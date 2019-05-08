@@ -12,9 +12,15 @@
  *************************************************************************/
 package org.signserver.module.openpgp.signer;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.Security;
@@ -22,6 +28,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import static junit.framework.TestCase.assertEquals;
@@ -40,10 +47,12 @@ import org.bouncycastle.openpgp.jcajce.JcaPGPObjectFactory;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyConverter;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -70,15 +79,15 @@ import org.signserver.testutils.ModulesTestCase;
  * @version $Id$
  */
 public class OpenPGPSignerUnitTest {
-   
+
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(OpenPGPSignerUnitTest.class);
 
     private static MockedCryptoToken tokenRSA;
     private static MockedCryptoToken tokenDSA;
     private static MockedCryptoToken tokenECDSA;
-    private static MockedCryptoToken tokenNonExisting;
- 
+    private static MockedCryptoToken tokenNonExisting; 
+         
     @BeforeClass
     public static void setUpClass() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
@@ -118,7 +127,7 @@ public class OpenPGPSignerUnitTest {
 
         // Simulating a non-existing key
         tokenNonExisting = new MockedCryptoToken();
-    }
+    }        
 
     /**
      * Test that providing an incorrect value for DIGEST_ALGORITHM
@@ -290,18 +299,18 @@ public class OpenPGPSignerUnitTest {
     }
     
     
-    private void signWithAlgorithm(MockedCryptoToken token, String digestAlgorithmConfig, int expectedDigestAlgorithm) throws Exception {
+    private void signWithAlgorithm(MockedCryptoToken token, String digestAlgorithmConfig, int expectedDigestAlgorithm, boolean detachedSignature) throws Exception {
         WorkerConfig config = new WorkerConfig();
-        config.setProperty("TYPE", "PROCESSABLE"); 
-        config.setProperty("DETACHEDSIGNATURE", "TRUE");
+        config.setProperty("TYPE", "PROCESSABLE");        
+        config.setProperty("DETACHEDSIGNATURE", Boolean.toString(detachedSignature));
         if (digestAlgorithmConfig != null) {
             config.setProperty(OpenPGPSigner.PROPERTY_DIGEST_ALGORITHM, digestAlgorithmConfig);
         }
         boolean armored = true;
-
-        final byte[] data = "my-data".getBytes("ASCII");
         
-        SimplifiedResponse response = signAndVerify(data, token, config, new RequestContext(), true, armored);
+        final byte[] data = "my-data\r\n".getBytes("ASCII");
+        
+        SimplifiedResponse response = signAndVerify(data, token, config, new RequestContext(), detachedSignature, armored);
         assertEquals("hash algorithm", expectedDigestAlgorithm, response.getSignature().getHashAlgorithm());
     }
 
@@ -321,26 +330,49 @@ public class OpenPGPSignerUnitTest {
         instance.init(1, config, new SignServerContext(), null);
 
         final byte[] data = "my-data".getBytes("ASCII");
-        signAndVerify(data, tokenRSA, config, null, false, armored);
+        signAndVerify(data, tokenRSA, config, null, true, armored);
     }
     
     /**
-     * Tests signing with RESPONSE_FORMAT=ARMORED.
-     * @throws Exception 
+     * Tests detached signing with RESPONSE_FORMAT=ARMORED.
+     *
+     * @throws Exception
      */
     @Test
-    public void testSignWithResponseFormatArmored() throws Exception {
+    public void testDetachedSignWithResponseFormatArmored() throws Exception {
         LOG.info("testSignWithResponseFormatArmored");
+        boolean detachedSignature = true;
         WorkerConfig config = new WorkerConfig();
         config.setProperty("TYPE", "PROCESSABLE");
         config.setProperty("RESPONSE_FORMAT", "ARMORED");
-        config.setProperty("DETACHEDSIGNATURE", "TRUE");
+        config.setProperty("DETACHEDSIGNATURE", Boolean.toString(detachedSignature));
         boolean armored = true;
         OpenPGPSigner instance = createMockSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
-
-        final byte[] data = "my-data".getBytes("ASCII");
-        signAndVerify(data, tokenRSA, config, null, false, armored);
+        
+        final byte[] data = "my-data\r\n".getBytes("ASCII");
+        signAndVerify(data, tokenRSA, config, null, detachedSignature, armored);
+    }
+    
+    /**
+     * Tests clear text signing with RESPONSE_FORMAT=ARMORED.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testClearTextSignWithResponseFormatArmored() throws Exception {
+        LOG.info("testSignWithResponseFormatArmored");
+        boolean detachedSignature = false;
+        WorkerConfig config = new WorkerConfig();
+        config.setProperty("TYPE", "PROCESSABLE");
+        config.setProperty("RESPONSE_FORMAT", "ARMORED");
+        config.setProperty("DETACHEDSIGNATURE", Boolean.toString(detachedSignature));
+        boolean armored = true;
+        OpenPGPSigner instance = createMockSigner(tokenRSA);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        final byte[] data = "my-data\r\n".getBytes("ASCII");
+        signAndVerify(data, tokenRSA, config, null, detachedSignature, armored);
     }
     
     /**
@@ -348,9 +380,19 @@ public class OpenPGPSignerUnitTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void testSign_RSA_default_SHA256() throws Exception {
+    public void testDetachedSign_RSA_default_SHA256() throws Exception {
         LOG.info("testSign_RSA_default_SHA256");
-        signWithAlgorithm(tokenRSA, null, PGPUtil.SHA256);
+        signWithAlgorithm(tokenRSA, null, PGPUtil.SHA256, true);
+    }
+    
+    /**
+     * Test default signing with RSA.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClearTextSign_RSA_default_SHA256() throws Exception {
+        LOG.info("testSign_RSA_default_SHA256");
+        signWithAlgorithm(tokenRSA, null, PGPUtil.SHA256, false);
     }
     
     /**
@@ -358,19 +400,41 @@ public class OpenPGPSignerUnitTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void testSign_RSA_SHA1() throws Exception {
+    public void testDetachedSign_RSA_SHA1() throws Exception {
         LOG.info("testSign_RSA_SHA1");
-        signWithAlgorithm(tokenRSA, "SHA1", PGPUtil.SHA1);
+        signWithAlgorithm(tokenRSA, "SHA1", PGPUtil.SHA1, true);
+    }
+    
+    /**
+     * Test signing with SHA1 and RSA.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClearTextSign_RSA_SHA1() throws Exception {
+        LOG.info("testSign_RSA_SHA1");
+        signWithAlgorithm(tokenRSA, "SHA1", PGPUtil.SHA1, false);
     }
     
     /**
      * Test signing with SHA-224 and RSA.
+     *
      * @throws java.lang.Exception
      */
     @Test
-    public void testSign_RSA_SHA224() throws Exception {
+    public void testDetachedSign_RSA_SHA224() throws Exception {
         LOG.info("testSign_RSA_SHA224");
-        signWithAlgorithm(tokenRSA, "SHA-224", PGPUtil.SHA224);
+        signWithAlgorithm(tokenRSA, "SHA-224", PGPUtil.SHA224, true);
+    }    // Note: currently ArmoredOutputStream does not support SHA-224 signature algorithm    
+    
+    
+    /**
+     * Test signing with SHA-384 and RSA.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testDetachedSign_RSA_SHA384() throws Exception {
+        LOG.info("testSign_RSA_SHA384");
+        signWithAlgorithm(tokenRSA, "SHA-384", PGPUtil.SHA384, true);
     }
     
     /**
@@ -378,9 +442,9 @@ public class OpenPGPSignerUnitTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void testSign_RSA_SHA384() throws Exception {
+    public void testClearTextSign_RSA_SHA384() throws Exception {
         LOG.info("testSign_RSA_SHA384");
-        signWithAlgorithm(tokenRSA, "SHA-384", PGPUtil.SHA384);
+        signWithAlgorithm(tokenRSA, "SHA-384", PGPUtil.SHA384, false);
     }
     
     /**
@@ -388,9 +452,19 @@ public class OpenPGPSignerUnitTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void testSign_RSA_SHA512() throws Exception {
+    public void testDetachedSign_RSA_SHA512() throws Exception {
         LOG.info("testSign_RSA_SHA512");
-        signWithAlgorithm(tokenRSA, "SHA-512", PGPUtil.SHA512);
+        signWithAlgorithm(tokenRSA, "SHA-512", PGPUtil.SHA512, true);
+    }
+    
+    /**
+     * Test signing with SHA-512 and RSA.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClearTextSign_RSA_SHA512() throws Exception {
+        LOG.info("testSign_RSA_SHA512");
+        signWithAlgorithm(tokenRSA, "SHA-512", PGPUtil.SHA512, false);
     }
     
     /**
@@ -398,9 +472,19 @@ public class OpenPGPSignerUnitTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void testSign_RSA_SHA512_byNumber() throws Exception {
+    public void testDetachedSign_RSA_SHA512_byNumber() throws Exception {
         LOG.info("testSign_RSA_SHA512_byNumber");
-        signWithAlgorithm(tokenRSA, "10", PGPUtil.SHA512); // 10 = SHA-512
+        signWithAlgorithm(tokenRSA, "10", PGPUtil.SHA512, true); // 10 = SHA-512
+    }
+    
+    /**
+     * Test signing with SHA-512 by number and RSA.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClearTextSign_RSA_SHA512_byNumber() throws Exception {
+        LOG.info("testSign_RSA_SHA512_byNumber");
+        signWithAlgorithm(tokenRSA, "10", PGPUtil.SHA512, false); // 10 = SHA-512
     }
     
     /**
@@ -408,9 +492,19 @@ public class OpenPGPSignerUnitTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void testSign_DSA_default_SHA256() throws Exception {
+    public void testDetachedSign_DSA_default_SHA256() throws Exception {
         LOG.info("testSign_DSA_default_SHA256");
-        signWithAlgorithm(tokenDSA, null, PGPUtil.SHA256);
+        signWithAlgorithm(tokenDSA, null, PGPUtil.SHA256, true);
+    }
+    
+    /**
+     * Test default signing with DSA.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClearTextSign_DSA_default_SHA256() throws Exception {
+        LOG.info("testSign_DSA_default_SHA256");
+        signWithAlgorithm(tokenDSA, null, PGPUtil.SHA256, false);
     }
     
     /**
@@ -418,9 +512,19 @@ public class OpenPGPSignerUnitTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void testSign_DSA_SHA1() throws Exception {
+    public void testDetachedSign_DSA_SHA1() throws Exception {
         LOG.info("testSign_DSA_SHA1");
-        signWithAlgorithm(tokenDSA, "SHA1", PGPUtil.SHA1);
+        signWithAlgorithm(tokenDSA, "SHA1", PGPUtil.SHA1, true);
+    }
+    
+    /**
+     * Test signing with SHA1 and DSA.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClearTextSign_DSA_SHA1() throws Exception {
+        LOG.info("testSign_DSA_SHA1");
+        signWithAlgorithm(tokenDSA, "SHA1", PGPUtil.SHA1, false);
     }
     
     /**
@@ -428,9 +532,9 @@ public class OpenPGPSignerUnitTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void testSign_DSA_SHA224() throws Exception {
+    public void testDetachedSign_DSA_SHA224() throws Exception {
         LOG.info("testSign_DSA_SHA224");
-        signWithAlgorithm(tokenDSA, "SHA-224", PGPUtil.SHA224);
+        signWithAlgorithm(tokenDSA, "SHA-224", PGPUtil.SHA224, true);
     }
     
     /**
@@ -438,9 +542,19 @@ public class OpenPGPSignerUnitTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void testSign_DSA_SHA384() throws Exception {
+    public void testDetachedSign_DSA_SHA384() throws Exception {
         LOG.info("testSign_DSA_SHA384");
-        signWithAlgorithm(tokenDSA, "SHA-384", PGPUtil.SHA384);
+        signWithAlgorithm(tokenDSA, "SHA-384", PGPUtil.SHA384, true);
+    }
+    
+    /**
+     * Test signing with SHA-384 and DSA.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClearTextSign_DSA_SHA384() throws Exception {
+        LOG.info("testSign_DSA_SHA384");
+        signWithAlgorithm(tokenDSA, "SHA-384", PGPUtil.SHA384, false);
     }
     
     /**
@@ -448,9 +562,19 @@ public class OpenPGPSignerUnitTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void testSign_DSA_SHA512() throws Exception {
+    public void testDetachedSign_DSA_SHA512() throws Exception {
         LOG.info("testSign_DSA_SHA512");
-        signWithAlgorithm(tokenDSA, "SHA-512", PGPUtil.SHA512);
+        signWithAlgorithm(tokenDSA, "SHA-512", PGPUtil.SHA512, true);
+    }
+    
+    /**
+     * Test signing with SHA-512 and DSA.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClearTextSign_DSA_SHA512() throws Exception {
+        LOG.info("testSign_DSA_SHA512");
+        signWithAlgorithm(tokenDSA, "SHA-512", PGPUtil.SHA512, false);
     }
     
     /**
@@ -458,9 +582,15 @@ public class OpenPGPSignerUnitTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void testSign_ECDSA_default_SHA256() throws Exception {
+    public void testDetachedSign_ECDSA_default_SHA256() throws Exception {
         LOG.info("testSign_ECDSA_default_SHA256");
-        signWithAlgorithm(tokenECDSA, null, PGPUtil.SHA256);
+        signWithAlgorithm(tokenECDSA, null, PGPUtil.SHA256, true);
+    }
+    
+    @Test
+    public void testClearTextSign_ECDSA_default_SHA256() throws Exception {
+        LOG.info("testSign_ECDSA_default_SHA256");
+        signWithAlgorithm(tokenECDSA, null, PGPUtil.SHA256, false);
     }
     
     /**
@@ -468,9 +598,19 @@ public class OpenPGPSignerUnitTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void testSign_ECDSA_SHA1() throws Exception {
+    public void testDetachedSign_ECDSA_SHA1() throws Exception {
         LOG.info("testSign_ECDSA_SHA1");
-        signWithAlgorithm(tokenECDSA, "SHA1", PGPUtil.SHA1);
+        signWithAlgorithm(tokenECDSA, "SHA1", PGPUtil.SHA1, true);
+    }
+    
+    /**
+     * Test signing with SHA1 and ECDSA.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClearTextSign_ECDSA_SHA1() throws Exception {
+        LOG.info("testSign_ECDSA_SHA1");
+        signWithAlgorithm(tokenECDSA, "SHA1", PGPUtil.SHA1, false);
     }
     
     /**
@@ -480,7 +620,7 @@ public class OpenPGPSignerUnitTest {
     @Test
     public void testSign_ECDSA_SHA224() throws Exception {
         LOG.info("testSign_ECDSA_SHA224");
-        signWithAlgorithm(tokenECDSA, "SHA-224", PGPUtil.SHA224);
+        signWithAlgorithm(tokenECDSA, "SHA-224", PGPUtil.SHA224, true);
     }
     
     /**
@@ -488,9 +628,19 @@ public class OpenPGPSignerUnitTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void testSign_ECDSA_SHA384() throws Exception {
+    public void testDetachedSign_ECDSA_SHA384() throws Exception {
         LOG.info("testSign_ECDSA_SHA384");
-        signWithAlgorithm(tokenECDSA, "SHA-384", PGPUtil.SHA384);
+        signWithAlgorithm(tokenECDSA, "SHA-384", PGPUtil.SHA384, true);
+    }
+    
+    /**
+     * Test signing with SHA-384 and ECDSA.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClearTextSign_ECDSA_SHA384() throws Exception {
+        LOG.info("testSign_ECDSA_SHA384");
+        signWithAlgorithm(tokenECDSA, "SHA-384", PGPUtil.SHA384, false);
     }
     
     /**
@@ -498,9 +648,19 @@ public class OpenPGPSignerUnitTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void testSign_ECDSA_SHA512() throws Exception {
+    public void testDetachedSign_ECDSA_SHA512() throws Exception {
         LOG.info("testSign_ECDSA_SHA512");
-        signWithAlgorithm(tokenECDSA, "SHA-512", PGPUtil.SHA512);
+        signWithAlgorithm(tokenECDSA, "SHA-512", PGPUtil.SHA512, true);
+    }
+    
+    /**
+     * Test signing with SHA-512 and ECDSA.
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testClearTextSign_ECDSA_SHA512() throws Exception {
+        LOG.info("testSign_ECDSA_SHA512");
+        signWithAlgorithm(tokenECDSA, "SHA-512", PGPUtil.SHA512, false);
     }
 
     /**
@@ -546,7 +706,11 @@ public class OpenPGPSignerUnitTest {
     }
     
     private SimplifiedResponse signAndVerify(final byte[] data, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached, boolean armored) throws Exception {
-        return signAndVerify(data, data, token, config, requestContext, detached, armored);
+        if (detached) {
+            return signAndVerifyDetachedSignature(data, data, token, config, requestContext, detached, armored);
+        } else {
+            return signAndVerifyClearTextSignature(data, data, token, config, requestContext, false, true);
+        }
     }
     
     /**
@@ -564,7 +728,7 @@ public class OpenPGPSignerUnitTest {
      * @return
      * @throws Exception 
      */
-    private SimplifiedResponse signAndVerify(final byte[] data, final byte[] originalData, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached, boolean armored) throws Exception {
+    private SimplifiedResponse signAndVerifyDetachedSignature(final byte[] data, final byte[] originalData, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached, boolean armored) throws Exception {
         final OpenPGPSigner instance = createMockSigner(token);
         instance.init(1, config, new SignServerContext(), null);
         
@@ -603,6 +767,109 @@ public class OpenPGPSignerUnitTest {
 
             sig.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), pgpPublicKey);
             sig.update(originalData);
+            
+            assertTrue("verified", sig.verify());
+            
+            return new SimplifiedResponse(signedBytes, sig, pgpPublicKey);
+        }
+    }
+    
+    /**
+     * Helper method signing the given data (either the actual data to be signed
+     * or if the signer or request implies client-side hashing, the pre-computed
+     * hash) and the original data. When detached mode is assumed, the originalData
+     * is used to verify the signature.
+     * 
+     * @param data Data (data to be signed, or pre-computed hash)
+     * @param originalData Original data (either the actual data or the data that was pre-hashed)
+     * @param token
+     * @param config
+     * @param requestContext
+     * @param detached If true, assume detached
+     * @return
+     * @throws Exception 
+     */
+    private SimplifiedResponse signAndVerifyClearTextSignature(final byte[] data, final byte[] originalData, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached, boolean armored) throws Exception {
+        final OpenPGPSigner instance = createMockSigner(token);
+        instance.init(1, config, new SignServerContext(), null);
+        
+        if (requestContext == null) {
+            requestContext = new RequestContext();
+        }
+        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
+
+        try (
+                CloseableReadableData requestData = ModulesTestCase.createRequestData(data);
+                CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
+            ) {
+            SignatureRequest request = new SignatureRequest(100, requestData, responseData);
+            SignatureResponse response = (SignatureResponse) instance.processData(request, requestContext);
+
+            byte[] signedBytes = responseData.toReadableData().getAsByteArray();
+            String signed = new String(signedBytes, StandardCharsets.US_ASCII);
+
+            assertTrue("expecting armored: " + signed, signed.startsWith("-----BEGIN PGP SIGNED MESSAGE-----"));
+
+            PGPSignature sig;
+            String resultName = "resultFile";
+            
+            ArmoredInputStream aIn = new ArmoredInputStream(new ByteArrayInputStream(signedBytes));
+            OutputStream out = new BufferedOutputStream(new FileOutputStream(resultName));
+            ByteArrayOutputStream lineOut = new ByteArrayOutputStream();
+            int lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, aIn);
+            byte[] lineSep = ClearSignedFileProcessorUtils.getLineSeparator();
+            
+            if (lookAhead != -1 && aIn.isClearText()) {
+                byte[] line = lineOut.toByteArray();
+                out.write(line, 0, ClearSignedFileProcessorUtils.getLengthWithoutSeparatorOrTrailingWhitespace(line));
+                out.write(lineSep);
+
+                while (lookAhead != -1 && aIn.isClearText()) {
+                    lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, lookAhead, aIn);
+
+                    line = lineOut.toByteArray();
+                    out.write(line, 0, ClearSignedFileProcessorUtils.getLengthWithoutSeparatorOrTrailingWhitespace(line));
+                    out.write(lineSep);
+                }
+            } else {
+                // a single line file
+                if (lookAhead != -1) {
+                    byte[] line = lineOut.toByteArray();
+                    out.write(line, 0, ClearSignedFileProcessorUtils.getLengthWithoutSeparatorOrTrailingWhitespace(line));
+                    out.write(lineSep);
+                }
+            }
+            
+            out.close();
+
+            JcaPGPObjectFactory pgpFact = new JcaPGPObjectFactory(aIn);
+            PGPSignatureList p3 = (PGPSignatureList) pgpFact.nextObject();
+            sig = p3.get(0); 
+                       
+            final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
+            final X509Certificate x509Cert = (X509Certificate) token.getCertificate(0);
+            final PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(getKeyAlg(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
+
+            sig.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), pgpPublicKey);
+
+            InputStream sigIn = new BufferedInputStream(new FileInputStream(resultName));
+
+            lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, sigIn);
+
+            ClearSignedFileProcessorUtils.processLine(sig, lineOut.toByteArray());
+            
+            if (lookAhead != -1) {
+                do {
+                    lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, lookAhead, sigIn);
+
+                    sig.update((byte) '\r');
+                    sig.update((byte) '\n');
+
+                    ClearSignedFileProcessorUtils.processLine(sig, lineOut.toByteArray());
+                } while (lookAhead != -1);
+            }
+            
+            sigIn.close();                        
             
             assertTrue("verified", sig.verify());
             

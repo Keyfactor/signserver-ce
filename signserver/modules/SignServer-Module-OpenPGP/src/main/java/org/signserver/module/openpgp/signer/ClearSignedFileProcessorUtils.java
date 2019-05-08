@@ -84,7 +84,7 @@ public class ClearSignedFileProcessorUtils {
         return lookAhead;
     }
 
-    private static byte[] getLineSeparator() {
+    public static byte[] getLineSeparator() {
         String nl = Strings.lineSeparator();
         byte[] nlBytes = new byte[nl.length()];
 
@@ -95,7 +95,7 @@ public class ClearSignedFileProcessorUtils {
         return nlBytes;
     }
 
-    private static void processLine(PGPSignature sig, byte[] line)
+    public static void processLine(PGPSignature sig, byte[] line)
             throws SignatureException, IOException {
         int length = getLengthWithoutWhiteSpace(line);
         if (length > 0) {
@@ -115,7 +115,7 @@ public class ClearSignedFileProcessorUtils {
         aOut.write(line, 0, line.length);
     }
 
-    private static int getLengthWithoutSeparatorOrTrailingWhitespace(byte[] line) {
+    public static int getLengthWithoutSeparatorOrTrailingWhitespace(byte[] line) {
         int end = line.length - 1;
 
         while (end >= 0 && isWhiteSpace(line[end])) {

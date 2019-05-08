@@ -775,24 +775,26 @@ public class OpenPGPSignerUnitTest {
     }
     
     /**
-     * Helper method signing the given data (either the actual data to be signed
-     * or if the signer or request implies client-side hashing, the pre-computed
-     * hash) and the original data. When detached mode is assumed, the originalData
-     * is used to verify the signature.
-     * 
+     * Helper method signing the given data and producing the clear text
+     * signature (either the actual data to be signed or if the signer or
+     * request implies client-side hashing, the pre-computed hash) and the
+     * original data. When detached mode is assumed, the originalData is used to
+     * verify the signature.
+     *
      * @param data Data (data to be signed, or pre-computed hash)
-     * @param originalData Original data (either the actual data or the data that was pre-hashed)
+     * @param originalData Original data (either the actual data or the data
+     * that was pre-hashed)
      * @param token
      * @param config
      * @param requestContext
      * @param detached If true, assume detached
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     private SimplifiedResponse signAndVerifyClearTextSignature(final byte[] data, final byte[] originalData, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached, boolean armored) throws Exception {
         final OpenPGPSigner instance = createMockSigner(token);
         instance.init(1, config, new SignServerContext(), null);
-        
+
         if (requestContext == null) {
             requestContext = new RequestContext();
         }
@@ -800,8 +802,7 @@ public class OpenPGPSignerUnitTest {
 
         try (
                 CloseableReadableData requestData = ModulesTestCase.createRequestData(data);
-                CloseableWritableData responseData = ModulesTestCase.createResponseData(false);
-            ) {
+                CloseableWritableData responseData = ModulesTestCase.createResponseData(false);) {
             SignatureRequest request = new SignatureRequest(100, requestData, responseData);
             SignatureResponse response = (SignatureResponse) instance.processData(request, requestContext);
 
@@ -812,67 +813,65 @@ public class OpenPGPSignerUnitTest {
 
             PGPSignature sig;
             String resultName = "resultFile";
-            
+
             ArmoredInputStream aIn = new ArmoredInputStream(new ByteArrayInputStream(signedBytes));
-            OutputStream out = new BufferedOutputStream(new FileOutputStream(resultName));
-            ByteArrayOutputStream lineOut = new ByteArrayOutputStream();
-            int lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, aIn);
-            byte[] lineSep = ClearSignedFileProcessorUtils.getLineSeparator();
-            
-            if (lookAhead != -1 && aIn.isClearText()) {
-                byte[] line = lineOut.toByteArray();
-                out.write(line, 0, ClearSignedFileProcessorUtils.getLengthWithoutSeparatorOrTrailingWhitespace(line));
-                out.write(lineSep);
-
-                while (lookAhead != -1 && aIn.isClearText()) {
-                    lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, lookAhead, aIn);
-
-                    line = lineOut.toByteArray();
-                    out.write(line, 0, ClearSignedFileProcessorUtils.getLengthWithoutSeparatorOrTrailingWhitespace(line));
-                    out.write(lineSep);
-                }
-            } else {
-                // a single line file
-                if (lookAhead != -1) {
+            ByteArrayOutputStream lineOut;
+            int lookAhead;
+            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(resultName))) {
+                lineOut = new ByteArrayOutputStream();
+                lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, aIn);
+                byte[] lineSep = ClearSignedFileProcessorUtils.getLineSeparator();
+                if (lookAhead != -1 && aIn.isClearText()) {
                     byte[] line = lineOut.toByteArray();
                     out.write(line, 0, ClearSignedFileProcessorUtils.getLengthWithoutSeparatorOrTrailingWhitespace(line));
                     out.write(lineSep);
+
+                    while (lookAhead != -1 && aIn.isClearText()) {
+                        lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, lookAhead, aIn);
+
+                        line = lineOut.toByteArray();
+                        out.write(line, 0, ClearSignedFileProcessorUtils.getLengthWithoutSeparatorOrTrailingWhitespace(line));
+                        out.write(lineSep);
+                    }
+                } else {
+                    // a single line file
+                    if (lookAhead != -1) {
+                        byte[] line = lineOut.toByteArray();
+                        out.write(line, 0, ClearSignedFileProcessorUtils.getLengthWithoutSeparatorOrTrailingWhitespace(line));
+                        out.write(lineSep);
+                    }
                 }
             }
-            
-            out.close();
 
             JcaPGPObjectFactory pgpFact = new JcaPGPObjectFactory(aIn);
             PGPSignatureList p3 = (PGPSignatureList) pgpFact.nextObject();
-            sig = p3.get(0); 
-                       
+            sig = p3.get(0);
+
             final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
             final X509Certificate x509Cert = (X509Certificate) token.getCertificate(0);
             final PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(getKeyAlg(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
 
             sig.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), pgpPublicKey);
 
-            InputStream sigIn = new BufferedInputStream(new FileInputStream(resultName));
+            try (InputStream sigIn = new BufferedInputStream(new FileInputStream(resultName))) {
+                lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, sigIn);
 
-            lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, sigIn);
+                ClearSignedFileProcessorUtils.processLine(sig, lineOut.toByteArray());
 
-            ClearSignedFileProcessorUtils.processLine(sig, lineOut.toByteArray());
-            
-            if (lookAhead != -1) {
-                do {
-                    lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, lookAhead, sigIn);
+                if (lookAhead != -1) {
+                    do {
+                        lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, lookAhead, sigIn);
 
-                    sig.update((byte) '\r');
-                    sig.update((byte) '\n');
+                        sig.update((byte) '\r');
+                        sig.update((byte) '\n');
 
-                    ClearSignedFileProcessorUtils.processLine(sig, lineOut.toByteArray());
-                } while (lookAhead != -1);
+                        ClearSignedFileProcessorUtils.processLine(sig, lineOut.toByteArray());
+                    } while (lookAhead != -1);
+                }
             }
-            
-            sigIn.close();                        
-            
+
             assertTrue("verified", sig.verify());
-            
+
             return new SimplifiedResponse(signedBytes, sig, pgpPublicKey);
         }
     }

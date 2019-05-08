@@ -201,9 +201,40 @@ public class OpenPGPSignerGpgComplianceTest {
     //    signAndVerify("dsa1024", "SHA-512");
     //}
     
+    /**
+     * Test signing and later revoking with RSA and SHA256
+     * @throws Exception 
+     */
     @Test
     public void testSigning_RSA_SHA256withRevocation() throws Exception {
         signAndVerify("rsa2048", "SHA-256", true);
+    }
+ 
+    /**
+     * Test signing and later revoking with RSA and SHA1
+     * @throws Exception 
+     */
+    @Test
+    public void testSigning_RSA_SHA1withRevocation() throws Exception {
+        signAndVerify("rsa2048", "SHA-1", true);
+    }
+    
+    /**
+     * Test signing and later revoking with ECDSA and SHA256
+     * @throws Exception 
+     */
+    @Test
+    public void testSigning_ECDSA_SHA256withRevocation() throws Exception {
+        signAndVerify("nistp256", "SHA-256", true);
+    }
+    
+    /**
+     * Test signing and later revoking with DSA and SHA256
+     * @throws Exception 
+     */
+    @Test
+    public void testSigning_DSA1024_SHA256withRevocation() throws Exception {
+        signAndVerify("dsa1024", "SHA-256", true);
     }
 
     /**
@@ -320,10 +351,11 @@ public class OpenPGPSignerGpgComplianceTest {
                              AdminCLI.execute("generatecertreq",
                                               Integer.toString(workerId),
                                               "Revocation",
-                                              "SHA256withRSA",
-                                              revocationFile.getAbsolutePath()));
+                                              getRevocationSigningAlgorithm(expectedKeyAlgorithm,
+                                                                            digestAlgorithm),
+                                              csrFile.getAbsolutePath()));
 
-                // remove short-cicuit colon
+                // read CSR file
                 String csrString =
                         FileUtils.readFileToString(csrFile, StandardCharsets.UTF_8);
                 
@@ -331,6 +363,7 @@ public class OpenPGPSignerGpgComplianceTest {
                 assertTrue("Contains colon-prefixed PGP header: " + csrString,
                            csrString.contains(":-----BEGIN PGP PUBLIC KEY BLOCK-----"));
                 
+                // remove short-cicuit colon
                 csrString = csrString.replaceFirst("\n:", "\n");
                 FileUtils.writeStringToFile(revocationFile, csrString,
                                             StandardCharsets.UTF_8);
@@ -362,6 +395,50 @@ public class OpenPGPSignerGpgComplianceTest {
             FileUtils.deleteQuietly(trustFile);
             FileUtils.deleteQuietly(publicKeyFile);
         }
+    }
+
+    private String getRevocationSigningAlgorithm(final String keyAlgorithm,
+                                                 final String digestAlgorithm)
+        throws IllegalArgumentException {
+        final String digestPart;
+        final String keyalgoPart;
+
+        switch (keyAlgorithm) {
+            case "rsa2048":
+            case "rsa4096":
+                keyalgoPart = "RSA";
+                break;
+            case "nistp256":
+                keyalgoPart = "ECDSA";
+                break;
+            case "dsa1024":
+                keyalgoPart = "DSA";
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported key algorithm: " + keyAlgorithm);
+        }
+        
+        switch (digestAlgorithm) {
+            case "SHA-1":
+                digestPart = "SHA1";
+                break;
+            case "SHA-224":
+                digestPart = "SHA224";
+                break;
+            case "SHA-256":
+                digestPart = "SHA256";
+                break;
+            case "SHA-384":
+                digestPart = "SHA384";
+                break;
+            case "SHA-512":
+                digestPart = "SHA512";
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported digest algorithm: " + digestAlgorithm);
+        }
+        
+        return digestPart + "with" + keyalgoPart;
     }
 
 }

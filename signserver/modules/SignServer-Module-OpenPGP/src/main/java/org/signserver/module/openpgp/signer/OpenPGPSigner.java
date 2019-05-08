@@ -413,7 +413,6 @@ public class OpenPGPSigner extends BaseSigner {
 
             PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), OpenPGPUtils.getHashAlgorithm(reqInfo.getSignatureAlgorithm())).setProvider(crypto.getProvider()).setDigestProvider("BC"));
 
-            // TODO: is this the right signatureType?
             generator.init(generateRevocationCertificate ?
                            PGPSignature.KEY_REVOCATION :
                            PGPSignature.DEFAULT_CERTIFICATION,

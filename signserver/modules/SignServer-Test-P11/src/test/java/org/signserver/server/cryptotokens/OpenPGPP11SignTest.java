@@ -12,12 +12,17 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import static junit.framework.TestCase.assertEquals;
@@ -45,6 +50,7 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.module.openpgp.signer.ClearSignedFileProcessorUtils;
 import org.signserver.module.openpgp.signer.OpenPGPUtils;
 import org.signserver.testutils.ModulesTestCase;
 
@@ -101,7 +107,7 @@ public class OpenPGPP11SignTest {
         workerSession.setWorkerProperty(tokenId, "CACHE_PRIVATEKEY", String.valueOf(cache));
     }
 
-    private void setOpenPGPSignerOnlyProperties(final int workerId) throws Exception {
+    private void setOpenPGPSignerOnlyProperties(final int workerId, String detachedSignature) throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.openpgp.signer.OpenPGPSigner");
@@ -109,20 +115,20 @@ public class OpenPGPP11SignTest {
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", CRYPTO_TOKEN_NAME);
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
-        workerSession.setWorkerProperty(workerId, "DETACHEDSIGNATURE", "true");
+        workerSession.setWorkerProperty(workerId, "DETACHEDSIGNATURE", detachedSignature);
     }
 
     /**
-     * Tests adding a User Id to the public key, sign something and verifying it.
+     * Tests adding a User Id to the public key, sign something producing detached signature and verifying it.
      *
      * @throws Exception
      */
     @Test
-    public void testAddUserIdSignAndVerify() throws Exception {
-        LOG.info("testAddUserIdSignAndVerify");
+    public void testAddUserIdDetachedSignAndVerify() throws Exception {
+        LOG.info("testAddUserIdDetachedSignAndVerify");
         try {
             setupCryptoTokenProperties(CRYPTO_TOKEN, false);
-            setOpenPGPSignerOnlyProperties(WORKER_OPENPGPSIGNER);
+            setOpenPGPSignerOnlyProperties(WORKER_OPENPGPSIGNER, "TRUE");
             workerSession.reloadConfiguration(CRYPTO_TOKEN);
             workerSession.reloadConfiguration(WORKER_OPENPGPSIGNER);
 
@@ -169,6 +175,115 @@ public class OpenPGPP11SignTest {
             testCase.removeWorker(WORKER_OPENPGPSIGNER);
         }
     }
+    
+    /**
+     * Tests adding a User Id to the public key, sign something producing clear text signature and verifying it.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testAddUserIdClearTextSignAndVerify() throws Exception {
+        LOG.info("testAddUserIdDetachedSignAndVerify");
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN, false);
+            setOpenPGPSignerOnlyProperties(WORKER_OPENPGPSIGNER, "FALSE");
+            workerSession.reloadConfiguration(CRYPTO_TOKEN);
+            workerSession.reloadConfiguration(WORKER_OPENPGPSIGNER);
+
+            // Generate the public key
+            final String userId = "Worker " + WORKER_OPENPGPSIGNER + " worker@example.com";
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA256WithRSA", userId, null);
+            AbstractCertReqData csr = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_OPENPGPSIGNER), certReqInfo, false);
+            assertNotNull(csr);
+            String publicKeyArmored = csr.toArmoredForm();
+            assertTrue("public key header: " + publicKeyArmored, publicKeyArmored.contains("-----BEGIN PGP PUBLIC KEY BLOCK-----"));
+            assertTrue("public key footer: " + publicKeyArmored, publicKeyArmored.contains("-----END PGP PUBLIC KEY BLOCK-----"));
+
+            // Store the updated public key
+            workerSession.setWorkerProperty(WORKER_OPENPGPSIGNER, "PGPPUBLICKEY", publicKeyArmored);
+            workerSession.reloadConfiguration(WORKER_OPENPGPSIGNER);
+
+            // Check the status has no errors and that the user id is printed
+            WorkerStatus status = workerSession.getStatus(new WorkerIdentifier(WORKER_OPENPGPSIGNER));
+            assertEquals("fatal errors", "[]", status.getFatalErrors().toString());
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            status.displayStatus(new PrintStream(bout), true);
+            String statusOutput = bout.toString(StandardCharsets.UTF_8.toString());
+            assertTrue("key contains user id: " + statusOutput, statusOutput.contains(userId));
+
+            // Test signing
+            final byte[] originalData = FileUtils.readFileToByteArray(pdfSampleFile);
+            GenericSignResponse response = testCase.signGenericDocument(WORKER_OPENPGPSIGNER, originalData);
+            final byte[] signedBytes = response.getProcessedData();
+
+            String signed = new String(signedBytes, StandardCharsets.US_ASCII);
+            assertTrue("expecting armored: " + signed, signed.startsWith("-----BEGIN PGP SIGNED MESSAGE-----"));
+            
+            // Verify signature
+            PGPSignature sig;
+            String resultName = "resultFile";
+
+            ArmoredInputStream aIn = new ArmoredInputStream(new ByteArrayInputStream(signedBytes));
+            ByteArrayOutputStream lineOut;
+            int lookAhead;
+            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(resultName))) {
+                lineOut = new ByteArrayOutputStream();
+                lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, aIn);
+                byte[] lineSep = ClearSignedFileProcessorUtils.getLineSeparator();
+                if (lookAhead != -1 && aIn.isClearText()) {
+                    byte[] line = lineOut.toByteArray();
+                    out.write(line, 0, ClearSignedFileProcessorUtils.getLengthWithoutSeparatorOrTrailingWhitespace(line));
+                    out.write(lineSep);
+
+                    while (lookAhead != -1 && aIn.isClearText()) {
+                        lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, lookAhead, aIn);
+
+                        line = lineOut.toByteArray();
+                        out.write(line, 0, ClearSignedFileProcessorUtils.getLengthWithoutSeparatorOrTrailingWhitespace(line));
+                        out.write(lineSep);
+                    }
+                } else {
+                    // a single line file
+                    if (lookAhead != -1) {
+                        byte[] line = lineOut.toByteArray();
+                        out.write(line, 0, ClearSignedFileProcessorUtils.getLengthWithoutSeparatorOrTrailingWhitespace(line));
+                        out.write(lineSep);
+                    }
+                }
+            }
+
+            JcaPGPObjectFactory pgpFact = new JcaPGPObjectFactory(aIn);
+            PGPSignatureList p3 = (PGPSignatureList) pgpFact.nextObject();
+            sig = p3.get(0);
+
+            final PGPPublicKey pgpPublicKey = OpenPGPUtils.parsePublicKeys(publicKeyArmored).get(0);
+            sig.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), pgpPublicKey);
+
+            try (InputStream sigIn = new BufferedInputStream(new FileInputStream(resultName))) {
+                lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, sigIn);
+
+                ClearSignedFileProcessorUtils.processLine(sig, lineOut.toByteArray());
+
+                if (lookAhead != -1) {
+                    do {
+                        lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, lookAhead, sigIn);
+
+                        sig.update((byte) '\r');
+                        sig.update((byte) '\n');
+
+                        ClearSignedFileProcessorUtils.processLine(sig, lineOut.toByteArray());
+                    } while (lookAhead != -1);
+                }
+            }
+
+            assertTrue("verified", sig.verify());
+
+        } finally {
+            testCase.removeWorker(CRYPTO_TOKEN);
+            testCase.removeWorker(WORKER_OPENPGPSIGNER);
+        }
+    }
+
 
     private BCPGInputStream createInputStream(InputStream in, boolean armored) throws IOException {
         return new BCPGInputStream(armored ? new ArmoredInputStream(in) : in);

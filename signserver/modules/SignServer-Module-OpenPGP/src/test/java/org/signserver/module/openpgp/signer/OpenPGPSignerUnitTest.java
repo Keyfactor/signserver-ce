@@ -604,7 +604,7 @@ public class OpenPGPSignerUnitTest {
             sig.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), pgpPublicKey);
             sig.update(originalData);
             
-            assertNotEquals("verified", sig.verify());
+            assertTrue("verified", sig.verify());
             
             return new SimplifiedResponse(signedBytes, sig, pgpPublicKey);
         }

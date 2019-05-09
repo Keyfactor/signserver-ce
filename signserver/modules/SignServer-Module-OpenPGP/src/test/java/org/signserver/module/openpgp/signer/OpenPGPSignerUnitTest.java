@@ -16,6 +16,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,6 +33,7 @@ import java.util.Date;
 import java.util.List;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.bcpg.ArmoredInputStream;
 import org.bouncycastle.bcpg.BCPGInputStream;
@@ -793,6 +795,7 @@ public class OpenPGPSignerUnitTest {
             requestContext = new RequestContext();
         }
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
+        final File resultFile = File.createTempFile("resultFile", "txt");
 
         try (
                 CloseableReadableData requestData = ModulesTestCase.createRequestData(data);
@@ -805,13 +808,12 @@ public class OpenPGPSignerUnitTest {
 
             assertTrue("expecting armored: " + signed, signed.startsWith("-----BEGIN PGP SIGNED MESSAGE-----"));
 
-            PGPSignature sig;
-            String resultName = "resultFile";
+            PGPSignature sig;            
 
             ArmoredInputStream aIn = new ArmoredInputStream(new ByteArrayInputStream(signedBytes));
             ByteArrayOutputStream lineOut;
             int lookAhead;
-            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(resultName))) {
+            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(resultFile))) {
                 lineOut = new ByteArrayOutputStream();
                 lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, aIn);
                 byte[] lineSep = ClearSignedFileProcessorUtils.getLineSeparator();
@@ -847,7 +849,7 @@ public class OpenPGPSignerUnitTest {
 
             sig.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), pgpPublicKey);
 
-            try (InputStream sigIn = new BufferedInputStream(new FileInputStream(resultName))) {
+            try (InputStream sigIn = new BufferedInputStream(new FileInputStream(resultFile))) {
                 lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, sigIn);
 
                 ClearSignedFileProcessorUtils.processLine(sig, lineOut.toByteArray());
@@ -867,6 +869,8 @@ public class OpenPGPSignerUnitTest {
             assertTrue("verified", sig.verify());
 
             return new SimplifiedResponse(signedBytes, sig, pgpPublicKey);
+        } finally {
+            FileUtils.deleteQuietly(resultFile);
         }
     }
     

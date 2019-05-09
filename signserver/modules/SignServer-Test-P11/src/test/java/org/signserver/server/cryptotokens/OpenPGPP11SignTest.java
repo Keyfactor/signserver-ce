@@ -183,6 +183,7 @@ public class OpenPGPP11SignTest {
     @Test
     public void testAddUserIdClearTextSignAndVerify() throws Exception {
         LOG.info("testAddUserIdClearTextSignAndVerify");
+        final File resultFile = File.createTempFile("resultFile", "txt");
         try {
             setupCryptoTokenProperties(CRYPTO_TOKEN, false);
             setOpenPGPSignerOnlyProperties(WORKER_OPENPGPSIGNER, "FALSE");
@@ -219,13 +220,12 @@ public class OpenPGPP11SignTest {
             assertTrue("expecting armored: " + signed, signed.startsWith("-----BEGIN PGP SIGNED MESSAGE-----"));
             
             // Verify signature
-            PGPSignature sig;
-            String resultName = "resultFile";
+            PGPSignature sig;            
 
             ArmoredInputStream aIn = new ArmoredInputStream(new ByteArrayInputStream(signedBytes));
             ByteArrayOutputStream lineOut;
             int lookAhead;
-            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(resultName))) {
+            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(resultFile))) {
                 lineOut = new ByteArrayOutputStream();
                 lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, aIn);
                 byte[] lineSep = ClearSignedFileProcessorUtils.getLineSeparator();
@@ -258,7 +258,7 @@ public class OpenPGPP11SignTest {
             final PGPPublicKey pgpPublicKey = OpenPGPUtils.parsePublicKeys(publicKeyArmored).get(0);
             sig.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), pgpPublicKey);
 
-            try (InputStream sigIn = new BufferedInputStream(new FileInputStream(resultName))) {
+            try (InputStream sigIn = new BufferedInputStream(new FileInputStream(resultFile))) {
                 lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, sigIn);
 
                 ClearSignedFileProcessorUtils.processLine(sig, lineOut.toByteArray());
@@ -280,6 +280,7 @@ public class OpenPGPP11SignTest {
         } finally {
             testCase.removeWorker(CRYPTO_TOKEN);
             testCase.removeWorker(WORKER_OPENPGPSIGNER);
+            FileUtils.deleteQuietly(resultFile);
         }
     }
 

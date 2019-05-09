@@ -28,7 +28,6 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import static junit.framework.TestCase.assertEquals;
@@ -50,9 +49,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
@@ -341,7 +337,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testDetachedSignWithResponseFormatArmored() throws Exception {
-        LOG.info("testSignWithResponseFormatArmored");
+        LOG.info("testDetachedSignWithResponseFormatArmored");
         boolean detachedSignature = true;
         WorkerConfig config = new WorkerConfig();
         config.setProperty("TYPE", "PROCESSABLE");
@@ -362,7 +358,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testClearTextSignWithResponseFormatArmored() throws Exception {
-        LOG.info("testSignWithResponseFormatArmored");
+        LOG.info("testClearTextSignWithResponseFormatArmored");
         boolean detachedSignature = false;
         WorkerConfig config = new WorkerConfig();
         config.setProperty("TYPE", "PROCESSABLE");
@@ -383,7 +379,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testDetachedSign_RSA_default_SHA256() throws Exception {
-        LOG.info("testSign_RSA_default_SHA256");
+        LOG.info("testDetachedSign_RSA_default_SHA256");
         signWithAlgorithm(tokenRSA, null, PGPUtil.SHA256, true);
     }
     
@@ -393,7 +389,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testClearTextSign_RSA_default_SHA256() throws Exception {
-        LOG.info("testSign_RSA_default_SHA256");
+        LOG.info("testClearTextSign_RSA_default_SHA256");
         signWithAlgorithm(tokenRSA, null, PGPUtil.SHA256, false);
     }
     
@@ -403,7 +399,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testDetachedSign_RSA_SHA1() throws Exception {
-        LOG.info("testSign_RSA_SHA1");
+        LOG.info("testDetachedSign_RSA_SHA1");
         signWithAlgorithm(tokenRSA, "SHA1", PGPUtil.SHA1, true);
     }
     
@@ -413,7 +409,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testClearTextSign_RSA_SHA1() throws Exception {
-        LOG.info("testSign_RSA_SHA1");
+        LOG.info("testClearTextSign_RSA_SHA1");
         signWithAlgorithm(tokenRSA, "SHA1", PGPUtil.SHA1, false);
     }
     
@@ -424,7 +420,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testDetachedSign_RSA_SHA224() throws Exception {
-        LOG.info("testSign_RSA_SHA224");
+        LOG.info("testDetachedSign_RSA_SHA224");
         signWithAlgorithm(tokenRSA, "SHA-224", PGPUtil.SHA224, true);
     }    // Note: currently ArmoredOutputStream does not support SHA-224 signature algorithm    
     
@@ -435,7 +431,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testDetachedSign_RSA_SHA384() throws Exception {
-        LOG.info("testSign_RSA_SHA384");
+        LOG.info("testDetachedSign_RSA_SHA384");
         signWithAlgorithm(tokenRSA, "SHA-384", PGPUtil.SHA384, true);
     }
     
@@ -445,7 +441,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testClearTextSign_RSA_SHA384() throws Exception {
-        LOG.info("testSign_RSA_SHA384");
+        LOG.info("testClearTextSign_RSA_SHA384");
         signWithAlgorithm(tokenRSA, "SHA-384", PGPUtil.SHA384, false);
     }
     
@@ -455,7 +451,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testDetachedSign_RSA_SHA512() throws Exception {
-        LOG.info("testSign_RSA_SHA512");
+        LOG.info("testDetachedSign_RSA_SHA512");
         signWithAlgorithm(tokenRSA, "SHA-512", PGPUtil.SHA512, true);
     }
     
@@ -465,7 +461,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testClearTextSign_RSA_SHA512() throws Exception {
-        LOG.info("testSign_RSA_SHA512");
+        LOG.info("testClearTextSign_RSA_SHA512");
         signWithAlgorithm(tokenRSA, "SHA-512", PGPUtil.SHA512, false);
     }
     
@@ -475,7 +471,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testDetachedSign_RSA_SHA512_byNumber() throws Exception {
-        LOG.info("testSign_RSA_SHA512_byNumber");
+        LOG.info("testDetachedSign_RSA_SHA512_byNumber");
         signWithAlgorithm(tokenRSA, "10", PGPUtil.SHA512, true); // 10 = SHA-512
     }
     
@@ -485,7 +481,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testClearTextSign_RSA_SHA512_byNumber() throws Exception {
-        LOG.info("testSign_RSA_SHA512_byNumber");
+        LOG.info("testClearTextSign_RSA_SHA512_byNumber");
         signWithAlgorithm(tokenRSA, "10", PGPUtil.SHA512, false); // 10 = SHA-512
     }
     
@@ -495,7 +491,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testDetachedSign_DSA_default_SHA256() throws Exception {
-        LOG.info("testSign_DSA_default_SHA256");
+        LOG.info("testDetachedSign_DSA_default_SHA256");
         signWithAlgorithm(tokenDSA, null, PGPUtil.SHA256, true);
     }
     
@@ -505,7 +501,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testClearTextSign_DSA_default_SHA256() throws Exception {
-        LOG.info("testSign_DSA_default_SHA256");
+        LOG.info("testClearTextSign_DSA_default_SHA256");
         signWithAlgorithm(tokenDSA, null, PGPUtil.SHA256, false);
     }
     
@@ -515,7 +511,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testDetachedSign_DSA_SHA1() throws Exception {
-        LOG.info("testSign_DSA_SHA1");
+        LOG.info("testDetachedSign_DSA_SHA1");
         signWithAlgorithm(tokenDSA, "SHA1", PGPUtil.SHA1, true);
     }
     
@@ -525,7 +521,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testClearTextSign_DSA_SHA1() throws Exception {
-        LOG.info("testSign_DSA_SHA1");
+        LOG.info("testClearTextSign_DSA_SHA1");
         signWithAlgorithm(tokenDSA, "SHA1", PGPUtil.SHA1, false);
     }
     
@@ -535,7 +531,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testDetachedSign_DSA_SHA224() throws Exception {
-        LOG.info("testSign_DSA_SHA224");
+        LOG.info("testDetachedSign_DSA_SHA224");
         signWithAlgorithm(tokenDSA, "SHA-224", PGPUtil.SHA224, true);
     }
     
@@ -545,7 +541,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testDetachedSign_DSA_SHA384() throws Exception {
-        LOG.info("testSign_DSA_SHA384");
+        LOG.info("testDetachedSign_DSA_SHA384");
         signWithAlgorithm(tokenDSA, "SHA-384", PGPUtil.SHA384, true);
     }
     
@@ -555,7 +551,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testClearTextSign_DSA_SHA384() throws Exception {
-        LOG.info("testSign_DSA_SHA384");
+        LOG.info("testClearTextSign_DSA_SHA384");
         signWithAlgorithm(tokenDSA, "SHA-384", PGPUtil.SHA384, false);
     }
     
@@ -565,7 +561,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testDetachedSign_DSA_SHA512() throws Exception {
-        LOG.info("testSign_DSA_SHA512");
+        LOG.info("testDetachedSign_DSA_SHA512");
         signWithAlgorithm(tokenDSA, "SHA-512", PGPUtil.SHA512, true);
     }
     
@@ -575,7 +571,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testClearTextSign_DSA_SHA512() throws Exception {
-        LOG.info("testSign_DSA_SHA512");
+        LOG.info("testClearTextSign_DSA_SHA512");
         signWithAlgorithm(tokenDSA, "SHA-512", PGPUtil.SHA512, false);
     }
     
@@ -585,13 +581,13 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testDetachedSign_ECDSA_default_SHA256() throws Exception {
-        LOG.info("testSign_ECDSA_default_SHA256");
+        LOG.info("testDetachedSign_ECDSA_default_SHA256");
         signWithAlgorithm(tokenECDSA, null, PGPUtil.SHA256, true);
     }
     
     @Test
     public void testClearTextSign_ECDSA_default_SHA256() throws Exception {
-        LOG.info("testSign_ECDSA_default_SHA256");
+        LOG.info("testClearTextSign_ECDSA_default_SHA256");
         signWithAlgorithm(tokenECDSA, null, PGPUtil.SHA256, false);
     }
     
@@ -601,7 +597,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testDetachedSign_ECDSA_SHA1() throws Exception {
-        LOG.info("testSign_ECDSA_SHA1");
+        LOG.info("testDetachedSign_ECDSA_SHA1");
         signWithAlgorithm(tokenECDSA, "SHA1", PGPUtil.SHA1, true);
     }
     
@@ -611,7 +607,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testClearTextSign_ECDSA_SHA1() throws Exception {
-        LOG.info("testSign_ECDSA_SHA1");
+        LOG.info("testClearTextSign_ECDSA_SHA1");
         signWithAlgorithm(tokenECDSA, "SHA1", PGPUtil.SHA1, false);
     }
     
@@ -620,8 +616,8 @@ public class OpenPGPSignerUnitTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void testSign_ECDSA_SHA224() throws Exception {
-        LOG.info("testSign_ECDSA_SHA224");
+    public void testDetachedSign_ECDSA_SHA224() throws Exception {
+        LOG.info("testDetachedSign_ECDSA_SHA224");
         signWithAlgorithm(tokenECDSA, "SHA-224", PGPUtil.SHA224, true);
     }
     
@@ -631,7 +627,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testDetachedSign_ECDSA_SHA384() throws Exception {
-        LOG.info("testSign_ECDSA_SHA384");
+        LOG.info("testDetachedSign_ECDSA_SHA384");
         signWithAlgorithm(tokenECDSA, "SHA-384", PGPUtil.SHA384, true);
     }
     
@@ -641,7 +637,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testClearTextSign_ECDSA_SHA384() throws Exception {
-        LOG.info("testSign_ECDSA_SHA384");
+        LOG.info("testClearTextSign_ECDSA_SHA384");
         signWithAlgorithm(tokenECDSA, "SHA-384", PGPUtil.SHA384, false);
     }
     
@@ -651,7 +647,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testDetachedSign_ECDSA_SHA512() throws Exception {
-        LOG.info("testSign_ECDSA_SHA512");
+        LOG.info("testDetachedSign_ECDSA_SHA512");
         signWithAlgorithm(tokenECDSA, "SHA-512", PGPUtil.SHA512, true);
     }
     
@@ -661,7 +657,7 @@ public class OpenPGPSignerUnitTest {
      */
     @Test
     public void testClearTextSign_ECDSA_SHA512() throws Exception {
-        LOG.info("testSign_ECDSA_SHA512");
+        LOG.info("testClearTextSign_ECDSA_SHA512");
         signWithAlgorithm(tokenECDSA, "SHA-512", PGPUtil.SHA512, false);
     }
 

@@ -183,7 +183,7 @@ public class OpenPGPP11SignTest {
      */
     @Test
     public void testAddUserIdClearTextSignAndVerify() throws Exception {
-        LOG.info("testAddUserIdDetachedSignAndVerify");
+        LOG.info("testAddUserIdClearTextSignAndVerify");
         try {
             setupCryptoTokenProperties(CRYPTO_TOKEN, false);
             setOpenPGPSignerOnlyProperties(WORKER_OPENPGPSIGNER, "FALSE");

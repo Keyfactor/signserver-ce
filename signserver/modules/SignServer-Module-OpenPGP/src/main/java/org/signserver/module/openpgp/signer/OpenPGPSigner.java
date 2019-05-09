@@ -260,10 +260,15 @@ public class OpenPGPSigner extends BaseSigner {
                 final PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), digestAlgorithm).setProvider(cryptoInstance.getProvider()).setDigestProvider("BC"));
 
                 if (detachedSignature) {
-                    try (BCPGOutputStream bOut = createOutputStreamForDetachedSignature(responseData.getAsOutputStream(), responseFormat)) {
+                    try (final BCPGOutputStream bOut = createOutputStreamForDetachedSignature(responseData.getAsOutputStream(), responseFormat);
+                         final InputStream fIn = new BufferedInputStream(requestData.getAsInputStream())) {
                         generator.init(PGPSignature.BINARY_DOCUMENT, pgpPrivateKey);
 
-                        generator.update(requestData.getAsByteArray()); // TODO: getAsInputStream()
+                        final byte[] buffer = new byte[4096]; 
+                        int n = 0;
+                        while (-1 != (n = fIn.read(buffer))) {
+                            generator.update(buffer, 0, n);
+                        }
                         generator.generate().encode(bOut);
                     }
                 } else {

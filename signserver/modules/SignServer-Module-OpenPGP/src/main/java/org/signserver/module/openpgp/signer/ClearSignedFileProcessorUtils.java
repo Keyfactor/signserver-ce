@@ -1,15 +1,4 @@
-/** ***********************************************************************
- *                                                                       *
- *  SignServer: The OpenSource Automated Signing Server                  *
- *                                                                       *
- *  This software is free software; you can redistribute it and/or       *
- *  modify it under the terms of the GNU Lesser General Public           *
- *  License as published by the Free Software Foundation; either         *
- *  version 2.1 of the License, or any later version.                    *
- *                                                                       *
- *  See terms of license at gnu.org.                                     *
- *                                                                       *
- ************************************************************************ */
+/* From Bouncy Castle version 1.60 (MIT license). */
 package org.signserver.module.openpgp.signer;
 
 import java.io.ByteArrayOutputStream;
@@ -26,8 +15,7 @@ import org.bouncycastle.util.Strings;
  * A simple utility class containing helper methods to create clear text
  * signatures.
  *
- * @see org.bouncycastle.openpgp.examples.ClearSignedFileProcessor
- * @author Vinay Singh
+ * @see org.bouncycastle.openpgp.examples.ClearSignedFileProcessor * 
  * @version $Id$
  *
  */

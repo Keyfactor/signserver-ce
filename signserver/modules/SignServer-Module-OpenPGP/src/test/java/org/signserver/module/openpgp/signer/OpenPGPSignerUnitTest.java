@@ -705,20 +705,16 @@ public class OpenPGPSignerUnitTest {
     
     private SimplifiedResponse signAndVerify(final byte[] data, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached, boolean armored) throws Exception {
         if (detached) {
-            return signAndVerifyDetachedSignature(data, data, token, config, requestContext, detached, armored);
+            return signAndVerifyDetachedSignature(data, token, config, requestContext, armored);
         } else {
-            return signAndVerifyClearTextSignature(data, data, token, config, requestContext, false, true);
+            return signAndVerifyClearTextSignature(data, token, config, requestContext);
         }
     }
     
     /**
-     * Helper method signing the given data (either the actual data to be signed
-     * or if the signer or request implies client-side hashing, the pre-computed
-     * hash) and the original data. When detached mode is assumed, the originalData
-     * is used to verify the signature.
+     * Helper method signing the given data.
      * 
-     * @param data Data (data to be signed, or pre-computed hash)
-     * @param originalData Original data (either the actual data or the data that was pre-hashed)
+     * @param data Data (data to be signed)
      * @param token
      * @param config
      * @param requestContext
@@ -726,7 +722,7 @@ public class OpenPGPSignerUnitTest {
      * @return
      * @throws Exception 
      */
-    private SimplifiedResponse signAndVerifyDetachedSignature(final byte[] data, final byte[] originalData, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached, boolean armored) throws Exception {
+    private SimplifiedResponse signAndVerifyDetachedSignature(final byte[] data, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean armored) throws Exception {
         final OpenPGPSigner instance = createMockSigner(token);
         instance.init(1, config, new SignServerContext(), null);
         
@@ -764,7 +760,7 @@ public class OpenPGPSignerUnitTest {
             final PGPPublicKey pgpPublicKey = conv.getPGPPublicKey(getKeyAlg(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
 
             sig.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), pgpPublicKey);
-            sig.update(originalData);
+            sig.update(data);
             
             assertTrue("verified", sig.verify());
             
@@ -789,7 +785,7 @@ public class OpenPGPSignerUnitTest {
      * @return
      * @throws Exception
      */
-    private SimplifiedResponse signAndVerifyClearTextSignature(final byte[] data, final byte[] originalData, MockedCryptoToken token, WorkerConfig config, RequestContext requestContext, boolean detached, boolean armored) throws Exception {
+    private SimplifiedResponse signAndVerifyClearTextSignature(final byte[] data, final MockedCryptoToken token, final WorkerConfig config, RequestContext requestContext) throws Exception {
         final OpenPGPSigner instance = createMockSigner(token);
         instance.init(1, config, new SignServerContext(), null);
 

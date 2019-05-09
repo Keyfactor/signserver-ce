@@ -439,6 +439,20 @@ public class OpenPGPSignerGpgComplianceTest {
             
             // Verify the output for clear-text signatures
             if (clearTextFile != null) {
+                
+                // --output was not working together with --verify before GnuPG 2.1.16: https://dev.gnupg.org/T1814
+                // so we need to call output explicitly in that case
+                if (!clearTextFile.exists()) {
+                    LOG.info("File " + clearTextFile.getAbsolutePath() + " did not exist so assuming gpg < 2.1.16");
+                    
+                    res = ComplianceTestUtils.executeWriting(FileUtils.readFileToByteArray(outFile), "gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
+                            "--command-fd", "0", "--no-tty",
+                            "--verbose", "--output", clearTextFile.getAbsolutePath());
+                    LOG.info("Output output: " + res.getErrorMessage());
+                    assertEquals("return code", 0, res.getExitValue());
+                }
+
+                // Now read the output
                 List<String> expectedLines = FileUtils.readLines(inFile, StandardCharsets.UTF_8);
                 List<String> actualLines = FileUtils.readLines(clearTextFile, StandardCharsets.UTF_8);
                 assertEquals(expectedLines, actualLines);

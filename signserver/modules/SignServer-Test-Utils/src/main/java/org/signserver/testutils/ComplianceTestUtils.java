@@ -77,7 +77,7 @@ public class ComplianceTestUtils {
             
             if (write != null) {
                 stdOut.write(write);
-                stdOut.flush();
+                stdOut.close();
             }
 
             List<String> lines = new LinkedList<>();

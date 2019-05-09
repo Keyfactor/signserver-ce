@@ -344,7 +344,7 @@ public class OpenPGPSignerGpgComplianceTest {
             boolean detachedSignature) throws Exception {
         final int workerId = 42;
         final String workerName = "OpenPGPSigner-" + expectedKeyAlgorithm + "-" + digestAlgorithm ;
-        final File inFile = new File(helper.getSignServerHome(), detachedSignature ? "res/test/HelloJar.jar" : "res/test/stub.c");
+        final File inFile = new File(helper.getSignServerHome(), detachedSignature ? "res/test/HelloJar.jar" : "res/test/stub.c");  // Let's use any binary file as input for detached and any text file for clear-text
         final File outFile = File.createTempFile("HelloJar.jar", ".asc");
         final File ringFile = File.createTempFile("pubring", ".gpg");
         final File trustFile = File.createTempFile("trustdb", ".gpg");

@@ -73,14 +73,14 @@ public class OpenPGPP11SignTest {
     private final String pin;
     private final String existingKey1;
 
-    private final File pdfSampleFile;
+    private final File sampleBinaryFile;
 
     private final ModulesTestCase testCase = new ModulesTestCase();
     private final WorkerSession workerSession = testCase.getWorkerSession();
 
     public OpenPGPP11SignTest() throws FileNotFoundException {
         final File home = PathUtil.getAppHome();
-        pdfSampleFile = new File(home, "res/test/pdf/sample.pdf");
+        sampleBinaryFile = new File(home, "res/test/pdf/sample.pdf"); // Let's use any binary file as input
         sharedLibraryName = testCase.getConfig().getProperty("test.p11.sharedLibraryName");
         slot = testCase.getConfig().getProperty("test.p11.slot");
         pin = testCase.getConfig().getProperty("test.p11.pin");
@@ -153,7 +153,7 @@ public class OpenPGPP11SignTest {
             assertTrue("key contains user id: " + statusOutput, statusOutput.contains(userId));
 
             // Test signing
-            final byte[] originalData = FileUtils.readFileToByteArray(pdfSampleFile);
+            final byte[] originalData = FileUtils.readFileToByteArray(sampleBinaryFile);
             GenericSignResponse response = testCase.signGenericDocument(WORKER_OPENPGPSIGNER, originalData);
             final byte[] signedBytes = response.getProcessedData();
 
@@ -211,7 +211,7 @@ public class OpenPGPP11SignTest {
             assertTrue("key contains user id: " + statusOutput, statusOutput.contains(userId));
 
             // Test signing
-            final byte[] originalData = FileUtils.readFileToByteArray(pdfSampleFile);
+            final byte[] originalData = FileUtils.readFileToByteArray(sampleBinaryFile);
             GenericSignResponse response = testCase.signGenericDocument(WORKER_OPENPGPSIGNER, originalData);
             final byte[] signedBytes = response.getProcessedData();
 

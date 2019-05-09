@@ -422,8 +422,8 @@ public class OpenPGPSignerUnitTest {
     public void testDetachedSign_RSA_SHA224() throws Exception {
         LOG.info("testDetachedSign_RSA_SHA224");
         signWithAlgorithm(tokenRSA, "SHA-224", PGPUtil.SHA224, true);
-    }    // Note: currently ArmoredOutputStream does not support SHA-224 signature algorithm    
-    
+    }    // Note: currently ArmoredOutputStream does not support SHA-224 signature algorithm in scenario of producing clear text signature but this test produces detached signature
+
     
     /**
      * Test signing with SHA-384 and RSA.

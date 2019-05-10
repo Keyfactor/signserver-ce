@@ -99,7 +99,7 @@ public class OpenPGPSigner extends BaseSigner {
     // Default values
     private static final ResponseFormat DEFAULT_RESPONSE_FORMAT = ResponseFormat.ARMORED;
     private static final int DEFAULT_DIGEST_ALGORITHM = PGPUtil.SHA256;
-    private static boolean DEFAULT_GENERATE_REVOCATION_CERTIFICATE = false;
+    private static final boolean DEFAULT_GENERATE_REVOCATION_CERTIFICATE = false;
 
     // Content types
     private static final String REQUEST_CONTENT_TYPE = "application/octet-stream";
@@ -125,7 +125,7 @@ public class OpenPGPSigner extends BaseSigner {
 
         // Optional property DIGEST_ALGORITHM
         final String digestAlgorithmValue = config.getProperty(PROPERTY_DIGEST_ALGORITHM);
-        if (!StringUtils.isBlank(digestAlgorithmValue)) {
+        if (digestAlgorithmValue != null) {
             try {
                 if (StringUtils.isNumeric(digestAlgorithmValue.trim())) {
                     digestAlgorithm = Integer.parseInt(digestAlgorithmValue.trim());
@@ -173,7 +173,7 @@ public class OpenPGPSigner extends BaseSigner {
         
         // Optional property RESPONSE_FORMAT
         final String responseFormatValue = config.getProperty(PROPERTY_RESPONSE_FORMAT);
-        if (!StringUtils.isBlank(responseFormatValue)) {
+        if (responseFormatValue != null) {
             try {
                 responseFormat = ResponseFormat.valueOf(responseFormatValue.trim());
             } catch (IllegalArgumentException ex) {

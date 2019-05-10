@@ -160,7 +160,7 @@ public class OpenPGPSigner extends BaseSigner {
 
         // Optional property SELFSIGNED_VALIDITY
         final String validityValue = config.getProperty(PROPERTY_SELFSIGNED_VALIDITY);
-        if (validityValue != null && !validityValue.trim().isEmpty()) {
+        if (validityValue != null) {
             try {
                 selfsignedValidity = Long.parseLong(validityValue);
             } catch (NumberFormatException ex) {

@@ -49,7 +49,6 @@ import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.cryptotokens.ICryptoInstance;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
-import org.signserver.server.signers.BaseSigner;
 import org.bouncycastle.openpgp.*;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyConverter;
@@ -81,7 +80,7 @@ import static org.signserver.server.cryptotokens.ICryptoTokenV4.PARAM_INCLUDE_DU
  * @author Markus Kilås
  * @version $Id: SkeletonSigner.java 7050 2016-02-17 14:49:30Z netmackan $
  */
-public class OpenPGPSigner extends BaseSigner {
+public class OpenPGPSigner extends BaseOpenPGPSigner {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(OpenPGPSigner.class);

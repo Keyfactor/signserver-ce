@@ -99,6 +99,7 @@ public class OpenPGPSigner extends BaseSigner {
     // Default values
     private static final ResponseFormat DEFAULT_RESPONSE_FORMAT = ResponseFormat.ARMORED;
     private static final int DEFAULT_DIGEST_ALGORITHM = PGPUtil.SHA256;
+    private static boolean DEFAULT_GENERATE_REVOCATION_CERTIFICATE = false;
 
     // Content types
     private static final String REQUEST_CONTENT_TYPE = "application/octet-stream";
@@ -185,24 +186,24 @@ public class OpenPGPSigner extends BaseSigner {
 
         // Optional property GENERATE_REVOCATION_CERTIFICATE
         final String generateRevocationCertificateValue =
-                config.getProperty(PROPERTY_GENERATE_REVOCATION_CERTIFICATE);
-        if (!StringUtils.isBlank(generateRevocationCertificateValue)) {
-            if (Boolean.TRUE.toString().equalsIgnoreCase(generateRevocationCertificateValue)) {
-                generateRevocationCertificate = true;
-            } else if (Boolean.FALSE.toString().equalsIgnoreCase(generateRevocationCertificateValue)) {
-                generateRevocationCertificate = false;
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Illegal value for " +
-                              PROPERTY_GENERATE_REVOCATION_CERTIFICATE + ": " +
-                              generateRevocationCertificateValue);
-                }
-                configErrors.add("Illegal value for " +
-                                 PROPERTY_GENERATE_REVOCATION_CERTIFICATE +
-                                 ". Specify boolean (true or false)");
+                config.getProperty(PROPERTY_GENERATE_REVOCATION_CERTIFICATE,
+                                   Boolean.toString(DEFAULT_GENERATE_REVOCATION_CERTIFICATE));
+
+        if (Boolean.TRUE.toString().equalsIgnoreCase(generateRevocationCertificateValue)) {
+            generateRevocationCertificate = true;
+        } else if (Boolean.FALSE.toString().equalsIgnoreCase(generateRevocationCertificateValue)) {
+            generateRevocationCertificate = false;
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Illegal value for " +
+                          PROPERTY_GENERATE_REVOCATION_CERTIFICATE + ": " +
+                          generateRevocationCertificateValue);
             }
+            configErrors.add("Illegal value for " +
+                             PROPERTY_GENERATE_REVOCATION_CERTIFICATE +
+                             ". Specify boolean (true or false)");
         }
-        
+
         // Detached signature
         final String detachedSignatureValue = config.getProperty(DETACHEDSIGNATURE_PROPERTY);
         if (detachedSignatureValue == null) {

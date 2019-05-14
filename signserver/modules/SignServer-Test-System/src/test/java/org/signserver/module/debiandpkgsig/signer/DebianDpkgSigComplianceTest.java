@@ -46,9 +46,9 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Marcus Lundblad
  * @version $Id: TimeStampSignerOpenSslComplianceTest.java 9042 2018-01-18 10:16:57Z malu9369 $
  */
-public class DebianDpkgSigSignerGpgComplianceTest {
+public class DebianDpkgSigComplianceTest {
     /** Logger for this class */
-    private static final Logger LOG = Logger.getLogger(DebianDpkgSigSignerGpgComplianceTest.class);
+    private static final Logger LOG = Logger.getLogger(DebianDpkgSigComplianceTest.class);
     private static final String DPKGSIG_ENABLED = "test.dpkgsig.enabled";
     private static final String HELLO_DEB = "res/test/HelloDeb.deb";
 

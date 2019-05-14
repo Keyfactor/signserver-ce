@@ -15,6 +15,7 @@ package org.signserver.module.debiandpkgsig.signer;
 import org.signserver.module.openpgp.signer.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import static junit.framework.TestCase.assertTrue;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -305,8 +306,8 @@ public class DebianDpkgSigSignerGpgComplianceTest {
         final String workerName = "OpenPGPSigner-" + expectedKeyAlgorithm + "-" + digestAlgorithm ;
         final File inFile = new File(helper.getSignServerHome(), inputFile);
         final File outFile = File.createTempFile("HelloDeb", "-signed.deb");
-        final File ringFile = File.createTempFile("pubring", ".gpg");
-        final File trustFile = File.createTempFile("trustdb", ".gpg");
+        final File gpgHome = Files.createTempDirectory("debiandpkgsigsigner-gnupghome").toFile();
+        final String[] envp = new String[] { "GNUPGHOME=" + gpgHome.getAbsolutePath() };
         final File publicKeyFile = File.createTempFile("pubkey", ".gpg");
         final String userId = "User 1 (Code Signing) <user1@example.com>";
 
@@ -348,14 +349,13 @@ public class DebianDpkgSigSignerGpgComplianceTest {
             final PGPPublicKey pgpPublicKey = OpenPGPUtils.parsePublicKeys(requestData.toArmoredForm()).get(0);
 
             // Import public key
-            trustFile.delete(); // Seems to be a bug in older versions of gpg not liking that the file is empty but non-existing is fine: https://dev.gnupg.org/T2417
-            ComplianceTestUtils.ProcResult res = ComplianceTestUtils.execute("gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
+            ComplianceTestUtils.ProcResult res = ComplianceTestUtils.executeWithEnv(envp,
                     "--import", publicKeyFile.getAbsolutePath());
             assertEquals("gpg2 --import: " + res.getErrorMessage(), 0, res.getExitValue());
 
             // Trust public key
             // Equaivalent of Bash: echo -e "trust\n5\ny\nsave\n" | gpg --command-fd 0 --edit-key F7B50A4D55F6E703
-            res = ComplianceTestUtils.executeWriting("trust\n5\ny\nsave\n".getBytes(), "gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
+            res = ComplianceTestUtils.executeWritingWithEnv("trust\n5\ny\nsave\n".getBytes(), envp, "gpg2",
                     "--command-fd", "0", "--no-tty", "--edit-key", OpenPGPUtils.formatKeyID(pgpPublicKey.getKeyID()));
             assertEquals("gpg2 --edit-key: " + res.getErrorMessage(), 0, res.getExitValue());
 
@@ -367,7 +367,7 @@ public class DebianDpkgSigSignerGpgComplianceTest {
                                      "-outfile", outFile.getAbsolutePath()));
 
             // Verify
-            res = ComplianceTestUtils.execute("dpkg-sig", "--gpgoptions", "--trustdb-name " + trustFile.getAbsolutePath() + " --no-default-keyring --keyring " + ringFile.getAbsolutePath(),
+            res = ComplianceTestUtils.executeWithEnv(envp, "dpkg-sig",
                         "--verify", outFile.getAbsolutePath());
 
             final String output = res.getErrorMessage();
@@ -378,8 +378,7 @@ public class DebianDpkgSigSignerGpgComplianceTest {
         } finally {
             helper.removeWorker(workerId);
             FileUtils.deleteQuietly(outFile);
-            FileUtils.deleteQuietly(ringFile);
-            FileUtils.deleteQuietly(trustFile);
+            FileUtils.deleteQuietly(gpgHome);
             FileUtils.deleteQuietly(publicKeyFile);
         }
     }

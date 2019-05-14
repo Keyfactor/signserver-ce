@@ -55,11 +55,19 @@ public class ComplianceTestUtils {
         }
     }
     
-    public static ProcResult execute(String... arguments) throws IOException {
-        return executeWriting(null, arguments);
+    public static ProcResult executeWithEnv(String[] envp, String... arguments) throws IOException {
+        return executeWritingWithEnv(null, envp, arguments);
     }
-        
+
+    public static ProcResult execute(String... arguments) throws IOException {
+        return executeWritingWithEnv(null, arguments);
+    }
+
     public static ProcResult executeWriting(byte[] write, String... arguments) throws IOException {
+        return executeWritingWithEnv(write, null, arguments);
+    }
+    
+    public static ProcResult executeWritingWithEnv(byte[] write, String[] envp, String... arguments) throws IOException {
         Process proc;
         BufferedReader stdIn = null;
         BufferedReader errIn = null;
@@ -70,7 +78,7 @@ public class ComplianceTestUtils {
             
             LOG.info(Arrays.toString(arguments));
 
-            proc = runtime.exec(arguments);
+            proc = runtime.exec(arguments, envp);
             stdIn = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             errIn = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
             stdOut = proc.getOutputStream();

@@ -15,6 +15,7 @@ package org.signserver.module.openpgp.signer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import static junit.framework.TestCase.assertTrue;
 import org.apache.commons.io.FileUtils;
@@ -346,6 +347,8 @@ public class OpenPGPSignerGpgComplianceTest {
         final String workerName = "OpenPGPSigner-" + expectedKeyAlgorithm + "-" + digestAlgorithm ;
         final File inFile = new File(helper.getSignServerHome(), detachedSignature ? "res/test/HelloJar.jar" : "res/test/stub.c");  // Let's use any binary file as input for detached and any text file for clear-text
         final File outFile = File.createTempFile("HelloJar.jar", ".asc");
+        final File gpgHome = Files.createTempDirectory("debiandpkgsigsigner-gnupghome").toFile();
+        final String[] envp = new String[] { "GNUPGHOME=" + gpgHome.getAbsolutePath() };
         final File ringFile = File.createTempFile("pubring", ".gpg");
         final File trustFile = File.createTempFile("trustdb", ".gpg");
         final File publicKeyFile = File.createTempFile("pubkey", ".gpg");
@@ -395,13 +398,13 @@ public class OpenPGPSignerGpgComplianceTest {
 
             // Import public key
             trustFile.delete(); // Seems to be a bug in older versions of gpg not liking that the file is empty but non-existing is fine: https://dev.gnupg.org/T2417
-            ComplianceTestUtils.ProcResult res = ComplianceTestUtils.execute("gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
+            ComplianceTestUtils.ProcResult res = ComplianceTestUtils.executeWithEnv(envp, "gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
                     "--import", publicKeyFile.getAbsolutePath());
             assertEquals("gpg2 --import: " + res.getErrorMessage(), 0, res.getExitValue());
 
             // Trust public key
             // Equaivalent of Bash: echo -e "trust\n5\ny\nsave\n" | gpg --command-fd 0 --edit-key F7B50A4D55F6E703
-            res = ComplianceTestUtils.executeWriting("trust\n5\ny\nsave\n".getBytes(), "gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
+            res = ComplianceTestUtils.executeWritingWithEnv("trust\n5\ny\nsave\n".getBytes(), envp, "gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
                     "--command-fd", "0", "--no-tty", "--edit-key", OpenPGPUtils.formatKeyID(pgpPublicKey.getKeyID()));
             assertEquals("gpg2 --edit-key: " + res.getErrorMessage(), 0, res.getExitValue());
 
@@ -415,13 +418,13 @@ public class OpenPGPSignerGpgComplianceTest {
             // Verify
             if (detachedSignature) {
                 // Verify detached signature + input file
-                res = ComplianceTestUtils.execute("gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
+                res = ComplianceTestUtils.executeWithEnv(envp, "gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
                         "--verbose", "--verify", outFile.getAbsolutePath(), inFile.getAbsolutePath());
             } else {
                 // Verify clear-text signature
                 clearTextFile = File.createTempFile("cleartext", ".txt");
                 clearTextFile.delete();
-                res = ComplianceTestUtils.execute("gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
+                res = ComplianceTestUtils.executeWithEnv(envp, "gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
                         "--verbose", "--output", clearTextFile.getAbsolutePath(), "--verify", outFile.getAbsolutePath());
             }
 
@@ -445,7 +448,7 @@ public class OpenPGPSignerGpgComplianceTest {
                 if (!clearTextFile.exists()) {
                     LOG.info("File " + clearTextFile.getAbsolutePath() + " did not exist so assuming gpg < 2.1.16");
                     
-                    res = ComplianceTestUtils.executeWriting(FileUtils.readFileToByteArray(outFile), "gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
+                    res = ComplianceTestUtils.executeWritingWithEnv(FileUtils.readFileToByteArray(outFile), envp, "gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
                             "--command-fd", "0", "--no-tty",
                             "--verbose", "--output", clearTextFile.getAbsolutePath());
                     LOG.info("Output output: " + res.getErrorMessage());
@@ -488,7 +491,7 @@ public class OpenPGPSignerGpgComplianceTest {
                                             StandardCharsets.UTF_8);
                 
                 // import revocation certificate
-                res = ComplianceTestUtils.execute("gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
+                res = ComplianceTestUtils.executeWithEnv(envp, "gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
                     "--import", revocationFile.getAbsolutePath());
                 assertEquals("gpg2 --import: " + res.getErrorMessage(), 0, res.getExitValue());
 
@@ -497,7 +500,7 @@ public class OpenPGPSignerGpgComplianceTest {
                            importRevocationOutput.contains("revocation certificate imported"));
                 
                 // Verify
-                res = ComplianceTestUtils.execute("gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
+                res = ComplianceTestUtils.executeWithEnv(envp, "gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
                         "--verbose", "--verify", outFile.getAbsolutePath(), inFile.getAbsolutePath());
 
                 final String verifyAfterRevokeOutput = res.getErrorMessage();
@@ -510,6 +513,7 @@ public class OpenPGPSignerGpgComplianceTest {
         } finally {
             helper.removeWorker(workerId);
             FileUtils.deleteQuietly(outFile);
+            FileUtils.deleteQuietly(gpgHome);
             FileUtils.deleteQuietly(ringFile);
             FileUtils.deleteQuietly(trustFile);
             FileUtils.deleteQuietly(publicKeyFile);

@@ -52,8 +52,6 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatusInfo;
-import org.signserver.common.data.Request;
-import org.signserver.common.data.Response;
 import org.signserver.server.IServices;
 import org.signserver.server.ServicesImpl;
 import org.signserver.server.WorkerContext;
@@ -69,7 +67,7 @@ import org.signserver.server.signers.BaseSigner;
  * @author Vinay Singh
  * @Version $Id$
  */
-public class BaseOpenPGPSigner extends BaseSigner {
+public abstract class BaseOpenPGPSigner extends BaseSigner {
     
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(BaseOpenPGPSigner.class);
@@ -426,11 +424,6 @@ public class BaseOpenPGPSigner extends BaseSigner {
         }
 
         return status;
-    }
-
-    @Override
-    public Response processData(Request signRequest, RequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

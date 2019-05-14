@@ -60,7 +60,7 @@ public class ComplianceTestUtils {
     }
 
     public static ProcResult execute(String... arguments) throws IOException {
-        return executeWritingWithEnv(null, arguments);
+        return executeWritingWithEnv(null, null, arguments);
     }
 
     public static ProcResult executeWriting(byte[] write, String... arguments) throws IOException {

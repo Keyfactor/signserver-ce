@@ -349,7 +349,7 @@ public class DebianDpkgSigComplianceTest {
             final PGPPublicKey pgpPublicKey = OpenPGPUtils.parsePublicKeys(requestData.toArmoredForm()).get(0);
 
             // Import public key
-            ComplianceTestUtils.ProcResult res = ComplianceTestUtils.executeWithEnv(envp,
+            ComplianceTestUtils.ProcResult res = ComplianceTestUtils.executeWithEnv(envp, "gpg2",
                     "--import", publicKeyFile.getAbsolutePath());
             assertEquals("gpg2 --import: " + res.getErrorMessage(), 0, res.getExitValue());
 

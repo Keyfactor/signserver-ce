@@ -242,15 +242,8 @@ public class OpenPGPSigner extends BaseOpenPGPSigner {
         } catch (IOException ex) {
             throw new SignServerException("Encoding error", ex);
         }
-    }    
-                
-    @Override
-    protected ICryptoInstance acquireDefaultCryptoInstance(Map<String, Object> params, String alias, RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {
-        final Map<String, Object> newParams = new HashMap<>(params);
-        newParams.put(PARAM_INCLUDE_DUMMYCERTIFICATE, true);
-        return super.acquireDefaultCryptoInstance(newParams, alias, context);
-    }       
-
+    } 
+                  
     private BCPGOutputStream createOutputStreamForDetachedSignature(OutputStream out, ResponseFormat responseFormat) {
         switch (responseFormat) {
             case ARMORED:

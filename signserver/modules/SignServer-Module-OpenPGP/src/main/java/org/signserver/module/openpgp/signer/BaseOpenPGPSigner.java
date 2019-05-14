@@ -425,5 +425,12 @@ public abstract class BaseOpenPGPSigner extends BaseSigner {
 
         return status;
     }
+    
+    @Override
+    protected ICryptoInstance acquireDefaultCryptoInstance(Map<String, Object> params, String alias, RequestContext context) throws CryptoTokenOfflineException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException, SignServerException {
+        final Map<String, Object> newParams = new HashMap<>(params);
+        newParams.put(PARAM_INCLUDE_DUMMYCERTIFICATE, true);
+        return super.acquireDefaultCryptoInstance(newParams, alias, context);
+    }
 
 }

@@ -372,7 +372,7 @@ public class DebianDpkgSigComplianceTest {
 
             final String output = res.getErrorMessage();
 
-            assertTrue("Expecting Good signature: " + output, output.contains("gpg: Good signature from \"User 1 (Code Signing) <user1@example.com>\""));
+            assertTrue("Expecting Good signature: " + res.getOutput().toString(), res.getOutput().get(1).contains("GOODSIG"));
             assertEquals("return code", 0, res.getExitValue());
 
         } finally {

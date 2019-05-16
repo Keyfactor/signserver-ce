@@ -97,7 +97,7 @@ public class DebianDpkgSigComplianceTest {
         signAndVerify("rsa2048", "SHA-256", HELLO_DEB);
     }
 
-    /*@Test
+    @Test
     public void testSigning_RSA_SHA1() throws Exception {
         signAndVerify("rsa2048", "SHA-1", HELLO_DEB);
     }
@@ -286,7 +286,6 @@ public class DebianDpkgSigComplianceTest {
     //public void testSigning_DSA1024_SHA224_clearText() throws Exception {
     //    signAndVerify("dsa1024", "SHA-224", false, false);
     //}
-*/
 
     /**
      * Sets up a signer using a key with the chosen algorithm,

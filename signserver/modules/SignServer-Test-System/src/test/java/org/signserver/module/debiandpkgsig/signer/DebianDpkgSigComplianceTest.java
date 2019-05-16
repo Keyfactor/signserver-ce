@@ -102,10 +102,11 @@ public class DebianDpkgSigComplianceTest {
         signAndVerify("rsa2048", "SHA-1", HELLO_DEB);
     }
 
-    @Test
-    public void testSigning_RSA_SHA224() throws Exception {
-        signAndVerify("rsa2048", "SHA-224", HELLO_DEB);
-    }
+    // Not supported by BC/ArmoredOutputStream
+    //@Test
+    //public void testSigning_RSA_SHA224() throws Exception {
+    //    signAndVerify("rsa2048", "SHA-224", HELLO_DEB);
+    //}
 
     @Test
     public void testSigning_RSA_SHA384() throws Exception {
@@ -159,10 +160,11 @@ public class DebianDpkgSigComplianceTest {
         signAndVerify("rsa4096", "SHA-1", HELLO_DEB);
     }
 
-    @Test
-    public void testSigning_RSA4096_SHA224() throws Exception {
-        signAndVerify("rsa4096", "SHA-224", HELLO_DEB);
-    }
+    // Not supported by BC/ArmoredOutputStream
+    //@Test
+    //public void testSigning_RSA4096_SHA224() throws Exception {
+    //    signAndVerify("rsa4096", "SHA-224", HELLO_DEB);
+    //}
 
     @Test
     public void testSigning_RSA4096_SHA384() throws Exception {
@@ -184,10 +186,11 @@ public class DebianDpkgSigComplianceTest {
         signAndVerify("dsa1024", "SHA-1", HELLO_DEB);
     }
 
-    @Test
-    public void testSigning_DSA1024_SHA224() throws Exception {
-        signAndVerify("dsa1024", "SHA-224", HELLO_DEB);
-    }
+    // Not supported by BC/ArmoredOutputStream
+    //@Test
+    //public void testSigning_DSA1024_SHA224() throws Exception {
+    //    signAndVerify("dsa1024", "SHA-224", HELLO_DEB);
+    //}
 
     // Note: Not supported with SUN/JKS:
     //@Test

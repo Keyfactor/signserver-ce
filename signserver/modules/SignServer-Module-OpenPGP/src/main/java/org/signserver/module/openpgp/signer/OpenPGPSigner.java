@@ -13,19 +13,15 @@
 package org.signserver.module.openpgp.signer;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.SignatureException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
@@ -44,7 +40,6 @@ import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.bouncycastle.openpgp.*;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyConverter;
-import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.data.ReadableData;
 import org.signserver.common.data.Request;
@@ -163,10 +158,10 @@ public class OpenPGPSigner extends BaseOpenPGPSigner {
 
                 if (detachedSignature) {
                     try (final BCPGOutputStream bOut = createOutputStreamForDetachedSignature(responseData.getAsOutputStream(), responseFormat);
-                         final InputStream fIn = new BufferedInputStream(requestData.getAsInputStream())) {
+                            final InputStream fIn = new BufferedInputStream(requestData.getAsInputStream())) {
                         generator.init(PGPSignature.BINARY_DOCUMENT, pgpPrivateKey);
 
-                        final byte[] buffer = new byte[4096]; 
+                        final byte[] buffer = new byte[4096];
                         int n = 0;
                         while (-1 != (n = fIn.read(buffer))) {
                             generator.update(buffer, 0, n);
@@ -174,46 +169,10 @@ public class OpenPGPSigner extends BaseOpenPGPSigner {
                         generator.generate().encode(bOut);
                     }
                 } else {
-                    PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
-                    generator.init(PGPSignature.CANONICAL_TEXT_DOCUMENT, pgpPrivateKey);
-
-                    Iterator it = pgpPublicKey.getUserIDs();
-                    if (it.hasNext()) {
-                        spGen.setSignerUserID(false, (String) it.next());
-                        generator.setHashedSubpackets(spGen.generate());
-                    }
-
-                    try (InputStream fIn = new BufferedInputStream(requestData.getAsInputStream());
-                            ArmoredOutputStream aOut = new ArmoredOutputStream(responseData.getAsOutputStream())) {
-                        aOut.setHeader(ArmoredOutputStream.VERSION_HDR, CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION));
-                        aOut.beginClearText(digestAlgorithm);
-                        ByteArrayOutputStream lineOut = new ByteArrayOutputStream();
-                        int lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, fIn);
-                        ClearSignedFileProcessorUtils.processLine(aOut, generator, lineOut.toByteArray());
-                        if (lookAhead != -1) {
-                            do {
-                                lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, lookAhead, fIn);
-
-                                generator.update((byte) '\r');
-                                generator.update((byte) '\n');
-
-                                ClearSignedFileProcessorUtils.processLine(aOut, generator, lineOut.toByteArray());
-                            } while (lookAhead != -1);
-                        }
-
-                        // Add new line before signature if needed
-                        byte[] lastBytes = lineOut.toByteArray();
-                        if (lastBytes.length > 0 && (lastBytes[lastBytes.length - 1] != '\r' && lastBytes[lastBytes.length - 1] != '\n')) {
-                            aOut.write("\r\n".getBytes(StandardCharsets.US_ASCII));
-                        }
-
-                        aOut.endClearText();
-                        BCPGOutputStream bOut = new BCPGOutputStream(aOut);
-                        generator.generate().encode(bOut);
-                    }
+                    signClearText(pgpPrivateKey, pgpPublicKey, generator, requestData.getAsInputStream(), responseData.getAsOutputStream(), digestAlgorithm);
                 }
-               
-            } catch (PGPException | SignatureException ex) {
+
+            } catch (PGPException ex) {
                 throw new SignServerException("PGP exception", ex);
             } catch (InvalidAlgorithmParameterException | UnsupportedCryptoTokenParameter ex) {
                 throw new SignServerException("Error initializing signer", ex);

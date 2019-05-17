@@ -12,10 +12,14 @@
  ************************************************************************ */
 package org.signserver.module.openpgp.signer;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.SignatureException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Date;
@@ -29,8 +33,10 @@ import javax.persistence.EntityManager;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
+import org.bouncycastle.bcpg.BCPGOutputStream;
 import org.bouncycastle.bcpg.sig.RevocationReasonTags;
 import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureGenerator;
@@ -40,6 +46,7 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyConverter;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPPrivateKey;
 import org.bouncycastle.util.encoders.Hex;
+import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
@@ -431,6 +438,55 @@ public abstract class BaseOpenPGPSigner extends BaseSigner {
         final Map<String, Object> newParams = new HashMap<>(params);
         newParams.put(PARAM_INCLUDE_DUMMYCERTIFICATE, true);
         return super.acquireDefaultCryptoInstance(newParams, alias, context);
+    }
+    
+    protected void signClearText(final PGPPrivateKey pgpPrivateKey, final PGPPublicKey pgpPublicKey, final PGPSignatureGenerator generator, final InputStream in, final OutputStream out, int digestAlgorithm) throws SignServerException {
+        try {
+            generator.init(PGPSignature.CANONICAL_TEXT_DOCUMENT, pgpPrivateKey);
+
+            PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
+
+            Iterator it = pgpPublicKey.getUserIDs();
+            if (it.hasNext()) {
+                spGen.setSignerUserID(false, (String) it.next());
+                generator.setHashedSubpackets(spGen.generate());
+            }
+
+            try (InputStream fIn = new BufferedInputStream(in);
+                    ArmoredOutputStream aOut = new ArmoredOutputStream(out)) {
+                aOut.setHeader(ArmoredOutputStream.VERSION_HDR, CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION));
+                aOut.beginClearText(digestAlgorithm);
+                ByteArrayOutputStream lineOut = new ByteArrayOutputStream();
+                int lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, fIn);
+                ClearSignedFileProcessorUtils.processLine(aOut, generator, lineOut.toByteArray());
+                if (lookAhead != -1) {
+                    do {
+                        lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, lookAhead, fIn);
+
+                        generator.update((byte) '\r');
+                        generator.update((byte) '\n');
+
+                        ClearSignedFileProcessorUtils.processLine(aOut, generator, lineOut.toByteArray());
+                    } while (lookAhead != -1);
+                }
+
+                // Add new line before signature if needed
+                byte[] lastBytes = lineOut.toByteArray();
+                if (lastBytes.length > 0 && (lastBytes[lastBytes.length - 1] != '\r' && lastBytes[lastBytes.length - 1] != '\n')) {
+                    aOut.write("\r\n".getBytes(StandardCharsets.US_ASCII));
+                }
+
+                aOut.endClearText();
+                BCPGOutputStream bOut = new BCPGOutputStream(aOut);
+                generator.generate().encode(bOut);
+            } catch (IOException ex) {
+                throw new SignServerException("Encoding error", ex);
+            } catch (SignatureException ex) {
+                throw new SignServerException("SignatureException", ex);
+            }
+        } catch (PGPException ex) {
+            throw new SignServerException("PGP exception", ex);
+        }
     }
 
 }

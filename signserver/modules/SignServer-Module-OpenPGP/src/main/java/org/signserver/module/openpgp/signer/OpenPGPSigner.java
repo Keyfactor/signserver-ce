@@ -169,7 +169,10 @@ public class OpenPGPSigner extends BaseOpenPGPSigner {
                         generator.generate().encode(bOut);
                     }
                 } else {
-                    signClearText(pgpPrivateKey, pgpPublicKey, generator, requestData.getAsInputStream(), responseData.getAsOutputStream(), digestAlgorithm);
+                    try (InputStream in = requestData.getAsInputStream();
+                            OutputStream out = responseData.getAsOutputStream()) {
+                        signClearText(pgpPrivateKey, pgpPublicKey, generator, in, out, digestAlgorithm);
+                    }
                 }
 
             } catch (PGPException ex) {

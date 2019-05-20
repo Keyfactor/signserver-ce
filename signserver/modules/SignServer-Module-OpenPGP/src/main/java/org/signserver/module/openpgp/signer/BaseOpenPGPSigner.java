@@ -440,6 +440,18 @@ public abstract class BaseOpenPGPSigner extends BaseSigner {
         return super.acquireDefaultCryptoInstance(newParams, alias, context);
     }
     
+    /**
+     * Sign the given data and produce output in clear text format.
+     *
+     * @param pgpPrivateKey PGP  private key
+     * @param pgpPublicKey PGP public key
+     * @param generator signature generator
+     * @param in InputStream containing data to be signed
+     * @param out OutputStream holder for signature output 
+     * @param digestAlgorithm used to digest the data before signing
+     * @throws org.signserver.common.SignServerException
+     *
+     */
     protected void signClearText(final PGPPrivateKey pgpPrivateKey, final PGPPublicKey pgpPublicKey, final PGPSignatureGenerator generator, final InputStream in, final OutputStream out, int digestAlgorithm) throws SignServerException {
         try {
             generator.init(PGPSignature.CANONICAL_TEXT_DOCUMENT, pgpPrivateKey);

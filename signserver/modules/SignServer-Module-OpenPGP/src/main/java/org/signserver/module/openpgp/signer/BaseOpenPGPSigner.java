@@ -201,7 +201,13 @@ public abstract class BaseOpenPGPSigner extends BaseSigner {
             
             final JcaPGPKeyConverter conv = new JcaPGPKeyConverter();
             final X509Certificate x509Cert = (X509Certificate) getSigningCertificate(crypto);
-            final PGPPublicKey pgpPublicKey = pgpCertificate != null ? pgpCertificate : conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm(x509Cert), x509Cert.getPublicKey(), x509Cert.getNotBefore());
+            final boolean generateForDefaultKey = keyAlias.equals(config.getProperty("DEFAULTKEY"));
+            final PGPPublicKey pgpPublicKey =
+                    pgpCertificate != null && generateForDefaultKey ?
+                    pgpCertificate :
+                    conv.getPGPPublicKey(OpenPGPUtils.getKeyAlgorithm(x509Cert),
+                                         x509Cert.getPublicKey(),
+                                         x509Cert.getNotBefore());
 
             PGPSignatureGenerator generator = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpPublicKey.getAlgorithm(), OpenPGPUtils.getHashAlgorithm(reqInfo.getSignatureAlgorithm())).setProvider(crypto.getProvider()).setDigestProvider("BC"));
 

@@ -308,7 +308,7 @@ public abstract class BaseOpenPGPSigner extends BaseSigner {
     }
     
     @Override
-    protected List<String> getFatalErrors(final IServices services) {
+    public List<String> getFatalErrors(final IServices services) {
         final List<String> result = new LinkedList<>();
         result.addAll(super.getFatalErrors(services));
         result.addAll(configErrors);

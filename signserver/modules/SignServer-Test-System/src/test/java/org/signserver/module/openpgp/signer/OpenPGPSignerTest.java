@@ -27,6 +27,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.bcpg.ArmoredInputStream;
 import org.bouncycastle.bcpg.BCPGInputStream;
+import org.bouncycastle.bcpg.HashAlgorithmTags;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureList;
@@ -147,7 +148,7 @@ public class OpenPGPSignerTest {
      */
     @Test
     public void testAddUserIdDetachedSignAndVerify_clientSide() throws Exception {
-        addUserIdDetachedSignAndVerify(true);
+        addUserIdDetachedSignAndVerify(true, "NONEwithRSA", "SHA256", HashAlgorithmTags.SHA256);
     }
 
     /**
@@ -158,10 +159,10 @@ public class OpenPGPSignerTest {
      */
     @Test
     public void testAddUserIdDetachedSignAndVerify_serverSide() throws Exception {
-        addUserIdDetachedSignAndVerify(false);
+        addUserIdDetachedSignAndVerify(false, "SHA256withRSA", null, HashAlgorithmTags.SHA256);
     }
 
-    private void setupOpenPGPSignerOnlyProperties(final int workerId, boolean detachedSignature) throws Exception {
+    private void setupOpenPGPSignerOnlyProperties(final int workerId, final String signatureAlgorithm, final boolean detachedSignature) throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.openpgp.signer.OpenPGPSigner");
@@ -170,9 +171,10 @@ public class OpenPGPSignerTest {
         workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", testCase.getSignerNameDummy1());
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", "signer00003");
         workerSession.setWorkerProperty(workerId, "DETACHEDSIGNATURE", String.valueOf(detachedSignature));
+        workerSession.setWorkerProperty(workerId, "SIGNATUREALGORITHM", signatureAlgorithm);
     }
 
-    private void setupOpenPGPPlainSignerOnlyProperties(final int workerId) throws Exception {
+    private void setupOpenPGPPlainSignerOnlyProperties(final int workerId, final String signatureAlgorithm) throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.openpgp.enterprise.signer.PGPPlainSigner");
@@ -180,7 +182,7 @@ public class OpenPGPSignerTest {
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", testCase.getSignerNameDummy1());
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", "signer00003");
-        workerSession.setWorkerProperty(workerId, "SIGNATUREALGORITHM", "NONEwithRSA");
+        workerSession.setWorkerProperty(workerId, "SIGNATUREALGORITHM", signatureAlgorithm);
     }
 
     /**
@@ -190,7 +192,7 @@ public class OpenPGPSignerTest {
      * @param clientSide if client-side option should be used
      * @throws Exception
      */
-    private void addUserIdDetachedSignAndVerify(boolean clientSide) throws Exception {
+    private void addUserIdDetachedSignAndVerify(final boolean clientSide, final String signatureAlgorithm, final String clientSideDigestAlgorithm, final int expectedHashAlgorithm) throws Exception {
         LOG.info("addUserIdDetachedSignAndVerify-" + (clientSide ? "clientSide" : "serverSide"));
         int workerId = 0;
         try {
@@ -198,10 +200,16 @@ public class OpenPGPSignerTest {
             testCase.addDummySigner1(true);
             if (clientSide) {
                 workerId = WORKER_OPENPGPPLAINSIGNER;
-                setupOpenPGPPlainSignerOnlyProperties(WORKER_OPENPGPPLAINSIGNER);
+                setupOpenPGPPlainSignerOnlyProperties(WORKER_OPENPGPPLAINSIGNER, signatureAlgorithm);
+                if (clientSideDigestAlgorithm == null) {
+                    throw new Exception("Must specify digest algorithm for testing client-side");
+                }
             } else {
                 workerId = WORKER_OPENPGPSIGNER;
-                setupOpenPGPSignerOnlyProperties(WORKER_OPENPGPSIGNER, true);
+                setupOpenPGPSignerOnlyProperties(WORKER_OPENPGPSIGNER, signatureAlgorithm, true);
+                if (clientSideDigestAlgorithm != null) {
+                    throw new Exception("Must not specify digest algorithm for testing server-side");
+                }
             }
             workerSession.reloadConfiguration(testCase.getSignerIdDummy1());
             workerSession.reloadConfiguration(WORKER_OPENPGPSIGNER);
@@ -237,7 +245,7 @@ public class OpenPGPSignerTest {
                                      "-outfile", outFile.getAbsolutePath(),
                                      "-clientside",
                                      "-filetype", "PGP",
-                                     "-digestalgorithm", "SHA256"));
+                                     "-digestalgorithm", clientSideDigestAlgorithm));
             } else {
                 assertEquals("Status code", ClientCLI.RETURN_SUCCESS,
                          CLI.execute("signdocument", "-workerid",
@@ -259,6 +267,8 @@ public class OpenPGPSignerTest {
             sig.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), pgpPublicKey);
             sig.update(originalData);
             assertTrue("verified", sig.verify());
+            
+            assertEquals("hash algorithm", expectedHashAlgorithm, sig.getHashAlgorithm());
 
         } finally {
             testCase.removeWorker(testCase.getSignerIdDummy1());

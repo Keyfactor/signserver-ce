@@ -35,8 +35,10 @@ public interface FileSpecificHandlerFactory {
      * @return A FileSpecificHandler
      * @throws java.io.IOException if unable to use the input file, i.e. file non-existing
      */
-    FileSpecificHandler createHandler(File inFile, File outFile, boolean clientSide, Map<String, String> extraOptions)
-            throws IOException;
+    FileSpecificHandler createHandler(File inFile, File outFile,
+                                      boolean clientSide,
+                                      Map<String, String> extraOptions)
+            throws IOException, IllegalArgumentException;
     
     /**
      * Create a handler given an input stream and an output file.
@@ -48,7 +50,10 @@ public interface FileSpecificHandlerFactory {
      * @param extraOptions extra settings for the implementation
      * @return A FileSpecificHandler 
      */
-    FileSpecificHandler createHandler(InputStream inStream, long size, File outFile, boolean clientSide, Map<String, String> extraOptions);
+    FileSpecificHandler createHandler(InputStream inStream, long size,
+                                      File outFile, boolean clientSide,
+                                      Map<String, String> extraOptions)
+            throws IllegalArgumentException;
     
     /**
      * Create a file specific handler given a file type name, input, and output
@@ -63,9 +68,10 @@ public interface FileSpecificHandlerFactory {
      * @throws IOException if unable to use the input file, i.e. file non-existing
      */
     FileSpecificHandler createHandler(String fileType, File inFile, File outFile,
-                                      boolean clientSide, Map<String, String> extraOptions)
-            throws IOException;
-    
+                                      boolean clientSide,
+                                      Map<String, String> extraOptions)
+            throws IOException, IllegalArgumentException;
+
     /**
      * Create a file specific handler given a file type name, input stream and
      * an output file.
@@ -80,7 +86,9 @@ public interface FileSpecificHandlerFactory {
      */
     FileSpecificHandler createHandler(String fileType, InputStream inStream,
                                       long size,
-                                      File outFile, boolean clientSide, Map<String, String> extraOptions);
+                                      File outFile, boolean clientSide,
+                                      Map<String, String> extraOptions)
+            throws IllegalArgumentException;
     
     /**
      * Return true if the factory can create a client-side hashing and

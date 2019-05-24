@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.fail;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.bcpg.ArmoredInputStream;
@@ -40,6 +41,7 @@ import org.junit.Test;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.PKCS10CertReqInfo;
+import org.signserver.common.SignServerException;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
@@ -169,6 +171,21 @@ public class OpenPGPSignerTest {
     public void testAddUserIdDetachedSignAndVerify_clientSide_otherKeyId() throws Exception {
         addUserIdDetachedSignAndVerify(true, "NONEwithRSA", "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM);
     }
+    
+    /**
+     * Tests with a different key, client-side.
+     *
+     * @throws Exception
+     */
+//    @Test
+//    public void testAddUserIdDetachedSignAndVerify_clientSide_incorrectKeyId() throws Exception {
+//        try {
+//            addUserIdDetachedSignAndVerify(true, "NONEwithRSA", "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, "INCORRECT_KEY_ID", RSA_KEY_ALGORITHM);
+//            fail("this should have failed");
+//        } catch (SignServerException ex) {
+//            assertTrue(ex.getMessage().contains("Mismatch between PGP key parameters"));
+//        }
+//    }
 
     /**
      * Tests adding a User Id to the public key, sign something producing 

@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.bcpg.ArmoredInputStream;
 import org.bouncycastle.bcpg.BCPGInputStream;
 import org.bouncycastle.bcpg.HashAlgorithmTags;
+import org.bouncycastle.bcpg.PublicKeyAlgorithmTags;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureList;
@@ -65,6 +66,9 @@ public class OpenPGPSignerTest {
     private static final String SIGNER00003_KEYID = "F7B50A4D55F6E703";
     private static final String SIGNER00001 = "signer00001";
     private static final String SIGNER00001_KEYID = "4B821662F54A5923";
+    private static final String RSA_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.RSA_SIGN);
+    // private static final String dsaKeyAlg = String.valueOf(PublicKeyAlgorithmTags.DSA);
+    // private static final String ecdsaKeyAlg = String.valueOf(PublicKeyAlgorithmTags.ECDSA);
 
     private final File sampleBinaryFile;
 
@@ -153,7 +157,7 @@ public class OpenPGPSignerTest {
      */
     @Test
     public void testAddUserIdDetachedSignAndVerify_clientSide() throws Exception {
-        addUserIdDetachedSignAndVerify(true, "NONEwithRSA", "SHA256", HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID);
+        addUserIdDetachedSignAndVerify(true, "NONEwithRSA", "SHA256", HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM);
     }
 
     /**
@@ -163,7 +167,7 @@ public class OpenPGPSignerTest {
      */
     @Test
     public void testAddUserIdDetachedSignAndVerify_clientSide_otherKeyId() throws Exception {
-        addUserIdDetachedSignAndVerify(true, "NONEwithRSA", "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID);
+        addUserIdDetachedSignAndVerify(true, "NONEwithRSA", "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM);
     }
 
     /**
@@ -174,7 +178,7 @@ public class OpenPGPSignerTest {
      */
     @Test
     public void testAddUserIdDetachedSignAndVerify_serverSide() throws Exception {
-        addUserIdDetachedSignAndVerify(false, "SHA256withRSA", null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID);
+        addUserIdDetachedSignAndVerify(false, "SHA256withRSA", null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM);
     }
     
     /**
@@ -184,7 +188,7 @@ public class OpenPGPSignerTest {
      */
     @Test
     public void testAddUserIdDetachedSignAndVerify_serverSide_otherKeyId() throws Exception {
-        addUserIdDetachedSignAndVerify(false, "SHA256withRSA", null, HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID);
+        addUserIdDetachedSignAndVerify(false, "SHA256withRSA", null, HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM);
     }
     
     private void setupOpenPGPSignerOnlyProperties(final int workerId, final String signatureAlgorithm, final String keyAlias, final boolean detachedSignature) throws Exception {
@@ -217,7 +221,7 @@ public class OpenPGPSignerTest {
      * @param clientSide if client-side option should be used
      * @throws Exception
      */
-    private void addUserIdDetachedSignAndVerify(final boolean clientSide, final String signatureAlgorithm, final String clientSideDigestAlgorithm, final int expectedHashAlgorithm, final String keyAlias, final String keyId) throws Exception {
+    private void addUserIdDetachedSignAndVerify(final boolean clientSide, final String signatureAlgorithm, final String clientSideDigestAlgorithm, final int expectedHashAlgorithm, final String keyAlias, final String keyId, final String keyAlgorithm) throws Exception {
         LOG.info("addUserIdDetachedSignAndVerify-" + (clientSide ? "clientSide" : "serverSide"));
         int workerId = 0;
         try {
@@ -271,7 +275,8 @@ public class OpenPGPSignerTest {
                                      "-clientside",
                                      "-filetype", "PGP",
                                      "-digestalgorithm", clientSideDigestAlgorithm,
-                                     "-extraoption", "KEY_ID=" + keyId));
+                                    "-extraoption", "KEY_ID=" + keyId,
+                                    "-extraoption", "KEY_ALGORITHM=" + keyAlgorithm));
             } else {
                 assertEquals("Status code", ClientCLI.RETURN_SUCCESS,
                          CLI.execute("signdocument", "-workerid",
@@ -296,6 +301,7 @@ public class OpenPGPSignerTest {
             
             assertEquals("hash algorithm", expectedHashAlgorithm, sig.getHashAlgorithm());
             assertEquals("key id", new BigInteger(keyId, 16).longValue(), sig.getKeyID());
+            assertEquals("key algorithm", Integer.parseInt(keyAlgorithm), sig.getKeyAlgorithm());
             
         } finally {
             testCase.removeWorker(testCase.getSignerIdDummy1());

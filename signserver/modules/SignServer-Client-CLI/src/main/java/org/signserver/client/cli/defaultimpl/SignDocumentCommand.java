@@ -47,6 +47,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.protocol.ws.client.SignServerWSClientFactory;
 import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.DEFAULT_LOAD_BALANCING;
 import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.ROUND_ROBIN_LOAD_BALANCING;
+import org.signserver.common.RequestMetadata;
 
 /**
  * Command Line Interface (CLI) for signing documents.
@@ -865,6 +866,16 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     os = new ByteArrayOutputStream();
                 } else {
                     os = outStream;
+                }
+
+                /* add addional metadata from the file handler to the request
+                 * context
+                 */
+                final Map<String, String> extraMetadata =
+                        inputSource.getMetadata();
+
+                if (extraMetadata != null) {
+                    metadata.putAll(extraMetadata);
                 }
                 
                 // Get the data signed

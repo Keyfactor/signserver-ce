@@ -63,13 +63,17 @@ public class OpenPGPSignerTest {
 
     private static final int WORKER_OPENPGPSIGNER = 40000;
     private static final int WORKER_OPENPGPPLAINSIGNER = 41000;
+    private static final String SIGNER00004 = "signer00004";
+    private static final String SIGNER00004_KEYID = "EFF9ED546884D030";
     private static final String SIGNER00003 = "signer00003";
     private static final String SIGNER00003_KEYID = "F7B50A4D55F6E703";
+    private static final String SIGNER00002 = "signer00002";
+    private static final String SIGNER00002_KEYID = "E3091F74636A925E";
     private static final String SIGNER00001 = "signer00001";
     private static final String SIGNER00001_KEYID = "4B821662F54A5923";
     private static final String RSA_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.RSA_SIGN);
-    // private static final String dsaKeyAlg = String.valueOf(PublicKeyAlgorithmTags.DSA);
-    // private static final String ecdsaKeyAlg = String.valueOf(PublicKeyAlgorithmTags.ECDSA);
+    private static final String ECDSA_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.ECDSA);
+    private static final String DSA_KEY_ALGORITHM = String.valueOf(PublicKeyAlgorithmTags.DSA);
 
     private final File sampleBinaryFile;
 
@@ -160,6 +164,42 @@ public class OpenPGPSignerTest {
     public void testAddUserIdDetachedSignAndVerify_clientSide() throws Exception {
         addUserIdDetachedSignAndVerify(true, "NONEwithRSA", "SHA256", HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS);
     }
+    
+    /**
+     * Tests adding a User Id to the public key, sign something producing 
+     * detached signature and verifying it with client-side option.
+     * Using RSA key and SHA-512.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testAddUserIdDetachedSignAndVerify_clientSideRSA_SHA512() throws Exception {
+        addUserIdDetachedSignAndVerify(true, "NONEwithRSA", "SHA512", HashAlgorithmTags.SHA512, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS);
+    }
+
+    /**
+     * Tests adding a User Id to the public key, sign something producing 
+     * detached signature and verifying it with client-side option.
+     * Using DSA.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testAddUserIdDetachedSignAndVerify_clientSideDSA() throws Exception {
+        addUserIdDetachedSignAndVerify(true, "NONEwithDSA", "SHA256", HashAlgorithmTags.SHA256, SIGNER00004, SIGNER00004_KEYID, DSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS);
+    }
+
+    /**
+     * Tests adding a User Id to the public key, sign something producing 
+     * detached signature and verifying it with client-side option.
+     * Using an ECDSA key.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testAddUserIdDetachedSignAndVerify_clientSideECDSA() throws Exception {
+        addUserIdDetachedSignAndVerify(true, "NONEwithECDSA", "SHA256", HashAlgorithmTags.SHA256, SIGNER00002, SIGNER00002_KEYID, ECDSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS);
+    }
 
     /**
      * Tests with a different key, client-side.
@@ -201,7 +241,7 @@ public class OpenPGPSignerTest {
     public void testAddUserIdDetachedSignAndVerify_serverSide_otherKeyId() throws Exception {
         addUserIdDetachedSignAndVerify(false, "SHA256withRSA", null, HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS);
     }
-    
+
     private void setupOpenPGPSignerOnlyProperties(final int workerId, final String signatureAlgorithm, final String keyAlias, final boolean detachedSignature) throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());

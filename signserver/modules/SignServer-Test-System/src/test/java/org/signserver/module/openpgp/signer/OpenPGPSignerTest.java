@@ -214,15 +214,14 @@ public class OpenPGPSignerTest {
         workerSession.setWorkerProperty(workerId, "SIGNATUREALGORITHM", signatureAlgorithm);
     }
 
-    private void setupOpenPGPPlainSignerOnlyProperties(final int workerId, final String signatureAlgorithm, final String keyAlias) throws Exception {
+    private void setupOpenPGPPlainSignerOnlyProperties(final int workerId, final String keyAlias) throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
-        workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.openpgp.enterprise.signer.PGPPlainSigner");
+        workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.openpgp.enterprise.signer.OpenPGPPlainSigner");
         workerSession.setWorkerProperty(workerId, "NAME", "OpenPGPPlainSigner" + workerId);
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", testCase.getSignerNameDummy1());
-        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", keyAlias);
-        workerSession.setWorkerProperty(workerId, "SIGNATUREALGORITHM", signatureAlgorithm);
+        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", keyAlias);       
     }
 
     /**
@@ -241,7 +240,7 @@ public class OpenPGPSignerTest {
             testCase.addDummySigner1(true);
             if (clientSide) {
                 workerId = WORKER_OPENPGPPLAINSIGNER;
-                setupOpenPGPPlainSignerOnlyProperties(WORKER_OPENPGPPLAINSIGNER, signatureAlgorithm, keyAlias);
+                setupOpenPGPPlainSignerOnlyProperties(WORKER_OPENPGPPLAINSIGNER, keyAlias);
                 if (clientSideDigestAlgorithm == null) {
                     throw new Exception("Must specify digest algorithm for testing client-side");
                 }

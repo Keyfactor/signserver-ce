@@ -30,6 +30,7 @@ import org.bouncycastle.bcpg.ArmoredInputStream;
 import org.bouncycastle.bcpg.BCPGInputStream;
 import org.bouncycastle.bcpg.HashAlgorithmTags;
 import org.bouncycastle.bcpg.PublicKeyAlgorithmTags;
+import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureList;
@@ -295,22 +296,10 @@ public class OpenPGPSignerTest {
                                      "-infile", sampleBinaryFile.getAbsolutePath(),
                                      "-outfile", outFile.getAbsolutePath()));
             }
-            
+
             // Verify signature if signing was successful         
             if (expectedOutcome == 0) {
-                final byte[] signedBytes = FileUtils.readFileToByteArray(outFile);
-                PGPSignature sig;
-                try (InputStream in = createInputStream(new ByteArrayInputStream(signedBytes), true)) {
-                    JcaPGPObjectFactory objectFactory = new JcaPGPObjectFactory(in);
-                    PGPSignatureList p3 = (PGPSignatureList) objectFactory.nextObject();
-                    sig = p3.get(0);
-                }
-
-                final PGPPublicKey pgpPublicKey = OpenPGPUtils.parsePublicKeys(publicKeyArmored).get(0);
-                sig.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), pgpPublicKey);
-                sig.update(originalData);
-                assertTrue("verified", sig.verify());
-
+                PGPSignature sig = verifySignature(originalData, outFile, publicKeyArmored);
                 assertEquals("hash algorithm", expectedHashAlgorithm, sig.getHashAlgorithm());
                 assertEquals("key id", new BigInteger(keyId, 16).longValue(), sig.getKeyID());
                 assertEquals("key algorithm", Integer.parseInt(keyAlgorithm), sig.getKeyAlgorithm());
@@ -329,19 +318,22 @@ public class OpenPGPSignerTest {
         return new BCPGInputStream(armored ? new ArmoredInputStream(in) : in);
     }
     
-//    private void verifySignature(byte[] originalData, final File outFile, final String publicKeyArmored) throws IOException, PGPException {
-//        final byte[] signedBytes = FileUtils.readFileToByteArray(outFile);
-//        PGPSignature sig;
-//        try (InputStream in = createInputStream(new ByteArrayInputStream(signedBytes), true)) {
-//            JcaPGPObjectFactory objectFactory = new JcaPGPObjectFactory(in);
-//            PGPSignatureList p3 = (PGPSignatureList) objectFactory.nextObject();
-//            sig = p3.get(0);
-//        }
-//
-//        final PGPPublicKey pgpPublicKey = OpenPGPUtils.parsePublicKeys(publicKeyArmored).get(0);
-//        sig.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), pgpPublicKey);
-//        sig.update(originalData);
-//        assertTrue("verified", sig.verify());
-//    }
+    private PGPSignature verifySignature(byte[] originalData, final File outFile, final String publicKeyArmored) throws IOException, PGPException {
+        final byte[] signedBytes = FileUtils.readFileToByteArray(outFile);
+        PGPSignature sig;
+
+        try (InputStream in = createInputStream(new ByteArrayInputStream(signedBytes), true)) {
+            JcaPGPObjectFactory objectFactory = new JcaPGPObjectFactory(in);
+            PGPSignatureList p3 = (PGPSignatureList) objectFactory.nextObject();
+            sig = p3.get(0);
+        }
+
+        final PGPPublicKey pgpPublicKey = OpenPGPUtils.parsePublicKeys(publicKeyArmored).get(0);
+        sig.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), pgpPublicKey);
+        sig.update(originalData);
+        assertTrue("verified", sig.verify());
+
+        return sig;
+    }
 
 }

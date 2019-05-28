@@ -98,6 +98,7 @@ fi
 # Enable Java debugging
 #JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=n"
 #JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=y"
+#JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=*:8788,server=y,suspend=y"
 
 # Execute the command
 exec "$JAVACMD" $JAVA_OPTS -cp "${CP}" $class_name "$@"

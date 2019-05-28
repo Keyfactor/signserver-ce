@@ -58,6 +58,7 @@ import org.signserver.server.log.Loggable;
 import org.signserver.validationservice.common.Validation;
 import javax.servlet.http.Cookie;
 import org.signserver.common.RequestContext;
+import static org.signserver.common.SignServerConstants.X_SIGNSERVER_ERROR_MESSAGE;
 
 /**
  * GenericProcessServlet is a general Servlet passing on it's request info to the worker configured by either
@@ -658,6 +659,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         } catch (NoSuchWorkerException ex) {
             res.sendError(HttpServletResponse.SC_NOT_FOUND, "Worker Not Found");
         } catch (IllegalRequestException e) {
+            res.setHeader(X_SIGNSERVER_ERROR_MESSAGE, e.getMessage());
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         } catch (CryptoTokenOfflineException | ServiceUnavailableException e) {
             res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, e.getMessage());

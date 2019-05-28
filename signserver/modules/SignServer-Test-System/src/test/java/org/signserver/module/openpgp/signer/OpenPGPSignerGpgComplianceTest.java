@@ -21,6 +21,7 @@ import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.bcpg.PublicKeyAlgorithmTags;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import static org.junit.Assert.assertEquals;
 import org.junit.Assume;
@@ -63,6 +64,9 @@ public class OpenPGPSignerGpgComplianceTest {
     private static final String RSA4096_ALIAS = "ts40003";
     private static final String RSA4096_KEYID = "019B2B04267FE968";
     private static final String NISTP256_ALIAS = "signer00002";
+    private static final String NISTP256_KEYID = "E3091F74636A925E";
+    private static final String DSA2048_ALIAS = "signer00004";
+    private static final String DSA2048_KEYID = "EFF9ED546884D030";
 
     private static boolean enabled;
     private static boolean ecdsaSupported;
@@ -111,6 +115,23 @@ public class OpenPGPSignerGpgComplianceTest {
         signAndVerify("rsa2048", "SHA-256", false, true, true, RSA2048_KEYID);
     }
 
+    @Test
+    public void testSigning_RSA_SHA512_clientSide() throws Exception {
+        signAndVerify("rsa2048", "SHA-512", false, true, true, RSA2048_KEYID);
+    }
+    
+    @Test
+    public void testSigning_DSA_SHA256_clientSide() throws Exception {
+        signAndVerify("dsa2048", "SHA-256", false, true, true, DSA2048_KEYID,
+                      PublicKeyAlgorithmTags.DSA);
+    }
+ 
+    @Test
+    public void testSigning_ECDSA_SHA256_clientSide() throws Exception {
+        signAndVerify("nistp256", "SHA-256", false, true, true, NISTP256_KEYID,
+                      PublicKeyAlgorithmTags.ECDSA);
+    }
+    
     @Test
     public void testSigning_RSA_SHA1() throws Exception {
         signAndVerify("rsa2048", "SHA-1", false, true, false, null);
@@ -343,6 +364,17 @@ public class OpenPGPSignerGpgComplianceTest {
         signAndVerify("dsa1024", "SHA-256", true, true, false, null);
     }
 
+    private void signAndVerify(final String expectedKeyAlgorithm,
+                               final String digestAlgorithm,
+                               final boolean revokeAfter,
+                               final boolean detachedSignature,
+                               final boolean clientSide,
+                               final String clientSideKeyId) throws Exception {
+        signAndVerify(expectedKeyAlgorithm, digestAlgorithm, revokeAfter,
+                      detachedSignature, clientSide, clientSideKeyId,
+                      PublicKeyAlgorithmTags.RSA_SIGN);
+    }
+    
     /**
      * Sets up a signer using a key with the chosen algorithm, 
      * then adds a user ID to the public key,
@@ -356,7 +388,13 @@ public class OpenPGPSignerGpgComplianceTest {
      * @param revokeAfter if true, issue and import a revocation certificate afterwards
      * @throws Exception 
      */
-    private void signAndVerify(final String expectedKeyAlgorithm, final String digestAlgorithm, final boolean revokeAfter, final boolean detachedSignature, boolean clientSide, String clientSideKeyId) throws Exception {
+    private void signAndVerify(final String expectedKeyAlgorithm,
+                               final String digestAlgorithm,
+                               final boolean revokeAfter,
+                               final boolean detachedSignature,
+                               final boolean clientSide,
+                               final String clientSideKeyId,
+                               final int clientSideKeyAlgorithm) throws Exception {
         final int workerId = 42;
         final String workerName = "OpenPGPSigner-" + expectedKeyAlgorithm + "-" + digestAlgorithm + (clientSide ? "clientSide" : "serverSide");
         final File inFile = new File(helper.getSignServerHome(), detachedSignature ? "res/test/HelloJar.jar" : "res/test/stub.c");  // Let's use any binary file as input for detached and any text file for clear-text
@@ -416,6 +454,13 @@ public class OpenPGPSignerGpgComplianceTest {
                     }
                     break;
                 }
+                case "dsa2048": {
+                    helper.getWorkerSession().setWorkerProperty(workerId, "DEFAULTKEY", DSA2048_ALIAS);
+                    if (clientSide) {
+                        helper.getWorkerSession().setWorkerProperty(workerId, "SIGNATUREALGORITHM", "NONEwithDSA");
+                    }
+                    break;
+                }
                 default: {
                     throw new UnsupportedOperationException("Test does not support key algorithm: " + expectedKeyAlgorithm);
                 }
@@ -455,7 +500,9 @@ public class OpenPGPSignerGpgComplianceTest {
                                      "-clientside",
                                      "-filetype", "PGP",
                                      "-digestalgorithm", digestAlgorithm,
-                                     "-extraoption", "KEY_ID=" + clientSideKeyId));
+                                     "-extraoption", "KEY_ID=" + clientSideKeyId,
+                                     "-extraoption", "KEY_ALGORITHM=" +
+                                     Integer.toString(clientSideKeyAlgorithm)));
             } else {
                 assertEquals("Status code", ClientCLI.RETURN_SUCCESS,
                          CLI.execute("signdocument", "-workername",

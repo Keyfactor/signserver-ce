@@ -483,14 +483,13 @@ public class OpenPGPSignerGpgComplianceTest {
             assertEquals("gpg2 --import: " + res.getErrorMessage(), 0, res.getExitValue());
 
             // Trust public key
-            // Equaivalent of Bash: echo -e "trust\n5\ny\nsave\n" | gpg --command-fd 0 --edit-key F7B50A4D55F6E703
+            // Equivalent of Bash: echo -e "trust\n5\ny\nsave\n" | gpg --command-fd 0 --edit-key F7B50A4D55F6E703
             res = ComplianceTestUtils.executeWritingWithEnv("trust\n5\ny\nsave\n".getBytes(), envp, "gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
                     "--command-fd", "0", "--no-tty", "--edit-key", OpenPGPUtils.formatKeyID(pgpPublicKey.getKeyID()));
             assertEquals("gpg2 --edit-key: " + res.getErrorMessage(), 0, res.getExitValue());
 
             // Sign
             if (clientSide) {
-                //fail("TODO: Below code should be modified to also supply the key Id and any other needed flags");
                 assertEquals("Status code", ClientCLI.RETURN_SUCCESS,
                          CLI.execute("signdocument", "-workername",
                                      workerName,

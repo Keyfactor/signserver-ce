@@ -30,7 +30,7 @@ Signer crypto token keystore:
     dss10_keystore.p12
         This can be used as a sample keystore crypto token for signers signing docuement, timestamp
 	signer, code signing, e-passport signing and for TLS clients.
-        Aliases for document signing: signer00001, signer00002, signer00003 signer00004
+        Aliases for document signing: signer00001, signer00002, signer00003, signer00004
             Keys with certificates issued directly by the root CA, by the root CA using ECDSA key,
             using RSA issued by a sub CA and DSA key.
         Aliases for timestamp signing: ts00001, ts00002, ts00003, ts40003

@@ -18,7 +18,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 import static junit.framework.TestCase.assertTrue;
-import static junit.framework.TestCase.fail;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.bcpg.PublicKeyAlgorithmTags;

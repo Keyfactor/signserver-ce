@@ -375,7 +375,7 @@ public class OpenPGPSignerGpgComplianceTest {
         try {
             final String implementation;
             if (clientSide) {
-                implementation = "org.signserver.module.openpgp.enterprise.signer.PGPPlainSigner";
+                implementation = "org.signserver.module.openpgp.enterprise.signer.OpenPGPPlainSigner";
             } else {
                 implementation = "org.signserver.module.openpgp.signer.OpenPGPSigner";
             }

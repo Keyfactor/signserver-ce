@@ -40,6 +40,7 @@ import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.bouncycastle.openpgp.*;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyConverter;
+import org.signserver.common.CompileTimeSettings;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.data.ReadableData;
 import org.signserver.common.data.Request;
@@ -209,7 +210,11 @@ public class OpenPGPSigner extends BaseOpenPGPSigner {
     private BCPGOutputStream createOutputStreamForDetachedSignature(OutputStream out, ResponseFormat responseFormat) {
         switch (responseFormat) {
             case ARMORED:
-                return new BCPGOutputStream(new ArmoredOutputStream(out));
+                final ArmoredOutputStream aOut = new ArmoredOutputStream(out);
+                
+                aOut.setHeader(ArmoredOutputStream.VERSION_HDR,
+                               CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION));
+                return new BCPGOutputStream(aOut);
             case BINARY:
                 return new BCPGOutputStream(out);
             default:

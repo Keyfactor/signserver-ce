@@ -127,6 +127,7 @@ public class OpenPGPSignerGpgComplianceTest {
  
     @Test
     public void testSigning_ECDSA_SHA256_clientSide() throws Exception {
+        Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
         signAndVerify("nistp256", "SHA-256", false, true, true, NISTP256_KEYID,
                       PublicKeyAlgorithmTags.ECDSA);
     }

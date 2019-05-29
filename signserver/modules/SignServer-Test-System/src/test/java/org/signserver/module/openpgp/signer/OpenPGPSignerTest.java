@@ -162,7 +162,18 @@ public class OpenPGPSignerTest {
      */
     @Test
     public void testAddUserIdDetachedSignAndVerify_clientSide() throws Exception {
-        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS);
+        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+    }
+
+    /**
+     * Tests adding a User Id to the public key, sign something producing 
+     * detached signature and verifying it with client-side option.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testAddUserIdDetachedSignAndVerify_clientSideBinaryForm() throws Exception {
+        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, false);
     }
     
     /**
@@ -174,7 +185,7 @@ public class OpenPGPSignerTest {
      */
     @Test
     public void testAddUserIdDetachedSignAndVerify_clientSideRSA_SHA512() throws Exception {
-        addUserIdDetachedSignAndVerify(true, "SHA512", HashAlgorithmTags.SHA512, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS);
+        addUserIdDetachedSignAndVerify(true, "SHA512", HashAlgorithmTags.SHA512, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
 
     /**
@@ -186,7 +197,7 @@ public class OpenPGPSignerTest {
      */
     @Test
     public void testAddUserIdDetachedSignAndVerify_clientSideDSA() throws Exception {
-        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00004, SIGNER00004_KEYID, DSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS);
+        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00004, SIGNER00004_KEYID, DSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
 
     /**
@@ -198,7 +209,7 @@ public class OpenPGPSignerTest {
      */
     @Test
     public void testAddUserIdDetachedSignAndVerify_clientSideECDSA() throws Exception {
-        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00002, SIGNER00002_KEYID, ECDSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS);
+        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00002, SIGNER00002_KEYID, ECDSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
 
     /**
@@ -208,7 +219,7 @@ public class OpenPGPSignerTest {
      */
     @Test
     public void testAddUserIdDetachedSignAndVerify_clientSide_otherKeyId() throws Exception {
-        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS);
+        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
     
     /**
@@ -218,7 +229,7 @@ public class OpenPGPSignerTest {
      */
     @Test
     public void testAddUserIdDetachedSignAndVerify_clientSide_incorrectKeyId() throws Exception {
-        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, "INCORRECT_KEY_ID", RSA_KEY_ALGORITHM, ClientCLI.RETURN_ERROR);
+        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, "INCORRECT_KEY_ID", RSA_KEY_ALGORITHM, ClientCLI.RETURN_ERROR, true);
     }
 
     /**
@@ -229,7 +240,18 @@ public class OpenPGPSignerTest {
      */
     @Test
     public void testAddUserIdDetachedSignAndVerify_serverSide() throws Exception {
-        addUserIdDetachedSignAndVerify(false, null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS);
+        addUserIdDetachedSignAndVerify(false, null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+    }
+
+    /**
+     * Tests adding a User Id to the public key, sign something producing 
+     * detached signature and verifying it.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testAddUserIdDetachedSignAndVerify_serverSideBinaryForm() throws Exception {
+        addUserIdDetachedSignAndVerify(false, null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, false);
     }
     
     /**
@@ -239,10 +261,14 @@ public class OpenPGPSignerTest {
      */
     @Test
     public void testAddUserIdDetachedSignAndVerify_serverSide_otherKeyId() throws Exception {
-        addUserIdDetachedSignAndVerify(false, null, HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS);
+        addUserIdDetachedSignAndVerify(false, null, HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
 
-    private void setupOpenPGPSignerOnlyProperties(final int workerId, final String keyAlias, final boolean detachedSignature) throws Exception {
+    private void setupOpenPGPSignerOnlyProperties(final int workerId,
+                                                  final String keyAlias,
+                                                  final boolean detachedSignature,
+                                                  final boolean armored)
+            throws Exception {
         // Setup worker
         workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.openpgp.signer.OpenPGPSigner");
@@ -250,7 +276,9 @@ public class OpenPGPSignerTest {
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", testCase.getSignerNameDummy1());
         workerSession.setWorkerProperty(workerId, "DEFAULTKEY", keyAlias);
-        workerSession.setWorkerProperty(workerId, "DETACHEDSIGNATURE", String.valueOf(detachedSignature));        
+        workerSession.setWorkerProperty(workerId, "DETACHEDSIGNATURE", String.valueOf(detachedSignature));
+        workerSession.setWorkerProperty(workerId, "RESPONSE_FORMAT",
+                                        armored ? "ARMORED" : "BINARY");
     }
 
     private void setupOpenPGPPlainSignerOnlyProperties(final int workerId, final String keyAlias) throws Exception {
@@ -270,7 +298,15 @@ public class OpenPGPSignerTest {
      * @param clientSide if client-side option should be used
      * @throws Exception
      */
-    private void addUserIdDetachedSignAndVerify(final boolean clientSide, final String clientSideDigestAlgorithm, final int expectedHashAlgorithm, final String keyAlias, final String keyId, final String keyAlgorithm, final int expectedOutcome) throws Exception {
+    private void addUserIdDetachedSignAndVerify(final boolean clientSide,
+                                                final String clientSideDigestAlgorithm,
+                                                final int expectedHashAlgorithm,
+                                                final String keyAlias,
+                                                final String keyId,
+                                                final String keyAlgorithm,
+                                                final int expectedOutcome,
+                                                final boolean armored)
+            throws Exception {
         LOG.info("addUserIdDetachedSignAndVerify-" + (clientSide ? "clientSide" : "serverSide"));
         int workerId = 0;
         File outFile = null;
@@ -285,7 +321,8 @@ public class OpenPGPSignerTest {
                 }
             } else {
                 workerId = WORKER_OPENPGPSIGNER;
-                setupOpenPGPSignerOnlyProperties(WORKER_OPENPGPSIGNER, keyAlias, true);
+                setupOpenPGPSignerOnlyProperties(WORKER_OPENPGPSIGNER, keyAlias,
+                                                 true, armored);
                 if (clientSideDigestAlgorithm != null) {
                     throw new Exception("Must not specify digest algorithm for testing server-side");
                 }
@@ -326,7 +363,9 @@ public class OpenPGPSignerTest {
                                      "-filetype", "PGP",
                                      "-digestalgorithm", clientSideDigestAlgorithm,
                                     "-extraoption", "KEY_ID=" + keyId,
-                                    "-extraoption", "KEY_ALGORITHM=" + keyAlgorithm));
+                                    "-extraoption", "KEY_ALGORITHM=" + keyAlgorithm,
+                                    "-extraoption", "RESPONSE_FORMAT=" +
+                                            (armored ? "ARMORED" : "BINARY")));
             } else {
                 assertEquals("Status code", expectedOutcome,
                          CLI.execute("signdocument", "-workerid",
@@ -337,7 +376,9 @@ public class OpenPGPSignerTest {
 
             // Verify signature if signing was successful         
             if (expectedOutcome == 0) {
-                PGPSignature sig = verifySignature(originalData, outFile, publicKeyArmored);
+                PGPSignature sig =
+                        verifySignature(originalData, outFile, publicKeyArmored,
+                                        armored);
                 assertEquals("hash algorithm", expectedHashAlgorithm, sig.getHashAlgorithm());
                 assertEquals("key id", new BigInteger(keyId, 16).longValue(), sig.getKeyID());
                 assertEquals("key algorithm", Integer.parseInt(keyAlgorithm), sig.getKeyAlgorithm());
@@ -356,11 +397,13 @@ public class OpenPGPSignerTest {
         return new BCPGInputStream(armored ? new ArmoredInputStream(in) : in);
     }
     
-    private PGPSignature verifySignature(byte[] originalData, final File outFile, final String publicKeyArmored) throws IOException, PGPException {
+    private PGPSignature verifySignature(byte[] originalData, final File outFile,
+                                         final String publicKeyArmored,
+                                         final boolean armored) throws IOException, PGPException {
         final byte[] signedBytes = FileUtils.readFileToByteArray(outFile);
         PGPSignature sig;
 
-        try (InputStream in = createInputStream(new ByteArrayInputStream(signedBytes), true)) {
+        try (InputStream in = createInputStream(new ByteArrayInputStream(signedBytes), armored)) {
             JcaPGPObjectFactory objectFactory = new JcaPGPObjectFactory(in);
             PGPSignatureList p3 = (PGPSignatureList) objectFactory.nextObject();
             sig = p3.get(0);

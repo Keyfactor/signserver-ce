@@ -47,7 +47,6 @@ import org.signserver.common.SignServerException;
 import org.signserver.protocol.ws.client.SignServerWSClientFactory;
 import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.DEFAULT_LOAD_BALANCING;
 import static org.signserver.client.cli.defaultimpl.HTTPDocumentSigner.ROUND_ROBIN_LOAD_BALANCING;
-import org.signserver.common.RequestMetadata;
 
 /**
  * Command Line Interface (CLI) for signing documents.
@@ -137,9 +136,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     /** Option DIGESTALGORITHM. */
     public static final String DIGESTALGORITHM = "digestalgorithm";
 
-    /** Option KEYID. */
-    public static final String KEYID = "keyid";
-    
     /** Option FILETYPE. */
     public static final String FILETYPE = "filetype";
     
@@ -217,8 +213,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 TEXTS.getString("CLIENTSIDE_DESCRIPTION"));
         OPTIONS.addOption(DIGESTALGORITHM, true,
                 TEXTS.getString("DIGESTALGORITHM_DESCRIPTION"));
-        OPTIONS.addOption(KEYID, true,
-                TEXTS.getString("KEYID_DESCRIPTION"));
         OPTIONS.addOption(FILETYPE, true,
                 TEXTS.getString("FILETYPE_DESCRIPTION"));
         OPTIONS.addOption(EXTRAOPTION, true,
@@ -289,7 +283,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     private boolean clientside;
     private String digestAlgorithm;
-    private String keyId;
     private String fileType;
     private String timeOutString;
     private int timeOutLimit;    
@@ -474,11 +467,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             }
         }
 
-        if (line.hasOption(KEYID)) {
-            keyId = line.getOptionValue(KEYID);
-            extraOptions.put("KEY_ID", keyId);
-        }
-        
         if (line.hasOption(FILETYPE)) {
             fileType = line.getOptionValue(FILETYPE);
         }
@@ -586,9 +574,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
             if (fileType != null) {
                 throw new IllegalCommandArgumentsException("Can only use -filetype with -clientside");
-            }
-            if (keyId != null) {
-                throw new IllegalCommandArgumentsException("Can only use -keyid with -clientside");
             }
         }
 

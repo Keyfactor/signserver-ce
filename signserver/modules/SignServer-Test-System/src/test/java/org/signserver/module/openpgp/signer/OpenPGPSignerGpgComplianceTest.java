@@ -479,7 +479,7 @@ public class OpenPGPSignerGpgComplianceTest {
 
             // Import public key
             trustFile.delete(); // Seems to be a bug in older versions of gpg not liking that the file is empty but non-existing is fine: https://dev.gnupg.org/T2417
-            ComplianceTestUtils.ProcResult res = ComplianceTestUtils.executeWithEnv(envp, "gpg2", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
+            ComplianceTestUtils.ProcResult res = ComplianceTestUtils.executeWithEnv(envp, "gpg2", "-v", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
                     "--import", publicKeyFile.getAbsolutePath());
             assertEquals("gpg2 --import: " + res.getErrorMessage(), 0, res.getExitValue());
 

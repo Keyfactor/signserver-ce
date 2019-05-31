@@ -479,7 +479,8 @@ public class OpenPGPSignerGpgComplianceTest {
 
             // Import public key
             trustFile.delete(); // Seems to be a bug in older versions of gpg not liking that the file is empty but non-existing is fine: https://dev.gnupg.org/T2417
-            ComplianceTestUtils.ProcResult res = ComplianceTestUtils.executeWithEnv(envp, "gpg2", "-v", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
+            // For GPG 2.0 it seems public key algorithm 3 is not supported (?) so we had to add --allow-non-selfsigned-uid
+            ComplianceTestUtils.ProcResult res = ComplianceTestUtils.executeWithEnv(envp, "gpg2", "-v", "--allow-non-selfsigned-uid", "--trustdb-name", trustFile.getAbsolutePath(), "--no-default-keyring", "--keyring", ringFile.getAbsolutePath(),
                     "--import", publicKeyFile.getAbsolutePath());
             assertEquals("gpg2 --import: " + res.getErrorMessage(), 0, res.getExitValue());
 

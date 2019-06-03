@@ -176,6 +176,11 @@ public class OpenPGPSignerTest {
         addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, false);
     }
     
+//    @Test TODO:
+//    public void testAddUserIdClearTextSignAndVerify_clientSide() throws Exception {
+//        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+//    }
+    
     /**
      * Tests adding a User Id to the public key, sign something producing 
      * detached signature and verifying it with client-side option.
@@ -187,6 +192,11 @@ public class OpenPGPSignerTest {
     public void testAddUserIdDetachedSignAndVerify_clientSideRSA_SHA512() throws Exception {
         addUserIdDetachedSignAndVerify(true, "SHA512", HashAlgorithmTags.SHA512, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
+    
+//    @Test TODO:
+//    public void testAddUserIdClearTextSignAndVerify_clientSideRSA_SHA512() throws Exception {
+//        addUserIdDetachedSignAndVerify(true, "SHA512", HashAlgorithmTags.SHA512, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+//    }
 
     /**
      * Tests adding a User Id to the public key, sign something producing 
@@ -199,6 +209,11 @@ public class OpenPGPSignerTest {
     public void testAddUserIdDetachedSignAndVerify_clientSideDSA() throws Exception {
         addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00004, SIGNER00004_KEYID, DSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
+    
+//    @Test TODO:
+//    public void testAddUserIdClearTextSignAndVerify_clientSideDSA() throws Exception {
+//        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00004, SIGNER00004_KEYID, DSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+//    }
 
     /**
      * Tests adding a User Id to the public key, sign something producing 
@@ -211,6 +226,11 @@ public class OpenPGPSignerTest {
     public void testAddUserIdDetachedSignAndVerify_clientSideECDSA() throws Exception {
         addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00002, SIGNER00002_KEYID, ECDSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
+    
+//    @Test TODO:
+//    public void testAddUserIdClearTextSignAndVerify_clientSideECDSA() throws Exception {
+//        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00002, SIGNER00002_KEYID, ECDSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+//    }
 
     /**
      * Tests with a different key, client-side.
@@ -221,6 +241,11 @@ public class OpenPGPSignerTest {
     public void testAddUserIdDetachedSignAndVerify_clientSide_otherKeyId() throws Exception {
         addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
+    
+//    @Test  TODO:
+//    public void testAddUserIdClearTextSignAndVerify_clientSide_otherKeyId() throws Exception {
+//        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+//    }
     
     /**
      * Tests with a incorrect id key, client-side and expects signing to fail.
@@ -242,6 +267,11 @@ public class OpenPGPSignerTest {
     public void testAddUserIdDetachedSignAndVerify_serverSide() throws Exception {
         addUserIdDetachedSignAndVerify(false, null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
+    
+//    @Test TODO:
+//    public void testAddUserIdClearTextSignAndVerify_serverSide() throws Exception {
+//        addUserIdDetachedSignAndVerify(false, null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+//    }
 
     /**
      * Tests adding a User Id to the public key, sign something producing 
@@ -263,6 +293,11 @@ public class OpenPGPSignerTest {
     public void testAddUserIdDetachedSignAndVerify_serverSide_otherKeyId() throws Exception {
         addUserIdDetachedSignAndVerify(false, null, HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
+    
+//    @Test TODO:
+//    public void testAddUserIdClearTextSignAndVerify_serverSide_otherKeyId() throws Exception {
+//        addUserIdDetachedSignAndVerify(false, null, HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+//    }
 
     private void setupOpenPGPSignerOnlyProperties(final int workerId,
                                                   final String keyAlias,
@@ -308,6 +343,100 @@ public class OpenPGPSignerTest {
                                                 final boolean armored)
             throws Exception {
         LOG.info("addUserIdDetachedSignAndVerify-" + (clientSide ? "clientSide" : "serverSide"));
+        int workerId = 0;
+        File outFile = null;
+        try {
+            outFile = File.createTempFile("outfile-", ".asc");
+            testCase.addDummySigner1(true);
+            if (clientSide) {
+                workerId = WORKER_OPENPGPPLAINSIGNER;
+                setupOpenPGPPlainSignerOnlyProperties(WORKER_OPENPGPPLAINSIGNER, keyAlias);
+                if (clientSideDigestAlgorithm == null) {
+                    throw new Exception("Must specify digest algorithm for testing client-side");
+                }
+            } else {
+                workerId = WORKER_OPENPGPSIGNER;
+                setupOpenPGPSignerOnlyProperties(WORKER_OPENPGPSIGNER, keyAlias,
+                                                 true, armored);
+                if (clientSideDigestAlgorithm != null) {
+                    throw new Exception("Must not specify digest algorithm for testing server-side");
+                }
+            }
+            workerSession.reloadConfiguration(testCase.getSignerIdDummy1());
+            workerSession.reloadConfiguration(WORKER_OPENPGPSIGNER);
+
+            // Generate the public key
+            final String userId = "Worker (" + workerId + ") <worker@example.com>";
+            final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA256WithRSA", userId, null);
+            AbstractCertReqData csr = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+            assertNotNull(csr);
+            String publicKeyArmored = csr.toArmoredForm();
+            assertTrue("public key header: " + publicKeyArmored, publicKeyArmored.contains("-----BEGIN PGP PUBLIC KEY BLOCK-----"));
+            assertTrue("public key footer: " + publicKeyArmored, publicKeyArmored.contains("-----END PGP PUBLIC KEY BLOCK-----"));
+
+            // Store the updated public key
+            workerSession.setWorkerProperty(workerId, "PGPPUBLICKEY", publicKeyArmored);
+            workerSession.reloadConfiguration(workerId);
+
+            // Check the status has no errors and that the user id is printed
+            WorkerStatus status = workerSession.getStatus(new WorkerIdentifier(workerId));
+            assertEquals("fatal errors", "[]", status.getFatalErrors().toString());
+            ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            status.displayStatus(new PrintStream(bout), true);
+            String statusOutput = bout.toString(StandardCharsets.UTF_8.toString());
+            assertTrue("key contains user id: " + statusOutput, statusOutput.contains(userId));
+
+            // Test signing
+            final byte[] originalData = FileUtils.readFileToByteArray(sampleBinaryFile);
+            if (clientSide) {
+                assertEquals("Status code", expectedOutcome,
+                         CLI.execute("signdocument", "-workerid",
+                                     String.valueOf(workerId),
+                                     "-infile", sampleBinaryFile.getAbsolutePath(),
+                                     "-outfile", outFile.getAbsolutePath(),
+                                     "-clientside",
+                                     "-filetype", "PGP",
+                                     "-digestalgorithm", clientSideDigestAlgorithm,
+                                    "-extraoption", "KEY_ID=" + keyId,
+                                    "-extraoption", "KEY_ALGORITHM=" + keyAlgorithm,
+                                    "-extraoption", "RESPONSE_FORMAT=" +
+                                            (armored ? "ARMORED" : "BINARY")));
+            } else {
+                assertEquals("Status code", expectedOutcome,
+                         CLI.execute("signdocument", "-workerid",
+                                     String.valueOf(workerId),
+                                     "-infile", sampleBinaryFile.getAbsolutePath(),
+                                     "-outfile", outFile.getAbsolutePath()));
+            }
+
+            // Verify signature if signing was successful         
+            if (expectedOutcome == 0) {
+                PGPSignature sig =
+                        verifySignature(originalData, outFile, publicKeyArmored,
+                                        armored);
+                assertEquals("hash algorithm", expectedHashAlgorithm, sig.getHashAlgorithm());
+                assertEquals("key id", new BigInteger(keyId, 16).longValue(), sig.getKeyID());
+                assertEquals("key algorithm", Integer.parseInt(keyAlgorithm), sig.getKeyAlgorithm());
+            }
+        } finally {
+            testCase.removeWorker(testCase.getSignerIdDummy1());
+            if (workerId != 0) {
+                testCase.removeWorker(workerId);
+            }
+            FileUtils.deleteQuietly(outFile);
+        }
+    }
+    
+    private void addUserIdClearSignAndVerify(final boolean clientSide,
+                                                final String clientSideDigestAlgorithm,
+                                                final int expectedHashAlgorithm,
+                                                final String keyAlias,
+                                                final String keyId,
+                                                final String keyAlgorithm,
+                                                final int expectedOutcome,
+                                                final boolean armored)
+            throws Exception {
+        LOG.info("addUserIdClearSignAndVerify-" + (clientSide ? "clientSide" : "serverSide"));
         int workerId = 0;
         File outFile = null;
         try {

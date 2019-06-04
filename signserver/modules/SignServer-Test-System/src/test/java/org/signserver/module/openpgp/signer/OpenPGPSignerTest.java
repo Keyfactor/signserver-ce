@@ -418,7 +418,8 @@ public class OpenPGPSignerTest {
                                     "-extraoption", "KEY_ID=" + keyId,
                                     "-extraoption", "KEY_ALGORITHM=" + keyAlgorithm,
                                     "-extraoption", "RESPONSE_FORMAT=" +
-                                            (armored ? "ARMORED" : "BINARY")));
+                                            (armored ? "ARMORED" : "BINARY"),
+                                    "-extraoption", "DETACHED_SIGNATURE=TRUE"));
             } else {
                 assertEquals("Status code", expectedOutcome,
                          CLI.execute("signdocument", "-workerid",

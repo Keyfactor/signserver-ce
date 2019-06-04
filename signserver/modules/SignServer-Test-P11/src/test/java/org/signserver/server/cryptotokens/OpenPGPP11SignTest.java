@@ -49,8 +49,8 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.WorkerSession;
-import org.signserver.module.openpgp.signer.ClearSignedFileProcessorUtils;
 import org.signserver.module.openpgp.signer.OpenPGPUtils;
+import org.signserver.openpgp.utils.ClearSignedFileProcessorUtils;
 import org.signserver.testutils.ModulesTestCase;
 
 /**

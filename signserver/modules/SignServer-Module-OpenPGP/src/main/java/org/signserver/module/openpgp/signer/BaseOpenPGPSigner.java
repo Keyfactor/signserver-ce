@@ -59,6 +59,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatusInfo;
+import org.signserver.openpgp.utils.ClearSignedFileProcessorUtils;
 import org.signserver.server.IServices;
 import org.signserver.server.ServicesImpl;
 import org.signserver.server.WorkerContext;

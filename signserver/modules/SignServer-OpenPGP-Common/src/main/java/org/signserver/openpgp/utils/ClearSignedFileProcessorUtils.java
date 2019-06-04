@@ -1,5 +1,5 @@
 /* From Bouncy Castle version 1.60 (MIT license). */
-package org.signserver.module.openpgp.signer;
+package org.signserver.openpgp.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import org.bouncycastle.util.Strings;
  * signatures.
  *
  * @see org.bouncycastle.openpgp.examples.ClearSignedFileProcessor * 
- * @version $Id$
+ * @version $Id: ClearSignedFileProcessorUtils.java 10785 2019-05-09 08:58:18Z vinays $
  *
  */
 public class ClearSignedFileProcessorUtils {

@@ -58,6 +58,7 @@ import org.signserver.common.WorkerStatusInfo;
 import org.signserver.common.data.SignatureRequest;
 import org.signserver.common.data.SignatureResponse;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.openpgp.utils.ClearSignedFileProcessorUtils;
 import org.signserver.server.IServices;
 import org.signserver.server.SignServerContext;
 import org.signserver.server.data.impl.CloseableReadableData;

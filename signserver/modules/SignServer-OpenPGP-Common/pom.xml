@@ -19,20 +19,6 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpg-jdk15on</artifactId>
-            <version>1.60</version>
         </dependency>
     </dependencies>
-    <build>
-        <!-- Filter SignServer version and edition in signservercompile.properties. -->
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-        <filters>
-            <filter>../../res/edition.properties</filter>
-            <filter>../../res/deploytools/app.properties</filter>
-        </filters>
-    </build>
 </project>

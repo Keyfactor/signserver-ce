@@ -90,6 +90,14 @@ public class ClearSignedFileProcessorUtils {
             sig.update(line, 0, length);
         }
     }
+    
+    public static void processLine(PGPSignatureGenerator sGen, byte[] line)
+            throws SignatureException, IOException {
+        int length = getLengthWithoutWhiteSpace(line);
+        if (length > 0) {
+            sGen.update(line, 0, length);
+        }
+    }
 
     public static void processLine(OutputStream aOut, PGPSignatureGenerator sGen, byte[] line)
             throws SignatureException, IOException {

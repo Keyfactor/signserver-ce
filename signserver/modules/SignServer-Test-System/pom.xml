@@ -144,6 +144,11 @@
             <artifactId>SignServer-Module-OpenPGP</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SignServer-OpenPGP-Common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

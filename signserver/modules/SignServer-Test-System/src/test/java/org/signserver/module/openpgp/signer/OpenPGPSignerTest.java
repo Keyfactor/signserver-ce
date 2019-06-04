@@ -183,10 +183,16 @@ public class OpenPGPSignerTest {
         addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, false);
     }
     
-//    @Test TODO:
-//    public void testAddUserIdClearTextSignAndVerify_clientSide() throws Exception {
-//        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
-//    }
+    /**
+     * Tests adding a User Id to the public key, sign something producing 
+     * clear-text signature and verifying it with client-side option.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testAddUserIdClearTextSignAndVerify_clientSide() throws Exception {
+        addUserIdClearTextSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+    }
     
     /**
      * Tests adding a User Id to the public key, sign something producing 
@@ -200,10 +206,17 @@ public class OpenPGPSignerTest {
         addUserIdDetachedSignAndVerify(true, "SHA512", HashAlgorithmTags.SHA512, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
     
-//    @Test TODO:
-//    public void testAddUserIdClearTextSignAndVerify_clientSideRSA_SHA512() throws Exception {
-//        addUserIdDetachedSignAndVerify(true, "SHA512", HashAlgorithmTags.SHA512, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
-//    }
+    /**
+     * Tests adding a User Id to the public key, sign something producing 
+     * clear-text signature and verifying it with client-side option.
+     * Using RSA key and SHA-512.
+     *
+     * @throws Exception
+     */
+    @Test 
+    public void testAddUserIdClearTextSignAndVerify_clientSideRSA_SHA512() throws Exception {
+        addUserIdClearTextSignAndVerify(true, "SHA512", HashAlgorithmTags.SHA512, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+    }
 
     /**
      * Tests adding a User Id to the public key, sign something producing 
@@ -217,10 +230,17 @@ public class OpenPGPSignerTest {
         addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00004, SIGNER00004_KEYID, DSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
     
-//    @Test TODO:
-//    public void testAddUserIdClearTextSignAndVerify_clientSideDSA() throws Exception {
-//        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00004, SIGNER00004_KEYID, DSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
-//    }
+    /**
+     * Tests adding a User Id to the public key, sign something producing 
+     * clear-text signature and verifying it with client-side option.
+     * Using DSA.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testAddUserIdClearTextSignAndVerify_clientSideDSA() throws Exception {
+        addUserIdClearTextSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00004, SIGNER00004_KEYID, DSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+    }
 
     /**
      * Tests adding a User Id to the public key, sign something producing 
@@ -234,13 +254,20 @@ public class OpenPGPSignerTest {
         addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00002, SIGNER00002_KEYID, ECDSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
     
-//    @Test TODO:
-//    public void testAddUserIdClearTextSignAndVerify_clientSideECDSA() throws Exception {
-//        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00002, SIGNER00002_KEYID, ECDSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
-//    }
+    /**
+     * Tests adding a User Id to the public key, sign something producing 
+     * clear-text signature and verifying it with client-side option.
+     * Using an ECDSA key.
+     *
+     * @throws Exception
+     */
+    @Test 
+    public void testAddUserIdClearTextSignAndVerify_clientSideECDSA() throws Exception {
+        addUserIdClearTextSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00002, SIGNER00002_KEYID, ECDSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+    }
 
     /**
-     * Tests with a different key, client-side.
+     * Tests detached signing with a different key, client-side.
      *
      * @throws Exception
      */
@@ -249,19 +276,34 @@ public class OpenPGPSignerTest {
         addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
     
-//    @Test  TODO:
-//    public void testAddUserIdClearTextSignAndVerify_clientSide_otherKeyId() throws Exception {
-//        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
-//    }
+    /**
+     * Tests clear-text signing with a different key, client-side.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testAddUserIdClearTextSignAndVerify_clientSide_otherKeyId() throws Exception {
+        addUserIdClearTextSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+    }
     
     /**
-     * Tests with a incorrect id key, client-side and expects signing to fail.
+     * Tests with a incorrect id key, client-side and expects detached signing to fail.
      *
      * @throws Exception
      */
     @Test
     public void testAddUserIdDetachedSignAndVerify_clientSide_incorrectKeyId() throws Exception {
         addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, "INCORRECT_KEY_ID", RSA_KEY_ALGORITHM, ClientCLI.RETURN_ERROR, true);
+    }
+    
+    /**
+     * Tests with a incorrect id key, client-side and expects clear-text signing to fail.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testAddUserIdClearTextSignAndVerify_clientSide_incorrectKeyId() throws Exception {
+        addUserIdClearTextSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, "INCORRECT_KEY_ID", RSA_KEY_ALGORITHM, ClientCLI.RETURN_ERROR, true);
     }
 
     /**
@@ -455,7 +497,7 @@ public class OpenPGPSignerTest {
                                                 final int expectedOutcome,
                                                 final boolean armored)
             throws Exception {
-        LOG.info("addUserIdClearSignAndVerify-" + (clientSide ? "clientSide" : "serverSide"));
+        LOG.info("addUserIdClearTextSignAndVerify-" + (clientSide ? "clientSide" : "serverSide"));
         int workerId = 0;
         File outFile = null;
         try {
@@ -499,8 +541,7 @@ public class OpenPGPSignerTest {
             String statusOutput = bout.toString(StandardCharsets.UTF_8.toString());
             assertTrue("key contains user id: " + statusOutput, statusOutput.contains(userId));
 
-            // Test signing
-            final byte[] originalData = FileUtils.readFileToByteArray(sampleBinaryFile);
+            // Test signing            
             if (clientSide) {
                 assertEquals("Status code", expectedOutcome,
                          CLI.execute("signdocument", "-workerid",
@@ -513,7 +554,8 @@ public class OpenPGPSignerTest {
                                     "-extraoption", "KEY_ID=" + keyId,
                                     "-extraoption", "KEY_ALGORITHM=" + keyAlgorithm,
                                     "-extraoption", "RESPONSE_FORMAT=" +
-                                            (armored ? "ARMORED" : "BINARY")));
+                                            (armored ? "ARMORED" : "BINARY"),
+                                    "-extraoption", "DETACHED_SIGNATURE=FALSE"));
             } else {
                 assertEquals("Status code", expectedOutcome,
                          CLI.execute("signdocument", "-workerid",

@@ -12,15 +12,21 @@
  *************************************************************************/
 package org.signserver.module.openpgp.signer;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.security.SignatureException;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
@@ -268,10 +274,16 @@ public class OpenPGPSignerTest {
         addUserIdDetachedSignAndVerify(false, null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
     
-//    @Test TODO:
-//    public void testAddUserIdClearTextSignAndVerify_serverSide() throws Exception {
-//        addUserIdDetachedSignAndVerify(false, null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
-//    }
+    /**
+     * Tests adding a User Id to the public key, sign something producing 
+     * clear-text signature and verifying it.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testAddUserIdClearTextSignAndVerify_serverSide() throws Exception {
+        addUserIdClearTextSignAndVerify(false, null, HashAlgorithmTags.SHA256, SIGNER00003, SIGNER00003_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+    }
 
     /**
      * Tests adding a User Id to the public key, sign something producing 
@@ -285,7 +297,7 @@ public class OpenPGPSignerTest {
     }
     
     /**
-     * Tests with a different key, server-side.
+     * Tests detached sign with a different key, server-side.
      *
      * @throws Exception
      */
@@ -294,10 +306,15 @@ public class OpenPGPSignerTest {
         addUserIdDetachedSignAndVerify(false, null, HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
     }
     
-//    @Test TODO:
-//    public void testAddUserIdClearTextSignAndVerify_serverSide_otherKeyId() throws Exception {
-//        addUserIdDetachedSignAndVerify(false, null, HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
-//    }
+    /**
+     * Tests clear-text sign with a different key, server-side.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testAddUserIdClearTextSignAndVerify_serverSide_otherKeyId() throws Exception {
+        addUserIdClearTextSignAndVerify(false, null, HashAlgorithmTags.SHA256, SIGNER00001, SIGNER00001_KEYID, RSA_KEY_ALGORITHM, ClientCLI.RETURN_SUCCESS, true);
+    }
 
     private void setupOpenPGPSignerOnlyProperties(final int workerId,
                                                   final String keyAlias,
@@ -412,7 +429,7 @@ public class OpenPGPSignerTest {
             // Verify signature if signing was successful         
             if (expectedOutcome == 0) {
                 PGPSignature sig =
-                        verifySignature(originalData, outFile, publicKeyArmored,
+                        verifyDetachedSignature(originalData, outFile, publicKeyArmored,
                                         armored);
                 assertEquals("hash algorithm", expectedHashAlgorithm, sig.getHashAlgorithm());
                 assertEquals("key id", new BigInteger(keyId, 16).longValue(), sig.getKeyID());
@@ -427,7 +444,7 @@ public class OpenPGPSignerTest {
         }
     }
     
-    private void addUserIdClearSignAndVerify(final boolean clientSide,
+    private void addUserIdClearTextSignAndVerify(final boolean clientSide,
                                                 final String clientSideDigestAlgorithm,
                                                 final int expectedHashAlgorithm,
                                                 final String keyAlias,
@@ -451,7 +468,7 @@ public class OpenPGPSignerTest {
             } else {
                 workerId = WORKER_OPENPGPSIGNER;
                 setupOpenPGPSignerOnlyProperties(WORKER_OPENPGPSIGNER, keyAlias,
-                                                 true, armored);
+                                                 false, armored);
                 if (clientSideDigestAlgorithm != null) {
                     throw new Exception("Must not specify digest algorithm for testing server-side");
                 }
@@ -505,9 +522,8 @@ public class OpenPGPSignerTest {
 
             // Verify signature if signing was successful         
             if (expectedOutcome == 0) {
-                PGPSignature sig =
-                        verifySignature(originalData, outFile, publicKeyArmored,
-                                        armored);
+                PGPSignature sig
+                        = verifyClearTextSignature(outFile, publicKeyArmored);
                 assertEquals("hash algorithm", expectedHashAlgorithm, sig.getHashAlgorithm());
                 assertEquals("key id", new BigInteger(keyId, 16).longValue(), sig.getKeyID());
                 assertEquals("key algorithm", Integer.parseInt(keyAlgorithm), sig.getKeyAlgorithm());
@@ -519,14 +535,13 @@ public class OpenPGPSignerTest {
             }
             FileUtils.deleteQuietly(outFile);
         }
-    }
-    // TODO: See OpenPGPP11SignTest.java for a clear-text version of above method
+    }    
 
     private BCPGInputStream createInputStream(InputStream in, boolean armored) throws IOException {
         return new BCPGInputStream(armored ? new ArmoredInputStream(in) : in);
     }
     
-    private PGPSignature verifySignature(byte[] originalData, final File outFile,
+    private PGPSignature verifyDetachedSignature(byte[] originalData, final File outFile,
                                          final String publicKeyArmored,
                                          final boolean armored) throws IOException, PGPException {
         final byte[] signedBytes = FileUtils.readFileToByteArray(outFile);
@@ -545,5 +560,84 @@ public class OpenPGPSignerTest {
 
         return sig;
     }
+    
+    /**
+     * Tests adding a User Id to the public key, sign something using CLI
+     * producing clear-text signature and verifying it.
+     *
+     * @param clientSide if client-side option should be used
+     * @throws Exception
+     */
+    private PGPSignature verifyClearTextSignature(final File outFile, final String publicKeyArmored) throws IOException, PGPException, SignatureException {
+        File resultFile = null;
+        PGPSignature sig;
+        try {
+            final byte[] signedBytes = FileUtils.readFileToByteArray(outFile);
+            resultFile = File.createTempFile("resultFile", "txt");
+
+            String signed = new String(signedBytes, StandardCharsets.US_ASCII);
+            assertTrue("expecting armored: " + signed, signed.startsWith("-----BEGIN PGP SIGNED MESSAGE-----"));
+
+            ArmoredInputStream aIn = new ArmoredInputStream(new ByteArrayInputStream(signedBytes));
+            ByteArrayOutputStream lineOut;
+            int lookAhead;
+            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(resultFile))) {
+                lineOut = new ByteArrayOutputStream();
+                lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, aIn);
+                byte[] lineSep = ClearSignedFileProcessorUtils.getLineSeparator();
+                if (lookAhead != -1 && aIn.isClearText()) {
+                    byte[] line = lineOut.toByteArray();
+                    out.write(line, 0, ClearSignedFileProcessorUtils.getLengthWithoutSeparatorOrTrailingWhitespace(line));
+                    out.write(lineSep);
+
+                    while (lookAhead != -1 && aIn.isClearText()) {
+                        lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, lookAhead, aIn);
+
+                        line = lineOut.toByteArray();
+                        out.write(line, 0, ClearSignedFileProcessorUtils.getLengthWithoutSeparatorOrTrailingWhitespace(line));
+                        out.write(lineSep);
+                    }
+                } else {
+                    // a single line file
+                    if (lookAhead != -1) {
+                        byte[] line = lineOut.toByteArray();
+                        out.write(line, 0, ClearSignedFileProcessorUtils.getLengthWithoutSeparatorOrTrailingWhitespace(line));
+                        out.write(lineSep);
+                    }
+                }
+            }
+
+            JcaPGPObjectFactory pgpFact = new JcaPGPObjectFactory(aIn);
+            PGPSignatureList p3 = (PGPSignatureList) pgpFact.nextObject();
+            sig = p3.get(0);
+
+            final PGPPublicKey pgpPublicKey = OpenPGPUtils.parsePublicKeys(publicKeyArmored).get(0);
+            sig.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), pgpPublicKey);
+
+            try (InputStream sigIn = new BufferedInputStream(new FileInputStream(resultFile))) {
+                lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, sigIn);
+
+                ClearSignedFileProcessorUtils.processLine(sig, lineOut.toByteArray());
+
+                if (lookAhead != -1) {
+                    do {
+                        lookAhead = ClearSignedFileProcessorUtils.readInputLine(lineOut, lookAhead, sigIn);
+
+                        sig.update((byte) '\r');
+                        sig.update((byte) '\n');
+
+                        ClearSignedFileProcessorUtils.processLine(sig, lineOut.toByteArray());
+                    } while (lookAhead != -1);
+                }
+            }
+
+            assertTrue("verified", sig.verify());
+
+            return sig;
+        } finally {
+            FileUtils.deleteQuietly(resultFile);
+        }
+    }
+    
 
 }

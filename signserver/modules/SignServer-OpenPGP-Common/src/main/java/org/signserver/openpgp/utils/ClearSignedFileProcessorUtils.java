@@ -110,6 +110,11 @@ public class ClearSignedFileProcessorUtils {
 
         aOut.write(line, 0, line.length);
     }
+    
+    public static void processLine(OutputStream aOut, byte[] line)
+            throws IOException {
+        aOut.write(line, 0, line.length);
+    }
 
     public static int getLengthWithoutSeparatorOrTrailingWhitespace(byte[] line) {
         int end = line.length - 1;

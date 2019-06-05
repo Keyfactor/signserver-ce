@@ -502,7 +502,9 @@ public class OpenPGPSignerGpgComplianceTest {
                                      "-digestalgorithm", digestAlgorithm,
                                      "-extraoption", "KEY_ID=" + clientSideKeyId,
                                      "-extraoption", "KEY_ALGORITHM=" +
-                                     Integer.toString(clientSideKeyAlgorithm)));
+                                     Integer.toString(clientSideKeyAlgorithm),
+                                     "-extraoption", "DETACHED_SIGNATURE=" +
+                                     Boolean.toString(detachedSignature)));
             } else {
                 assertEquals("Status code", ClientCLI.RETURN_SUCCESS,
                          CLI.execute("signdocument", "-workername",

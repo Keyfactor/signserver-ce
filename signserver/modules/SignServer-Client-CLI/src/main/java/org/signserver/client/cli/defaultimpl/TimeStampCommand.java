@@ -738,7 +738,7 @@ public class TimeStampCommand extends AbstractCommand {
                 }
             }
             
-            final SSLSocketFactory sf = keyStoreOptions.setupHTTPS();
+            final SSLSocketFactory sf = keyStoreOptions.setupHTTPS(createConsolePasswordReader(), out);
             
             if (sf != null) {
                 HttpsURLConnection.setDefaultSSLSocketFactory(sf);

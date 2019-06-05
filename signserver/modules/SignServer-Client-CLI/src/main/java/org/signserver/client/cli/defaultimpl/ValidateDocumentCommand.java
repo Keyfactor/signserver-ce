@@ -266,7 +266,7 @@ public class ValidateDocumentCommand extends AbstractCommand {
     /**
      * Checks that all mandadory options are given.
      */
-    private void validateOptions() throws ParseException {
+    private void validateOptions() throws ParseException, IllegalCommandArgumentsException {
         if (workerName == null && workerId == 0) {
             throw new ParseException(
                     "Missing -workername or -workerid");
@@ -293,7 +293,7 @@ public class ValidateDocumentCommand extends AbstractCommand {
             workerIdOrName = String.valueOf(workerId);
         }
 
-        final SSLSocketFactory sf = keyStoreOptions.setupHTTPS();
+        final SSLSocketFactory sf = keyStoreOptions.setupHTTPS(createConsolePasswordReader(), out);
 
         if (port == null) {
             if (keyStoreOptions.isUsePrivateHTTPS()) {

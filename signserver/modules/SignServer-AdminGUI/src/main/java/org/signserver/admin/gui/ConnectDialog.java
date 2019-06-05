@@ -1102,6 +1102,7 @@ public class ConnectDialog extends javax.swing.JDialog {
         if (keystore == null) {
             final InputStream config = new ByteArrayInputStream(
                 new StringBuilder().append("name=").append(name).append("\n")
+                        .append("slot=2\n")
                         .append("library=").append(library.getAbsolutePath()).append("\n")
                         .append("showInfo=true")
                         .toString().getBytes());

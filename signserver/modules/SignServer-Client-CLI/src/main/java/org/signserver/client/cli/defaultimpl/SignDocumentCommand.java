@@ -647,7 +647,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             throws MalformedURLException {
         final DocumentSigner signer;
 
-        final SSLSocketFactory sf = keyStoreOptions.setupHTTPS(); // TODO: Should be done earlier and only once (not for each signer)
+        final SSLSocketFactory sf = keyStoreOptions.setupHTTPS(createConsolePasswordReader(), out); // TODO: Should be done earlier and only once (not for each signer)
 
         if (port == null) {
             if (keyStoreOptions.isUsePrivateHTTPS()) {

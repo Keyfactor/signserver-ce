@@ -105,55 +105,78 @@ public class OpenPGPSignerGpgComplianceTest {
     }
 
     @Test
-    public void testSigning_RSA_SHA256() throws Exception {
+    public void testDetachedSigning_RSA_SHA256() throws Exception {
         signAndVerify("rsa2048", "SHA-256", false, true, false, null);
     }
 
     @Test
-    public void testSigning_RSA_SHA256_clientSide() throws Exception {
+    public void testDetachedSigning_RSA_SHA256_clientSide() throws Exception {
         signAndVerify("rsa2048", "SHA-256", false, true, true, RSA2048_KEYID);
+    }
+    
+    @Test
+    public void testClearTextSigning_RSA_SHA256_clientSide() throws Exception {
+        signAndVerify("rsa2048", "SHA-256", false, false, true, RSA2048_KEYID);
     }
 
     @Test
-    public void testSigning_RSA_SHA512_clientSide() throws Exception {
+    public void testDetachedSigning_RSA_SHA512_clientSide() throws Exception {
         signAndVerify("rsa2048", "SHA-512", false, true, true, RSA2048_KEYID);
     }
     
     @Test
-    public void testSigning_DSA_SHA256_clientSide() throws Exception {
+    public void testClearTextSigning_RSA_SHA512_clientSide() throws Exception {
+        signAndVerify("rsa2048", "SHA-512", false, false, true, RSA2048_KEYID);
+    }
+    
+    @Test
+    public void testDetachedSigning_DSA_SHA256_clientSide() throws Exception {
         signAndVerify("dsa2048", "SHA-256", false, true, true, DSA2048_KEYID,
+                      PublicKeyAlgorithmTags.DSA);
+    }
+    
+    @Test
+    public void testClearTextSigning_DSA_SHA256_clientSide() throws Exception {
+        signAndVerify("dsa2048", "SHA-256", false, false, true, DSA2048_KEYID,
                       PublicKeyAlgorithmTags.DSA);
     }
  
     @Test
-    public void testSigning_ECDSA_SHA256_clientSide() throws Exception {
+    public void testDetachedSigning_ECDSA_SHA256_clientSide() throws Exception {
         Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
         signAndVerify("nistp256", "SHA-256", false, true, true, NISTP256_KEYID,
                       PublicKeyAlgorithmTags.ECDSA);
     }
     
     @Test
-    public void testSigning_RSA_SHA1() throws Exception {
+    public void testClearTextSigning_ECDSA_SHA256_clientSide() throws Exception {
+        Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
+        signAndVerify("nistp256", "SHA-256", false, false, true, NISTP256_KEYID,
+                      PublicKeyAlgorithmTags.ECDSA);
+    }
+    
+    @Test
+    public void testDetachedSigning_RSA_SHA1() throws Exception {
         signAndVerify("rsa2048", "SHA-1", false, true, false, null);
     }
 
     @Test
-    public void testSigning_RSA_SHA224() throws Exception {
+    public void testDetachedSigning_RSA_SHA224() throws Exception {
         signAndVerify("rsa2048", "SHA-224", false, true, false, null);
     }
 
     @Test
-    public void testSigning_RSA_SHA384() throws Exception {
+    public void testDetachedSigning_RSA_SHA384() throws Exception {
         signAndVerify("rsa2048", "SHA-384", false, true, false, null);
     }
 
     @Test
-    public void testSigning_RSA_SHA512() throws Exception {
+    public void testDetachedSigning_RSA_SHA512() throws Exception {
         signAndVerify("rsa2048", "SHA-512", false, true, false, null);
     }
 
     @Test
-    public void testSigning_ECDSA_SHA256() throws Exception {
+    public void testDetachedSigning_ECDSA_SHA256() throws Exception {
         Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
         signAndVerify("nistp256", "SHA-256", false, true, false, null);
     }
@@ -173,59 +196,59 @@ public class OpenPGPSignerGpgComplianceTest {
     //}
 
     @Test
-    public void testSigning_ECDSA_SHA384() throws Exception {
+    public void testDetachedSigning_ECDSA_SHA384() throws Exception {
         Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
         signAndVerify("nistp256", "SHA-384", false, true, false, null);
     }
 
     @Test
-    public void testSigning_ECDSA_SHA512() throws Exception {
+    public void testDetachedSigning_ECDSA_SHA512() throws Exception {
         Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
         signAndVerify("nistp256", "SHA-512", false, true, false, null);
     }
 
     @Test
-    public void testSigning_RSA4096_SHA256() throws Exception {
+    public void testDetachedSigning_RSA4096_SHA256() throws Exception {
         signAndVerify("rsa4096", "SHA-256", false, true, false, null);
     }
 
     @Test
-    public void testSigning_RSA4096_SHA256_clientSide() throws Exception {
+    public void testDetachedSigning_RSA4096_SHA256_clientSide() throws Exception {
         signAndVerify("rsa4096", "SHA-256", false, true, true, RSA4096_KEYID);
     }
 
     @Test
-    public void testSigning_RSA4096_SHA1() throws Exception {
+    public void testDetachedSigning_RSA4096_SHA1() throws Exception {
         signAndVerify("rsa4096", "SHA-1", false, true, false, null);
     }
 
     @Test
-    public void testSigning_RSA4096_SHA224() throws Exception {
+    public void testDetachedSigning_RSA4096_SHA224() throws Exception {
         signAndVerify("rsa4096", "SHA-224", false, true, false, null);
     }
 
     @Test
-    public void testSigning_RSA4096_SHA384() throws Exception {
+    public void testDetachedSigning_RSA4096_SHA384() throws Exception {
         signAndVerify("rsa4096", "SHA-384", false, true, false, null);
     }
 
     @Test
-    public void testSigning_RSA4096_SHA512() throws Exception {
+    public void testDetachedSigning_RSA4096_SHA512() throws Exception {
         signAndVerify("rsa4096", "SHA-512", false, true, false, null);
     }
 
     @Test
-    public void testSigning_DSA1024_SHA256() throws Exception {
+    public void testDetachedSigning_DSA1024_SHA256() throws Exception {
         signAndVerify("dsa1024", "SHA-256", false, true, false, null);
     }
 
     @Test
-    public void testSigning_DSA1024_SHA1() throws Exception {
+    public void testDetachedSigning_DSA1024_SHA1() throws Exception {
         signAndVerify("dsa1024", "SHA-1", false, true, false, null);
     }
 
     @Test
-    public void testSigning_DSA1024_SHA224() throws Exception {
+    public void testDetachedSigning_DSA1024_SHA224() throws Exception {
         signAndVerify("dsa1024", "SHA-224", false, true, false, null);
     }
 
@@ -242,12 +265,12 @@ public class OpenPGPSignerGpgComplianceTest {
     //}
 
     @Test
-    public void testSigning_RSA_SHA256_clearText() throws Exception {
+    public void testClearTextSigning_RSA_SHA256() throws Exception {
         signAndVerify("rsa2048", "SHA-256", false, false, false, null);
     }
 
     @Test
-    public void testSigning_RSA_SHA1_clearText() throws Exception {
+    public void testClearTextSigning_RSA_SHA1() throws Exception {
         signAndVerify("rsa2048", "SHA-1", false, false, false, null);
     }
 
@@ -258,40 +281,40 @@ public class OpenPGPSignerGpgComplianceTest {
     //}
 
     @Test
-    public void testSigning_RSA_SHA384_clearText() throws Exception {
+    public void testClearTextSigning_RSA_SHA384() throws Exception {
         signAndVerify("rsa2048", "SHA-384", false, false, false, null);
     }
 
     @Test
-    public void testSigning_RSA_SHA512_clearText() throws Exception {
+    public void testClearTextSigning_RSA_SHA512() throws Exception {
         signAndVerify("rsa2048", "SHA-512", false, false, false, null);
     }
 
     @Test
-    public void testSigning_ECDSA_SHA256_clearText() throws Exception {
+    public void testClearTextSigning_ECDSA_SHA256() throws Exception {
         Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
         signAndVerify("nistp256", "SHA-256", false, false, false, null);
     }
 
     @Test
-    public void testSigning_ECDSA_SHA384_clearText() throws Exception {
+    public void testClearTextSigning_ECDSA_SHA384() throws Exception {
         Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
         signAndVerify("nistp256", "SHA-384", false, false, false, null);
     }
 
     @Test
-    public void testSigning_ECDSA_SHA512_clearText() throws Exception {
+    public void testClearTextSigning_ECDSA_SHA512() throws Exception {
         Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
         signAndVerify("nistp256", "SHA-512", false, false, false, null);
     }
 
     @Test
-    public void testSigning_RSA4096_SHA256_clearText() throws Exception {
+    public void testClearTextSigning_RSA4096_SHA256() throws Exception {
         signAndVerify("rsa4096", "SHA-256", false, false, false, null);
     }
 
     @Test
-    public void testSigning_RSA4096_SHA1_clearText() throws Exception {
+    public void testClearTextSigning_RSA4096_SHA1() throws Exception {
         signAndVerify("rsa4096", "SHA-1", false, false, false, null);
     }
 
@@ -302,22 +325,22 @@ public class OpenPGPSignerGpgComplianceTest {
     //}
 
     @Test
-    public void testSigning_RSA4096_SHA384_clearText() throws Exception {
+    public void testClearTextSigning_RSA4096_SHA384() throws Exception {
         signAndVerify("rsa4096", "SHA-384", false, false, false, null);
     }
 
     @Test
-    public void testSigning_RSA4096_SHA512_clearText() throws Exception {
+    public void testClearTextSigning_RSA4096_SHA512() throws Exception {
         signAndVerify("rsa4096", "SHA-512", false, false, false, null);
     }
 
     @Test
-    public void testSigning_DSA1024_SHA256_clearText() throws Exception {
+    public void testClearTextSigning_DSA1024_SHA256() throws Exception {
         signAndVerify("dsa1024", "SHA-256", false, false, false, null);
     }
 
     @Test
-    public void testSigning_DSA1024_SHA1_clearText() throws Exception {
+    public void testClearTextSigning_DSA1024_SHA1() throws Exception {
         signAndVerify("dsa1024", "SHA-1", false, false, false, null);
     }
 
@@ -332,7 +355,7 @@ public class OpenPGPSignerGpgComplianceTest {
      * @throws Exception 
      */
     @Test
-    public void testSigning_RSA_SHA256withRevocation() throws Exception {
+    public void testDetachedSigning_RSA_SHA256withRevocation() throws Exception {
         signAndVerify("rsa2048", "SHA-256", true, true, false, null);
     }
  
@@ -341,7 +364,7 @@ public class OpenPGPSignerGpgComplianceTest {
      * @throws Exception 
      */
     @Test
-    public void testSigning_RSA_SHA1withRevocation() throws Exception {
+    public void testDetachedSigning_RSA_SHA1withRevocation() throws Exception {
         signAndVerify("rsa2048", "SHA-1", true, true, false, null);
     }
     
@@ -350,7 +373,7 @@ public class OpenPGPSignerGpgComplianceTest {
      * @throws Exception 
      */
     @Test
-    public void testSigning_ECDSA_SHA256withRevocation() throws Exception {
+    public void testDetachedSigning_ECDSA_SHA256withRevocation() throws Exception {
         Assume.assumeTrue("ECDSA supported by GPG version", ecdsaSupported);
         signAndVerify("nistp256", "SHA-256", true, true, false, null);
     }
@@ -360,7 +383,7 @@ public class OpenPGPSignerGpgComplianceTest {
      * @throws Exception 
      */
     @Test
-    public void testSigning_DSA1024_SHA256withRevocation() throws Exception {
+    public void testDetachedSigning_DSA1024_SHA256withRevocation() throws Exception {
         signAndVerify("dsa1024", "SHA-256", true, true, false, null);
     }
 

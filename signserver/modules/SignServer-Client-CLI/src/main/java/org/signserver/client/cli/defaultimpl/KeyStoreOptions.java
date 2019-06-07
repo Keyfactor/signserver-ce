@@ -285,7 +285,7 @@ public class KeyStoreOptions {
         if (useHTTPS) {
             try {
                 return setDefaultSocketFactory(truststore, keystore, keyAlias,
-                    keystorePassword == null ? null : keystorePassword.toCharArray());
+                    keystorePassword == null ? null : keystorePassword.toCharArray(), out);
             } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException | UnrecoverableKeyException ex) {
                 throw new RuntimeException("Could not setup HTTPS", ex);
             }
@@ -302,7 +302,7 @@ public class KeyStoreOptions {
     }
 
     private static SSLSocketFactory setDefaultSocketFactory(final KeyStore truststore,
-            final KeyStore keystore, String keyAlias, char[] keystorePassword) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, UnrecoverableKeyException {
+            final KeyStore keystore, String keyAlias, char[] keystorePassword, PrintStream out) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, UnrecoverableKeyException {
 
         final TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
         tmf.init(truststore);
@@ -311,17 +311,24 @@ public class KeyStoreOptions {
         if (keystore == null) {
             keyManagers = null;
         } else {
-            if (keyAlias == null) {
-                keyAlias = keystore.aliases().nextElement();
-            }
             final KeyManagerFactory kKeyManagerFactory
                     = KeyManagerFactory.getInstance("SunX509");
             kKeyManagerFactory.init(keystore, keystorePassword);
             keyManagers = kKeyManagerFactory.getKeyManagers();
-            for (int i = 0; i < keyManagers.length; i++) {
-                if (keyManagers[i] instanceof X509KeyManager) {
-                    keyManagers[i] = new AliasKeyManager(
-                            (X509KeyManager) keyManagers[i], keyAlias);
+            
+            if (keyAlias == null) {
+                for (int i = 0; i < keyManagers.length; i++) {
+                    if (keyManagers[i] instanceof X509KeyManager) {
+                        keyManagers[i] = new CliKeyManager(
+                                (X509KeyManager) keyManagers[i], out);
+                    }
+                }
+            } else {
+                for (int i = 0; i < keyManagers.length; i++) {
+                    if (keyManagers[i] instanceof X509KeyManager) {
+                        keyManagers[i] = new AliasKeyManager(
+                                (X509KeyManager) keyManagers[i], keyAlias);
+                    }
                 }
             }
         }

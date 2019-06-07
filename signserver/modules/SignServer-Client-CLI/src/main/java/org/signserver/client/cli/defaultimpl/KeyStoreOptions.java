@@ -235,31 +235,36 @@ public class KeyStoreOptions {
         if (keystoreFile != null) {
             try {
                 if ("PKCS11".equals(keystoreType)) {
-                    KeyStore.CallbackHandlerProtection pp = new KeyStore.CallbackHandlerProtection(new CallbackHandler() {
+                    final KeyStore.ProtectionParameter pp;
+                    if (keystorePassword == null) {
+                        pp = new KeyStore.CallbackHandlerProtection(new CallbackHandler() {
 
-                        @Override
-                        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                            for (Callback callback : callbacks) {
-                                if (callback instanceof PasswordCallback) {
-                                    try {
-                                        final PasswordCallback pc = (PasswordCallback) callback;
-                                        out.print("Password for keystore: ");
-                                        out.flush();
+                            @Override
+                            public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+                                for (Callback callback : callbacks) {
+                                    if (callback instanceof PasswordCallback) {
+                                        try {
+                                            final PasswordCallback pc = (PasswordCallback) callback;
+                                            out.print("Password for PKCS#11 keystore (" + keystoreFile.getName() + "): ");
+                                            out.flush();
 
-                                        keystorePassword = new String(passwordReader.readPassword());
+                                            keystorePassword = new String(passwordReader.readPassword());
 
-                                        if (keystorePassword != null) {
-                                            pc.setPassword(keystorePassword.toCharArray());
+                                            if (keystorePassword != null) {
+                                                pc.setPassword(keystorePassword.toCharArray());
+                                            }
+                                        } catch (CommandFailureException ex) {
+                                            throw new IOException(ex);
                                         }
-                                    } catch (CommandFailureException ex) {
-                                        throw new IOException(ex);
+                                    } else {
+                                        throw new UnsupportedCallbackException(callback, "Unrecognized Callback");
                                     }
-                                } else {
-                                    throw new UnsupportedCallbackException(callback, "Unrecognized Callback");
                                 }
                             }
-                        }
-                    });                
+                        });
+                    } else {
+                        pp = new KeyStore.PasswordProtection(keystorePassword.toCharArray());
+                    }
                     keystore = getLoadedKeystorePKCS11("PKCS11", keystoreFile, keystorePassword != null ? keystorePassword.toCharArray() : null, pp);
                 } else {
                     keystore = loadKeyStore(keystoreFile, keystorePassword);
@@ -362,14 +367,14 @@ public class KeyStoreOptions {
     }
 
 
-    private static KeyStore getLoadedKeystorePKCS11(final String name, final File library, final char[] authCode, KeyStore.CallbackHandlerProtection callbackHandlerProtection) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
+    private static KeyStore getLoadedKeystorePKCS11(final String name, final File library, final char[] authCode, final KeyStore.ProtectionParameter protectionParameter) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
         KeyStore keystore;
 
         final InputStream config = new ByteArrayInputStream(
             new StringBuilder().append("name=").append(name).append("\n")
                     .append("library=").append(library.getAbsolutePath()).append("\n")
                     .append("slot=2\n") // TODO
-                    .append("showInfo=true")
+                    //.append("showInfo=true")
                     .toString().getBytes());
 
         try {
@@ -404,7 +409,7 @@ public class KeyStoreOptions {
                 Security.addProvider(provider);
 
                 final KeyStore.Builder builder = KeyStore.Builder.newInstance("PKCS11",
-                        provider, callbackHandlerProtection);
+                        provider, protectionParameter);
 
                 keystore = builder.getKeyStore();
                 keystore.load(null, authCode);

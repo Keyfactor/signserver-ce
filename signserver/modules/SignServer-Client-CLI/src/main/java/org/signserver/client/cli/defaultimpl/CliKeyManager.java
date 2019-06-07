@@ -48,7 +48,7 @@ public class CliKeyManager implements X509KeyManager {
     }
 
     @Override
-    public String chooseClientAlias(String[] keyType, Principal[] issuers, Socket socket) {
+    public synchronized String chooseClientAlias(String[] keyType, Principal[] issuers, Socket socket) { // Note: synchronized to stop all but one thread from asking for alias
 
         if (lastSelectedAlias == null) {
             // For each keyType, call getClientAliases on the base KeyManager

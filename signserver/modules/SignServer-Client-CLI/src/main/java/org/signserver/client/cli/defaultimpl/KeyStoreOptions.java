@@ -112,6 +112,8 @@ public class KeyStoreOptions {
     private KeyStore keystore;
     private boolean useHTTPS;
     private boolean usePrivateHTTPS;
+    
+    private SSLSocketFactory socketFactory;
 
     public enum KeystoreType {
         JKS,
@@ -236,85 +238,97 @@ public class KeyStoreOptions {
         }
     }
 
-    public SSLSocketFactory setupHTTPS(final ConsolePasswordReader passwordReader, final PrintStream out) {
-        // If we should use HTTPS
-        if (truststoreFile != null) {
-            try {
-                truststore = loadKeyStore(truststoreFile, truststorePassword);
-            } catch (KeyStoreException | NoSuchAlgorithmException |
-                     CertificateException | IOException ex) {
-                throw new RuntimeException("Could not load truststore", ex);
+    /**
+     * Setup HTTPS with or without client authentication if it has not already been done.
+     * 
+     * Note: this method is thread-safe and only the first call actually setups HTTPS.
+     *
+     * @param passwordReader to ask for password and which key alias to use etc
+     * @param out to write out question about password etc
+     * @return the SSLSocketFactory
+     */
+    public synchronized SSLSocketFactory setupHTTPS(final ConsolePasswordReader passwordReader, final PrintStream out) {
+        if (socketFactory == null) {
+            // If we should use HTTPS
+            if (truststoreFile != null) {
+                try {
+                    truststore = loadKeyStore(truststoreFile, truststorePassword);
+                } catch (KeyStoreException | NoSuchAlgorithmException |
+                         CertificateException | IOException ex) {
+                    throw new RuntimeException("Could not load truststore", ex);
+                }
             }
-        }
 
-        SignServerUtil.installBCProvider();
+            SignServerUtil.installBCProvider();
 
-        // If we should use client authenticated HTTPS
-        if (keystoreFile != null) {
-            try {
-                if (KeystoreType.PKCS11.equals(keystoreType) || KeystoreType.PKCS11_CONFIG.equals(keystoreType)) {
-                    final KeyStore.ProtectionParameter pp;
-                    if (keystorePassword == null) {
-                        pp = new KeyStore.CallbackHandlerProtection(new CallbackHandler() {
+            // If we should use client authenticated HTTPS
+            if (keystoreFile != null) {
+                try {
+                    if (KeystoreType.PKCS11.equals(keystoreType) || KeystoreType.PKCS11_CONFIG.equals(keystoreType)) {
+                        final KeyStore.ProtectionParameter pp;
+                        if (keystorePassword == null) {
+                            pp = new KeyStore.CallbackHandlerProtection(new CallbackHandler() {
 
-                            @Override
-                            public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                                for (Callback callback : callbacks) {
-                                    if (callback instanceof PasswordCallback) {
-                                        try {
-                                            final PasswordCallback pc = (PasswordCallback) callback;
-                                            out.print("Password for PKCS#11 keystore (" + keystoreFile.getName() + "): ");
-                                            out.flush();
+                                @Override
+                                public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+                                    for (Callback callback : callbacks) {
+                                        if (callback instanceof PasswordCallback) {
+                                            try {
+                                                final PasswordCallback pc = (PasswordCallback) callback;
+                                                out.print("Password for PKCS#11 keystore (" + keystoreFile.getName() + "): ");
+                                                out.flush();
 
-                                            keystorePassword = new String(passwordReader.readPassword());
+                                                keystorePassword = new String(passwordReader.readPassword());
 
-                                            if (keystorePassword != null) {
-                                                pc.setPassword(keystorePassword.toCharArray());
+                                                if (keystorePassword != null) {
+                                                    pc.setPassword(keystorePassword.toCharArray());
+                                                }
+                                            } catch (CommandFailureException ex) {
+                                                throw new IOException(ex);
                                             }
-                                        } catch (CommandFailureException ex) {
-                                            throw new IOException(ex);
+                                        } else {
+                                            throw new UnsupportedCallbackException(callback, "Unrecognized Callback");
                                         }
-                                    } else {
-                                        throw new UnsupportedCallbackException(callback, "Unrecognized Callback");
                                     }
                                 }
-                            }
-                        });
+                            });
+                        } else {
+                            pp = new KeyStore.PasswordProtection(keystorePassword.toCharArray());
+                        }
+                        keystore = getLoadedKeystorePKCS11(keystoreType, keystoreFile, keystorePassword != null ? keystorePassword.toCharArray() : null, pp);
                     } else {
-                        pp = new KeyStore.PasswordProtection(keystorePassword.toCharArray());
+                        keystore = loadKeyStore(keystoreFile, keystorePassword);
                     }
-                    keystore = getLoadedKeystorePKCS11(keystoreType, keystoreFile, keystorePassword != null ? keystorePassword.toCharArray() : null, pp);
-                } else {
-                    keystore = loadKeyStore(keystoreFile, keystorePassword);
+                } catch (KeyStoreException | NoSuchAlgorithmException |
+                         CertificateException | IOException ex) {
+                    throw new RuntimeException("Could not load keystore", ex);
                 }
-            } catch (KeyStoreException | NoSuchAlgorithmException |
-                     CertificateException | IOException ex) {
-                throw new RuntimeException("Could not load keystore", ex);
             }
-        }
 
-        if (truststore == null && keystore == null) {
-            useHTTPS = false;
-        } else if (keystore == null) {
-            useHTTPS = true;
-        } else {
-            if (truststore == null) {
-                truststore = keystore;
+            if (truststore == null && keystore == null) {
+                useHTTPS = false;
+            } else if (keystore == null) {
+                useHTTPS = true;
+            } else {
+                if (truststore == null) {
+                    truststore = keystore;
+                }
+                useHTTPS = true;
+                usePrivateHTTPS = true;
             }
-            useHTTPS = true;
-            usePrivateHTTPS = true;
-        }
 
-        if (useHTTPS) {
-            try {
-                return setDefaultSocketFactory(truststore, keystore, keyAlias,
-                    keystorePassword == null ? null : keystorePassword.toCharArray(), out);
-            } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException | UnrecoverableKeyException ex) {
-                throw new RuntimeException("Could not setup HTTPS", ex);
+            if (useHTTPS) {
+                try {
+                    this.socketFactory = setDefaultSocketFactory(truststore, keystore, keyAlias,
+                        keystorePassword == null ? null : keystorePassword.toCharArray(), out);
+                } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException | UnrecoverableKeyException ex) {
+                    throw new RuntimeException("Could not setup HTTPS", ex);
+                }
+            } else {
+                return null;
             }
-        } else {
-            return null;
         }
+        return this.socketFactory;
     }
 
     private static KeyStore loadKeyStore(final File truststoreFile,

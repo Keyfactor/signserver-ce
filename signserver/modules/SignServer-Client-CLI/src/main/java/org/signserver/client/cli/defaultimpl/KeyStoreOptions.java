@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.client.cli.defaultimpl;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,6 +23,7 @@ import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -45,7 +47,7 @@ import org.signserver.common.SignServerUtil;
 /**
  * Handles keystore and truststore options from the command line as well
  * as setting them up for use with SSL.
- * 
+ *
  * @author Markus Kilås
  * @version $Id$
  */
@@ -84,7 +86,7 @@ public class KeyStoreOptions {
 
     /** Option KEYALIAS. */
     public static final String KEYALIAS = "keyalias";
-    
+
     /** Option KEYSTORETYPE. */
     public static final String KEYSTORETYPE = "keystoretype";
 
@@ -104,16 +106,22 @@ public class KeyStoreOptions {
     private File keystoreFile;
     private String keystorePassword;
     private String keyAlias;
-    private String keystoreType;
+    private KeystoreType keystoreType;
 
     private KeyStore truststore;
     private KeyStore keystore;
     private boolean useHTTPS;
     private boolean usePrivateHTTPS;
 
+    public enum KeystoreType {
+        JKS,
+        PKCS11,
+        PKCS11_CONFIG
+    }
+
     public void parseCommandLine(CommandLine line, ConsolePasswordReader passwordReader, PrintStream out)
             throws IOException, NoSuchAlgorithmException, CertificateException,
-                   KeyStoreException, CommandFailureException {
+                   KeyStoreException, CommandFailureException, IllegalCommandArgumentsException {
         if (line.hasOption(KeyStoreOptions.TRUSTSTORE)) {
             truststoreFile = new File(line.getOptionValue(KeyStoreOptions.TRUSTSTORE, null));
         }
@@ -130,14 +138,18 @@ public class KeyStoreOptions {
             keyAlias = line.getOptionValue(KeyStoreOptions.KEYALIAS, null);
         }
         if (line.hasOption(KeyStoreOptions.KEYSTORETYPE)) {
-            keystoreType = line.getOptionValue(KeyStoreOptions.KEYSTORETYPE, null);
+            try {
+                keystoreType = KeystoreType.valueOf(line.getOptionValue(KeyStoreOptions.KEYSTORETYPE, null));
+            } catch (IllegalArgumentException ex) {
+                throw new IllegalCommandArgumentsException("Unsupported keystore type. Supported values are: " + Arrays.toString(KeystoreType.values()));
+            }
         }
 
         if (passwordReader != null) {
             // Prompt for truststore password if not given
             if (truststoreFile != null && truststorePassword == null) {
                 for (int i = 0; i < 3; i++) {
-                    out.print("Password for truststore: "); 
+                    out.print("Password for truststore: ");
                     out.flush();
                     truststorePassword = new String(passwordReader.readPassword());
                     try {
@@ -157,11 +169,11 @@ public class KeyStoreOptions {
                 }
             }
             // Prompt for keystore password if not given
-            if (keystoreFile != null && keystorePassword == null && !"PKCS11".equals(keystoreType)) {
+            if (keystoreFile != null && keystorePassword == null && !KeystoreType.PKCS11.equals(keystoreType) && !KeystoreType.PKCS11_CONFIG.equals(keystoreType)) {
                 for (int i = 0; i < 3; i++) {
                     out.print("Password for keystore: ");
                     out.flush();
-                    
+
                     keystorePassword = new String(passwordReader.readPassword());
                     try {
                         KeyStore keystore = KeyStore.getInstance("JKS");
@@ -181,20 +193,12 @@ public class KeyStoreOptions {
             }
         }
     }
-    
+
     public void validateOptions() throws IllegalCommandArgumentsException {
         if (truststoreFile != null && truststorePassword == null) {
             throw new IllegalCommandArgumentsException("Missing -truststorepwd");
-        } else if (keystoreFile != null && keystorePassword == null && !"PKCS11".equals(keystoreType)) {
+        } else if (keystoreFile != null && keystorePassword == null && !KeystoreType.PKCS11.equals(keystoreType) && !KeystoreType.PKCS11_CONFIG.equals(keystoreType)) {
             throw new IllegalCommandArgumentsException("Missing -keystorepwd");
-        } else if (keystoreType != null) {
-            switch (keystoreType) {
-                case "PKCS11":
-                case "JKS":
-                    break;
-                default:
-                    throw new IllegalCommandArgumentsException("Unsupported keystore type. Supported values are: [JKS, PKCS11]");
-            }
         }
     }
 
@@ -218,6 +222,20 @@ public class KeyStoreOptions {
         return truststorePassword;
     }
 
+    private static InputStream createConfigInputStream(KeystoreType keystoreType, File library) throws FileNotFoundException {
+        switch (keystoreType) {
+            case PKCS11:
+                return new ByteArrayInputStream(new StringBuilder()
+                        .append("name=PKCS11").append("\n")
+                        .append("library=").append(library.getAbsolutePath()).append("\n")
+                        .toString().getBytes(StandardCharsets.ISO_8859_1));
+            case PKCS11_CONFIG:
+                return new BufferedInputStream(new FileInputStream(library));
+            default:
+                throw new IllegalArgumentException("Unsupported PKCS#11 keystore type: " + keystoreType);
+        }
+    }
+
     public SSLSocketFactory setupHTTPS(final ConsolePasswordReader passwordReader, final PrintStream out) {
         // If we should use HTTPS
         if (truststoreFile != null) {
@@ -228,13 +246,13 @@ public class KeyStoreOptions {
                 throw new RuntimeException("Could not load truststore", ex);
             }
         }
-        
+
         SignServerUtil.installBCProvider();
 
         // If we should use client authenticated HTTPS
         if (keystoreFile != null) {
             try {
-                if ("PKCS11".equals(keystoreType)) {
+                if (KeystoreType.PKCS11.equals(keystoreType) || KeystoreType.PKCS11_CONFIG.equals(keystoreType)) {
                     final KeyStore.ProtectionParameter pp;
                     if (keystorePassword == null) {
                         pp = new KeyStore.CallbackHandlerProtection(new CallbackHandler() {
@@ -265,7 +283,7 @@ public class KeyStoreOptions {
                     } else {
                         pp = new KeyStore.PasswordProtection(keystorePassword.toCharArray());
                     }
-                    keystore = getLoadedKeystorePKCS11("PKCS11", keystoreFile, keystorePassword != null ? keystorePassword.toCharArray() : null, pp);
+                    keystore = getLoadedKeystorePKCS11(keystoreType, keystoreFile, keystorePassword != null ? keystorePassword.toCharArray() : null, pp);
                 } else {
                     keystore = loadKeyStore(keystoreFile, keystorePassword);
                 }
@@ -320,7 +338,7 @@ public class KeyStoreOptions {
                     = KeyManagerFactory.getInstance("SunX509");
             kKeyManagerFactory.init(keystore, keystorePassword);
             keyManagers = kKeyManagerFactory.getKeyManagers();
-            
+
             if (keyAlias == null) {
                 for (int i = 0; i < keyManagers.length; i++) {
                     if (keyManagers[i] instanceof X509KeyManager) {
@@ -342,7 +360,7 @@ public class KeyStoreOptions {
         context.init(keyManagers, tmf.getTrustManagers(), new SecureRandom());
 
         SSLSocketFactory factory = context.getSocketFactory();
-        
+
         return factory;
     }
 
@@ -358,26 +376,18 @@ public class KeyStoreOptions {
         this.usePrivateHTTPS = usePrivateHTTPS;
     }
 
-    public String getKeystoreType() {
+    public KeystoreType getKeystoreType() {
         return keystoreType;
     }
 
-    public void setKeystoreType(String keystoreType) {
+    public void setKeystoreType(KeystoreType keystoreType) {
         this.keystoreType = keystoreType;
     }
 
-
-    private static KeyStore getLoadedKeystorePKCS11(final String name, final File library, final char[] authCode, final KeyStore.ProtectionParameter protectionParameter) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
+    private static KeyStore getLoadedKeystorePKCS11(final KeystoreType keystoreType, final File library, final char[] authCode, final KeyStore.ProtectionParameter protectionParameter) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
         KeyStore keystore;
 
-        final InputStream config = new ByteArrayInputStream(
-            new StringBuilder().append("name=").append(name).append("\n")
-                    .append("library=").append(library.getAbsolutePath()).append("\n")
-                    .append("slot=2\n") // TODO
-                    //.append("showInfo=true")
-                    .toString().getBytes());
-
-        try {
+        try (final InputStream config = createConfigInputStream(keystoreType, library)) {
                 final Class<?> klass = Class.forName("sun.security.pkcs11.SunPKCS11");
                 Provider provider;
 
@@ -386,7 +396,7 @@ public class KeyStoreOptions {
                      * if this fails, fall back to the old way, calling the
                      * constructor
                      */
-                    final Class[] paramString = new Class[1];    
+                    final Class[] paramString = new Class[1];
                     paramString[0] = String.class;
                     final Method method =
                             Provider.class.getDeclaredMethod("configure",
@@ -400,7 +410,7 @@ public class KeyStoreOptions {
                     Class<?>[] parTypes = new Class[1];
                     parTypes[0] = InputStream.class;
 
-                    Constructor<?> ctor = klass.getConstructor(parTypes);	        
+                    Constructor<?> ctor = klass.getConstructor(parTypes);
                     Object[] argList = new Object[1];
                     argList[0] = config;
                     provider = (Provider) ctor.newInstance(argList);
@@ -445,18 +455,18 @@ public class KeyStoreOptions {
             throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         final Provider prototype = Security.getProvider("SunPKCS11");
         final Provider provider = (Provider) configMethod.invoke(prototype, config);
-        
+
         return provider;
     }
-    
+
     private static String getSunP11ConfigStringFromInputStream(final InputStream is) throws IOException {
         final StringBuilder configBuilder = new StringBuilder();
-        
+
         /* we need to prepend -- to indicate to the configure() method
          * that the config is treated as a string
          */
-        configBuilder.append("--").append(IOUtils.toString(is));
-        
+        configBuilder.append("--").append(IOUtils.toString(is, StandardCharsets.ISO_8859_1));
+
         return configBuilder.toString();
-    }    
+    }
 }

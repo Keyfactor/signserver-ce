@@ -16,7 +16,7 @@ import org.bouncycastle.util.Strings;
  * signatures.
  *
  * @see org.bouncycastle.openpgp.examples.ClearSignedFileProcessor * 
- * @version $Id: ClearSignedFileProcessorUtils.java 10785 2019-05-09 08:58:18Z vinays $
+ * @version $Id$
  *
  */
 public class ClearSignedFileProcessorUtils {

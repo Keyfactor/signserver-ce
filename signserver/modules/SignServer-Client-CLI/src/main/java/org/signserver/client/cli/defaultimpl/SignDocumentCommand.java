@@ -321,8 +321,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             .append("h) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -outdir ./output/ -threads 5 -hosts primaryhost,secondaryhost,otherhost -timeout 5000").append(NL)
             .append("i) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -outdir ./output/ -threads 5 -hosts host1,host2,host3 -loadbalancing ROUND_ROBIN -timeout 5000").append(NL)
             .append("j) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11 -keystore libcryptoki.so").append(NL)
-            .append("k) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11 -keystore libcryptoki.so -keyalias admin3").append(NL)
-            .append("l) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11_CONFIG -keystore sunpkcs11.cfg").append(NL);
+            .append("k) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11 -keystore libcryptoki.so -keyaliasprompt").append(NL)
+            .append("l) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11 -keystore libcryptoki.so -keyalias admin3").append(NL)
+            .append("m) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11_CONFIG -keystore sunpkcs11.cfg").append(NL);
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();

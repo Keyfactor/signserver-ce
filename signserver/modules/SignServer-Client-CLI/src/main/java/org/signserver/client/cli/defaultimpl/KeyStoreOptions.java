@@ -87,6 +87,9 @@ public class KeyStoreOptions {
     /** Option KEYALIAS. */
     public static final String KEYALIAS = "keyalias";
 
+    /** Option KEYALIASPROMPT. */
+    public static final String KEYALIASPROMPT = "keyaliasprompt";
+
     /** Option KEYSTORETYPE. */
     public static final String KEYSTORETYPE = "keystoretype";
 
@@ -97,6 +100,7 @@ public class KeyStoreOptions {
             new Option(KeyStoreOptions.KEYSTORE, true, TEXTS.getString("KEYSTORE_DESCRIPTION")),
             new Option(KeyStoreOptions.KEYSTOREPWD, true, TEXTS.getString("KEYSTOREPWD_DESCRIPTION")),
             new Option(KeyStoreOptions.KEYALIAS, true, TEXTS.getString("KEYALIAS_DESCRIPTION")),
+            new Option(KeyStoreOptions.KEYALIASPROMPT, false, TEXTS.getString("KEYALIASPROMPT_DESCRIPTION")),
             new Option(KeyStoreOptions.KEYSTORETYPE, true, TEXTS.getString("KEYSTORETYPE_DESCRIPTION"))
         );
     }
@@ -106,6 +110,7 @@ public class KeyStoreOptions {
     private File keystoreFile;
     private String keystorePassword;
     private String keyAlias;
+    private boolean keyAliasPrompt;
     private KeystoreType keystoreType;
 
     private KeyStore truststore;
@@ -138,6 +143,13 @@ public class KeyStoreOptions {
         }
         if (line.hasOption(KeyStoreOptions.KEYALIAS)) {
             keyAlias = line.getOptionValue(KeyStoreOptions.KEYALIAS, null);
+        }
+        if (line.hasOption(KeyStoreOptions.KEYALIASPROMPT)) {
+            keyAliasPrompt = true;
+
+            if (line.hasOption(KeyStoreOptions.KEYALIAS)) {
+                throw new IllegalCommandArgumentsException("Can not supply both -keyalias and -keyaliasprompt");
+            }
         }
         if (line.hasOption(KeyStoreOptions.KEYSTORETYPE)) {
             try {
@@ -319,7 +331,7 @@ public class KeyStoreOptions {
 
             if (useHTTPS) {
                 try {
-                    this.socketFactory = setDefaultSocketFactory(truststore, keystore, keyAlias,
+                    this.socketFactory = setDefaultSocketFactory(truststore, keystore, keyAlias, keyAliasPrompt,
                         keystorePassword == null ? null : keystorePassword.toCharArray(), out);
                 } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException | UnrecoverableKeyException ex) {
                     throw new RuntimeException("Could not setup HTTPS", ex);
@@ -339,7 +351,7 @@ public class KeyStoreOptions {
     }
 
     private static SSLSocketFactory setDefaultSocketFactory(final KeyStore truststore,
-            final KeyStore keystore, String keyAlias, char[] keystorePassword, PrintStream out) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, UnrecoverableKeyException {
+            final KeyStore keystore, String keyAlias, boolean keyAliasPrompt, char[] keystorePassword, PrintStream out) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, UnrecoverableKeyException {
 
         final TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
         tmf.init(truststore);
@@ -353,7 +365,8 @@ public class KeyStoreOptions {
             kKeyManagerFactory.init(keystore, keystorePassword);
             keyManagers = kKeyManagerFactory.getKeyManagers();
 
-            if (keyAlias == null) {
+            
+            if (keyAliasPrompt) {
                 for (int i = 0; i < keyManagers.length; i++) {
                     if (keyManagers[i] instanceof X509KeyManager) {
                         keyManagers[i] = new CliKeyManager(
@@ -361,6 +374,9 @@ public class KeyStoreOptions {
                     }
                 }
             } else {
+                if (keyAlias == null) {
+                    keyAlias = keystore.aliases().nextElement();
+                }
                 for (int i = 0; i < keyManagers.length; i++) {
                     if (keyManagers[i] instanceof X509KeyManager) {
                         keyManagers[i] = new AliasKeyManager(

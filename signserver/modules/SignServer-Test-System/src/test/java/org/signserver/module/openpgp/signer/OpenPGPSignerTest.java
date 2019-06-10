@@ -488,6 +488,13 @@ public class OpenPGPSignerTest {
         }
     }
     
+    /**
+     * Tests adding a User Id to the public key, sign something using CLI
+     * producing clear-text signature and verifying it.
+     *
+     * @param clientSide if client-side option should be used
+     * @throws Exception
+     */
     private void addUserIdClearTextSignAndVerify(final boolean clientSide,
                                                 final String clientSideDigestAlgorithm,
                                                 final int expectedHashAlgorithm,
@@ -603,15 +610,8 @@ public class OpenPGPSignerTest {
         assertTrue("verified", sig.verify());
 
         return sig;
-    }
+    }    
     
-    /**
-     * Tests adding a User Id to the public key, sign something using CLI
-     * producing clear-text signature and verifying it.
-     *
-     * @param clientSide if client-side option should be used
-     * @throws Exception
-     */
     private PGPSignature verifyClearTextSignature(final File outFile, final String publicKeyArmored) throws IOException, PGPException, SignatureException {
         File resultFile = null;
         PGPSignature sig;

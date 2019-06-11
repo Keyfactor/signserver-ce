@@ -287,23 +287,47 @@ public class OpenPGPSignerTest {
     }
     
     /**
-     * Tests with a incorrect id key, client-side and expects detached signing to fail.
+     * Tests with a invalid key id, client-side and expects detached signing to fail.
      *
      * @throws Exception
      */
     @Test
-    public void testAddUserIdDetachedSignAndVerify_clientSide_incorrectKeyId() throws Exception {
+    public void testAddUserIdDetachedSignAndVerify_clientSide_invalidKeyId() throws Exception {
         addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, "INCORRECT_KEY_ID", RSA_KEY_ALGORITHM, ClientCLI.RETURN_ERROR, true);
+        // It should cause error "Failed to parse key ID"
     }
     
     /**
-     * Tests with a incorrect id key, client-side and expects clear-text signing to fail.
+     * Tests with a invalid key id, client-side and expects clear-text signing to fail.
      *
      * @throws Exception
      */
     @Test
-    public void testAddUserIdClearTextSignAndVerify_clientSide_incorrectKeyId() throws Exception {
+    public void testAddUserIdClearTextSignAndVerify_clientSide_invalidKeyId() throws Exception {
         addUserIdClearTextSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, "INCORRECT_KEY_ID", RSA_KEY_ALGORITHM, ClientCLI.RETURN_ERROR, true);
+        // It should cause error "Failed to parse key ID"
+    }
+    
+    /**
+     * Tests with a incorrect key id, client-side and expects detached signing to fail.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testAddUserIdDetachedSignAndVerify_clientSide_incorrectKeyId() throws Exception {  // last digit modified from 3 to 0 in key id
+        addUserIdDetachedSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, "4B821662F54A5920", RSA_KEY_ALGORITHM, ClientCLI.RETURN_ERROR, true);
+        // It should cause error "Mismatch between PGP key parameters sent in request and configured in signer...."
+    }
+    
+    /**
+     * Tests with a invalid key id, client-side and expects clear-text signing to fail.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testAddUserIdClearTextSignAndVerify_clientSide_incorrectKeyId() throws Exception { // last digit modified from 3 to 0 in key id
+        addUserIdClearTextSignAndVerify(true, "SHA256", HashAlgorithmTags.SHA256, SIGNER00001, "4B821662F54A5920", RSA_KEY_ALGORITHM, ClientCLI.RETURN_ERROR, true);
+        // It should cause error "Mismatch between PGP key parameters sent in request and configured in signer...."
     }
 
     /**
@@ -399,7 +423,7 @@ public class OpenPGPSignerTest {
                                                 final String keyAlias,
                                                 final String keyId,
                                                 final String keyAlgorithm,
-                                                final int expectedOutcome,
+                                                final int expectedOutcome,                                                
                                                 final boolean armored)
             throws Exception {
         LOG.info("addUserIdDetachedSignAndVerify-" + (clientSide ? "clientSide" : "serverSide"));
@@ -474,7 +498,7 @@ public class OpenPGPSignerTest {
             if (expectedOutcome == 0) {
                 PGPSignature sig =
                         verifyDetachedSignature(originalData, outFile, publicKeyArmored,
-                                        armored);
+                                armored);
                 assertEquals("hash algorithm", expectedHashAlgorithm, sig.getHashAlgorithm());
                 assertEquals("key id", new BigInteger(keyId, 16).longValue(), sig.getKeyID());
                 assertEquals("key algorithm", Integer.parseInt(keyAlgorithm), sig.getKeyAlgorithm());
@@ -501,7 +525,7 @@ public class OpenPGPSignerTest {
                                                 final String keyAlias,
                                                 final String keyId,
                                                 final String keyAlgorithm,
-                                                final int expectedOutcome,
+                                                final int expectedOutcome,                                                 
                                                 final boolean armored)
             throws Exception {
         LOG.info("addUserIdClearTextSignAndVerify-" + (clientSide ? "clientSide" : "serverSide"));

@@ -170,6 +170,9 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                     internalDoSign(in, size, encoding, out, requestContext, nextHost);
                 }
             } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Failed sending request ", e);
+                }
                 LOG.error("Failed sending request: " + e.getMessage());
                 throw e;
             }

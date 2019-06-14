@@ -50,6 +50,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
 import org.cesecore.util.CertTools;
+import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -72,6 +73,7 @@ import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.testutils.CLITestHelper;
+import org.signserver.testutils.ComplianceTestUtils;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
@@ -118,6 +120,7 @@ public class P11AuthKeyTest {
             + File.separator + "dss10";    
     final String trustoreFilePath = dss10Path + File.separator + "dss10_truststore.jks";    
     final String dss10RootCAPemPath = dss10Path + File.separator + "DSSRootCA10.cacert.pem";
+    final String signClientCLI = testCase.getSignServerHome().getAbsolutePath() + File.separator + "bin" + File.separator + "signclient";
     
     @Rule
     public final TemporaryFolder inDir = new TemporaryFolder();
@@ -184,28 +187,19 @@ public class P11AuthKeyTest {
     }
     
     @Test
-    public void testSigningFixedP11AuthKeyFromInDir() throws Exception {      
-        LOG.info("testSigningFixedP11AuthKeyFromInDir");
+    public void testSigningFixedP11AuthKey() throws Exception {
+        LOG.info("testSigningFixedP11AuthKey");
         File p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
-        final StringBuilder config = new StringBuilder();
-        config.append("name=PKCS11\n");
-        config.append("library=").append(sharedLibraryPath).append("\n");
-        if (!StringUtils.isBlank(slot)) {
-            config.append("slot=").append(slot);
-        } else {
-            config.append("slotListIndex=").append(slotIndex);
-        }
-        FileUtils.writeStringToFile(p11ConfigFile, config.toString(), StandardCharsets.UTF_8);
+        createPKCS11ConfigFile(p11ConfigFile);
+
         try {
             setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
             createP11AuthKey();
 
-            setPlainSignerProperties(WORKER_PLAIN, true);
-            workerSession.setWorkerProperty(WORKER_PLAIN, "DEFAULTKEY", TEST_AUTH_KEY);
+            setPlainSignerProperties(WORKER_PLAIN, true);            
             workerSession.setWorkerProperty(WORKER_PLAIN, "AUTHTYPE",
-                                                      "org.signserver.server.ClientCertAuthorizer");
-            workerSession.setWorkerProperty(WORKER_PLAIN, "DISABLEKEYUSAGECOUNTER", "TRUE");
-           
+                    "org.signserver.server.ClientCertAuthorizer");
+
             // Add CLIENT AUTH rule in worker
             assertEquals("execute add", 0,
                     adminCLI.execute("authorizedclients", "-worker", String.valueOf(WORKER_PLAIN),
@@ -217,22 +211,17 @@ public class P11AuthKeyTest {
 
             workerSession.reloadConfiguration(WORKER_PLAIN);
 
-            // Create 200 input files
-            inDir.create();
-            outDir.create();
-            final ArrayList<File> files = createInputFiles(200);
-        
-            assertEquals("Status code", 0, 
-                    clientCLI.execute("signdocument", "-workername", "TestPlainSignerP11",
-                    "-indir", inDir.getRoot().getAbsolutePath(),
-                    "-outdir", outDir.getRoot().getAbsolutePath(),
-                    "-keystoretype", "PKCS11_CONFIG",
-                    "-keyalias", TEST_AUTH_KEY,
-                    "-keystore", p11ConfigFile.getAbsolutePath(),
-                    "-keystorepwd", pin,
-                    "-truststore", trustoreFilePath,
-                    "-truststorepwd", "changeit"));
-            
+            ComplianceTestUtils.ProcResult res
+                    = ComplianceTestUtils.execute(signClientCLI, "signdocument", "-workername", "TestPlainSignerP11",
+                            "-data", "<data/>",
+                            "-keystoretype", "PKCS11_CONFIG",
+                            "-keyalias", TEST_AUTH_KEY,
+                            "-keystore", p11ConfigFile.getAbsolutePath(),
+                            "-keystorepwd", pin,
+                            "-truststore", trustoreFilePath,
+                            "-truststorepwd", "changeit");
+            Assert.assertEquals("result: " + res.getErrorMessage(), 0, res.getExitValue());
+
         } finally {
             workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
             testCase.removeWorker(CRYPTO_TOKEN_ID);
@@ -244,28 +233,20 @@ public class P11AuthKeyTest {
     }
     
     @Test
-    public void testSigningFixedP11AuthKeyFromInDirWith100Threads() throws Exception {      
-        LOG.info("testSigningFixedP11AuthKeyFromInDirWith100Threads");
+    public void testSigningFixedP11AuthKeyFromInDir() throws Exception {
+        LOG.info("testSigningFixedP11AuthKeyFromInDir");
         File p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
-        final StringBuilder config = new StringBuilder();
-        config.append("name=PKCS11\n");
-        config.append("library=").append(sharedLibraryPath).append("\n");
-        if (!StringUtils.isBlank(slot)) {
-            config.append("slot=").append(slot);
-        } else {
-            config.append("slotListIndex=").append(slotIndex);
-        }
-        FileUtils.writeStringToFile(p11ConfigFile, config.toString(), StandardCharsets.UTF_8);
+        createPKCS11ConfigFile(p11ConfigFile);
+
         try {
             setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
             createP11AuthKey();
 
-            setPlainSignerProperties(WORKER_PLAIN, true);
-            workerSession.setWorkerProperty(WORKER_PLAIN, "DEFAULTKEY", TEST_AUTH_KEY);
+            setPlainSignerProperties(WORKER_PLAIN, true);            
             workerSession.setWorkerProperty(WORKER_PLAIN, "AUTHTYPE",
-                                                      "org.signserver.server.ClientCertAuthorizer");
+                    "org.signserver.server.ClientCertAuthorizer");
             workerSession.setWorkerProperty(WORKER_PLAIN, "DISABLEKEYUSAGECOUNTER", "TRUE");
-           
+
             // Add CLIENT AUTH rule in worker
             assertEquals("execute add", 0,
                     adminCLI.execute("authorizedclients", "-worker", String.valueOf(WORKER_PLAIN),
@@ -281,19 +262,74 @@ public class P11AuthKeyTest {
             inDir.create();
             outDir.create();
             final ArrayList<File> files = createInputFiles(200);
-        
-            assertEquals("Status code", 0, 
-                    clientCLI.execute("signdocument", "-workername", "TestPlainSignerP11",
-                    "-indir", inDir.getRoot().getAbsolutePath(),
-                    "-outdir", outDir.getRoot().getAbsolutePath(),
-                    "-threads", "100",
-                    "-keystoretype", "PKCS11_CONFIG",
-                    "-keyalias", TEST_AUTH_KEY,
-                    "-keystore", p11ConfigFile.getAbsolutePath(),
-                    "-keystorepwd", pin,
-                    "-truststore", trustoreFilePath,
-                    "-truststorepwd", "changeit"));
-            
+
+            ComplianceTestUtils.ProcResult res
+                    = ComplianceTestUtils.execute(signClientCLI, "signdocument", "-workername", "TestPlainSignerP11",
+                            "-indir", inDir.getRoot().getAbsolutePath(),
+                            "-outdir", outDir.getRoot().getAbsolutePath(),
+                            "-keystoretype", "PKCS11_CONFIG",
+                            "-keyalias", TEST_AUTH_KEY,
+                            "-keystore", p11ConfigFile.getAbsolutePath(),
+                            "-keystorepwd", pin,
+                            "-truststore", trustoreFilePath,
+                            "-truststorepwd", "changeit");
+            Assert.assertEquals("result: " + res.getErrorMessage(), 0, res.getExitValue());
+
+        } finally {
+            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
+            testCase.removeWorker(CRYPTO_TOKEN_ID);
+            testCase.removeWorker(WORKER_PLAIN);
+            FileUtils.deleteQuietly(p11ConfigFile);
+            inDir.delete();
+            outDir.delete();
+        }
+    }
+    
+    @Test
+    public void testSigningFixedP11AuthKeyFromInDirWith100Threads() throws Exception {
+        LOG.info("testSigningFixedP11AuthKeyFromInDirWith100Threads");        
+        File p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
+        createPKCS11ConfigFile(p11ConfigFile);
+
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
+            createP11AuthKey();
+
+            setPlainSignerProperties(WORKER_PLAIN, true);            
+            workerSession.setWorkerProperty(WORKER_PLAIN, "AUTHTYPE",
+                    "org.signserver.server.ClientCertAuthorizer");
+            workerSession.setWorkerProperty(WORKER_PLAIN, "DISABLEKEYUSAGECOUNTER", "TRUE");
+
+            // Add CLIENT AUTH rule in worker
+            assertEquals("execute add", 0,
+                    adminCLI.execute("authorizedclients", "-worker", String.valueOf(WORKER_PLAIN),
+                            "-add",
+                            "-matchSubjectWithType", "SUBJECT_RDN_CN",
+                            "-matchSubjectWithValue", AUTH_KEY_CERT_CN,
+                            "-matchIssuerWithValue", ISSUER_DN,
+                            "-description", DESCRIPTION));
+
+            workerSession.reloadConfiguration(WORKER_PLAIN);
+
+            // Create 200 input files
+            inDir.create();
+            outDir.create();
+            final ArrayList<File> files = createInputFiles(200);
+
+            ComplianceTestUtils.ProcResult res
+                    = ComplianceTestUtils.execute(signClientCLI, "signdocument",
+                            "-workername", "TestPlainSignerP11",
+                            "-indir", inDir.getRoot().getAbsolutePath(),
+                            "-outdir", outDir.getRoot().getAbsolutePath(),
+                            "-threads", "100",
+                            "-keystoretype", "PKCS11_CONFIG",
+                            "-keyalias", TEST_AUTH_KEY,
+                            "-keystore", p11ConfigFile.getAbsolutePath(),
+                            "-keystorepwd", pin,
+                            "-truststore", trustoreFilePath,
+                            "-truststorepwd", "changeit");
+            Assert.assertEquals("result: " + res.getErrorMessage(), 0, res.getExitValue());
+
         } finally {
             workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
             testCase.removeWorker(CRYPTO_TOKEN_ID);
@@ -312,14 +348,10 @@ public class P11AuthKeyTest {
         workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", CRYPTO_TOKEN_NAME);
         workerSession.setWorkerProperty(workerId, "NAME", "TestPlainSignerP11");
         workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");
-        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", existingKey1);
+        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", TEST_AUTH_KEY);
     }
 
-    private void plainSigner(final int workerId) throws Exception {
-
-        workerSession.setWorkerProperty(workerId, "DEFAULTKEY", TEST_AUTH_KEY);
-        workerSession.reloadConfiguration(workerId);
-
+    private void plainSigner(final int workerId) throws Exception {        
         // Test active
         List<String> errors = workerSession.getStatus(new WorkerIdentifier(workerId)).getFatalErrors();
         assertEquals("errors: " + errors, 0, errors.size());
@@ -385,6 +417,18 @@ public class P11AuthKeyTest {
             result.add(f);
         }
         return result;
+    }
+    
+    private void createPKCS11ConfigFile(File p11ConfigFile) throws IOException {
+        final StringBuilder config = new StringBuilder();
+        config.append("name=PKCS11\n");
+        config.append("library=").append(sharedLibraryPath).append("\n");
+        if (!StringUtils.isBlank(slot)) {
+            config.append("slot=").append(slot);
+        } else {
+            config.append("slotListIndex=").append(slotIndex);
+        }
+        FileUtils.writeStringToFile(p11ConfigFile, config.toString(), StandardCharsets.UTF_8);
     }
 
 }

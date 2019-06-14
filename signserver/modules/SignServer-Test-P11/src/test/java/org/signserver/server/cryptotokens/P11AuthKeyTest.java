@@ -286,7 +286,7 @@ public class P11AuthKeyTest {
                     clientCLI.execute("signdocument", "-workername", "TestPlainSignerP11",
                     "-indir", inDir.getRoot().getAbsolutePath(),
                     "-outdir", outDir.getRoot().getAbsolutePath(),
-                    "-threads", "1",
+                    "-threads", "100",
                     "-keystoretype", "PKCS11_CONFIG",
                     "-keyalias", TEST_AUTH_KEY,
                     "-keystore", p11ConfigFile.getAbsolutePath(),

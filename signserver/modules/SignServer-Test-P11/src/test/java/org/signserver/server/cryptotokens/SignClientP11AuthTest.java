@@ -82,12 +82,12 @@ import org.signserver.testutils.ModulesTestCase;
  * @version $Id$
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class P11AuthKeyTest {
+public class SignClientP11AuthTest {
 
     /**
      * Logger for this class.
      */
-    private static final Logger LOG = Logger.getLogger(P11AuthKeyTest.class);
+    private static final Logger LOG = Logger.getLogger(SignClientP11AuthTest.class);
 
     private static final int CRYPTO_TOKEN_ID = 40100;
 
@@ -127,7 +127,7 @@ public class P11AuthKeyTest {
     public final TemporaryFolder outDir = new TemporaryFolder();
 
 
-    public P11AuthKeyTest() throws FileNotFoundException {
+    public SignClientP11AuthTest() throws FileNotFoundException {
         final File home = PathUtil.getAppHome();
         sharedLibraryName = testCase.getConfig().getProperty("test.p11.sharedLibraryName");
         sharedLibraryPath = testCase.getConfig().getProperty("test.p11.sharedLibraryPath");

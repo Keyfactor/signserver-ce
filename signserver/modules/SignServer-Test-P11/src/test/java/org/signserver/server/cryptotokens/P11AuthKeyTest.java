@@ -137,7 +137,7 @@ public class P11AuthKeyTest {
             workerSession.setWorkerProperty(tokenId, CryptoTokenHelper.PROPERTY_SLOTLABELVALUE, slot);
         } else {
             LOG.debug("setting slotIndex: " + slotIndex);
-            workerSession.setWorkerProperty(tokenId, CryptoTokenHelper.PROPERTY_SLOTLABELTYPE, Pkcs11SlotLabelType.SLOT_NUMBER.getKey());
+            workerSession.setWorkerProperty(tokenId, CryptoTokenHelper.PROPERTY_SLOTLABELTYPE, Pkcs11SlotLabelType.SLOT_INDEX.getKey());
             workerSession.setWorkerProperty(tokenId, CryptoTokenHelper.PROPERTY_SLOTLABELVALUE, slotIndex);
         }
         workerSession.setWorkerProperty(tokenId, "PIN", pin);
@@ -257,25 +257,20 @@ public class P11AuthKeyTest {
         final ISignerCertReqInfo req
                 = new PKCS10CertReqInfo("SHA256WithRSA", "CN=Worker" + CRYPTO_TOKEN_ID, null);
         AbstractCertReqData reqData = (AbstractCertReqData) testCase.getWorkerSession().getCertificateRequest(new WorkerIdentifier(CRYPTO_TOKEN_ID), req, false, TEST_AUTH_KEY);
-
-        // Issue certificate
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
-
-        // List<Certificate> caCertificateChain;
-        File caPemFile = new File(dss10RootCAPemPath);
-//        try (InputStream targetStream = new FileInputStream(caPemFile)) {
-//            caCertificateChain = CertTools.getCertsFromPEM(targetStream, Certificate.class);
-//        }
-
-        X509Certificate caCert = SignServerUtil.getCertFromFile(caPemFile.getAbsolutePath());
         
+        // Get CA cert from file
+        File caPemFile = new File(dss10RootCAPemPath);
+        X509Certificate caCert = SignServerUtil.getCertFromFile(caPemFile.getAbsolutePath());
+         
+        // Issue certificate
         // Extension certExt = (Extension) new CertExt(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_clientAuth, KeyPurposeId.id_kp_codeSigning }));
         final X509CertificateHolder certHolder = new X509v3CertificateBuilder(new X500Name(caCert.getIssuerDN().getName()), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).addExtension(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_clientAuth, KeyPurposeId.id_kp_codeSigning })).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(getdss10CAPrivateKey()));
-
-        
         Certificate signerCert = CertTools.getCertfromByteArray(certHolder.getEncoded());
+        
         List certChain = Arrays.asList(signerCert, caCert);        
 
+        // Import certificate chain in token
         testCase.getWorkerSession().importCertificateChain(new WorkerIdentifier(CRYPTO_TOKEN_ID), getCertByteArrayList(certChain), TEST_AUTH_KEY, null);
         testCase.getWorkerSession().reloadConfiguration(CRYPTO_TOKEN_ID);
     }

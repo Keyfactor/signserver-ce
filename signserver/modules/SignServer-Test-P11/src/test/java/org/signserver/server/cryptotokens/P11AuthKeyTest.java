@@ -28,6 +28,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateParsingException;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
@@ -258,9 +259,6 @@ public class P11AuthKeyTest {
 
         // Issue certificate
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
-        
-        // Extension certExt = (Extension) new CertExt(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_clientAuth, KeyPurposeId.id_kp_codeSigning }));
-        final X509CertificateHolder certHolder = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).addExtension(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_clientAuth, KeyPurposeId.id_kp_codeSigning })).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(getdss10CAPrivateKey()));
 
         // List<Certificate> caCertificateChain;
         File caPemFile = new File(dss10RootCAPemPath);
@@ -268,7 +266,12 @@ public class P11AuthKeyTest {
 //            caCertificateChain = CertTools.getCertsFromPEM(targetStream, Certificate.class);
 //        }
 
-        Certificate caCert = SignServerUtil.getCertFromFile(caPemFile.getAbsolutePath());
+        X509Certificate caCert = SignServerUtil.getCertFromFile(caPemFile.getAbsolutePath());
+        
+        // Extension certExt = (Extension) new CertExt(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_clientAuth, KeyPurposeId.id_kp_codeSigning }));
+        final X509CertificateHolder certHolder = new X509v3CertificateBuilder(new X500Name(caCert.getIssuerDN().getName()), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).addExtension(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_clientAuth, KeyPurposeId.id_kp_codeSigning })).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(getdss10CAPrivateKey()));
+
+        
         Certificate signerCert = CertTools.getCertfromByteArray(certHolder.getEncoded());
         List certChain = Arrays.asList(signerCert, caCert);        
 

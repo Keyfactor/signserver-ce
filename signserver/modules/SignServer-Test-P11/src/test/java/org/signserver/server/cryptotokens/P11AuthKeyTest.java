@@ -132,11 +132,11 @@ public class P11AuthKeyTest {
         workerSession.setWorkerProperty(tokenId, "NAME", CRYPTO_TOKEN_NAME);
         workerSession.setWorkerProperty(tokenId, "SHAREDLIBRARYNAME", sharedLibraryName);
         if (!StringUtils.isBlank(slot)) {
-            System.out.println("setting slot: " + slot);
+            LOG.debug("setting slot: " + slot);
             workerSession.setWorkerProperty(tokenId, CryptoTokenHelper.PROPERTY_SLOTLABELTYPE, Pkcs11SlotLabelType.SLOT_NUMBER.getKey());
             workerSession.setWorkerProperty(tokenId, CryptoTokenHelper.PROPERTY_SLOTLABELVALUE, slot);
         } else {
-            System.out.println("setting slotIndex: " + slotIndex);
+            LOG.debug("setting slotIndex: " + slotIndex);
             workerSession.setWorkerProperty(tokenId, CryptoTokenHelper.PROPERTY_SLOTLABELTYPE, Pkcs11SlotLabelType.SLOT_NUMBER.getKey());
             workerSession.setWorkerProperty(tokenId, CryptoTokenHelper.PROPERTY_SLOTLABELVALUE, slotIndex);
         }
@@ -145,7 +145,7 @@ public class P11AuthKeyTest {
         workerSession.reloadConfiguration(tokenId);
     }
 
-    @Test
+   @Test
     public void testPlainSigner_P11AuthKey() throws Exception {
         final int workerId = WORKER_PLAIN;
 
@@ -182,10 +182,11 @@ public class P11AuthKeyTest {
             createP11AuthKey();
 
             setPlainSignerProperties(workerId, true);
+            workerSession.setWorkerProperty(workerId, "DEFAULTKEY", TEST_AUTH_KEY);
             workerSession.reloadConfiguration(workerId);
 
             assertEquals("Status code", 0, 
-                    CLI.execute("signdocument", "-workername", "PlainSignerP11",
+                    CLI.execute("signdocument", "-workername", "TestPlainSignerP11",
                     "-data", "<data/>",
                     "-keystoretype", "PKCS11_CONFIG",
                     "-keyalias", TEST_AUTH_KEY,
@@ -276,7 +277,7 @@ public class P11AuthKeyTest {
         List certChain = Arrays.asList(signerCert, caCert);        
 
         testCase.getWorkerSession().importCertificateChain(new WorkerIdentifier(CRYPTO_TOKEN_ID), getCertByteArrayList(certChain), TEST_AUTH_KEY, null);
-
+        testCase.getWorkerSession().reloadConfiguration(CRYPTO_TOKEN_ID);
     }
 
 }

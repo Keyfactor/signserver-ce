@@ -28,7 +28,6 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateParsingException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
@@ -36,6 +35,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import static junit.framework.TestCase.assertEquals;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
@@ -46,6 +46,7 @@ import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
 import org.cesecore.util.CertTools;
 import org.junit.Assume;
 import org.junit.Before;
@@ -113,7 +114,7 @@ public class P11AuthKeyTest {
         slot = testCase.getConfig().getProperty("test.p11.slot");
         slotIndex = testCase.getConfig().getProperty("test.p11.slotindex");
         pin = testCase.getConfig().getProperty("test.p11.pin");
-        existingKey1 = testCase.getConfig().getProperty("test.p11.existingkey1");        
+        existingKey1 = testCase.getConfig().getProperty("test.p11.existingkey1");
     }
 
     @Before
@@ -129,9 +130,18 @@ public class P11AuthKeyTest {
         workerSession.setWorkerProperty(tokenId, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, PKCS11CryptoToken.class.getName());
         workerSession.setWorkerProperty(tokenId, "NAME", CRYPTO_TOKEN_NAME);
         workerSession.setWorkerProperty(tokenId, "SHAREDLIBRARYNAME", sharedLibraryName);
-        workerSession.setWorkerProperty(tokenId, "SLOT", slot);
+        if (!StringUtils.isBlank(slot)) {
+            System.out.println("setting slot: " + slot);
+            workerSession.setWorkerProperty(tokenId, CryptoTokenHelper.PROPERTY_SLOTLABELTYPE, Pkcs11SlotLabelType.SLOT_NUMBER.getKey());
+            workerSession.setWorkerProperty(tokenId, CryptoTokenHelper.PROPERTY_SLOTLABELVALUE, slot);
+        } else {
+            System.out.println("setting slotIndex: " + slotIndex);
+            workerSession.setWorkerProperty(tokenId, CryptoTokenHelper.PROPERTY_SLOTLABELTYPE, Pkcs11SlotLabelType.SLOT_NUMBER.getKey());
+            workerSession.setWorkerProperty(tokenId, CryptoTokenHelper.PROPERTY_SLOTLABELVALUE, slotIndex);
+        }
         workerSession.setWorkerProperty(tokenId, "PIN", pin);
-        workerSession.setWorkerProperty(tokenId, "DEFAULTKEY", existingKey1); // Test key        
+        workerSession.setWorkerProperty(tokenId, "DEFAULTKEY", existingKey1); // Test key
+        workerSession.reloadConfiguration(tokenId);
     }
 
     @Test
@@ -157,10 +167,15 @@ public class P11AuthKeyTest {
     public void testSigningFixedP11AuthKey() throws Exception {
         final int workerId = WORKER_PLAIN;
         File p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
-        String config = "name=PKCS11\n"
-                + "library=" + sharedLibraryPath + "\n"
-                + "slotListIndex=" + slotIndex;
-        FileUtils.writeStringToFile(p11ConfigFile, config, StandardCharsets.UTF_8);
+        final StringBuilder config = new StringBuilder();
+        config.append("name=PKCS11\n");
+        config.append("library=").append(sharedLibraryPath).append("\n");
+        if (!StringUtils.isBlank(slot)) {
+            config.append("slot=").append(slot);
+        } else {
+            config.append("slotListIndex=").append(slotIndex);
+        }
+        FileUtils.writeStringToFile(p11ConfigFile, config.toString(), StandardCharsets.UTF_8);
         try {
             setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
             createP11AuthKey();
@@ -253,7 +268,7 @@ public class P11AuthKeyTest {
 //            caCertificateChain = CertTools.getCertsFromPEM(targetStream, Certificate.class);
 //        }
 
-        Certificate caCert = SignServerUtil.getCertFromFile(caPemFile.getName());
+        Certificate caCert = SignServerUtil.getCertFromFile(caPemFile.getAbsolutePath());
         Certificate signerCert = CertTools.getCertfromByteArray(certHolder.getEncoded());
         List certChain = Arrays.asList(signerCert, caCert);        
 

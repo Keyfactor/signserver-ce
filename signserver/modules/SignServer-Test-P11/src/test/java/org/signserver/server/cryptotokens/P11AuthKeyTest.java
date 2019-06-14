@@ -52,6 +52,7 @@ import org.cesecore.util.CertTools;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
+import org.signserver.admin.cli.AdminCLI;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -96,15 +97,20 @@ public class P11AuthKeyTest {
 
     private final ModulesTestCase testCase = new ModulesTestCase();
     private final WorkerSession workerSession = testCase.getWorkerSession();
-    private static final CLITestHelper CLI = new CLITestHelper(ClientCLI.class);
+    
+    private final CLITestHelper adminCLI = new CLITestHelper(AdminCLI.class);
+    private static final CLITestHelper clientCLI = new CLITestHelper(ClientCLI.class);
+    
+    private final String ISSUER_DN = "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE";
+    private final String DESCRIPTION = "Test auth client";
+    
+    private final String AUTH_KEY_CERT_CN = "Worker" + CRYPTO_TOKEN_ID + "P11Auth";
     
     final String dss10Path = testCase.getSignServerHome().getAbsolutePath()
             + File.separator + "res"
             + File.separator + "test"
-            + File.separator + "dss10";
-    
-    final String trustoreFilePath = dss10Path + File.separator + "dss10_truststore.jks";
-    
+            + File.separator + "dss10";    
+    final String trustoreFilePath = dss10Path + File.separator + "dss10_truststore.jks";    
     final String dss10RootCAPemPath = dss10Path + File.separator + "DSSRootCA10.cacert.pem";
 
 
@@ -165,8 +171,7 @@ public class P11AuthKeyTest {
     }
     
     @Test
-    public void testSigningFixedP11AuthKey() throws Exception {
-        final int workerId = WORKER_PLAIN;
+    public void testSigningFixedP11AuthKey() throws Exception {        
         File p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
         final StringBuilder config = new StringBuilder();
         config.append("name=PKCS11\n");
@@ -181,12 +186,25 @@ public class P11AuthKeyTest {
             setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
             createP11AuthKey();
 
-            setPlainSignerProperties(workerId, true);
-            workerSession.setWorkerProperty(workerId, "DEFAULTKEY", TEST_AUTH_KEY);
-            workerSession.reloadConfiguration(workerId);
+            setPlainSignerProperties(WORKER_PLAIN, true);
+            workerSession.setWorkerProperty(WORKER_PLAIN, "DEFAULTKEY", TEST_AUTH_KEY);
+            workerSession.setWorkerProperty(WORKER_PLAIN, "AUTHTYPE",
+                                                      "org.signserver.server.ClientCertAuthorizer");
+           
+            // Add CLIENT AUTH rule in worker
+            assertEquals("execute add", 0,
+                    adminCLI.execute("authorizedclients", "-worker", String.valueOf(WORKER_PLAIN),
+                            "-add",
+                            "-matchSubjectWithType", "SUBJECT_RDN_CN",
+                            "-matchSubjectWithValue", AUTH_KEY_CERT_CN,
+                            "-matchIssuerWithValue", ISSUER_DN,
+                            "-description", DESCRIPTION));
+            
+            
+            workerSession.reloadConfiguration(WORKER_PLAIN);       
 
             assertEquals("Status code", 0, 
-                    CLI.execute("signdocument", "-workername", "TestPlainSignerP11",
+                    clientCLI.execute("signdocument", "-workername", "TestPlainSignerP11",
                     "-data", "<data/>",
                     "-keystoretype", "PKCS11_CONFIG",
                     "-keyalias", TEST_AUTH_KEY,
@@ -198,7 +216,7 @@ public class P11AuthKeyTest {
         } finally {
             workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
             testCase.removeWorker(CRYPTO_TOKEN_ID);
-            testCase.removeWorker(workerId);
+            testCase.removeWorker(WORKER_PLAIN);
             FileUtils.deleteQuietly(p11ConfigFile);
         }
     }
@@ -255,7 +273,7 @@ public class P11AuthKeyTest {
 
         // Generate CSR
         final ISignerCertReqInfo req
-                = new PKCS10CertReqInfo("SHA256WithRSA", "CN=Worker" + CRYPTO_TOKEN_ID, null);
+                = new PKCS10CertReqInfo("SHA256WithRSA", "CN=" + AUTH_KEY_CERT_CN, null);
         AbstractCertReqData reqData = (AbstractCertReqData) testCase.getWorkerSession().getCertificateRequest(new WorkerIdentifier(CRYPTO_TOKEN_ID), req, false, TEST_AUTH_KEY);
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
         

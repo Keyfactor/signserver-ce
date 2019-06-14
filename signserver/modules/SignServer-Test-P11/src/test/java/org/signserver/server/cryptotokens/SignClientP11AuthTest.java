@@ -203,10 +203,12 @@ public class SignClientP11AuthTest {
     @Test
     public void testSigningFixedP11AuthKey() throws Exception {
         LOG.info("testSigningFixedP11AuthKey");
-        File p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
-        createPKCS11ConfigFile(p11ConfigFile);
+        File p11ConfigFile = null;
 
         try {
+            p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
+            createPKCS11ConfigFile(p11ConfigFile);
+
             setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
             createP11AuthKey();
 
@@ -258,10 +260,12 @@ public class SignClientP11AuthTest {
     @Test
     public void testSigningFixedP11AuthKeyFromInDir() throws Exception {
         LOG.info("testSigningFixedP11AuthKeyFromInDir");
-        File p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
-        createPKCS11ConfigFile(p11ConfigFile);
+        File p11ConfigFile = null;
 
         try {
+            p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
+            createPKCS11ConfigFile(p11ConfigFile);
+            
             setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
             createP11AuthKey();
 
@@ -320,10 +324,12 @@ public class SignClientP11AuthTest {
     @Test
     public void testSigningFixedP11AuthKeyFromInDirWith100Threads() throws Exception {
         LOG.info("testSigningFixedP11AuthKeyFromInDirWith100Threads");        
-        File p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
-        createPKCS11ConfigFile(p11ConfigFile);
+        File p11ConfigFile = null;
 
         try {
+            p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
+            createPKCS11ConfigFile(p11ConfigFile);
+            
             setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
             createP11AuthKey();
 

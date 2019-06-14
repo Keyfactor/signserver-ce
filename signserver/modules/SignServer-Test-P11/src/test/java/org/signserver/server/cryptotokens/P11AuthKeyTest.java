@@ -59,7 +59,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runners.MethodSorters;
 import org.signserver.admin.cli.AdminCLI;
-import org.signserver.client.cli.ClientCLI;
 import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ISignerCertReqInfo;
@@ -106,8 +105,7 @@ public class P11AuthKeyTest {
     private final ModulesTestCase testCase = new ModulesTestCase();
     private final WorkerSession workerSession = testCase.getWorkerSession();
     
-    private final CLITestHelper adminCLI = new CLITestHelper(AdminCLI.class);
-    private static final CLITestHelper clientCLI = new CLITestHelper(ClientCLI.class);
+    private final CLITestHelper adminCLI = new CLITestHelper(AdminCLI.class);    
     
     private final String ISSUER_DN = "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE";
     private final String DESCRIPTION = "Test auth client";
@@ -166,26 +164,42 @@ public class P11AuthKeyTest {
         workerSession.reloadConfiguration(tokenId);
     }
 
+    /**
+     * Creates a new key in P11 keystore, issue a certificate by DSSRootCA10,
+     * imports it in token associating with generated key and performs signing
+     * operation by same key through PlainSigner.
+     *
+     *
+     * @throws Exception
+     */
    @Test
     public void testPlainSigner_P11AuthKey() throws Exception {
-        LOG.info("testPlainSigner_P11AuthKey");
-        final int workerId = WORKER_PLAIN;
-
+        LOG.info("testPlainSigner_P11AuthKey"); 
+        
         try {
             setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
             createP11AuthKey();
 
-            setPlainSignerProperties(workerId, true);
-            workerSession.reloadConfiguration(workerId);
+            setPlainSignerProperties(WORKER_PLAIN, true);
+            workerSession.reloadConfiguration(WORKER_PLAIN);
 
-            plainSigner(workerId);
+            plainSigner(WORKER_PLAIN);
         } finally {
             workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
             testCase.removeWorker(CRYPTO_TOKEN_ID);
-            testCase.removeWorker(workerId);
+            testCase.removeWorker(WORKER_PLAIN);
         }
     }
     
+    /**
+     * Creates a new TLS client authentication key in P11 keystore, issue a
+     * certificate by DSSRootCA10, imports it in token associating with
+     * generated key and performs signing operation through CLI using same key
+     * for client authentication while connecting to server.
+     *
+     *
+     * @throws Exception
+     */
     @Test
     public void testSigningFixedP11AuthKey() throws Exception {
         LOG.info("testSigningFixedP11AuthKey");
@@ -232,6 +246,15 @@ public class P11AuthKeyTest {
         }
     }
     
+    /**
+     * Creates a new TLS client authentication key in P11 keystore, issue a
+     * certificate by DSSRootCA10, imports it in token associating with
+     * generated key and performs signing operation (batch mode)through CLI using same key
+     * for client authentication while connecting to server.
+     *
+     *
+     * @throws Exception
+     */
     @Test
     public void testSigningFixedP11AuthKeyFromInDir() throws Exception {
         LOG.info("testSigningFixedP11AuthKeyFromInDir");
@@ -285,6 +308,15 @@ public class P11AuthKeyTest {
         }
     }
     
+    /**
+     * Creates a new TLS client authentication key in P11 keystore, issue a
+     * certificate by DSSRootCA10, imports it in token associating with
+     * generated key and performs signing operation (batch mode and multiple threads) through CLI using same key
+     * for client authentication while connecting to server.
+     *
+     *
+     * @throws Exception
+     */
     @Test
     public void testSigningFixedP11AuthKeyFromInDirWith100Threads() throws Exception {
         LOG.info("testSigningFixedP11AuthKeyFromInDirWith100Threads");        

@@ -507,6 +507,11 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
                     public List<String> getAllWorkerNames() {
                         throw new UnsupportedOperationException("Not supported yet."); 
                     }
+
+                    @Override
+                    public boolean isKeyGenerationDisabled() {
+                        return false;
+                    }
                 };
             }
             return workerSession;

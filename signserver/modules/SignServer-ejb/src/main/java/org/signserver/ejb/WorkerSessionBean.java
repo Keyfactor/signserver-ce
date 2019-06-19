@@ -419,6 +419,11 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             throws CryptoTokenOfflineException, InvalidWorkerIdException,
                 IllegalArgumentException {
 
+        // Check that key generation is not disabled
+        if (isKeyGenerationDisabled()) {
+            throw new CryptoTokenOfflineException("Key generation has been disabled");
+        }
+
         try {
             IWorker worker = workerManagerSession.getWorker(signerId);
 
@@ -1474,5 +1479,23 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         } catch (NoSuchWorkerException ex) {
             throw new InvalidWorkerIdException(ex.getMessage());
         }
+    }
+
+    @Override
+    public boolean isKeyGenerationDisabled() {
+        final boolean result;
+        final String value = CompileTimeSettings.getInstance().getProperties().getProperty(CompileTimeSettings.CRYPTOTOKEN_DISABLEKEYGENERATION, Boolean.FALSE.toString());
+        if (value.trim().equalsIgnoreCase(Boolean.TRUE.toString())) {
+            result = true;
+        } else if (value.trim().equalsIgnoreCase(Boolean.FALSE.toString())) {
+            result = false;
+        } else {
+            LOG.error("Incorrect value for property " + CompileTimeSettings.CRYPTOTOKEN_DISABLEKEYGENERATION + ". Key generation will be disabled.");
+            result = true;
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Key generation disabled: " + result);
+        }
+        return result;
     }
 }

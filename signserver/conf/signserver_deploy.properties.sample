@@ -295,6 +295,12 @@
 #   NONE:           No updates are logged.
 #statusrepository.log=ALL
 
+# ------------- CryptoToken Configuration --------------------------------------
+
+# Disable the key generation functionality for all crypto tokens.
+#
+# Default: false
+#cryptotoken.disablekeygeneration=false
 
 # ------------- PKCS11 library definitions -------------------------------------
 #

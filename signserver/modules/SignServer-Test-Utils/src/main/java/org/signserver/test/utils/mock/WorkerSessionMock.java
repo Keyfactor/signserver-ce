@@ -501,6 +501,11 @@ public class WorkerSessionMock implements WorkerSessionLocal,
         return new ArrayList<>();
     }
 
+    @Override
+    public boolean isKeyGenerationDisabled() {
+        return false;
+    }
+
     private static class Worker {
         private final IProcessable processable;
         private final WorkerConfig config;

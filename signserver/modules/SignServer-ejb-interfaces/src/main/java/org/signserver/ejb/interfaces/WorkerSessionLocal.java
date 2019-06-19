@@ -394,4 +394,10 @@ public interface WorkerSessionLocal extends WorkerSession {
             InvalidAlgorithmParameterException,
             UnsupportedCryptoTokenParameter,
             OperationUnsupportedException;
+    
+    /**
+     * Checks if key generation is disabled in the deployment configuration.
+     * @return true if key generation has been disabled globally.
+     */
+    boolean isKeyGenerationDisabled();
 }

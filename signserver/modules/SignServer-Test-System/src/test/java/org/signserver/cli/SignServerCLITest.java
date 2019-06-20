@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -542,6 +543,20 @@ public class SignServerCLITest extends ModulesTestCase {
         assertPrinted("", cli.getOut(), "SignServer reloaded successfully");
     }
 
+    private boolean isAllowAnyWsAdminsEnabled() throws Exception {
+        final boolean result;
+        cli.execute("getproperty", "global", "ALLOWANYWSADMIN");
+        final String output = cli.getOut().toString(StandardCharsets.UTF_8.name());
+        if (output.contains("No such global property") || output.toLowerCase().contains("false")) {
+            result = false;
+        } else if (output.toLowerCase().contains("true")) {
+            result = true;
+        } else {
+            throw new Exception("Unable to determine value of ALLOWANYWSADMIN: " + output);
+        }
+        return result;
+    }
+    
     /**
      * Test adding and removing WS admins using serial number and issuer DN directly.
      * @throws Exception
@@ -549,101 +564,112 @@ public class SignServerCLITest extends ModulesTestCase {
     @Test
     public void test01WSAdmins() throws Exception {
         LOG.info(">test01WSAdmins");
-    	// Test adding wsadmin using explicit parameters
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("wsadmins", "-add", "-certserialno", "ef34242d2324",
-            		"-issuerdn", "CN=Test Root CA"));
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-        	cli.execute("wsadmins", "-list"));
-       
-        assertPrinted("", cli.getOut(), "ef34242d2324");
-        assertPrinted("", cli.getOut(), "CN=Test Root CA");
         
-        // try adding the same admin again
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("wsadmins", "-add", "-certserialno", "ef34242d2324",
-            		"-issuerdn", "CN=Test Root CA"));
-        assertPrinted("", cli.getOut(), "Administrator already exists");
-        
-        // Test removing previously added admin
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-        		cli.execute("wsadmins", "-remove", "-certserialno", "ef34242d2324",
-            		"-issuerdn", "CN=Test Root CA"));
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-        		cli.execute("wsadmins", "-list"));
-        assertNotPrinted("", cli.getOut(), "ef34242d2324");
-        assertNotPrinted("", cli.getOut(), "CN=Test Root CA");
-        
-        // Test adding wsadmin with leading zero in serial number
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("wsadmins", "-add", "-certserialno", "0df34242d2324",
-            		"-issuerdn", "CN=Test Root CA"));
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-        	cli.execute("wsadmins", "-list"));
-       
-        assertPrinted("", cli.getOut(), "df34242d2324");
-        assertPrinted("", cli.getOut(), "CN=Test Root CA");
-        
-        // Test removing previously added admin
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-        		cli.execute("wsadmins", "-remove", "-certserialno", "0df34242d2324",
-            		"-issuerdn", "CN=Test Root CA"));
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-        		cli.execute("wsadmins", "-list"));
-        assertNotPrinted("", cli.getOut(), "df34242d2324");
-        assertNotPrinted("", cli.getOut(), "CN=Test Root CA");
+        // Save the value for ALLOWANYWSADMIN
+        final boolean initalAllowAny = isAllowAnyWsAdminsEnabled();
 
-        // Test adding wsadmin with serial number given in with upper case
-        // hex letters and test that the -list output is given in internal
-        // (BigInteger.toString(16) ) form
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
-            cli.execute("wsadmins", "-add", "-certserialno", "FF34242D2324",
-            		"-issuerdn", "CN=Test Root CA"));
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-        	cli.execute("wsadmins", "-list"));
-       
-        assertPrinted("", cli.getOut(), "ff34242d2324");
-        assertPrinted("", cli.getOut(), "CN=Test Root CA");
+        try {
+            // This test assumes ALLOWANYWSADMIN=false
+            cli.execute("wsadmins", "-allowany", String.valueOf(false));
 
-        // Test removing previously added admin
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-        		cli.execute("wsadmins", "-remove", "-certserialno", "FF34242D2324",
-            		"-issuerdn", "CN=Test Root CA"));
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-        		cli.execute("wsadmins", "-list"));
-        assertNotPrinted("", cli.getOut(), "ff34242d2324");
-        assertNotPrinted("", cli.getOut(), "CN=Test Root CA");
-        
-        // Test setting any WS admin allowed
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-                cli.execute("wsadmins", "-allowany"));
-        assertPrinted("", cli.getOut(), "Set to allow any WS admin");
-        
-        // check that the list command shows a warning when allow any is on
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-                cli.execute("wsadmins", "-list"));
-        assertPrinted("", cli.getOut(), "ANY CERTIFICATE ACCEPTED FOR WS ADMINISTRATORS");
-    
-        // Test turning off allowing any WS admin
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-                cli.execute("wsadmins", "-allowany", "false"));
-        assertPrinted("", cli.getOut(), "Set to not allow any WS admin");
-        
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-                cli.execute("wsadmins", "-list"));
-        assertNotPrinted("", cli.getOut(), "ANY CERTIFICATE ACCEPTED FOR WS ADMINISTRATORS");
-        
-        // Test with invalid hexadecimal serial number
-        assertEquals("", CommandLineInterface.RETURN_INVALID_ARGUMENTS,
-                cli.execute("wsadmins", "-add", "-certserialno", "foo",
-                        "-issuerdn", "CN=foo"));
-        assertPrinted("", cli.getOut(), "Illegal serial number specified: foo");
-        assertEquals("", CommandLineInterface.RETURN_INVALID_ARGUMENTS,
-                cli.execute("wsadmins", "-remove", "-certserialno", "foo",
-                        "-issuerdn", "CN=foo"));
-        assertPrinted("", cli.getOut(), "Illegal serial number specified: foo");
+            // Test adding wsadmin using explicit parameters
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                cli.execute("wsadmins", "-add", "-certserialno", "ef34242d2324",
+                            "-issuerdn", "CN=Test Root CA"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                    cli.execute("wsadmins", "-list"));
+
+            assertPrinted("" + cli.getOut().toString(), cli.getOut(), "ef34242d2324");
+            assertPrinted("", cli.getOut(), "CN=Test Root CA");
+
+            // try adding the same admin again
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                cli.execute("wsadmins", "-add", "-certserialno", "ef34242d2324",
+                            "-issuerdn", "CN=Test Root CA"));
+            assertPrinted("", cli.getOut(), "Administrator already exists");
+
+            // Test removing previously added admin
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                            cli.execute("wsadmins", "-remove", "-certserialno", "ef34242d2324",
+                            "-issuerdn", "CN=Test Root CA"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                            cli.execute("wsadmins", "-list"));
+            assertNotPrinted("", cli.getOut(), "ef34242d2324");
+            assertNotPrinted("", cli.getOut(), "CN=Test Root CA");
+
+            // Test adding wsadmin with leading zero in serial number
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                cli.execute("wsadmins", "-add", "-certserialno", "0df34242d2324",
+                            "-issuerdn", "CN=Test Root CA"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                    cli.execute("wsadmins", "-list"));
+
+            assertPrinted("", cli.getOut(), "df34242d2324");
+            assertPrinted("", cli.getOut(), "CN=Test Root CA");
+
+            // Test removing previously added admin
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                            cli.execute("wsadmins", "-remove", "-certserialno", "0df34242d2324",
+                            "-issuerdn", "CN=Test Root CA"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                            cli.execute("wsadmins", "-list"));
+            assertNotPrinted("", cli.getOut(), "df34242d2324");
+            assertNotPrinted("", cli.getOut(), "CN=Test Root CA");
+
+            // Test adding wsadmin with serial number given in with upper case
+            // hex letters and test that the -list output is given in internal
+            // (BigInteger.toString(16) ) form
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS, 
+                cli.execute("wsadmins", "-add", "-certserialno", "FF34242D2324",
+                            "-issuerdn", "CN=Test Root CA"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                    cli.execute("wsadmins", "-list"));
+
+            assertPrinted("", cli.getOut(), "ff34242d2324");
+            assertPrinted("", cli.getOut(), "CN=Test Root CA");
+
+            // Test removing previously added admin
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                            cli.execute("wsadmins", "-remove", "-certserialno", "FF34242D2324",
+                            "-issuerdn", "CN=Test Root CA"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                            cli.execute("wsadmins", "-list"));
+            assertNotPrinted("", cli.getOut(), "ff34242d2324");
+            assertNotPrinted("", cli.getOut(), "CN=Test Root CA");
+
+            // Test setting any WS admin allowed
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                    cli.execute("wsadmins", "-allowany"));
+            assertPrinted("", cli.getOut(), "Set to allow any WS admin");
+
+            // check that the list command shows a warning when allow any is on
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                    cli.execute("wsadmins", "-list"));
+            assertPrinted("", cli.getOut(), "ANY CERTIFICATE ACCEPTED FOR WS ADMINISTRATORS");
+
+            // Test turning off allowing any WS admin
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                    cli.execute("wsadmins", "-allowany", "false"));
+            assertPrinted("", cli.getOut(), "Set to not allow any WS admin");
+
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                    cli.execute("wsadmins", "-list"));
+            assertNotPrinted("", cli.getOut(), "ANY CERTIFICATE ACCEPTED FOR WS ADMINISTRATORS");
+
+            // Test with invalid hexadecimal serial number
+            assertEquals("", CommandLineInterface.RETURN_INVALID_ARGUMENTS,
+                    cli.execute("wsadmins", "-add", "-certserialno", "foo",
+                            "-issuerdn", "CN=foo"));
+            assertPrinted("", cli.getOut(), "Illegal serial number specified: foo");
+            assertEquals("", CommandLineInterface.RETURN_INVALID_ARGUMENTS,
+                    cli.execute("wsadmins", "-remove", "-certserialno", "foo",
+                            "-issuerdn", "CN=foo"));
+            assertPrinted("", cli.getOut(), "Illegal serial number specified: foo");
+        } finally {
+            cli.execute("wsadmins", "-allowany", String.valueOf(initalAllowAny));
+        }
     }
-    
+
     /**
      * Test adding WS admins using PEM and DER files.
      * @throws Exception
@@ -651,23 +677,34 @@ public class SignServerCLITest extends ModulesTestCase {
     @Test
     public void test01WSAdminsFromFile() throws Exception {
         LOG.info(">test01WSAdminsFromFile");
-    	// Test adding wsadmin using a PEM file
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-        		cli.execute("wsadmins", "-add",
-        				"-cert", getSignServerHome() + "/res/test/dss10/dss10_signer1.pem"));
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-        		cli.execute("wsadmins", "-list"));
-        assertPrinted("", cli.getOut(), "41935ada62ee0e8a");
-        assertPrinted("", cli.getOut(), "C=SE, O=SignServer, OU=Testing, CN=DSS Root CA 10");
-     
-        // Test adding wsadmin using a DER file
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-        		cli.execute("wsadmins", "-add",
-        				"-cert", getSignServerHome() + "/res/test/dss10/dss10_signer2.der"));
-        assertEquals("", CommandLineInterface.RETURN_SUCCESS,
-        		cli.execute("wsadmins", "-list"));
-        assertPrinted("", cli.getOut(), "53f6992d081248a");
-        assertPrinted("", cli.getOut(), "C=SE, O=SignServer, OU=Testing, CN=DSS Root CA 10");
+
+        // Save the value for ALLOWANYWSADMIN
+        final boolean initalAllowAny = isAllowAnyWsAdminsEnabled();
+
+        try {
+            // This test assumes ALLOWANYWSADMIN=false
+            cli.execute("wsadmins", "-allowany", String.valueOf(false));
+            
+            // Test adding wsadmin using a PEM file
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                            cli.execute("wsadmins", "-add",
+                                            "-cert", getSignServerHome() + "/res/test/dss10/dss10_signer1.pem"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                            cli.execute("wsadmins", "-list"));
+            assertPrinted("", cli.getOut(), "41935ada62ee0e8a");
+            assertPrinted("", cli.getOut(), "C=SE, O=SignServer, OU=Testing, CN=DSS Root CA 10");
+
+            // Test adding wsadmin using a DER file
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                            cli.execute("wsadmins", "-add",
+                                            "-cert", getSignServerHome() + "/res/test/dss10/dss10_signer2.der"));
+            assertEquals("", CommandLineInterface.RETURN_SUCCESS,
+                            cli.execute("wsadmins", "-list"));
+            assertPrinted("", cli.getOut(), "53f6992d081248a");
+            assertPrinted("", cli.getOut(), "C=SE, O=SignServer, OU=Testing, CN=DSS Root CA 10");
+        } finally {
+            cli.execute("wsadmins", "-allowany", String.valueOf(initalAllowAny));
+        }
     }
     
     /**

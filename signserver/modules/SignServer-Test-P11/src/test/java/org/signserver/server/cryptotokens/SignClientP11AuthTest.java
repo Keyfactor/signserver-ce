@@ -12,10 +12,13 @@
  ************************************************************************ */
 package org.signserver.server.cryptotokens;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
@@ -51,6 +54,7 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
 import org.cesecore.util.CertTools;
 import org.junit.Assert;
+import static org.junit.Assert.assertTrue;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -94,6 +98,7 @@ public class SignClientP11AuthTest {
     private static final String CRYPTO_TOKEN_NAME = "TestCryptoTokenP11Auth";
     private static final int WORKER_PLAIN = 40020;
     private static final String TEST_AUTH_KEY = "testAuthKey";
+    private static final String TEST_AUTH_ALT_KEY = "testAuthKeyAlt";
 
     private final String sharedLibraryName;
     private final String sharedLibraryPath;
@@ -111,7 +116,8 @@ public class SignClientP11AuthTest {
     private final String DESCRIPTION = "Test auth client";
     
     private final String AUTH_KEY_CERT_CN = "Worker" + CRYPTO_TOKEN_ID + "P11Auth";
-    
+    private final String AUTH_KEY_ALT_CERT_CN = "Worker" + CRYPTO_TOKEN_ID + "P11AuthAlt";
+
     final String dss10Path = testCase.getSignServerHome().getAbsolutePath()
             + File.separator + "res"
             + File.separator + "test"
@@ -245,6 +251,156 @@ public class SignClientP11AuthTest {
             FileUtils.deleteQuietly(p11ConfigFile);
             inDir.delete();
             outDir.delete();
+        }
+    }
+
+    /**
+     * Creates two new TLS client authentication keys in P11 keystore, issue
+     * certificates by DSSRootCA10, imports them in token associating with
+     * generated keys and performs signing operation through CLI using one of
+     * the keys as an authorized client certificate for client authentication
+     * while connecting to server.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testSigningFixedP11AuthKeyProptForAlias() throws Exception {
+        LOG.info("testSigningFixedP11AuthKey");
+        File p11ConfigFile = null;
+
+        try {
+            p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
+            createPKCS11ConfigFile(p11ConfigFile);
+
+            setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
+            createP11AuthKey();
+            createP11AltAuthKey();
+
+            setPlainSignerProperties(WORKER_PLAIN, true);            
+            workerSession.setWorkerProperty(WORKER_PLAIN, "AUTHTYPE",
+                    "org.signserver.server.ClientCertAuthorizer");
+
+            // Add CLIENT AUTH rule in worker
+            assertEquals("execute add", 0,
+                    adminCLI.execute("authorizedclients", "-worker", String.valueOf(WORKER_PLAIN),
+                            "-add",
+                            "-matchSubjectWithType", "SUBJECT_RDN_CN",
+                            "-matchSubjectWithValue", AUTH_KEY_CERT_CN,
+                            "-matchIssuerWithValue", ISSUER_DN,
+                            "-description", DESCRIPTION));
+
+            workerSession.reloadConfiguration(WORKER_PLAIN);
+            
+            ComplianceTestUtils.ProcResult res =
+                    execute(TEST_AUTH_KEY, TEST_AUTH_ALT_KEY,
+                            signClientCLI, "signdocument",
+                            "-workername", "TestPlainSignerP11",
+                            "-data", "<data/>",
+                            "-keystoretype", "PKCS11_CONFIG",
+                            "-keyaliasprompt",
+                            "-keystore", p11ConfigFile.getAbsolutePath(),
+                            "-keystorepwd", pin,
+                            "-truststore", trustoreFilePath,
+                            "-truststorepwd", "changeit");
+            LOG.debug("output: " + res.getOutput().toString());
+            Assert.assertEquals("result: " + res.getErrorMessage(), 0, res.getExitValue());
+        } finally {
+            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
+            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_ALT_KEY);
+            testCase.removeWorker(CRYPTO_TOKEN_ID);
+            testCase.removeWorker(WORKER_PLAIN);
+            FileUtils.deleteQuietly(p11ConfigFile);
+            inDir.delete();
+            outDir.delete();
+        }
+    }
+
+    private static ComplianceTestUtils.ProcResult execute(final String aliasToUse,
+                                                          final String altAlias,
+                                                          final String... arguments)
+            throws IOException {
+        Process proc;
+        BufferedReader stdIn = null;
+        BufferedReader errIn = null;
+        OutputStream stdOut = null;
+
+        try {
+            Runtime runtime = Runtime.getRuntime();
+            
+            LOG.info(Arrays.toString(arguments));
+
+            proc = runtime.exec(arguments, null);
+            stdIn = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            errIn = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+            stdOut = proc.getOutputStream();
+
+            List<String> lines = new LinkedList<>();
+            String line;
+            boolean foundAuthKey = false;
+            boolean foundAltAuthKey = false;
+            boolean foundPrompt = false;
+
+            while ((line = stdIn.readLine()) != null) {
+                if (line.endsWith(aliasToUse)) {
+                    LOG.debug("Found expected alias line: " + line);
+                    if (line.charAt(0) == '[') {
+                        final int endIndexOffset = line.indexOf(']');
+                        if (endIndexOffset != -1) {
+                            foundAuthKey = true;
+                            final String answerToPrompt = line.substring(1, endIndexOffset);
+                            LOG.debug("Parsed answer: " + answerToPrompt);
+                            // answer prompt
+                            stdOut.write(answerToPrompt.getBytes(StandardCharsets.UTF_8));
+                            stdOut.write('\n');
+                            stdOut.close();
+                        }
+                    }
+                    
+                } else if (line.endsWith(altAlias)) {
+                    LOG.debug("Found line with alt key: " + line);
+                    if (line.charAt(0) == '[' &&
+                        line.indexOf(']') != -1) {
+                        foundAltAuthKey = true;
+                    }
+                } else if (line.startsWith("Choose [")) {
+                    foundPrompt = true;
+                }
+                lines.add(line);
+            }
+
+            final String allLines = lines.toString();
+            LOG.debug("lines printed: " + allLines);
+            assertTrue("Found authkey in list", foundAuthKey);
+            assertTrue("Found alternative key", foundAltAuthKey);
+            assertTrue("Found prompt", foundPrompt);
+
+            StringBuilder errBuff = new StringBuilder();
+            while ((line = errIn.readLine()) != null) {
+                errBuff.append(line).append("\n");
+            }
+            try {
+                proc.waitFor();
+                return new ComplianceTestUtils.ProcResult(proc.exitValue(), errBuff.toString(), lines);
+            } catch (InterruptedException ex) {
+                LOG.error("Command interrupted", ex);
+                return new ComplianceTestUtils.ProcResult(-1, errBuff.toString(), lines);
+            }
+        } finally {
+            if (stdOut != null) {
+                try {
+                    stdOut.close();
+                } catch (IOException ignored) {} // NOPMD
+            }
+            if (stdIn != null) {
+                try {
+                    stdIn.close();
+                } catch (IOException ignored) {} // NOPMD
+            }
+            if (errIn != null) {
+                try {
+                    errIn.close();
+                } catch (IOException ignored) {} // NOPMD
+            }
         }
     }
     
@@ -422,13 +578,39 @@ public class SignClientP11AuthTest {
         return issuerPrivKey;
     }
 
-    private void createP11AuthKey() throws CryptoTokenOfflineException, InvalidWorkerIdException, IOException, FileNotFoundException, KeyStoreException, CertificateParsingException, NoSuchProviderException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, OperatorCreationException, OperationUnsupportedException {
-        workerSession.generateSignerKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), "RSA", "2048", TEST_AUTH_KEY, pin.toCharArray());
+    private void createP11AuthKey()
+            throws CryptoTokenOfflineException, InvalidWorkerIdException,
+                   IOException, FileNotFoundException, KeyStoreException,
+                   CertificateParsingException, NoSuchProviderException,
+                   NoSuchAlgorithmException, CertificateException,
+                   UnrecoverableKeyException, OperatorCreationException,
+                   OperationUnsupportedException {
+        createP11Key(TEST_AUTH_KEY, AUTH_KEY_CERT_CN);
+    }
+
+    private void createP11AltAuthKey()
+            throws CryptoTokenOfflineException, InvalidWorkerIdException,
+                   IOException, FileNotFoundException, KeyStoreException,
+                   NoSuchProviderException, NoSuchAlgorithmException,
+                   CertificateException, CertificateParsingException,
+                   UnrecoverableKeyException, OperatorCreationException,
+                   OperationUnsupportedException {
+        createP11Key(TEST_AUTH_ALT_KEY, AUTH_KEY_ALT_CERT_CN);
+    }
+
+    private void createP11Key(final String keyAlias, final String CN)
+            throws CryptoTokenOfflineException, InvalidWorkerIdException,
+                   IOException, FileNotFoundException, KeyStoreException,
+                   CertificateParsingException, NoSuchProviderException,
+                   NoSuchAlgorithmException, CertificateException,
+                   UnrecoverableKeyException, OperatorCreationException,
+                   OperationUnsupportedException {
+        workerSession.generateSignerKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), "RSA", "2048", keyAlias, pin.toCharArray());
 
         // Generate CSR
         final ISignerCertReqInfo req
-                = new PKCS10CertReqInfo("SHA256WithRSA", "CN=" + AUTH_KEY_CERT_CN, null);
-        AbstractCertReqData reqData = (AbstractCertReqData) testCase.getWorkerSession().getCertificateRequest(new WorkerIdentifier(CRYPTO_TOKEN_ID), req, false, TEST_AUTH_KEY);
+                = new PKCS10CertReqInfo("SHA256WithRSA", "CN=" + CN, null);
+        AbstractCertReqData reqData = (AbstractCertReqData) testCase.getWorkerSession().getCertificateRequest(new WorkerIdentifier(CRYPTO_TOKEN_ID), req, false, keyAlias);
         PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
         
         // Get CA cert from file
@@ -442,7 +624,7 @@ public class SignClientP11AuthTest {
         List certChain = Arrays.asList(signerCert, caCert);        
 
         // Import certificate chain in token
-        testCase.getWorkerSession().importCertificateChain(new WorkerIdentifier(CRYPTO_TOKEN_ID), getCertByteArrayList(certChain), TEST_AUTH_KEY, null);
+        testCase.getWorkerSession().importCertificateChain(new WorkerIdentifier(CRYPTO_TOKEN_ID), getCertByteArrayList(certChain), keyAlias, null);
         testCase.getWorkerSession().reloadConfiguration(CRYPTO_TOKEN_ID);
     }
     

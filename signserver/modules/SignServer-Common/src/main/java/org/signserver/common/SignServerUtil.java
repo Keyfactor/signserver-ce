@@ -302,4 +302,26 @@ public class SignServerUtil {
             return buf.toString().trim();
         }
     } // BasicX509NameTokenizer
+
+    /**
+     * Checks if key generation is disabled in the deployment configuration.
+     * @return true if key generation has been disabled globally.
+     */
+    public static boolean isKeyGenerationDisabled() {
+        final boolean result;
+        final String value = CompileTimeSettings.getInstance().getProperties().getProperty(CompileTimeSettings.CRYPTOTOKEN_DISABLEKEYGENERATION, Boolean.FALSE.toString());
+        if (value.trim().equalsIgnoreCase(Boolean.TRUE.toString())) {
+            result = true;
+        } else if (value.trim().equalsIgnoreCase(Boolean.FALSE.toString())) {
+            result = false;
+        } else {
+            LOG.error("Incorrect value for property " + CompileTimeSettings.CRYPTOTOKEN_DISABLEKEYGENERATION + ". Key generation will be disabled.");
+            result = true;
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Key generation disabled: " + result);
+        }
+        return result;
+    }
+    
 }

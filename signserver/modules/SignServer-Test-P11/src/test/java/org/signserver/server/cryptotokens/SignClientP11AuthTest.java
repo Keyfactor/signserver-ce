@@ -264,7 +264,7 @@ public class SignClientP11AuthTest {
      * @throws Exception
      */
     @Test
-    public void testSigningFixedP11AuthKeyProptForAlias() throws Exception {
+    public void testSigningFixedP11AuthKeyPromptForAlias() throws Exception {
         LOG.info("testSigningFixedP11AuthKey");
         File p11ConfigFile = null;
 
@@ -292,7 +292,7 @@ public class SignClientP11AuthTest {
             workerSession.reloadConfiguration(WORKER_PLAIN);
             
             ComplianceTestUtils.ProcResult res =
-                    execute(TEST_AUTH_KEY, TEST_AUTH_ALT_KEY,
+                    executeWithExpectedPrompt(TEST_AUTH_KEY, TEST_AUTH_ALT_KEY,
                             signClientCLI, "signdocument",
                             "-workername", "TestPlainSignerP11",
                             "-data", "<data/>",
@@ -315,7 +315,20 @@ public class SignClientP11AuthTest {
         }
     }
 
-    private static ComplianceTestUtils.ProcResult execute(final String aliasToUse,
+    /**
+     * Executes command checking for expected alias to answer the prompt
+     * with and alternative alias that should also be among the available
+     * options offered.
+     * 
+     * @param aliasToUse Alias to be expected in the output, and used to
+     *                   answer the prompt with
+     * @param altAlias Alternative alias that should be offered
+     * @param arguments Command arguments
+     * @return process result
+     * @throws IOException
+     */
+    private static ComplianceTestUtils.ProcResult executeWithExpectedPrompt(
+                                                          final String aliasToUse,
                                                           final String altAlias,
                                                           final String... arguments)
             throws IOException {

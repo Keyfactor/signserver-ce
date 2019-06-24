@@ -12,13 +12,17 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import java.nio.charset.StandardCharsets;
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import org.apache.log4j.Logger;
 import org.junit.Assume;
 import org.junit.Test;
+import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
@@ -63,4 +67,28 @@ public class DisabledKeyGenerationTest {
         }
     }
     
+    /**
+     * Same test as for WorkerSession but using CLI.
+     * 
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testAdminCLIKeyGeneration() throws Exception {
+        LOG.info("This test assumes test.disablekeygen.disabled=false and that conf/signserver_deploy.properties is configured with cryptotoken.disablekeygeneration=true.");
+        Assume.assumeFalse("true".equalsIgnoreCase(helper.getConfig().getProperty("test.disablekeygen.disabled")));
+
+        try {
+            helper.addDummySigner1(true);
+            CLITestHelper cli = helper.getAdminCLI();
+            
+            int ret = cli.execute("generatekey", String.valueOf(helper.getSignerIdDummy1()), "-keyalg", "RSA", "-keyspec", "2048", "-alias", "newkey");
+            String error = cli.getErr().toString(StandardCharsets.UTF_8);
+            assertTrue("Error: " + error, error.contains("Key generation has been disabled"));
+        } catch (UnexpectedCommandFailureException ex) {
+            assertEquals("Key generation has been disabled", ex.getCause().getMessage());
+        } finally {
+            helper.removeWorker(helper.getSignerIdDummy1());
+        }
+    }
+
 }

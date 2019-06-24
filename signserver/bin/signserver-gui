@@ -11,9 +11,9 @@ case "`uname`" in
   CYGWIN*) cygwin=true ;;
 esac
 
-JAVACMD=`which java`
 # Check that JAVA_HOME is set
 if [ ! -n "$JAVA_HOME" ]; then
+    JAVACMD=`command -v java`
     if [ ! -n "$JAVACMD" ]
     then
         echo "You must set JAVA_HOME before running the SignServer cli."

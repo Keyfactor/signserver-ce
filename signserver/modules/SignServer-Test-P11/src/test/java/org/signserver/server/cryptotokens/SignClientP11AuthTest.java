@@ -293,6 +293,7 @@ public class SignClientP11AuthTest {
             
             ComplianceTestUtils.ProcResult res =
                     executeWithExpectedPrompt(TEST_AUTH_KEY, TEST_AUTH_ALT_KEY,
+                                              false,
                             signClientCLI, "signdocument",
                             "-workername", "TestPlainSignerP11",
                             "-data", "<data/>",
@@ -316,6 +317,69 @@ public class SignClientP11AuthTest {
     }
 
     /**
+     * Creates two new TLS client authentication keys in P11 keystore, issue
+     * certificates by DSSRootCA10, imports them in token associating with
+     * generated keys and performs signing operation through CLI using one of
+     * the keys as an authorized client certificate for client authentication
+     * while connecting to server. Answer with the non-authorized key.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testSigningFixedP11AuthKeyPromptForAliasAnswerWithAlternative()
+            throws Exception {
+        LOG.info("testSigningFixedP11AuthKey");
+        File p11ConfigFile = null;
+
+        try {
+            p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
+            createPKCS11ConfigFile(p11ConfigFile);
+
+            setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
+            createP11AuthKey();
+            createP11AltAuthKey();
+
+            setPlainSignerProperties(WORKER_PLAIN, true);            
+            workerSession.setWorkerProperty(WORKER_PLAIN, "AUTHTYPE",
+                    "org.signserver.server.ClientCertAuthorizer");
+
+            // Add CLIENT AUTH rule in worker
+            assertEquals("execute add", 0,
+                    adminCLI.execute("authorizedclients", "-worker", String.valueOf(WORKER_PLAIN),
+                            "-add",
+                            "-matchSubjectWithType", "SUBJECT_RDN_CN",
+                            "-matchSubjectWithValue", AUTH_KEY_CERT_CN,
+                            "-matchIssuerWithValue", ISSUER_DN,
+                            "-description", DESCRIPTION));
+
+            workerSession.reloadConfiguration(WORKER_PLAIN);
+            
+            ComplianceTestUtils.ProcResult res =
+                    executeWithExpectedPrompt(TEST_AUTH_KEY, TEST_AUTH_ALT_KEY,
+                                              true,
+                            signClientCLI, "signdocument",
+                            "-workername", "TestPlainSignerP11",
+                            "-data", "<data/>",
+                            "-keystoretype", "PKCS11_CONFIG",
+                            "-keyaliasprompt",
+                            "-keystore", p11ConfigFile.getAbsolutePath(),
+                            "-keystorepwd", pin,
+                            "-truststore", trustoreFilePath,
+                            "-truststorepwd", "changeit");
+            LOG.debug("output: " + res.getOutput().toString());
+            Assert.assertEquals("result: " + res.getErrorMessage(), 254, res.getExitValue());
+        } finally {
+            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
+            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_ALT_KEY);
+            testCase.removeWorker(CRYPTO_TOKEN_ID);
+            testCase.removeWorker(WORKER_PLAIN);
+            FileUtils.deleteQuietly(p11ConfigFile);
+            inDir.delete();
+            outDir.delete();
+        }
+    }
+    
+    /**
      * Executes command checking for expected alias to answer the prompt
      * with and alternative alias that should also be among the available
      * options offered.
@@ -330,6 +394,7 @@ public class SignClientP11AuthTest {
     private static ComplianceTestUtils.ProcResult executeWithExpectedPrompt(
                                                           final String aliasToUse,
                                                           final String altAlias,
+                                                          final boolean answerWithAlternative,
                                                           final String... arguments)
             throws IOException {
         Process proc;
@@ -360,20 +425,22 @@ public class SignClientP11AuthTest {
                         final int endIndexOffset = line.indexOf(']');
                         if (endIndexOffset != -1) {
                             foundAuthKey = true;
-                            final String answerToPrompt = line.substring(1, endIndexOffset);
-                            LOG.debug("Parsed answer: " + answerToPrompt);
-                            // answer prompt
-                            stdOut.write(answerToPrompt.getBytes(StandardCharsets.UTF_8));
-                            stdOut.write('\n');
-                            stdOut.close();
+                            if (!answerWithAlternative) {
+                                answerPrompt(stdOut, line, endIndexOffset);
+                            }
                         }
                     }
                     
                 } else if (line.endsWith(altAlias)) {
                     LOG.debug("Found line with alt key: " + line);
-                    if (line.charAt(0) == '[' &&
-                        line.indexOf(']') != -1) {
-                        foundAltAuthKey = true;
+                    if (line.charAt(0) == '[') {
+                        final int endIndexOffset = line.indexOf(']');
+                        if (endIndexOffset != -1) {
+                            foundAltAuthKey = true;
+                            if (answerWithAlternative) {
+                                answerPrompt(stdOut, line, endIndexOffset);
+                            }
+                        }
                     }
                 } else if (line.startsWith("Choose [")) {
                     foundPrompt = true;
@@ -415,6 +482,17 @@ public class SignClientP11AuthTest {
                 } catch (IOException ignored) {} // NOPMD
             }
         }
+    }
+
+    private static void answerPrompt(final OutputStream stdOut,
+                                     final String line,
+                                     final int endIndexOffset) throws IOException {
+        final String answerToPrompt = line.substring(1, endIndexOffset);
+        LOG.debug("Parsed answer: " + answerToPrompt);
+        // answer prompt
+        stdOut.write(answerToPrompt.getBytes(StandardCharsets.UTF_8));
+        stdOut.write('\n');
+        stdOut.close();
     }
     
     /**

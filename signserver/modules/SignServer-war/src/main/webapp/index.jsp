@@ -36,8 +36,10 @@
                     <c:set var="uri" value="${req.requestURI}" />
                     <c:set var="servername" value="${fn:substring(url, 0, fn:length(url) - fn:length(uri))}"/>
                     <c:set var="servername2" value="${fn:substring(servername, fn:indexOf(servername, '//') + 2, fn:length(servername))}"/>
-                    <c:set var="servername3" value="${fn:substring(servername2, 0, fn:indexOf(servername2, ':'))}"/>
-                    <c:set var="adminWeb" value="https://${servername3}:${settings.externalPrivateHttpsPort}${req.contextPath}/adminweb/"/>
+                    <c:set var="split" value="${fn:split(servername2, ':')}"/>
+                    <c:set var="last" value="${split[fn:length(split) - 1]}"/>
+                    <c:set var="servername3" value="${fn:substringBefore(servername2, last)}"/>
+                    <c:set var="adminWeb" value="https://${servername3}${settings.externalPrivateHttpsPort}${req.contextPath}/adminweb/"/>
 
                     <%--
                     <c:out value="req: ${req}"/><br/>
@@ -46,6 +48,7 @@
                     <c:out value="contextPath: ${req.contextPath}"/><br/>
                     <c:out value="servername: ${servername}"/><br/>
                     <c:out value="servername2: ${servername2}"/><br/>
+                    <c:out value="last: ${last}"/><br/>
                     <c:out value="servername3: ${servername3}"/><br/>
                     <c:out value="adminWeb: ${adminWeb}"/><br/>
                     --%>

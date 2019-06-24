@@ -82,7 +82,7 @@ public class DisabledKeyGenerationTest {
             CLITestHelper cli = helper.getAdminCLI();
             
             int ret = cli.execute("generatekey", String.valueOf(helper.getSignerIdDummy1()), "-keyalg", "RSA", "-keyspec", "2048", "-alias", "newkey");
-            String error = cli.getErr().toString(StandardCharsets.UTF_8);
+            String error = cli.getErr().toString(StandardCharsets.UTF_8.name());
             assertTrue("Error: " + error, error.contains("Key generation has been disabled"));
         } catch (UnexpectedCommandFailureException ex) {
             assertEquals("Key generation has been disabled", ex.getCause().getMessage());

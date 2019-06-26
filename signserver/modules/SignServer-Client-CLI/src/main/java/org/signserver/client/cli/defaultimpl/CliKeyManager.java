@@ -80,7 +80,7 @@ public class CliKeyManager implements X509KeyManager {
                     }
 
                     for (int j = 0; j < 3; j++) {
-                        out.print(format);
+                        out.printf(format, i - 1);
 
                         final BufferedReader reader =
                                 new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));

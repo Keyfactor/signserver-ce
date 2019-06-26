@@ -13,12 +13,14 @@
 package org.signserver.client.cli.defaultimpl;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -93,6 +95,8 @@ public class KeyStoreOptions {
     /** Option KEYSTORETYPE. */
     public static final String KEYSTORETYPE = "keystoretype";
 
+    public static final String PASSWORDFROMSTDIN = "passwordfromstdin";
+
     public static List<Option> getKeyStoreOptions() {
         return Arrays.asList(
             new Option(KeyStoreOptions.TRUSTSTORE, true, TEXTS.getString("TRUSTSTORE_DESCRIPTION")),
@@ -101,7 +105,8 @@ public class KeyStoreOptions {
             new Option(KeyStoreOptions.KEYSTOREPWD, true, TEXTS.getString("KEYSTOREPWD_DESCRIPTION")),
             new Option(KeyStoreOptions.KEYALIAS, true, TEXTS.getString("KEYALIAS_DESCRIPTION")),
             new Option(KeyStoreOptions.KEYALIASPROMPT, false, TEXTS.getString("KEYALIASPROMPT_DESCRIPTION")),
-            new Option(KeyStoreOptions.KEYSTORETYPE, true, TEXTS.getString("KEYSTORETYPE_DESCRIPTION"))
+            new Option(KeyStoreOptions.KEYSTORETYPE, true, TEXTS.getString("KEYSTORETYPE_DESCRIPTION")),
+            new Option(KeyStoreOptions.PASSWORDFROMSTDIN, false, TEXTS.getString("PASSWORDFROMSTDIN_DESCRIPTION"))
         );
     }
 
@@ -112,6 +117,7 @@ public class KeyStoreOptions {
     private String keyAlias;
     private boolean keyAliasPrompt;
     private KeystoreType keystoreType;
+    private boolean passwordFromStdin;
 
     private KeyStore truststore;
     private KeyStore keystore;
@@ -158,14 +164,27 @@ public class KeyStoreOptions {
                 throw new IllegalCommandArgumentsException("Unsupported keystore type. Supported values are: " + Arrays.toString(KeystoreType.values()));
             }
         }
+        if (line.hasOption(KeyStoreOptions.PASSWORDFROMSTDIN)) {
+            passwordFromStdin = true;
+        }
 
-        if (passwordReader != null) {
+        if (passwordReader != null || passwordFromStdin) {
             // Prompt for truststore password if not given
             if (truststoreFile != null && truststorePassword == null) {
+                final String truststorePasswordPrompt = passwordFromStdin ?
+                              "Password for truststore (will be echoed): " :
+                              "Password for truststore: ";
                 for (int i = 0; i < 3; i++) {
-                    out.print("Password for truststore: ");
+                    out.print(truststorePasswordPrompt);
                     out.flush();
-                    truststorePassword = new String(passwordReader.readPassword());
+                    if (passwordFromStdin) {
+                        final BufferedReader reader =
+                                new BufferedReader(new InputStreamReader(System.in,
+                                                                         StandardCharsets.UTF_8));
+                        truststorePassword = reader.readLine();
+                    } else {
+                        truststorePassword = new String(passwordReader.readPassword());
+                    }
                     try {
                         KeyStore keystore = KeyStore.getInstance("JKS");
                         keystore.load(new FileInputStream(truststoreFile), truststorePassword.toCharArray());
@@ -184,11 +203,23 @@ public class KeyStoreOptions {
             }
             // Prompt for keystore password if not given
             if (keystoreFile != null && keystorePassword == null && !KeystoreType.PKCS11.equals(keystoreType) && !KeystoreType.PKCS11_CONFIG.equals(keystoreType)) {
+                final String keystorePasswordPrompt = passwordFromStdin ?
+                              "Password for keystore (will be echoed): " :
+                              "Password for keystore: ";
+
                 for (int i = 0; i < 3; i++) {
-                    out.print("Password for keystore: ");
+                    out.print(keystorePasswordPrompt);
                     out.flush();
 
-                    keystorePassword = new String(passwordReader.readPassword());
+                    if (passwordFromStdin) {
+                        final BufferedReader reader =
+                                new BufferedReader(new InputStreamReader(System.in,
+                                                                         StandardCharsets.UTF_8));
+                        keystorePassword = reader.readLine();
+                    } else {
+                        keystorePassword = new String(passwordReader.readPassword());
+                    }
+
                     try {
                         KeyStore keystore = KeyStore.getInstance("JKS");
                         keystore.load(new FileInputStream(keystoreFile), keystorePassword.toCharArray());
@@ -287,10 +318,21 @@ public class KeyStoreOptions {
                                         if (callback instanceof PasswordCallback) {
                                             try {
                                                 final PasswordCallback pc = (PasswordCallback) callback;
-                                                out.print("Password for PKCS#11 keystore (" + keystoreFile.getName() + "): ");
+                                                final String keystorePasswordPrompt =
+                                                        passwordFromStdin ?
+                                                        "Password for PKCS#11 keystore (" + keystoreFile.getName() + "): (will be echoed): " :
+                                                        "Password for PKCS#11 keystore (" + keystoreFile.getName() + "): ";
+                                                out.print(keystorePasswordPrompt);
                                                 out.flush();
 
-                                                keystorePassword = new String(passwordReader.readPassword());
+                                                if (passwordFromStdin) {
+                                                    final BufferedReader reader =
+                                                            new BufferedReader(new InputStreamReader(System.in,
+                                                                         StandardCharsets.UTF_8));
+                                                    keystorePassword = reader.readLine();
+                                                } else {
+                                                    keystorePassword = new String(passwordReader.readPassword());
+                                                }
 
                                                 if (keystorePassword != null) {
                                                     pc.setPassword(keystorePassword.toCharArray());

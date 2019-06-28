@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.0.0</p>
+                    <p>Version: 5.1.0</p>
                 </div>
             </header>
 
@@ -260,6 +260,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
 
             </li>
@@ -269,6 +273,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Setting_up_One-time_Keys.html">Setting up One-time Keys</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -322,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -545,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1306,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1383,19 +1407,19 @@
         <h3 class="heading "><span>Deployment Properties</span></h3>
     <p  >To run SignServer without a database, set <strong class=" ">database.name</strong> to <strong class=" ">nodb</strong> in the <tt class=" ">signserver_deploy.properties </tt>file :    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">database.name=nodb</code></div>
 </div>
     </div>
     <p  >Set the location for the local file-based database:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">database.nodb.location=/opt/signserver/nodb</code></div>
 </div>
     </div>
     <p  >Ensure to specify a path to a location where SignServer can write files. The default value is empty. If a relative path is used, it is most likely relative to the application server's working directory. The directory should either point to an existing SignServer file database, or be completely empty. If the directory is empty, SignServer will create the initial database structure at startup.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">mkdir /opt/signserver/nodb</code></div>
 </div>
     </div>

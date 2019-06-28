@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.0.0</p>
+                    <p>Version: 5.1.0</p>
                 </div>
             </header>
 
@@ -260,6 +260,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
 
             </li>
@@ -269,6 +273,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Setting_up_One-time_Keys.html">Setting up One-time Keys</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -322,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -545,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1306,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1363,7 +1387,7 @@
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >    </p>
-    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >Key wrapping allows solving issues arising when the number of keys you need to handle exceeds the amount that can be stored in a limited storage space for an HSM. The feature enables exporting the key material in a protected manner and storing the wrapped, encrypted key in an external database.    </p>
     <p  class="confluence-link">Follow the steps below to set up key wrapping. For more information and background on key wrapping, see the reference section <a   href="Key_Wrapping.html">Key Wrapping</a>.    </p>
 <ul class=" "><li class=" ">    <p  ><a   href="#src-15859741_id-.SettingupKeyWrappingv4.3.0-Step1SetUpCryptoWorkerwithSourceCryptoToken">Step 1: Set Up Crypto Worker with Source Crypto Token</a>    </p>
@@ -1375,7 +1399,7 @@
 <ol class=" "><li class=" ">    <p  >Create source crypto worker <strong class=" ">CryptoTokenP11NG1</strong> using the sample configuration <strong class=" ">p11ng-crypto.properties</strong>. For details, see <a  class="external-link" href="http://192.168.3.98:8090/display/SIGNDS/.JackNJI11CryptoToken+v4.3.0">JackNJI11CryptoToken</a>.    </p>
     <div  class="confbox programlisting">
                     <div class="title">Sample source crypto worker configuration</div>
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample source crypto worker configuration">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample source crypto worker configuration" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">WORKERGENID1.TYPE=CRYPTO_WORKER</code></div>
 <div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.server.signers.CryptoWorker</code></div>
 <div class="line"><code class="plain">WORKERGENID1.CRYPTOTOKEN_IMPLEMENTATION_CLASS=org.signserver.p11ng.common.cryptotoken.JackNJI11CryptoToken</code></div>
@@ -1403,7 +1427,7 @@
 <ol class=" "><li class=" ">    <p  >Create key wrapping crypto worker <strong class=" ">CryptoTokenP11NG1KeyWrapping</strong> using the sample configuration <strong class=" ">p11ng-keywrapping-crypto.properties</strong>. For details, see <a  class="external-link" href="http://192.168.3.98:8090/display/SIGNDS/.JackNJI11KeyWrappingCryptoToken+v4.3.0">JackNJI11KeyWrappingCryptoToken</a> and <a  class="external-link" href="http://192.168.3.98:8090/display/SIGNDS/.JackNJI11KeyWrappingCryptoWorker+v4.3.0">JackNJI11KeyWrappingCryptoWorker</a>.    </p>
     <div  class="confbox programlisting">
                     <div class="title">Sample key wrapping crypto worker configuration</div>
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample key wrapping crypto worker configuration">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample key wrapping crypto worker configuration" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">WORKERGENID1.TYPE=CRYPTO_WORKER</code></div>
 <div class="line"> </div>
 <div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.p11ng.common.cryptotoken.JackNJI11KeyWrappingCryptoWorker</code></div>
@@ -1432,7 +1456,7 @@
     <p  >Create PlainSigner using the sample configuration <strong class=" ">plainsigner.properties.</strong>    </p>
     <div  class="confbox programlisting">
                     <div class="title">Sample Plain Signer configuration with fixed wrapped key</div>
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample Plain Signer configuration with fixed wrapped key">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample Plain Signer configuration with fixed wrapped key" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain"># General properties</code></div>
 <div class="line"><code class="plain">WORKERGENID1.TYPE=PROCESSABLE</code></div>
 <div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.module.cmssigner.PlainSigner</code></div>
@@ -1455,7 +1479,7 @@
     <p  >Create PlainSigner using the sample configuration <strong class=" ">plainsigner.properties</strong> and the following properties related to the Individual user key.    </p>
     <div  class="confbox programlisting">
                     <div class="title">Sample Plain Signer configuration with individual user wrapped key</div>
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample Plain Signer configuration with individual user wrapped key">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample Plain Signer configuration with individual user wrapped key" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain"># General properties</code></div>
 <div class="line"><code class="plain">WORKERGENID1.TYPE=PROCESSABLE</code></div>
 <div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.module.cmssigner.PlainSigner</code></div>

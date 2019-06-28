@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.0.0</p>
+                    <p>Version: 5.1.0</p>
                 </div>
             </header>
 
@@ -260,6 +260,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
 
             </li>
@@ -269,6 +273,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link current" href="Setting_up_One-time_Keys.html">Setting up One-time Keys</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -322,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -545,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1306,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1363,7 +1387,7 @@
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >    </p>
-    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >    </p>
     <p  >One-time keys and certificates allow you to have a large number of individual signing keys and certificates, despite the often limited storage capabilities of HSMs. One-time keys are created on request and are deleted once the signature has been created.    </p>
     <p  class="inline-comment-marker">One-time keys use a specific crypto worker called <a   href="OneTimeCryptoWorker.html">OneTimeCryptoWorker</a>. The crypto worker references a regular crypto token used to generate the short-lived key-pair. Every time a signer requests a crypto instance from the <a   href="OneTimeCryptoWorker.html">OneTimeCryptoWorker</a>, a new key-pair is generated and a certificate for the public key is obtained from a CA Connector component.    </p>
@@ -1375,7 +1399,7 @@
     <p  >The following shows a source crypto worker <strong class=" ">CryptoTokenP11</strong> sample configuration <strong class=" ">pkcs11-crypto.properties</strong>:    </p>
     <div  class="confbox programlisting">
                     <div class="title">Sample source crypto worker configuration</div>
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample source crypto worker configuration">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample source crypto worker configuration" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">WORKERGENID1.TYPE=CRYPTO_WORKER</code></div>
 <div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.server.signers.CryptoWorker</code></div>
 <div class="line"><code class="plain">WORKERGENID1.CRYPTOTOKEN_IMPLEMENTATION_CLASS=org.signserver.server.cryptotokens.PKCS11CryptoToken</code></div>
@@ -1445,7 +1469,7 @@
     <p  ><strong class=" ">Example Configuration Sample</strong><br/>The following shows a sample configuration <strong class=" ">onetime-crypto.properties</strong> for a crypto worker <strong class=" ">CryptoTokenP11OneTimeSelfSigned</strong>:    </p>
     <div  class="confbox programlisting">
                     <div class="title">Sample Configuration</div>
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample Configuration">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample Configuration" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">WORKERGENID1.TYPE=CRYPTO_WORKER</code></div>
 <div class="line"><code class="plain"> </code></div>
 <div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.module.onetime.cryptoworker.OneTimeCryptoWorker</code></div>
@@ -1528,7 +1552,7 @@
     <p  >The following shows a sample configuration <strong class=" ">onetime-crypto.properties</strong> for a crypto worker <strong class=" ">CryptoTokenP11OneTimeEjbcaWS</strong>:    </p>
     <div  class="confbox programlisting">
                     <div class="title">Sample CryptoTokenP11OneTimeEjbcaWS Configuration</div>
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample CryptoTokenP11OneTimeEjbcaWS Configuration">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample CryptoTokenP11OneTimeEjbcaWS Configuration" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">WORKERGENID1.TYPE=CRYPTO_WORKER</code></div>
 <div class="line"> </div>
 <div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.module.onetime.cryptoworker.OneTimeCryptoWorker</code></div>
@@ -1625,7 +1649,7 @@
     <p  >The following shows a sample configuration <strong class=" ">xadessigner.properties</strong> for a <strong class=" ">CryptoTokenP11OneTimeEjbcaWS</strong>:    </p>
     <div  class="confbox programlisting">
                     <div class="title">Sample XAdESSigner Configuration with One-time Key</div>
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample XAdESSigner Configuration with One-time Key">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample XAdESSigner Configuration with One-time Key" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain"># General properties</code></div>
 <div class="line"><code class="plain">WORKERGENID1.TYPE=PROCESSABLE</code></div>
 <div class="line"><code class="plain">WORKERGENID1.IMPLEMENTATION_CLASS=org.signserver.module.xades.signer.XAdESSigner</code></div>
@@ -1657,7 +1681,7 @@
         <h2 class="heading "><span>Test Signing with SignClient</span></h2>
     <p  >To test signing using the SignServer CLI SignClient, run the following:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/signclient signdocument -workername XAdESSigner -data </code><code class="string">"&lt;xml/&gt;"</code><code class="plain"> -username user1 -password password</code></div>
 <div class="line"> </div>
 <div class="line"><code class="plain">bin/signclient signdocument -workername CMSSigner -infile </code><code class="string">"input.txt"</code><code class="plain"> -username user1 -password password -outfile </code><code class="string">"output.p7s"</code></div>
@@ -1671,13 +1695,13 @@
         <h2 class="heading "><span>Signature Verification</span></h2>
 <ul class=" "><li class=" ">    <p  >To verify the CMS Signature through OpenSSL, run the following:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">openssl cms -verify -in output.p7s -inform DER -content input.txt -CAfile cacert.pem &gt; /dev/</code><code class="keyword">null</code></div>
 </div>
     </div>
 </li></ul><ul class=" "><li class=" ">    <p  >To verify the code signature with jarsigner, run the following:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">jarsigner -verify -strict HelloJar_Signed.jar -certs </code></div>
 </div>
     </div>
@@ -1686,7 +1710,7 @@
         <h2 class="heading "><span>Performance Test using Stresstest Tool</span></h2>
     <p  >To run a performance test using the stresstest tool, run the following:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/stresstest -testsuite DocumentSigner1 -threads </code><code class="value">20</code><code class="plain"> -processurl http:</code><code class="comments">//localhost:8080/signserver/process -worker XAdESSigner -data "&lt;root/&gt;" -userprefix user -usersuffixmin 1 -usersuffixmax 500</code></div>
 </div>
     </div>
@@ -1716,7 +1740,7 @@
             </svg>
             <span>Setting up Key Wrapping</span>
         </a>
-                <a href="Troubleshooting.html" class="ht-post-nav-next">
+                <a href="Setting_up_OpenPGP_Signer.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1725,7 +1749,7 @@
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Troubleshooting</span>
+            <span>Setting up OpenPGP Signer</span>
         </a>
     </nav>    
             

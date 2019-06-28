@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.0.0</p>
+                    <p>Version: 5.1.0</p>
                 </div>
             </header>
 
@@ -260,6 +260,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
 
             </li>
@@ -269,6 +273,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Setting_up_One-time_Keys.html">Setting up One-time Keys</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -322,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -545,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1306,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1365,7 +1389,7 @@
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >    </p>
-    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >    </p>
     <div  class="confbox admonition admonition-note">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
@@ -1376,7 +1400,7 @@
     <p  >The CLI needs to have the JDBC driver of the selected database available on the classpath. This can be achieved by setting the OPTIONAL_CLASSPATH environment variable when calling the bin/signserver-db script or by putting the JAR under lib/ext/jdbc/ and calling it jdbc.jar. The last method is required to be able to run the JUnit tests.    </p>
     <p  >Sample usage:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/signserver-db audit</code></div>
 </div>
     </div>
@@ -1385,14 +1409,14 @@
     <p  class="prettyprint">The command verifies logs from all nodes starting at sequence number 0, or only from the specified nodes and optional sequence number offsets.    </p>
     <p  class="prettyprint">Usage:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">verifylog -all verifylog [-node NODENAME[:OFFSET] ...]</code></div>
 </div>
     </div>
     <p  class="prettyprint">If the nodename is suffixed with a colon and a number, then the verification for that node is started from that sequence number. The JDBC connector of the database might have to be put on the classpath, see the following example.    </p>
     <p  class="prettyprint">Examples:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">signserver-db audit verifylog -all</code></div>
 <div class="line"><code class="plain">signserver-db audit verifylog -node server1 -node server2:708</code></div>
 <div class="line"><code class="plain">OPTIONAL_CLASSPATH=/usr/share/java/mysql-connector-java.jar signserver-db audit verifylog -all</code></div>
@@ -1421,20 +1445,20 @@
     <p  >As the Database CLI audit verifylog command checks for gaps in the sequence numbering, entries from the audit log cannot be archived/moved to other storage without special care. However, since the command now supports the option to specify from which sequence number to start the verification, the following scheme for archiving is proposed:    </p>
 <ol class=" "><li class=" ">    <p  >Run the command to verify the complete log audit log:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">audit verifylog -all</code></div>
 </div>
     </div>
     <p  >Note down the last sequence number for each node, for example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">Last sequences: {server1=2, server2=7}</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >All entries from 0 up to the entry before the last can now be archived and removed from the database. In the example, that would be entry <strong class=" ">0</strong> and <strong class=" ">1</strong> for node <strong class=" ">server1</strong> and entries from <strong class=" ">0</strong> to <strong class=" ">6</strong> for node <strong class=" ">server2.</strong>    </p>
 </li><li class=" ">    <p  >The next time the log should be verified, start the verification from the last sequence numbers:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">audit verifylog -node server1:2 -node server2:7</code></div>
 </div>
     </div>

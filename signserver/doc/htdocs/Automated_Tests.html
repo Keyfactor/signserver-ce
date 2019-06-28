@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.0.0</p>
+                    <p>Version: 5.1.0</p>
                 </div>
             </header>
 
@@ -260,6 +260,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
 
             </li>
@@ -269,6 +273,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Setting_up_One-time_Keys.html">Setting up One-time Keys</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -322,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -545,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1306,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1359,26 +1383,27 @@
                                         <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                                                      <li><a href="Developer_Reference.html">Developer Reference</a></li>
                                                             </ul>
-</div>            <h1 id="src-16235640"> <span>Automated Tests</span></h1>
+</div>            <h1 id="src-75860148"> <span>Automated Tests</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >SignServer uses JUnit for automated testing and test cases exist in multiple projects:    </p>
     <p  >    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-16235640_id-.AutomatedTestsv4.4.0-UnitTests">Unit Tests</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-16235640_id-.AutomatedTestsv4.4.0-SystemTests">System Tests</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-16235640_id-.AutomatedTestsv4.4.0-WebTests">Web Tests</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-16235640_id-.AutomatedTestsv4.4.0-TestCoveragewithClover">Test Coverage with Clover</a>    </p>
-</li></ul>    <div class="section section-1" id="src-16235640_id-.AutomatedTestsv4.4.0-UnitTests">
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-75860148_id-.AutomatedTestsv5.1.0-UnitTests">Unit Tests</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860148_id-.AutomatedTestsv5.1.0-SystemTests">System Tests</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860148_id-.AutomatedTestsv5.1.0-WebTests">Web Tests</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860148_id-.AutomatedTestsv5.1.0-PlatformTests">Platform Tests</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860148_id-.AutomatedTestsv5.1.0-TestCoveragewithClover">Test Coverage with Clover</a>    </p>
+</li></ul>    <div class="section section-1" id="src-75860148_id-.AutomatedTestsv5.1.0-UnitTests">
         <h1 class="heading "><span>Unit Tests</span></h1>
     <p  >Unit tests are run when building with Maven, unless <tt class=" ">-DskipTests</tt> is specified.    </p>
     </div>
-    <div class="section section-1" id="src-16235640_id-.AutomatedTestsv4.4.0-SystemTests">
+    <div class="section section-1" id="src-75860148_id-.AutomatedTestsv5.1.0-SystemTests">
         <h1 class="heading "><span>System Tests</span></h1>
     <p  >System tests are placed in JAR files and can later be run with Ant by executing:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/ant systemtest:jars</code></div>
 </div>
     </div>
@@ -1387,23 +1412,38 @@
 </li><li class=" ">    <p  >Some components (i.e. Web Services) use their own test projects (<tt class=" ">SignServer-Test-*WS</tt>) in order to not include client-side code in their projects.    </p>
 </li><li class=" ">    <p  >Legacy tests and system tests are placed in <tt class=" ">SignServer-Test-System</tt>.    </p>
 </li></ul>    </div>
-    <div class="section section-1" id="src-16235640_id-.AutomatedTestsv4.4.0-WebTests">
+    <div class="section section-1" id="src-75860148_id-.AutomatedTestsv5.1.0-WebTests">
         <h1 class="heading "><span>Web Tests</span></h1>
     <p  >SignServer also includes a WebTest module for automated testing of the web interface. For more information, see <a   href="WebTest_Module.html">WebTest Module</a>.    </p>
     </div>
-    <div class="section section-1" id="src-16235640_id-.AutomatedTestsv4.4.0-TestCoveragewithClover">
+    <div class="section section-1" id="src-75860148_id-.AutomatedTestsv5.1.0-PlatformTests">
+        <h1 class="heading "><span>Platform Tests</span></h1>
+    <p  >The following command can be used to run only the platform verification tests:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">ant systemtest:jars -Dsystemtest.jars.include=lib/SignServer-Test-Platform-*-tests.jar systemtest:report</code></div>
+</div>
+    </div>
+    <p  >The <strong class=" ">BasicSigningAdminWsTest</strong> assumes:    </p>
+<ul class=" "><li class=" ">    <p  >There is a &quot;p12&quot; folder.    </p>
+</li><li class=" ">    <p  >The &quot;p12&quot; folder containing a keystore &quot;truststore.jks&quot; with the CA certificate that issued the TLS server certificate and using the password &quot;changeit&quot;. If the server uses res/test/dss10/dss10_demo-tls.jks then the dssk10_truststore.jks can be used for this.    </p>
+</li><li class=" ">    <p  >The &quot;p12&quot; folder containing a keystore &quot;client.p12&quot; with password &quot;foo123&quot; and a key entry with certificate allowed by the truststore of the server. For instance if the server uses dss10_truststore.jks the sample keystore dss10_admin1.p12 can be used for this.    </p>
+</li></ul>    <p  >The <strong class=" ">BasicStartupAdminCliTest</strong> assumes:    </p>
+<ul class=" "><li class=" ">    <p  >The test is running on the same server as the application server and APPSRV_HOME is configured.    </p>
+</li></ul>    </div>
+    <div class="section section-1" id="src-75860148_id-.AutomatedTestsv5.1.0-TestCoveragewithClover">
         <h1 class="heading "><span>Test Coverage with Clover</span></h1>
     <p  >To run Clover, copy the Clover installation folder (or make a symlink to it) and store it as <tt class=" ">lib/ext/clover-dir</tt>.    </p>
     <p  >Note that if the project has been built previously, a dummy Clover folder will already exist with the name <tt class=" ">lib/ext/clover-dir</tt> and the following must be run to remove it:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/ant clean clover.clean build deploy</code></div>
 <div class="line"><code class="plain">bin/ant ant test:run</code></div>
 </div>
     </div>
     <p  >Stop the application server and then run the following to gather the report:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">ant clover.xml clover.html</code></div>
 </div>
     </div>

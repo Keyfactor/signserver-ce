@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.0.0</p>
+                    <p>Version: 5.1.0</p>
                 </div>
             </header>
 
@@ -260,6 +260,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
 
             </li>
@@ -269,6 +273,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Setting_up_One-time_Keys.html">Setting up One-time Keys</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -322,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -545,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1306,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1400,7 +1424,7 @@
     <div class="section section-1" id="src-16226869_id-.SignerStatusReportWorkerv4.3.0-OutputFormat">
         <h1 class="heading "><span>Output Format</span></h1>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">workerName=WORKERNAME1, status=STATUS1, KEY3=VALUE3, KEY4=VALUE4, ...</code></div>
 <div class="line"><code class="plain">workerName=WORKERNAME2, status=STATUS2, KEY3=VALUE3, KEY4=VALUE4, ...</code></div>
 <div class="line"><code class="plain">workerName=WORKERNAME3, status=STATUS3, KEY3=VALUE3, KEY4=VALUE4, ...</code></div>
@@ -1484,25 +1508,25 @@
     <div class="section section-3" id="src-16226869_id-.SignerStatusReportWorkerv4.3.0-Examples">
         <h3 class="heading "><span>Examples</span></h3>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">workerName=Sod71, status=ACTIVE, validityNotBefore=2010-07-05 17:32:36 CEST, validityNotAfter=2010-09-08 17:32:36 EEST, signings=132, signLimit=100000,</code></div>
 </div>
     </div>
     <p  >Explanation: Sod71 has done 132 signings and is ACTIVE and validityNotAfter indicates that it can continue to sign until 8th September if not the sign limit is reached before    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">workerName=Sod72, status=OFFLINE, validityNotBefore=2010-07-05 17:32:33 CEST, validityNotAfter=2010-09-08 17:32:33 EEST, signings=100000, signLimit=100000,</code></div>
 </div>
     </div>
     <p  >Explanation: Sod72 has performed all of its 100000 signings and can not sign until it gets a new key and certificate.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">workerName=Sod73, status=OFFLINE, validityNotBefore=2010-07-05 17:32:33 CEST, validityNotAfter=2010-09-08 17:32:33 EEST, signings=0, signLimit=100000,</code></div>
 </div>
     </div>
     <p  >Explanation: Sod73 has not reached its limit and is still in validity time, but is OFFLINE for some other reason.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">workerName=Sod74, status=OFFLINE,</code></div>
 </div>
     </div>

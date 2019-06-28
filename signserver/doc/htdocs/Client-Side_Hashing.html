@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.0.0</p>
+                    <p>Version: 5.1.0</p>
                 </div>
             </header>
 
@@ -260,6 +260,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
 
             </li>
@@ -269,6 +273,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Setting_up_One-time_Keys.html">Setting up One-time Keys</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -322,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -545,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1306,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1357,14 +1381,19 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                             </ul>
-</div>            <h1 id="src-11572500"> <span>Client-Side Hashing</span></h1>
+</div>            <h1 id="src-75860160"> <span>Client-Side Hashing</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >This describes the various options for having the hashing performed at the client-side instead of doing all the steps in the signing at the server-side. This is also sometimes referred to as &quot;hash signing&quot;.    </p>
-    <p  >The main benefit is that the original file does not have to be sent to the server.    </p>
-    <div class="section section-1" id="src-11572500_id-.Client-SideHashingv4.2.1-CMSDetachedSignatures">
+    <p  >The following describes various options for performing the hashing on the client-side instead of making all the steps in the signing on the server-side. Client-side hashing is also sometimes referred to as &quot;hash signing&quot; and the main advantage is that the original file does not need to be sent to the server.    </p>
+    <p  >    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-75860160_id-.Client-SideHashingv5.1.0-CMSDetachedSignatures">CMS Detached Signatures</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860160_id-.Client-SideHashingv5.1.0-PlainSignatures">Plain Signatures</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860160_id-.Client-SideHashingv5.1.0-EmbeddedSignatureFormats">Embedded Signature Formats</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860160_id-.Client-SideHashingv5.1.0-OpenPGP">OpenPGP</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860160_id-.Client-SideHashingv5.1.0-DebianDpkg-sig">Debian Dpkg-sig</a>    </p>
+</li></ul>    <div class="section section-1" id="src-75860160_id-.Client-SideHashingv5.1.0-CMSDetachedSignatures">
         <h1 class="heading "><span>CMS Detached Signatures</span></h1>
     <p  >Detached signatures allow the signature to be placed in a separate file next to the original file, and thus the original file does not have to be updated. With CMS signatures, what is covered by the signature is a set of attributes (unless it is a direct signature) where one of the attributes is called messageDigest, which is the hash of the original file. This means that in order to create a CMS detached signature, it is sufficient to get the hash of the original file as input.    </p>
     <p  >The <a   href="CMS_Signer.html">CMS Signer</a> is for instance configured to accept a hash as input by setting CLIENTSIDEHASHING=TRUE, or by allowing the client to specify if the input is the original file or a hash of it, by configuring ALLOW_CLIENTSIDEHASHING_OVERRIDE=TRUE.    </p>
@@ -1372,7 +1401,7 @@
 <ul class=" "><li class=" "><pre class=" ">USING_CLIENTSUPPLIED_HASH=true</pre></li><li class=" "><pre class=" ">CLIENTSIDE_HASHDIGESTALGORITHM=SHA-256</pre></li></ul>    <p  >where SHA-256 should be replaced with the name of the hash algorithm used to digest the data. The algorithm must be one of those configured in signer with the ACCEPTED_HASH_DIGEST_ALGORITHM property.    </p>
     <p  >The following commands can be used to create a detached CMS signature using this mode with a CMSSigner set up to default to consider requests as client-side computed hash (using the CLIENTSIDEHASHING property) (assuming a GNU/Linux, or Unix-like system is used):    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ echo </code><code class="string">"data-to-be-signed"</code><code class="plain"> | openssl sha256 -binary &gt; pre-computed-hash.bin</code></div>
 <div class="line"><code class="plain">$ ./bin/signclient signdocument -workername CMSSigner</code></div>
 <div class="line"><code class="plain">-metadata USING_CLIENTSUPPLIED_HASH=</code><code class="keyword">true</code><code class="plain"> -metadata CLIENTSIDE_HASHDIGESTALGORITHM=SHA-</code><code class="value">256</code></div>
@@ -1380,14 +1409,14 @@
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-11572500_id-.Client-SideHashingv4.2.1-PlainSignatures">
+    <div class="section section-1" id="src-75860160_id-.Client-SideHashingv5.1.0-PlainSignatures">
         <h1 class="heading "><span>Plain Signatures</span></h1>
     <p  >For plain signatures (as produced by the <a   href="Plain_Signer.html">Plain Signer</a>), generally the whole file is sent to the signer and returned is the small signature. However, as the plain signature schemes involves a hash operation, it is be possible to perform that on the client side.    </p>
     <p  >For the Plain Signer, this can be achieved by configuring the signer with a signature algorithm with the word NONE instead of the name of the hash. For example: &quot;NONEwithRSA&quot; or &quot;NONEwithECDSA&quot;. Note that the input to the signer has to be in a particular format when using the &quot;NONEwithRSA&quot; algorithm for the final signature to be correct. See RFC#3447 for details.    </p>
-    <div class="section section-2" id="src-11572500_safe-id-aWQtLkNsaWVudC1TaWRlSGFzaGluZ3Y0LjIuMS1TYW1wbGVVc2FnZSh3aXRoTk9ORXdpdGhFQ0RTQWFsZ29yaXRobSk">
+    <div class="section section-2" id="src-75860160_safe-id-aWQtLkNsaWVudC1TaWRlSGFzaGluZ3Y1LjEuMC1TYW1wbGVVc2FnZSh3aXRoTk9ORXdpdGhFQ0RTQWFsZ29yaXRobSk">
         <h2 class="heading "><span>Sample Usage (with NONEwithECDSA algorithm)</span></h2>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">openssl x509 -in PlainSigner-certificate.pem -noout -pubkey &gt; plainsigner-pubkey.pem</code></div>
 <div class="line"> </div>
 <div class="line"><code class="plain">openssl dgst -sha256 -out pre-computed-hash.bin -binary sample.txt</code></div>
@@ -1397,10 +1426,10 @@
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-11572500_id-.Client-SideHashingv4.2.1-EmbeddedSignatureFormats">
+    <div class="section section-1" id="src-75860160_id-.Client-SideHashingv5.1.0-EmbeddedSignatureFormats">
         <h1 class="heading "><span>Embedded Signature Formats</span></h1>
     <p  >    </p>
-    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >For signature formats where the signature is to be placed within the original document, additional logic has to be implemented on the client-side in order to, typically, first prepare the document for signing, compute the digest and send it to the server, and then finally embed the signature within the file.    </p>
     <p  >On the client-side, support has been implemented for &quot;client-side hashing and construction&quot; for Authenticode signing of Portable Executable (PE) files (i.e. EXE, .DLL,..), Windows Installer files (.MSI), and for Java Archives (.JAR,.APK,..) in the <a   href="Client_CLI.html">SignClient</a> signdocument command. Support for other file types such as PDF may also be implemented.    </p>
     <p  >On the server-side, typically a CMS Signer is needed but since Authenticode and JAR signing are producing slightly different variants of the CMS signatures, different implementations are available for use. For Authenticode, there is the <a   href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a>, and for JAR signing the <a   href="JArchive_CMS_Signer.html">JArchive CMS Signer</a>.    </p>
@@ -1476,10 +1505,10 @@
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-11572500_id-.Client-SideHashingv4.2.1-SampleUsages">
+    <div class="section section-2" id="src-75860160_id-.Client-SideHashingv5.1.0-SampleUsages">
         <h2 class="heading "><span>Sample Usages</span></h2>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ signclient signdocument -clientside -workername MSAuthCodeCMSSigner -infile unsigned.exe</code></div>
 <div class="line"><code class="plain">-outfile signed.exe -digestalgorithm SHA-</code><code class="value">256</code></div>
 <div class="line"> </div>
@@ -1493,6 +1522,153 @@
 <div class="line"><code class="plain">-outfile signed.apk -digestalgorithm SHA-</code><code class="value">256</code><code class="plain"> -extraoption ZIPALIGN=TRUE -extraoption SIGNATURE_NAME_VALUE=SIGNER02</code></div>
 </div>
     </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-75860160_id-.Client-SideHashingv5.1.0-OpenPGP">
+        <h1 class="heading "><span>OpenPGP</span></h1>
+    <p  >When using the client-side hashing and construction with OpenPGP using the OpenPGPPlainSigner, the parameters key ID and key algorithm (when using a key with an algorithm other than RSA) need to be specified with the request using the <tt class=" ">-extraoption</tt> options.    </p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Parameter    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Description    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-filetype PGP    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Specify that a OpenPGP signature is wanted.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-extraoption KEY_ID=    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Key ID (in hex format) for the PGP public key. Default: &quot;3&quot; (RSA)    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-extraoption KEY_ALGORITHM=    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Key algorithm, either in text format (RSA, DSA, or ECDSA) or numeric decimal format.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-extraoption RESPONSE_FORMAT=    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Format of the output. Either binary or ASCII armored. Examples: &quot;BINARY&quot;, &quot;ARMORED&quot;. Optional. Default: &quot;ARMORED&quot;.    </p>
+    <p  >RESPONSE_FORMAT can be only be provided as &quot;ARMORED&quot; when DETACHED_SIGNATURE extra option is provided as &quot;FALSE&quot;    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-extraoption DETACHED_SIGNATURE=    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Property specifying if a detached signature should be used or otherwise a clear-text signature. Examples: &quot;true&quot;, &quot;false&quot;. Required.    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <div class="section section-2" id="src-75860160_id-.Client-SideHashingv5.1.0-SampleUsage">
+        <h2 class="heading "><span>Sample Usage</span></h2>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ signclient signdocument -workername OpenPGPPlainSigner -clientside -digestalgorithm SHA-</code><code class="value">256</code><code class="plain"> -filetype PGP\</code></div>
+<div class="line"><code class="plain">-infile file-to-be-signed -outfile signed-file -extraoption KEY_ID=1234567890ABC -extraoption KEY_ALGORITHM=ECDSA\</code></div>
+<div class="line"><code class="plain">-extraoption RESPONSE_FORMAT=ARMORED -extraoption DETACHED_SIGNATURE=TRUE</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">$ signclient signdocument -workername OpenPGPPlainSigner -clientside -digestalgorithm SHA-</code><code class="value">256</code><code class="plain"> -filetype PGP\</code></div>
+<div class="line"><code class="plain">-infile file-to-be-signed -outfile signed-file -extraoption KEY_ID=1234567890ABC -extraoption KEY_ALGORITHM=ECDSA\</code></div>
+<div class="line"><code class="plain">-extraoption RESPONSE_FORMAT=ARMORED -extraoption DETACHED_SIGNATURE=FALSE</code></div>
+</div>
+    </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-75860160_id-.Client-SideHashingv5.1.0-DebianDpkg-sig">
+        <h1 class="heading "><span>Debian Dpkg-sig</span></h1>
+    <p  >When using the client-side hashing and construction with Dpkg-sig using the OpenPGPPlainSigner, the key ID, key fingerprint, and key algorithm (when using a key with an algorithm other than RSA) need to be specified with the request using the <tt class=" ">-extraoption</tt> options.    </p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-filetype DPKG_SIG    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Specify that a Debian Dpkg-sig signature is wanted.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-extraoption KEY_ID=    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Key ID (in hex format) for the PGP public key.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-extraoption KEY_ALGORITHM=    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Key algorithm, either in text format (RSA, DSA, or ECDSA) or numeric decimal format.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-extraoption KEY_FINGERPRINT=    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Key fingerprint (in hex format) for the PGP public key. This is included in the signed manifest.    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <div  class="confbox admonition admonition-tip">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+    <p  >You can run without the required KEY_ options and the server will give an error message that includes the values that can be used.    </p>
+        </div>
+    </div>
+    <div class="section section-2" id="src-75860160_id-.Client-SideHashingv5.1.0-AlgorithmSupport">
+        <h2 class="heading "><span>Algorithm Support</span></h2>
+    <p  >Note that specifically for DSA signatures in client-side mode, other algorithms than SHA1 may not be supported due to the underlying implementation.    </p>
+    </div>
+    <div class="section section-2" id="src-75860160_id-.Client-SideHashingv5.1.0-SampleUsages.1">
+        <h2 class="heading "><span>Sample Usages</span></h2>
+    <p  >The key ID is the hex-encoded representation, and the key algorithm can be specified as either a name (RSA, DSA, or ECDSA) or using one of the PGP constant values (for example 19 for ECDSA).    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ signclient signdocument -workername OpenPGPPlainSigner -clientside -digestalgorithm SHA-</code><code class="value">256</code><code class="plain"> -filetype DPKG_SIG\</code></div>
+<div class="line"><code class="plain">-infile hello.deb -outfile hello-signed.deb -extraoption KEY_ID=4B821662F54A5923 -extraoption KEY_ALGORITHM=ECDSA\</code></div>
+<div class="line"><code class="plain"> -extraoption KEY_FINGERPRINT=23C0B776EEE6A30D6530ACD44B821662F54A5923</code></div>
+<div class="line"><code class="plain"> </code></div>
+<div class="line"><code class="plain">$ signclient signdocument -workername OpenPGPPlainSigner -clientside -digestalgorithm SHA-</code><code class="value">256</code><code class="plain"> -filetype DPKG_SIG\</code></div>
+<div class="line"><code class="plain">-infile hello.deb -outfile hello-signed.deb -extraoption KEY_ID=4B821662F54A5923 -extraoption KEY_ALGORITHM=</code><code class="value">19</code><code class="plain">\</code></div>
+<div class="line"><code class="plain"> -extraoption KEY_FINGERPRINT=23C0B776EEE6A30D6530ACD44B821662F54A5923</code></div>
+</div>
+    </div>
+    <p  >    </p>
+    <p  >    </p>
+    <p  >    </p>
     </div>
     </div>
         </div>

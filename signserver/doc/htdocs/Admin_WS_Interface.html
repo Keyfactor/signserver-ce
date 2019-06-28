@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.0.0</p>
+                    <p>Version: 5.1.0</p>
                 </div>
             </header>
 
@@ -260,6 +260,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
 
             </li>
@@ -269,6 +273,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Setting_up_One-time_Keys.html">Setting up One-time Keys</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -322,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -545,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1306,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1367,13 +1391,13 @@
     <p  >The WSDL file is located at the following URL: http://&lt;hostname&gt;:8080/signserver/AdminWSService/AdminWS?wsdl.    </p>
     <p  >To authorize administrators using the Admin CLI, use the <tt class=" ">wsadmins</tt> command:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin</code><code class="plain">/signserver</code><code class="plain"> wsadmins</code></div>
 </div>
     </div>
     <p  >Usage:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">Usage: signserver wsadmins -add -certserialno &lt;certificate serial number (</code><code class="keyword">in</code><code class="plain"> hex)&gt; -issuerdn &lt;issuer DN&gt;</code></div>
 <div class="line"><code class="plain">Usage: signserver wsadmins -add -cert &lt;PEM or DER </code><code class="functions">file</code><code class="plain">&gt;</code></div>
 <div class="line"><code class="plain">Usage: signserver wsadmins -remove -certserialno &lt;certificate serial number (</code><code class="keyword">in</code><code class="plain"> hex)&gt; -issuerdn &lt;issuer DN&gt;</code></div>
@@ -1397,7 +1421,7 @@
     <p  >An administrator can also be added by supplying a client certificate as an argument. The serial number and issuer DN is then taken from that certificate.    </p>
     <p  >To troubleshoot an &quot;Administrator not authorized to resource&quot;, refer to the logs for how SignServer interprets the serialnumber and subject DN. Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="value">19</code><code class="plain">:</code><code class="value">00</code><code class="plain">:</code><code class="value">33</code><code class="plain">,</code><code class="value">946</code><code class="plain"> INFO  [AdminWS] ADMIN OPERATION; subjectDN=C=SE, O=Markus Organization, OU=Internal Testing </code><code class="value">1</code><code class="plain">, CN=External RA Admin </code><code class="value">1</code><code class="plain">; serialNumber=4a3442e98e3ce428; issuerDN=C=SE, O=Markus Organization, OU=Internal Testing </code><code class="value">1</code><code class="plain">, CN=MarkusAdminCA1; authorized=</code><code class="keyword">false</code><code class="plain">; operation=getWorkers; arguments=                 </code></div>
 </div>
     </div>

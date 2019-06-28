@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.0.0</p>
+                    <p>Version: 5.1.0</p>
                 </div>
             </header>
 
@@ -260,6 +260,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
 
             </li>
@@ -269,6 +273,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Setting_up_One-time_Keys.html">Setting up One-time Keys</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -322,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -545,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1306,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1424,7 +1448,7 @@
         <p  >SHAREDLIBRARY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
+        <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
  This property is deprecated.    </p>
     <p  >Full path to the library containing the PKCS11 interface. From version 3.7.0 this must point to a file declared in signserver_deploy.properties (or using the built-in values). If this property is defined at the same time as SHAREDLIBRARYNAME they must point to the same library on the file system.    </p>
             </td>
@@ -1473,7 +1497,7 @@
         <p  >PKCS#11 attributes used for key generation specified directly in the property value. Optional, not allowed if ATTRIBUTESFILE is specified.    </p>
     <p  >Sample p11attributes.cfg:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">attributes(generate,CKO_PUBLIC_KEY,*) = {</code></div>
 <div class="line"><code class="plain">CKA_TOKEN = false</code></div>
 <div class="line"><code class="plain">CKA_ENCRYPT = true</code></div>
@@ -1502,9 +1526,9 @@
 <div class="line"><code class="plain">}</code></div>
 </div>
     </div>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
  The PKCS#11 attributes configuration is global per shared library. If specified in multiple workers, only the configuration from the first worker loaded will be used. Changing the property might not take effect without restarting the application server.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
  For a Thales nCipher 'module protected' slot (slot index 0), CKA_PRIVATE must be false for the CKO_PRIVATEKEY to allow the key to be used without a login. Otherwise the key generation will fail with a CKR_USER_NOT_LOGGED_IN PKCS#11 error.    </p>
             </td>
         </tr>
@@ -1518,13 +1542,13 @@
     <p  >Where x is the object class: PUBLIC or PRIVATE.<br/>Where y is the key type: RSA, ECDSA, etc.<br/>Where z is the attribute name or ID as decimal number or a hexadecimal number prefixed with &quot;0x&quot;. An exception to this is CKA_ALLOWED_MECHANISMS, which currently cannot be specified in decimal or hexadecimal form.    </p>
     <p  >Examples:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_SENSITIVE=TRUE</code></div>
 <div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.</code><code class="value">0X0000010C</code><code class="plain">=FALSE</code></div>
 <div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS=CKM_RSA_PKCS, CKM_SHA256_RSA_PKCS, </code><code class="value">0x00000043</code><code class="plain">, CKM_SHA256_RSA_PKCS_PSS</code></div>
 </div>
     </div>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
  This feature requires a patched Java Runtime Environment.    </p>
             </td>
         </tr>
@@ -1534,9 +1558,9 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >If set to true, the private key and certificate is cached in the worker so that they are not queried for each signature. This could potentially improve performance in some environments, typically where network HSMs or HSM slots with many keys are used. Default: true.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
  This worker property is to be specified in the worker where the key to be used is specified by the DEFAULTKEY property. It is that key that will be cached locally in the worker. It is important to remember this if the crypto token is configured in a separate worker in which case this property should be specified in the worker that will be using the crypto token and not necessarily in the one having the crypto token configuration.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg" alt="images/s/en_US/7901/58be3fa11e9ad58113c0ea45e7063389a7c7d344/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
  When enabled, the signer certificate is also cached if taken from the token and not overridden by specifying it in the configuration. This means that if the certificate in the token is changed, the old certificate will still be used until the worker is reloaded, clearing the cache.    </p>
             </td>
         </tr>
@@ -1561,32 +1585,32 @@
     <p  >Edit (preferably a copy of) pkcs11-crypto.properties to match your PKCS#11 token.    </p>
     <p  >Run the following command to set up the token:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/signserver setproperties pkcs11-crypto-configuragtion.properties</code></div>
 </div>
     </div>
     <p  >Reload the configuration using the printed ID (in this example 8):    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/signserver reload </code><code class="value">8</code></div>
 </div>
     </div>
     <p  >Activate the crypto token by specifying the PIN code:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/signserver activatecryptotoken </code><code class="value">8</code></div>
 </div>
     </div>
     <p  >Unless your DEFAULTKEY worker property points to an existing key in the HSM, the activation will look like it failed. Continue by creating a key that can be used for testing slot activation:    </p>
     <p  >Generate a keypair in the token to be used as test key:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/signserver generatekey </code><code class="value">8</code><code class="plain"> -alias testkey1 -keyalg RSA -keyspec </code><code class="value">2048</code></div>
 </div>
     </div>
     <p  >Set the key as test key:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/signserver setproperty </code><code class="value">8</code><code class="plain"> DEFAULTKEY testkey1</code></div>
 <div class="line"><code class="plain">bin/signserver reload </code><code class="value">8</code></div>
 <div class="line"><code class="plain">bin/signserver activatecryptotoken </code><code class="value">8</code></div>
@@ -1594,20 +1618,20 @@
     </div>
     <p  >Test the keypair:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/signserver testkey </code><code class="value">8</code></div>
 </div>
     </div>
     <p  >You also need a certificate for the signer. Generate a certificate request with the command:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/signserver generatecertreq </code><code class="value">8</code><code class="plain"> </code><code class="string">"CN=PKCS11 Signer token"</code><code class="plain"> SHA1WithRSA /tmp/certreq.pem</code></div>
 </div>
     </div>
     <p  >Add a user in EJBCA with a certificate profile suitable for signing, and enroll for a &quot;Server Certificate&quot; using the public web pages.    </p>
     <p  >Create the certificate chain file with the command:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">cat /tmp/cert.pem /tmp/AdminCA1.pem &gt; /tmp/certchain.pem</code></div>
 </div>
     </div>
@@ -1615,7 +1639,7 @@
     <p  >The signer certificate should then be uploaded to the worker which should use it.    </p>
     <p  >Upload the signing certificate chain to the signer using the command:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/signserver uploadsignercertificatechain </code><code class="value">9</code><code class="plain"> GLOB /tmp/certchain.pem bin/signserver reload </code><code class="value">9</code></div>
 </div>
     </div>
@@ -1628,13 +1652,13 @@
 <ul class=" "><li class=" ">    <p  >Patched Java/SunPKCS11 (i.e. for RSASSA-PSS signature support and for setting allowed mechanisms).    </p>
 </li><li class=" ">    <p  >Key-pair to be generated with the following worker property set:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS=CKM_RSA_PKCS_PSS, CKM_SHA256_RSA_PKCS_PSS</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >The following worker property set in order for test signing to work:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">  SIGNATUREALGORITHM=SHA256withRSAandMGF1</code></div>
 </div>
     </div>

@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.0.0</p>
+                    <p>Version: 5.1.0</p>
                 </div>
             </header>
 
@@ -260,6 +260,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
 
             </li>
@@ -269,6 +273,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Setting_up_One-time_Keys.html">Setting up One-time Keys</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -322,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -545,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1306,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1357,7 +1381,7 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Operations.html">SignServer Operations</a></li>
                                                             </ul>
-</div>            <h1 id="src-22380678"> <span>Troubleshooting</span></h1>
+</div>            <h1 id="src-75860229"> <span>Troubleshooting</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1366,24 +1390,26 @@
 This section lists common errors and the steps needed to troubleshoot them:    </span>
     </p>
     <p  >    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-22380678_id-.Troubleshootingv4.4.0-GeneralIssues">General Issues</a>    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-22380678_id-.Troubleshootingv4.4.0-Transactionrolledbackerror">Transaction rolled back error</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="#src-22380678_id-.Troubleshootingv4.4.0-AdminGUIIssues">Admin GUI Issues</a>    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-22380678_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y0LjQuMC1BZG1pbkdVSWxvZ2ludXNpbmdzbWFydGNhcmRmYWlsc29uNjQtYml0KHg4Nl82NCl2ZXJzaW9ub2ZXaW5kb3dz">AdminGUI login using smartcard fails on 64-bit (x86_64) version of Windows</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-22380678_id-.Troubleshootingv4.4.0-AdminGUIloginusingsmartcardfailsifpathtoDLLcontainsparenthesis">AdminGUI login using smartcard fails if path to DLL contains parenthesis</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-22380678_id-.Troubleshootingv4.4.0-IPv6dualstackcangivepermissiondeniedwhentryingtoconnectfromAdminGUI">IPv6 dualstack can give permission denied when trying to connect from AdminGUI</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-22380678_id-.Troubleshootingv4.4.0-AdminGUIloginusingsmartcardfailswithsomecards">AdminGUI login using smartcard fails with some cards</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="#src-22380678_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y0LjQuMC1QMTFORy9KYWNrTkpJMTFJc3N1ZXM">P11NG / JackNJI11 Issues</a>    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-22380678_id-.Troubleshootingv4.4.0-UnsatisfiedLinkError">UnsatisfiedLinkError</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-22380678_id-.Troubleshootingv4.4.0-USER_NOT_LOGGED_INError">USER_NOT_LOGGED_IN Error</a>    </p>
-</li></ul></li></ul>    <div class="section section-1" id="src-22380678_id-.Troubleshootingv4.4.0-GeneralIssues">
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-75860229_id-.Troubleshootingv5.1.0-GeneralIssues">General Issues</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-75860229_id-.Troubleshootingv5.1.0-Transactionrolledbackerror">Transaction rolled back error</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="#src-75860229_id-.Troubleshootingv5.1.0-AdminGUIIssues">Admin GUI Issues</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-75860229_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y1LjEuMC1BZG1pbkdVSWxvZ2ludXNpbmdzbWFydGNhcmRmYWlsc29uNjQtYml0KHg4Nl82NCl2ZXJzaW9ub2ZXaW5kb3dz">AdminGUI login using smartcard fails on 64-bit (x86_64) version of Windows</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860229_id-.Troubleshootingv5.1.0-AdminGUIloginusingsmartcardfailsifpathtoDLLcontainsparenthesis">AdminGUI login using smartcard fails if path to DLL contains parenthesis</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860229_id-.Troubleshootingv5.1.0-IPv6dualstackcangivepermissiondeniedwhentryingtoconnectfromAdminGUI">IPv6 dualstack can give permission denied when trying to connect from AdminGUI</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860229_id-.Troubleshootingv5.1.0-AdminGUIloginusingsmartcardfailswithsomecards">AdminGUI login using smartcard fails with some cards</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="#src-75860229_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y1LjEuMC1QMTFORy9KYWNrTkpJMTFJc3N1ZXM">P11NG / JackNJI11 Issues</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-75860229_id-.Troubleshootingv5.1.0-UnsatisfiedLinkError">UnsatisfiedLinkError</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860229_id-.Troubleshootingv5.1.0-USER_NOT_LOGGED_INError">USER_NOT_LOGGED_IN Error</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="#src-75860229_id-.Troubleshootingv5.1.0-SignClientissues">SignClient issues</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-75860229_id-.Troubleshootingv5.1.0-CannotproduceCertificateVerifysignature">Cannot produce CertificateVerify signature</a>    </p>
+</li></ul></li></ul>    <div class="section section-1" id="src-75860229_id-.Troubleshootingv5.1.0-GeneralIssues">
         <h1 class="heading "><span>General Issues</span></h1>
-    <div class="section section-2" id="src-22380678_id-.Troubleshootingv4.4.0-Transactionrolledbackerror">
+    <div class="section section-2" id="src-75860229_id-.Troubleshootingv5.1.0-Transactionrolledbackerror">
         <h2 class="heading "><span>Transaction rolled back error</span></h2>
     <p  >A transaction timeout can occur for requests that are taking longer time to finish than what is configured for database transactions in the application server.    </p>
     <p  >Example of errors displayed in the log:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">13:21:17,483 ERROR [org.jboss.as.ejb3.invocation] (http-/0.0.0.0:8443-1) JBAS014134: EJB Invocation failed on component ProcessSessionBean for method public abstract org.signserver.common.data.Response org.signserver.ejb.interfaces.ProcessSessionLocal.process(org.signserver.server.log.AdminInfo,org.signserver.common.WorkerIdentifier,org.signserver.common.data.Request,org.signserver.common.RequestContext) throws org.signserver.common.IllegalRequestException,org.signserver.common.CryptoTokenOfflineException,org.signserver.common.SignServerException: javax.ejb.EJBTransactionRolledbackException: Transaction rolled back</code></div>
 <div class="line"><code class="plain">...</code></div>
 <div class="line"><code class="plain">Caused by: javax.transaction.RollbackException: JBAS014585: Transaction 'TransactionImple &lt; ac, BasicAction: 0:ffff7f000001:672b819:5911a12e:f8 status: ActionStatus.ABORTED &gt;' was already rolled back</code></div>
@@ -1392,35 +1418,35 @@ This section lists common errors and the steps needed to troubleshoot them:    <
 </div>
     </div>
     <p  >Possible reasons include, large file uploads and/or downloads, and/or slow network connections, slow HSM connection or HSM, or that contacting external servers takes long time (CRL/OCSP fetching or time-stamping etc).    </p>
-    <div class="section section-3" id="src-22380678_id-.Troubleshootingv4.4.0-Solutions">
+    <div class="section section-3" id="src-75860229_id-.Troubleshootingv5.1.0-Solutions">
         <h3 class="heading "><span>Solutions</span></h3>
 <ul class=" "><li class=" ">    <p  >Since database transactions are not required if the worker is not configured to access the database, disabling the key usage counter, and not using any archivers will resolve this issue. For more information, see <a   href="Limiting_the_number_of_signatures.html">Limiting the number of signatures</a> and <a   href="Archiving.html">Archiving</a>.    </p>
 </li><li class=" ">    <p  >Alternatively, if the key usage counter or an Archiver must be used, reconfigure the application server with a higher value for the transaction timeout. For more information, see <a   href="Limiting_the_number_of_signatures.html">Limiting the number of signatures</a> and <a   href="Archiving.html">Archiving</a>.    </p>
 </li></ul>    </div>
     </div>
     </div>
-    <div class="section section-1" id="src-22380678_id-.Troubleshootingv4.4.0-AdminGUIIssues">
+    <div class="section section-1" id="src-75860229_id-.Troubleshootingv5.1.0-AdminGUIIssues">
         <h1 class="heading "><span>Admin GUI Issues</span></h1>
-    <div class="section section-2" id="src-22380678_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y0LjQuMC1BZG1pbkdVSWxvZ2ludXNpbmdzbWFydGNhcmRmYWlsc29uNjQtYml0KHg4Nl82NCl2ZXJzaW9ub2ZXaW5kb3dz">
+    <div class="section section-2" id="src-75860229_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y1LjEuMC1BZG1pbkdVSWxvZ2ludXNpbmdzbWFydGNhcmRmYWlsc29uNjQtYml0KHg4Nl82NCl2ZXJzaW9ub2ZXaW5kb3dz">
         <h2 class="heading "><span>AdminGUI login using smartcard fails on 64-bit (x86_64) version of Windows</span></h2>
     <p  >The 64-bit version of Oracle Java does not support PKCS#11. On Windows, use a 32-bit version of Java and the PKCS#11 shared library.    </p>
     </div>
-    <div class="section section-2" id="src-22380678_id-.Troubleshootingv4.4.0-AdminGUIloginusingsmartcardfailsifpathtoDLLcontainsparenthesis">
+    <div class="section section-2" id="src-75860229_id-.Troubleshootingv5.1.0-AdminGUIloginusingsmartcardfailsifpathtoDLLcontainsparenthesis">
         <h2 class="heading "><span>AdminGUI login using smartcard fails if path to DLL contains parenthesis</span></h2>
     <p  >On versions prior to JDK 7u80 and 8 b91, the Java bug <a  class="external-link" href="https://bugs.java.com/bugdatabase/view_bug.do?bug_id=7196009">JDK-7196009</a> will cause issues with configuration paths containing parenthesis, for example:<tt class=" "> c:\program files (x86)\middleware\pkcs11.dll</tt>.    </p>
     <p  >As a workaround, make sure to install the middle-ware (PKCS#11/smartcard library) to a path not containing parenthesis.    </p>
     </div>
-    <div class="section section-2" id="src-22380678_id-.Troubleshootingv4.4.0-IPv6dualstackcangivepermissiondeniedwhentryingtoconnectfromAdminGUI">
+    <div class="section section-2" id="src-75860229_id-.Troubleshootingv5.1.0-IPv6dualstackcangivepermissiondeniedwhentryingtoconnectfromAdminGUI">
         <h2 class="heading "><span>IPv6 dualstack can give permission denied when trying to connect from AdminGUI</span></h2>
     <p  >Connecting to SignServer over web services using the AdminGUI on Windows where both IPv4 and IPv6 is available, can give &quot;permission denied&quot;.    </p>
     <p  >As a workaround, edit the <tt class=" ">signserver-gui.cmd</tt> and add the following to the command:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">-Djava.net.preferIPv4Stack=</code><code class="keyword">true</code></div>
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-22380678_id-.Troubleshootingv4.4.0-AdminGUIloginusingsmartcardfailswithsomecards">
+    <div class="section section-2" id="src-75860229_id-.Troubleshootingv5.1.0-AdminGUIloginusingsmartcardfailswithsomecards">
         <h2 class="heading "><span>AdminGUI login using smartcard fails with some cards</span></h2>
     <p  >The card prompts for the PIN but then does not ask for which certificate to login with. Instead, the following error message is shown: <i class=" ">Received fatal alert: bad_certificate</i>. The error message indicates that the server did not accept the provided certificate (that is the issuer was not in the server's truststore). However, for certain types of smartcards, the issue is caused by inability to read certificate from the card.    </p>
     <p  >The following workaround is proposed:    </p>
@@ -1431,32 +1457,53 @@ This section lists common errors and the steps needed to troubleshoot them:    <
 </li><li class=" ">    <p  >This time, after the PIN prompt you are asked for which certificate to login with.    </p>
 </li></ol>    </div>
     </div>
-    <div class="section section-1" id="src-22380678_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y0LjQuMC1QMTFORy9KYWNrTkpJMTFJc3N1ZXM">
+    <div class="section section-1" id="src-75860229_safe-id-aWQtLlRyb3VibGVzaG9vdGluZ3Y1LjEuMC1QMTFORy9KYWNrTkpJMTFJc3N1ZXM">
         <h1 class="heading "><span>P11NG / JackNJI11 Issues</span></h1>
-    <div class="section section-2" id="src-22380678_id-.Troubleshootingv4.4.0-UnsatisfiedLinkError">
+    <div class="section section-2" id="src-75860229_id-.Troubleshootingv5.1.0-UnsatisfiedLinkError">
         <h2 class="heading "><span>UnsatisfiedLinkError</span></h2>
     <p  >There can be a conflict between the JNA implementation in SignServer and the one installed in the system. This can be seen as errors similar to the following:    </p>
 <ul class=" "><li class=" ">    <p  >java.lang.UnsatisfiedLinkError: com.sun.jna.Native.malloc(J)J    </p>
 </li><li class=" ">    <p  >java.lang.UnsatisfiedLinkError: Can't obtain static newInstance method for class com.sun.jna.Structure    </p>
 </li></ul>    <p  >Solution is to remove JNA from the system (i.e. apt-get remove libjna-java) or to run Java with:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">-Djava.library.path=</code></div>
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-22380678_id-.Troubleshootingv4.4.0-USER_NOT_LOGGED_INError">
+    <div class="section section-2" id="src-75860229_id-.Troubleshootingv5.1.0-USER_NOT_LOGGED_INError">
         <h2 class="heading "><span>USER_NOT_LOGGED_IN Error</span></h2>
     <p  >If a <strong class=" ">USER_NOT_LOGGED_IN</strong> error is encountered while using the Utimaco HSM, the solution is to enable the <strong class=" ">KeepAlive</strong> setting in the Utimaco configuration    <span style="color: #000000;">
  file <tt class=" ">cs_pkcs11_R2.cfg</tt>:    </span>
     </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain"># Prevents expiring session after inactivity of </code><code class="value">15</code><code class="plain"> minutes</code></div>
 <div class="line"><code class="plain">KeepAlive = </code><code class="keyword">true</code></div>
 </div>
     </div>
     <p  >    </p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-75860229_id-.Troubleshootingv5.1.0-SignClientissues">
+        <h1 class="heading "><span>SignClient issues</span></h1>
+    <div class="section section-2" id="src-75860229_id-.Troubleshootingv5.1.0-CannotproduceCertificateVerifysignature">
+        <h2 class="heading "><span>Cannot produce CertificateVerify signature</span></h2>
+    <p  >When using SignClient using a PKCS 11 token (e.g. a smart-card reader) for authenticating in some cases (e.g. both server and client running on Java 11) a cipher-suit-related error can occur:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">ERROR [HTTPDocumentSigner] Failed sending request: Cannot produce CertificateVerify signature</code></div>
+</div>
+    </div>
+    <p  >As a workaround, SignClient can be forced to fallback to use TLS version 1.1 (as shown in the commented-out sample in script bin/signclient, a similar example is also present in the Windows batch file bin/signclient.cmd)    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain"># In some cases, running SignClient authenticating with a P11 token</code></div>
+<div class="line"><code class="plain"># (e.g. a smartcard reader) could give cipher-suit errors,</code></div>
+<div class="line"><code class="plain"># In these cases, a workaround is to force the use of TLS version </code><code class="value">1.1</code></div>
+<div class="line"><code class="plain">JAVA_OPTS=</code><code class="string">"$JAVA_OPTS  -Djdk.tls.client.protocols=TLSv1.1 -Dhttps.protocols=TLSv1.1"</code></div>
+</div>
+    </div>
     </div>
     </div>
         </div>
@@ -1465,7 +1512,7 @@ This section lists common errors and the steps needed to troubleshoot them:    <
 
 
             <nav id="ht-post-nav">
-                <a href="Setting_up_One-time_Keys.html" class="ht-post-nav-prev">
+                <a href="Setting_up_OpenPGP_Signer.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1474,7 +1521,7 @@ This section lists common errors and the steps needed to troubleshoot them:    <
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Setting up One-time Keys</span>
+            <span>Setting up OpenPGP Signer</span>
         </a>
                 <a href="SignServer_Integration.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"

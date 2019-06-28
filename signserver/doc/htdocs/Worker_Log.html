@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.0.0</p>
+                    <p>Version: 5.1.0</p>
                 </div>
             </header>
 
@@ -260,6 +260,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
 
             </li>
@@ -269,6 +273,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Setting_up_One-time_Keys.html">Setting up One-time Keys</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -322,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -545,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1306,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1372,7 +1396,7 @@
     <p  >The default worker logger for most workers. Can be used during testing to find which fields a worker logs, and may then be changed to the PatternWorkerLogger to only log fields that are of interest.    </p>
     <p  >The LOGLEVEL_DEFAULT sets the level of the log output. The log levels are specified as the standard Log4J levels (FATAL, ERROR, WARNING, INFO, DEBUG, and TRACE) and default to the log level INFO if not set.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">WORKERLOGGER=org.signserver.server.log.AllFieldsWorkerLogger</code></div>
 <div class="line"><code class="plain">LOGLEVEL_DEFAULT=INFO</code></div>
 </div>
@@ -1384,7 +1408,7 @@
     <p  class="section">The properties LOGINCLUDEFIELDS and LOGEXCLUDEFIELDS can be used to restrict the fields included in additionalDetails by explicitly setting a comma-separated list of field names.    </p>
     <p  >Note that only one of these options can be set at a time.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">WORKERLOGGER=org.signserver.server.log.SecurityEventsWorkerLogger</code></div>
 </div>
     </div>
@@ -1393,7 +1417,7 @@
         <h1 class="heading section"><span>PatternWorkerLogger</span></h1>
     <p  class="section">The LOGLEVEL_DEFAULT property has the same behavior as the AllFieldsWorkerLogger.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">WORKERLOGGER=org.signserver.server.log.PatternWorkerLogger</code></div>
 <div class="line"><code class="plain">LOGTIMEZONE=GMT</code></div>
 <div class="line"><code class="plain">LOGDATEFORMAT=yyyy-MM-dd:HH:mm:ss:z</code></div>
@@ -1408,7 +1432,7 @@
         <h1 class="heading section"><span>DefaultTimeStampLogger</span></h1>
     <p  >Pattern logger with a default log order suitable for logging time-stamp requests. This logger is the default logger used by the <a   href="Time_Stamp_Signer.html">TimeStampSigner</a>.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">WORKERLOGGER=org.signserver.module.tsa.DefaultTimeStampLogger</code></div>
 </div>
     </div>
@@ -1417,7 +1441,7 @@
         <h1 class="heading "><span>NullWorkerLogger</span></h1>
     <p  >Worker logger that does not log anything.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">WORKERLOGGER=org.signserver.server.log.NullWorkerLogger</code></div>
 </div>
     </div>
@@ -1425,7 +1449,7 @@
     <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-CustomTimeStampLogger1">
         <h1 class="heading "><span>CustomTimeStampLogger1</span></h1>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">WORKERLOGGER=org.signserver.module.tsa.CustomTimeStampLogger1</code></div>
 </div>
     </div>
@@ -1434,7 +1458,7 @@
         <h1 class="heading "><span>FileWorkerLogger</span></h1>
     <p  >Worker logger that writes the log values to a worker-specific log file. This logger logs all fields, similar to the AllFieldsWorkerLogger, and is mainly intended for use by unit tests, and is not thread safe.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">WORKERLOGGER=org.signserver.server.log.FileWorkerLogger</code></div>
 <div class="line"><code class="plain">LOG_FILE_PATH=/path/to/logfile</code></div>
 </div>

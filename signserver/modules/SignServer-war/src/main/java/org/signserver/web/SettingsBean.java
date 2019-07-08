@@ -13,6 +13,9 @@
 package org.signserver.web;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.signserver.common.CompileTimeSettings;
 
@@ -130,6 +133,20 @@ public class SettingsBean {
             LOG.warn("\"httpserver.external.privhttps\" is not a decimal number. Using default value: " + value);
         }
         return value;
+    }
+    
+    /**
+     * Host name used by SignServer public web to construct a correct URL.
+     *
+     * @param request HTTPServetRequest
+     * @return The host name
+     * @throws java.net.URISyntaxException
+     */
+    public String getHostName(HttpServletRequest request) throws URISyntaxException {
+        StringBuilder result = new StringBuilder();
+        URI uri = new URI(request.getRequestURL().toString());
+        result.append(uri.getHost()).append(":");
+        return result.toString();
     }
 
 }

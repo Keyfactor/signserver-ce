@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.1.0.Final</version>
+        <version>5.2.0.Alpha4-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-AdminGUI</artifactId>
     <name>SignServer-AdminGUI</name>
@@ -122,18 +122,18 @@
         <dependency>
             <groupId>org.signserver</groupId>
             <artifactId>SignServer-Client-CLientWS</artifactId>
-            <version>5.1.0.Final</version>
+            <version>5.2.0.Alpha4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.signserver</groupId>
             <artifactId>SignServer-Client-SigningAndValidationAPI</artifactId>
-            <version>5.1.0.Final</version>
+            <version>5.2.0.Alpha4-SNAPSHOT</version>
             
         </dependency>
         <dependency>
             <groupId>org.signserver</groupId>
             <artifactId>SignServer-Module-Renewal-interfaces</artifactId>
-            <version>5.1.0.Final</version>
+            <version>5.2.0.Alpha4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.ejbca.cesecore</groupId>

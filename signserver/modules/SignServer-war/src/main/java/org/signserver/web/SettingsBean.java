@@ -143,10 +143,8 @@ public class SettingsBean {
      * @throws java.net.URISyntaxException
      */
     public String getHostName(HttpServletRequest request) throws URISyntaxException {
-        StringBuilder result = new StringBuilder();
         URI uri = new URI(request.getRequestURL().toString());
-        result.append(uri.getHost()).append(":");
-        return result.toString();
+        return uri.getHost();
     }
 
 }

@@ -34,7 +34,7 @@
                     <c:set var="req" value="${pageContext.request}" />
                     <c:set var="url">${req.requestURL}</c:set>
                     <c:set var="uri" value="${req.requestURI}" />                    
-                    <c:set var="adminWeb" value="https://${settings.getHostName(req)}${settings.externalPrivateHttpsPort}${req.contextPath}/adminweb/"/>
+                    <c:set var="adminWeb" value="https://${settings.getHostName(req)}:${settings.externalPrivateHttpsPort}${req.contextPath}/adminweb/"/>
 
                     <%--
                     <c:out value="req: ${req}"/><br/>

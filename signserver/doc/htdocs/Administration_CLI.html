@@ -121,33 +121,9 @@
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
-                                                <li class="collapsed">
+                                                <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_Introduction.html">SignServer Introduction</a>
 
-                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
-                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="11" y="7" width="2" height="10"></rect>
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-            </span>
-
-            <ul class="nav ht-pages-nav-sub">
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Architecture_and_Concepts.html">SignServer Architecture and Concepts</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Interoperability.html">SignServer Interoperability</a>
-
-            </li>
-                            </ul>
             </li>
                                                 <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Installation.html">SignServer Installation</a>
@@ -300,6 +276,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -350,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -573,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1334,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1426,7 +1422,7 @@
     <p  >List the value of a worker or global property.    </p>
     <p  >Usage:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">signserver getproperty &lt;signerid | signerName | global | node&gt; &lt;propertykey&gt;</code></div>
 </div>
     </div>
@@ -1547,7 +1543,7 @@
         <h2 class="heading "><span id="src-55607343_id-.AdministrationCLIv5.1.0-authorizedclients" class="confluence-anchor-link"></span><span>authorizedclients </span></h2>
     <p  >Command for adding, removing or listing a worker's client authorization rules. Replaces the legacy commands <i class=" ">addauthorizedclient</i>, <i class=" ">removeauthorizedclient</i> and <i class=" ">listauthorizedclient</i>.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">Usage: signserver authorizedclients -worker &lt;worker name or ID&gt; -list </code></div>
 <div class="line"> </div>
 <div class="line"><code class="plain">       signserver authorizedclients -worker &lt;worker name or ID&gt; &lt;-add/-remove&gt; </code></div>
@@ -1719,13 +1715,13 @@
     <p  >    </p>
     <p  >Example 1:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">signserver authorizedclients -worker CMSSigner -list</code></div>
 </div>
     </div>
     <p  >Example 2:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">signserver authorizedclients -worker CMSSigner -add </code></div>
 <div class="line"><code class="plain"> -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue </code><code class="string">"Client One"</code></div>
 <div class="line"><code class="plain"> -matchIssuerWithValue </code><code class="string">"CN=AdminCA1, C=SE"</code></div>
@@ -1733,7 +1729,7 @@
     </div>
     <p  >Example 3:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">signserver authorizedclients -worker CMSSigner -add </code></div>
 <div class="line"><code class="plain"> -matchSubjectWithType SUBJECT_RDN_CN -matchSubjectWithValue </code><code class="string">"Client One"</code></div>
 <div class="line"><code class="plain"> -matchIssuerWithType ISSUER_DN_BCSTYLE -matchIssuerWithValue </code><code class="string">"CN=AdminCA1, C=SE"</code><code class="plain"> -description </code><code class="string">"my rule"</code></div>
@@ -1741,7 +1737,7 @@
     </div>
     <p  >Example 4:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">signserver authorizedclients -worker CMSSigner -add </code></div>
 <div class="line"><code class="plain"> -matchSubjectWithType CERTIFICATE_SERIALNO -matchIssuerWithType ISSUER_DN_BCSTYLE </code></div>
 <div class="line"><code class="plain"> -cert /tmp/admin.pem</code></div>
@@ -1749,7 +1745,7 @@
     </div>
     <p  >Example 5:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">signserver authorizedclients -worker CMSSigner -remove </code></div>
 <div class="line"><code class="plain"> -matchSubjectWithType CERTIFICATE_SERIALNO </code></div>
 <div class="line"><code class="plain"> -matchIssuerWithType ISSUER_DN_BCSTYLE </code></div>
@@ -1768,19 +1764,19 @@
     <p  >Adds a client certificate to a processable workers list of acceptable clients using this worker. Specify certificate serial number in hex and the Issuer DN of the client certificate. If DN components contains commas, these need to be escaped with backslashes. Alternatively, a certificate file (PEM or DER format) can be specified, from which the serial number and issuer DN is fetched.    </p>
     <p  >Usage example 1:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">signserver addauthorizedclient 1 EF34242D2324 </code><code class="string">"CN=Test Root CA"</code></div>
 </div>
     </div>
     <p  >Usage example 2:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">signserver addauthorizedclient 1 EF3456789ABC </code><code class="string">"CN=Client,O=Test Organization,C=SE"</code></div>
 </div>
     </div>
     <p  >Usage example 3:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">signserver addauthorizedclient 1 client.pem</code></div>
 </div>
     </div>
@@ -1833,7 +1829,7 @@
     <p  >Used to query contents of the archive. Actual archived data is not fetched by this command.    </p>
     <p  >Usage:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">signserver archive query -limit &lt;number&gt; [-criteria  </code><code class="string">"&lt;field&gt; &lt;op&gt; &lt;value&gt;"</code><code class="plain"> [-criteria...]] [-from &lt;index&gt;] [-header] [-request|-response]</code></div>
 </div>
     </div>
@@ -1888,7 +1884,7 @@
             </div>
     <p  >Examples:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">signserver archive query -limit 10 -criteria </code><code class="string">"signerid EQ 1"</code></div>
 <div class="line"><code class="plain">signserver archive query -limit 10 -criteria </code><code class="string">"signerid EQ 1"</code><code class="plain"> -request</code></div>
 <div class="line"><code class="plain">signserver archive query -limit 10 -criteria </code><code class="string">"time GT 1359623137000"</code><code class="plain"> -criteria "requestIP EQ 127.0.0.1</code></div>
@@ -1908,33 +1904,33 @@
     <p  >Authorizes an administrator to use the Admin Web Service interface by certificate serial number (in hexadecimal) and issuer DN with space after each comma separating DN components. If DN components contains commas, these needs to be escaped with backslashes.    </p>
     <p  >The following displays how to enter the issuer DN when using a certificate issued from EJBCA with the default (as specified by EJBCA) LDAP DN order:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">C=SE, O=TestOrganization, CN=IssuingCA</code></div>
 </div>
     </div>
     <p  >The following displays using escaped DN components:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">C=SE, O=TestOrganization\, The, CN=IssuingCA\, Th</code></div>
 </div>
     </div>
     <p  >Note that the order is reversed, compared to how the issuer DN is stored in the certificate.    </p>
     <p  >The following displays how to enter the issuer DN when using a certificate issued from EJBCA with the Use LDAP DN order option disabled:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">CN=ReverseIssuingCA, O=TestOrganization, C=S</code></div>
 </div>
     </div>
     <p  >Alternatively, a certificate file can be specified from which the serial number and issuer DN will be taken.    </p>
     <p  >Usage example 1:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">signserver wsadmins -add -certserialno 123ABCDEF -issuerdn </code><code class="string">"CN=Neo Morpheus, C=SE"</code></div>
 </div>
     </div>
     <p  >Usage example 2:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">signserver wsadmins -add -cert wsadmin.pe</code></div>
 </div>
     </div>
@@ -1982,7 +1978,7 @@
     <p  >Query the CESeCore audit log.    </p>
     <p  >Usage:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">signserver auditlog -query -limit &lt;number&gt; [-criteria </code><code class="string">"&lt;field&gt; &lt;op&gt; &lt;value&gt;"</code><code class="plain"> [-criteria...]] [-from &lt;index&gt;] [-header]</code></div>
 </div>
     </div>
@@ -2040,7 +2036,7 @@
         <h2 class="heading "><span>querytokenentries</span></h2>
     <p  >Queries the entries (key alias, certificates etc) in a CryptoToken. If no limit is given, all entries are queried and printed (10 at a time). You can specify to start query from an index in the result. Search conditions can be added to only search for entries with certain key aliases.<br/>Usage:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">signserver querytokenentries -token &lt;</code><code class="functions">id</code><code class="plain"> or name&gt; -limit &lt;number&gt; [-criteria  </code><code class="string">"&lt;field&gt; &lt;op&gt; &lt;value&gt;"</code><code class="plain"> [-criteria...]] [-from &lt;index&gt;] [-</code><code class="functions">v</code><code class="plain">]</code></div>
 </div>
     </div>

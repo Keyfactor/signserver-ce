@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <title>SignServer Architecture and Concepts - SignServer - Documentation Space</title> -->
-    <title>SignServer Architecture and Concepts - SignServer Manual</title>
+    <!-- <title>Client CLI signdocument Command - SignServer - Documentation Space</title> -->
+    <title>Client CLI signdocument Command - SignServer Manual</title>
 
     <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
@@ -121,33 +121,9 @@
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
-                                                <li class="collapsed">
+                                                <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_Introduction.html">SignServer Introduction</a>
 
-                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
-                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="11" y="7" width="2" height="10"></rect>
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-            </span>
-
-            <ul class="nav ht-pages-nav-sub">
-                                        <li class="leaf">
-        <a class="ht-nav-page-link current" href="SignServer_Architecture_and_Concepts.html">SignServer Architecture and Concepts</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Interoperability.html">SignServer Interoperability</a>
-
-            </li>
-                            </ul>
             </li>
                                                 <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Installation.html">SignServer Installation</a>
@@ -300,6 +276,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -350,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link current" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -573,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1334,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1383,163 +1379,87 @@
     <ul>
         <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
-                                                                                     <li><a href="SignServer_Introduction.html">SignServer Introduction</a></li>
+                                                                                                             <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
+                                        <li class="shortcut"><a href="SignServer_Integration.html">SignServer Integration</a></li>
+                                                                                     <li><a href="Client_CLI.html">Client CLI</a></li>
                                                             </ul>
-</div>            <h1 id="src-48791832"> <span>SignServer Architecture and Concepts</span></h1>
+</div>            <h1 id="src-75860154"> <span>Client CLI signdocument Command</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >    <span style="color: #333333;">
-The following outlines SignServer's flexible, component-based architecture.    </span>
-    </p>
-    <p  >    <img  class="confluence-embedded-image" src="images/download/attachments/48791832/worddav5a92050e7f35a8e297e72e5556ace107.png" alt="images/download/attachments/48791832/worddav5a92050e7f35a8e297e72e5556ace107.png" width="605" height="288" />
-            <br/><span class="caption">SignServer Architecture</span>
-        </p>
-    <p  >    <span style="color: #333333;">
-SignServer Signers are used to sign or in other way process requested data.    </span>
-    </p>
-    <p  >    <span style="color: #333333;">
-In addition to processable services, a concept called Timed Service enables plug-ins run at defined intervals performing maintenance or reporting routines.    </span>
-    </p>
-    <div class="section section-1" id="src-48791832_id-.SignServerArchitectureandConceptsv5.1.0-Signers">
-        <h1 class="heading "><span>Signers</span></h1>
-    <p  >    <span style="color: #000000;">
-Signers for different signature types and plug-in functionality for your own signers.    </span>
-    </p>
-    <p  >    <span style="color: #333333;">
-Out-of-the-box are there several signers ready to be used. They can easily be configured after installation of SignServer.    </span>
-    </p>
+    <p  >Request signing of a document using HTTP(s) or web services.    </p>
+    <p  >The data to send to SignServer can be supplied using one of the following methods (see <a   href="#src-75860154_id-.ClientCLIsigndocumentCommandv5.1.0-Sampleusages">Sample usages</a> below):    </p>
+<ul class=" "><li class=" ">    <p  >Provided directly on the command line as a string using the <strong class=" ">-data</strong> flag. Useful for text input.    </p>
+</li><li class=" ">    <p  >As a path to the file containing the data using the <strong class=" ">-infile</strong> flag.    </p>
+</li><li class=" ">    <p  >As a path to folder containing files with the input data using the <strong class=" ">-indir</strong> flag and combined with <strong class=" ">-outdir</strong> for the response files. This is the so called <a   href="#src-75860154_id-.ClientCLIsigndocumentCommandv5.1.0-BatchSigningMode">Batch Signing Mode</a>.    </p>
+</li></ul>    <p  >    </p>
+<pre class=" ">usage: signdocument &lt;-workername WORKERNAME | -workerid WORKERID&gt;<br/>                    [options]<br/>Request a document to be signed by SignServer<br/> -clientside              Hash the file(s) locally, sign the hash<br/>                          server-side, and assemble the resulting file(s)<br/>                          locally. Note: this option is only available in<br/>                          the enterprise edition.<br/> -data &lt;arg&gt;              Data to send to the worker.<br/> -digestalgorithm &lt;arg&gt;   Digest algorithm to use for client-side hashing<br/>                          and construction (using the -clientside option).<br/>                          Note: this option is only available in the<br/>                          enterprise edition.<br/> -extraoption &lt;arg&gt;       Additional options for the command needed for<br/>                          some file-types. The parameters should be given<br/>                          in the form KEY=VALUE. This option can be given<br/>                          multiple times.<br/> -filetype &lt;arg&gt;          Overrides automatic file-type detection for<br/>                          client-side hashing and construction (possible<br/>                          values PE, MSI, ZIP), default: try to guess<br/>                          based on input. Note: this option is only<br/>                          available in the enterprise edition.<br/> -host &lt;arg&gt;              Server name or IP address. Default: localhost<br/> -hosts &lt;arg&gt;             List of server names or IP addresses to try in<br/>                          order.<br/> -indir &lt;arg&gt;             Directory to read input files from. Required if<br/>                          outdir specified. Can not be combined with<br/>                          infile or outfile.<br/> -infile &lt;arg&gt;            File to read data to send to the worker from.<br/> -keyalias &lt;arg&gt;          Alias of the key in the keystore to use for<br/>                          authentication.<br/> -keyaliasprompt          Ask for which key alias to use in the keystore<br/>                          to use for authentication.<br/> -keystore &lt;arg&gt;          Keystore with private key and certificate for<br/>                          client certificate authentication.<br/> -keystorepwd &lt;arg&gt;       Password for reading the keystore.  If keystore<br/>                          is specified but not this keystore password<br/>                          option, the CLI will instead prompt for the<br/>                          password.<br/> -keystoretype &lt;arg&gt;      Type of keystore. Examples: JKS, PKCS11 and<br/>                          PKCS11_CONFIG.<br/> -loadbalancing &lt;arg&gt;     Specify if the load balancing feature using<br/>                          round robin should be used. ROUND_ROBIN or NONE.<br/>                          Default: NONE. NONE means no load balancing.<br/> -metadata &lt;arg&gt;          Additional meta data to send to the signer. The<br/>                          parameters should be given in the form<br/>                          KEY=VALUE. This option can be given multiple<br/>                          times.<br/> -onefirst                In batch mode, don't send all requests until the<br/>                          first succeeds. This is primary to prevent too<br/>                          many incorrect password attempts. Default if<br/>                          username is provided and -startall not provided.<br/> -outdir &lt;arg&gt;            Directory to write output files to. Required if<br/>                          indir specified. Can not be combined with infile<br/>                          or outfile.<br/> -outfile &lt;arg&gt;           File to write the result to. If not specified<br/>                          result is written to stdout. Must specify<br/>                          -outfile or -outdir when using -clientside.<br/> -password &lt;arg&gt;          Password for authentication. If username is<br/>                          specified but not this password option, the CLI<br/>                          will instead prompt for the password.<br/> -passwordfromstdin       Read password from standard input. Useful for<br/>                          scripting. Might also be needed for some<br/>                          terminals which don't support reading from a<br/>                          ConsoleReader. NOTE: when running interactively,<br/>                          this will echo back the password.<br/> -pdfpassword &lt;arg&gt;       Password for changing the PDF (if required).<br/> -port &lt;arg&gt;              Server port. Default: 8080 (for HTTP), 8442 for<br/>                          HTTPS and 8443 for HTTPS with client<br/>                          authentication.<br/> -protocol &lt;arg&gt;          Method of interacting with SignServer. HTTP,<br/>                          CLIENTWS or WEBSERVICES. Default: HTTP.<br/> -removefromindir         Specify this flag to have the successfully<br/>                          processed input files removed from indir.<br/> -servlet &lt;arg&gt;           Servlet to call. Default /signserver/process<br/> -startall                In batch mode, send all requests at once,<br/>                          without waiting for the first to succeed.<br/>                          Default unless username is provided or -onefirst<br/>                          provided.<br/> -threads &lt;arg&gt;           Number of threads for sending the requests. Only<br/>                          allowed in batch mode, ie when indir and outdir<br/>                          are specified. Default: 1.<br/> -timeout &lt;arg&gt;           Timeout limit in milliseconds for connecting to<br/>                          SignServer. If the connection is not established<br/>                          within this time interval it will be considered<br/>                          as a connection failure. Default timeout is<br/>                          system dependent. Specifying as 0 means no<br/>                          timeout.<br/> -truststore &lt;arg&gt;        Keystore with trusted certificates to use with<br/>                          HTTPS.<br/> -truststorepwd &lt;arg&gt;     Password for the keystore with trusted<br/>                          certificates. If truststore is specified but not<br/>                          this truststore password option, the CLI will<br/>                          instead prompt for the password.<br/> -username &lt;arg&gt;          Username for authentication.<br/> -workerid &lt;arg&gt;          ID of worker which should perform the operation.<br/> -workername &lt;arg&gt;        Name of worker which should perform the<br/>                          operation.</pre>    <p  ><span id="src-75860154_id-.ClientCLIsigndocumentCommandv5.1.0-Sampleusages"></span>    </p>
+<pre class=" ">Sample usages:<br/>a) signdocument -workername XMLSigner -data &quot;&lt;root/&gt;&quot;<br/>b) signdocument -workername XMLSigner -infile /tmp/document.xml<br/>c) signdocument -workerid 2 -data &quot;&lt;root/&gt;&quot; -truststore truststore.jks<br/>-truststorepwd changeit<br/>d) signdocument -workerid 2 -data &quot;&lt;root/&gt;&quot; -keystore superadmin.jks<br/>-keystorepwd foo123<br/>e) signdocument -workerid 2 -data &quot;&lt;root/&gt;&quot; -metadata param1=value1<br/>-metadata param2=value2<br/>f) signdocument -workerid 3 -indir ./input/ -removefromindir -outdir<br/>./output/ -threads 5<br/>g) signdocument -workerid 3 -indir ./input/ -outdir ./output/ -threads 5<br/>-hosts primaryhost,secondaryhost<br/>h) signdocument -workerid 3 -indir ./input/ -outdir ./output/ -threads 5<br/>-hosts primaryhost,secondaryhost,otherhost -timeout 5000<br/>i) signdocument -workerid 3 -indir ./input/ -outdir ./output/ -threads 5<br/>-hosts host1,host2,host3 -loadbalancing ROUND_ROBIN -timeout 5000<br/>j) signdocument -workerid 2 -data &quot;&lt;root/&gt;&quot; -keystoretype PKCS11 -keystore<br/>libcryptoki.so<br/>k) signdocument -workerid 2 -data &quot;&lt;root/&gt;&quot; -keystoretype PKCS11 -keystore<br/>libcryptoki.so -keyaliasprompt<br/>l) signdocument -workerid 2 -data &quot;&lt;root/&gt;&quot; -keystoretype PKCS11 -keystore<br/>libcryptoki.so -keyalias admin3<br/>m) signdocument -workerid 2 -data &quot;&lt;root/&gt;&quot; -keystoretype PKCS11_CONFIG<br/>-keystore sunpkcs11.cfg</pre><pre class=" "><br/></pre>    <div class="section section-1" id="src-75860154_id-.ClientCLIsigndocumentCommandv5.1.0-BatchSigningMode">
+        <h1 class="heading "><span>Batch Signing Mode</span></h1>
+    <p  >Instead of specifying the input data using the <strong class=" ">-data</strong> flag or specifying one file using <strong class=" ">-infile</strong>, you can use the <strong class=" ">-indir</strong> and <strong class=" ">-outdir</strong> options to process multiple files in one run.    </p>
     </div>
-    <div class="section section-1" id="src-48791832_safe-id-aWQtLlNpZ25TZXJ2ZXJBcmNoaXRlY3R1cmVhbmRDb25jZXB0c3Y1LjEuMC1TaWduYXR1cmVrZXlzbWFuYWdlZGluc29mdGtleXN0b3Jlc29yUEtDUyMxMUhhcmR3YXJlU2VjdXJpdHlNb2R1bGVz">
-        <h1 class="heading "><span>Signature keys managed in soft keystores or PKCS#11 Hardware Security Modules</span></h1>
-    <p  >    <span style="color: #333333;">
-Centralized management of Signers, access control and audit    </span>
-    </p>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-Large file support    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Sign single documents or batches    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Individual    </span>
-    <span style="color: #333333;">
-signing keys for every user or one central key for the organization    </span>
-    </p>
-</li></ul>    </div>
-    <div class="section section-1" id="src-48791832_id-.SignServerArchitectureandConceptsv5.1.0-TimeService">
-        <h1 class="heading "><span>Time Service</span></h1>
-    <p  >Text    </p>
+    <div class="section section-1" id="src-75860154_id-.ClientCLIsigndocumentCommandv5.1.0-FailoverandLoadBalancingModes">
+        <h1 class="heading "><span>Failover and Load Balancing Modes</span></h1>
+    <p  >SignClient can be used instead of having a load balancer as it is capable of failing over to another host if the current one fails and also has the option to spread the load between multiple servers. These features are configured by specifying additional SignServer <strong class=" ">hosts</strong>, setting the connection <strong class=" ">timeout</strong> value and the optional <strong class=" ">loadbalancing</strong> option.    </p>
+    <div  class="confbox admonition admonition-warning">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+    <p  >The failover and load balancing features are limited to the <tt class=" ">signdocument</tt> command and is only supported using the default <strong class=" ">-protocol HTTP</strong>.    </p>
+        </div>
     </div>
-    <div class="section section-1" id="src-48791832_id-.SignServerArchitectureandConceptsv5.1.0-UserAuthentication">
-        <h1 class="heading "><span>User Authentication</span></h1>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-Configurable access control using HTTP basic authentication, https client certificates, IP address restrictions etc.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Proxy alternative    </span>
-    </p>
-</li></ul>    </div>
-    <div class="section section-1" id="src-48791832_id-.SignServerArchitectureandConceptsv5.1.0-DeploymentandContinuousOperation">
-        <h1 class="heading "><span>Deployment and Continuous Operation</span></h1>
-    <p  >    <span style="color: #333333;">
-Simple installation and configuration.    </span>
-<br/>    <span style="color: #333333;">
-How-to guides    </span>
-<br/>    <span style="color: #333333;">
-Scaling etc. High availability etc.    </span>
-    </p>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-Easy upgrade paths when new versions are released.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Transaction logging suitable for statistics and billing.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Audit logging for events related to keys, certificates, and time-sources    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Health check monitoring service to support efficient clustering and monitoring.    </span>
-    </p>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-Status of workers    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Down for maintenance support    </span>
-    </p>
-</li></ul></li><li class=" ">    <p  >    <span style="color: #333333;">
-Integrity protected     </span>
-    <span style="color: #000000;">
-audit log    </span>
-    <span style="color: #333333;">
- (log signing), with digital signature or HMAC protection. See <a   href="Logging.html">Logging</a>.<br/>    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Command line tool for verification of audit and database integrity protection.    </span>
-    </p>
-</li></ul>    </div>
-    <div class="section section-1" id="src-48791832_id-.SignServerArchitectureandConceptsv5.1.0-Administration">
-        <h1 class="heading "><span>Administration</span></h1>
-    <p  >SignServer provides multiple interfaces for administrating workers and key management, as well as querying the audit log and archive.    </p>
-    <p  >    <span style="color: #333333;">
-The SignServer Administration Web (Admin Web) supports remote management with strong authentication, see <a   href="Administration_Web.html">Administration Web</a>.<br/>    </span>
-    </p>
+    <p  >You can use the <strong class=" ">-hosts</strong> flag to specify multiple SignServer hosts to send the requests to. If the connection to one host fails, either directly or because of a timeout, the next host in the list is tried instead. To specify a timeout value, use the <strong class=" ">-timeout</strong> flag.    </p>
+    <p  >Connection failures include cases where the host is not reachable, SignServer is not available (i.e. not started and/or deployed), or the worker is not available (for example due to that the HSM is not activated or the worker is misconfigured). Failures caused by issues with the request, like incorrect input data or wrong credentials etc., are generally not considered connection failures.    </p>
+    <p  >Load balancing is by default not used and the default behavior is to use the first host in the list and only if that fails, try the next host in the list, and so on until the request(s) are processed or there are no more hosts to try.    </p>
+    <p  >To enable load balancing, specify the <strong class=" ">-</strong><strong class=" ">loadbalancing</strong><strong class=" "> </strong><strong class=" ">ROUND_ROBIN</strong> option. The first host to use is then randomly selected from the list of hosts. If the command is running in <a   href="#src-75860154_id-.ClientCLIsigndocumentCommandv5.1.0-BatchSigningMode">Batch Signing Mode</a> (i.e. <strong class=" ">-indir</strong> is specified) so there is more than one request to process, the next request will use the next host in the list (the list will wrap-around at the end, continuing with the first host).    </p>
     </div>
-    <div class="section section-1" id="src-48791832_id-.SignServerArchitectureandConceptsv5.1.0-Integration">
-        <h1 class="heading "><span>Integration</span></h1>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-SignClient    </span>
+    <div class="section section-1" id="src-75860154_id-.ClientCLIsigndocumentCommandv5.1.0-SmartcardAuthentication">
+        <h1 class="heading "><span>Smartcard Authentication</span></h1>
+    <p  >In addition to using a software keystore for client certificate authentication it is also possible to use a PKCS#11 device like a smart card or a token.    </p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-keystoretype PKCS11    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >With this keystore type the -keystore option should point to the PKCS#11 (cryptoki) shared library file.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-keystoretype PKCS11_CONFIG    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >With this keystore type the -keystore options should point to a SunPKCS11 configuration file.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-keyaliasprompt    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Instead of providing the key alias with -keyalias, this option can be used to have SignClient prompt for which of the matching key alias to use.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #172b4d;">
+-keystorepwd    </span>
     </p>
-</li></ul>    <div class="section section-2" id="src-48791832_id-.SignServerArchitectureandConceptsv5.1.0-WorkflowEngineIntegration">
-        <h2 class="heading "><span>Workflow Engine Integration</span></h2>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-Interfaces and automation    </span>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <span style="color: #172b4d;">
+Smartcard PIN can either be provided on the command line or if this option is not provided instead SignClient will prompt for the PIN.    </span>
     </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Integration APIs ensures integration in your workflow    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Possible to integrate into large Java applications for optimal integration into the business process.    </span>
-    </p>
-</li></ul>    </div>
-    <div class="section section-2" id="src-48791832_id-.SignServerArchitectureandConceptsv5.1.0-Plug-ins">
-        <h2 class="heading "><span>Plug-ins</span></h2>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-Functionality allowing you to bring your own code to implement    </span>
-    <span style="color: #333333;">
-your own functionality and workflows.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Service Provider Interface (SPI) for creating new document signers.    </span>
-    </p>
-</li></ul>    </div>
-    <div class="section section-2" id="src-48791832_id-.SignServerArchitectureandConceptsv5.1.0-ExternalCAs">
-        <h2 class="heading "><span>External CAs</span></h2>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-Get your document signer certificate, such as PDF signing certificates, signed by public recognized CAs.    </span>
-    </p>
-</li></ul>    </div>
-    <div class="section section-2" id="src-48791832_id-.SignServerArchitectureandConceptsv5.1.0-IntegrationwithEJBCA">
-        <h2 class="heading "><span>Integration with EJBCA</span></h2>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-Automatic signer certificate renewal when used together with     </span>
-<a  class="external-link" href="https://www.ejbca.org/">    <span style="color: #2170ab;">
-EJBCA    </span>
-</a>    <span style="color: #333333;">
-.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Signer certificate renewal with an outgoing connection from     </span>
-<a  class="external-link" href="https://www.ejbca.org/">    <span style="color: #2170ab;">
-EJBCA    </span>
-</a>    <span style="color: #333333;">
- to SignServer.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Peer Connector support.    </span>
-    </p>
-</li></ul>    </div>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
     </div>
         </div>
 
@@ -1547,7 +1467,7 @@ Peer Connector support.    </span>
 
 
             <nav id="ht-post-nav">
-                <a href="SignServer_Introduction.html" class="ht-post-nav-prev">
+                <a href="Client_CLI.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1556,9 +1476,9 @@ Peer Connector support.    </span>
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Introduction</span>
+            <span>Client CLI</span>
         </a>
-                <a href="SignServer_Interoperability.html" class="ht-post-nav-next">
+                <a href="validatedocument.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1567,7 +1487,7 @@ Peer Connector support.    </span>
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Interoperability</span>
+            <span>validatedocument</span>
         </a>
     </nav>    
             

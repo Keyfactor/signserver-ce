@@ -254,8 +254,8 @@ public class UserMappedDispatcherTest extends ModulesTestCase {
     }
 
     private void addCertificate(PrivateKey issuerPrivateKey, int workerId, String workerName) throws CryptoTokenOfflineException, InvalidWorkerIdException, IOException, CertificateException, OperatorCreationException {
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), new PKCS10CertReqInfo("SHA1withRSA", "CN=" + workerName, null), false);
-        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        AbstractCertReqData reqData = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), new PKCS10CertReqInfo("SHA1withRSA", "CN=" + workerName, null), false);
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
         X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerPrivateKey));
         workerSession.setWorkerProperty(workerId, "SIGNERCERTCHAIN", new String(CertTools.getPemFromCertificateChain(Arrays.asList((Certificate) new JcaX509CertificateConverter().getCertificate(cert)))));
         workerSession.reloadConfiguration(workerId);

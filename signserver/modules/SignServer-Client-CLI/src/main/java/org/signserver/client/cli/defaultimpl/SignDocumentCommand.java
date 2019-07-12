@@ -135,7 +135,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     /** Option DIGESTALGORITHM. */
     public static final String DIGESTALGORITHM = "digestalgorithm";
-    
+
     /** Option FILETYPE. */
     public static final String FILETYPE = "filetype";
     
@@ -319,7 +319,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             .append("f) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -removefromindir -outdir ./output/ -threads 5").append(NL)
             .append("g) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -outdir ./output/ -threads 5 -hosts primaryhost,secondaryhost").append(NL)
             .append("h) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -outdir ./output/ -threads 5 -hosts primaryhost,secondaryhost,otherhost -timeout 5000").append(NL)
-            .append("i) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -outdir ./output/ -threads 5 -hosts host1,host2,host3 -loadbalancing ROUND_ROBIN -timeout 5000").append(NL);
+            .append("i) ").append(COMMAND).append(" -workerid 3 -indir ./input/ -outdir ./output/ -threads 5 -hosts host1,host2,host3 -loadbalancing ROUND_ROBIN -timeout 5000").append(NL)
+            .append("j) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11 -keystore libcryptoki.so").append(NL)
+            .append("k) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11 -keystore libcryptoki.so -keyaliasprompt").append(NL)
+            .append("l) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11 -keystore libcryptoki.so -keyalias admin3").append(NL)
+            .append("m) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11_CONFIG -keystore sunpkcs11.cfg").append(NL);
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
@@ -466,7 +470,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 }
             }
         }
-        
+
         if (line.hasOption(FILETYPE)) {
             fileType = line.getOptionValue(FILETYPE);
         }
@@ -647,7 +651,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             throws MalformedURLException {
         final DocumentSigner signer;
 
-        final SSLSocketFactory sf = keyStoreOptions.setupHTTPS(); // TODO: Should be done earlier and only once (not for each signer)
+        final SSLSocketFactory sf = keyStoreOptions.setupHTTPS(createConsolePasswordReader(), out); // TODO: Should be done earlier and only once (not for each signer)
 
         if (port == null) {
             if (keyStoreOptions.isUsePrivateHTTPS()) {
@@ -851,6 +855,16 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     os = new ByteArrayOutputStream();
                 } else {
                     os = outStream;
+                }
+
+                /* add addional metadata from the file handler to the request
+                 * context
+                 */
+                final Map<String, String> extraMetadata =
+                        inputSource.getMetadata();
+
+                if (extraMetadata != null) {
+                    metadata.putAll(extraMetadata);
                 }
                 
                 // Get the data signed

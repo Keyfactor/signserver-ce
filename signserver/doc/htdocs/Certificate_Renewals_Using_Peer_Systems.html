@@ -121,33 +121,9 @@
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
-                                                <li class="collapsed">
+                                                <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_Introduction.html">SignServer Introduction</a>
 
-                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
-                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="11" y="7" width="2" height="10"></rect>
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-            </span>
-
-            <ul class="nav ht-pages-nav-sub">
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Architecture_and_Concepts.html">SignServer Architecture and Concepts</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Interoperability.html">SignServer Interoperability</a>
-
-            </li>
-                            </ul>
             </li>
                                                 <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Installation.html">SignServer Installation</a>
@@ -300,6 +276,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -350,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -573,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1334,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1391,7 +1387,7 @@
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >    </p>
-    <p  ><span class="status blue ">ENTERPRISE EDITION</span> This is a SignServer Enterprise Edition (EE) feature.    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >This section provides instructions for how to setup and use peer systems for certificate renewals or rekeying:    </p>
     <p  >    </p>
 <ul class="toc-indentation "></ul>    <p  >For background and more information, see <a   href="Peer_Systems.html">Peer Systems</a> in the SignServer Reference section.    </p>
@@ -1425,21 +1421,21 @@
     <p  >To configure SignServer for incoming Peer Connections the Admin CLI, do the following:    </p>
 <ol class=" "><li class=" ">    <p  >Using the <a   href="Administration_CLI.html">SignServer Administration CLI</a>, set the global configuration property PEERS_INCOMING_ENABLED:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver setproperty global PEERS_INCOMING_ENABLED </code><code class="keyword">true</code></div>
 <div class="line"><code class="plain">$ bin/signserver reload all</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >Check the server log for the error message created when the ping request from EJBCA was denied. It looks something like this:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">Denied peer access to 4fe9278255cba7b issuer: </code><code class="string">'C=SE, O=SignServer, OU=Testing, CN=DSS Sub CA 11'</code></div>
 </div>
     </div>
     <p  >The error message contains the certificate serial number and issuer DN that should be added to the authorization rules.<br/><br/>Note that it is important to preserve the format of the serial number and issuer DN, and it is therefore recommended to copy the values from the log.    </p>
 </li><li class=" ">    <p  >Using the certificate serial number and issue DN exactly as it is written in the log, run the follwoing command to add the authorization rule:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/signserver wspeersystems -add -certserialno 4fe9278255cba7b -issuerdn </code><code class="string">"C=SE, O=SignServer, OU=Testing, CN=DSS Sub CA 11"</code></div>
 </div>
     </div>

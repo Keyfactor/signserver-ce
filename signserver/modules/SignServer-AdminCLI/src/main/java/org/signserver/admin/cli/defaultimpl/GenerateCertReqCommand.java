@@ -14,10 +14,11 @@ package org.signserver.admin.cli.defaultimpl;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
-import org.signserver.common.Base64SignerCertReqData;
+import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.WorkerIdentifier;
@@ -113,21 +114,19 @@ public class GenerateCertReqCommand extends AbstractAdminCommand {
             final WorkerIdentifier id = WorkerIdentifier.createFromIdOrName(workerid);
 
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(sigAlg, dn, null);
-            final Base64SignerCertReqData reqData;
+            final AbstractCertReqData reqData;
             
             if (keyAlias != null) {
-                reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(id, certReqInfo, explicitecc, keyAlias);
+                reqData = (AbstractCertReqData) getWorkerSession().getCertificateRequest(id, certReqInfo, explicitecc, keyAlias);
             } else {
-                reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(id, certReqInfo, explicitecc, defaultKey);
+                reqData = (AbstractCertReqData) getWorkerSession().getCertificateRequest(id, certReqInfo, explicitecc, defaultKey);
             }
    
             if (reqData == null) {
                 throw new Exception("Base64SignerCertReqData returned was null. Unable to generate certificate request.");
             }
             try (FileOutputStream fos = new FileOutputStream(filename)) {
-                fos.write("-----BEGIN CERTIFICATE REQUEST-----\n".getBytes());
-                fos.write(reqData.getBase64CertReq());
-                fos.write("\n-----END CERTIFICATE REQUEST-----\n".getBytes());
+                fos.write(reqData.toArmoredForm().getBytes(StandardCharsets.UTF_8));
             }
 
             getOutputStream().println(SUCCESS + filename);

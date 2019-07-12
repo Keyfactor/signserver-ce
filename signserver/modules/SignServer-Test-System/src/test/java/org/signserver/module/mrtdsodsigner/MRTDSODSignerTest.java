@@ -27,7 +27,6 @@ import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.bouncycastle.util.encoders.Base64;
 import org.junit.After;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
@@ -235,10 +234,10 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         // Set property to limit remaining cert validity
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Test validity cert", null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(WORKER1), certReqInfo, false);
+        AbstractCertReqData reqData = (AbstractCertReqData) getWorkerSession().getCertificateRequest(new WorkerIdentifier(WORKER1), certReqInfo, false);
 
         // Issue certificate
-        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
         X509CertificateHolder cscaCert = new JcaX509v3CertificateBuilder(new X500Name("CN=Test validity CSCA"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), new X500Name("CN=Test validity CSCA"), issuerKeyPair.getPublic())
                 .build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));

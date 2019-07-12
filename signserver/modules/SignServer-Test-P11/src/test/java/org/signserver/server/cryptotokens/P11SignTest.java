@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.cert.Certificate;
@@ -65,7 +66,7 @@ import org.bouncycastle.util.encoders.Base64;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
-import org.signserver.common.Base64SignerCertReqData;
+import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
@@ -111,6 +112,7 @@ public class P11SignTest {
     private static final int WORKER_OOXML = 20006;
     private static final int WORKER_MSA = 20007;
     private static final int WORKER_TSA_ALTKEY = 20008;
+    private static final int WORKER_PLAIN = 20020;
     
     private static final String MSAUTHCODE_REQUEST_DATA =
     		"MIIBIwYKKwYBBAGCNwMCATCCARMGCSqGSIb3DQEHAaCCAQQEggEAVVSpOKf9zJYc" +
@@ -205,10 +207,10 @@ public class P11SignTest {
             
             // Tests generating a CSR
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_PDF, null);
-            Base64SignerCertReqData csr = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_PDF), certReqInfo, false);
+            AbstractCertReqData csr = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_PDF), certReqInfo, false);
             assertNotNull(csr);
-            assertNotNull(csr.getBase64CertReq());
-            testCase.assertTrue(csr.getBase64CertReq().length > 0);
+            assertNotNull(csr.toBinaryForm());
+            testCase.assertTrue(csr.toBinaryForm().length > 0);
             
             // Test for an non-existing key label
             setPDFSignerWithCryptoProperties(WORKER_PDF, false);
@@ -237,10 +239,10 @@ public class P11SignTest {
 
             // Tests generating a CSR
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_PDF, null);
-            Base64SignerCertReqData csr = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_PDF), certReqInfo, false);
+            AbstractCertReqData csr = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_PDF), certReqInfo, false);
             assertNotNull(csr);
-            assertNotNull(csr.getBase64CertReq());
-            testCase.assertTrue(csr.getBase64CertReq().length > 0);
+            assertNotNull(csr.toBinaryForm());
+            testCase.assertTrue(csr.toBinaryForm().length > 0);
 
             // Test for an non-existing key label
             workerSession.setWorkerProperty(WORKER_PDF, "DEFAULTKEY", "NON-EXISTING-KEY-LABEL");
@@ -255,6 +257,69 @@ public class P11SignTest {
         } finally {
             testCase.removeWorker(CRYPTO_TOKEN);
             testCase.removeWorker(WORKER_PDF);
+        }
+    }
+    
+    // Input should be 20 byte hashed data for successful signing with NONEwithDSA (signing only works with SHA-1 hashed data as of now)
+    @Test
+    public void testPlainSigner_NONEwithDSA() throws Exception {
+        final int workerId = WORKER_PLAIN;
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN, false);
+            setPlainSignerProperties(workerId, true);
+            workerSession.reloadConfiguration(workerId);
+
+            plainSigner(workerId);
+        } finally {
+            testCase.removeWorker(workerId);
+        }
+    }
+    
+    private void setPlainSignerProperties(final int workerId, final boolean cached) throws IOException {
+        // Setup worker
+        workerSession.setWorkerProperty(workerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        workerSession.setWorkerProperty(workerId, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.cmssigner.PlainSigner");
+        workerSession.setWorkerProperty(workerId, "CRYPTOTOKEN", CRYPTO_TOKEN_NAME);
+        workerSession.setWorkerProperty(workerId, "NAME", "PlainSignerP11");
+        workerSession.setWorkerProperty(workerId, "AUTHTYPE", "NOAUTH");      
+    }
+    
+    private void plainSigner(final int workerId) throws Exception {
+        String key = "testKey";
+
+        try {
+            workerSession.generateSignerKey(new WorkerIdentifier(workerId), "DSA", "1024", key, pin.toCharArray());
+            workerSession.setWorkerProperty(workerId, "DEFAULTKEY", key);
+            workerSession.setWorkerProperty(workerId, "SIGNATUREALGORITHM", "NONEwithDSA");
+            workerSession.reloadConfiguration(workerId);
+
+            // Generate CSR
+            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithDSA", "CN=Worker" + workerId, null);
+            AbstractCertReqData reqData = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+
+            // Issue certificate
+            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
+            KeyPair issuerKeyPair = CryptoUtils.generateDSA(1024);
+            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA1withDSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
+
+            // Install certificate and chain
+            workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(workerId);
+
+            // Test active
+            List<String> errors = workerSession.getStatus(new WorkerIdentifier(workerId)).getFatalErrors();
+            assertEquals("errors: " + errors, 0, errors.size());
+            
+            byte[] plainText = "some-data".getBytes("ASCII");
+            MessageDigest md = MessageDigest.getInstance("SHA-1"); // 20 byte length of hashed data
+            md.update(plainText);
+            byte[] hash = md.digest();
+
+            // Test signing
+            testCase.signGenericDocument(workerId, hash);
+        } finally {
+            workerSession.removeKey(new WorkerIdentifier(workerId), key);
         }
     }
 
@@ -327,10 +392,10 @@ public class P11SignTest {
     private void pdfSignerTest() throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_PDF, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_PDF), certReqInfo, false);
+        AbstractCertReqData reqData = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_PDF), certReqInfo, false);
 
         // Issue certificate
-        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
         X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 
@@ -375,10 +440,10 @@ public class P11SignTest {
         
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+        AbstractCertReqData reqData = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
 
         // Issue certificate
-        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
         X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo())
                 .addExtension(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping).toASN1Primitive())
@@ -440,10 +505,10 @@ public class P11SignTest {
             
             // Generate CSR
             PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_TSA_ALTKEY, null);
-            Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_TSA_ALTKEY), certReqInfo, false);
+            AbstractCertReqData reqData = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_TSA_ALTKEY), certReqInfo, false);
 
             // Issue certificate
-            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
             KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
             X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo())
                     .addExtension(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping).toASN1Primitive())
@@ -513,10 +578,10 @@ public class P11SignTest {
     private void tsSigner() throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + WORKER_TSA, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_TSA), certReqInfo, false);
+        AbstractCertReqData reqData = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(WORKER_TSA), certReqInfo, false);
 
         // Issue certificate
-        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
         X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).addExtension(org.bouncycastle.asn1.x509.X509Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping)).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 
@@ -590,10 +655,10 @@ public class P11SignTest {
     private void mrtdsodSigner(final int workerId) throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+        AbstractCertReqData reqData = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
 
         // Issue certificate
-        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
         X509CertificateHolder issuerCert = new JcaX509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), new X500Name("CN=TestP11 Issuer"), issuerKeyPair.getPublic()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
         X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
@@ -664,10 +729,10 @@ public class P11SignTest {
     private void cmsSigner(final int workerId) throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+        AbstractCertReqData reqData = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
 
         // Issue certificate
-        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
         X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 
@@ -762,10 +827,10 @@ public class P11SignTest {
     private void xmlSigner(final int workerId) throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+        AbstractCertReqData reqData = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
 
         // Issue certificate
-        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
         X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 
@@ -839,10 +904,10 @@ public class P11SignTest {
     private void odfSigner(final int workerId) throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+        AbstractCertReqData reqData = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
 
         // Issue certificate
-        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
         X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 
@@ -903,10 +968,10 @@ public class P11SignTest {
     private void ooxmlSigner(final int workerId) throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+        AbstractCertReqData reqData = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
 
         // Issue certificate
-        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
         X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 
@@ -968,10 +1033,10 @@ public class P11SignTest {
     private void msauthTSSigner(final int workerId) throws Exception {        
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
-        Base64SignerCertReqData reqData = (Base64SignerCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
+        AbstractCertReqData reqData = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false);
 
         // Issue certificate
-        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
         X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).addExtension(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping)).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 
@@ -1173,11 +1238,10 @@ public class P11SignTest {
             // Generate CSR, and check the public key's public exponent
             final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA",
                 "CN=test01GenerateKey,C=SE", null);
-            Base64SignerCertReqData data = (Base64SignerCertReqData) workerSession
+            AbstractCertReqData data = (AbstractCertReqData) workerSession
                 .getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, false, "keywithexponent");
-            final byte[] reqBytes = data.getBase64CertReq();
             final PKCS10CertificationRequest req
-                = new PKCS10CertificationRequest(Base64.decode(reqBytes));
+                = new PKCS10CertificationRequest(data.toBinaryForm());
 
             final RSAPublicKey pubKey = (RSAPublicKey) testCase.getPublicKeyFromRequest(req);
             

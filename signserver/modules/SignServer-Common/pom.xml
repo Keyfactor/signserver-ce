@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.1.0.Beta1</version>
+        <version>5.1.0.Final</version>
     </parent>
     <artifactId>SignServer-Common</artifactId>
     <name>SignServer-Common</name>
@@ -70,6 +70,10 @@
             <version>2.4.0-b180830.0359</version>
             <scope>provided</scope>
        	</dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpg-jdk15on</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <!-- Filter SignServer version and edition in signservercompile.properties. -->

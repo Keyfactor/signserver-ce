@@ -5,7 +5,7 @@
   <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.1.0.Beta1</version>
+        <version>5.1.0.Final</version>
     </parent>
   <artifactId>SignServer-Server</artifactId>
   <name>SignServer-Server</name>
@@ -87,7 +87,7 @@
     <dependency>
       <groupId>org.signserver.jacknji11</groupId>
       <artifactId>jacknji11</artifactId>
-    </dependency>    
+    </dependency>
   </dependencies>
 </project>
 

@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.signserver</groupId>
     <artifactId>SignServer</artifactId>
-    <version>5.1.0.Beta1</version>
+    <version>5.1.0.Final</version>
     <packaging>pom</packaging>
     <name>SignServer</name>
     <properties>
@@ -50,6 +50,12 @@
                 <groupId>org.bouncycastle</groupId>
                 <type>jar</type>
                 <version>1.60</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpg-jdk15on</artifactId>
+                <version>1.60</version>
+                <type>jar</type>
             </dependency>
             
             <dependency>
@@ -168,9 +174,9 @@
             </dependency>
             
             <dependency>
-                <groupId>net.jsign</groupId>
+                <groupId>org.signserver.jsign</groupId>
                 <artifactId>jsign-core</artifactId>
-                <version>2.1</version>
+                <version>2.1-signserver5.1</version>
             </dependency>
 
             <dependency>

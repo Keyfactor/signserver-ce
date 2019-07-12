@@ -635,23 +635,19 @@ public class RenewalWorker extends BaseSigner {
     private String createRequestPEM(int workerId, final String sigAlg, 
             final String subjectDN, final boolean explicitEccParameters,
             final boolean defaultKey, final WorkerSessionLocal workerSession)
-            throws CryptoTokenOfflineException, InvalidWorkerIdException {
+            throws CryptoTokenOfflineException, InvalidWorkerIdException, IOException {
         final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(sigAlg,
                 subjectDN, null);
-        final Base64SignerCertReqData reqData
-                = (Base64SignerCertReqData) workerSession
+        final AbstractCertReqData reqData
+                = (AbstractCertReqData) workerSession
                 .getCertificateRequest(new WorkerIdentifier(workerId), certReqInfo, explicitEccParameters, defaultKey);
         if (reqData == null) {
             throw new RuntimeException(
-                    "Base64SignerCertReqData returned was null."
+                    "CSR returned was null."
                     + " Unable to generate certificate request.");
         }
 
-        final StringBuilder buff = new StringBuilder();
-        buff.append("-----BEGIN CERTIFICATE REQUEST-----\n");
-        buff.append(new String(reqData.getBase64CertReq()));
-        buff.append("\n-----END CERTIFICATE REQUEST-----\n");
-        return buff.toString();
+        return reqData.toArmoredForm();
     }
 
     private EjbcaWS getEjbcaWS(final String ejbcaUrl, final String alias,

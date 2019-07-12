@@ -70,7 +70,8 @@ public interface ICryptoTokenV4 {
     String PARAM_WORKERCACHE = "WORKERCACHE";
     
     String ALL_KEYS = "all";
-
+    
+    String PARAM_INCLUDE_DUMMYCERTIFICATE = "INCLUDE_DUMMYCERTIFICATE";
 
     void init(int workerId, Properties props, IServices services) throws CryptoTokenInitializationFailureException;
 

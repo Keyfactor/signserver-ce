@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <title>SignServer Interoperability - SignServer - Documentation Space</title> -->
-    <title>SignServer Interoperability - SignServer Manual</title>
+    <!-- <title>Setting up OpenPGP Signer - SignServer - Documentation Space</title> -->
+    <title>Setting up OpenPGP Signer - SignServer Manual</title>
 
     <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
@@ -121,33 +121,9 @@
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
-                                                <li class="collapsed">
+                                                <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_Introduction.html">SignServer Introduction</a>
 
-                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
-                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="11" y="7" width="2" height="10"></rect>
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-            </span>
-
-            <ul class="nav ht-pages-nav-sub">
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Architecture_and_Concepts.html">SignServer Architecture and Concepts</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link current" href="SignServer_Interoperability.html">SignServer Interoperability</a>
-
-            </li>
-                            </ul>
             </li>
                                                 <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Installation.html">SignServer Installation</a>
@@ -300,6 +276,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link current" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -350,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -573,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1334,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1383,139 +1379,118 @@
     <ul>
         <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
-                                                                                     <li><a href="SignServer_Introduction.html">SignServer Introduction</a></li>
+                                                                                     <li><a href="SignServer_Operations.html">SignServer Operations</a></li>
                                                             </ul>
-</div>            <h1 id="src-48791837"> <span>SignServer Interoperability</span></h1>
+</div>            <h1 id="src-75860218"> <span>Setting up OpenPGP Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div class="section section-1" id="src-48791837_id-.SignServerInteroperabilityv5.1.0-SystemFeatures">
-        <h1 class="heading "><span>System Features</span></h1>
-    <div class="section section-2" id="src-48791837_id-.SignServerInteroperabilityv5.1.0-JavaVirtualMachine">
-        <h2 class="heading "><span>Java Virtual Machine</span></h2>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-Built on the JEE 7 (EJB 3.2) specification.    </span>
-    </p>
-</li></ul>    </div>
-    <div class="section section-2" id="src-48791837_id-.SignServerInteroperabilityv5.1.0-ApplicationServersandDatabases">
-        <h2 class="heading "><span>Application Servers and Databases</span></h2>
-    <p  >SignServer supports multiple application servers and     <span style="color: #333333;">
-standard, high-performance databases. For more information, see <a   href="Prerequisites.html">Prerequisites</a>.    </span>
-    </p>
+    <p  >The OpenPGP signer signs arbitrary data and produces an OpenPGP detached signature in binary or ASCII armored form, or a cleartext signature. For more information on the OpenPGP format, refer to <a  class="external-link" href="https://tools.ietf.org/html/rfc4880">RFC 4880</a>.    </p>
+    <p  >Follow the steps below to set up the OpenPGP signer.    </p>
+    <p  >    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDE6QWRkT3BlblBHUFNpZ25lcg">Step 1: Add OpenPGP Signer</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDI6QWRkVXNlcklEL0NlcnRpZmljYXRpb24">Step 2: Add User ID / Certification</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDM6R2VuZXJhdGVhbmRTdG9yZVJldm9jYXRpb25DZXJ0aWZpY2F0ZQ">Step 3: Generate and Store Revocation Certificate</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDQ6VGVzdFNpZ25pbmc">Step 4: Test Signing</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDU6VmVyaWZ5U2lnbmF0dXJl">Step 5: Verify Signature</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDY6T3B0aW9uYWw6RGlzdHJpYnV0ZXRoZU9wZW5QR1BQdWJsaWNLZXk">Step 6: Optional: Distribute the OpenPGP Public Key</a>    </p>
+</li></ul>    <div class="section section-1" id="src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtUHJlcmVxdWlzaXRlOkNyeXB0b1dvcmtlckFscmVhZHlTZXRVcA">
+        <h1 class="heading "><span>Prerequisite: Crypto Worker Already Set Up</span></h1>
+    <p  >As with all signers, a crypto worker either using a software keystore or PKCS#11, should be available before setting up the OpenPGP signer.    </p>
     </div>
+    <div class="section section-1" id="src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDE6QWRkT3BlblBHUFNpZ25lcg">
+        <h1 class="heading "><span>Step 1: Add OpenPGP Signer</span></h1>
+    <p  >Follow the steps below to add the OpenPGP signer using the sample configuration file openpgpsigner.properties as a template.    </p>
+<ol class=" "><li class=" ">    <p  >Select the SignServer AdminWeb <strong class=" ">Workers</strong> tab, and click <strong class=" ">Add</strong> to add a new worker.    </p>
+</li><li class=" ">    <p  >Choose the method <strong class=" ">From Template</strong>.    </p>
+</li><li class=" ">    <p  >Select <strong class=" ">openpgpsigner.properties</strong> in the <strong class=" ">Load from Template</strong> list and click <strong class=" ">Next</strong>.    </p>
+</li><li class=" ">    <p  >Change the sample configuration properties as needed, for example:    </p>
+<ul class=" "><li class=" ">    <p  >Update the <strong class=" ">NAME</strong> property.    </p>
+</li><li class=" ">    <p  >Update the <strong class=" ">CRYPTOTOKEN</strong> property to the name of your crypto worker.    </p>
+</li><li class=" ">    <p  >Update the <strong class=" ">AUTHTYPE</strong> so that the worker cannot be accessed without authentication (if using a live system).    </p>
+</li><li class=" ">    <p  >Update <strong class=" ">DEFAULTKEY</strong> to an existing key (or do this in a later step).    </p>
+</li></ul></li><li class=" ">    <p  >Click <strong class=" ">Apply</strong> to load the configuration and list the worker in the All Workers list.    </p>
+</li><li class=" ">    <p  >Select the added worker in the list to open the Worker page.    </p>
+</li><li class=" ">    <p  >Check if the <strong class=" ">Worker status</strong> is Offline and if there are any errors listed. The &quot;No key available for purpose&quot; message means that the DEFAULTKEY property does not point to an existing key in the crypto token. In that case, either update the DEFAULTKEY property to point to an existing key or do the following to generate a new key to use with this signer:    </p>
+<ol class=" "><li class=" ">    <p  >Click <strong class=" ">Renew key</strong> and specify the following:    </p>
+<ul class=" "><li class=" ">    <p  >Specify a <strong class=" ">Key Algorithm</strong>, for example &quot;RSA&quot;, &quot;ECDSA&quot; or &quot;DSA&quot;.    </p>
+</li><li class=" ">    <p  >Specify a <strong class=" ">Key Specification</strong>, for example<strong class=" "> </strong>the key length &quot;2048&quot; (for RSA/DSA), or the cure name &quot;prime256v1&quot; (for ECDSA).    </p>
+</li><li class=" ">    <p  ><strong class=" "></strong>Update the <strong class=" ">New Key Alias</strong> to the name of DEFAULTKEY property (typically change to the same value as the Old Key Alias).    </p>
+</li></ul></li><li class=" ">    <p  >Click <strong class=" ">Generate</strong>.    </p>
+</li><li class=" ">    <p  >Select the worker in the list and confirm that the <strong class=" ">Worker status</strong> is Active and without errors listed. If not, confirm that the DEFAULTKEY property is correct and check in the Crypto Token tab of the crypto worker that a key with the specified name exists.    </p>
+</li></ol></li></ol>    <p  >For all OpenPGPSigner specific properties, see <a   href="OpenPGP_Signer.html">OpenPGP Signer</a>.    </p>
     </div>
-    <div class="section section-1" id="src-48791837_id-.SignServerInteroperabilityv5.1.0-Algorithms">
-        <h1 class="heading "><span>Algorithms</span></h1>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-RSA key algorithm up to 8192 bits.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-ECDSA key algorithm with named curves.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Hash algorithms for signatures, SHA-1, SHA-2.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Compliant with NSA SUITE B algorithms and certificates.    </span>
-    </p>
-</li></ul>    </div>
-    <div class="section section-1" id="src-48791837_id-.SignServerInteroperabilityv5.1.0-ThirdPartyHardware">
-        <h1 class="heading "><span>Third Party Hardware</span></h1>
-    <div class="section section-2" id="src-48791837_id-.SignServerInteroperabilityv5.1.0-HSM">
-        <h2 class="heading "><span>HSM</span></h2>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-Support for Hardware Security Modules (HSMs). Built-in support for Thales/nCipher, SafeNet Luna, SafeNet ProtectServer, Utimaco    </span>
-    <span style="color: #333333;">
-CryptoServer, AEP Keyper, ARX CoSign and other HSMs with a good PKCS#11 library.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Support for software-based keys for lower security requirements or development.    </span>
-    </p>
-</li></ul>    </div>
+    <div class="section section-1" id="src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDI6QWRkVXNlcklEL0NlcnRpZmljYXRpb24">
+        <h1 class="heading "><span>Step 2: Add User ID / Certification</span></h1>
+    <p  >Follow the steps below to add User ID / Certification for the OpenPGP public key using the Generate CSR option.    </p>
+<ol class=" "><li class=" ">    <p  >Select the SignServer AdminWeb <strong class=" ">Workers</strong> tab.    </p>
+</li><li class=" ">    <p  >Click the OpenPGP worker.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">Generate CSR </strong>and specify the following:<strong class=" "><br/></strong>    </p>
+</li><li class=" ">    <p  >Specify a <strong class=" ">Signature Algorithm</strong>, for example &quot;SHA256withRSA&quot; or &quot;SHA256withECDSA&quot;. Note that the OpenPGPSigner also accepts just specifying the OpenPGP Hash Algorithm.    </p>
+</li><li class=" ">    <p  >Specify <strong class=" ">DN </strong>as<strong class=" "> </strong>the wanted User Id, for example &quot;Signer001 (Code Signing) &lt;signer001@example.com&gt;&quot;.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">Generate</strong>, and then click <strong class=" ">Download</strong>.    </p>
+</li><li class=" ">    <p  >Open the downloaded file using any text editor and copy its content.    </p>
+</li><li class=" ">    <p  >Click the link to the worker.    </p>
+</li><li class=" ">    <p  >Click the <strong class=" ">Configuration</strong> tab.    </p>
+</li><li class=" ">    <p  >For the <strong class=" ">PGPPUBLICKEY</strong> property, click <strong class=" ">Edit</strong>.    </p>
+</li><li class=" ">    <p  >Paste the public key content in the <strong class=" ">Value</strong> field, and click <strong class=" ">Submit</strong>.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">Status Summary</strong> and confirm that fields like &quot;PGP Key ID&quot; and &quot;PGP Public key&quot; are listed. Also, note that the User ID is listed.    </p>
+</li></ol>    </div>
+    <div class="section section-1" id="src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDM6R2VuZXJhdGVhbmRTdG9yZVJldm9jYXRpb25DZXJ0aWZpY2F0ZQ">
+        <h1 class="heading "><span>Step 3: Generate and Store Revocation Certificate</span></h1>
+    <p  >To generate and store a revocation certificate, do the following:    </p>
+<ol class=" "><li class=" ">    <p  >On the AdminWeb Worker page, click the <strong class=" ">Configuration</strong> tab.    </p>
+</li><li class=" ">    <p  >For the <strong class=" ">GENERATE_REVOCATION_CERTIFICATE</strong> property click <strong class=" ">Edit</strong>.    </p>
+</li><li class=" ">    <p  >Set <strong class=" ">Value</strong> &quot;true&quot; and click <strong class=" ">Submit</strong>.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">Generate CSR</strong>.    </p>
+</li><li class=" ">    <p  >Specify a <strong class=" ">Signature Algorithm</strong>, for example &quot;SHA256withRSA&quot; or &quot;SHA256withECDSA&quot;. Note that the OpenPGPSigner also accepts just specifying the OpenPGP Hash Algorithm.    </p>
+</li><li class=" ">    <p  >Specify any <strong class=" ">DN</strong> value as this field is not used when generating a revocation certificate.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">Generate</strong>, and then click <strong class=" ">Download</strong>.    </p>
+</li><li class=" ">    <p  >Store the revocation certificate securely so that it can be accessed by authorized personnel in case the public key needs to be revoked.    </p>
+</li><li class=" ">    <p  >Click the <strong class=" ">Configuration</strong> tab.    </p>
+</li><li class=" ">    <p  >For the <strong class=" ">GENERATE_REVOCATION_CERTIFICATE</strong> property, click <strong class=" ">Edit</strong>.    </p>
+</li><li class=" ">    <p  >Set Value &quot;false&quot; and click <strong class=" ">Submit</strong>.    </p>
+</li></ol>    </div>
+    <div class="section section-1" id="src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDQ6VGVzdFNpZ25pbmc">
+        <h1 class="heading "><span>Step 4: Test Signing</span></h1>
+    <p  >The following example shows how to sign using the SignServer Public Web. You can test signing using any of the SignServer client interfaces.    </p>
+<ol class=" "><li class=" ">    <p  >Click <strong class=" ">Signing and Validation Demo</strong>.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">Generic</strong>.    </p>
+</li><li class=" ">    <p  >In the <strong class=" ">Sign by File Upload</strong> section, specify the <strong class=" ">Worker name</strong> used, for example, &quot;OpenPGPSigner&quot;.    </p>
+</li><li class=" ">    <p  >Select the file to create a detached signature for, for example, &quot;release.zip&quot;.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">Submit</strong> and store the resulting signature file, for example, &quot;release.zip.asc&quot;.    </p>
+</li></ol>    </div>
+    <div class="section section-1" id="src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDU6VmVyaWZ5U2lnbmF0dXJl">
+        <h1 class="heading "><span>Step 5: Verify Signature</span></h1>
+    <p  >The following example shows how to verify the signature using the OpenPGP tool GnuPG. It should be possible to use any OpenPGP tool to verify the signature.    </p>
+    <div class="section section-2" id="src-75860218_id-.SettingupOpenPGPSignerv5.1.0-ExampleforGnuPG">
+        <h2 class="heading "><span>Example for GnuPG</span></h2>
+    <p  >Run the following to verify the signature using GnuPG:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ gpg --verify release.zip.asc release.zip</code></div>
+</div>
     </div>
-    <div class="section section-1" id="src-48791837_id-.SignServerInteroperabilityv5.1.0-SignatureFormats">
-        <h1 class="heading "><span>Signature Formats</span></h1>
-    <div class="section section-2" id="src-48791837_id-.SignServerInteroperabilityv5.1.0-Document">
-        <h2 class="heading "><span>Document</span></h2>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-PDF, XML, XAdES-BES, XAdES-T, ODF, OOXML, CMS and MRTD.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Generic CMS (PKCS#7) signer signs any document or file with support for detached signatures and client-side hashing.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-PDF document processing, including support for:    </span>
-    </p>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-Visible signatures.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Different certification levels.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Requesting and embedding timestamp responses.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Requesting and embedding CRLs.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Requesting and embedding OCSP responses.    </span>
-    </p>
-</li><li class=" ">    <p  >PDF permissions.    </p>
-</li></ul></li></ul>    </div>
-    <div class="section section-2" id="src-48791837_id-.SignServerInteroperabilityv5.1.0-TimeStamping">
-        <h2 class="heading "><span>Time Stamping</span></h2>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-RFC 3161, 5816 compliant Time Stamp Authority (TSA) module.    </span>
-    </p>
-</li></ul>    </div>
-    <div class="section section-2" id="src-48791837_id-.SignServerInteroperabilityv5.1.0-CodeSigning">
-        <h2 class="heading "><span>Code Signing</span></h2>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-Built-in Authenticode Timestamp signer module.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Client-side hashing and construction for Authenticode signatures in SignClient.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Client-side hashing and construction for JAR signatures in SignClient    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Authenticode signer for signing Windows executable files and Windows Installers (MSI).    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-JAR signer for signing Java archives (and Android apps).    </span>
-    </p>
-</li></ul>    </div>
-    <div class="section section-2" id="src-48791837_id-.SignServerInteroperabilityv5.1.0-ePassport">
-        <h2 class="heading "><span>ePassport</span></h2>
-<ul class=" "><li class=" ">    <p  >LDS version 1.7 and 1.8 support    </p>
-</li></ul>    </div>
-    <div class="section section-2" id="src-48791837_id-.SignServerInteroperabilityv5.1.0-Validationservice">
-        <h2 class="heading "><span>Validation service</span></h2>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-Validators for signed documents, built-in support for XML validation, XAdES-BES, XAdES-T, or make your own validator plug-in.<span id="src-48791837_id-.SignServerInteroperabilityv5.1.0-Integration_features"></span>    </span>
-    </p>
-</li></ul>    </div>
+    <p  >If needed, first import the public key to GnuPG before verifying the signature in the third step:    </p>
+<ol class=" "><li class=" ">    <p  >Store the public key (i.e. from PGPPUBLICKEY property) as signer001-pub.asc.    </p>
+</li><li class=" ">    <p  >Import the key to GnuPG:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ gpg --</code><code class="keyword">import</code><code class="plain"> signer001-pub.asc</code></div>
+</div>
     </div>
-    <div class="section section-1" id="src-48791837_id-.SignServerInteroperabilityv5.1.0-IntegrationInterfaces">
-        <h1 class="heading "><span>Integration Interfaces</span></h1>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-Java API    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Web server (HTTP)    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Web Services (WS)    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Command line (CLI)    </span>
-    </p>
-</li></ul>    <p  >    <span style="color: #333333;">
-<br/>    </span>
-    </p>
+</li><li class=" ">    <p  >Run the following to verify the signature:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ gpg --verify release.zip.asc release.zip</code></div>
+</div>
+    </div>
+</li></ol>    </div>
+    </div>
+    <div class="section section-1" id="src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDY6T3B0aW9uYWw6RGlzdHJpYnV0ZXRoZU9wZW5QR1BQdWJsaWNLZXk">
+        <h1 class="heading "><span>Step 6: Optional: Distribute the OpenPGP Public Key</span></h1>
+    <p  >The OpenPGP Public Key can optionally be published to online key servers or distributed to clients otherwise.    </p>
     </div>
         </div>
 
@@ -1523,7 +1498,7 @@ Command line (CLI)    </span>
 
 
             <nav id="ht-post-nav">
-                <a href="SignServer_Architecture_and_Concepts.html" class="ht-post-nav-prev">
+                <a href="Setting_up_One-time_Keys.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1532,9 +1507,9 @@ Command line (CLI)    </span>
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Architecture and Concepts</span>
+            <span>Setting up One-time Keys</span>
         </a>
-                <a href="SignServer_Installation.html" class="ht-post-nav-next">
+                <a href="Troubleshooting.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1543,7 +1518,7 @@ Command line (CLI)    </span>
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Installation</span>
+            <span>Troubleshooting</span>
         </a>
     </nav>    
             

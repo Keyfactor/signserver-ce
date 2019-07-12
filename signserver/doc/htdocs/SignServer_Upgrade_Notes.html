@@ -121,33 +121,9 @@
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
-                                                <li class="collapsed">
+                                                <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_Introduction.html">SignServer Introduction</a>
 
-                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
-                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="11" y="7" width="2" height="10"></rect>
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-            </span>
-
-            <ul class="nav ht-pages-nav-sub">
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Architecture_and_Concepts.html">SignServer Architecture and Concepts</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Interoperability.html">SignServer Interoperability</a>
-
-            </li>
-                            </ul>
             </li>
                                                 <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Installation.html">SignServer Installation</a>
@@ -300,6 +276,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -350,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -573,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1334,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1414,14 +1410,16 @@
     <p  >No database changes required.    </p>
     <div class="section section-3" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer5.1.0Notice">
         <h3 class="heading "><span>SignServer 5.1.0 Notice</span></h3>
-<ul class=" "><li class=" ">    <p  >The internal format for client authorization rules has changed in version 5.1.0 when support for matching on RDN and alternative names was added.    </p>
+    <div class="section section-4" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-NewInternalFormatforClientAuthorizationRules">
+        <h4 class="heading "><span>New Internal Format for Client Authorization Rules</span></h4>
+    <p  >The internal format for client authorization rules has been changed in version 5.1.0 as a result of added support for matching on RDN and alternative names.    </p>
 <ul class=" "><li class=" ">    <p  >Existing rules will be available as before.    </p>
-</li><li class=" ">    <p  >Existing rules will be upgraded to the new format when/if they are edited.    </p>
-</li><li class=" ">    <p  >New rules will be added in the new format when using Admin Web. If using the Admin CLI for editing client authorization rules, please use the new <i class=" ">authorizedclients </i><a   href="Administration_CLI.html">Administration CLI</a> command and not the legacy ones (<i class=" ">addauthorizedclient</i>, <i class=" ">removeauthorizedclient</i> and <i class=" ">listauthorizedclient</i>) as those will not see the new type of rules.    </p>
+</li><li class=" ">    <p  >Existing rules will be upgraded to the new format when/if the rules are edited.    </p>
+</li><li class=" ">    <p  >New rules will be added in the new format when using the Admin Web. If using the Admin CLI for editing client authorization rules, please use the new <tt class=" ">authorizedclients</tt><a   href="Administration_CLI.html">Administration CLI</a> command instead of the legacy ones <tt class=" ">(addauthorizedclient, removeauthorizedclient</tt> and <tt class=" ">listauthorizedclient</tt>) as those will not recognize the new type of rules.    </p>
 </li><li class=" ">    <p  >If running in a cluster (i.e. multiple nodes with shared database), keep in mind that:    </p>
-<ul class=" "><li class=" ">    <p  >Rules in the new format will not be available to nodes running a older version until they are upgraded.    </p>
-</li><li class=" ">    <p  >Making a configuration change in a node running an older version overwrites any new rules added from a node with the new version. Recommendation is to avoid making configuration changes in workers until all nodes has been upgraded to the same version.    </p>
-</li></ul></li></ul></li></ul>    <p  >    </p>
+<ul class=" "><li class=" ">    <p  >Rules in the new format will not be available to nodes running an older version until the nodes are upgraded.    </p>
+</li><li class=" ">    <p  >Making a configuration change in a node running an older version overwrites any new rules added from a node with the new version. You are recommended to avoid making configuration changes in workers until all nodes have been upgraded to the same version.    </p>
+</li></ul></li></ul>    </div>
     </div>
     </div>
     <div class="section section-2" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-SignServer4.4.xtoSignServer5.0.x">
@@ -1490,7 +1488,7 @@
     <div class="section section-4" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-ForOracle">
         <h4 class="heading "><span>For Oracle</span></h4>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">ALTER TABLE signerconfigdata ADD signerName VARCHAR(</code><code class="value">255</code><code class="plain">);</code></div>
 <div class="line"><code class="plain">ALTER TABLE signerconfigdata ADD signerType VARCHAR(</code><code class="value">255</code><code class="plain">);</code></div>
 </div>
@@ -1499,7 +1497,7 @@
     <div class="section section-4" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-ForMySQL">
         <h4 class="heading "><span>For MySQL</span></h4>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">ALTER TABLE signerconfigdata ADD signerName VARCHAR(</code><code class="value">255</code><code class="plain">);</code></div>
 <div class="line"><code class="plain">ALTER TABLE signerconfigdata ADD signerType VARCHAR(</code><code class="value">255</code><code class="plain">);</code></div>
 </div>
@@ -1606,7 +1604,7 @@
 </li></ul>    <div class="section section-4" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-ForOracle.1">
         <h4 class="heading "><span>For Oracle</span></h4>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">RENAME GLOBALCONFIG TO GlobalConfigData;</code></div>
 </div>
     </div>
@@ -1614,7 +1612,7 @@
     <div class="section section-4" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-ForMySQL.1">
         <h4 class="heading "><span>For MySQL</span></h4>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">RENAME TABLE GlobalConfigurationData TO GlobalConfigData;</code></div>
 </div>
     </div>
@@ -1642,7 +1640,7 @@
     <div class="section section-4" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-ForOracle.2">
         <h4 class="heading "><span>For Oracle</span></h4>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">ALTER TABLE ARCHIVEDATA ADD DATAENCODING NUMBER(</code><code class="value">10</code><code class="plain">,</code><code class="value">0</code><code class="plain">);</code></div>
 </div>
     </div>
@@ -1650,7 +1648,7 @@
     <div class="section section-4" id="src-65110075_id-.SignServerUpgradeNotesv5.1.0-ForMySQL.2">
         <h4 class="heading "><span>For MySQL</span></h4>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">ALTER TABLE ArchiveData ADD dataEncoding </code><code class="keyword">int</code><code class="plain">(</code><code class="value">11</code><code class="plain">) DEFAULT NULL;</code></div>
 </div>
     </div>

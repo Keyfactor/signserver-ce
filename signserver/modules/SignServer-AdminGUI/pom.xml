@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.1.0.Beta1</version>
+        <version>5.1.0.Final</version>
     </parent>
     <artifactId>SignServer-AdminGUI</artifactId>
     <name>SignServer-AdminGUI</name>
@@ -122,22 +122,27 @@
         <dependency>
             <groupId>org.signserver</groupId>
             <artifactId>SignServer-Client-CLientWS</artifactId>
-            <version>5.1.0.Beta1</version>
+            <version>5.1.0.Final</version>
         </dependency>
         <dependency>
             <groupId>org.signserver</groupId>
             <artifactId>SignServer-Client-SigningAndValidationAPI</artifactId>
-            <version>5.1.0.Beta1</version>
+            <version>5.1.0.Final</version>
             
         </dependency>
         <dependency>
             <groupId>org.signserver</groupId>
             <artifactId>SignServer-Module-Renewal-interfaces</artifactId>
-            <version>5.1.0.Beta1</version>
+            <version>5.1.0.Final</version>
         </dependency>
         <dependency>
             <groupId>org.ejbca.cesecore</groupId>
             <artifactId>cesecore-interfaces</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SignServer-Module-OpenPGP</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
     <build>

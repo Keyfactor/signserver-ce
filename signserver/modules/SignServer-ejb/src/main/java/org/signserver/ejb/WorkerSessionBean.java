@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.ejb;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
@@ -417,6 +418,11 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             String keySpec, String alias, final char[] authCode)
             throws CryptoTokenOfflineException, InvalidWorkerIdException,
                 IllegalArgumentException {
+
+        // Check that key generation is not disabled
+        if (isKeyGenerationDisabled()) {
+            throw new CryptoTokenOfflineException("Key generation has been disabled");
+        }
 
         try {
             IWorker worker = workerManagerSession.getWorker(signerId);
@@ -880,11 +886,17 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             
             final HashMap<String, Object> auditMap = new HashMap<>();
             
-            final String csr;
-            if (ret instanceof Base64SignerCertReqData) {
-                csr = new String(((Base64SignerCertReqData) ret).getBase64CertReq());
-            } else {
-                csr = ret.toString();
+            String csr = null;
+            try {
+                if (ret instanceof AbstractCertReqData) {
+                    csr = org.bouncycastle.util.encoders.Base64.toBase64String(((AbstractCertReqData) ret).toBinaryForm());
+                } else if (ret instanceof Base64SignerCertReqData) {
+                    csr = new String(((Base64SignerCertReqData) ret).getBase64CertReq());
+                } else if (ret != null) {
+                    csr = ret.toString();
+                }
+            } catch (IOException ex) {
+                LOG.error("Unable to encode CSR", ex);
             }
             
             final WorkerConfig config = processable.getConfig();
@@ -892,7 +904,9 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             auditMap.put(AdditionalDetailsTypes.KEYALIAS.name(), keyAlias == null && defaultKey ? config.getProperty("DEFAULTKEY") : keyAlias);
             auditMap.put(AdditionalDetailsTypes.FOR_DEFAULTKEY.name(), String.valueOf(defaultKey));
             auditMap.put(AdditionalDetailsTypes.CRYPTOTOKEN.name(), getCryptoToken(signerId, config));
-            auditMap.put(AdditionalDetailsTypes.CSR.name(), csr);
+            if (csr != null) {
+                auditMap.put(AdditionalDetailsTypes.CSR.name(), csr);
+            }
             auditLog(adminInfo, SignServerEventTypes.GENCSR, EventStatus.SUCCESS, SignServerModuleTypes.KEY_MANAGEMENT, signerId, auditMap);
             
             if (LOG.isTraceEnabled()) {
@@ -1465,5 +1479,10 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         } catch (NoSuchWorkerException ex) {
             throw new InvalidWorkerIdException(ex.getMessage());
         }
+    }
+
+    @Override
+    public boolean isKeyGenerationDisabled() {
+        return SignServerUtil.isKeyGenerationDisabled();
     }
 }

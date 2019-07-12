@@ -15,6 +15,7 @@ package org.signserver.admin.gui;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
@@ -53,6 +54,7 @@ import org.signserver.admin.gui.adminws.gen.ArchiveEntry;
 import org.signserver.admin.gui.adminws.gen.AuthorizationDeniedException_Exception;
 import org.signserver.admin.gui.adminws.gen.AuthorizedClient;
 import org.signserver.admin.gui.adminws.gen.Base64SignerCertReqData;
+import org.signserver.admin.gui.adminws.gen.CertReqData;
 import org.signserver.admin.gui.adminws.gen.CertificateException_Exception;
 import org.signserver.admin.gui.adminws.gen.CryptoTokenAuthenticationFailureException_Exception;
 import org.signserver.admin.gui.adminws.gen.CryptoTokenOfflineException_Exception;
@@ -74,6 +76,7 @@ import org.signserver.admin.gui.adminws.gen.TokenSearchResults;
 import org.signserver.admin.gui.adminws.gen.WsGlobalConfiguration;
 import org.signserver.admin.gui.adminws.gen.WsWorkerConfig;
 import org.signserver.admin.gui.adminws.gen.WsWorkerStatus;
+import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.ArchiveMetadata;
 import org.signserver.common.CESeCoreModules;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
@@ -462,16 +465,18 @@ public class AdminLayerEJBImpl implements AdminWS {
             final ICertReqData data = worker.getCertificateRequest(new WorkerIdentifier(signerId),
                     new PKCS10CertReqInfo(certReqInfo.getSignatureAlgorithm(),
                     certReqInfo.getSubjectDN(), null), explicitEccParameters);
-            if (!(data instanceof org.signserver.common.Base64SignerCertReqData)) {
+            if (!(data instanceof org.signserver.common.AbstractCertReqData)) {
                 throw new RuntimeException("Unsupported cert req data: " + data);
             }
             result = new Base64SignerCertReqData();
-            result.setBase64CertReq(((org.signserver.common.Base64SignerCertReqData) data).getBase64CertReq());
+            result.setBase64CertReq(((org.signserver.common.AbstractCertReqData) data).toArmoredForm().getBytes(StandardCharsets.UTF_8));
             return result;
         } catch (CryptoTokenOfflineException ex) {
             throw wrap(ex);
         } catch (InvalidWorkerIdException ex) {
             throw wrap(ex);
+        } catch (IOException ex) {
+            throw wrap(new CryptoTokenOfflineException(ex));
         }
     }
 
@@ -498,16 +503,60 @@ public class AdminLayerEJBImpl implements AdminWS {
                     new PKCS10CertReqInfo(certReqInfo.getSignatureAlgorithm(),
                     certReqInfo.getSubjectDN(), null), explicitEccParameters,
                     defaultKey);
-            if (!(data instanceof org.signserver.common.Base64SignerCertReqData)) {
+            if (!(data instanceof AbstractCertReqData)) {
                 throw new RuntimeException("Unsupported cert req data: " + data);
             }
             result = new Base64SignerCertReqData();
-            result.setBase64CertReq(((org.signserver.common.Base64SignerCertReqData) data).getBase64CertReq());
+            result.setBase64CertReq(((AbstractCertReqData) data).toArmoredForm().getBytes(StandardCharsets.UTF_8));
             return result;
         } catch (CryptoTokenOfflineException ex) {
             throw wrap(ex);
         } catch (InvalidWorkerIdException ex) {
             throw wrap(ex);
+        } catch (IOException ex) {
+            throw wrap(new CryptoTokenOfflineException(ex));
+        }
+    }
+    
+    /**
+     * Method used to let a signer generate a certificate request
+     * using the signers own genCertificateRequest method.
+     *
+     * @param signerId id of the signer
+     * @param certReqInfo information used by the signer to create the request
+     * @param defaultKey true if the default key should be used otherwise for
+     * instance use next key.
+     */
+    @Override
+    public CertReqData getPKCS10CertificateRequestForKey2(
+            final int signerId,
+            final Pkcs10CertReqInfo certReqInfo,
+            final boolean explicitEccParameters,
+            final boolean defaultKey)
+                throws CryptoTokenOfflineException_Exception,
+                InvalidWorkerIdException_Exception {
+        final CertReqData result;
+        try {
+            final ICertReqData data = worker.getCertificateRequest(new WorkerIdentifier(signerId), 
+                    new PKCS10CertReqInfo(certReqInfo.getSignatureAlgorithm(),
+                    certReqInfo.getSubjectDN(), null), explicitEccParameters,
+                    defaultKey);
+            if (!(data instanceof AbstractCertReqData)) {
+                throw new RuntimeException("Unsupported cert req data: " + data);
+            }
+            AbstractCertReqData adata = (AbstractCertReqData) data;
+            result = new CertReqData();
+            result.setArmored(adata.toArmoredForm());
+            result.setBinary(adata.toBinaryForm());
+            result.setContentType(adata.getContentType());
+            result.setFileSuffix(adata.getFileSuffix());
+            return result;
+        } catch (CryptoTokenOfflineException ex) {
+            throw wrap(ex);
+        } catch (InvalidWorkerIdException ex) {
+            throw wrap(ex);
+        } catch (IOException ex) {
+            throw wrap(new CryptoTokenOfflineException(ex));
         }
     }
 
@@ -519,16 +568,45 @@ public class AdminLayerEJBImpl implements AdminWS {
                     new PKCS10CertReqInfo(certReqInfo.getSignatureAlgorithm(),
                     certReqInfo.getSubjectDN(), null), explicitEccParameters,
                     keyAlias);
-            if (!(data instanceof org.signserver.common.Base64SignerCertReqData)) {
+            if (!(data instanceof AbstractCertReqData)) {
                 throw new RuntimeException("Unsupported cert req data: " + data);
             }
             result = new Base64SignerCertReqData();
-            result.setBase64CertReq(((org.signserver.common.Base64SignerCertReqData) data).getBase64CertReq());
+            result.setBase64CertReq(((AbstractCertReqData) data).toArmoredForm().getBytes(StandardCharsets.UTF_8));
             return result;
         } catch (CryptoTokenOfflineException ex) {
             throw wrap(ex);
         } catch (InvalidWorkerIdException ex) {
             throw wrap(ex);
+        } catch (IOException ex) {
+            throw wrap(new CryptoTokenOfflineException(ex));
+        }
+    }
+    
+    @Override
+    public CertReqData getPKCS10CertificateRequestForAlias2(int signerId, Pkcs10CertReqInfo certReqInfo, boolean explicitEccParameters, String keyAlias) throws AdminNotAuthorizedException_Exception, CryptoTokenOfflineException_Exception, InvalidWorkerIdException_Exception {
+        final CertReqData result;
+        try {
+            final ICertReqData data = worker.getCertificateRequest(new WorkerIdentifier(signerId), 
+                    new PKCS10CertReqInfo(certReqInfo.getSignatureAlgorithm(),
+                    certReqInfo.getSubjectDN(), null), explicitEccParameters,
+                    keyAlias);
+            if (!(data instanceof AbstractCertReqData)) {
+                throw new RuntimeException("Unsupported cert req data: " + data);
+            }
+            AbstractCertReqData adata = (AbstractCertReqData) data;
+            result = new CertReqData();
+            result.setArmored(adata.toArmoredForm());
+            result.setBinary(adata.toBinaryForm());
+            result.setContentType(adata.getContentType());
+            result.setFileSuffix(adata.getFileSuffix());
+            return result;
+        } catch (CryptoTokenOfflineException ex) {
+            throw wrap(ex);
+        } catch (InvalidWorkerIdException ex) {
+            throw wrap(ex);
+        } catch (IOException ex) {
+            throw wrap(new CryptoTokenOfflineException(ex));
         }
     }
 

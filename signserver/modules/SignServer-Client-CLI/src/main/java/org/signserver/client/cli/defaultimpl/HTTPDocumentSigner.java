@@ -22,6 +22,7 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -30,7 +31,7 @@ import org.bouncycastle.util.encoders.Base64;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
-
+import static org.signserver.common.SignServerConstants.X_SIGNSERVER_ERROR_MESSAGE;
 
 /**
  * DocumentSigner using the HTTP protocol.
@@ -169,6 +170,9 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                     internalDoSign(in, size, encoding, out, requestContext, nextHost);
                 }
             } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Failed sending request ", e);
+                }
                 LOG.error("Failed sending request: " + e.getMessage());
                 throw e;
             }
@@ -292,7 +296,16 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                 IOUtils.copy(responseIn, out);
             } else {
                 final byte[] errorBody = IOUtils.toByteArray(responseIn);
-                throw new HTTPException(processServlet, responseCode, conn.getResponseMessage(), errorBody);
+              
+                // display customized error message sent from server, if exists, instead of default(ex: Bad Request)
+                String clientResponseMessage = conn.getResponseMessage();
+                Map<String, List<String>> map = conn.getHeaderFields();
+                List<String> errorList = map.get(X_SIGNSERVER_ERROR_MESSAGE);
+                if (errorList != null) {
+                    clientResponseMessage = errorList.toString();
+                }
+                
+                throw new HTTPException(processServlet, responseCode, clientResponseMessage, errorBody);
             }
         } catch (ConnectException | SocketTimeoutException | UnknownHostException ex) {
             connectionFailure = true;

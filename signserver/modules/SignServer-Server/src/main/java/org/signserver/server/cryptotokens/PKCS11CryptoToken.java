@@ -606,7 +606,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                 synchronized (workerCache) {
                     result = (ICryptoInstance) workerCache.get(WORKERCACHE_ENTRY);
                     if (result == null) {
-                        result = createCryptoInstance(alias, context);
+                        result = createCryptoInstance(alias, context, params.containsKey(PARAM_INCLUDE_DUMMYCERTIFICATE));
                         workerCache.put(WORKERCACHE_ENTRY, result);
                     }
                 }
@@ -615,7 +615,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
         
         // In case of no caching just load the crypt instance
         if (result == null) {
-            result = createCryptoInstance(alias, context);
+            result = createCryptoInstance(alias, context, params.containsKey(PARAM_INCLUDE_DUMMYCERTIFICATE));
         }
         
         return result;
@@ -626,7 +626,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
      * the crypto instance.
      * Possibly expensive call if a network HSM is used.
      */
-    private ICryptoInstance createCryptoInstance(String alias, RequestContext context) throws
+    private ICryptoInstance createCryptoInstance(String alias, RequestContext context, boolean includeDummyCertificate) throws
             CryptoTokenOfflineException, 
             NoSuchAliasException, 
             InvalidAlgorithmParameterException,
@@ -634,7 +634,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
             IllegalRequestException {
         final PrivateKey privateKey = getPrivateKey(alias);
         final List<Certificate> certificateChain = getCertificateChain(alias);
-        if (certificateChain.size() == 1 && CryptoTokenHelper.isDummyCertificate(certificateChain.get(0))) {
+        if ((certificateChain.size() == 1 && CryptoTokenHelper.isDummyCertificate(certificateChain.get(0)) && !includeDummyCertificate)) {
             return new DefaultCryptoInstance(alias, context, delegate.getActivatedKeyStore().getProvider(), privateKey, certificateChain.get(0).getPublicKey());
         } else {
             return new DefaultCryptoInstance(alias, context, delegate.getActivatedKeyStore().getProvider(), privateKey, certificateChain);

@@ -284,7 +284,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
     /**
      * Checks that all mandatory options are given.
      */
-    private void validateOptions() throws ParseException {
+    private void validateOptions() throws ParseException, IllegalCommandArgumentsException {
         if (workerName == null && workerId == 0) {
             throw new ParseException(
                     "Missing -workername or -workerid");
@@ -304,7 +304,7 @@ public class SignDataGroupsCommand extends AbstractCommand {
     private SODSigner createSigner() throws MalformedURLException {
         final SODSigner signer;
 
-        final SSLSocketFactory sf = keyStoreOptions.setupHTTPS();
+        final SSLSocketFactory sf = keyStoreOptions.setupHTTPS(createConsolePasswordReader(), out);
         
         if (sf != null) {
             HttpsURLConnection.setDefaultSSLSocketFactory(sf);

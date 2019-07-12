@@ -4,11 +4,11 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer</artifactId>
-        <version>5.1.0.Beta1</version>
+        <version>5.1.0.Final</version>
     </parent>
     <groupId>org.signserver</groupId>
     <artifactId>SignServer-Modules</artifactId>
-    <version>5.1.0.Beta1</version>
+    <version>5.1.0.Final</version>
     <packaging>pom</packaging>
     <name>SignServer Modules</name>
     <properties>
@@ -41,6 +41,7 @@
         <module>SignServer-ejb</module>
         <module>CESeCore-jars</module>
         <module>SignServer-Compile</module>
+        <module>SignServer-OpenPGP-Common</module>
         
         <!-- Interfaces -->
         <module>SignServer-Admin-Common</module>
@@ -74,6 +75,7 @@
         <module>SignServer-Module-MRTDSODSigner</module>
         <module>SignServer-Module-ODFSigner</module>
         <module>SignServer-Module-OOXMLSigner</module>
+        <module>SignServer-Module-OpenPGP</module>
         <module>SignServer-Module-PDFSigner</module>
         <module>SignServer-Module-Renewal-interface</module>
         <module>SignServer-Module-Renewal</module>

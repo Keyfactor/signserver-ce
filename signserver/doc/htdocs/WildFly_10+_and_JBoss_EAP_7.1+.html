@@ -121,33 +121,9 @@
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
-                                                <li class="collapsed">
+                                                <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_Introduction.html">SignServer Introduction</a>
 
-                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
-                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="11" y="7" width="2" height="10"></rect>
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-            </span>
-
-            <ul class="nav ht-pages-nav-sub">
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Architecture_and_Concepts.html">SignServer Architecture and Concepts</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Interoperability.html">SignServer Interoperability</a>
-
-            </li>
-                            </ul>
             </li>
                                                 <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Installation.html">SignServer Installation</a>
@@ -300,6 +276,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -350,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -573,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1334,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1426,14 +1422,14 @@
     <p  >The following steps cover how to configure TLS and HTTP with a three-port separation. Port 8080 will be used for regular HTTP traffic, port 8442 for HTTPS with server authentication, and port 8443 for HTTPS with both client and server authentication.    </p>
 <ol class=" "><li class=" ">    <p  >Start JBoss CLI:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">APPSRV_HOME</code><code class="plain">/bin/jboss-cli</code><code class="plain">.sh -c</code></div>
 </div>
     </div>
     <p  >    </p>
 </li><li class=" ">    <p  >To remove any existing TLS and HTTP configuration and allow configuring port 8443, run the following:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">/subsystem=undertow/server=</code><code class="keyword">default</code><code class="plain">-server/http-listener=</code><code class="keyword">default</code><code class="plain">:remove</code></div>
 <div class="line"><code class="plain">/subsystem=undertow/server=</code><code class="keyword">default</code><code class="plain">-server/https-listener=https:remove</code></div>
 <div class="line"><code class="plain">/socket-binding-group=standard-sockets/socket-binding=http:remove</code></div>
@@ -1444,7 +1440,7 @@
     <p  >    </p>
 </li><li class=" ">    <p  >Configure interfaces using the appropriate bind address. This example uses <strong class=" ">0.0.0.0</strong> to make it available for anyone:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">/</code><code class="keyword">interface</code><code class="plain">=http:add(inet-address=</code><code class="string">"0.0.0.0"</code><code class="plain">)</code></div>
 <div class="line"><code class="plain">/</code><code class="keyword">interface</code><code class="plain">=httpspub:add(inet-address=</code><code class="string">"0.0.0.0"</code><code class="plain">)</code></div>
 <div class="line"><code class="plain">/</code><code class="keyword">interface</code><code class="plain">=httpspriv:add(inet-address=</code><code class="string">"0.0.0.0"</code><code class="plain">)</code></div>
@@ -1460,7 +1456,7 @@
     </div>
 </li><li class=" ">    <p  >Configure the HTTPS httpspriv listener and set up the private port requiring the client certificate. Use appropriate values for key-alias (hostname), password (keystore password), ca-certificate-password (truststore password), and supported protocols.<br/>For WildFly 14, instead use <tt class=" ">enable-http2=&quot;false&quot;</tt> to avoid error messages in the log.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">/core-service=management/security-realm=SSLRealm:add()</code></div>
 <div class="line"><code class="plain">/core-service=management/security-realm=SSLRealm/server-identity=ssl:add(keystore-path=</code><code class="string">"keystore/keystore.jks"</code><code class="plain">, keystore-relative-to=</code><code class="string">"jboss.server.config.dir"</code><code class="plain">, keystore-password=</code><code class="string">"serverpwd"</code><code class="plain">, alias=</code><code class="string">"localhost"</code><code class="plain">)</code></div>
 <div class="line"><code class="plain">:reload</code></div>
@@ -1472,7 +1468,7 @@
     </div>
 </li><li class=" ">    <p  >Configure the default HTTP listener.<br/>For WildFly 14, instead use <tt class=" ">enable-http2=&quot;false&quot;</tt> to avoid error messages in the log.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">/socket-binding-group=standard-sockets/socket-binding=http:add(port=</code><code class="string">"8080"</code><code class="plain">,</code><code class="keyword">interface</code><code class="plain">=</code><code class="string">"http"</code><code class="plain">)</code></div>
 <div class="line"><code class="plain">/subsystem=undertow/server=</code><code class="keyword">default</code><code class="plain">-server/http-listener=</code><code class="keyword">default</code><code class="plain">:add(socket-binding=http, max-post-size=</code><code class="string">"10485760"</code><code class="plain">, enable-http2=</code><code class="string">"true"</code><code class="plain">)</code></div>
 <div class="line"><code class="plain">/subsystem=undertow/server=</code><code class="keyword">default</code><code class="plain">-server/http-listener=</code><code class="keyword">default</code><code class="plain">:write-attribute(name=redirect-socket, value=</code><code class="string">"httpspriv"</code><code class="plain">)</code></div>
@@ -1482,7 +1478,7 @@
     <p  >    </p>
 </li><li class=" ">    <p  >Configure the HTTPS httpspub listener and set up the public SSL port not requiring the client certificate.<br/>For WildFly 14, instead use <tt class=" ">enable-http2=&quot;false&quot;</tt> to avoid error messages in the log.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">/socket-binding-group=standard-sockets/socket-binding=httpspub:add(port=</code><code class="string">"8442"</code><code class="plain">,</code><code class="keyword">interface</code><code class="plain">=</code><code class="string">"httpspub"</code><code class="plain">)</code></div>
 <div class="line"><code class="plain">/subsystem=undertow/server=</code><code class="keyword">default</code><code class="plain">-server/https-listener=httpspub:add(socket-binding=</code><code class="string">"httpspub"</code><code class="plain">, security-realm=</code><code class="string">"SSLRealm"</code><code class="plain">, max-post-size=</code><code class="string">"10485760"</code><code class="plain">, enable-http2=</code><code class="string">"true"</code><code class="plain">)</code></div>
 </div>
@@ -1490,7 +1486,7 @@
     <p  >    </p>
 </li><li class=" ">    <p  >Configure the remoting (HTTP) listener and secure the CLI by removing the <tt class=" ">http-remoting-connector</tt> from using the HTTP port and instead use a separate port 4447.<br/>For WildFly 14, instead use <tt class=" ">enable-http2=&quot;false&quot;</tt> to avoid error messages in the log.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">/subsystem=remoting/http-connector=http-remoting-connector:remove</code></div>
 <div class="line"><code class="plain">/subsystem=remoting/http-connector=http-remoting-connector:add(connector-ref=</code><code class="string">"remoting"</code><code class="plain">,security-realm=</code><code class="string">"ApplicationRealm"</code><code class="plain">)</code></div>
 <div class="line"><code class="plain">/socket-binding-group=standard-sockets/socket-binding=remoting:add(port=</code><code class="string">"4447"</code><code class="plain">)</code></div>
@@ -1503,14 +1499,14 @@
     <p  >In order for the web services to work correctly when requiring client certificate, you need to configure the Web Services Description Language (WSDL) web-host rewriting to use the request host.    </p>
     <p  >To configure the WSDL location, run:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">/subsystem=webservices:write-attribute(name=wsdl-host, value=jbossws.undefined.host)</code></div>
 <div class="line"><code class="plain">/subsystem=webservices:write-attribute(name=modify-wsdl-address, value=</code><code class="keyword">true</code><code class="plain">)</code></div>
 </div>
     </div>
     <p  >If the server is slow, wait before reloading:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">:reload</code></div>
 </div>
     </div>
@@ -1519,7 +1515,7 @@
         <h1 class="heading "><span id="src-42959488_safe-id-aWQtLldpbGRGbHkxMCthbmRKQm9zc0VBUDcuMSt2NS4wLjAtSkJvc3NBUzcvRUFQNi9XaWxkRmx5VVJJZW5jb2Rpbmc" class="confluence-anchor-link"></span><span>URI Encoding </span></h1>
     <p  >To configure the URI encoding, run the following:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">/system-property=org.apache.catalina.connector.URI_ENCODING:remove()</code></div>
 <div class="line"><code class="plain">/system-property=org.apache.catalina.connector.URI_ENCODING:add(value=UTF-</code><code class="value">8</code><code class="plain">)</code></div>
 <div class="line"><code class="plain">/system-property=org.apache.catalina.connector.USE_BODY_ENCODING_FOR_QUERY_STRING:remove()</code></div>
@@ -1541,13 +1537,13 @@ The Xalan library bundled with SignServer is not properly overriding the JBoss-b
         <h3 class="heading "><span>Linux/Unix</span></h3>
     <p  >To copy the files, run the following:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">cp lib/ext/xalan-</code><code class="value">2.7</code><code class="plain">.</code><code class="value">2</code><code class="plain">.jar lib/ext/serializer-</code><code class="value">2.7</code><code class="plain">.</code><code class="value">2</code><code class="plain">.jar ${APPSRV_HOME}/modules/system/layers/base/org/apache/xalan/main/</code></div>
 </div>
     </div>
     <p  >To set the correct driver jar versions, edit <tt class=" ">${APPSRV_HOME}/modules/system/layers/base/org/apache/xalan/main/module.xml</tt> file:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">&lt;resource-root path=</code><code class="string">"serializer-2.7.2.jar"</code><code class="plain">/&gt;</code></div>
 <div class="line"><code class="plain">&lt;resource-root path=</code><code class="string">"xalan-2.7.2.jar"</code><code class="plain">/&gt;</code></div>
 </div>
@@ -1557,7 +1553,7 @@ The Xalan library bundled with SignServer is not properly overriding the JBoss-b
         <h3 class="heading prettyprint"><span>Windows</span></h3>
     <p  class="prettyprint">To copy the files, run the following:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">copy lib\ext\xalan-</code><code class="value">2.7</code><code class="plain">.</code><code class="value">2</code><code class="plain">.jar %APPSRV_HOME%\modules\system\layers\base\org\apache\xalan\main\</code></div>
 <div class="line"><code class="plain">copy lib\ext\serializer-</code><code class="value">2.7</code><code class="plain">.</code><code class="value">2</code><code class="plain">.jar %APPSRV_HOME%\modules\system\layers\base\org\apache\xalan\main\</code></div>
 </div>
@@ -1572,13 +1568,13 @@ The Xalan library bundled with SignServer is not properly overriding the JBoss-b
         <h2 class="heading "><span>Configure Database Driver</span></h2>
     <p  >Add the MariaDB database driver by hot-deploying it into the deployment directory. The driver will be picked up by WildFly and deployed, allowing creating the data source in the next step. You can use a generic name, without version number, to get a generic <tt class=" ">driver-name</tt> for the data source command.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="functions">cp</code><code class="plain"> mariadb-java-client-2.1.0.jar APPSRV_HOME</code><code class="plain">/standalone/deployments/mariadb-java-client</code><code class="plain">.jar</code></div>
 </div>
     </div>
     <p  >If you are using a database other than MariaDB, copy the JDBC driver to the deployments directory and make note of the driver class and driver-name shown in the server log for later use when adding the data source in the next step. Example of server log:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">... INFO  [org.jboss.as.connector.deployers.jdbc] (...) WFLYJCA0005: Deploying non-JDBC-compliant driver class org.postgresql.Driver (version 9.2)</code></div>
 <div class="line"><code class="plain">... INFO  [org.jboss.as.connector.deployers.jdbc] (...) WFLYJCA0018: Started Driver service with driver-name = postgresql-jdbc3.jar</code></div>
 </div>
@@ -1590,7 +1586,7 @@ The Xalan library bundled with SignServer is not properly overriding the JBoss-b
     <p  >The MariaDB data source example configuration uses the driver deployed in the previous step <a   href="#src-42959488_safe-id-aWQtLldpbGRGbHkxMCthbmRKQm9zc0VBUDcuMSt2NS4wLjAtQ29uZmlndXJlRGF0YWJhc2VEcml2ZXI">Configure Database Driver</a>. The <tt class=" ">-jindi-name</tt> below is the default database.properties value. Also note that the <tt class=" ">--enabled=true</tt> option should be set for JBoss EAP 7.x.    </p>
     <p  >If you are using a database other than MariaDB, update the <tt class=" ">driver-name</tt>, <tt class=" ">connection-url,</tt> <tt class=" ">driver-class</tt> and <tt class=" ">check-valid-connection-sql</tt> values accordingly.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">data-source add --name=signserverds --driver-name=</code><code class="string">"mariadb-java-client.jar"</code><code class="plain"> --connection-url=</code><code class="string">"jdbc:mysql://127.0.0.1:3306/signserver"</code><code class="plain"> --jndi-name=</code><code class="string">"java:/SignServerDS"</code><code class="plain"> --use-ccm=</code><code class="keyword">true</code><code class="plain"> --driver-</code><code class="keyword">class</code><code class="plain">=</code><code class="string">"org.mariadb.jdbc.Driver"</code><code class="plain"> --user-name=</code><code class="string">"signserver"</code><code class="plain"> --password=</code><code class="string">"signserver"</code><code class="plain"> --validate-on-match=</code><code class="keyword">true</code><code class="plain"> --background-validation=</code><code class="keyword">false</code><code class="plain"> --prepared-statements-cache-size=</code><code class="value">50</code><code class="plain"> --share-prepared-statements=</code><code class="keyword">true</code><code class="plain"> --min-pool-size=</code><code class="value">5</code><code class="plain"> --max-pool-size=</code><code class="value">150</code><code class="plain"> --pool-prefill=</code><code class="keyword">true</code><code class="plain"> --transaction-isolation=TRANSACTION_READ_COMMITTED --check-valid-connection-sql=</code><code class="string">"select 1;"</code><code class="plain"> --enabled=</code><code class="keyword">true</code></div>
 <div class="line"><code class="plain">:reload</code></div>
 </div>

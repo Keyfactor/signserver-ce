@@ -13,10 +13,10 @@
 package org.signserver.admin.gui;
 
 import java.awt.Frame;
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +38,7 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.Task;
-import org.signserver.admin.gui.adminws.gen.Base64SignerCertReqData;
+import org.signserver.admin.gui.adminws.gen.CertReqData;
 import org.signserver.admin.gui.adminws.gen.InvalidWorkerIdException_Exception;
 import org.signserver.admin.gui.adminws.gen.Pkcs10CertReqInfo;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -510,15 +510,15 @@ public class GenerateRequestsDialog extends JDialog {
                     certReqInfo.setSubjectDN(dn);
                     certReqInfo.setAttributes(null);
                     
-                    final Base64SignerCertReqData reqData;
+                    final CertReqData reqData;
                     
                     if (usingKeyAlias) {
                         final String keyAlias = (String) key;
                         
                         reqData =
-                            (Base64SignerCertReqData) SignServerAdminGUIApplication
+                            SignServerAdminGUIApplication
                                 .getAdminWS()
-                                .getPKCS10CertificateRequestForAlias(workerid,
+                                .getPKCS10CertificateRequestForAlias2(workerid,
                                     certReqInfo, explicitEccParameters, keyAlias);
                     } else {
                         final Utils.HardCodedAliasValue alias =
@@ -527,9 +527,9 @@ public class GenerateRequestsDialog extends JDialog {
                                 (alias.getHardCodedAlias() == Utils.HardCodedAlias.DEFAULT_KEY);
                         
                         reqData =
-                        (Base64SignerCertReqData) SignServerAdminGUIApplication
+                         SignServerAdminGUIApplication
                             .getAdminWS()
-                            .getPKCS10CertificateRequestForKey(workerid,
+                            .getPKCS10CertificateRequestForKey2(workerid,
                             certReqInfo, explicitEccParameters, defaultKey);
                     }
 
@@ -541,25 +541,16 @@ public class GenerateRequestsDialog extends JDialog {
                         sb.append(error);
                         sb.append("\n");
                     } else {
-
-                        final ByteArrayOutputStream bout
-                                = new ByteArrayOutputStream();
-                        bout.write("-----BEGIN CERTIFICATE REQUEST-----\n"
-                                .getBytes());
-                        bout.write(reqData.getBase64CertReq());
-                        bout.write("\n-----END CERTIFICATE REQUEST-----\n"
-                                .getBytes());
-
                         byte[] fileContent;
                         if (signer == null) {
-                            fileContent = bout.toByteArray();
+                            fileContent = reqData.getArmored().getBytes(StandardCharsets.UTF_8);
                         } else {
                             final GenericSignResponse response =
                                     (GenericSignResponse)
                                     SignServerAdminGUIApplication
                             .getClientWS().sign(
                                     String.valueOf(signer.getWorkerId()),
-                                    bout.toByteArray());
+                                    reqData.getArmored().getBytes(StandardCharsets.UTF_8));
                             fileContent = response.getProcessedData();
                         }
 

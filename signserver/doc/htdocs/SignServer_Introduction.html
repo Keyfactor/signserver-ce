@@ -121,33 +121,9 @@
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
-                                                <li class="collapsed">
+                                                <li class="leaf">
         <a class="ht-nav-page-link current" href="SignServer_Introduction.html">SignServer Introduction</a>
 
-                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
-                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="11" y="7" width="2" height="10"></rect>
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-            </span>
-
-            <ul class="nav ht-pages-nav-sub">
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Architecture_and_Concepts.html">SignServer Architecture and Concepts</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Interoperability.html">SignServer Interoperability</a>
-
-            </li>
-                            </ul>
             </li>
                                                 <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Installation.html">SignServer Installation</a>
@@ -300,6 +276,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -350,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -573,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1334,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1384,92 +1380,27 @@
         <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                             </ul>
-</div>            <h1 id="src-48791807"> <span>SignServer Introduction</span></h1>
+</div>            <h1 id="src-3053772"> <span>SignServer Introduction</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >    <span style="color: #333333;">
-SignServer is a framework designed to perform different kinds of digital signatures for different applications.    </span>
-    </p>
-    <p  >    <span style="color: #333333;">
-SignServer digitally signs your documents, code, time-stamping and ePassports. It keeps signature keys secure, and your workflows easy, secure and auditable.    </span>
-    </p>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-<a   href="#src-48791807_id-.SignServerIntroductionv5.1.0-CodeSigning">Code Signing</a>: MS Authenticode, Java including Android APK and Generic.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-<a   href="#src-48791807_id-.SignServerIntroductionv5.1.0-DocumentSigning">Document Signing</a>: PDF, XML, XAdES (BES and T).    </span>
-    <span style="color: #333333;">
-<br/>    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-<a   href="#src-48791807_id-.SignServerIntroductionv5.1.0-TimeStamping">Time Stamping</a>: RFC 3161 and MS Authenticode time stamps, ETSI compliant.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-<a   href="#src-48791807_id-.SignServerIntroductionv5.1.0-ePassport">ePassport</a>: ICAO compliant MRTD signer.    </span>
-    </p>
-</li></ul>    <p  >    <span style="color: #333333;">
-SignServer is a server-side signing server with plug-ins for different signature types. Signature keys are kept secure on the server side, preferably using a Hardware Security Module (HSM), and users are authenticated to perform signatures online.    </span>
-    </p>
-    <p  >    <span style="color: #333333;">
-One instance of SignServer can host multiple use cases/signers, organizations and users. Multiple Signers and Validators    </span>
-     <span style="color: #333333;">
-serve all your digital signature needs within one instance of SignServer.    </span>
-    </p>
-    <p  >    <span style="color: #333333;">
-Instead of managing a myriad of distributed signing islands where each team has its own solution, using a central signing solution simplifies administration, improves security and lowers cost.    </span>
-    </p>
-    <div class="section section-1" id="src-48791807_id-.SignServerIntroductionv5.1.0-CodeSigning">
-        <h1 class="heading "><span>Code Signing</span></h1>
-    <p  >SignServer Enterprise is a secure code signing solution that allows you to keep code signing keys protected, and also provides a centrally managed and audited single service for all your code signing needs and allows you to keep code signing keys protected.    </p>
-    <p  >SignServer enables different project members or systems to authenticate and share the same protected code signing key and certificate when signing, and also provides audit records of who signed what. SignServer can also control individual code signing keys where only one person is granted authorization.    </p>
-    <p  >Most code signing needs are fulfilled by SignServer using different signers and custom plug-ins:    </p>
-<ul class=" "><li class=" ">    <p  >Authenticode for Portable Executables (PE signing).    </p>
-</li><li class=" ">    <p  >Java (JAR signing) from 3.7.1 and Windows Installer (MSI signing).    </p>
-</li><li class=" ">    <p  >Client-side hashing and construction for Authenticode and JAR signing.    </p>
-</li></ul>    </div>
-    <div class="section section-1" id="src-48791807_id-.SignServerIntroductionv5.1.0-DocumentSigning">
-        <h1 class="heading "><span>Document Signing</span></h1>
-    <p  >Text    </p>
-    </div>
-    <div class="section section-1" id="src-48791807_id-.SignServerIntroductionv5.1.0-TimeStamping">
-        <h1 class="heading "><span>Time Stamping</span></h1>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-Configurable time sources.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-qcStatements extension support for Qualified Electronic time-stamps according to the EU Regulation No 910/2014 (eIDAS).    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-SignServer TimeMonitor application and modules for monitoring time synchronization in TSA set-ups.    </span>
-    </p>
-</li></ul>    </div>
-    <div class="section section-1" id="src-48791807_id-.SignServerIntroductionv5.1.0-ePassport">
-        <h1 class="heading "><span>ePassport</span></h1>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-Electronic ePassport document signing (MRTD) compliant with ICAO requirements:    </span>
-    </p>
-<ul class=" "><li class=" ">    <p  >    <span style="color: #333333;">
-LDS version 1.8 support.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Support for limiting the number of signings.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Support for key usage period.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Multiple active logical signers with fail-over when the sign limit is exceeded or key usage period expires.    </span>
-    </p>
-</li><li class=" ">    <p  >    <span style="color: #333333;">
-Signer suitable of signing ICAO Deviation/Defect Lists.    </span>
-    </p>
-</li></ul></li><li class=" ">    <p  >    <span style="color: #333333;">
-ePassport CSCA master list signer compliant with ICAO requirements.    </span>
-    </p>
-</li></ul>    <p  >    </p>
-    </div>
+<span id="src-3053772_Introductionscope"></span>    <p  ><i class=" ">SignServer is a server-side application capable of creating digital signatures.</i>    </p>
+    <p  >Multiple different types and formats of digital signatures are supported through an extendable architecture where different <a   href="SignServer_Workers.html">'worker' implementations</a> implements support for different formats.    </p>
+    <p  >The cryptography operations are typically carried out in an Hardware Security Module (HSM) or using software key stores.    </p>
+    <p  >Audit <a   href="Logging.html">logging</a> of administrator operations as well as client transactions are supported both to file and to database. This allows organizations to keep track of all usages of the signing keys.    </p>
+    <p  >    <img  class="confluence-embedded-image" src="images/download/attachments/3053772/signserver-technical-design-deployment-uml6.png" alt="images/download/attachments/3053772/signserver-technical-design-deployment-uml6.png"  height="250" />
+            <br/><span class="caption">SignServer Deployment Diagram</span>
+        </p>
+    <p  >A typical work flow goes like this:    </p>
+<ol class=" "><li class=" ">    <p  >Client submits the document or file to be signed.    </p>
+</li><li class=" ">    <p  >SignServer receives the request and signs the file using its keys.    </p>
+</li><li class=" ">    <p  >The signed file is returned to client.    </p>
+</li></ol>    <p  >Client requests can be submitted through any of the supported <a   href="SignServer_Integration.html">interfaces</a> such as HTTP POST form uploads, Web Services or the command line interface.    </p>
+    <p  >Administration can be done locally using the <a   href="Administration_CLI.html">command line</a> interface, or remotely using the standalone <a   href="Administration_GUI.html">Administration GUI</a> application, using the <a   href="Administration_Web.html">Administration Web</a> interface or using Web Services.    </p>
+    <p  >SignServer can be set up for high availability to be putting a load balancer in front of multiple server instances.    </p>
+    <p  >In addition to document signing, SignServer also supports ePassport (ICAO eMRTD) signing, code signing such as Microsoft Authenticode and JAR signing as well as be operated as a Time-stamping Authority (TSA).    </p>
+    <p  >    </p>
         </div>
 
     </article>
@@ -1487,7 +1418,7 @@ ePassport CSCA master list signer compliant with ICAO requirements.    </span>
             </svg>
             <span>SignServer Manual</span>
         </a>
-                <a href="SignServer_Architecture_and_Concepts.html" class="ht-post-nav-next">
+                <a href="SignServer_Installation.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1496,7 +1427,7 @@ ePassport CSCA master list signer compliant with ICAO requirements.    </span>
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Architecture and Concepts</span>
+            <span>SignServer Installation</span>
         </a>
     </nav>    
             

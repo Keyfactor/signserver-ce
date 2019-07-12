@@ -121,33 +121,9 @@
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
-                                                <li class="collapsed">
+                                                <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_Introduction.html">SignServer Introduction</a>
 
-                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
-                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="11" y="7" width="2" height="10"></rect>
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-            </span>
-
-            <ul class="nav ht-pages-nav-sub">
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Architecture_and_Concepts.html">SignServer Architecture and Concepts</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Interoperability.html">SignServer Interoperability</a>
-
-            </li>
-                            </ul>
             </li>
                                                 <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Installation.html">SignServer Installation</a>
@@ -300,6 +276,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -350,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -573,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1334,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1406,13 +1402,13 @@
     <p  >To setup a sample crypto token, do the following:    </p>
 <ol class=" "><li class=" ">    <p  >Set up a crypto token called CryptoTokenP12 which uses a keystore-based token:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/keystore-crypto.properties</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >Activate the configuration using the assigned worker ID that was printed (for example, 1):    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver reload </code><code class="value">1</code></div>
 </div>
     </div>
@@ -1423,13 +1419,13 @@
     <p  >Workers can then be set up using the <tt class=" ">setproperties</tt> followed by the <tt class=" ">reload</tt> command.    </p>
 <ol class=" "><li class=" ">    <p  >Sample configurations are available in doc/sample-configs which by default uses the sample crypto token:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/CONFIGURATION.properties</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >Activate the configuration using the assigned worker ID that was printed (for example, 2):    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver reload </code><code class="value">2</code></div>
 </div>
     </div>
@@ -1441,14 +1437,14 @@
     <p  >Follow the steps below to setup a demo Time Stamp service (TSA according to RFC3161) and get an understanding of the structure of SignServer works:    </p>
 <ol class=" "><li class=" ">    <p  >Setup the keystore crypto token (if not already done) and activate it with its ID:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/keystore-crypto.properties</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  class="prettyprint">Update the crypto token's KEYSTOREPATH property to point to a PKCS#12 keystore containing keys and certificate suitable for timestamp signing (the sample keystore in res/test/dss10/dss10_keystore.p12 can be used).<br/>Update the keystore password and set the crypto token's default key:    </p>
     <p  >    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver setproperty </code><code class="value">1</code><code class="plain"> KEYSTOREPATH $SIGNSERVER_HOME/res/test/dss10/dss10_keystore.p12</code></div>
 <div class="line"><code class="plain">$ bin/signserver setproperty </code><code class="value">1</code><code class="plain"> KEYSTOREPASSWORD foo123</code></div>
 <div class="line"><code class="plain">$ bin/signserver setproperty </code><code class="value">1</code><code class="plain"> DEFAULTKEY </code><code class="string">"ts00003"</code></div>
@@ -1457,25 +1453,25 @@
     </div>
 </li><li class=" ">    <p  >Load the Timestamp demo configuration and notice the generated worker ID (in this example 2):    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/timestamp.properties</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >Activate the configuration:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver reload </code><code class="value">2</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >Check the status and configuration:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver getstatus complete all</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >Run the test client to confirm that the setup is successful:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signclient timestamp http:</code><code class="comments">//localhost:8080/signserver/process?workerName=TimeStampSigner</code></div>
 </div>
     </div>
@@ -1487,13 +1483,13 @@
 <ol class=" "><li class=" ">    <p  >Make sure the pdfsigner module is built in by setting <tt class=" ">module.pdfsigner.enabled=true</tt> and <tt class=" ">module.pdfsigner.include=true</tt> in <strong class=" ">signserver_deploy.properties</strong> before building and deploying SignServer. Alternatively, set <tt class=" ">includemodulesinbuild=true</tt> to have all modules built in.    </p>
 </li><li class=" ">    <p  >Setup the keystore crypto token (if not already done) and activate it with its ID:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/keystore-crypto.properties</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >Update the crypto token's KEYSTOREPATH property to point to a PKCS#12 keystore containing keys and certificate suitable for document signing (the sample keystore in res/test/dss10/dss10_keystore.p12 can be used).<br/>Update the keystore password and set the crypto token's default key.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver setproperty </code><code class="value">1</code><code class="plain"> KEYSTOREPATH $SIGNSERVER_HOME/res/test/dss10/dss10_keystore.p12</code></div>
 <div class="line"><code class="plain">$ bin/signserver setproperty </code><code class="value">1</code><code class="plain"> KEYSTOREPASSWORD foo123</code></div>
 <div class="line"><code class="plain">$ bin/signserver setproperty </code><code class="value">1</code><code class="plain"> DEFAULTKEY </code><code class="string">"signer00003"</code></div>
@@ -1503,19 +1499,19 @@
     <p  >    </p>
 </li><li class=" ">    <p  >Load the PDF signer demo configuration and notice the generated worker ID (in this example 3):    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/pdfsigner.properties</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >Activate the configuration:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain" /></div>
 </div>
     </div>
 </li><li class=" ">    <p  >Check the status and configuration:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver getstatus complete all</code></div>
 </div>
     </div>
@@ -1528,19 +1524,19 @@
     <p  >To install a certificate validation service worker, issue the following commands:    </p>
 <ol class=" "><li class=" ">    <p  >Load the configuration and notice the worker ID (in this example, 6):    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/validator_dummy.properties</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >Activate the configuration:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver reload </code><code class="value">6</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >The status of the Worker can now be viewed with:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver getstatus complete CertValidationWorker</code></div>
 </div>
     </div>
@@ -1548,25 +1544,25 @@
 <ol class=" "><li class=" ">    <p  >Make sure the xmlvalidator module is built in by setting <tt class=" ">module.xmlvalidator.enabled=true</tt> and <tt class=" ">module.xmlvalidator.include=true</tt> in <strong class=" ">signserver_deploy.properties</strong> before building and deploying SignServer. Alternatively, set <tt class=" ">includemodulesinbuild=true</tt> to have all modules built in.    </p>
 </li><li class=" ">    <p  >Load the XML validator demo configuration and note the generated worker ID (in this example 7):    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain"> $ bin/signserver setproperties doc/sample-configs/xmlvalidator.properties</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >Verify the configuration: Note that <tt class=" ">VALIDATIONSERVICEWORKER</tt> is set to &quot;CertValidationWorker&quot;.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver getconfig </code><code class="value">7</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >Activate the configuration with:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver reload </code><code class="value">7</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >The status of the Validator can now be viewed with:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver getstatus complete DemoXMLValidator</code></div>
 </div>
     </div>
@@ -1580,26 +1576,26 @@
 <ol class=" "><li class=" ">    <p  >Make sure the mrtdsodsigner module is built in by setting <tt class=" ">module.mrtdsodsigner.enabled=true</tt> and <tt class=" ">module.mrtdsodsigner.include=true</tt> in s<strong class=" ">ignserver_deploy.properties</strong> before building and deploying SignServer. Alternatively, set i<tt class=" ">ncludemodulesinbuild=true</tt> to have all modules built in.    </p>
 </li><li class=" ">    <p  >Setup the soft crypto token (if not already done) and activate it with its ID:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/keystore-crypto.properties</code></div>
 <div class="line"><code class="plain">$ bin/signserver reload </code><code class="value">1</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >Load the MRTD SOD signer demo configuration and notice the generated worker ID (in this example 8):    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver setproperties doc/sample-configs/mrtdsodsigner.properties</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >Activate the configuration:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver reload </code><code class="value">8</code></div>
 </div>
     </div>
 </li><li class=" ">    <p  >The status of the signer can now be viewed with:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">$ bin/signserver getstatus complete mrtdsodsigner</code></div>
 </div>
     </div>
@@ -1612,7 +1608,7 @@
     <p  >Before starting with an HSM installation, you are recommended to read the <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a> page.    </p>
     <p  >When configuring a worker, make sure to have the worker property <tt class=" ">CRYPTOTOKEN=CryptoTokenP11</tt>:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/signserver setproperties doc/sample-configs/pkcs11-crypto.properties</code></div>
 <div class="line"><code class="plain">bin/signserver reload </code><code class="value">9</code></div>
 <div class="line"><code class="plain">bin/signserver setproperties doc/sample-configs/mrtdsodsigner.properties</code></div>
@@ -1624,7 +1620,7 @@
     </div>
     <p  >where 9 is the workerId that you got when running the <tt class=" ">setproperties</tt> command for the pkcs11 crypto token.<br/>where tokenpin is the password for the HSM slot configured in the properties file.<br/><br/>This will create a certificate request that you can get signed by your CA. When you have received the response, you can import it and the CA certificate. If you have the returned signer certificate as cert.pem and the CA certificate as cacert.pem, then:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">cat cert.pem cacert.pem &gt; certchain.pem</code></div>
 <div class="line"><code class="plain">bin/signserver uploadsignercertificate </code><code class="value">10</code><code class="plain"> glob cert.pem</code></div>
 <div class="line"><code class="plain">bin/signserver uploadsignercertificatechain </code><code class="value">10</code><code class="plain"> glob certchain.pem</code></div>
@@ -1634,7 +1630,7 @@
     <p  >    </p>
     <p  >Note that you can use the EJBCA tool Client Toolbox to create keys on a PKCS#11 HSM:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">ejbcaClientToolBox.sh PKCS11HSMKeyTool generate /opt/ETcpsdk/lib/linux-x86_64/libcryptoki.so </code><code class="value">2048</code><code class="plain"> DSSignKey </code><code class="value">5</code></div>
 </div>
     </div>

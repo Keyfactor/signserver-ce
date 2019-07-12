@@ -19,12 +19,11 @@ import java.security.*;
 import java.util.Collection;
 import org.bouncycastle.jce.ECKeyUtil;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.After;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
-import org.signserver.common.Base64SignerCertReqData;
+import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.KeyTestResult;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.SignServerUtil;
@@ -129,11 +128,10 @@ public class AnySignerTest extends ModulesTestCase {
         // Generate CSR
         final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA",
                 "CN=test01GenerateKey,C=SE", null);
-        Base64SignerCertReqData data = (Base64SignerCertReqData) workerSession
+        AbstractCertReqData data = (AbstractCertReqData) workerSession
                 .getCertificateRequest(new WorkerIdentifier(WORKERID), certReqInfo, false, false);
-        byte[] reqBytes = data.getBase64CertReq();
         final PKCS10CertificationRequest req
-                = new PKCS10CertificationRequest(Base64.decode(reqBytes));
+                = new PKCS10CertificationRequest(data.toBinaryForm());
 
         final PublicKey actualPubKey = getPublicKeyFromRequest(req);
 
@@ -184,11 +182,10 @@ public class AnySignerTest extends ModulesTestCase {
         // Generate CSR
         final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(
                 "SHA1WithECDSA", "CN=test02GenerateKey", null);
-        Base64SignerCertReqData data = (Base64SignerCertReqData) workerSession
+        AbstractCertReqData data = (AbstractCertReqData) workerSession
                 .getCertificateRequest(new WorkerIdentifier(WORKERID), certReqInfo, false, false);
-        byte[] reqBytes = data.getBase64CertReq();
         final PKCS10CertificationRequest req
-                = new PKCS10CertificationRequest(Base64.decode(reqBytes));
+                = new PKCS10CertificationRequest(data.toBinaryForm());
 
         final PublicKey actualPubKey = getPublicKeyFromRequest(req);
 
@@ -203,12 +200,11 @@ public class AnySignerTest extends ModulesTestCase {
         // Generate CSR
         final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(
                 "SHA1WithECDSA", "CN=test02GenerateKey", null);
-        Base64SignerCertReqData data = (Base64SignerCertReqData) workerSession
+        AbstractCertReqData data = (AbstractCertReqData) workerSession
                 .getCertificateRequest(new WorkerIdentifier(WORKERID), certReqInfo, explicitEcc,
                 false);
-        byte[] reqBytes = data.getBase64CertReq();
         final PKCS10CertificationRequest req
-                = new PKCS10CertificationRequest(Base64.decode(reqBytes));
+                = new PKCS10CertificationRequest(data.toBinaryForm());
 
         final PublicKey actualPubKey = getPublicKeyFromRequest(req);
         final PublicKey afterConvert = ECKeyUtil.publicToExplicitParameters(
@@ -231,12 +227,11 @@ public class AnySignerTest extends ModulesTestCase {
         // Generate CSR
         final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo(
                 "SHA1WithECDSA", "CN=test02GenerateKey", null);
-        Base64SignerCertReqData data = (Base64SignerCertReqData) workerSession
+        AbstractCertReqData data = (AbstractCertReqData) workerSession
                 .getCertificateRequest(new WorkerIdentifier(WORKERID), certReqInfo, explicitEcc,
                 false);
-        byte[] reqBytes = data.getBase64CertReq();
         final PKCS10CertificationRequest req
-                = new PKCS10CertificationRequest(Base64.decode(reqBytes));
+                = new PKCS10CertificationRequest(data.toBinaryForm());
 
         final PublicKey actualPubKey = getPublicKeyFromRequest(req);
         final PublicKey afterConvert = ECKeyUtil.publicToExplicitParameters(

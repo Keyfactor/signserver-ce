@@ -13,6 +13,7 @@
 package org.signserver.client.cli.defaultimpl;
 
 import java.io.InputStream;
+import java.util.Map;
 
 /**
  * Input source encapsulting information about an input stream with an associated
@@ -25,12 +26,20 @@ public class InputSource {
     private final InputStream inputStream;
     private final long size;
     private final String fileName;
-    
+    private final Map<String, String> metadata;
+
     public InputSource(final InputStream inputStream, final long size,
-                       final String fileName) {
+                       final String fileName,
+                       final Map<String, String> metadata) {
         this.inputStream = inputStream;
         this.size = size;
         this.fileName = fileName;
+        this.metadata = metadata;
+    }
+
+    public InputSource(final InputStream inputStream, final long size,
+                       final String fileName) {
+        this(inputStream, size, fileName, null);
     }
     
     public InputSource(final InputStream inputStream, final long size) {
@@ -47,5 +56,9 @@ public class InputSource {
     
     public String getFileName() {
         return fileName;
+    }
+
+    public Map<String, String> getMetadata() {
+        return metadata;
     }
 }

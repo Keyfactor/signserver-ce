@@ -121,33 +121,9 @@
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
-                                                <li class="collapsed">
+                                                <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_Introduction.html">SignServer Introduction</a>
 
-                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
-                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="11" y="7" width="2" height="10"></rect>
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-            </span>
-
-            <ul class="nav ht-pages-nav-sub">
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Architecture_and_Concepts.html">SignServer Architecture and Concepts</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Interoperability.html">SignServer Interoperability</a>
-
-            </li>
-                            </ul>
             </li>
                                                 <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Installation.html">SignServer Installation</a>
@@ -300,6 +276,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -350,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -573,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1334,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1416,7 +1412,7 @@
     <p  ><strong class=" ">VERSION:</strong> The version of SignServer.    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: SIGNSERVER_STARTUP; MODULE: SERVICE; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; VERSION: SignServer 3.3.0alpha12; REPLY_TIME:1350562045545</code></div>
 </div>
     </div>
@@ -1431,7 +1427,7 @@
     <p  ><strong class=" ">VERSION:</strong> The version of SignServer.    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: SIGNSERVER_SHUTDOWN; MODULE: SERVICE; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; VERSION: SignServer 3.3.0alpha12; REPLY_TIME:1350562045545</code></div>
 </div>
     </div>
@@ -1451,7 +1447,7 @@
     <p  ><strong class=" ">GLOBALCONFIG_PROPERTY:</strong> The property that was updated.<br/><strong class=" ">GLOBALCONFIG_VALUE:</strong> The new value of the property.    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: SET_GLOBAL_PROPERTY; MODULE: GLOBAL_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; GLOBALCONFIG_VALUE: TESTVALUE47; GLOBALCONFIG_PROPERTY: GLOB.TESTPROPERTY47; REPLY_TIME:1350657202153</code></div>
 </div>
     </div>
@@ -1466,7 +1462,7 @@
     <p  ><strong class=" ">GLOBALCONFIG_PROPERTY:</strong> The property that was removed.    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: REMOVE_GLOBAL_PROPERTY; MODULE: GLOBAL_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; GLOBALCONFIG_PROPERTY: GLOB.TESTPROPERTY47; REPLY_TIME:1350657202444</code></div>
 </div>
     </div>
@@ -1479,7 +1475,7 @@
         <p  >Logged when the global configuration was reloaded from the database.    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: GLOBAL_CONFIG_RELOAD; MODULE: GLOBAL_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; REPLY_TIME:1350657202593</code></div>
 </div>
     </div>
@@ -1493,7 +1489,7 @@
         <p  >Logged when the resync command was executed.    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: GLOBAL_CONFIG_RESYNC; MODULE: GLOBAL_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; REPLY_TIME:1350894343902</code></div>
 </div>
     </div>
@@ -1515,27 +1511,27 @@
     <p  >Authorized clients are shown as a property with the name <strong class=" ">authorized_client</strong>.    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; added:FOO: bar; REPLY_TIME:1350657202773</code></div>
 </div>
     </div>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; changed:FOO: newvalue; REPLY_TIME:1350657202873</code></div>
 </div>
     </div>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; removed:FOO: newvalue; REPLY_TIME:1350657202873</code></div>
 </div>
     </div>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; added:FOO: bar; changed:BAR: newvalue; REPLY_TIME:1350657202873</code></div>
 </div>
     </div>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; added:authorized_client: SN: 1234567890, issuer DN: CN=Test; REPLY_TIME:1350657202873</code></div>
 </div>
     </div>
@@ -1550,7 +1546,7 @@
     <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.<br/><strong class=" ">CERTIFICATE:</strong> The certificate in PEM format.<br/><strong class=" ">SCOPE: </strong>If the setting was at GLOBAL or NODE scope.<br/><strong class=" ">NODE: </strong>The ID of the node if the setting was at NODE scope, otherwise not available.    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: CERTINSTALLED; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; CERTIFICATE: Subject: CN=Anyone Issuer: CN=Anyone </code></div>
 <div class="line"><code class="plain">-----BEGIN CERTIFICATE----- </code></div>
 <div class="line"><code class="plain">MIIBnTCCAQagAwIBAgIIWWNYSOeuN+swDQYJKoZIhvcNAQEFBQAwETEPMA0GA1UE </code></div>
@@ -1578,7 +1574,7 @@
     <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.<br/><strong class=" ">CERTIFICATECHAIN:</strong> The certificates in PEM format.<br/><strong class=" ">SCOPE: </strong>If the setting was at GLOBAL or NODE scope.<br/><strong class=" ">NODE: </strong>The ID of the node if the setting was at NODE scope, otherwise not available.    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: CERTCHAININSTALLED; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; CERTIFICATECHAIN: Subject: CN=Signer,C=SE Issuer: CN=Issuer,C=SE </code></div>
 <div class="line"><code class="plain">-----BEGIN CERTIFICATE----- </code></div>
 <div class="line"><code class="plain">MIIBdjCCASCgAwIBAgIIE+fXOs/SAwMwDQYJKoZIhvcNAQEFBQAwHjEPMA0GA1UE </code></div>
@@ -1609,7 +1605,7 @@
     <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.<br/><strong class=" ">CERTIFICATECHAIN:</strong> The certificates in PEM format.<br/><strong class=" ">KEYALIAS:</strong> The alias of the entry in the token.<br/><strong class=" ">CRYPTOTOKEN:</strong> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: CERTCHAININSTALLED; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: CLI user; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 5801; KEYALIAS: testkeyalias10; CRYPTOTOKEN: HSMCryptoToken1; CERTIFICATECHAIN: Subject: CN=testkeyalias10,C=SE</code></div>
 <div class="line"><code class="plain">Issuer: CN=Issuer,C=SE</code></div>
 <div class="line"><code class="plain">-----BEGIN CERTIFICATE-----</code></div>
@@ -1646,7 +1642,7 @@
     <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.<br/><strong class=" ">KEYALIAS:</strong> The new key alias.<br/><strong class=" ">CRYPTOTOKEN:</strong> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/><strong class=" ">SCOPE: </strong>If the setting was at GLOBAL or NODE scope.<br/><strong class=" ">NODE: </strong>The ID of the node if the setting was at NODE scope, otherwise not available.    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: KEYSELECTED; MODULE: WORKER_CONFIG; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 100; KEYALIAS: ts_key00002; CRYPTOTOKEN: TestSigner6000; SCOPE: GLOBAL; REPLY_TIME:1350891907048</code></div>
 </div>
     </div>
@@ -1666,7 +1662,7 @@
     <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.<br/><strong class=" ">KEYALIAS:</strong> The new key alias.<br/><strong class=" ">CRYPTOTOKEN:</strong> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/><strong class=" ">KEYSPEC:</strong> The key specification (i.e. RSA/DSA bit length or EC curve).<br/><strong class=" ">KEYALG:</strong> The key algorithm.    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: KEYGEN; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 5676; KEYALIAS: ts_key00004; CRYPTOTOKEN: HSMCryptoToken0; KEYSPEC: 2048; KEYALG: RSA; REPLY_TIME:135089190791</code></div>
 </div>
     </div>
@@ -1681,7 +1677,7 @@
     <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.<br/><strong class=" ">KEYALIAS:</strong> Alias of the the key to test or &quot;all&quot; to test all available keys in the slot.<br/><strong class=" ">CRYPTOTOKEN:</strong> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/><strong class=" ">TESTRESULTS:</strong> The test report with an entry for each tested key.    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: KEYTEST; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 47; KEYALIAS: all; CRYPTOTOKEN: HSMCryptoToken1; TESTRESULTS: KeyTestResult{alias=tsu47_key00005, success=true, status=, publicKeyHash=979359e5261112b11fac341962bec1e7e6052d9e}</code></div>
 <div class="line"><code class="plain">KeyTestResult{alias=key5, success=true, status=, publicKeyHash=46b264e4892ef2e4fd9616e4927534ca3597fd9c}</code></div>
 <div class="line"><code class="plain">KeyTestResult{alias=key3, success=true, status=, publicKeyHash=ae64792f1f50e23eb54bf79d46d819bc07db2d79}</code></div>
@@ -1701,7 +1697,7 @@
     <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.<br/><strong class=" ">KEYALIAS:</strong> The key alias of the key used to generate the CSR.<br/><strong class=" ">FOR_DEFAULTKEY: </strong>True if the &quot;default key&quot; was requested.<br/><strong class=" ">CRYPTOTOKEN:</strong> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/><strong class=" ">CSR:</strong> Base64 encoded CSR (typically in PKCS#10 format).    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: GENCSR; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: </code><code class="keyword">null</code><code class="plain">; ISSUER: </code><code class="keyword">null</code><code class="plain">; SERIAL_NUMBER: </code><code class="keyword">null</code><code class="plain">; WORKER_ID: </code><code class="value">5676</code><code class="plain">; KEYALIAS: ts_key00004; CRYPTOTOKEN: HSMCryptoToken0; CSR: MIIBYDCBygIBADAjMRQwEgYDVQQDDAtUUyBTaWduZXIgMTELMAkGA1UEBhMCU0Uw</code></div>
 <div class="line"><code class="plain">gZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAJt8F51wD+QcX+WLyIxjWu3at3q+</code></div>
 <div class="line"><code class="plain">IiJrL5jIenmggUhjOLHGHOStoNOiYEQAaiiTZ623m9y7O3zhqFdAdWZg+JrfsHQJ</code></div>
@@ -1723,7 +1719,7 @@
     <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker.<br/><strong class=" ">KEYALIAS:</strong> The key alias of the key removed.<br/><strong class=" ">CRYPTOTOKEN:</strong> Name of the configured crypto worker or the name or ID of the current worker if no separate crypto worker is used.<br/><strong class=" ">SUCCESS:</strong> True if the key was removed or false if the removal failed or if removal was not supported by the token.    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: KEYREMOVE; MODULE: KEY_MANAGEMENT; ADMINISTRATOR: CLI user; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: 20003; KEYALIAS: signKey000002; CRYPTOTOKEN: HSMCryptoToken1; SUCCESS: true; REPLY_TIME:1391008847962</code></div>
 </div>
     </div>
@@ -1743,7 +1739,7 @@
     <p  ><strong class=" ">STATUSREPO_PROPERTY:</strong> The updated property.<br/><strong class=" ">STATUSREPO_VALUE:</strong> The new property value.<br/><strong class=" ">STATUSREPO_EXPIRATION:</strong> Expiration time for the status property (timestamp), if any.    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: SET_STATUS_PROPERTY; MODULE: STATUS_REPOSITORY; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; STATUSREPO_EXPIRATION: 1350891909366; STATUSREPO_PROPERTY: TEST_PROPERTY1; STATUSREPO_VALUE: TESTVALUE47; REPLY_TIME:1350891908372</code></div>
 </div>
     </div>
@@ -1763,7 +1759,7 @@
     <p  ><strong class=" ">WORKER_ID:</strong> The ID of the worker or empty in case of non existing worker.<br/><strong class=" ">Worker logger fields:</strong> All fields available to the worker logger.    </p>
     <p  >Example:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">EVENT: PROCESS; MODULE: WORKER; ADMINISTRATOR: null; ISSUER: null; SERIAL_NUMBER: null; WORKER_ID: null; LOG_ID: db517726-ff0d-40dd-8f2b-2297925cb4d3; CLIENT_IP: 127.0.0.1; PROCESS_SUCCESS: false; REQUEST_LENGTH: 0; XFORWARDEDFOR: null; FILENAME: noname.dat; </code></div>
 <div class="line"><code class="plain">REQUEST_FULLURL: </code><code class="comments">http://localhost:8080/signserver/process?null;</code><code class="plain"> LOG_TIME: 1350628977410; WORKER_ID: 0; EXCEPTION: No such worker: 0; REPLY_TIME:1350628977411</code></div>
 </div>

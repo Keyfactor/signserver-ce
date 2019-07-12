@@ -663,8 +663,9 @@ public class KeystoreCryptoToken extends BaseCryptoToken {
             InvalidAlgorithmParameterException,
             UnsupportedCryptoTokenParameter,
             IllegalRequestException {
+        final boolean includeDummyCertificate = params.containsKey(PARAM_INCLUDE_DUMMYCERTIFICATE);
         final KeyEntry entry = getKeyEntry(alias, context.getServices());
-        if (entry.getCertificateChain().size() == 1 && CryptoTokenHelper.isDummyCertificate(entry.getCertificateChain().get(0))) {
+        if ((entry.getCertificateChain().size() == 1 && CryptoTokenHelper.isDummyCertificate(entry.getCertificateChain().get(0))) && !includeDummyCertificate) {
             return new DefaultCryptoInstance(alias, context, ks.getProvider(), entry.getPrivateKey(), entry.getCertificateChain().get(0).getPublicKey());
         } else {
             return new DefaultCryptoInstance(alias, context, ks.getProvider(), entry.getPrivateKey(), entry.getCertificateChain());

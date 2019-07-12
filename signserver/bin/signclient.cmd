@@ -50,6 +50,11 @@ rem set JAVA_OPTS="%JAVA_OPTS% -Djavax.net.debug=ssl"
 rem Enable Java PKCS#11 debug logs
 rem set JAVA_OPTS="%JAVA_OPTS% -Djava.security.debug=sunpkcs11"
 
+rem In some cases, running SignClient authenticating with a P11 token
+rem (e.g. a smartcard reader) could give cipher-suit errors,
+rem In these cases, a workaround is to force the use of TLS version 1.1
+rem set JAVA_OPTS="%JAVA_OPTS%  -Djdk.tls.client.protocols=TLSv1.1 -Dhttps.protocols=TLSv1.1"
+
 rem Enable Java debugging
 rem set JAVA_OPTS="%JAVA_OPTS% -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=n"
 rem set JAVA_OPTS="%JAVA_OPTS% -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=y"

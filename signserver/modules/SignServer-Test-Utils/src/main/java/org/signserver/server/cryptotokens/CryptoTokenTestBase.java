@@ -48,7 +48,7 @@ import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.RelationalOperator;
 import org.cesecore.util.query.elems.Term;
 import static org.junit.Assert.*;
-import org.signserver.common.Base64SignerCertReqData;
+import org.signserver.common.AbstractCertReqData;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
@@ -326,11 +326,11 @@ public abstract class CryptoTokenTestBase {
         try {
             final ISignerCertReqInfo req =
                     new PKCS10CertReqInfo("SHA1WithRSA", "CN=imported, organizationIdentifier=12345, O=Test", null);
-            Base64SignerCertReqData reqData =
-                    (Base64SignerCertReqData) genCertificateRequest(req, false, existingKey);
+            AbstractCertReqData reqData =
+                    (AbstractCertReqData) genCertificateRequest(req, false, existingKey);
 
             // Issue certificate
-            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
             KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
             final X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 
@@ -351,9 +351,9 @@ public abstract class CryptoTokenTestBase {
 
             // Isse additional certificate
             reqData =
-                    (Base64SignerCertReqData) genCertificateRequest(req, false, additionalAlias);
+                    (AbstractCertReqData) genCertificateRequest(req, false, additionalAlias);
 
-            csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));
+            csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
             issuerKeyPair = CryptoUtils.generateRSA(512);
             final X509CertificateHolder newCert = new X509v3CertificateBuilder(new X500Name("CN=Test Issuer2"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 
@@ -405,12 +405,12 @@ public abstract class CryptoTokenTestBase {
             OperatorCreationException, IOException, QueryException, OperationUnsupportedException, AuthorizationDeniedException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
         
         final ISignerCertReqInfo req = new PKCS10CertReqInfo("SHA1WithRSA", "CN=imported, organizationIdentifier=12345, O=Test", null);
-        final Base64SignerCertReqData reqData = (Base64SignerCertReqData) genCertificateRequest(req, false, existingKey);
+        final AbstractCertReqData reqData = (AbstractCertReqData) genCertificateRequest(req, false, existingKey);
 
         // Generate a certificate chain that we will try to import and later export
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
         final X509CertificateHolder issuerCert = new JcaX509v3CertificateBuilder(new X500Name("CN=Test Import/Export CA"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(3650)), new X500Name("CN=Test Import/Export CA"), issuerKeyPair.getPublic()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
-        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(Base64.decode(reqData.getBase64CertReq()));            
+        PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
         final X509CertificateHolder subjectCert1 = new X509v3CertificateBuilder(new X500Name("CN=Test Import/Export CA"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), new X500Name("CN=Test Import/Export 1"), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
         final X509CertificateHolder subjectCert2 = new X509v3CertificateBuilder(new X500Name("CN=Test Import/Export CA"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), new X500Name("CN=Test Import/Export 2"), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 

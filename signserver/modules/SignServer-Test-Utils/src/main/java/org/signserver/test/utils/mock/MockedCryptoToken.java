@@ -72,6 +72,11 @@ public class MockedCryptoToken extends BaseCryptoToken {
         this.providerName = null;
     }
 
+    /** Constructs a MockedCryptoToken for a non-existing key. */
+    public MockedCryptoToken() {
+        this(null, null, null, null, (Provider) null);
+    }
+
     @Override
     public void init(int workerId, Properties props, IServices services) throws CryptoTokenInitializationFailureException {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -79,7 +84,7 @@ public class MockedCryptoToken extends BaseCryptoToken {
 
     public int getCryptoTokenStatus() {
         LOG.debug(">getCryptoTokenStatus");
-        return WorkerStatus.STATUS_ACTIVE;
+        return privateKey != null ? WorkerStatus.STATUS_ACTIVE : WorkerStatus.STATUS_OFFLINE;
     }
     
     @Override
@@ -101,11 +106,13 @@ public class MockedCryptoToken extends BaseCryptoToken {
     public PrivateKey getPrivateKey(int purpose) throws CryptoTokenOfflineException {
         LOG.debug(">getPrivateKey");
         privateKeyCalls++;
+        checkExisting();
         return privateKey;
     }
 
     public PublicKey getPublicKey(int purpose) throws CryptoTokenOfflineException {
         LOG.debug(">getPublicKey");
+        checkExisting();
         return publicKey;
     }
 
@@ -120,11 +127,13 @@ public class MockedCryptoToken extends BaseCryptoToken {
 
     public Certificate getCertificate(int purpose) throws CryptoTokenOfflineException {
         LOG.debug(">getCertificate");
+        checkExisting();
         return signerCertificate;
     }
 
     public List<Certificate> getCertificateChain(int purpose) throws CryptoTokenOfflineException {
         LOG.debug(">getCertificateChain");
+        checkExisting();
         return certificateChain;
     }
 
@@ -161,6 +170,7 @@ public class MockedCryptoToken extends BaseCryptoToken {
 
     @Override
     public ICryptoInstance acquireCryptoInstance(String alias, Map<String, Object> params, RequestContext context) throws CryptoTokenOfflineException, NoSuchAliasException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter, IllegalRequestException {
+        checkExisting();
         return new DefaultCryptoInstance(alias, context, provider == null ? Security.getProvider(providerName) : provider, privateKey, certificateChain);
     }
 
@@ -187,6 +197,12 @@ public class MockedCryptoToken extends BaseCryptoToken {
     @Override
     public boolean removeKey(String alias, IServices services) throws CryptoTokenOfflineException, KeyStoreException, SignServerException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void checkExisting() throws CryptoTokenOfflineException {
+        if (privateKey == null) {
+            throw new CryptoTokenOfflineException("Non-existing key");
+        }
     }
 
 }

@@ -22,6 +22,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -107,7 +108,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
             context.setServices(services);
             ICryptoInstance crypto = null;
             try {
-                crypto = acquireDefaultCryptoInstance(context);
+                crypto = acquireDefaultCryptoInstance(Collections.<String, Object>emptyMap(), context);
 
                 signerCertificate = (X509Certificate) getSigningCertificate(crypto);
                 if (signerCertificate != null) {
@@ -263,7 +264,7 @@ public abstract class BaseSigner extends BaseProcessable implements ISigner {
         Certificate certificate = null;
         List<Certificate> certificateChain = null;
         try {
-            crypto = acquireDefaultCryptoInstance(context);
+            crypto = acquireDefaultCryptoInstance(Collections.<String, Object>emptyMap(), context);
             certificate = getSigningCertificate(crypto);
             certificateChain = getSigningCertificateChain(crypto);
             final ICryptoTokenV4 token = getCryptoToken(services);

@@ -24,7 +24,7 @@
 "Jaxen";                      "BSD";                                           "http://jaxen.codehaus.org";                            "Dependency of OpenXML4J.";            "No.";
 "JNA";                        "Apache 2.0";                                    "https://github.com/java-native-access/jna";            "Dependency of JackNJI11" ;            "No." ;
 "jnr-ffi";                    "Apache 2.0";                                    "https://github.com/jnr/jnr-ffi";                       "Dependency of JackNJI11";             "No." ;
-"Jsign";                      "Apache 2.0";                                    "https://ebourg.github.io/jsign";                       "Used by MSAuthCodeSigner to sign Portable Executables";  "No.";
+"Jsign";                      "Apache 2.0";                                    "https://ebourg.github.io/jsign";                       "Used by MSAuthCodeSigner to sign Portable Executables";  "Yes, fixed issue with SHA-512 merged upstreams but for now built from https://github.com/netmackan/jsign/tree/signserver-sha512-1 until official release.";
 "JUnit";                      "Eclipse Public License";                        "http://junit.org";                                     "Core dependency used for automated testing.";  "No.";
 "Log4j";                      "Apache 2.0";                                    "http://logging.apache.org/log4j";                      "Core dependency used for producing logs." ;  "No.";
 "ODFDOM";                     "Apache 2.0";                                    "http://incubator.apache.org/odftoolkit";               "Used by ODFSigner for ODF support.";  "Yes, ported to work with later version of Bouncy Castle. Contributed upstream patch not yet merged. See DSS-493.";

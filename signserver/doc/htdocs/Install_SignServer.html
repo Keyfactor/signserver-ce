@@ -121,33 +121,9 @@
 
             <nav class="ht-pages-nav">
                 <ul class="ht-pages-nav-top">
-                                                <li class="collapsed">
+                                                <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_Introduction.html">SignServer Introduction</a>
 
-                    <span class="sp-toggle sp-aui-icon-small ht-pages-nav-toggle">
-                <svg id="icon-minus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-                <svg id="icon-plus" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#CCCCCC">
-                        <rect x="11" y="7" width="2" height="10"></rect>
-                        <rect x="7" y="11" width="10" height="2"></rect>
-                    </g>
-                </svg>
-            </span>
-
-            <ul class="nav ht-pages-nav-sub">
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Architecture_and_Concepts.html">SignServer Architecture and Concepts</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_Interoperability.html">SignServer Interoperability</a>
-
-            </li>
-                            </ul>
             </li>
                                                 <li class="collapsed">
         <a class="ht-nav-page-link" href="SignServer_Installation.html">SignServer Installation</a>
@@ -300,6 +276,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -350,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -573,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1334,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1412,7 +1408,7 @@
 </li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">signserver-5.x.y-src.tar.gz: </strong>The source-only tarball distribution. This distribution cannot be deployed without first gathering all the dependencies and then building it. If you choose this one, you are on your own.    </p>
 </li></ul>    <p  >Make sure to compare the checksums as provided on <a  class="external-link" href="https://www.signserver.org/download.html">https://signserver.org/download.html</a>, or from a by PrimeKey provided download site.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">sha256sum signserver-</code><code class="value">5</code><code class="plain">.x.y-bin.zip</code></div>
 <div class="line"><code class="plain">unzip signserver-</code><code class="value">5</code><code class="plain">.x.y-bin.zip</code></div>
 </div>
@@ -1428,7 +1424,7 @@
         <h2 class="heading "><span>Install Maven</span></h2>
     <p  >For example, to install Maven in CentOS 7, run something like the following:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">sudo yum install maven</code></div>
 </div>
     </div>
@@ -1438,7 +1434,7 @@
     <p  >Before running Maven (mvn) commands, ensure that you have a secure Maven installation that does not contact the Central repository over insecure HTTP. Ensure that the URL for the Central repository is specified with HTTPS (and/or use an internal repository).    </p>
     <p  >For an example on how to override the default Maven settings in <tt class=" ">~/.m2/settings.xml</tt>, refer to the <tt class=" ">sample-maven-settings-community.xml</tt> file provided in your SignServer release. To view the current settings, run:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">mvn help:effective-settings</code></div>
 </div>
     </div>
@@ -1447,7 +1443,7 @@
         <h2 class="heading "><span>Set Edition</span></h2>
     <p  >To set the edition (generating <tt class=" ">res/edition.properties</tt>), run:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/ant init</code></div>
 </div>
     </div>
@@ -1456,7 +1452,7 @@
         <h2 class="heading "><span>Build from Sources</span></h2>
     <p  >To build from the sources, run:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">mvn install -DskipTests</code></div>
 </div>
     </div>
@@ -1469,7 +1465,7 @@
     <p  >Set APPSRV_HOME to point to your application server installation.    </p>
     <p  >To set the <strong class=" ">APPSRV_HOME</strong> environment variable for WildFly 14, for example use:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">export APPSRV_HOME=/opt/wildfly-</code><code class="value">14.0</code><code class="plain">.</code><code class="value">1</code><code class="plain">.Final</code></div>
 </div>
     </div>
@@ -1479,7 +1475,7 @@
         <h2 class="heading "><span>SIGNSERVER_NODEID</span></h2>
     <p  >To set SIGNSERVER_NODEID to a unique ID for the server, use:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">export SIGNSERVER_NODEID=node1</code></div>
 </div>
     </div>
@@ -1493,13 +1489,13 @@
     <p  >The file <tt class=" ">signserver_deploy.properties</tt> includes configuration settings for the application, database, and web services.    </p>
     <p  >Copy <tt class=" ">conf/signserver_deploy.properties.sample</tt> to <tt class=" ">conf/signserver_deploy.properties</tt> and open it for editing in a text editor.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">cp conf/signserver_deploy.properties.sample conf/signserver_deploy.properties</code></div>
 </div>
     </div>
     <p  >If using a database other than MySQL and MariaDB, update the property <tt class=" ">database.name.</tt> The following shows the default value, used for both MySQL and MariaDB:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">database.name=mysql</code></div>
 </div>
     </div>
@@ -1508,19 +1504,19 @@
     <p  >You can choose to install SignServer without a database management system and instead rely on SignServer to manage persistence using local files, see <a   href="SignServer_without_Database.html">SignServer without Database</a>.    </p>
     <p  >To run SignServer without a database, set <strong class=" ">database.name</strong> to <strong class=" ">nodb</strong> in the <tt class=" ">signserver_deploy.properties </tt>file :    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">database.name=nodb</code></div>
 </div>
     </div>
     <p  >Set the location for the local file-based database:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">database.nodb.location=/opt/signserver/nodb</code></div>
 </div>
     </div>
     <p  >Ensure to specify a path to a location where SignServer can write files. The default value is empty. If a relative path is used, it is most likely relative to the application server's working directory. The directory should either point to an existing SignServer file database, or be completely empty. If the directory is empty, SignServer will create the initial database structure at startup.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">mkdir /opt/signserver/nodb</code></div>
 </div>
     </div>
@@ -1531,7 +1527,7 @@
     <p  >The file databaseprotection.properties includes configuration for audit log signing and verification that can be used in Enterprise Edition when running with database.    </p>
     <p  >Copy <tt class=" ">conf/databaseprotection.properties.sample</tt> to <tt class=" ">conf/databaseprotection.properties</tt> and open it for editing in a text editor.    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">cp conf/databaseprotection.properties.sample conf/databaseprotection.properties</code></div>
 </div>
     </div>
@@ -1542,14 +1538,14 @@
         <h1 class="heading "><span>Deploy SignServer</span></h1>
     <p  >Run <tt class=" ">bin/ant deploy</tt> to build the configuration and deploy it to the selected application server:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/ant deploy</code></div>
 </div>
     </div>
     <p  >Make sure the application server is running and verify that SignServer was deployed correctly.    </p>
     <p  >For example, look at the server log or for WildFly, run:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">ls /opt/wildfly/standalone/deployments | grep signserver.ear*</code></div>
 </div>
     </div>
@@ -1565,7 +1561,7 @@
         <h2 class="heading "><span>Administration CLI</span></h2>
     <p  >To test the access to the server and print the deployed version, run the following Admin CLI command:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/signserver getstatus brief all</code></div>
 <div class="line"><code class="plain">Current version of server is: SignServer EE </code><code class="value">5.0</code><code class="plain">.</code><code class="value">0</code></div>
 </div>
@@ -1577,7 +1573,7 @@
     <p  >To access the SignServer Admin Web, point your web browser to <a  class="external-link" href="http://localhost:8080/signserver/adminweb">http://localhost:8080/signserver/adminweb.</a>    </p>
     <p  >To temporarily allow all valid client certificates to administer the Administration Web, run the following:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/signserver wsadmins -allowany</code></div>
 </div>
     </div>
@@ -1587,7 +1583,7 @@
         <h2 class="heading "><span>Administration GUI (Community Edition)</span></h2>
     <p  >To start the SignServer Admin GUI, use the following script:    </p>
     <div  class="confbox programlisting">
-                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/signserver-gui</code></div>
 </div>
     </div>

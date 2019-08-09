@@ -65,7 +65,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>SignServer-Client-CLientWS</artifactId>
+            <artifactId>SignServer-Client-ClientWS</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

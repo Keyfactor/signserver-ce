@@ -6,7 +6,7 @@
         <artifactId>SignServer-Modules</artifactId>
         <version>5.2.0.Alpha4-SNAPSHOT</version>
     </parent>
-    <artifactId>SignServer-Client-CLientWS</artifactId>
+    <artifactId>SignServer-Client-ClientWS</artifactId>
     <name>SignServer-Client-ClientWS</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -121,7 +121,7 @@
         </dependency>
         <dependency>
             <groupId>org.signserver</groupId>
-            <artifactId>SignServer-Client-CLientWS</artifactId>
+            <artifactId>SignServer-Client-ClientWS</artifactId>
             <version>5.2.0.Alpha4-SNAPSHOT</version>
         </dependency>
         <dependency>

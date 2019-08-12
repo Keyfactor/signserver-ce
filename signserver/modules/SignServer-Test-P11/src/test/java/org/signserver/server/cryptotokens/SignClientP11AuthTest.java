@@ -124,7 +124,7 @@ public class SignClientP11AuthTest {
             + File.separator + "dss10";    
     final String trustoreFilePath = dss10Path + File.separator + "dss10_truststore.jks";    
     final String dss10RootCAPemPath = dss10Path + File.separator + "DSSRootCA10.cacert.pem";
-    final String signClientCLI = testCase.getSignServerHome().getAbsolutePath() + File.separator + "bin" + File.separator + "signclient";
+    final String signClientCLI;
     
     @Rule
     public final TemporaryFolder inDir = new TemporaryFolder();
@@ -141,6 +141,12 @@ public class SignClientP11AuthTest {
         slotIndex = testCase.getConfig().getProperty("test.p11.slotindex");
         pin = testCase.getConfig().getProperty("test.p11.pin");
         existingKey1 = testCase.getConfig().getProperty("test.p11.existingkey1");
+        
+        if (ModulesTestCase.isWindows()) {
+            signClientCLI = testCase.getSignServerHome().getAbsolutePath() + File.separator + "bin" + File.separator + "signclient.cmd";
+        } else {
+            signClientCLI = testCase.getSignServerHome().getAbsolutePath() + File.separator + "bin" + File.separator + "signclient";
+        }
     }
 
     @Before

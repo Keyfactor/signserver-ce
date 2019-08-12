@@ -713,4 +713,14 @@ public class ModulesTestCase extends TestCase {
         pos = version.indexOf('.', pos + 1);
         return Double.parseDouble(version.substring(0, pos));
     }
+    
+    /**
+     * Is OS running this test-Windows?.
+     *
+     * @return
+     */
+    public static boolean isWindows() {
+        String OS = System.getProperty("os.name").toLowerCase();
+        return (OS.contains("win"));
+    }
 }

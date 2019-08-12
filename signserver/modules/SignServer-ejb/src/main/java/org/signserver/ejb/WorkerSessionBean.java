@@ -69,7 +69,6 @@ import org.signserver.server.entities.KeyUsageCounter;
 import org.signserver.server.entities.KeyUsageCounterDataService;
 import org.signserver.server.log.*;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
-import org.signserver.server.statistics.StatisticsManager;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
@@ -354,8 +353,6 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             serviceTimerSession.unload(workerId);
             serviceTimerSession.load(workerId);
         }
-
-        StatisticsManager.flush(workerId);
     }
 
     /* (non-Javadoc)

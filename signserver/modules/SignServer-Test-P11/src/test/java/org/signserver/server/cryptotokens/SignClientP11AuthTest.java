@@ -220,6 +220,10 @@ public class SignClientP11AuthTest {
         try {
             p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
             createPKCS11ConfigFile(p11ConfigFile);
+            
+            boolean fileExists = p11ConfigFile.exists();
+            assertTrue("fileExists or not ", fileExists);
+            LOG.info("file name" + p11ConfigFile.getAbsolutePath() + "file name " + p11ConfigFile.getName());
 
             setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
             createP11AuthKey();

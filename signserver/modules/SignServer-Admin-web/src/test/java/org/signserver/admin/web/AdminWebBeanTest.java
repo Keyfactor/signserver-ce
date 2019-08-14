@@ -72,7 +72,7 @@ public class AdminWebBeanTest {
         
         // Then test that each of our pages has a mapping to an existing file
         final File home = PathUtil.getAppHome();
-        final File sources = new File(home, "modules/mod-enterprise/SignServer-Admin-web/src/main/webapp/");
+        final File sources = new File(home, "modules/SignServer-Admin-web/src/main/webapp/");
         final File docs = new File(home, "doc/htdocs/");
         final File[] srcFiles = sources.listFiles((FileFilter) new SuffixFileFilter(".xhtml"));
         if (srcFiles.length == 0) {

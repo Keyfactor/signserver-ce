@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <f:metadata>
+        <f:viewParam name="property" value="#{globalConfigurationBean.property}"/>
+    </f:metadata>
+    
+    <body>
+
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            <ui:param name="activeMenu" value="global-configuration"/>
+
+            <ui:define name="title">
+                <h:outputText value="#{text['Remove_Property_-_Global_Configuration']}"/>
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <h1><h:outputText value="#{globalConfigurationBean.toDelete.size() eq 1 ? text['Remove_Property'] : text['Remove_Properties']}"/></h1>
+                
+                <h:form id="form">
+                    <h:panelGroup rendered="#{not empty globalConfigurationBean.toDelete}">
+                        <!-- Properties selected -->
+                        <h2><h:outputText value="#{globalConfigurationBean.toDelete.size() eq 1 ? text['Are_you_sure_you_want_to_remove_the_worker_property'] : text['Are_you_sure_you_want_to_remove_the_worker_properties']}"/></h2>
+
+                        <h:dataTable id="table1" value="#{globalConfigurationBean.toDelete}" var="item">
+                            <f:facet name="header">
+                            </f:facet>
+                            <h:column>
+                                <span class="alertArea"><h:outputText value="#{item}"/></span>
+                            </h:column>
+                            <f:facet name="footer">
+                            </f:facet>
+                        </h:dataTable>
+
+                        <h:commandButton class="buttonNegative" value="#{text['Remove']}" action="#{globalConfigurationBean.removePropertyAction()}"/>
+                        <h:link value="#{text['Cancel']}" outcome="global-configuration"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{empty globalConfigurationBean.toDelete}">
+                        <!-- No properties selected -->
+                        <p><h:outputText value="#{text['(No_properties_selected)']}"/></p>
+                        <h:link value="#{text['Cancel']}" outcome="global-configuration"/>
+                    </h:panelGroup>
+                </h:form>
+                
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <f:metadata>
+        <f:viewParam name="id" value="#{workerBean.id}"/>
+        <f:viewParam name="id" value="#{workerAuthBean.id}"/>        
+        <f:viewParam name="matchSubjectWithValue" value="#{workerAuthBean.matchSubjectWithValue}"/>
+        <f:viewParam name="matchIssuerWithValue" value="#{workerAuthBean.matchIssuerWithValue}"/>
+        <f:viewParam name="matchSubjectWithType" value="#{workerAuthBean.matchSubjectWithType}"/>
+        <f:viewParam name="matchIssuerWithType" value="#{workerAuthBean.matchIssuerWithType}"/>
+        <f:viewParam name="description" value="#{workerAuthBean.description}"/>
+    </f:metadata>
+
+    <body>
+
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            <ui:param name="activeMenu" value="workers"/>
+
+            <ui:define name="title">
+                <h:outputFormat value="#{text['Worker_X']}">
+                    <f:param value="#{workerAuthBean.worker.name}"/>
+                </h:outputFormat>
+                <h:outputText value="- #{text['Authorization_-_Remove']}"/>
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <ui:include src="/worker-menu.xhtml">
+                    <ui:param name="worker" value="#{workerAuthBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="worker-authorization"/>
+                </ui:include>
+                
+                <div id="worker_content">
+                    <h:panelGroup rendered="#{workerAuthBean.existingRule}">
+                        <h:form id="form">
+                            <h:inputHidden id="id" value="#{workerAuthBean.id}"/>
+
+                            <h2><h:outputText value="#{text['Are_you_sure_you_want_to_remove_the_authorized_client']}"/></h2>
+
+                            <h:panelGrid columns="3">
+                                <h:outputText styleClass="titleCell" value="#{text['Subject']}"/>
+                                <h:outputText styleClass="removeAuthType" value="#{text[workerAuthBean.matchSubjectWithType]}"/>
+                                <h:outputText value="#{workerAuthBean.matchSubjectWithValue}"/>
+                                
+                                <h:outputText styleClass="titleCell" value="#{text['Issuer']}"/>
+                                <h:outputText styleClass="removeAuthType" value="#{text[workerAuthBean.matchIssuerWithType]}"/>
+                                <h:outputText value="#{workerAuthBean.matchIssuerWithValue}"/>
+                                
+                                <h:outputText styleClass="titleCell" value="#{text['Description']}"/>
+                                <h:outputText styleClass="removeAuthType" value="#{workerAuthBean.description}"/>
+                            </h:panelGrid>
+                            <h:commandButton class="buttonNegative" value="#{text['Remove']}" action="#{workerAuthBean.removePropertyAction()}"/> <h:link value="#{text['Cancel']}" outcome="worker-authorization"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
+                        </h:form>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{!workerAuthBean.existingRule}">
+                        <h2><h:outputText value="#{text['n/a']}"/></h2>
+                        <p>
+                            <h:link value="#{text['Cancel']}" outcome="worker-authorization"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
+                        </p>
+                    </h:panelGroup>
+                </div>
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

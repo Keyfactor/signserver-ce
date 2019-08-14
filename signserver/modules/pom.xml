@@ -50,6 +50,7 @@
         <module>SignServer-war-Healthcheck</module>
         <module>SignServer-AdminCLI</module>
         <module>SignServer-AdminGUI</module>
+	<module>SignServer-Admin-web</module>
         
         <module>SignServer-ejb-AdminWS</module>
         <module>SignServer-ejb-SignServerWS</module>

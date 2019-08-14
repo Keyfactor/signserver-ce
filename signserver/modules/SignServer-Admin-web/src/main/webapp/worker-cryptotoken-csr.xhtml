@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <f:metadata>
+        <f:viewParam name="id" value="#{workerBean.id}"/>
+        <f:viewParam name="workers" value="#{cSRBulkBean.workerIds}"/>
+        <f:viewParam name="keys" value="#{cSRBulkBean.keys}"/>
+        <f:viewParam name="previous" value="#{cSRBulkBean.previous}"/>
+    </f:metadata>
+    
+    <body>
+
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            <ui:param name="activeMenu" value="workers"/>
+
+            <ui:define name="title">
+                <h:outputFormat value="#{text['Workers_-_Generate-CSR-for-X-Signers']}">
+                    <f:param value="#{cSRBulkBean.CSRWorkers.size()}"/>
+                </h:outputFormat>
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <ui:include src="/worker-menu.xhtml">
+                    <ui:param name="worker" value="#{workerBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="worker-cryptotoken"/>
+                </ui:include>
+
+                <h2><h:outputText value="#{text['Generate_CSR']}"/></h2>
+
+                <h:messages class="errorMessage" globalOnly="true"/>
+               
+                
+                <h:form id="csrForm">
+                    <h:panelGroup rendered="#{empty cSRBulkBean.workers}">
+                        <p>
+                            <h:outputText value="#{text['(No_workers_selected)']}"/>
+                        </p>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{!empty cSRBulkBean.workers}">
+                        <h:dataTable id="table1" value="#{cSRBulkBean.CSRWorkers}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
+                            <h:column>
+                                <f:facet name="header">
+                                    <!-- TODO: Mark all link -->
+                                </f:facet>
+                                <h:selectBooleanCheckbox id="itemSelect" value="#{cSRBulkBean.selectedIds[item.id]}" binding="#{components.itemSelect}" disabled="#{!item.existing}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Key']}" />
+                                </f:facet>
+                                <h:panelGroup rendered="#{item.fixedAlias}">
+                                    <h:outputText value="#{item.alias}"/>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{!item.fixedAlias}">
+                                    <h:selectOneMenu id="alias" value="#{item.alias}" rendered="#{(!item.showOther and item.aliasMenuValues.size() > 1)}" disabled="#{!item.existing}">
+                                        <f:selectItems value="#{item.aliasMenuValues}"/>
+                                    </h:selectOneMenu>
+                                    <b><h:outputText value="#{item.aliasMenuValuesFirst}" rendered="#{(!item.showOther and item.aliasMenuValues.size() == 1)}"/></b> 
+                                    <h:inputText id="otherKeyValue" value="#{item.alias}" validatorMessage="*" rendered="#{item.showOther}" disabled="#{!item.existing}">
+                                        <f:validator validatorId="optionallyRequiredValidator"/>
+                                        <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
+                                        <f:attribute name="andCheckboxSelected" value="#{components.itemSelect.clientId}"/>
+                                    </h:inputText>
+                                    <span class="errorMessage"><h:message for="otherKeyValue"/></span>
+                                </h:panelGroup>
+                            </h:column>
+                            <h:column>
+                                <h:commandButton id="otherAdd" value="&gt;" action="#{item.setShowOther(true)}" rendered="#{!item.showOther and !item.fixedAlias}" disabled="#{!item.existing}"/>
+                                <h:commandButton id="otherRemove" value="&lt;" action="#{item.setShowOther(false)}" rendered="#{item.showOther and !item.fixedAlias}" disabled="#{!item.existing}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Signature_Algorithm']}" />
+                                </f:facet>
+                                <h:inputText id ="sigAlg" value="#{item.signatureAlgorithm}" requiredMessage="*" disabled="#{!item.existing}" size="20">
+                                    <f:validator validatorId="optionallyRequiredValidator"/>
+                                    <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
+                                    <f:attribute name="andCheckboxSelected" value="#{components.itemSelect.clientId}"/>
+                                </h:inputText>
+                                <span class="errorMessage"><h:message for="sigAlg"/></span>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['DN']}" />
+                                </f:facet>
+                                <h:inputText id="dn" value="#{item.dn}" requiredMessage="*" disabled="#{!item.existing}" size="30">
+                                    <f:validator validatorId="optionallyRequiredValidator"/>
+                                    <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
+                                    <f:attribute name="andCheckboxSelected" value="#{components.itemSelect.clientId}"/>
+                                </h:inputText>
+                                <span class="errorMessage"><h:message for="dn"/></span>
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Result']}" />
+                                </f:facet>
+                                <h:commandButton class="buttonFeatured" id="download" value="Download" action="#{cSRBulkBean.downloadAction(item)}" rendered="#{(item.pemFile != null)}"/>
+                            </h:column>
+
+                            <h:column>
+                                <f:facet name="header">
+                                    <!-- Error -->
+                                </f:facet>
+                                <span class="errorMessage"><h:outputText value="#{item.error}"/></span> 
+                                <span class="successMessage"><h:outputText value="#{item.success}"/></span>
+                            </h:column>
+                            <f:facet name="footer">
+                                <!-- <h:outputText value="Selected: #{cSRBulkBean.selectedIds.size()}" /> -->
+                            </f:facet>
+                        </h:dataTable>
+
+                        <h:outputText value="#{text['Format']}"/>
+                        <h:selectOneRadio id="format" value="#{cSRBulkBean.format}">
+                            <f:selectItem id="standard" itemValue="#{cSRBulkBean.FORMAT_STANDARD}"
+                                          itemLabel="#{text['Standard_CSR']}"/>
+                            <f:selectItem id="signed" itemValue="#{cSRBulkBean.FORMAT_SIGNED}"
+                                          itemLabel="#{text['CSR_signed_by_worker']} "/>
+                        </h:selectOneRadio>
+                        <h:selectOneMenu id="requestSigner" value="#{cSRBulkBean.requestSigner}">
+                            <f:selectItems value="#{cSRBulkBean.availableWorkersMenu}"/>
+                        </h:selectOneMenu>
+
+                        <h:panelGrid columns="2">
+                            <f:facet name="footer">
+                                <h:commandButton class="buttonFeatured" value="#{text['Generate']}" action="#{cSRBulkBean.generateAction()}" binding="#{components.buttonSubmit}"/> <h:link value="#{text['Cancel']}" outcome="#{cSRBulkBean.getBackToCryptoTokenLink(cSRBulkBean.keysList)}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                            </f:facet>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                </h:form>
+                
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

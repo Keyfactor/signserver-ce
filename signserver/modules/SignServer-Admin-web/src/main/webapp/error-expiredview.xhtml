@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <body>
+
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+
+            <ui:define name="title">
+                <h:outputText value="#{text['View_Expired']}"/>
+            </ui:define>
+
+            <ui:define name="top"/>
+
+            <ui:define name="content">
+                <h1><h:outputText value="#{text['View_Expired']}"/></h1>
+                <p>
+                    <b><h:outputText value="#{requestScope['javax.servlet.error.message']}"/></b>
+                </p>
+                <p>&nbsp;</p>
+                
+            </ui:define>
+
+            <ui:define name="bottom"/>
+
+        </ui:composition>
+
+    </body>
+</html>

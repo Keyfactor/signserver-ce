@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <f:metadata>
+        <f:viewParam name="sequenceNumber" value="#{auditLogEntryBean.sequenceNumber}"/>
+        <f:viewParam name="node" value="#{auditLogEntryBean.node}"/>
+    </f:metadata>
+
+    <body>
+
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            <ui:param name="activeMenu" value="auditlog"/>
+
+            <ui:define name="title">
+                <h:outputFormat value="#{text['Audit_Log_-_Entry_X_on_Y']}">
+                    <f:param value="#{auditLogEntryBean.sequenceNumber}"/>
+                    <f:param value="#{auditLogEntryBean.node}"/>
+                </h:outputFormat>
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <h1>
+                    <h:outputFormat value="#{text['Entry_X_on_Y']}">
+                        <f:param value="#{auditLogEntryBean.sequenceNumber}"/>
+                        <f:param value="#{auditLogEntryBean.node}"/>
+                    </h:outputFormat>
+                </h1>
+                <h:form>
+                    
+                   
+                    <p class="errorMessage">
+                        <h:outputText value="#{auditLogEntryBean.queryErrorMain}" rendered="#{auditLogEntryBean.queryError != null}"/>
+                    </p>
+                    <p>
+                        <pre>
+                            <h:outputText value="#{auditLogEntryBean.queryError}"  />
+                        </pre>
+                    </p>
+                    
+                    <h:panelGroup rendered="#{auditLogEntryBean.queryError == null}">
+                        <h:panelGrid columns="2">
+                            <h:outputText value="#{text['Time_COLON']}"/>
+                            <h:outputText value="#{auditLogEntryBean.entry.time}"/>
+                            
+                            <h:outputText value="#{text['Outcome_COLON']}"/>
+                            <h:outputText value="#{auditLogEntryBean.entry.outcome}"/>
+                            
+                            <h:outputText value="#{text['Event_COLON']}"/>
+                            <h:outputText value="#{auditLogEntryBean.entry.event}"/>
+                            
+                            <h:outputText value="#{text['Module_COLON']}"/>
+                            <h:outputText value="#{auditLogEntryBean.entry.module}"/>
+                            
+                            <h:outputText value="#{text['Service_COLON']}"/>
+                            <h:outputText value="#{auditLogEntryBean.entry.service}"/>
+                            
+                            <h:outputText value="#{text['Admin_Subject_COLON']}"/>
+                            <h:outputText value="#{auditLogEntryBean.entry.adminSubject}"/>
+                            
+                            <h:outputText value="#{text['Admin_Serial_Number_COLON']}"/>
+                            <h:outputText value="#{auditLogEntryBean.entry.adminSerialNumber}"/>
+                            
+                            <h:outputText value="#{text['Admin_Issuer_COLON']}"/>
+                            <h:outputText value="#{auditLogEntryBean.entry.adminIssuer}"/>
+                            
+                            <h:outputText value="#{text['Worker_ID_COLON']}"/>
+                            <h:outputText value="#{auditLogEntryBean.entry.workerID}"/>
+                            
+                            <h:outputText value="#{text['Node_COLON']}"/>
+                            <h:outputText value="#{auditLogEntryBean.entry.node}"/>
+                            
+                            <h:outputText value="#{text['Details_COLON']}"/>
+                            <h:panelGroup>
+                                <pre>
+                                    <h:outputText value="#{auditLogEntryBean.entry.fullDetails}"/>
+                                </pre>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </h:panelGroup>
+                    
+                </h:form>
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

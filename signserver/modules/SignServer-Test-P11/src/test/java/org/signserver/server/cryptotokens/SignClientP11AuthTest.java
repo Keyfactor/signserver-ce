@@ -150,7 +150,7 @@ public class SignClientP11AuthTest {
         }
         
         String javaHome = System.getenv("JAVA_HOME");
-        envp = new String[]{"JAVA_HOME=" + javaHome};
+        envp = new String[]{"JAVA_HOME=" + javaHome, "SIGNSERVER_HOME=" + testCase.getSignServerHome().getAbsolutePath()};
     }
 
     @Before

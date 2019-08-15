@@ -146,7 +146,7 @@ public class SignClientP11AuthTest {
             signClientCLI = testCase.getSignServerHome().getAbsolutePath() + File.separator + "bin" + File.separator + "signclient.cmd";
         } else {
             signClientCLI = testCase.getSignServerHome().getAbsolutePath() + File.separator + "bin" + File.separator + "signclient";
-        }                
+        }  
     }
 
     @Before
@@ -184,24 +184,24 @@ public class SignClientP11AuthTest {
      *
      * @throws Exception
      */
-   @Test
-    public void testPlainSigner_P11AuthKey() throws Exception {
-        LOG.info("testPlainSigner_P11AuthKey"); 
-        
-        try {
-            setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
-            createP11AuthKey();
-
-            setPlainSignerProperties(WORKER_PLAIN, true);
-            workerSession.reloadConfiguration(WORKER_PLAIN);
-
-            plainSigner(WORKER_PLAIN);
-        } finally {
-            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
-            testCase.removeWorker(CRYPTO_TOKEN_ID);
-            testCase.removeWorker(WORKER_PLAIN);
-        }
-    }
+//   @Test
+//    public void testPlainSigner_P11AuthKey() throws Exception {
+//        LOG.info("testPlainSigner_P11AuthKey"); 
+//        
+//        try {
+//            setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
+//            createP11AuthKey();
+//
+//            setPlainSignerProperties(WORKER_PLAIN, true);
+//            workerSession.reloadConfiguration(WORKER_PLAIN);
+//
+//            plainSigner(WORKER_PLAIN);
+//        } finally {
+//            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
+//            testCase.removeWorker(CRYPTO_TOKEN_ID);
+//            testCase.removeWorker(WORKER_PLAIN);
+//        }
+//    }
     
     /**
      * Creates a new TLS client authentication key in P11 keystore, issue a
@@ -218,7 +218,7 @@ public class SignClientP11AuthTest {
         File p11ConfigFile = null;
 
         try {
-            p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
+            p11ConfigFile = File.createTempFile("sunpkcs11-", ".cfg");
             createPKCS11ConfigFile(p11ConfigFile);
             
             boolean fileExists = p11ConfigFile.exists();
@@ -273,58 +273,58 @@ public class SignClientP11AuthTest {
      *
      * @throws Exception
      */
-    @Test
-    public void testSigningFixedP11AuthKeyPromptForAlias() throws Exception {
-        LOG.info("testSigningFixedP11AuthKey");
-        File p11ConfigFile = null;
-
-        try {
-            p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
-            createPKCS11ConfigFile(p11ConfigFile);
-
-            setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
-            createP11AuthKey();
-            createP11AltAuthKey();
-
-            setPlainSignerProperties(WORKER_PLAIN, true);            
-            workerSession.setWorkerProperty(WORKER_PLAIN, "AUTHTYPE",
-                    "org.signserver.server.ClientCertAuthorizer");
-
-            // Add CLIENT AUTH rule in worker
-            assertEquals("execute add", 0,
-                    adminCLI.execute("authorizedclients", "-worker", String.valueOf(WORKER_PLAIN),
-                            "-add",
-                            "-matchSubjectWithType", "SUBJECT_RDN_CN",
-                            "-matchSubjectWithValue", AUTH_KEY_CERT_CN,
-                            "-matchIssuerWithValue", ISSUER_DN,
-                            "-description", DESCRIPTION));
-
-            workerSession.reloadConfiguration(WORKER_PLAIN);
-            
-            ComplianceTestUtils.ProcResult res =
-                    executeWithExpectedPrompt(TEST_AUTH_KEY, TEST_AUTH_ALT_KEY,
-                                              false,
-                            signClientCLI, "signdocument",
-                            "-workername", "TestPlainSignerP11",
-                            "-data", "<data/>",
-                            "-keystoretype", "PKCS11_CONFIG",
-                            "-keyaliasprompt",
-                            "-keystore", p11ConfigFile.getAbsolutePath(),
-                            "-keystorepwd", pin,
-                            "-truststore", trustoreFilePath,
-                            "-truststorepwd", "changeit");
-            LOG.debug("output: " + res.getOutput().toString());
-            Assert.assertEquals("result: " + res.getErrorMessage(), 0, res.getExitValue());
-        } finally {
-            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
-            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_ALT_KEY);
-            testCase.removeWorker(CRYPTO_TOKEN_ID);
-            testCase.removeWorker(WORKER_PLAIN);
-            FileUtils.deleteQuietly(p11ConfigFile);
-            inDir.delete();
-            outDir.delete();
-        }
-    }
+//    @Test
+//    public void testSigningFixedP11AuthKeyPromptForAlias() throws Exception {
+//        LOG.info("testSigningFixedP11AuthKey");
+//        File p11ConfigFile = null;
+//
+//        try {
+//            p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
+//            createPKCS11ConfigFile(p11ConfigFile);
+//
+//            setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
+//            createP11AuthKey();
+//            createP11AltAuthKey();
+//
+//            setPlainSignerProperties(WORKER_PLAIN, true);            
+//            workerSession.setWorkerProperty(WORKER_PLAIN, "AUTHTYPE",
+//                    "org.signserver.server.ClientCertAuthorizer");
+//
+//            // Add CLIENT AUTH rule in worker
+//            assertEquals("execute add", 0,
+//                    adminCLI.execute("authorizedclients", "-worker", String.valueOf(WORKER_PLAIN),
+//                            "-add",
+//                            "-matchSubjectWithType", "SUBJECT_RDN_CN",
+//                            "-matchSubjectWithValue", AUTH_KEY_CERT_CN,
+//                            "-matchIssuerWithValue", ISSUER_DN,
+//                            "-description", DESCRIPTION));
+//
+//            workerSession.reloadConfiguration(WORKER_PLAIN);
+//            
+//            ComplianceTestUtils.ProcResult res =
+//                    executeWithExpectedPrompt(TEST_AUTH_KEY, TEST_AUTH_ALT_KEY,
+//                                              false,
+//                            signClientCLI, "signdocument",
+//                            "-workername", "TestPlainSignerP11",
+//                            "-data", "<data/>",
+//                            "-keystoretype", "PKCS11_CONFIG",
+//                            "-keyaliasprompt",
+//                            "-keystore", p11ConfigFile.getAbsolutePath(),
+//                            "-keystorepwd", pin,
+//                            "-truststore", trustoreFilePath,
+//                            "-truststorepwd", "changeit");
+//            LOG.debug("output: " + res.getOutput().toString());
+//            Assert.assertEquals("result: " + res.getErrorMessage(), 0, res.getExitValue());
+//        } finally {
+//            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
+//            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_ALT_KEY);
+//            testCase.removeWorker(CRYPTO_TOKEN_ID);
+//            testCase.removeWorker(WORKER_PLAIN);
+//            FileUtils.deleteQuietly(p11ConfigFile);
+//            inDir.delete();
+//            outDir.delete();
+//        }
+//    }
 
     /**
      * Creates two new TLS client authentication keys in P11 keystore, issue
@@ -335,59 +335,59 @@ public class SignClientP11AuthTest {
      *
      * @throws Exception
      */
-    @Test
-    public void testSigningFixedP11AuthKeyPromptForAliasAnswerWithAlternative()
-            throws Exception {
-        LOG.info("testSigningFixedP11AuthKey");
-        File p11ConfigFile = null;
-
-        try {
-            p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
-            createPKCS11ConfigFile(p11ConfigFile);
-
-            setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
-            createP11AuthKey();
-            createP11AltAuthKey();
-
-            setPlainSignerProperties(WORKER_PLAIN, true);            
-            workerSession.setWorkerProperty(WORKER_PLAIN, "AUTHTYPE",
-                    "org.signserver.server.ClientCertAuthorizer");
-
-            // Add CLIENT AUTH rule in worker
-            assertEquals("execute add", 0,
-                    adminCLI.execute("authorizedclients", "-worker", String.valueOf(WORKER_PLAIN),
-                            "-add",
-                            "-matchSubjectWithType", "SUBJECT_RDN_CN",
-                            "-matchSubjectWithValue", AUTH_KEY_CERT_CN,
-                            "-matchIssuerWithValue", ISSUER_DN,
-                            "-description", DESCRIPTION));
-
-            workerSession.reloadConfiguration(WORKER_PLAIN);
-            
-            ComplianceTestUtils.ProcResult res =
-                    executeWithExpectedPrompt(TEST_AUTH_KEY, TEST_AUTH_ALT_KEY,
-                                              true,
-                            signClientCLI, "signdocument",
-                            "-workername", "TestPlainSignerP11",
-                            "-data", "<data/>",
-                            "-keystoretype", "PKCS11_CONFIG",
-                            "-keyaliasprompt",
-                            "-keystore", p11ConfigFile.getAbsolutePath(),
-                            "-keystorepwd", pin,
-                            "-truststore", trustoreFilePath,
-                            "-truststorepwd", "changeit");
-            LOG.debug("output: " + res.getOutput().toString());
-            Assert.assertEquals("result: " + res.getErrorMessage(), 254, res.getExitValue());
-        } finally {
-            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
-            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_ALT_KEY);
-            testCase.removeWorker(CRYPTO_TOKEN_ID);
-            testCase.removeWorker(WORKER_PLAIN);
-            FileUtils.deleteQuietly(p11ConfigFile);
-            inDir.delete();
-            outDir.delete();
-        }
-    }
+//    @Test
+//    public void testSigningFixedP11AuthKeyPromptForAliasAnswerWithAlternative()
+//            throws Exception {
+//        LOG.info("testSigningFixedP11AuthKey");
+//        File p11ConfigFile = null;
+//
+//        try {
+//            p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
+//            createPKCS11ConfigFile(p11ConfigFile);
+//
+//            setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
+//            createP11AuthKey();
+//            createP11AltAuthKey();
+//
+//            setPlainSignerProperties(WORKER_PLAIN, true);            
+//            workerSession.setWorkerProperty(WORKER_PLAIN, "AUTHTYPE",
+//                    "org.signserver.server.ClientCertAuthorizer");
+//
+//            // Add CLIENT AUTH rule in worker
+//            assertEquals("execute add", 0,
+//                    adminCLI.execute("authorizedclients", "-worker", String.valueOf(WORKER_PLAIN),
+//                            "-add",
+//                            "-matchSubjectWithType", "SUBJECT_RDN_CN",
+//                            "-matchSubjectWithValue", AUTH_KEY_CERT_CN,
+//                            "-matchIssuerWithValue", ISSUER_DN,
+//                            "-description", DESCRIPTION));
+//
+//            workerSession.reloadConfiguration(WORKER_PLAIN);
+//            
+//            ComplianceTestUtils.ProcResult res =
+//                    executeWithExpectedPrompt(TEST_AUTH_KEY, TEST_AUTH_ALT_KEY,
+//                                              true,
+//                            signClientCLI, "signdocument",
+//                            "-workername", "TestPlainSignerP11",
+//                            "-data", "<data/>",
+//                            "-keystoretype", "PKCS11_CONFIG",
+//                            "-keyaliasprompt",
+//                            "-keystore", p11ConfigFile.getAbsolutePath(),
+//                            "-keystorepwd", pin,
+//                            "-truststore", trustoreFilePath,
+//                            "-truststorepwd", "changeit");
+//            LOG.debug("output: " + res.getOutput().toString());
+//            Assert.assertEquals("result: " + res.getErrorMessage(), 254, res.getExitValue());
+//        } finally {
+//            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
+//            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_ALT_KEY);
+//            testCase.removeWorker(CRYPTO_TOKEN_ID);
+//            testCase.removeWorker(WORKER_PLAIN);
+//            FileUtils.deleteQuietly(p11ConfigFile);
+//            inDir.delete();
+//            outDir.delete();
+//        }
+//    }
     
     /**
      * Executes command checking for expected alias to answer the prompt
@@ -514,60 +514,60 @@ public class SignClientP11AuthTest {
      *
      * @throws Exception
      */
-    @Test
-    public void testSigningFixedP11AuthKeyFromInDir() throws Exception {
-        LOG.info("testSigningFixedP11AuthKeyFromInDir");
-        File p11ConfigFile = null;
-
-        try {
-            p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
-            createPKCS11ConfigFile(p11ConfigFile);
-            
-            setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
-            createP11AuthKey();
-
-            setPlainSignerProperties(WORKER_PLAIN, true);            
-            workerSession.setWorkerProperty(WORKER_PLAIN, "AUTHTYPE",
-                    "org.signserver.server.ClientCertAuthorizer");
-            workerSession.setWorkerProperty(WORKER_PLAIN, "DISABLEKEYUSAGECOUNTER", "TRUE");
-
-            // Add CLIENT AUTH rule in worker
-            assertEquals("execute add", 0,
-                    adminCLI.execute("authorizedclients", "-worker", String.valueOf(WORKER_PLAIN),
-                            "-add",
-                            "-matchSubjectWithType", "SUBJECT_RDN_CN",
-                            "-matchSubjectWithValue", AUTH_KEY_CERT_CN,
-                            "-matchIssuerWithValue", ISSUER_DN,
-                            "-description", DESCRIPTION));
-
-            workerSession.reloadConfiguration(WORKER_PLAIN);
-
-            // Create 200 input files
-            inDir.create();
-            outDir.create();
-            final ArrayList<File> files = createInputFiles(200);
-
-            ComplianceTestUtils.ProcResult res
-                    = ComplianceTestUtils.execute(signClientCLI, "signdocument", "-workername", "TestPlainSignerP11",
-                            "-indir", inDir.getRoot().getAbsolutePath(),
-                            "-outdir", outDir.getRoot().getAbsolutePath(),
-                            "-keystoretype", "PKCS11_CONFIG",
-                            "-keyalias", TEST_AUTH_KEY,
-                            "-keystore", p11ConfigFile.getAbsolutePath(),
-                            "-keystorepwd", pin,
-                            "-truststore", trustoreFilePath,
-                            "-truststorepwd", "changeit");
-            Assert.assertEquals("result: " + res.getErrorMessage(), 0, res.getExitValue());
-
-        } finally {
-            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
-            testCase.removeWorker(CRYPTO_TOKEN_ID);
-            testCase.removeWorker(WORKER_PLAIN);
-            FileUtils.deleteQuietly(p11ConfigFile);
-            inDir.delete();
-            outDir.delete();
-        }
-    }
+//    @Test
+//    public void testSigningFixedP11AuthKeyFromInDir() throws Exception {
+//        LOG.info("testSigningFixedP11AuthKeyFromInDir");
+//        File p11ConfigFile = null;
+//
+//        try {
+//            p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
+//            createPKCS11ConfigFile(p11ConfigFile);
+//            
+//            setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
+//            createP11AuthKey();
+//
+//            setPlainSignerProperties(WORKER_PLAIN, true);            
+//            workerSession.setWorkerProperty(WORKER_PLAIN, "AUTHTYPE",
+//                    "org.signserver.server.ClientCertAuthorizer");
+//            workerSession.setWorkerProperty(WORKER_PLAIN, "DISABLEKEYUSAGECOUNTER", "TRUE");
+//
+//            // Add CLIENT AUTH rule in worker
+//            assertEquals("execute add", 0,
+//                    adminCLI.execute("authorizedclients", "-worker", String.valueOf(WORKER_PLAIN),
+//                            "-add",
+//                            "-matchSubjectWithType", "SUBJECT_RDN_CN",
+//                            "-matchSubjectWithValue", AUTH_KEY_CERT_CN,
+//                            "-matchIssuerWithValue", ISSUER_DN,
+//                            "-description", DESCRIPTION));
+//
+//            workerSession.reloadConfiguration(WORKER_PLAIN);
+//
+//            // Create 200 input files
+//            inDir.create();
+//            outDir.create();
+//            final ArrayList<File> files = createInputFiles(200);
+//
+//            ComplianceTestUtils.ProcResult res
+//                    = ComplianceTestUtils.execute(signClientCLI, "signdocument", "-workername", "TestPlainSignerP11",
+//                            "-indir", inDir.getRoot().getAbsolutePath(),
+//                            "-outdir", outDir.getRoot().getAbsolutePath(),
+//                            "-keystoretype", "PKCS11_CONFIG",
+//                            "-keyalias", TEST_AUTH_KEY,
+//                            "-keystore", p11ConfigFile.getAbsolutePath(),
+//                            "-keystorepwd", pin,
+//                            "-truststore", trustoreFilePath,
+//                            "-truststorepwd", "changeit");
+//            Assert.assertEquals("result: " + res.getErrorMessage(), 0, res.getExitValue());
+//
+//        } finally {
+//            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
+//            testCase.removeWorker(CRYPTO_TOKEN_ID);
+//            testCase.removeWorker(WORKER_PLAIN);
+//            FileUtils.deleteQuietly(p11ConfigFile);
+//            inDir.delete();
+//            outDir.delete();
+//        }
+//    }
     
     /**
      * Creates a new TLS client authentication key in P11 keystore, issue a
@@ -578,62 +578,62 @@ public class SignClientP11AuthTest {
      *
      * @throws Exception
      */
-    @Test
-    public void testSigningFixedP11AuthKeyFromInDirWith100Threads() throws Exception {
-        LOG.info("testSigningFixedP11AuthKeyFromInDirWith100Threads");        
-        File p11ConfigFile = null;
-
-        try {
-            p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
-            createPKCS11ConfigFile(p11ConfigFile);
-            
-            setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
-            createP11AuthKey();
-
-            setPlainSignerProperties(WORKER_PLAIN, true);            
-            workerSession.setWorkerProperty(WORKER_PLAIN, "AUTHTYPE",
-                    "org.signserver.server.ClientCertAuthorizer");
-            workerSession.setWorkerProperty(WORKER_PLAIN, "DISABLEKEYUSAGECOUNTER", "TRUE");
-
-            // Add CLIENT AUTH rule in worker
-            assertEquals("execute add", 0,
-                    adminCLI.execute("authorizedclients", "-worker", String.valueOf(WORKER_PLAIN),
-                            "-add",
-                            "-matchSubjectWithType", "SUBJECT_RDN_CN",
-                            "-matchSubjectWithValue", AUTH_KEY_CERT_CN,
-                            "-matchIssuerWithValue", ISSUER_DN,
-                            "-description", DESCRIPTION));
-
-            workerSession.reloadConfiguration(WORKER_PLAIN);
-
-            // Create 200 input files
-            inDir.create();
-            outDir.create();
-            final ArrayList<File> files = createInputFiles(200);
-
-            ComplianceTestUtils.ProcResult res
-                    = ComplianceTestUtils.execute(signClientCLI, "signdocument",
-                            "-workername", "TestPlainSignerP11",
-                            "-indir", inDir.getRoot().getAbsolutePath(),
-                            "-outdir", outDir.getRoot().getAbsolutePath(),
-                            "-threads", "100",
-                            "-keystoretype", "PKCS11_CONFIG",
-                            "-keyalias", TEST_AUTH_KEY,
-                            "-keystore", p11ConfigFile.getAbsolutePath(),
-                            "-keystorepwd", pin,
-                            "-truststore", trustoreFilePath,
-                            "-truststorepwd", "changeit");
-            Assert.assertEquals("result: " + res.getErrorMessage(), 0, res.getExitValue());
-
-        } finally {
-            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
-            testCase.removeWorker(CRYPTO_TOKEN_ID);
-            testCase.removeWorker(WORKER_PLAIN);
-            FileUtils.deleteQuietly(p11ConfigFile);
-            inDir.delete();
-            outDir.delete();
-        }
-    }
+//    @Test
+//    public void testSigningFixedP11AuthKeyFromInDirWith100Threads() throws Exception {
+//        LOG.info("testSigningFixedP11AuthKeyFromInDirWith100Threads");        
+//        File p11ConfigFile = null;
+//
+//        try {
+//            p11ConfigFile = File.createTempFile("sunpkcs11-", "cfg");
+//            createPKCS11ConfigFile(p11ConfigFile);
+//            
+//            setupCryptoTokenProperties(CRYPTO_TOKEN_ID, false);
+//            createP11AuthKey();
+//
+//            setPlainSignerProperties(WORKER_PLAIN, true);            
+//            workerSession.setWorkerProperty(WORKER_PLAIN, "AUTHTYPE",
+//                    "org.signserver.server.ClientCertAuthorizer");
+//            workerSession.setWorkerProperty(WORKER_PLAIN, "DISABLEKEYUSAGECOUNTER", "TRUE");
+//
+//            // Add CLIENT AUTH rule in worker
+//            assertEquals("execute add", 0,
+//                    adminCLI.execute("authorizedclients", "-worker", String.valueOf(WORKER_PLAIN),
+//                            "-add",
+//                            "-matchSubjectWithType", "SUBJECT_RDN_CN",
+//                            "-matchSubjectWithValue", AUTH_KEY_CERT_CN,
+//                            "-matchIssuerWithValue", ISSUER_DN,
+//                            "-description", DESCRIPTION));
+//
+//            workerSession.reloadConfiguration(WORKER_PLAIN);
+//
+//            // Create 200 input files
+//            inDir.create();
+//            outDir.create();
+//            final ArrayList<File> files = createInputFiles(200);
+//
+//            ComplianceTestUtils.ProcResult res
+//                    = ComplianceTestUtils.execute(signClientCLI, "signdocument",
+//                            "-workername", "TestPlainSignerP11",
+//                            "-indir", inDir.getRoot().getAbsolutePath(),
+//                            "-outdir", outDir.getRoot().getAbsolutePath(),
+//                            "-threads", "100",
+//                            "-keystoretype", "PKCS11_CONFIG",
+//                            "-keyalias", TEST_AUTH_KEY,
+//                            "-keystore", p11ConfigFile.getAbsolutePath(),
+//                            "-keystorepwd", pin,
+//                            "-truststore", trustoreFilePath,
+//                            "-truststorepwd", "changeit");
+//            Assert.assertEquals("result: " + res.getErrorMessage(), 0, res.getExitValue());
+//
+//        } finally {
+//            workerSession.removeKey(new WorkerIdentifier(CRYPTO_TOKEN_ID), TEST_AUTH_KEY);
+//            testCase.removeWorker(CRYPTO_TOKEN_ID);
+//            testCase.removeWorker(WORKER_PLAIN);
+//            FileUtils.deleteQuietly(p11ConfigFile);
+//            inDir.delete();
+//            outDir.delete();
+//        }
+//    }
 
 
     private void setPlainSignerProperties(final int workerId, final boolean cached) throws IOException {

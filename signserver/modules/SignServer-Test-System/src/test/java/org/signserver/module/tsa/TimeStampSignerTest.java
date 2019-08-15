@@ -1677,6 +1677,7 @@ public class TimeStampSignerTest extends ModulesTestCase {
         removeWorker(WORKER2.getId());
         removeWorker(WORKER3.getId());
         removeWorker(WORKER4.getId());
+        removeWorker(WORKER5.getId());
     }
 
 }

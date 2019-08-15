@@ -124,8 +124,7 @@ public class SignClientP11AuthTest {
             + File.separator + "dss10";    
     final String trustoreFilePath = dss10Path + File.separator + "dss10_truststore.jks";    
     final String dss10RootCAPemPath = dss10Path + File.separator + "DSSRootCA10.cacert.pem";
-    final String signClientCLI;
-    final String[] envp;
+    final String signClientCLI;    
     
     @Rule
     public final TemporaryFolder inDir = new TemporaryFolder();
@@ -147,10 +146,7 @@ public class SignClientP11AuthTest {
             signClientCLI = testCase.getSignServerHome().getAbsolutePath() + File.separator + "bin" + File.separator + "signclient.cmd";
         } else {
             signClientCLI = testCase.getSignServerHome().getAbsolutePath() + File.separator + "bin" + File.separator + "signclient";
-        }
-        
-        String javaHome = System.getenv("JAVA_HOME");
-        envp = new String[]{"JAVA_HOME=" + javaHome, "SIGNSERVER_HOME=" + testCase.getSignServerHome().getAbsolutePath()};
+        }                
     }
 
     @Before
@@ -248,7 +244,7 @@ public class SignClientP11AuthTest {
             workerSession.reloadConfiguration(WORKER_PLAIN);
 
             ComplianceTestUtils.ProcResult res
-                    = ComplianceTestUtils.executeWithEnv(envp, signClientCLI, "signdocument", "-workername", "TestPlainSignerP11",
+                    = ComplianceTestUtils.execute(signClientCLI, "signdocument", "-workername", "TestPlainSignerP11",
                             "-data", "<data/>",
                             "-keystoretype", "PKCS11_CONFIG",
                             "-keyalias", TEST_AUTH_KEY,
@@ -552,7 +548,7 @@ public class SignClientP11AuthTest {
             final ArrayList<File> files = createInputFiles(200);
 
             ComplianceTestUtils.ProcResult res
-                    = ComplianceTestUtils.executeWithEnv(envp, signClientCLI, "signdocument", "-workername", "TestPlainSignerP11",
+                    = ComplianceTestUtils.execute(signClientCLI, "signdocument", "-workername", "TestPlainSignerP11",
                             "-indir", inDir.getRoot().getAbsolutePath(),
                             "-outdir", outDir.getRoot().getAbsolutePath(),
                             "-keystoretype", "PKCS11_CONFIG",
@@ -616,7 +612,7 @@ public class SignClientP11AuthTest {
             final ArrayList<File> files = createInputFiles(200);
 
             ComplianceTestUtils.ProcResult res
-                    = ComplianceTestUtils.executeWithEnv(envp, signClientCLI, "signdocument",
+                    = ComplianceTestUtils.execute(signClientCLI, "signdocument",
                             "-workername", "TestPlainSignerP11",
                             "-indir", inDir.getRoot().getAbsolutePath(),
                             "-outdir", outDir.getRoot().getAbsolutePath(),

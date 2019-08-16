@@ -34,7 +34,7 @@ import org.signserver.testutils.ModulesTestCase;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 
 /**
- * TODO: Document me! See issue DSS-610
+ * TODO: Document me!
  * @version $Id$
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

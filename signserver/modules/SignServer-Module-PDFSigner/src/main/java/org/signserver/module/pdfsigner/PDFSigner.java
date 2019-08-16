@@ -55,7 +55,6 @@ import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
 import org.signserver.server.signers.BaseSigner;
-import org.signserver.server.statistics.Event;
 import org.signserver.validationservice.server.ValidationUtils;
 import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
 
@@ -91,11 +90,7 @@ public class PDFSigner extends BaseSigner {
 
     /** Logger for this class. */
     public static final Logger LOG = Logger.getLogger(PDFSigner.class);
-    
-    // private final CSVFileStatisticsCollector cSVFileStatisticsCollector =
-    // CSVFileStatisticsCollector.getInstance(this.getClass().getName(),
-    // "PDF size in bytes");
-    
+
     // Configuration Property constants
     // signature properties
     public static final String REASON = "REASON";

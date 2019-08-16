@@ -84,13 +84,7 @@ public class RequestContext implements Serializable {
      * All requests called from a CLI interface should set this setting to Boolean true.
      */
     public static final String CALLED_FROM_CLI = "CALLED_FROM_CLI";
-    
-    /**
-     * The current statistics event that a worker can use to add custom data.
-     * Is null if no statistics is performed.
-     */
-    public static final String STATISTICS_EVENT = "STATISTICS_EVENT";    
-        
+
     /**
      * The transaction ID.
      * This value is set by the WorkerSessionBean but could be read by

@@ -321,12 +321,6 @@ public class PDFSigner extends BaseSigner {
         final LogMap logMap = LogMap.getInstance(requestContext);        
 
         // Start processing the actual signature
-        
-        if (requestContext.get(RequestContext.STATISTICS_EVENT) != null) {
-            Event event = (Event) requestContext.get(RequestContext.STATISTICS_EVENT);
-            event.addCustomStatistics("PDFBYTES", (int) sReq.getRequestData().getLength());
-        }
-        
         ICryptoInstance crypto = null;
         try {
             crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);

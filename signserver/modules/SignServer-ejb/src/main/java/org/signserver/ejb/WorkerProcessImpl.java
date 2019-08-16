@@ -59,7 +59,6 @@ import org.signserver.server.log.SignServerEventTypes;
 import org.signserver.server.log.SignServerModuleTypes;
 import org.signserver.server.log.SignServerServiceTypes;
 import org.signserver.server.log.WorkerLoggerException;
-import org.signserver.server.statistics.Event;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.worker.impl.PreloadedWorkerConfig;

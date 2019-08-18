@@ -220,6 +220,8 @@ public class ConnectDialog extends javax.swing.JDialog {
         jRadioButtonLocal = new javax.swing.JRadioButton();
         jRadioButtonRemote = new javax.swing.JRadioButton();
         jLabelProgress = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jEditorPane1 = new javax.swing.JEditorPane();
 
         passwordLabel.setText("Enter password:");
 
@@ -467,7 +469,7 @@ public class ConnectDialog extends javax.swing.JDialog {
 
         jLabelConnectTo.setText("Connect to:");
 
-        jPanelButtons.setLayout(new java.awt.FlowLayout(0));
+        jPanelButtons.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         buttonGroup1.add(jRadioButtonLocal);
         jRadioButtonLocal.setText("Local SignServer");
@@ -487,26 +489,36 @@ public class ConnectDialog extends javax.swing.JDialog {
         });
         jPanelButtons.add(jRadioButtonRemote);
 
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        jEditorPane1.setEditable(false);
+        jEditorPane1.setBackground(java.awt.SystemColor.info);
+        jEditorPane1.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.SystemColor.activeCaptionBorder));
+        jEditorPane1.setText("Note: The AdminGUI is deprecated and will be removed in a future version.\nPlease, use the AdminWeb instead.");
+        jScrollPane1.setViewportView(jEditorPane1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanelRemote3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanelButtons, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
-                    .addComponent(jLabelConnectTo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
-                    .addComponent(jPanelRemote2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanelRemote1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabelProgress, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
+                        .addComponent(jLabelProgress, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
                         .addGap(24, 24, 24)
                         .addComponent(defaultsButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(connectButton)))
+                        .addComponent(connectButton))
+                    .addComponent(jPanelRemote3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanelButtons, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
+                    .addComponent(jLabelConnectTo, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
+                    .addComponent(jPanelRemote2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanelRemote1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -515,7 +527,8 @@ public class ConnectDialog extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jLabelConnectTo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanelButtons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1229,6 +1242,7 @@ public class ConnectDialog extends javax.swing.JDialog {
     private javax.swing.JTextField hostnameField;
     private javax.swing.JLabel hostnameLabel;
     private javax.swing.JPanel hostnameMismatchConfirmPanel;
+    private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel8;
@@ -1241,6 +1255,7 @@ public class ConnectDialog extends javax.swing.JDialog {
     private javax.swing.JPanel jPanelRemote3;
     private javax.swing.JRadioButton jRadioButtonLocal;
     private javax.swing.JRadioButton jRadioButtonRemote;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton keystoreBrowseButton;
     private javax.swing.JTextField keystoreFilePathTextField;
     private javax.swing.JComboBox keystoreTypeComboBox;

@@ -13,6 +13,13 @@
             <jsp:useBean class="org.signserver.web.SettingsBean" id="settings"/>
 
             <h2>AdminGUI Download</h2>
+            
+            <div style="border: thin solid gray; background-color: lightgray; float:left; padding: 0.5em; border-radius: 4px; -webkit-border-radius: 4px;">
+                Note: The AdminGUI is deprecated and will be removed in a future version.<br/>
+                Please, use the AdminWeb instead.
+            </div>
+            <div style="clear:both"/>
+            <p>&nbsp</p>
 
             <p>
                 If enabled, a binary distribution (zip-file) with the SignServer 

@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;

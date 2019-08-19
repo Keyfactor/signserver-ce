@@ -104,14 +104,15 @@
                         <h:commandButton class="buttonNeutral" value="#{text['Switch_to_Allow_any']}" rendered="#{!administratorsBean.allowAny}" action="administrators-allowany"/>
                         <h:commandButton class="buttonNeutral" value="#{text['Switch_to_Only_listed']}" rendered="#{administratorsBean.allowAny}" action="administrators-allowonlylisted"/>
                         
-                        <h2><h:outputText value="#{text['Peer_Systems']}"/></h2>
-                        <h:panelGrid columns="3">
+                        <h2><h:outputText value="#{text['Peer_Systems']}"
+                                          rendered="#{administratorsBean.peersAvailable}"/></h2>
+                        <h:panelGrid columns="3" rendered="#{administratorsBean.peersAvailable}">
                             <h:selectBooleanCheckbox id="allowIncoming" value="#{administratorsBean.allowIncomingPeerSystems}"/> 
                             <h:outputLabel for="allowIncoming"><h:outputText value="#{text['Allow_incoming_connections']}"/></h:outputLabel> 
                             <h:commandButton class="buttonNeutral" value="#{text['Save']}" action="#{administratorsBean.saveAllowIncomingAction()}"/>
                         </h:panelGrid>
 
-                        <h:panelGroup rendered="#{administratorsBean.peerConnectorsIn.rowCount != 0 || administratorsBean.allowIncomingPeerSystems}">
+                        <h:panelGroup rendered="#{administratorsBean.peersAvailable and (administratorsBean.peerConnectorsIn.rowCount != 0 || administratorsBean.allowIncomingPeerSystems)}">
                             <h3><h:outputText value="#{text.PEERS_INCOMING}"/></h3>
                             <h:outputText rendered="#{administratorsBean.peerConnectorsIn.rowCount == 0}" value="#{text.PEERS_INCOMING_NONE}"/>
                             <h:dataTable rendered="#{administratorsBean.peerConnectorsIn.rowCount != 0}" value="#{administratorsBean.peerConnectorsIn}" var="peerIncomingInformation">

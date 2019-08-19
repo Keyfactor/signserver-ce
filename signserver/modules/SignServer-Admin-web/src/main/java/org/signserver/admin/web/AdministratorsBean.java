@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.ServiceLoader;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -37,9 +39,8 @@ import org.signserver.common.GlobalConfiguration;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 import org.signserver.common.SignServerUtil;
-import org.signserver.ejbca.peerconnector.PeerConnectorInRegistry;
-import org.signserver.ejbca.peerconnector.PeerIncomingInformation;
-import org.signserver.ejbca.peerconnector.common.PeersGlobalProperties;
+import org.signserver.serviceprovider.PeersInInfo;
+import org.signserver.serviceprovider.PeersProvider;
 
 /**
  *
@@ -56,6 +57,9 @@ public class AdministratorsBean {
     private static final Logger LOG = Logger.getLogger(AdministratorsBean.class);
 
     private static final String ALLOWANYWSADMIN = "ALLOWANYWSADMIN";
+
+    // copied from PeersGlobalConstants to avoid depending on that package
+    private static final String PEERS_INCOMING_ENABLED = "PEERS_INCOMING_ENABLED";
 
     @EJB
     private AdminWebSessionBean workerSessionBean;
@@ -86,7 +90,7 @@ public class AdministratorsBean {
     private boolean remove;
     
     private String loadErrorMessage;
-    private ListDataModel<PeerIncomingInformation> peerConnectorsInModel;
+    private ListDataModel<PeersInInfo> peerConnectorsInModel;
 
     /**
      * Creates a new instance of GlobalConfigurationBean.
@@ -135,7 +139,7 @@ public class AdministratorsBean {
     public Boolean getAllowIncomingPeerSystems() throws AdminNotAuthorizedException {
         if (allowIncomingPeerSystems == null) {
             // set initial state for the allow all checkbox
-            final String property = getGlobalConfig().getProperty(GlobalConfiguration.SCOPE_GLOBAL, PeersGlobalProperties.PEERS_INCOMING_ENABLED);
+            final String property = getGlobalConfig().getProperty(GlobalConfiguration.SCOPE_GLOBAL, PEERS_INCOMING_ENABLED);
             allowIncomingPeerSystems = property != null && Boolean.TRUE.toString().equalsIgnoreCase(property);
         }
         return allowIncomingPeerSystems;
@@ -246,13 +250,13 @@ public class AdministratorsBean {
     }
     
     public String saveAllowIncomingAction() throws AdminNotAuthorizedException {
-        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(), GlobalConfiguration.SCOPE_GLOBAL, PeersGlobalProperties.PEERS_INCOMING_ENABLED, String.valueOf(allowIncomingPeerSystems));
+        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(), GlobalConfiguration.SCOPE_GLOBAL, PEERS_INCOMING_ENABLED, String.valueOf(allowIncomingPeerSystems));
         this.allowIncomingPeerSystems = null;
         return "administrators?faces-redirect=true";
     }
 
     public String allowIncomingAction(boolean allowIncoming) throws AdminNotAuthorizedException {
-        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(), GlobalConfiguration.SCOPE_GLOBAL, PeersGlobalProperties.PEERS_INCOMING_ENABLED, String.valueOf(allowIncoming));
+        workerSessionBean.setGlobalProperty(authBean.getAdminCertificate(), GlobalConfiguration.SCOPE_GLOBAL, PEERS_INCOMING_ENABLED, String.valueOf(allowIncoming));
         this.allowIncomingPeerSystems = null;
         return "administrators?faces-redirect=true";
     }
@@ -413,26 +417,37 @@ public class AdministratorsBean {
         return AdminsUtil.parseAdmins(admins, auditors, archiveAuditors, peerSystems);
     }
     
-    public ListDataModel<PeerIncomingInformation> getPeerConnectorsIn() {
+    public ListDataModel<PeersInInfo> getPeerConnectorsIn() {
         if (peerConnectorsInModel == null) {
-            final List<PeerIncomingInformation> incoming = PeerConnectorInRegistry.INSTANCE.getPeerIncomingInformations();
+            final ServiceLoader<PeersProvider> sl =
+                    ServiceLoader.load(PeersProvider.class);
+            final Optional<PeersProvider> pp = sl.findFirst();
+            
+            if (pp.isPresent()) {
+                final List<PeersInInfo> incoming = pp.get().createPeersIncoming();
 
-            // Sort by credential, remote address and last seen
-            Collections.sort(incoming, new Comparator<PeerIncomingInformation>() {
-                @Override
-                public int compare(final PeerIncomingInformation first, final PeerIncomingInformation second) {
-                    final int authCompare = first.getAuthenticationToken().toString().compareTo(second.getAuthenticationToken().toString());
-                    if (authCompare != 0) {
-                        return authCompare;
+                // Sort by credential, remote address and last seen
+                Collections.sort(incoming, new Comparator<PeersInInfo>() {
+                    @Override
+                    public int compare(final PeersInInfo first,
+                                       final PeersInInfo second) {
+                        final int authCompare =
+                                first.getAuthenticationToken().toString().
+                                compareTo(second.getAuthenticationToken().toString());
+                        if (authCompare != 0) {
+                            return authCompare;
+                        }
+                        final int addressCompare = first.getRemoteAddress().compareTo(second.getRemoteAddress());
+                        if (addressCompare != 0) {
+                            return addressCompare;
+                        }
+                        return Long.valueOf(second.getLastUpdate() - first.getLastUpdate()).intValue();
                     }
-                    final int addressCompare = first.getRemoteAddress().compareTo(second.getRemoteAddress());
-                    if (addressCompare != 0) {
-                        return addressCompare;
-                    }
-                    return Long.valueOf(second.getLastUpdate() - first.getLastUpdate()).intValue();
-                }
-            });
-            peerConnectorsInModel = new ListDataModel<>(incoming);
+                });
+                peerConnectorsInModel = new ListDataModel<>(incoming);
+            } else {
+                peerConnectorsInModel = new ListDataModel<>();
+            }
         }
         return peerConnectorsInModel;
     }
@@ -475,16 +490,22 @@ public class AdministratorsBean {
         }
     }
     
-    private PeerIncomingInformation getCurrentPeerConnectorIn() {
+    private PeersInInfo getCurrentPeerConnectorIn() {
         return getPeerConnectorsIn().getRowData();
     }
 
     public void clearIncomingAction() {
-        final PeerIncomingInformation peerIncomingInformation = getCurrentPeerConnectorIn();
+        final PeersInInfo peerIncomingInformation = getCurrentPeerConnectorIn();
         if (peerIncomingInformation == null) {
             LOG.info("Unable to clear nonexisting info.");
         } else {
-            PeerConnectorInRegistry.INSTANCE.remove(peerIncomingInformation.getId(), peerIncomingInformation.getAuthenticationToken());
+            final ServiceLoader<PeersProvider> sl =
+                    ServiceLoader.load(PeersProvider.class);
+            final Optional<PeersProvider> pp = sl.findFirst();
+            if (pp.isPresent()) {
+                pp.get().remove(peerIncomingInformation.getId(),
+                                peerIncomingInformation.getAuthenticationToken());
+            }
             peerConnectorsInModel = null;
         }
     }
@@ -504,5 +525,11 @@ public class AdministratorsBean {
     
     public String getCurrentIssuerDN() throws AdminNotAuthorizedException {
         return getNewEntry().getIssuerDN();
+    }
+
+    public boolean isPeersAvailable() {
+        final ServiceLoader sl = ServiceLoader.load(PeersProvider.class);
+
+        return sl.findFirst().isPresent();
     }
 }

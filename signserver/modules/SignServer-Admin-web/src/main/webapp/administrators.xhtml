@@ -179,7 +179,7 @@
                                     <h:selectBooleanCheckbox id="roleAdmin" value="#{administratorsBean.roleAdmin}"/> <h:outputLabel for="roleAdmin" value="#{text['Admin']}" />
                                     <h:selectBooleanCheckbox id="roleAuditor" value="#{administratorsBean.roleAuditor}"/> <h:outputLabel for="roleAuditor" value="#{text['Auditor']}" />
                                     <h:selectBooleanCheckbox id="roleArchiveAuditor" value="#{administratorsBean.roleArchiveAuditor}"/> <h:outputLabel for="roleArchiveAuditor" value="#{text['Archive_Auditor']}" />
-                                    <h:selectBooleanCheckbox id="rolePeerSystem" value="#{administratorsBean.rolePeerSystem}"/> <h:outputLabel for="rolePeerSystem" value="#{text['Peer_System']}" />
+                                    <h:selectBooleanCheckbox id="rolePeerSystem" value="#{administratorsBean.rolePeerSystem}" disabled="#{!administratorsBean.peersAvailable}"/> <h:outputLabel rendered="#{administratorsBean.peersAvailable}" for="rolePeerSystem" value="#{text['Peer_System']}"/> <h:outputLabel rendered="#{!administratorsBean.peersAvailable}" for="rolePeerSystem" value="#{text['Peer_System']}" class="dimmedLabel"/>
                                 </h:panelGroup>
                             </h:panelGrid>
                             <h:commandButton class="buttonFeatured" id="buttonSubmit" binding="#{components.buttonSubmit}" value="#{text['Submit']}" action="#{administratorsBean.editSubmitAction()}"/>

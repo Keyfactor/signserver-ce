@@ -378,6 +378,10 @@ tr.dss1_odd {
     color: orange;
 }
 
+.dimmedLabel {
+    color: #888888;
+}
+
 .fileInputContainer {
     display: inline-block;
 }

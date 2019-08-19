@@ -419,12 +419,10 @@ public class AdministratorsBean {
     
     public ListDataModel<PeersInInfo> getPeerConnectorsIn() {
         if (peerConnectorsInModel == null) {
-            final ServiceLoader<PeersProvider> sl =
-                    ServiceLoader.load(PeersProvider.class);
-            final Optional<PeersProvider> pp = sl.findFirst();
+            final PeersProvider pp = getPeersProvider();
             
-            if (pp.isPresent()) {
-                final List<PeersInInfo> incoming = pp.get().createPeersIncoming();
+            if (pp != null) {
+                final List<PeersInInfo> incoming = pp.createPeersIncoming();
 
                 // Sort by credential, remote address and last seen
                 Collections.sort(incoming, new Comparator<PeersInInfo>() {
@@ -499,12 +497,11 @@ public class AdministratorsBean {
         if (peerIncomingInformation == null) {
             LOG.info("Unable to clear nonexisting info.");
         } else {
-            final ServiceLoader<PeersProvider> sl =
-                    ServiceLoader.load(PeersProvider.class);
-            final Optional<PeersProvider> pp = sl.findFirst();
-            if (pp.isPresent()) {
-                pp.get().remove(peerIncomingInformation.getId(),
-                                peerIncomingInformation.getAuthenticationToken());
+            final PeersProvider pp = getPeersProvider();
+
+            if (pp != null) {
+                pp.remove(peerIncomingInformation.getId(),
+                          peerIncomingInformation.getAuthenticationToken());
             }
             peerConnectorsInModel = null;
         }
@@ -528,8 +525,24 @@ public class AdministratorsBean {
     }
 
     public boolean isPeersAvailable() {
+        return getPeersProvider() != null;
+    }
+
+    /**
+     * Return the first found peers provider interface implementation.
+     * Note: past Java 8 this could use the new Optional-using methods from
+     * ServiceLoader to avoid ugly != null checks when used.
+     * 
+     * @return The first found PeersProvider implementation
+     */
+    private PeersProvider getPeersProvider() {
         final ServiceLoader sl = ServiceLoader.load(PeersProvider.class);
 
-        return sl.findFirst().isPresent();
+        // lazily just return the first found implementation for now
+        if (sl.iterator().hasNext()) {
+            return (PeersProvider) sl.iterator().next();
+        } else {
+            return null;
+        }
     }
 }

@@ -1,21 +1,28 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.serviceprovider;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.cesecore.authentication.tokens.AuthenticationToken;
 import org.cesecore.util.ValidityDate;
 
 /**
- *
+ * Class representing information from an incoming peer connection from
+ * EJBCA.
+ * 
  * @author Marcus Lundblad
  * @version $Id$
  */
-public class PeersInInfo implements Comparable<PeersInInfo> {
+public class PeersInInfo {
     private Integer id;
     private final AuthenticationToken authenticationToken;
     private String remoteAddress = null;
@@ -57,31 +64,5 @@ public class PeersInInfo implements Comparable<PeersInInfo> {
 
     public String getLastUpdateString() {
         return ValidityDate.formatAsISO8601ServerTZ(getLastUpdate(), ValidityDate.TIMEZONE_SERVER);
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 4711). // two randomly chosen prime numbers
-                append(id).
-                toHashCode();
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (!(obj instanceof PeersInInfo)) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        final PeersInInfo other = (PeersInInfo) obj;
-        return new EqualsBuilder().
-                append(id, other.getId()).
-                isEquals();
-    }
-
-    @Override
-    public int compareTo(PeersInInfo o) {
-        return this.getId().compareTo(o.getId());
     }
 }

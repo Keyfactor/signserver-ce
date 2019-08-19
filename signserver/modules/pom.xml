@@ -48,8 +48,7 @@
         <module>SignServer-Web-Common</module>
         <module>SignServer-war</module>
         <module>SignServer-war-Healthcheck</module>
-        <module>SignServer-AdminCLI</module>
-        <module>SignServer-AdminGUI</module>
+        <module>SignServer-AdminCLI</module>        
 	<module>SignServer-Admin-web</module>
         
         <module>SignServer-ejb-AdminWS</module>

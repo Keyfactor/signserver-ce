@@ -28,7 +28,7 @@ public class PathUtil {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(PathUtil.class);
 
-    private static final String APPLICATION_SPECIFIC_FILE = "bin/signserver-gui";
+    private static final String APPLICATION_SPECIFIC_FILE = "bin/signclient";
 
     /**
      * Gets the application directory (ie. SIGNSERVER_HOME).

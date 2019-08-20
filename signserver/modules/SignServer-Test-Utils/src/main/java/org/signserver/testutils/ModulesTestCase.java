@@ -720,7 +720,7 @@ public class ModulesTestCase extends TestCase {
      * @return
      */
     public static boolean isWindows() {
-        String OS = System.getProperty("os.name").toLowerCase();
+        String OS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         return (OS.contains("win"));
     }
 }

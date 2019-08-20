@@ -144,12 +144,12 @@ public class SignClientP11AuthTest {
         slotIndex = testCase.getConfig().getProperty("test.p11.slotindex");
         pin = testCase.getConfig().getProperty("test.p11.pin");
         existingKey1 = testCase.getConfig().getProperty("test.p11.existingkey1");
-        
+
         if (ModulesTestCase.isWindows()) {
-               signClientCLI = testCase.getSignServerHome().getAbsolutePath() + File.separator + "bin" + File.separator + "signclient.cmd";
+            signClientCLI = testCase.getSignServerHome().getAbsolutePath() + File.separator + "bin" + File.separator + "signclient.cmd";
         } else {
             signClientCLI = testCase.getSignServerHome().getAbsolutePath() + File.separator + "bin" + File.separator + "signclient";
-        }  
+        }
     }
 
     @Before

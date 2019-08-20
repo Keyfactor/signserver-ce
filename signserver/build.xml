@@ -482,7 +482,7 @@ Installation Guide for details.
     <target name="dist:admingui">
         <available file="${basedir}/lib/SignServer-AdminGUI.jar" property="admingui.jar" value="SignServer-AdminGUI.jar"/>
         <available file="${basedir}/lib/SignServer-AdminGUI-${app.version.number}.jar" property="admingui.jar" value="SignServer-AdminGUI-${app.version.number}.jar"/>
-        <fail unless="admingui.jar" message="Must build SignServer-AdmingGUI first"/>
+        <fail unless="admingui.jar" message="Must build SignServer-AdminGUI first if this is enterprise edition (AdminGUI has been removed from community edition)"/>
         <antcall target="dist">
             <param name="dist.jars" value="${admingui.jar}"/>
             <param name="dist.includes" value="

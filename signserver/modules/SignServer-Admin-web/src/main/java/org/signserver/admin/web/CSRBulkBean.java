@@ -30,6 +30,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import org.apache.commons.lang.StringUtils;
+import org.cesecore.certificates.util.AlgorithmConstants;
+import org.cesecore.certificates.util.AlgorithmTools;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.PKCS10CertReqInfo;
@@ -269,15 +271,21 @@ public class CSRBulkBean extends BulkBean {
         private String contentType;
         private String fileSuffix;
         private final boolean fixedAlias;
+        private boolean selectSignatureAlgorithmFromList = true;
+        private LinkedHashMap<String, Object> signatureAlgorithmMenuValues;
 
         public CSRWorker(int id, boolean exists, String name, Properties config, String alias, String signatureAlgorithm, String dn, int rowIndex, boolean fixedAlias) {
             super(id, exists, name, config);
             this.alias = alias;
-            this.signatureAlgorithm = signatureAlgorithm;
+            this.signatureAlgorithm =
+                    getNormalizedSignatureAlgorithm(signatureAlgorithm);
             this.dn = dn;
             this.rowIndex = rowIndex;
             if (alias == null) {
                 showOther = true;
+            }
+            if (StringUtils.isBlank(signatureAlgorithm)) {
+                this.signatureAlgorithm = AlgorithmConstants.SIGALG_SHA256_WITH_RSA;
             }
             this.fixedAlias = fixedAlias;
         }
@@ -295,7 +303,29 @@ public class CSRBulkBean extends BulkBean {
         }
 
         public void setSignatureAlgorithm(String signatureAlgorithm) {
-            this.signatureAlgorithm = StringUtils.trim(signatureAlgorithm);
+            this.signatureAlgorithm =
+                    getNormalizedSignatureAlgorithm(signatureAlgorithm);
+        }
+
+        /**
+         * Returns a signature algorithm normalized according to the 
+         * representations in CESeCore, if matching one of these, otherwise
+         * returns the passed in value.
+         * 
+         * @param sigAlg algorithm name to match
+         * @return matched algorithm name, or the passed in value if not matched
+         */
+        private String getNormalizedSignatureAlgorithm(final String sigAlg) {
+            final String trimmedSigAlg = StringUtils.trim(sigAlg);
+            Map<String, Object> knownAlgs = getSignatureAlgorihmMenuValues();
+            
+            for (final String knownAlg : knownAlgs.keySet()) {
+                if (knownAlg.equalsIgnoreCase(trimmedSigAlg)) {
+                    return knownAlg;
+                }
+            }
+
+            return sigAlg;
         }
 
         public String getDn() {
@@ -336,6 +366,36 @@ public class CSRBulkBean extends BulkBean {
 
         public boolean isFixedAlias() {
             return fixedAlias;
+        }
+
+        public boolean isSelectSignatureAlgorithmFromList() {
+            return selectSignatureAlgorithmFromList;
+        }
+
+        public void setSelectSignatureAlgorithmFromList(final boolean selectSignatureAlgorithmFromList) {
+            this.selectSignatureAlgorithmFromList = selectSignatureAlgorithmFromList;
+        }
+
+        public Map<String, Object> getSignatureAlgorihmMenuValues() {
+            if (signatureAlgorithmMenuValues == null) {
+                signatureAlgorithmMenuValues = new LinkedHashMap<>();
+                AlgorithmTools.SIG_ALGS_RSA.forEach((alg) -> {
+                    signatureAlgorithmMenuValues.put(alg, alg);
+                });
+                AlgorithmTools.SIG_ALGS_DSA.forEach((alg) -> {
+                    signatureAlgorithmMenuValues.put(alg, alg);
+                });
+                 AlgorithmTools.SIG_ALGS_ECDSA.forEach((alg) -> {
+                    signatureAlgorithmMenuValues.put(alg, alg);
+                });
+                AlgorithmTools.SIG_ALGS_ECGOST3410.forEach((alg) -> {
+                    signatureAlgorithmMenuValues.put(alg, alg);
+                });
+                AlgorithmTools.SIG_ALGS_DSTU4145.forEach((alg) -> {
+                    signatureAlgorithmMenuValues.put(alg, alg);
+                });
+            }
+            return signatureAlgorithmMenuValues;
         }
 
         public Map<String, Object> getAliasMenuValues() {

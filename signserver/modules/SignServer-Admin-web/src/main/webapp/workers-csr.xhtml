@@ -105,11 +105,31 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{text['Signature_Algorithm']}" />
                                 </f:facet>
-                                <h:inputText id ="sigAlg" value="#{item.signatureAlgorithm}" requiredMessage="*" disabled="#{!item.existing}" size="20">
+                                <h:inputText id ="sigAlg" value="#{item.signatureAlgorithm}"
+                                             requiredMessage="*"
+                                             disabled="#{!item.existing}"
+                                             size="20"
+                                             rendered="#{!item.selectSignatureAlgorithmFromList}">
                                     <f:validator validatorId="optionallyRequiredValidator"/>
                                     <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
                                     <f:attribute name="andCheckboxSelected" value="#{components.itemSelect.clientId}"/>
                                 </h:inputText>
+                                <h:selectOneMenu id="sigAlgMenu"
+                                                 value="#{item.signatureAlgorithm}"
+                                                 disabled="#{!item.existing}"
+                                                 rendered="#{item.selectSignatureAlgorithmFromList}">
+                                    <f:selectItems value="#{item.signatureAlgorihmMenuValues}"/>
+                                </h:selectOneMenu>
+                                <h:commandButton class="buttonNeutral"
+                                                 id="enterSigAlgManually"
+                                                 value="&gt;"
+                                                 action="#{item.setSelectSignatureAlgorithmFromList(false)}"
+                                                 rendered="#{item.selectSignatureAlgorithmFromList}"/>
+                                <h:commandButton class="buttonNeutral"
+                                                 id="enterKeySpecFromList"
+                                                 value="&lt;"
+                                                 action="#{item.setSelectSignatureAlgorithmFromList(true)}"
+                                                 rendered="#{!item.selectSignatureAlgorithmFromList}"/>
                                 <span class="errorMessage"><h:message for="sigAlg"/></span>
                             </h:column>
                             <h:column>

@@ -495,15 +495,14 @@ public class AdministratorsBean {
     }
 
     public void clearIncomingAction() {
-        final PeersInInfo peerIncomingInformation = getCurrentPeerConnectorIn();
-        if (peerIncomingInformation == null) {
+        final PeersInInfo pii = getCurrentPeerConnectorIn();
+        if (pii == null) {
             LOG.info("Unable to clear nonexisting info.");
         } else {
             final PeersProvider pp = getPeersProvider();
 
             if (pp != null) {
-                pp.remove(peerIncomingInformation.getId(),
-                          peerIncomingInformation.getAuthenticationToken());
+                pp.removeIncomingPeer(pii.getId(), pii.getAuthenticationToken());
             }
             peerConnectorsInModel = null;
         }

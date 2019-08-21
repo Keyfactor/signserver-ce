@@ -24,5 +24,5 @@ import org.cesecore.authentication.tokens.AuthenticationToken;
  */
 public interface PeersProvider {
     List<PeersInInfo> createPeersIncoming();
-    void remove(Integer id, AuthenticationToken authenticationToken);
+    void removeIncomingPeer(Integer id, AuthenticationToken authenticationToken);
 }

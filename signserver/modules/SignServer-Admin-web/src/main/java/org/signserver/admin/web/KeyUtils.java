@@ -103,9 +103,9 @@ public class KeyUtils {
                 }
                 break;
             case "ECDSA":
-                ECDSA_CURVES.keySet().forEach((key) -> {
+                for (final String key : ECDSA_CURVES.keySet()) {
                     keySpecMenuValues.put(ECDSA_CURVES.get(key), key);
-                });
+                }
                 break;
 
             case "AES":

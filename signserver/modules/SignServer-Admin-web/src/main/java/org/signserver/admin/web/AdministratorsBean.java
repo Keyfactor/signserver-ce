@@ -91,6 +91,9 @@ public class AdministratorsBean {
     private String loadErrorMessage;
     private ListDataModel<PeersInInfo> peerConnectorsInModel;
 
+    private boolean hasCachedPeersProvider = false;
+    private PeersProvider cachedPeersProvider;
+
     /**
      * Creates a new instance of GlobalConfigurationBean.
      */
@@ -535,13 +538,18 @@ public class AdministratorsBean {
      * @return The first found PeersProvider implementation
      */
     private PeersProvider getPeersProvider() {
-        final ServiceLoader sl = ServiceLoader.load(PeersProvider.class);
+        if (!hasCachedPeersProvider) {
+            final ServiceLoader sl = ServiceLoader.load(PeersProvider.class);
 
-        // lazily just return the first found implementation for now
-        if (sl.iterator().hasNext()) {
-            return (PeersProvider) sl.iterator().next();
-        } else {
-            return null;
+            // lazily just return the first found implementation for now
+            if (sl.iterator().hasNext()) {
+                cachedPeersProvider = (PeersProvider) sl.iterator().next();
+            } else {
+                cachedPeersProvider = null;
+            }
+            hasCachedPeersProvider = true;
         }
+
+        return cachedPeersProvider;
     }
 }

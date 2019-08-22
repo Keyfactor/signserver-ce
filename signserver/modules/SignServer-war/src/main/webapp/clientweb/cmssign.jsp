@@ -6,7 +6,7 @@
         <link rel="stylesheet" href="demo.css" type="text/css"/>
         <script type="text/javascript" src="demo.js"></script>
         <link rel="shortcut icon" href="../favicon.png"/>
-        <title>CMS Signing Demo - SignServer</title>
+        <title>CMS Signing - SignServer</title>
     </head>
     <body>
         <div id="container1">

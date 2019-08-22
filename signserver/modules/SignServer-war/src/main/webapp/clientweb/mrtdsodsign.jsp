@@ -6,7 +6,7 @@
         <link rel="stylesheet" href="demo.css" type="text/css"/>
         <script type="text/javascript" src="demo.js"></script>
         <link rel="shortcut icon" href="../favicon.png"/>
-        <title>MRTD SOD Signing Demo - SignServer</title>
+        <title>MRTD SOD Signing - SignServer</title>
     </head>
     <body onload="ldsVersionChanged()">
         <div id="container1">
@@ -14,7 +14,7 @@
             <%@include file="../WEB-INF/jspf/demo_menu.jspf" %>
 
 
-            <h3>MRTD SOD Signing Demo</h3>
+            <h3>MRTD SOD Signing</h3>
             <p>Enter the data for the data groups to be stored on the passport.</p>
             <p>Note 1: Please provide the hashes of the respective data groups if the signer is configured to accept hashes instead of the actual data.</p>
             <p>Note 2: When submitting this form using a web browser it is not possible to enter binary data directly into the input fields. Then first base64 encode the data and choose the Base64 encoding option and the signer will decode the data before signing it.</p>

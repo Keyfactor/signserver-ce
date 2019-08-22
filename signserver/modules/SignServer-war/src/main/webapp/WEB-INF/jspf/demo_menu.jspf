@@ -1,7 +1,7 @@
 <%@ page pageEncoding="UTF-8" %>
             <ul id="topMenu">
                 <li><a href="../">Index</a></li>
-                <li><a href="./">Demos</a></li>
+                <li><a href="./">Client Web</a></li>
                 <li><a href="genericsign.jsp">Generic</a></li>
                 <li><a href="pdfsign.jsp">PDF</a></li>
                 <li><a href="odfsign.jsp">ODF</a></li>

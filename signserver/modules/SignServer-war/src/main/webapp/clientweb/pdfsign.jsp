@@ -6,7 +6,7 @@
         <link rel="stylesheet" href="demo.css" type="text/css"/>
         <script type="text/javascript" src="demo.js"></script>
         <link rel="shortcut icon" href="../favicon.png"/>
-        <title>PDF Signing Demo - SignServer</title>
+        <title>PDF Signing - SignServer</title>
     </head>
     <body>
         <div id="container1">
@@ -14,7 +14,7 @@
             <%@include file="../WEB-INF/jspf/demo_menu.jspf" %>
 
 
-            <h3>PDF Signing Demo</h3>
+            <h3>PDF Signing</h3>
             <p>
                 Simply upload a PDF document (small please) to the PDF signer
                 and you will get back the same PDF, but signed by SignServer.

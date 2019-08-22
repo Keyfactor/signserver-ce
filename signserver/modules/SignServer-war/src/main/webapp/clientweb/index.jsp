@@ -12,10 +12,10 @@
             <%@include file="../WEB-INF/jspf/header.jspf" %>
             <%@include file="../WEB-INF/jspf/demo_menu.jspf" %>
 
-            <h2>Signing and Validation Demo</h2>
+            <h2>Client Web</h2>
 
             <p>
-                The demo web pages shows how calls to the different
+                The client web pages shows how calls to the different
                 signers and validators can be made using HTTP. The pages also serves as an
                 easy way of testing the installation and with small adjustments
                 could also be used in production to allow users to submit

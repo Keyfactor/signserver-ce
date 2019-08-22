@@ -17,7 +17,7 @@
             
             <h4>Local Resources</h4>
             <ul class="resourcesList">
-                <li><a href="demo/">Signing and Validation Demo</a></li>
+                <li><a href="clientweb/">Client Web</a></li>
                 <li><a href="healthcheck/signserverhealth">Health Check</a></li>
                 <c:if test="${settings.webDocEnabled}">
                     <li><a href="doc/">Documentation</a></li>
@@ -51,6 +51,7 @@
             <h4>Online Resources</h4>
             <ul class="resourcesList">
                 <li><a href="https://www.signserver.org">SignServer Web Site</a></li>
+                <li><a href="https://doc.primekey.com">PrimeKey Documentation</a></li>
             </ul>
 
             <%@include file="WEB-INF/jspf/footer.jspf" %>

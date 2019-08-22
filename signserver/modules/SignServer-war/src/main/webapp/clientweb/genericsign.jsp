@@ -6,7 +6,7 @@
         <link rel="stylesheet" href="demo.css" type="text/css"/>
         <script type="text/javascript" src="demo.js"></script>
         <link rel="shortcut icon" href="../favicon.png"/>
-        <title>Generic Signing and Validation Demo - SignServer</title>
+        <title>Generic Client Web - SignServer</title>
     </head>
     <body>
         <div id="container1">
@@ -14,7 +14,7 @@
             <%@include file="../WEB-INF/jspf/demo_menu.jspf" %>
 
 
-            <h3>Generic Signing and Validation Demo</h3>
+            <h3>Generic Client Web</h3>
             <p>
                 The forms below can be used to request signing and validation from any of the
                 generic signers and validators. The content to be signed or validated can be submitted

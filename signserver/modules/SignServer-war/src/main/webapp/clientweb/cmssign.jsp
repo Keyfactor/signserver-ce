@@ -14,7 +14,7 @@
             <%@include file="../WEB-INF/jspf/demo_menu.jspf" %>
 
 
-            <h3>CMS Signing Demo</h3>
+            <h3>CMS Signing</h3>
             <form id="recievefile" action="../worker/CMSSigner"
                   method="post" enctype="multipart/form-data">
 

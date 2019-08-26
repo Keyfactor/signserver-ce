@@ -27,6 +27,11 @@
         </cookie-config>
     </session-config>
     <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
         <servlet-name>GenericProcessServlet</servlet-name>
         <servlet-class>org.signserver.web.GenericProcessServlet</servlet-class>
     </servlet>
@@ -58,6 +63,10 @@
         <servlet-name>ClientCLIDistServlet</servlet-name>
         <servlet-class>org.signserver.web.ClientCLIDistServlet</servlet-class>
     </servlet>
+     <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.xhtml</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>WS31Dispatcher</servlet-name>
         <url-pattern>/signserverws/signserverws</url-pattern>

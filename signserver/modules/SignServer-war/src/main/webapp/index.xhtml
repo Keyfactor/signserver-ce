@@ -30,11 +30,14 @@
                             <h:outputLink value = "doc/">Documentation</h:outputLink> 
                         </li>                         
                         <li>
-                            <h:outputLink value = "clientcli-dist/">Client CLI Download</h:outputLink>    
+                            <h:link value = "Client CLI Download" outcome = "clientcli-dist" />    
                         </li>
                         <li>
-                            <h:outputLink value = "admingui-dist/">Administration GUI Download</h:outputLink>    
-                        </li>                          
+                            <h:link value = "Administration GUI Download" outcome = "admingui-dist" />    
+                        </li>
+                        <li>
+                            <h:outputLink value="#{settingsNGBean.getAdminWebPrivateHttpsLink()}">Administration Web</h:outputLink>                           
+                        </li>                        
                     </ul>
                     <h2>Online Resources</h2>
                     <ul class="resourcesList">

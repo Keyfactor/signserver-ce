@@ -29,7 +29,7 @@
     <managed-bean>
 	  <managed-bean-name>settingsNGBean</managed-bean-name>
 	  <managed-bean-class>org.signserver.web.SettingsNGBean</managed-bean-class>
-	  <managed-bean-scope>session</managed-bean-scope>
+	  <managed-bean-scope>view</managed-bean-scope>
      </managed-bean>
 
 </faces-config>

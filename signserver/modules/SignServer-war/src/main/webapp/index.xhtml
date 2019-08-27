@@ -20,24 +20,32 @@
                 <div id="container1">
                     <h2>Local Resources</h2>
                     <ul class="resourcesList">
-                        <li>
-                            <h:link value = "Client Web" outcome = "clientweb" />
-                        </li>
+                            <li>
+                                <h:link value = "Client Web" outcome = "clientweb" />
+                            </li>
                         <li>
                             <h:outputLink value = "healthcheck/signserverhealth">Health Check</h:outputLink> 
                         </li>
-                        <li>
-                            <h:outputLink value = "doc/">Documentation</h:outputLink> 
-                        </li>                         
-                        <li>
-                            <h:link value = "Client CLI Download" outcome = "clientcli-dist" />    
-                        </li>
-                        <li>
-                            <h:link value = "Administration GUI Download" outcome = "admingui-dist" />    
-                        </li>
+                        <h:panelGroup rendered="#{settingsNGBean.webDocEnabled}">
+                            <li>
+                                <h:outputLink value = "doc/">Documentation</h:outputLink> 
+                            </li>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{settingsNGBean.webClientCLIDistEnabled}">
+                            <li>
+                                <h:link value = "Client CLI Download" outcome = "clientcli-dist" />    
+                            </li>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{settingsNGBean.webAdminGUIDistEnabled}">
+                            <li>
+                                <h:link value = "Administration GUI Download" outcome = "admingui-dist" />    
+                            </li>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{settingsNGBean.adminWebEnabledAndAvailable}">
                         <li>
                             <h:outputLink value="#{settingsNGBean.getAdminWebPrivateHttpsLink()}">Administration Web</h:outputLink>                           
-                        </li>                        
+                        </li>
+                        </h:panelGroup>
                     </ul>
                     <h2>Online Resources</h2>
                     <ul class="resourcesList">

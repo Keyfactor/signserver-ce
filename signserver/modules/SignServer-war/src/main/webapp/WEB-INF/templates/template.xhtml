@@ -28,7 +28,7 @@
         <link rel="shortcut icon" type="image/png" href="#{resource['default/images/favicon.png']}"/>
         <h:outputStylesheet library="default" name="css/default.css"/>
         <h:outputStylesheet library="default" name="css/cssLayout.css"/>
-        <title><ui:insert name="title">Title</ui:insert><h:outputText value=" - #{text['SignServer_Admin_Web']}"/></title>
+        <title><ui:insert name="title">Title</ui:insert><h:outputText value=" - SignServer"/></title>
         <h:outputScript library="default" name="js/adminweb.js"/>
         <h:outputScript library="default" name="js/ejbca-common.js"/>
     </h:head>
@@ -36,43 +36,24 @@
     <h:body>
         
         <div id="top">
-            <div id="top-left"><h:outputLink value="../"><h:graphicImage library="default" name="images/logo.png" height="50"/></h:outputLink></div>
+            <div id="top-left"><h:graphicImage library="default" name="images/logo.png" height="50"/></div>
             <div id="top-right">
-                <h:panelGrid columns="2">
-                    <h:outputText value="#{text['User_COLON']}" class="top-right-c1"/>
-                    <h:outputText value="#{authenticationBean.userDisplayName}" class="top-right-c2"/>
-                    
-                    <h:outputText value="#{text['Node_COLON']}" class="top-right-c1"/>
-                    <h:outputText value="#{adminWebBean.node}" class="top-right-c2"/>
-                    
-                    <h:outputText value="#{text['Server_Time_COLON']}" class="top-right-c1"/>
-                    <h:outputText value="#{adminWebBean.currentTime}" class="top-right-c2"/>
-                    
-                    <h:outputText value="#{text['Version_COLON']}" class="top-right-c1"/>
-                    <h:outputText value="#{adminWebBean.version}" class="top-right-c2"/>
+                <h:panelGrid columns="2">                   
+                    <h:outputText value="Node:" class="top-right-c1"/>
+                    <h:outputText value="#{settingsNGBean.node}" class="top-right-c2"/>                 
                 </h:panelGrid>
             </div>
             <div class="clearBoth"></div>
 
-            <div id="top-menu">
-                <ul>
-                    <li>
-                        <h:link outcome="workers" class="#{activeMenu == 'workers' ? 'active' : ''}"><h:outputText value="#{text['Workers']}"/></h:link>
-                    </li>
-                    <li>
-                        <h:link outcome="global-configuration" class="#{activeMenu == 'global-configuration' ? 'active' : ''}"><h:outputText value="#{text['Global_Configuration']}"/></h:link>
-                    </li>
-                    <li>
-                        <h:link outcome="administrators" class="#{activeMenu == 'administrators' ? 'active' : ''}"><h:outputText value="#{text['Administrators']}"/></h:link>
-                    </li>
-                    <li>
-                        <h:link outcome="auditlog" class="#{activeMenu == 'auditlog' ? 'active' : ''}"><h:outputText value="#{text['Audit_Log']}"/></h:link>
-                    </li>
-                    <li>
-                        <h:link outcome="archive" class="#{activeMenu == 'archive' ? 'active' : ''}"><h:outputText value="#{text['Archive']}"/></h:link>
-                    </li>
+            <div id="top-menu"> 
+                <ul>                   
                     <li class="last">
-                        <h:outputLink value="#{adminWebBean.documentationLink}" class="topOutsideLink"><h:outputText value="#{text['Documentation']}"/></h:outputLink>
+                        <h:panelGroup rendered="#{settingsNGBean.webDocEnabled}">
+                            <h:outputLink value="#{settingsNGBean.documentationLink}" class="topOutsideLink"><h:outputText value="Documentation"/></h:outputLink>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{!settingsNGBean.webDocEnabled}">
+                            <h:outputLink value="#{settingsNGBean.documentationLink}" class="topOutsideLink"><h:outputText value=""/></h:outputLink>
+                        </h:panelGroup>
                     </li>
                 </ul>
                 <ui:insert name="top">Top</ui:insert>
@@ -87,7 +68,7 @@
             <ui:insert name="bottom">Bottom</ui:insert>
             
             <p class="bottomText">
-                <h:outputText value="#{adminWebBean.copyright}"/>
+                <h:outputText value="#{settingsNGBean.copyright}"/>
             </p>
         </div>
 

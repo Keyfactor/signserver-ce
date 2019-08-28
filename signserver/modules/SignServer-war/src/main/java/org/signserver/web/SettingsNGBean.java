@@ -21,6 +21,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
+import org.cesecore.config.CesecoreConfiguration;
 import org.signserver.common.CompileTimeSettings;
 
 /**
@@ -174,6 +175,26 @@ public class SettingsNGBean {
             LOG.error("Malformed URL");
             throw new RuntimeException(ex);
         }
+    }
+    
+    /**
+     * Get the most relevant documentation link for the current page or use the
+     * main page if no mapping exists.
+     *
+     * The path is prefix with the location of the documentation.
+     *
+     * @return The link to the documentation
+     */
+    public String getDocumentationLink() {
+        return "doc/";
+    }
+    
+    public String getCopyright() {
+        return "Copyright © 2006–2019 PrimeKey Solutions AB";
+    }
+    
+    public String getNode() {
+        return CesecoreConfiguration.getNodeIdentifier();
     }
 
 }

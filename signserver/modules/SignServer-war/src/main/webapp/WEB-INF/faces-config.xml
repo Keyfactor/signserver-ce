@@ -13,10 +13,11 @@
             <!-- Add additional languages below -->
             
         </locale-config>
-<!--        <resource-bundle>
-            <base-name>org.signserver.admin.web.languagefile</base-name>
+        
+        <resource-bundle>
+            <base-name>org.signserver.public.web.languagefile</base-name>
             <var>text</var>
-        </resource-bundle>-->
+        </resource-bundle>
     </application>
 
     <managed-bean>

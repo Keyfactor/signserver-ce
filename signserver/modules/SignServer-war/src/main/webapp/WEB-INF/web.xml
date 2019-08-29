@@ -121,28 +121,21 @@
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
+    <!-- Special page for 404 -->
+    <error-page>
+        <exception-type>com.sun.faces.context.FacesFileNotFoundException</exception-type>
+        <location>/error-404.xhtml</location>
+    </error-page>
     <error-page>
         <error-code>404</error-code>
-        <location>/errorpages/error404.jsp</location>
+        <location>/error-404.xhtml</location>
     </error-page>
     <error-page>
-        <error-code>400</error-code>
-        <location>/errorpages/error400.jsp</location>
+        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <location>/error-expiredview.xhtml</location>
     </error-page>
+    <!-- Global error page for all other errors -->
     <error-page>
-        <error-code>403</error-code>
-        <location>/errorpages/error403.jsp</location>
-    </error-page>
-    <error-page>
-        <error-code>413</error-code>
-        <location>/errorpages/error413.jsp</location>
-    </error-page>
-    <error-page>
-        <error-code>500</error-code>
-        <location>/errorpages/error500.jsp</location>
-    </error-page>
-    <error-page>
-        <error-code>503</error-code>
-        <location>/errorpages/error503.jsp</location>
+        <location>/error.xhtml</location>
     </error-page>
 </web-app>

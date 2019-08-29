@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+    
+    <h:body>
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            
+            <ui:define name="title">
+                <h:outputText value="SignServer - PDF Signing"/>
+            </ui:define>
+            
+            <ui:define name="top">
+
+            </ui:define>
+            
+            <ui:define name="content">
+                <div id="container1">
+                    <h3>CMS Signing</h3>
+                    <form id="recievefile" action="worker/CMSSigner"
+                          method="post" enctype="multipart/form-data">
+
+                        <p>Simply upload a file to the CMS signer and you will get
+                                back the result signed in CMS format.</p>
+
+                        <table border="0" cellspacing="3" cellpadding="3">
+                            <tr id="Row1">
+                                <td valign="top" align="right">
+                                    Select file to upload and sign
+                                </td>
+                                <td valign="top">
+                                    <input id="fileInput" type="file" name="filerecievefile" />
+                                </td>
+                            </tr>
+                            <tr id="Row2">
+                                <td valign="top" align="right">Detached signature:</td>
+                                <td valign="top">
+                                    <input type="radio" name="REQUEST_METADATA.DETACHEDSIGNATURE" value="" checked="checked"/>Use default
+                                    <input type="radio" name="REQUEST_METADATA.DETACHEDSIGNATURE" value="TRUE"/>Detached
+                                    <input type="radio" name="REQUEST_METADATA.DETACHEDSIGNATURE" value="FALSE"/>Include content
+                                </td>
+                            </tr>
+                            <tr id="Row2">
+                                <td valign="top" align="right">Additional meta data (set in the REQUEST_METADATA request parameter):</td>
+                                <td valign="top">
+                                    <textarea name="REQUEST_METADATA" cols="40" rows="5"></textarea>
+                                </td>
+                            </tr>
+                            <tr id="Row3">
+                                <td valign="top" align="right">
+                                    &nbsp;
+                                </td>
+                                <td valign="top">
+                                    <input id="submitButton" type="submit" name="buttonrecievefile" value="Submit"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

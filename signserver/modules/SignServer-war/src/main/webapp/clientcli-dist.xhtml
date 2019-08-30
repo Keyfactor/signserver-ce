@@ -26,13 +26,13 @@
                         ClientCLI command line signing client can be downloaded from this page.
                     </p>
                     
-                    <h:panelGroup rendered="${settingsNGBean.isWebClientCLIDistAvailable()}">
+                    <h:panelGroup rendered="#{settingsNGBean.isWebClientCLIDistAvailable()}">
                         <b>
                             <h:outputLink value = "clientcli-dist/signserver-clientcli.zip">signserver-clientcli.zip</h:outputLink> [<h:outputText value="${settingsNGBean.getWebClientCLIDistSize()}"/>]
                         </b> 
                     </h:panelGroup>
                     
-                    <h:panelGroup rendered="${!settingsNGBean.isWebClientCLIDistAvailable()}">
+                    <h:panelGroup rendered="#{!settingsNGBean.isWebClientCLIDistAvailable()}">
                         <p><b>Download not available</b></p>
                     </h:panelGroup>
                     

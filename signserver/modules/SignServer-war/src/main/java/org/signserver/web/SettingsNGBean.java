@@ -26,7 +26,7 @@ import org.signserver.common.CompileTimeSettings;
 
 /**
  * JSF managed bean exposing settings to the JSF pages. 
- * TODO: remove this and change SettingsBean to JSF managed bean as this is duplicate of SettingsBean.
+ * TODO: this is duplicate of SettingsBean and still keep it if JSF managed bean can not be used in Servlet. 
  *
  * @author Vinay Singh
  * @version $Id$
@@ -46,10 +46,8 @@ public class SettingsNGBean {
     private static final String WEB_CLIENTCLI_DIST_FILE = "web.clientcli.dist.file";
     private static final String HTTPSERVER_EXTERNAL_PRIVHTTPS = "httpserver.external.privhttps";
 
-    private final CompileTimeSettings settings = CompileTimeSettings.getInstance();
+    private final CompileTimeSettings settings = CompileTimeSettings.getInstance();   
     
-    private String healthCheckURL;
-
     public SettingsNGBean() {
     }
 
@@ -147,6 +145,7 @@ public class SettingsNGBean {
         return value;
     }
     
+    // TODO: remove below method later on as it is not required in JSF
     /**
      * Host name used by SignServer public web to construct a correct URL.
      *

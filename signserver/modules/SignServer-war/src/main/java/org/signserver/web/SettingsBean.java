@@ -25,6 +25,7 @@ import org.signserver.common.CompileTimeSettings;
  * @author Markus Kilås
  * @version $Id$
  */
+// TODO: Remove most (unused) methods from this class if JSF managed bean (SettingsNGBean.java) also kept.
 public class SettingsBean {
 
     /** Logger for this class. */

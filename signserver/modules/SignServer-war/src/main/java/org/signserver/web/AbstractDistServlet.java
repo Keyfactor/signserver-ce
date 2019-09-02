@@ -42,7 +42,7 @@ public abstract class AbstractDistServlet extends HttpServlet {
      */
     protected abstract File getFile();
     
-    protected final SettingsBean settings = new SettingsBean();
+    protected final SettingsNGBean settings = new SettingsNGBean();
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

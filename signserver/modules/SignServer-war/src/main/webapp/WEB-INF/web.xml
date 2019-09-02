@@ -119,7 +119,7 @@
         <url-pattern>/clientcli-dist/signserver-clientcli.zip</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>index.xhtml</welcome-file>
     </welcome-file-list>
     <!-- Special page for 404 -->
     <error-page>

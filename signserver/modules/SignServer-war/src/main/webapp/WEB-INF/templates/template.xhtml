@@ -47,7 +47,19 @@
             <div class="clearBoth"></div>
 
             <div id="top-menu"> 
-                <ul>                   
+                <ul>
+                    <li>
+                        <h:link outcome="generic" class="#{activeMenu == 'generic' ? 'active' : ''}"><h:outputText value="#{text['Generic']}"/></h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="pdf" class="#{activeMenu == 'pdf' ? 'active' : ''}"><h:outputText value="#{text['PDF']}"/></h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="cms" class="#{activeMenu == 'cms' ? 'active' : ''}"><h:outputText value="#{text['CMS']}"/></h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="mrtdsod" class="#{activeMenu == 'mrtdsod' ? 'active' : ''}"><h:outputText value="#{text['eMRTD']}"/></h:link>
+                    </li>
                     <li class="last">
                         <h:panelGroup rendered="#{settingsNGBean.webDocEnabled}">
                             <h:outputLink value="#{settingsNGBean.documentationLink}" class="topOutsideLink"><h:outputText value="#{text['Documentation']}"/></h:outputLink>

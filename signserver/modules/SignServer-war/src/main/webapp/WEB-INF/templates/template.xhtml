@@ -46,7 +46,7 @@
             </div>
             <div class="clearBoth"></div>
 
-            <div id="top-menu"> 
+            <h:panelGroup id="top-menu" layout="block" rendered="#{activeMenu != null and activeMenu != ''}"> 
                 <ul>
                     <li>
                         <h:link outcome="generic" class="#{activeMenu == 'generic' ? 'active' : ''}"><h:outputText value="#{text['Generic']}"/></h:link>
@@ -70,7 +70,7 @@
                     </li>
                 </ul>
                 <ui:insert name="top">Top</ui:insert>
-            </div>
+            </h:panelGroup>
         </div>
         <div>
             <div id="content" class="full_content">

@@ -24,25 +24,51 @@
 
                     </p>
 
-                    <form id="recievefile" action="process" method="post" enctype="multipart/form-data">
+                    <form id="recievefile" action="../process" method="post" enctype="multipart/form-data">
+                        <h3>Worker</h3>
                         <p>
                             Worker name: <input type="text" name="workerName"/>
                         </p>
+                        
+                        <h3>Input</h3>
                         <p>
                             File: <input id="fileInput" type="file" name="filerecievefile"/>
                         </p>
-                        <p>
-                            Process type:
-                            <select name="processType">
-                                    <option value="signDocument" selected="selected">Sign document</option>
-                                    <option value="validateDocument">Validate document</option>
-                                    <option value="validateCertificate">Validate certificate</option>
-                            </select>
-                        </p>
-                        <p>
-                            Additional meta data (set in the REQUEST_METADATA request parameter):<br/>
-                            <textarea name="REQUEST_METADATA" cols="40" rows="5"></textarea><br/>
-                        </p>
+                        
+                        <h3>Options</h3>
+                        <details>
+                            <summary>Process type:</summary>
+                            <p>
+                                <select name="processType">
+                                        <option value="signDocument" selected="selected">Sign document</option>
+                                        <option value="validateDocument">Validate document</option>
+                                        <option value="validateCertificate">Validate certificate</option>
+                                </select>
+                            </p>
+                        </details>
+                        <details>
+                            <summary>CMS-specific</summary>
+                            <p>
+                                Request detached signature: 
+                                <input type="radio" name="REQUEST_METADATA.DETACHEDSIGNATURE" value="" checked="checked"/>Use default
+                                <input type="radio" name="REQUEST_METADATA.DETACHEDSIGNATURE" value="TRUE"/>Detached
+                                <input type="radio" name="REQUEST_METADATA.DETACHEDSIGNATURE" value="FALSE"/>Include content
+                            </p>
+                        </details>
+                        <details>
+                            <summary>PDF-specific</summary>
+                            <p>Password (if required for opening or signing PDF):<br/>
+                            <input type="password" name="REQUEST_METADATA.pdfPassword"/></p>
+                        </details>
+                        <details>
+                            <summary>Generic meta data</summary>
+                            <p>
+                                Include additional meta data with the request:<br/>
+                                <textarea name="REQUEST_METADATA" cols="40" rows="5"></textarea><br/>
+                            </p>
+                        </details>
+                        
+                        <h3>Submit</h3>
                         <p>
                             <input id="submitButton" type="submit" name="buttonrecievefile" value="Submit"/>
                         </p>

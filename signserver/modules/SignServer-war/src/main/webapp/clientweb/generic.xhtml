@@ -4,7 +4,7 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html">
     <h:body>
-        <ui:composition template="WEB-INF/templates/template.xhtml">
+        <ui:composition template="../WEB-INF/templates/template.xhtml">
             <ui:param name="activeMenu" value="generic"/>
 
             <ui:define name="title">
@@ -80,11 +80,6 @@
                             </p>
                         </form>
                     </fieldset>
-                    
-                    <p>
-                        <h:link value="Back" outcome="index"></h:link>
-                    </p>
-                    
                 </div>
             </ui:define>
             <ui:define name="bottom">

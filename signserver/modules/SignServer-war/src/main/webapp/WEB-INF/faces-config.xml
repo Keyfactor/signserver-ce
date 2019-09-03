@@ -25,12 +25,6 @@
         <managed-bean-name>components</managed-bean-name>
         <managed-bean-class>java.util.HashMap</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
+    </managed-bean>    
     
-    <managed-bean>
-	  <managed-bean-name>settingsNGBean</managed-bean-name>
-	  <managed-bean-class>org.signserver.web.SettingsNGBean</managed-bean-class>
-	  <managed-bean-scope>view</managed-bean-scope>
-     </managed-bean>
-
 </faces-config>

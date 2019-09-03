@@ -26,19 +26,19 @@
                         <li>
                             <h:outputLink value = "healthcheck/signserverhealth">Health Check</h:outputLink> 
                         </li>                        
-                        <h:panelGroup rendered="#{settingsNGBean.webClientCLIDistEnabled}">
+                        <h:panelGroup rendered="#{publicWebBean.webClientCLIDistEnabled}">
                             <li>                                
                                 <h:outputLink value="clientcli-dist/">Client CLI Download</h:outputLink>
                             </li>
                         </h:panelGroup>
-                        <h:panelGroup rendered="#{settingsNGBean.webAdminGUIDistEnabled}">
+                        <h:panelGroup rendered="#{publicWebBean.webAdminGUIDistEnabled}">
                             <li>
                                 <h:outputLink value="admingui-dist/">Administration GUI Download</h:outputLink>    
                             </li>
                         </h:panelGroup>
-                        <h:panelGroup rendered="#{settingsNGBean.adminWebEnabledAndAvailable}">
+                        <h:panelGroup rendered="#{publicWebBean.adminWebEnabledAndAvailable}">
                             <li>
-                                <h:outputLink value="#{settingsNGBean.getAdminWebPrivateHttpsLink()}">Administration Web</h:outputLink>                           
+                                <h:outputLink value="#{publicWebBean.getAdminWebPrivateHttpsLink()}">Administration Web</h:outputLink>                           
                             </li>
                         </h:panelGroup>                        
                     </ul>

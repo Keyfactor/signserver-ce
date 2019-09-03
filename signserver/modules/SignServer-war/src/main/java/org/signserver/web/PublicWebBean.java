@@ -23,6 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.cesecore.config.CesecoreConfiguration;
 import org.signserver.common.CompileTimeSettings;
+import javax.faces.bean.ApplicationScoped;
+import javax.faces.bean.ManagedBean;
+import javax.inject.Named;
 
 /**
  * JSF managed bean exposing settings to the JSF pages. 
@@ -32,10 +35,13 @@ import org.signserver.common.CompileTimeSettings;
  * @version $Id$
  *
  */
-public class SettingsNGBean {
+@Named("publicWebBean")
+@ApplicationScoped
+@ManagedBean
+public class PublicWebBean {
     
     /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(SettingsNGBean.class);
+    private static final Logger LOG = Logger.getLogger(PublicWebBean.class);
 
     /** Key in signservercompile.properties. */
     private static final String ADMINWEB_ENABLED_AND_AVAILABLE = "adminweb.enabled.available";
@@ -48,7 +54,7 @@ public class SettingsNGBean {
 
     private final CompileTimeSettings settings = CompileTimeSettings.getInstance();   
     
-    public SettingsNGBean() {
+    public PublicWebBean() {
     }
 
     /**

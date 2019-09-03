@@ -49,8 +49,11 @@
             <h:panelGroup id="top-menu" layout="block" rendered="#{activeMenu != null and activeMenu != ''}"> 
                 <ul>
                     <li>
-                        <h:link outcome="generic" class="#{activeMenu == 'generic' ? 'active' : ''}"><h:outputText value="#{text['Generic']}"/></h:link>
-                    </li>                    
+                        <h:link outcome="genericfile" class="#{activeMenu == 'genericfile' ? 'active' : ''}"><h:outputText value="#{text['Sign_by_File_Upload']}"/></h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="genericdirect" class="#{activeMenu == 'genericdirect' ? 'active' : ''}"><h:outputText value="#{text['Sign_by_Direct_Input']}"/></h:link>
+                    </li>
                     <li>
                         <h:link outcome="more-signing-options" class="#{activeMenu == 'more-signing-options' ? 'active' : ''}"><h:outputText value="#{text['More_Signing_Options']}"/></h:link>
                     </li>

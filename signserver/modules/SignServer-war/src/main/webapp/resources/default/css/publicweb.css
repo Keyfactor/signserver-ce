@@ -11,23 +11,18 @@ ul#topMenu li {
 }
 
 #container1 {
-    margin: 1em;
-    margin-top: 2em;
-    padding: 2em;
-    padding-top: 0.5em;
+    margin: 0;
+    margin-top: 0;
+    padding: 0;
+    padding-top: 0;
     padding-bottom: 0;
     /*                padding-top: 5em;*/
     background-color: white;
     /*                background-image: url("/home/markus/VersionControlled/signserver/trunk-156/signserver/SignServer-war/web/pub/logo.png");*/
     background-repeat: no-repeat;
     
-    border: darkgray thin solid;
-    border-radius: 4px;
-    -webkit-border-radius: 4px;
-    
     /*                width: 40em;*/
     /*                left: 8em;
-                    right: 8em;*/
 }
 
 .logo {

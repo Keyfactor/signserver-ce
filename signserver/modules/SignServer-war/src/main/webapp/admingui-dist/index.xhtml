@@ -6,7 +6,7 @@
       xmlns:f="http://java.sun.com/jsf/core">
 
     <body>
-        <ui:composition template="WEB-INF/templates/template.xhtml">
+        <ui:composition template="../WEB-INF/templates/template.xhtml">
 
             <ui:define name="title">
                 <h:outputText value="#{text['AdminGUI_Download']}"/>
@@ -35,7 +35,7 @@
                     
                     <h:panelGroup rendered="#{settingsNGBean.isWebClientCLIDistAvailable()}">
                         <b>
-                            <h:outputLink value = "admingui-dist/signserver-admingui.zip">signserver-admingui.zip</h:outputLink> [<h:outputText value="${settingsNGBean.getWebAdminGUIDistSize()}"/>]
+                            <h:outputLink value = "signserver-admingui.zip">signserver-admingui.zip</h:outputLink> [<h:outputText value="${settingsNGBean.getWebAdminGUIDistSize()}"/>]
                         </b> 
                     </h:panelGroup>
                     
@@ -45,8 +45,8 @@
                     
                     <p>&nbsp;</p>        
                     <p>&nbsp;</p>
-                    <p>
-                        <h:link value="Back" outcome="index"></h:link>
+                    <p>                        
+                        <h:outputLink value="../">Back</h:outputLink>
                     </p>
                     
                 </div>

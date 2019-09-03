@@ -33,14 +33,14 @@
                         </h:panelGroup>
                         <h:panelGroup rendered="#{settingsNGBean.webAdminGUIDistEnabled}">
                             <li>
-                                <h:link value = "Administration GUI Download" outcome = "admingui-dist" />    
+                                <h:outputLink value="admingui-dist/">Administration GUI Download</h:outputLink>    
                             </li>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{settingsNGBean.adminWebEnabledAndAvailable}">
                             <li>
                                 <h:outputLink value="#{settingsNGBean.getAdminWebPrivateHttpsLink()}">Administration Web</h:outputLink>                           
                             </li>
-                        </h:panelGroup>
+                        </h:panelGroup>                        
                     </ul>
                     <h2>Online Resources</h2>
                     <ul class="resourcesList">

@@ -185,7 +185,7 @@ public class SettingsNGBean {
      * @return The link to the documentation
      */
     public String getDocumentationLink() {
-        return "doc/";
+        return "../doc/";
     }
     
     public String getCopyright() {

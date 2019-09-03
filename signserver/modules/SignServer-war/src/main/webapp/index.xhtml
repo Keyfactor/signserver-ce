@@ -27,8 +27,8 @@
                             <h:outputLink value = "healthcheck/signserverhealth">Health Check</h:outputLink> 
                         </li>                        
                         <h:panelGroup rendered="#{settingsNGBean.webClientCLIDistEnabled}">
-                            <li>
-                                <h:link value = "Client CLI Download" outcome = "clientcli-dist" />    
+                            <li>                                
+                                <h:outputLink value="clientcli-dist/">Client CLI Download</h:outputLink>
                             </li>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{settingsNGBean.webAdminGUIDistEnabled}">

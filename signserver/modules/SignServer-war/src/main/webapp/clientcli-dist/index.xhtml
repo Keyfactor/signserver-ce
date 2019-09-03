@@ -6,7 +6,7 @@
       xmlns:f="http://java.sun.com/jsf/core">
     
     <body>
-        <ui:composition template="WEB-INF/templates/template.xhtml">
+        <ui:composition template="../WEB-INF/templates/template.xhtml">
 
             <ui:define name="title">
                 <h:outputText value="#{text['ClientCLI_Download']}"/>
@@ -28,7 +28,7 @@
                     
                     <h:panelGroup rendered="#{settingsNGBean.isWebClientCLIDistAvailable()}">
                         <b>
-                            <h:outputLink value = "clientcli-dist/signserver-clientcli.zip">signserver-clientcli.zip</h:outputLink> [<h:outputText value="${settingsNGBean.getWebClientCLIDistSize()}"/>]
+                            <h:outputLink value = "signserver-clientcli.zip">signserver-clientcli.zip</h:outputLink> [<h:outputText value="${settingsNGBean.getWebClientCLIDistSize()}"/>]
                         </b> 
                     </h:panelGroup>
                     
@@ -39,7 +39,7 @@
                     <p>&nbsp;</p>        
                     <p>&nbsp;</p>
                     <p>
-                        <h:link value="Back" outcome="index"></h:link>
+                        <h:outputLink value="../">Back</h:outputLink>
                     </p>
                 </div>
 

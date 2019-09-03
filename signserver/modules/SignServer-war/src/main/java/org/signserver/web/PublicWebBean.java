@@ -28,8 +28,7 @@ import javax.faces.bean.ManagedBean;
 import javax.inject.Named;
 
 /**
- * JSF managed bean exposing settings to the JSF pages. 
- * TODO: this is duplicate of SettingsBean and still keep it if JSF managed bean can not be used in Servlet. 
+ * JSF managed bean exposing settings to the JSF pages.
  *
  * @author Vinay Singh
  * @version $Id$

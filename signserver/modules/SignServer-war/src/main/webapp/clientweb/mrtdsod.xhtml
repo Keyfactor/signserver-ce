@@ -6,7 +6,7 @@
     
     <h:body>
         <ui:composition template="../WEB-INF/templates/template.xhtml">
-            <ui:param name="activeMenu" value="mrtdsod"/>
+            <ui:param name="activeMenu" value="more-signing-options"/>
             
             <ui:define name="title">
                 <h:outputText value="SignServer - PDF Signing"/>
@@ -17,6 +17,11 @@
             </ui:define>
             
             <ui:define name="content">
+                
+                <ui:include src="more-signing-options-menu.xhtml">                    
+                    <ui:param name="activeSigningOptionsMenu" value="mrtdsod"/>
+                </ui:include>
+                
                 <div id="container1">
                     <h3>MRTD SOD Signing</h3>
                     <p>Enter the data for the data groups to be stored on the passport.</p>

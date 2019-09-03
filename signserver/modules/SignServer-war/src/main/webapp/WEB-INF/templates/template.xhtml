@@ -50,15 +50,9 @@
                 <ul>
                     <li>
                         <h:link outcome="generic" class="#{activeMenu == 'generic' ? 'active' : ''}"><h:outputText value="#{text['Generic']}"/></h:link>
-                    </li>
+                    </li>                    
                     <li>
-                        <h:link outcome="pdf" class="#{activeMenu == 'pdf' ? 'active' : ''}"><h:outputText value="#{text['PDF']}"/></h:link>
-                    </li>
-                    <li>
-                        <h:link outcome="cms" class="#{activeMenu == 'cms' ? 'active' : ''}"><h:outputText value="#{text['CMS']}"/></h:link>
-                    </li>
-                    <li>
-                        <h:link outcome="mrtdsod" class="#{activeMenu == 'mrtdsod' ? 'active' : ''}"><h:outputText value="#{text['eMRTD']}"/></h:link>
+                        <h:link outcome="more-signing-options" class="#{activeMenu == 'more-signing-options' ? 'active' : ''}"><h:outputText value="#{text['More_Signing_Options']}"/></h:link>
                     </li>
                     <li class="last">
                         <h:panelGroup rendered="#{settingsNGBean.webDocEnabled}">

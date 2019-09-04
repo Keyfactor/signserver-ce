@@ -41,7 +41,7 @@
             <div id="top-right">
                 <h:panelGrid columns="2">                   
                     <h:outputText value="#{text['Node_COLON']}" class="top-right-c1"/>
-                    <h:outputText value="#{settingsNGBean.node}" class="top-right-c2"/>                 
+                    <h:outputText value="#{publicWebBean.node}" class="top-right-c2"/>                 
                 </h:panelGrid>
             </div>
             <div class="clearBoth"></div>
@@ -58,11 +58,11 @@
                         <h:link outcome="more-signing-options" class="#{activeMenu == 'more-signing-options' ? 'active' : ''}"><h:outputText value="#{text['More_Signing_Options']}"/></h:link>
                     </li>
                     <li class="last">
-                        <h:panelGroup rendered="#{settingsNGBean.webDocEnabled}">
-                            <h:outputLink value="#{settingsNGBean.documentationLink}" class="topOutsideLink"><h:outputText value="#{text['Documentation']}"/></h:outputLink>
+                        <h:panelGroup rendered="#{publicWebBean.webDocEnabled}">
+                            <h:outputLink value="#{publicWebBean.documentationLink}" class="topOutsideLink"><h:outputText value="#{text['Documentation']}"/></h:outputLink>
                         </h:panelGroup>
-                        <h:panelGroup rendered="#{!settingsNGBean.webDocEnabled}">
-                            <h:outputLink value="#{settingsNGBean.documentationLink}" class="topOutsideLink"><h:outputText value=""/></h:outputLink>
+                        <h:panelGroup rendered="#{!publicWebBean.webDocEnabled}">
+                            <h:outputLink value="#{publicWebBean.documentationLink}" class="topOutsideLink"><h:outputText value=""/></h:outputLink>
                         </h:panelGroup>
                     </li>
                 </ul>
@@ -78,7 +78,7 @@
             <ui:insert name="bottom">Bottom</ui:insert>
             
             <p class="bottomText">
-                <h:outputText value="#{settingsNGBean.copyright}"/>
+                <h:outputText value="#{publicWebBean.copyright}"/>
             </p>
         </div>
 

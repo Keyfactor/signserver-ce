@@ -92,47 +92,6 @@ li a.active {
     color: red;
 }
 
-
-#worker-menu, #cert-menu {
-    /*float: left;*/
-    /*width: 12em;*/
-    
-    margin-left: 0px;
-    background-color: gray;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    border-radius: 3px;
-}
-
-#worker-menu ul, #cert-menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-}
-
-#worker-menu li, #cert-menu li {
-    float: left;
-}
-
-#worker-menu li.last {
-    float:right;
-}
-
-#worker-menu li a, #cert-menu li a {
-    color: white;
-    display: block;
-    text-decoration: none;
-    padding: 10px 15px;
-    /*width: 12em;*/
-    -webkit-transition-duration: 0.4s; /* Safari */
-    transition-duration: 0.4s;
-}
-
-#worker-menu li a:hover, #cert-menu li a:hover {
-    background-color: black;
-}
-
 input[type="file"] {
     background-color: lightgray;
     border: none;
@@ -152,100 +111,6 @@ input[type="file"]:hover {
     background-color: black;
     color: white;
 }
-
-.buttonNeutral {
-    background-color: lightgray;
-    border: none;
-    border-radius: 4px;
-    color: black;
-    padding: 5px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 10px;
-    margin: 2px;
-
-    -webkit-transition-duration: 0.4s; /* Safari */
-    transition-duration: 0.4s;
-}
-.buttonNeutral:hover {
-    background-color: black;
-    color: white;
-}
-.buttonNeutral:disabled, .buttonNeutral:disabled:hover,
-.buttonFeatured:disabled, .buttonFeatured:disabled:hover,
-.buttonNegative:disabled, .buttonNegative:disabled:hover,
-.buttonPositive:disabled, .buttonPositive:disabled:hover {
-    background-color: whitesmoke;
-    color: gray;
-}
-
-.buttonFeatured {
-    background-color: #1F589F;
-    border: none;
-    border-radius: 4px;
-    color: white;
-    padding: 5px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 10px;
-    margin: 2px;
-
-    -webkit-transition-duration: 0.4s; /* Safari */
-    transition-duration: 0.4s;
-}
-.buttonFeatured:hover {
-    background-color: black;
-}
-
-.buttonPositive {
-    background-color: #53983C;
-    border: none;
-    border-radius: 4px;
-    color: white;
-    padding: 5px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 10px;
-    margin: 2px;
-
-    -webkit-transition-duration: 0.4s; /* Safari */
-    transition-duration: 0.4s;
-}
-.buttonPositive:hover {
-    background-color: black;
-}
-
-.buttonNegative {
-    background-color: #E73D35;
-    border: none;
-    border-radius: 4px;
-    color: white;
-    padding: 5px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 10px;
-    margin: 2px;
-
-    -webkit-transition-duration: 0.4s; /* Safari */
-    transition-duration: 0.4s;
-}
-.buttonNegative:hover {
-    background-color: black;
-}
-
-
-.linkPositive, a:link.linkPositive, a:visited.linkPositive, a:link:hover.linkPositive, a:visited:hover.linkPositive {
-    color: #53983C;
-}
-
-.linkNegative, a:link.linkNegative, a:visited.linkNegative, a:link:hover.linkNegative, a:visited:hover.linkNegative {
-    color: #E73D35;
-}
-
 
 #header {
     /*background-color: #ece3a5;*/
@@ -330,56 +195,9 @@ table.dss1 {
     margin: 5px;
 }
 
-thead.dss1, th.dss1, tfoot.dss1 {
-    background: lightgray;
-    padding: 5px;
-}
-
-td.dss1 {
-    border-left: thin solid darkgray;
-    border-right: thin solid darkgray;
-}
-
-td.viewAuthRuleType {
-    border-left: thin solid darkgray;
-    border-right: 0px;
-}
-
-td.viewAuthRuleValue {
-    border-left: 0px;
-    border-right: thin solid darkgray;
-}
-
-
-tr.dss1 {
-    border-top: thin solid darkgray;
-    border-bottom: thin solid darkgray;
-    background-color: white;
-}
-
-tr.dss1_odd {
-    border-top: thin solid darkgray;
-    border-bottom: thin solid darkgray;
-    background-color: #F2F5F9;
-}
-
 .notable {
     border: none;
     background: none;
-}
-
-.errorMessage {
-    color: red;
-}
-.successMessage {
-    color: green;
-}
-.warningMessage {
-    color: orange;
-}
-
-.dimmedLabel {
-    color: #888888;
 }
 
 .fileInputContainer {
@@ -405,18 +223,6 @@ tr.dss1_odd {
     color: gray;
 }
 
-.workerImage1 {
-    height: 1em;
-    padding-right: 0.25em;
-}
-.workerImage2 {
-    height: 1em;
-    margin-right: 0.25em;
-}
-
-.propertiesInputTextarea {
-    width: 100%;
-}
 
 .centered {
     text-align: center;
@@ -432,72 +238,4 @@ tr.dss1_odd {
 
 .titleCell {
     font-weight: bold;
-}
-
-/** List/Add/Edit Worker Authorizations. */
-
-.optionalArea {
-    float: left;
-    border: lightgray groove thin;
-    border-radius: 1em;
-    margin-bottom: 1em;
-    padding: 1em;
-}
-.postOptionalArea {
-    float: none;
-    clear: both;
-}
-
-#editAuthRule {
-    margin-bottom: 1em;
-}
-
-.editAuthRule {
-    width: 100%;
-    margin-bottom: 0.5em;
-}
-
-.importAuthRuleFromCert {
-    float: left;
-    border: lightgray groove thin;
-    border-radius: 1em;
-}
-
-.viewAuthRuleCell{
-    margin: 0.5em;
-    padding: 0.5em;    
-}
-
-.selectedAuthType {
-    font-weight: bold;
-    background-color: #1F589F;
-    color: white
-}
-
-.authTypeCell {
-    height: 30px;
-    border-bottom: thin solid black;
-    margin: 0px 0px 0px 0px;
-    padding: 0.5em;
-}
-
-.disabledAuthType {
-    opacity: 0.5;
-}
-
-.authFieldsTable {    
-    border-top: black solid thin;
-    border-right: black solid thin;
-    border-left: black solid thin;
-
-}
-
-.authFieldSelectedMark {
-    text-align: center;
-    font-size: larger;
-}
-
-.removeAuthType{
-    margin-right: 0.5em;
-    margin-left: 0.5em;
 }

@@ -92,6 +92,47 @@ li a.active {
     color: red;
 }
 
+
+#worker-menu, #cert-menu {
+    /*float: left;*/
+    /*width: 12em;*/
+    
+    margin-left: 0px;
+    background-color: gray;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+}
+
+#worker-menu ul, #cert-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#worker-menu li, #cert-menu li {
+    float: left;
+}
+
+#worker-menu li.last {
+    float:right;
+}
+
+#worker-menu li a, #cert-menu li a {
+    color: white;
+    display: block;
+    text-decoration: none;
+    padding: 10px 15px;
+    /*width: 12em;*/
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+#worker-menu li a:hover, #cert-menu li a:hover {
+    background-color: black;
+}
+
 input[type="file"] {
     background-color: lightgray;
     border: none;

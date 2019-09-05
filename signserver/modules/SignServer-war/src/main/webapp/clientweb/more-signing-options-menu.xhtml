@@ -6,13 +6,7 @@
                 xmlns:f="http://java.sun.com/jsf/core">
 
     <div id="worker-menu">
-        <ul>            
-            <li>
-                <h:link outcome="more-signing-options" class="#{activeSigningOptionsMenu == 'pdf' ? 'active' : ''}"><h:outputText value="#{text['PDF']}"/></h:link>
-            </li>
-            <li>
-                <h:link outcome="cms" class="#{activeSigningOptionsMenu == 'cms' ? 'active' : ''}"><h:outputText value="#{text['CMS']}"/></h:link>
-            </li>
+        <ul>
             <li>
                 <h:link outcome="mrtdsod" class="#{activeSigningOptionsMenu == 'mrtdsod' ? 'active' : ''}"><h:outputText value="#{text['eMRTD']}"/></h:link>
             </li>

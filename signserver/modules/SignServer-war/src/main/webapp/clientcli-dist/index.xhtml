@@ -28,7 +28,7 @@
                     
                     <h:panelGroup rendered="#{publicWebBean.isWebClientCLIDistAvailable()}">
                         <b>
-                            <h:outputLink value = "signserver-clientcli.zip">signserver-clientcli.zip</h:outputLink> [<h:outputText value="${settingsNGBean.getWebClientCLIDistSize()}"/>]
+                            <h:outputLink value = "signserver-clientcli.zip">signserver-clientcli.zip</h:outputLink> [<h:outputText value="#{publicWebBean.getWebClientCLIDistSize()}"/>]
                         </b> 
                     </h:panelGroup>
                     

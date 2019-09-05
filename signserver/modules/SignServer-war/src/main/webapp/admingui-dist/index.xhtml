@@ -35,7 +35,7 @@
                     
                     <h:panelGroup rendered="#{publicWebBean.isWebClientCLIDistAvailable()}">
                         <b>
-                            <h:outputLink value = "signserver-admingui.zip">signserver-admingui.zip</h:outputLink> [<h:outputText value="${settingsNGBean.getWebAdminGUIDistSize()}"/>]
+                            <h:outputLink value = "signserver-admingui.zip">signserver-admingui.zip</h:outputLink> [<h:outputText value="#{publicWebBean.getWebAdminGUIDistSize()}"/>]
                         </b> 
                     </h:panelGroup>
                     

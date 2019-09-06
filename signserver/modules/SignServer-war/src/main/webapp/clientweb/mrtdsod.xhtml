@@ -23,12 +23,16 @@
                 </ui:include>
                 
                 <div id="container1">
-                    <h3>MRTD SOD Signing</h3>
-                    <p>Enter the data for the data groups to be stored on the passport.</p>
-                    <p>Note 1: Please provide the hashes of the respective data groups if the signer is configured to accept hashes instead of the actual data.</p>
-                    <p>Note 2: When submitting this form using a web browser it is not possible to enter binary data directly into the input fields. Then first base64 encode the data and choose the Base64 encoding option and the signer will decode the data before signing it.</p>
+                    <form id="requestform" action="../sod" method="post">
+                        <h3>Worker</h3>
+                        <p>
+                            Worker name: <input type="text" name="workerName"/>
+                        </p>
+                        <h3>MRTD SOD Signing</h3>
+                        <p>Enter the data for the data groups to be stored on the passport.</p>
+                        <p>Note 1: Please provide the hashes of the respective data groups if the signer is configured to accept hashes instead of the actual data.</p>
+                        <p>Note 2: When submitting this form using a web browser it is not possible to enter binary data directly into the input fields. Then first base64 encode the data and choose the Base64 encoding option and the signer will decode the data before signing it.</p>
 
-                    <form id="requestform" action="sodworker/MRTDSODSigner" method="post">
                         <p>
                             DG1: <input type="text" size="80" name="dataGroup1" value="PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4="/><br/>
                             DG2: <input type="text" size="80" name="dataGroup2" value="BTfUgfc6dXM0MoBS2jr5YmztlwKOILhJ9hFcIs12UZc="/><br/>
@@ -69,15 +73,13 @@
                         <p>
                             <input type="submit" name="submit" value="Submit" /><br />
                         </p>
+                        <p>
+                            <input type="submit" name="displayCert" value="Display Signer Certificate"/><br/>
+                        </p>
+                        <p>
+                            <input type="submit" name="downloadCert" value="Download Signer Certificate"/><br/>
+                        </p>
                     </form>
-
-                    <h2>Display signing certificate</h2>
-                    <p>View the current document signer certificate.</p>
-                    <p><a href="../sod?workerName=MRTDSODSigner&amp;displayCert=true">Display</a></p>
-
-                    <h2>Download signing certificate</h2>
-                    <p>Download the current document signer certificate in binary (der) format.</p>
-                    <p><a href="../sod?workerName=MRTDSODSigner&amp;downloadCert=true">Download</a></p>
                 </div>
             </ui:define>
             <ui:define name="bottom">

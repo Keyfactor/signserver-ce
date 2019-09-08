@@ -23,16 +23,19 @@
                 </ui:include>
                 
                 <div id="container1">
+                    
+                    <h1>MRTD SOD Signing</h1>
+                    <p>Enter the data for the data groups to be stored on the passport.</p>
+                    <p>Note 1: Please provide the hashes of the respective data groups if the signer is configured to accept hashes instead of the actual data.</p>
+                    <p>Note 2: When submitting this form using a web browser it is not possible to enter binary data directly into the input fields. Then first base64 encode the data and choose the Base64 encoding option and the signer will decode the data before signing it.</p>
+                    
                     <form id="requestform" action="../sod" method="post">
                         <h3>Worker</h3>
                         <p>
-                            Worker name: <input type="text" name="workerName"/>
+                            Name: <input type="text" name="workerName"/>
                         </p>
-                        <h3>MRTD SOD Signing</h3>
-                        <p>Enter the data for the data groups to be stored on the passport.</p>
-                        <p>Note 1: Please provide the hashes of the respective data groups if the signer is configured to accept hashes instead of the actual data.</p>
-                        <p>Note 2: When submitting this form using a web browser it is not possible to enter binary data directly into the input fields. Then first base64 encode the data and choose the Base64 encoding option and the signer will decode the data before signing it.</p>
-
+                        
+                        <h3>Input</h3>
                         <p>
                             DG1: <input type="text" size="80" name="dataGroup1" value="PJaDAX+eS/M9D77dJr8UP9ct6bndFFRBt18GBAR+oo4="/><br/>
                             DG2: <input type="text" size="80" name="dataGroup2" value="BTfUgfc6dXM0MoBS2jr5YmztlwKOILhJ9hFcIs12UZc="/><br/>
@@ -59,6 +62,7 @@
                             <input type="radio" name="encoding" value="base64" checked="checked"/>Base64
                         </p>
 
+                        <h3>Options</h3>
                         <p>
                             Request LDS version:<br/>
                             <input type="radio" name="ldsVersion" value="" id="ldsNo" checked="checked"/><label for="ldsNo">Unspecified</label><br/>
@@ -66,18 +70,25 @@
                             <input type="radio" name="ldsVersion" value="0108" id="lds0108"/><label for="lds0108">V1.8</label><br/>
                             <label for="unicodeField">Unicode version:</label> <input type="text" size="6" name="unicodeVersion" id="unicodeField" value="040000"/>
                         </p>
+                        <details>
+                            <summary>Generic meta data</summary>
+                            <p>
+                                Include additional meta data with the request:<br/>
+                                <textarea name="REQUEST_METADATA" cols="40" rows="5"></textarea><br/>
+                            </p>
+                        </details>
+                        
+                        <h3>Submit</h3>
                         <p>
-                            Additional meta data (set in the REQUEST_METADATA request parameter):<br/>
-                            <textarea name="REQUEST_METADATA" cols="40" rows="5"></textarea><br/>
+                            <input type="submit" name="submit" value="Submit" class="buttonFeatured"/><br />
+                        </p>
+                        
+                        <h3>Other Actions</h3>
+                        <p>
+                            <input type="submit" name="displayCert" value="Display Signer Certificate" class="buttonNeutral"/><br/>
                         </p>
                         <p>
-                            <input type="submit" name="submit" value="Submit" /><br />
-                        </p>
-                        <p>
-                            <input type="submit" name="displayCert" value="Display Signer Certificate"/><br/>
-                        </p>
-                        <p>
-                            <input type="submit" name="downloadCert" value="Download Signer Certificate"/><br/>
+                            <input type="submit" name="downloadCert" value="Download Signer Certificate" class="buttonNeutral"/><br/>
                         </p>
                     </form>
                 </div>

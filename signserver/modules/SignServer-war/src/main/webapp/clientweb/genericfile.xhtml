@@ -19,7 +19,7 @@
                 <div id="container1">
 
                     <h1>Generic Signing or Validation by File Upload</h1>
-                        This page can be used to request signing and validation from any of the generic signers and validators by uploading a file. The name of the worker that should process the request needs to be specified. To perform document and certificate validation, use the process type dropdown to select the appropriate operation. 
+                        This page can be used to request signing and validation from any of the generic signers and validators by uploading a file. The name of the worker that should process the request needs to be specified. To perform document and certificate validation, use the process type dropdown to select the appropriate operation.
                     <p>
 
                     </p>
@@ -28,14 +28,14 @@
                           enctype="multipart/form-data" autocomplete="off">
                         <h3>Worker</h3>
                         <p>
-                            Worker name: <input type="text" name="workerName" value=""/>
+                            Name: <input type="text" name="workerName" value=""/>
                         </p>
-                        
+
                         <h3>Input</h3>
                         <p>
                             File: <input id="fileInput" type="file" name="filerecievefile"/>
                         </p>
-                        
+
                         <h3>Options</h3>
                         <details>
                             <summary>Process type:</summary>
@@ -50,7 +50,7 @@
                         <details>
                             <summary>CMS-specific</summary>
                             <p>
-                                Request detached signature: 
+                                Request detached signature:
                                 <input type="radio" name="REQUEST_METADATA.DETACHEDSIGNATURE" value="" checked="checked"/>Use default
                                 <input type="radio" name="REQUEST_METADATA.DETACHEDSIGNATURE" value="TRUE"/>Detached
                                 <input type="radio" name="REQUEST_METADATA.DETACHEDSIGNATURE" value="FALSE"/>Include content
@@ -68,10 +68,10 @@
                                 <textarea name="REQUEST_METADATA" cols="40" rows="5"></textarea><br/>
                             </p>
                         </details>
-                        
+
                         <h3>Submit</h3>
                         <p>
-                            <input id="submitButton" type="submit" name="buttonrecievefile" value="Submit"/>
+                            <input id="submitButton" type="submit" name="buttonrecievefile" value="Submit" class="buttonFeatured"/>
                         </p>
                     </form>
                 </div>

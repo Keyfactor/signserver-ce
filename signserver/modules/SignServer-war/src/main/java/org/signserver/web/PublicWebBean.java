@@ -150,19 +150,6 @@ public class PublicWebBean {
         return value;
     }
     
-    // TODO: remove below method later on as it is not required in JSF
-    /**
-     * Host name used by SignServer public web to construct a correct URL.
-     *
-     * @param request HTTPServetRequest
-     * @return The host name
-     * @throws java.net.URISyntaxException
-     */
-    public String getHostName(HttpServletRequest request) throws URISyntaxException {
-        URI uri = new URI(request.getRequestURL().toString());
-        return uri.getHost();
-    }
-    
     public String getAdminWebPrivateHttpsLink() {
         
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();

@@ -3,9 +3,6 @@
 <%@ page pageEncoding="UTF-8" %>
 
     <p class="logo">
-        <img src="<c:out value='${pageContext.servletContext.contextPath}'/>/../logo.png" width="245" height="76" alt="SignServer - PKI by PrimeKey"/>
+        <img src="<c:out value='${pageContext.servletContext.contextPath}'/>/logo.png" width="245" height="76" alt="SignServer - PKI by PrimeKey"/>
     </p>
-    <p class="header">
-        <%=CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION)%>
-    </p>
-    <hr class="topSeparator"/>
+

@@ -1,6 +1,5 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<!DOCTYPE html>
+<html lang="en"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html">
     <h:body>
@@ -24,7 +23,7 @@
                         This page can be used to request signing and validation from any of the generic signers and validators. The content to be signed or validated can optionally be treated as Base64 encoded. The name of the worker that should process the request needs to be specified. To perform document and certificate validation, use the process type dropdown to select the appropriate operation.
                     </p>
 
-                    <form id="requestform" action="process" method="post">
+                    <form id="requestform" action="process" method="post" autocomplete="off">
                         <h3>Worker</h3>
                         <p>
                             Name: <input type="text" name="workerName"/>
@@ -64,7 +63,7 @@
                         <details>
                             <summary>PDF-specific</summary>
                             <p>Password (if required for opening or signing PDF):<br/>
-                            <input type="password" name="REQUEST_METADATA.pdfPassword" autocomplete="new-password"/></p>
+                            <input type="password" name="REQUEST_METADATA.pdfPassword" autocomplete="off"/></p>
                         </details>
                         <details>
                             <summary>Generic meta data</summary>

@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="46137346">
+<body pageid="75861550">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.1.0</p>
+                    <p>Version: 5.2.0</p>
                 </div>
             </header>
 
@@ -1037,10 +1037,6 @@
         <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
 
             </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
-
-            </li>
                                         <li class="collapsed">
         <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
 
@@ -1222,6 +1218,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
 
             </li>
@@ -1326,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.2_Release_Notes.html">SignServer 5.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
 
             </li>
@@ -1387,17 +1391,17 @@
                                                                                                          <li class="shortcut"><a href="Worker_Page.html">Worker Page</a></li>
                                                                                      <li><a href="Worker_Crypto_Token_Page.html">Worker Crypto Token Page</a></li>
                                                             </ul>
-</div>            <h1 id="src-5282839"> <span>Crypto Token Generate CSR Page</span></h1>
+</div>            <h1 id="src-78940269"> <span>Crypto Token Generate CSR Page</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >Generation of certificate signing requests.    </p>
-    <p  >Make sure each key that should have a CSR generated are selected.    </p>
-    <div class="section section-1" id="src-5282839_id-.CryptoTokenGenerateCSRPagev4.1.0-GenerateCSR">
+    <p  >Make sure each key that should have a CSR generated is selected.    </p>
+    <div class="section section-1" id="src-78940269_id-.CryptoTokenGenerateCSRPagev5.2.0-GenerateCSR">
         <h1 class="heading "><span>Generate CSR</span></h1>
     <div  class="tablewrap">
-        <table class="confluenceTable">
+        <table class="wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />
@@ -1424,7 +1428,9 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >The signature algorithm to use when creating the signature in the CSR (proof-of-possession).    </p>
-    <p  >The algorithm must work with the key algorithm used (i.e. RSA or ECDSA).    </p>
+    <p  >By default, the signature algorithms can be selected from a drop-down list listing common algorithms. Note that some of these algorithms might not be supported by the crypto token used.    </p>
+    <p  >To specify a signature algorithm manually, click <strong class=" ">&gt;</strong>.    </p>
+    <p  >Note that the algorithm must work with the key algorithm used (i.e. RSA or ECDSA).    </p>
     <p  >Examples:    </p>
 <ul class=" "><li class=" ">    <p  >SHA256withRSA    </p>
 </li><li class=" ">    <p  >SHA256withECDSA    </p>
@@ -1452,10 +1458,10 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5282839_id-.CryptoTokenGenerateCSRPagev4.1.0-FormatOptions">
+    <div class="section section-1" id="src-78940269_id-.CryptoTokenGenerateCSRPagev5.2.0-FormatOptions">
         <h1 class="heading "><span>Format Options</span></h1>
     <div  class="tablewrap">
-        <table class="confluenceTable">
+        <table class="wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />
@@ -1474,16 +1480,16 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Create a PKCS#10 certificate signing request that is encapsulated in a PKCS#7/CMS SignedData structure.    </p>
-    <p  >If this option is selected then the drop-down menu should be used to select the CMS signer that will sign the request.    </p>
+    <p  >If selected, use the drop-down list to select the CMS signer that will sign the request.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5282839_id-.CryptoTokenGenerateCSRPagev4.1.0-Actions">
+    <div class="section section-1" id="src-78940269_id-.CryptoTokenGenerateCSRPagev5.2.0-Actions">
         <h1 class="heading "><span>Actions</span></h1>
     <div  class="tablewrap">
-        <table class="confluenceTable">
+        <table class="wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />
@@ -1502,7 +1508,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Performs the CSR generation for each selected key.    </p>
-    <p  >The result column will provide a download button for each CSR generated.    </p>
+    <p  >The <strong class=" ">Result</strong> column will provide a download button for each CSR generated.    </p>
             </td>
         </tr>
     <tr>

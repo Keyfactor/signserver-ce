@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <title>signdocument - SignServer - Documentation Space</title> -->
-    <title>signdocument - SignServer Manual</title>
+    <!-- <title>SignServer 5.2 Release Notes - SignServer - Documentation Space</title> -->
+    <title>SignServer 5.2 Release Notes - SignServer Manual</title>
 
     <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="46137346">
+<body pageid="75861550">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.0.0</p>
+                    <p>Version: 5.2.0</p>
                 </div>
             </header>
 
@@ -260,6 +260,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
 
             </li>
@@ -269,6 +273,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Setting_up_One-time_Keys.html">Setting up One-time Keys</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>
 
             </li>
                                         <li class="leaf">
@@ -322,7 +330,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link current" href="signdocument.html">signdocument</a>
+        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
 
             </li>
                                         <li class="leaf">
@@ -545,6 +553,18 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Plain_Signer.html">Plain Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGP_Signer.html">OpenPGP Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="OpenPGPPlain_Signer.html">OpenPGPPlain Signer</a>
 
             </li>
                             </ul>
@@ -1017,10 +1037,6 @@
         <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
 
             </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
-
-            </li>
                                         <li class="collapsed">
         <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
 
@@ -1202,6 +1218,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
 
             </li>
@@ -1306,6 +1326,14 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link current" href="SignServer_5.2_Release_Notes.html">SignServer 5.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.0_Release_Notes.html">SignServer 5.0 Release Notes</a>
 
             </li>
@@ -1356,38 +1384,113 @@
         <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                                              <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
-                                        <li class="shortcut"><a href="SignServer_Integration.html">SignServer Integration</a></li>
-                                                                                     <li><a href="Client_CLI.html">Client CLI</a></li>
+                                        <li class="shortcut"><a href="SignServer_Release_Information.html">SignServer Release Information</a></li>
+                                                                                     <li><a href="SignServer_Release_Notes.html">SignServer Release Notes</a></li>
                                                             </ul>
-</div>            <h1 id="src-26775246"> <span>signdocument</span></h1>
+</div>            <h1 id="src-78939220"> <span>SignServer 5.2 Release Notes</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >Request signing of a document using HTTP(s) or web services.    </p>
-    <p  >The data to send to SignServer can be supplied using one of the following methods (see <a   href="#src-26775246_id-.ClientCLIsigndocumentCommandv4.4.1-Sampleusages">Sample usages</a> below):    </p>
-<ul class=" "><li class=" ">    <p  >Provided directly on the command line as a string using the <strong class=" ">-data</strong> flag. Useful for text input.    </p>
-</li><li class=" ">    <p  >As a path to the file containing the data using the <strong class=" ">-infile</strong> flag.    </p>
-</li><li class=" ">    <p  >As a path to folder containing files with the input data using the <strong class=" ">-indir</strong> flag and combined with <strong class=" ">-outdir</strong> for the response files. This is the so called <a   href="#src-26775246_id-.ClientCLIsigndocumentCommandv4.4.1-BatchSigningMode">Batch Signing Mode</a>.    </p>
-</li></ul>    <p  >    </p>
-<pre class="prettyprint ">usage: signdocument &lt;-workername WORKERNAME | -workerid WORKERID&gt;<br/>                    [options]<br/>Request a document to be signed by SignServer</pre><pre class=" "> -clientside              Hash the file(s) locally, sign the hash</pre><pre class=" ">                          server-side, and assemble the resulting file(s)</pre><pre class=" ">                          locally. Note: this option is only available in</pre><pre class=" ">                          the enterprise edition.</pre><pre class=" "> -data &lt;arg&gt;              Data to send to the worker.</pre><pre class=" "> -digestalgorithm &lt;arg&gt;   Digest algorithm to use for client-side hashing</pre><pre class=" ">                          and construction (using the -clientside option).</pre><pre class=" ">                          Note: this option is only available in the</pre><pre class=" ">                          enterprise edition.</pre><pre class=" "> -extraoption &lt;arg&gt;       Additional options for the command needed for</pre><pre class=" ">                          some file-types. The parameters should be given</pre><pre class=" ">                          in the form KEY=VALUE. This option can be given</pre><pre class=" ">                          multiple times.</pre><pre class=" "> -filetype &lt;arg&gt;          Overrides automatic file-type detection for</pre><pre class=" ">                          client-side hashing and construction (possible</pre><pre class=" ">                          values PE, MSI, ZIP), default: try to guess</pre><pre class=" ">                          based on input. Note: this option is only</pre><pre class=" ">                          available in the enterprise edition.</pre><pre class=" "> -host &lt;arg&gt;              Server name or IP address. Default: localhost</pre><pre class=" "> -hosts &lt;arg&gt;             List of server names or IP addresses to try in</pre><pre class=" ">                          order.</pre><pre class=" "> -indir &lt;arg&gt;             Directory to read input files from. Required if</pre><pre class=" ">                          outdir specified. Can not be combined with</pre><pre class=" ">                          infile or outfile.</pre><pre class=" "> -infile &lt;arg&gt;            File to read data to send to the worker from.</pre><pre class=" "> -keyalias &lt;arg&gt;          Alias of the key in the keystore to use for</pre><pre class=" ">                          authentication.</pre><pre class=" "> -keystore &lt;arg&gt;          Keystore with private key and certificate for</pre><pre class=" ">                          client certificate authentication.</pre><pre class=" "> -keystorepwd &lt;arg&gt;       Password for reading the keystore.  If keystore</pre><pre class=" ">                          is specified but not this keystore password</pre><pre class=" ">                          option, the CLI will instead prompt for the</pre><pre class=" ">                          password.</pre><pre class=" "> -loadbalancing &lt;arg&gt;     Specify if the load balancing feature using</pre><pre class=" ">                          round robin should be used. ROUND_ROBIN or NONE.</pre><pre class=" ">                          Default: NONE. NONE means no load balancing.</pre><pre class=" "> -metadata &lt;arg&gt;          Additional meta data to send to the signer. The</pre><pre class=" ">                          parameters should be given in the form</pre><pre class=" ">                          KEY=VALUE. This option can be given multiple</pre><pre class=" ">                          times.</pre><pre class=" "> -onefirst                In batch mode, don't send all requests until the</pre><pre class=" ">                          first succeeds. This is primary to prevent too</pre><pre class=" ">                          many incorrect password attempts. Default if</pre><pre class=" ">                          username is provided and -startall not provided.</pre><pre class=" "> -outdir &lt;arg&gt;            Directory to write output files to. Required if</pre><pre class=" ">                          indir specified. Can not be combined with infile</pre><pre class=" ">                          or outfile.</pre><pre class=" "> -outfile &lt;arg&gt;          File to write the result to. If not specified<br/>                         result is written to stdout. Must specify<br/>                         -outfile or -outdir when using -clientside.</pre><pre class=" "> -password &lt;arg&gt;          Password for authentication. If username is</pre><pre class=" ">                          specified but not this password option, the CLI</pre><pre class=" ">                          will instead prompt for the password.</pre><pre class=" "> -pdfpassword &lt;arg&gt;       Password for changing the PDF (if required).</pre><pre class=" "> -port &lt;arg&gt;              Server port. Default: 8080 (for HTTP), 8442 for</pre><pre class=" ">                          HTTPS and 8443 for HTTPS with client</pre><pre class=" ">                          authentication.</pre><pre class=" "> -protocol &lt;arg&gt;          Method of interacting with SignServer. HTTP,</pre><pre class=" ">                          CLIENTWS or WEBSERVICES. Default: HTTP.</pre><pre class=" "> -removefromindir         Specify this flag to have the successfully</pre><pre class=" ">                          processed input files removed from indir.</pre><pre class=" "> -servlet &lt;arg&gt;           Servlet to call. Default /signserver/process</pre><pre class=" "> -startall                In batch mode, send all requests at once,</pre><pre class=" ">                          without waiting for the first to succeed.</pre><pre class=" ">                          Default unless username is provided or -onefirst</pre><pre class=" ">                          provided.</pre><pre class=" "> -threads &lt;arg&gt;           Number of threads for sending the requests. Only</pre><pre class=" ">                          allowed in batch mode, ie when indir and outdir</pre><pre class=" ">                          are specified. Default: 1.</pre><pre class=" "> -timeout &lt;arg&gt;           Timeout limit in milliseconds for connecting to</pre><pre class=" ">                          SignServer. If the connection is not established</pre><pre class=" ">                          within this time interval it will be considered</pre><pre class=" ">                          as a connection failure. Default timeout is</pre><pre class=" ">                          system dependent. Specifying as 0 means no</pre><pre class=" ">                          timeout.</pre><pre class=" "> -truststore &lt;arg&gt;        Keystore with trusted certificates to use with</pre><pre class=" ">                          HTTPS.</pre><pre class=" "> -truststorepwd &lt;arg&gt;     Password for the keystore with trusted</pre><pre class=" ">                          certificates. If truststore is specified but not</pre><pre class=" ">                          this truststore password option, the CLI will</pre><pre class=" ">                          instead prompt for the password.</pre><pre class=" "> -username &lt;arg&gt;          Username for authentication.</pre><pre class=" "> -workerid &lt;arg&gt;          ID of worker which should perform the operation.</pre><pre class=" "> -workername &lt;arg&gt;        Name of worker which should perform the</pre><pre class=" ">                          operation.</pre>    <p  ><span id="src-26775246_id-.ClientCLIsigndocumentCommandv4.4.1-Sampleusages"></span>    </p>
-<pre class=" ">Sample usages: </pre><pre class=" ">a) signdocument -workername XMLSigner -data &quot;&lt;root/&gt;&quot;</pre><pre class=" ">b) signdocument -workername XMLSigner -infile /tmp/document.xml</pre><pre class=" ">c) signdocument -workerid 2 -data &quot;&lt;root/&gt;&quot; -truststore truststore.jks</pre><pre class=" ">-truststorepwd changeit</pre><pre class=" ">d) signdocument -workerid 2 -data &quot;&lt;root/&gt;&quot; -keystore superadmin.jks</pre><pre class=" ">-keystorepwd foo123</pre><pre class=" ">e) signdocument -workerid 2 -data &quot;&lt;root/&gt;&quot; -metadata param1=value1</pre><pre class=" ">-metadata param2=value2</pre><pre class=" ">f) signdocument -workerid 3 -indir ./input/ -removefromindir -outdir</pre><pre class=" ">./output/ -threads 5</pre><pre class=" ">g) signdocument -workerid 3 -indir ./input/ -outdir ./output/ -threads 5</pre><pre class=" ">-hosts primaryhost,secondaryhost</pre><pre class=" ">h) signdocument -workerid 3 -indir ./input/ -outdir ./output/ -threads 5</pre><pre class=" ">-hosts primaryhost,secondaryhost,otherhost -timeout 5000</pre><pre class=" ">i) signdocument -workerid 3 -indir ./input/ -outdir ./output/ -threads 5</pre><pre class=" ">-hosts host1,host2,host3 -loadbalancing ROUND_ROBIN</pre><pre class=" ">-timeout 5000</pre>    <div class="section section-1" id="src-26775246_id-.ClientCLIsigndocumentCommandv4.4.1-BatchSigningMode">
-        <h1 class="heading "><span>Batch Signing Mode</span></h1>
-    <p  >Instead of specifying the input data using the <strong class=" ">-data</strong> flag or specifying one file using <strong class=" ">-infile</strong>, you can use the <strong class=" ">-indir</strong> and <strong class=" ">-outdir</strong> options to process multiple files in one run.    </p>
+    <p  >The PrimeKey SignServer team is pleased to announce the release of SignServer 5.2.0.    </p>
+    <p  >    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-78939220_id-.SignServer5.2ReleaseNotesv5.2.0-Highlights">Highlights</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-78939220_id-.SignServer5.2ReleaseNotesv5.2.0-NewandImprovedClientWeb">New and Improved Client Web</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-78939220_id-.SignServer5.2ReleaseNotesv5.2.0-AdministrationInterfaceChanges">Administration Interface Changes</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-78939220_id-.SignServer5.2ReleaseNotesv5.2.0-AlgorithmDrop-downLists">Algorithm Drop-down Lists</a>    </p>
+</li></ul></li><li class=" ">    <p  ><a   href="#src-78939220_id-.SignServer5.2ReleaseNotesv5.2.0-UpgradeInformation">Upgrade Information</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-78939220_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjJSZWxlYXNlTm90ZXN2NS4yLjAtQ2hhbmdlTG9nOlJlc29sdmVkSXNzdWVz">Change Log: Resolved Issues</a>    </p>
+</li></ul>    <div class="section section-1" id="src-78939220_id-.SignServer5.2ReleaseNotesv5.2.0-Highlights">
+        <h1 class="heading "><span>Highlights</span></h1>
+    <div class="section section-2" id="src-78939220_id-.SignServer5.2ReleaseNotesv5.2.0-NewandImprovedClientWeb">
+        <h2 class="heading "><span>New and Improved Client Web</span></h2>
+    <p  >    <span style="color: #1c1e29;">
+Since the SignServer Demo Web is not used exclusively for demonstration purposes but is also widely utilized in production, the former <strong class=" ">Demo Web</strong> has now been renamed <strong class=" ">Client Web</strong>.    </span>
+    </p>
+    <p  >    <span style="color: #1c1e29;">
+We have also improved the new Client Web forms for submitting signature requests and updated the interface.    </span>
+    </p>
+    <p  >    <span style="color: #1c1e29;">
+    <img  class="confluence-embedded-image" src="images/download/attachments/78939220/ClientWeb.png" alt="images/download/attachments/78939220/ClientWeb.png" width="650"  />
+    </span>
+    </p>
     </div>
-    <div class="section section-1" id="src-26775246_id-.ClientCLIsigndocumentCommandv4.4.1-FailoverandLoadBalancingModes">
-        <h1 class="heading "><span>Failover and Load Balancing Modes</span></h1>
-    <p  >SignClient can be used instead of having a load balancer as it is capable of failing over to another host if the current one fails and also has the option to spread the load between multiple servers. These features are configured by specifying additional SignServer <strong class=" ">hosts</strong>, setting the connection <strong class=" ">timeout</strong> value and the optional <strong class=" ">loadbalancing</strong> option.    </p>
-    <div  class="confbox admonition admonition-warning">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >The failover and load balancing features are limited to the <tt class=" ">signdocument</tt> command and is in version 4.3.0 only supported using the default <strong class=" ">-protocol HTTP</strong>.    </p>
-        </div>
+    <div class="section section-2" id="src-78939220_id-.SignServer5.2ReleaseNotesv5.2.0-AdministrationInterfaceChanges">
+        <h2 class="heading "><span>Administration Interface Changes</span></h2>
+    <p  >    <span style="color: #1c1e29;">
+The SignServer Administration Web (AdminWeb) interface is now available in SignServer Community edition as well as in SignServer Enterprise.    </span>
+    </p>
+    <p  >    <span style="color: #1c1e29;">
+The Administration Web was first introduced in SignServer Enterprise version 4.1, providing a web interface for SignServer implementing all functionality available in the Java desktop application SignServer Administration GUI.    </span>
+    </p>
+    <p  >    <span style="color: #1c1e29;">
+The former SignServer     </span>
+<a   href="Administration_GUI.html">Administration GUI</a>    <span style="color: #1c1e29;">
+ is as of this release deprecated in Signserver Enterprise and removed in the Community edition.    </span>
+    </p>
+    <p  >    <span style="color: #1c1e29;">
+For more information on SignServer's web interface, see     </span>
+<a   href="Administration_Web.html">Administration Web</a>    <span style="color: #1c1e29;">
+.    </span>
+    </p>
     </div>
-    <p  >You can use the <strong class=" ">-hosts</strong> flag to specify multiple SignServer hosts to send the requests to. If the connection to one host fails, either directly or because of a timeout, the next host in the list is tried instead. To specify a timeout value, use the <strong class=" ">-timeout</strong> flag.    </p>
-    <p  >Connection failures include cases where the host is not reachable, SignServer is not available (i.e. not started and/or deployed), or the worker is not available (for example due to that the HSM is not activated or the worker is misconfigured). Failures caused by issues with the request, like incorrect input data or wrong credentials etc., are generally not considered connection failures.    </p>
-    <p  >Load balancing is by default not used and the default behavior is to use the first host in the list and only if that fails, try the next host in the list, and so on until the request(s) are processed or there are no more hosts to try.    </p>
-    <p  >To enable load balancing, specify the <strong class=" ">-</strong><strong class=" ">loadbalancing</strong><strong class=" "> </strong><strong class=" ">ROUND_ROBIN</strong> option. The first host to use is then randomly selected from the list of hosts. If the command is running in <a   href="#src-26775246_id-.ClientCLIsigndocumentCommandv4.4.1-BatchSigningMode">Batch Signing Mode</a> (i.e. <strong class=" ">-indir</strong> is specified) so there is more than one request to process, the next request will use the next host in the list (the list will wrap-around at the end, continuing with the first host).    </p>
+    <div class="section section-2" id="src-78939220_id-.SignServer5.2ReleaseNotesv5.2.0-AlgorithmDrop-downLists">
+        <h2 class="heading "><span>Algorithm Drop-down Lists</span></h2>
+    <p  >    <span style="color: #1c1e29;">
+We have added AdminWeb drop-down lists allowing you to choose among available options when specifying the key algorithm and key length/curve when generating keys or certificate signing requests.    </span>
+    </p>
+    <p  >    <span style="color: #1c1e29;">
+You are thus no longer required to type the name of the algorithm or key specification manually but can choose to do so if another option than the ones listed is desired.    </span>
+    </p>
+    </div>
+    </div>
+    <div class="section section-1" id="src-78939220_id-.SignServer5.2ReleaseNotesv5.2.0-UpgradeInformation">
+        <h1 class="heading "><span>Upgrade Information</span></h1>
+    <p  >Review the <a   href="SignServer_Upgrade_Notes.html">SignServer Upgrade Notes</a> for important information about this release. For upgrade instructions, see <a   href="Upgrade_SignServer.html">Upgrade SignServer</a>.    </p>
+    </div>
+    <div class="section section-1" id="src-78939220_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjJSZWxlYXNlTm90ZXN2NS4yLjAtQ2hhbmdlTG9nOlJlc29sdmVkSXNzdWVz">
+        <h1 class="heading "><span>Change Log: Resolved Issues</span></h1>
+    <p  >For full details of fixed bugs and implemented features in SignServer 5.2.0, refer to our <a  class="external-link" href="https://jira.primekey.se/issues/?jql=project%20%3D%20DSS%20AND%20resolution%20in%20(Fixed%2C%20Done)%20AND%20fixVersion%20%3D%205.2.0.Final%20ORDER%20BY%20issuetype%20DESC">JIRA Issue Tracker</a>.    </p>
+    <div class="section section-2" id="src-78939220_id-.SignServer5.2ReleaseNotesv5.2.0-IssuesResolvedin5.2.0">
+        <h2 class="heading "><span>Issues Resolved in 5.2.0</span></h2>
+    <p  >Released on 31 October 2019    </p>
+    <p  >    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-78939220_id-.IssuesResolvedin5.2.0v5.2.0-NewFeatures">New Features</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-78939220_id-.IssuesResolvedin5.2.0v5.2.0-Tasks">Tasks</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-78939220_id-.IssuesResolvedin5.2.0v5.2.0-Improvements">Improvements</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-78939220_id-.IssuesResolvedin5.2.0v5.2.0-BugFixes">Bug Fixes</a>    </p>
+</li></ul>    </div>
+    <div class="section section-2" id="src-78939220_id-.SignServer5.2ReleaseNotesv5.2.0-NewFeatures">
+        <h2 class="heading "><span>New Features</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-1633">DSS-1633</a> - Key length/type drop-down with suggestions in Admin Web    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2002">DSS-2002</a> - AdminWeb in Community    </p>
+    </div>
+    <div class="section section-2" id="src-78939220_id-.SignServer5.2ReleaseNotesv5.2.0-Tasks">
+        <h2 class="heading "><span>Tasks</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2016">DSS-2016</a> - Break out peers functionality for for the admin web to a service lookup    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2020">DSS-2020</a> - Migrate SignServer-Core-Web from JSP to JSF    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2021">DSS-2021</a> - Update index page in SignServer-Core-Web    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2022">DSS-2022</a> - Redesign/clean-up old demo web pages    </p>
+    </div>
+    <div class="section section-2" id="src-78939220_id-.SignServer5.2ReleaseNotesv5.2.0-Improvements">
+        <h2 class="heading "><span>Improvements</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-610">DSS-610</a> - Remove *StatisticsCollectorS    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-1743">DSS-1743</a> - Disable autocomplete for password field in demo web page    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-1744">DSS-1744</a> - Change from &quot;Demo Web&quot; to a Client Web    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-1745">DSS-1745</a> - Don't print SignServer version on Public and Client Web    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-1948">DSS-1948</a> - Add templates and sample configs for dispatcher workers    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2014">DSS-2014</a> - Move AdminGUI to Enterprise    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2015">DSS-2015</a> - Deprecate AdminGUI    </p>
+    </div>
+    <div class="section section-2" id="src-78939220_id-.SignServer5.2ReleaseNotesv5.2.0-BugFixes">
+        <h2 class="heading "><span>Bug Fixes</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-1487">DSS-1487</a> - Mispelled artifactId for SignServer-Client-ClientWS    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-1778">DSS-1778</a> - Typo in cmssigner.properties template    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-1875">DSS-1875</a> - PKCS11CryptoToken attributes example in documentation contains disabled mechanisms    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-1994">DSS-1994</a> - NPE when legacy encoding is used and there is an exception generating the response    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2017">DSS-2017</a> - Regression: HealthCheck tests failing as a new test is not cleaning up    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2019">DSS-2019</a> - Regression: TimeMonitor-Common unit tests in non-standard location    </p>
+    </div>
     </div>
         </div>
 
@@ -1395,7 +1498,7 @@
 
 
             <nav id="ht-post-nav">
-                <a href="Client_CLI.html" class="ht-post-nav-prev">
+                <a href="SignServer_Release_Notes.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1404,9 +1507,9 @@
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Client CLI</span>
+            <span>SignServer Release Notes</span>
         </a>
-                <a href="validatedocument.html" class="ht-post-nav-next">
+                <a href="SignServer_5.1_Release_Notes.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1415,7 +1518,7 @@
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>validatedocument</span>
+            <span>SignServer 5.1 Release Notes</span>
         </a>
     </nav>    
             

@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="46137346">
+<body pageid="75861550">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.1.0</p>
+                    <p>Version: 5.2.0</p>
                 </div>
             </header>
 
@@ -1037,10 +1037,6 @@
         <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
 
             </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
-
-            </li>
                                         <li class="collapsed">
         <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
 
@@ -1222,6 +1218,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
 
             </li>
@@ -1326,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.2_Release_Notes.html">SignServer 5.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
 
             </li>
@@ -1384,13 +1388,13 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-16235155"> <span>Time Stamp Signer</span></h1>
+</div>            <h1 id="src-77889713"> <span>Time Stamp Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The signer has the class name: <strong class=" ">org.signserver.server.signers.TimeStampSigner</strong>.    </p>
-    <div class="section section-1" id="src-16235155_id-.TimeStampSignerv4.3.1-Overview">
+    <div class="section section-1" id="src-77889713_id-.TimeStampSignerv5.1.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The time stamp server generates time stamp tokens and supports the following options:    </p>
 <ul class=" "><li class=" ">    <p  >Set of accepted policies    </p>
@@ -1411,7 +1415,7 @@
     <p  >The time-stamp signer requires a time-stamp certificate with the extended key usage <strong class=" ">time-stamp</strong> only. The extended key usage extension must be critical.    </p>
     <p  >If the time-stamp request contains a nonce value, this value will also be included in the time-stamp token.    </p>
     </div>
-    <div class="section section-1" id="src-16235155_id-.TimeStampSignerv4.3.1-AvailableProperties">
+    <div class="section section-1" id="src-77889713_id-.TimeStampSignerv5.1.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <p  >The following properties can be configured with the signer:    </p>
     <p  >    </p>
@@ -1474,7 +1478,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >A ';' separated string containing accepted policies.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_US/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/en_US/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
  Note that only policies listed in this property are allowed to be requested. If the property does not contain any policies, then no policy can be requested. Requests not including any policy will use the default policy regardless of this property, but requests explicitly requesting the default policy will still not be allowed unless listed in this property. If this property is used, ACCEPTANYPOLICY cannot be set to true. OPTIONAL, recommended.    </p>
             </td>
         </tr>
@@ -1579,7 +1583,7 @@
         <p  >WORKERLOGGER    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >As for other workers this property can be used to specify which worker logger to use. By default the <a  class="external-link" href="file:///C:/Users/Per%20Grahn-M%C3%B6ller/AppData/Local/Temp/Temp1_signserver-htdocs-r7948-2017-01-17.zip/htdocs/manual/misc.html#DefaultTimeStampLogger">DefaultTimeStampLogger</a> is used.    </p>
+        <p  >As for other workers this property can be used to specify which worker logger to use. By default, the <a   href="Worker_Log.html">DefaultTimeStampLogger</a> is used.    </p>
             </td>
         </tr>
     <tr>
@@ -1641,15 +1645,14 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-16235155_id-.TimeStampSignerv4.3.1-CertificateRequirements">
+    <div class="section section-1" id="src-77889713_id-.TimeStampSignerv5.1.0-CertificateRequirements">
         <h1 class="heading "><span>Certificate Requirements</span></h1>
 <ul class=" "><li class=" ">    <p  >Specifying a signer certificate is required as information from that certificate will be used to indicate which signer signed the time-stamp token.    </p>
 </li><li class=" ">    <p  >The signer certificate chain contains all certificates included in the token if the client requests the certificates.    </p>
 </li><li class=" ">    <p  >The signer certificate MUST be included in the configured certificate chain. Other certificates might also be included in the chain (typically intermediate CA certificates). However, if REQUIREVALIDCHAIN=true is specified, only the signer certificate, directly followed by its issuer and then the issuer's issuer and so on, is allowed. All certificates will be verified if there is a certificate coming after it. No check is made that the last certificate is a root certificate as that certificate is usually not included.    </p>
 </li><li class=" ">    <p  >A time-stamp signer certificate must have the extended key usage extension present and marked as critical.    </p>
 </li><li class=" ">    <p  >The extended key usage extension must contain the timeStamping key purpose ID and only that one.    </p>
-</li></ul>    <p  >    </p>
-    </div>
+</li></ul>    </div>
         </div>
 
     </article>

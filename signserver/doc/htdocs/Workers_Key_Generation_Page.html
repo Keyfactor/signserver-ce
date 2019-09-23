@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="46137346">
+<body pageid="75861550">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.1.0</p>
+                    <p>Version: 5.2.0</p>
                 </div>
             </header>
 
@@ -1037,10 +1037,6 @@
         <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
 
             </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
-
-            </li>
                                         <li class="collapsed">
         <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
 
@@ -1222,6 +1218,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
 
             </li>
@@ -1326,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.2_Release_Notes.html">SignServer 5.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
 
             </li>
@@ -1385,15 +1389,15 @@
                                                                                                          <li class="shortcut"><a href="Administration_Web.html">Administration Web</a></li>
                                                                                      <li><a href="Workers_Page.html">Workers Page</a></li>
                                                             </ul>
-</div>            <h1 id="src-16220168"> <span>Workers Key Generation Page</span></h1>
+</div>            <h1 id="src-78940273"> <span>Workers Key Generation Page</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >A new key-pair can be generated and its name stored as the next key in the configuration.    </p>
-    <p  >Make sure that each worker that should have a new key-pair generated has its check box selected.    </p>
+    <p  >Make sure that each worker that should have a new key-pair generated is selected.    </p>
     <p  >Work from left to right for each worker and specify the required information.    </p>
-    <div class="section section-1" id="src-16220168_id-.WorkersKeyGenerationPagev4.3.0-RenewKeys">
+    <div class="section section-1" id="src-78940273_id-.WorkersKeyGenerationPagev5.2.0-RenewKeys">
         <h1 class="heading "><span>Renew Keys</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1414,8 +1418,7 @@
         <p  >Signer    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Name of the worker.    </p>
-    <p  >Clicking the link goes to the worker's page.    </p>
+        <p  >Name of the worker. Click the link to view the worker's page.    </p>
             </td>
         </tr>
     <tr>
@@ -1433,9 +1436,11 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Name of the key algorithm to use for the new key.    </p>
+    <p  >By default, key algorithms can be selected from a drop-down list with the common options (RSA, DSA, ECDSA, and AES).    </p>
+    <p  >To manually specify another value, click <strong class=" ">&gt;</strong>.    </p>
     <p  >Examples: RSA, DSA, ECDSA, AES.    </p>
-    <p  >The value is already filled in if the worker has a KEYALG property specified.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
+    <p  >The value will be preselected with the value of the KEYALG property specified in the worker.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_US/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/en_US/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
  If generating a symmetric (secret) key and the specified key algorithm name is not present in the predefined list of known secret key algorithms, the key algorithm name must be specified with the prefix &quot;SEC:&quot;, for example: <strong class=" ">SEC:Blowfish</strong>. Currently, the secret key list contains the algorithms AES and DES.    </p>
     <p  class="sv-pt-link confluence-link">If the worker references the <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>, the algorithm name can be specified as a long or hexadecimal constant value. For more information, see <strong class=" ">Secret Key generation</strong> in <a  class="external-link" href="http://192.168.3.98:8090/display/SIGNDS/.JackNJI11CryptoToken+v4.3.0">JackNJI11CryptoToken</a>.    </p>
             </td>
@@ -1446,9 +1451,12 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Parameters for the key generation process.    </p>
-    <p  >For RSA and DSA this should be the key length and for ECDSA the name of the curve.    </p>
+    <p  >By default, the key specification can be selected from a drop-down list with common values, depending on the key algorithm selected.    </p>
+    <p  >To manually specify another value, click <strong class=" ">&gt;</strong>.    </p>
+    <p  >Note that some key specifications presented might not be supported by the crypto token being used.    </p>
+    <p  >For RSA and DSA, this should be the key length and for ECDSA the name of the curve.    </p>
     <p  >Examples: 2048, 3072, secp256r1.    </p>
-    <p  >The value is already filled in if the worker has a KEYSPEC property specified.    </p>
+    <p  >The value is already set if the worker has a KEYSPEC property specified.    </p>
             </td>
         </tr>
     <tr>
@@ -1462,7 +1470,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-16220168_id-.WorkersKeyGenerationPagev4.3.0-Actions">
+    <div class="section section-1" id="src-78940273_id-.WorkersKeyGenerationPagev5.2.0-Actions">
         <h1 class="heading "><span>Actions</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">

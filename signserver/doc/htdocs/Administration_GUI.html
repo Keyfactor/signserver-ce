@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="46137346">
+<body pageid="75861550">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.1.0</p>
+                    <p>Version: 5.2.0</p>
                 </div>
             </header>
 
@@ -1037,10 +1037,6 @@
         <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
 
             </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link current" href="Administration_GUI.html">Administration GUI</a>
-
-            </li>
                                         <li class="collapsed">
         <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
 
@@ -1222,6 +1218,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link current" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
 
             </li>
@@ -1326,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.2_Release_Notes.html">SignServer 5.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
 
             </li>
@@ -1383,18 +1387,26 @@
                                         <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                                                      <li><a href="SignServer_User_Interfaces.html">SignServer User Interfaces</a></li>
                                                             </ul>
-</div>            <h1 id="src-9797748"> <span>Administration GUI</span></h1>
+</div>            <h1 id="src-78939993"> <span>Administration GUI</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
+    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <div  class="confbox admonition admonition-note">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+    <p  >The Administration GUI (AdminGUI) is deprecated and will be removed in a future version. Please, use the <a   href="Administration_Web.html">Administration Web</a> instead.    </p>
+        </div>
+    </div>
     <p  >The SignServer Administration GUI (AdminGUI) is one of the available interfaces to administrate SignServer. It supports configuration of workers and associated key management as well as querying the audit log and archive.    </p>
-    <p  >Other options for administration includes the <a   href="Administration_CLI.html">Administration CLI</a>, the <a   href="Administration_Web.html">Administration Web</a>, and the <a   href="#src-9797748_id-.AdministrationGUIv4.2.0-Administration_Web_Services">Administration Web Services</a> interfaces.    </p>
+    <p  >Other options for administration includes the <a   href="Administration_CLI.html">Administration CLI</a>, the <a   href="Administration_Web.html">Administration Web</a>, and the <a   href="#src-78939993_id-.AdministrationGUIv5.2.0-Administration_Web_Services">Administration Web Services</a> interfaces.    </p>
     <p  >As a complement to the command line interface there is also a graphical user interface for managing some of the most basic administrative tasks.    </p>
     <p  >The SignServer AdminGUI is built by default (unless the property admingui.enabled is set to the value &quot;false&quot; in <strong class=" ">signserver_deploy.properties</strong>), and can be started using the script <strong class=" ">bin/signserver-gui</strong>.    </p>
     <p  >On startup, the connect to SignServer dialog offers the possibility to either connect to a locally running SignServer instance or a remote one over web services. If the &quot;-ws&quot; command line option is specified the later option is already selected when the dialog opens.    </p>
     <p  >See also the AdminGUI part of the <a   href="Troubleshooting.html">troubleshooting</a> section.    </p>
-    <div class="section section-1" id="src-9797748_id-.AdministrationGUIv4.2.0-ConnecttoSignServerdialog">
+    <div class="section section-1" id="src-78939993_id-.AdministrationGUIv5.2.0-ConnecttoSignServerdialog">
         <h1 class="heading "><span>Connect to SignServer dialog</span></h1>
     <p  >First select either to connect to a local or remote instance. If a remote one is selected then also specify URL to SignServer server as well as keystore and truststore for setting up the HTTPS connection. Then click the button <strong class=" ">Connect</strong>. By clicking the button <strong class=" ">Load defaults</strong> the settings from the file default_connect.properties is loaded. The current settings are stored to connect.properties and displayed the next time the dialog is opened.    </p>
     <p  ><strong class=" ">Connect to</strong>: Select to either connect to a &quot;Local SignServer&quot; using the EJB interface or a &quot;Remote SignServer&quot; using web services on the specified URL.    </p>
@@ -1404,10 +1416,10 @@
 </li><li class=" ">    <p  ><strong class=" ">Truststore password</strong>: Password of the truststore file (if any).    </p>
 </li><li class=" ">    <p  ><strong class=" ">Keystore Type</strong>: Type of the keystore. Should match the choosen keystore file path. Options are: <strong class=" ">JKS</strong>, <strong class=" ">PKCS12</strong> or <strong class=" ">PKCS11</strong>. If PKCS11 is choosen the keystore file path should be the path to the PKCS#11 shared library file.    </p>
 </li></ul>    </div>
-    <div class="section section-1" id="src-9797748_id-.AdministrationGUIv4.2.0-Mainwindow">
+    <div class="section section-1" id="src-78939993_id-.AdministrationGUIv5.2.0-Mainwindow">
         <h1 class="heading "><span>Main window</span></h1>
     <p  >The SignServer Administration GUI main window consists of a menu bar, a toolbar, the working area and at the bottom a status bar. The working area consists of a left and right part where the left is a list of all configured workers and the right shows details for the selected workers (if any).    </p>
-    <div class="section section-2" id="src-9797748_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjQuMi4wLU1haW53aW5kb3c6TWVudWJhcg">
+    <div class="section section-2" id="src-78939993_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjUuMi4wLU1haW53aW5kb3c6TWVudWJhcg">
         <h2 class="heading "><span>Main window: Menu bar</span></h2>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">File -&gt; Add Worker/Load Configuration&hellip;</strong>:    </p>
     <p  >Opens the dialog to import a configuration or set-up a worker manually by specifying worker parameters.    </p>
@@ -1441,7 +1453,7 @@
 </li></ul><ul class=" "><li class=" ">    <p  ><strong class=" ">Help -&gt; About...</strong>:    </p>
     <p  >Opens the about box doc.    </p>
 </li></ul>    </div>
-    <div class="section section-2" id="src-9797748_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjQuMi4wLU1haW53aW5kb3c6VG9vbGJhcg">
+    <div class="section section-2" id="src-78939993_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjUuMi4wLU1haW53aW5kb3c6VG9vbGJhcg">
         <h2 class="heading "><span>Main window: Tool bar</span></h2>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">Refresh</strong>:<br/>Refreshes the information about all workers.    </p>
 </li><li class=" ">    <p  ><strong class=" ">Activate</strong>:<br/>Activates the selected worker(s).    </p>
@@ -1452,30 +1464,30 @@
 </li><li class=" ">    <p  ><strong class=" ">Install certificates...</strong>:<br/>Opens the Install certificates dialog for the selected worker(s).    </p>
 </li><li class=" ">    <p  ><strong class=" ">Renew signer...</strong>:<br/>Opens the Renew signer dialog for the selected worker(s).    </p>
 </li></ul>    </div>
-    <div class="section section-2" id="src-9797748_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjQuMi4wLU1haW53aW5kb3c6U3RhdHVzU3VtbWFyeVRhYg">
+    <div class="section section-2" id="src-78939993_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjUuMi4wLU1haW53aW5kb3c6U3RhdHVzU3VtbWFyeVRhYg">
         <h2 class="heading "><span>Main window: Status Summary Tab</span></h2>
     <p  >Displays the status summary for the selected worker in the same format as the CLI command <strong class=" ">signserver getstatus complete</strong>.    </p>
     </div>
-    <div class="section section-2" id="src-9797748_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjQuMi4wLU1haW53aW5kb3c6U3RhdHVzUHJvcGVydGllc1RhYg">
+    <div class="section section-2" id="src-78939993_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjUuMi4wLU1haW53aW5kb3c6U3RhdHVzUHJvcGVydGllc1RhYg">
         <h2 class="heading "><span>Main window: Status Properties Tab</span></h2>
     <p  >Displays the status in properties format with the option of viewing details for some properties such as for the certificates.    </p>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">Details...</strong>: Selecting an property and clicking this button opens a dialog box with more information for the property (if supported). Currently for certificates this opens the Certificate details dialog.    </p>
 </li></ul>    </div>
-    <div class="section section-2" id="src-9797748_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjQuMi4wLU1haW53aW5kb3c6Q29uZmlndXJhdGlvblRhYg">
+    <div class="section section-2" id="src-78939993_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjUuMi4wLU1haW53aW5kb3c6Q29uZmlndXJhdGlvblRhYg">
         <h2 class="heading "><span>Main window: Configuration Tab</span></h2>
     <p  >Lists all the selected worker's configuration properties and gives the ability to add, remove or edit properties.    </p>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">Add...</strong>:<br/>Adds a new property to the selected worker.    </p>
 </li><li class=" ">    <p  ><strong class=" ">Edit</strong>:<br/>Edit the selected property.    </p>
 </li><li class=" ">    <p  ><strong class=" ">Remove</strong>:<br/>Removes the selected property.    </p>
 </li></ul>    </div>
-    <div class="section section-2" id="src-9797748_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjQuMi4wLU1haW53aW5kb3c6QXV0aG9yaXphdGlvblRhYg">
+    <div class="section section-2" id="src-78939993_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjUuMi4wLU1haW53aW5kb3c6QXV0aG9yaXphdGlvblRhYg">
         <h2 class="heading "><span>Main window: Authorization Tab</span></h2>
     <p  >Lists all the authorized client certificates for the selected worker. Notice that this only applies if the worker has the <strong class=" ">AUTHTYPE</strong> set to <strong class=" ">CLIENTCERT</strong> otherwise information about authorized clients might be taken from other sources. If the checkbox <strong class=" ">Allow any administrator with a valid certificate...</strong> is selected, any user with a valid certificate will be authorized. Having this enabled will override the administrators added in the list above. This is meant primarily for allowing a temporary certificate for setting up initial configuration.    </p>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">Add...</strong>:<br/>Adds a new authorized client. If the option <strong class=" ">Apply changes to all selected workers</strong> is checked the client is added to all the currently selected workers. The &quot;...&quot; button can be used to read the values for serial number and issuer DN from a certificate file in PEM or DER format.    </p>
 </li><li class=" ">    <p  ><strong class=" ">Edit...</strong>:<br/>Edits the selected authorized client. If the option <strong class=" ">Apply changes to all selected workers</strong> is checked the client is modified in all the currently selected workers.    </p>
 </li><li class=" ">    <p  ><strong class=" ">Remove</strong>:<br/>Removes the selected client. If the option <strong class=" ">Apply changes to all selected workers</strong> is checked the client is modified in all the currently selected workers.    </p>
 </li></ul>    </div>
-    <div class="section section-2" id="src-9797748_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjQuMi4wLU1haW53aW5kb3c6Q3J5cHRvVG9rZW5UYWI">
+    <div class="section section-2" id="src-78939993_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjUuMi4wLU1haW53aW5kb3c6Q3J5cHRvVG9rZW5UYWI">
         <h2 class="heading "><span>Main window: CryptoToken Tab</span></h2>
     <p  >The CryptoToken tab is only visible when selecting a worker that either is a CryptoWorker or is a worker that has crypto token configuration. The tab allows quering of entries inside the crypto token as well as generating keys, certificate requests and importing certificates etc.    </p>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">First</strong>:<br/>Go to the first search results page.    </p>
@@ -1510,7 +1522,7 @@
 </li><li class=" ">    <p  ><strong class=" ">Key algorithm</strong>: If available, the algorithm used for the key, i.e. RSA, DSA, ECDSA or AES etc.    </p>
 </li></ul></li></ul>    <p  >Additional information might be available depending on the crypto token implementation.<br/>Double clicking or pressing the <strong class=" ">Enter</strong> key on a selected row opens the details window as well.    </p>
     </div>
-    <div class="section section-2" id="src-9797748_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjQuMi4wLU1haW53aW5kb3c6QXVkaXRsb2c">
+    <div class="section section-2" id="src-78939993_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjUuMi4wLU1haW53aW5kb3c6QXVkaXRsb2c">
         <h2 class="heading "><span>Main window: Audit log</span></h2>
     <p  >In the <strong class=" ">Audit log</strong> tab controls for querying and filter the audit log exists.    </p>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">Current conditions</strong>:<br/>Lists query conditions used to filter the search results.    </p>
@@ -1525,7 +1537,7 @@
 </li></ul>    <p  >Double clicking or pressing the <strong class=" ">Enter</strong> key on a selected row opens a window showing details for the row.    </p>
     <p  >If <strong class=" ">databaseprotection.enableverify</strong> is enabled at the server side the signature of each row displayed are verified. If the verification fails for any of the rows in a page, an error message is displayed. The error message contains information about the first row that failed.    </p>
     </div>
-    <div class="section section-2" id="src-9797748_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjQuMi4wLU1haW53aW5kb3c6QXJjaGl2ZQ">
+    <div class="section section-2" id="src-78939993_safe-id-aWQtLkFkbWluaXN0cmF0aW9uR1VJdjUuMi4wLU1haW53aW5kb3c6QXJjaGl2ZQ">
         <h2 class="heading "><span>Main window: Archive</span></h2>
     <p  >In the <strong class=" ">Archive</strong> tab controls for querying and filter the archive.    </p>
 <ul class=" "><li class=" ">    <p  ><strong class=" ">Current conditions</strong>:<br/>Lists query conditions used to filter the search results.    </p>
@@ -1539,19 +1551,19 @@
 </li><li class=" ">    <p  ><strong class=" ">Entries per page</strong>:<br/>The maximum number of rows to display in one page.    </p>
 </li></ul>    <p  >When selection one or more rows from the search result, the <strong class=" ">Fetch selected archive data items</strong> button is enabled. Clicking this button opens a dialog allowing to select a download directory and downloading the archived data of the selected rows.    </p>
     </div>
-    <div class="section section-2" id="src-9797748_id-.AdministrationGUIv4.2.0-Renewkeydialog">
+    <div class="section section-2" id="src-78939993_id-.AdministrationGUIv5.2.0-Renewkeydialog">
         <h2 class="heading "><span>Renew key dialog</span></h2>
     <p  >Generates new keys for all the listed workers. For this to work all workers should have the same password. <strong class=" ">Key algorithm</strong>, <strong class=" ">Key specification</strong> and <strong class=" ">New key alias</strong> must be specified if it is not taken from the worker's configuration.    </p>
     </div>
-    <div class="section section-2" id="src-9797748_id-.AdministrationGUIv4.2.0-Testkeydialog">
+    <div class="section section-2" id="src-78939993_id-.AdministrationGUIv5.2.0-Testkeydialog">
         <h2 class="heading "><span>Test key dialog</span></h2>
     <p  >Test keys for all the listed workers. It is optional to either test the current key or the next key (if any) or all the keys in the keystore. For this to work all workers should have the same password. The results shows for each key the key alias, SUCCESS and the public key hash if the test signing succeeded.    </p>
     </div>
-    <div class="section section-2" id="src-9797748_id-.AdministrationGUIv4.2.0-GenerateCSRdialog">
+    <div class="section section-2" id="src-78939993_id-.AdministrationGUIv5.2.0-GenerateCSRdialog">
         <h2 class="heading "><span>Generate CSR dialog</span></h2>
     <p  >Generates certificate signing requests (CSR:s) in PKCS#10 format for all listed signers. In the key dropdown menu either the current key (<strong class=" ">DEFAULTKEY</strong>) or the next key can be selected. It is also possible to manually enter a value in the field to generate a CSR for a specific key alias in the crypto token. Signature algorithm, subject distinguished name (DN) and Filename must be specified if not already taken from the worker's configuration. The format of the request could either be a Standard CSR file or a CSR wrapped in PKCS#7/CMS signed object created by a RequestSigner. The with the last option is that at the CA the signature of the request can be verified.    </p>
     </div>
-    <div class="section section-2" id="src-9797748_id-.AdministrationGUIv4.2.0-Installcertificates">
+    <div class="section section-2" id="src-78939993_id-.AdministrationGUIv5.2.0-Installcertificates">
         <h2 class="heading "><span>Install certificates</span></h2>
     <p  >Installs signer certificate and certificate chains for the listed workers and if next key is chosen that key becomes the new default key.    </p>
     <p  >At least one of <strong class=" ">Signer certificate</strong> and <strong class=" ">Signer certificate chain</strong> columns needs to be filled in. If a file is chosen for <strong class=" ">Signer certificate</strong> then the first certificate from that file will be used as signer certificate. It will also be added to the beginning of the certificate chain (if it is not already there). If a file is chosen for <strong class=" ">Signer certificate chain</strong> then all of the certificates from that file will be included in the certificate chain. The first certificate will be used as signer certificate (if a <strong class=" ">Signer certificate</strong> was not chosen).    </p>
@@ -1559,19 +1571,19 @@
 <ul class=" "><li class=" ">    <p  ><strong class=" ">Signer certificate</strong>: Browse for the signer certificate file in PEM format.    </p>
 </li><li class=" ">    <p  ><strong class=" ">Certificate chain</strong>: Browse for the signer certificate chain file (or CA certificate(s)) in PEM format.    </p>
 </li></ul>    </div>
-    <div class="section section-2" id="src-9797748_id-.AdministrationGUIv4.2.0-Renewsignerdialog">
+    <div class="section section-2" id="src-78939993_id-.AdministrationGUIv5.2.0-Renewsignerdialog">
         <h2 class="heading "><span>Renew signer dialog</span></h2>
     <p  >Requests a Renewal worker to renew all the chosen and selected workers. The Renewal worker will generate a new key if there isn't already a next key available and then contact EJBCA using its web service interface to request a new certificate. After receiving the new certificate it is installed and the next key becomes the current default key. Notice how the <strong class=" ">Not valid after</strong> date and possibly also the <strong class=" ">Signings</strong> column changes and the <strong class=" ">Renewal</strong> checkbox gets unchecked after a successful renewal.    </p>
     </div>
-    <div class="section section-2" id="src-9797748_id-.AdministrationGUIv4.2.0-Removekeydialog">
+    <div class="section section-2" id="src-78939993_id-.AdministrationGUIv5.2.0-Removekeydialog">
         <h2 class="heading "><span>Remove key dialog</span></h2>
     <p  >Enter the key alias of the key to remove from the crypto token. Note that multiple workers might be using the key. If the crypto token supports key removal the key will be deleted and it might not be possible to restore it.    </p>
     </div>
-    <div class="section section-2" id="src-9797748_id-.AdministrationGUIv4.2.0-Globalconfigurationdialog">
+    <div class="section section-2" id="src-78939993_id-.AdministrationGUIv5.2.0-Globalconfigurationdialog">
         <h2 class="heading "><span>Global configuration dialog</span></h2>
     <p  >Lists all the global configuration properties and gives the ability to add, remove or edit properties.    </p>
     </div>
-    <div class="section section-2" id="src-9797748_id-.AdministrationGUIv4.2.0-Administratorsdialog">
+    <div class="section section-2" id="src-78939993_id-.AdministrationGUIv5.2.0-Administratorsdialog">
         <h2 class="heading "><span>Administrators dialog</span></h2>
     <p  >Lists all the authorized WS administrators, auditors, archive auditors and <a   href="Peer_Systems.html">peer systems</a> and gives the ability to add, remove or edit them. It is also possible to get the serial number and issuer DN from a certificate file in PEM or DER format by using the <strong class=" ">From file</strong> button.    </p>
     <p  >If already connected over WS, it is possible to click the <strong class=" ">Load current</strong> button to fill in the values from the currently used administrator certificate.    </p>
@@ -1585,7 +1597,7 @@
 
 
             <nav id="ht-post-nav">
-                <a href="Administration_CLI.html" class="ht-post-nav-prev">
+                <a href="Archive_Page.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1594,9 +1606,9 @@
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Administration CLI</span>
+            <span>Archive Page</span>
         </a>
-                <a href="Administration_Web.html" class="ht-post-nav-next">
+                <a href="Database_CLI.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1605,7 +1617,7 @@
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Administration Web</span>
+            <span>Database CLI</span>
         </a>
     </nav>    
             

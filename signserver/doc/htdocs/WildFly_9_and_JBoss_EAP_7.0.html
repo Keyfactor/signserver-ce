@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="46137346">
+<body pageid="75861550">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.1.0</p>
+                    <p>Version: 5.2.0</p>
                 </div>
             </header>
 
@@ -1037,10 +1037,6 @@
         <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
 
             </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
-
-            </li>
                                         <li class="collapsed">
         <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
 
@@ -1222,6 +1218,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
 
             </li>
@@ -1326,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.2_Release_Notes.html">SignServer 5.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
 
             </li>
@@ -1383,7 +1387,7 @@
                                         <li class="shortcut"><a href="SignServer_Installation.html">SignServer Installation</a></li>
                                                                                      <li><a href="Application_Server_Setup.html">Application Server Setup</a></li>
                                                             </ul>
-</div>            <h1 id="src-42959483"> <span>WildFly 9 and JBoss EAP 7.0</span></h1>
+</div>            <h1 id="src-78941117"> <span>WildFly 9 and JBoss EAP 7.0</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1394,16 +1398,16 @@
     <p  class="section">Application Server specific information for WildFly 9 and JBoss EAP 7.0.    </p>
         </div>
     </div>
-    <p  class="section">This section provides the following information on configuring your application server:    </p>
+    <p  class="section">This section provides information on configuring your application server.    </p>
     <p  class="section">    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-ConfigureWebServerKeystoresConfigureWebServerKeystore">Configure Web Server Keystores</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-ConfigureTLSandHTTP">Configure TLS and HTTP</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-42959483_safe-id-aWQtLldpbGRGbHk5YW5kSkJvc3NFQVA3LjB2NS4wLjAtV1NETExvY2F0aW9uRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ">WSDL Location</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-42959483_safe-id-aWQtLldpbGRGbHk5YW5kSkJvc3NFQVA3LjB2NS4wLjAtVVJJRW5jb2RpbmdKQm9zc0FTNy9FQVA2L1dpbGRGbHlVUkllbmNvZGluZw">URI Encoding</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-JBossTroubleshootingFixSecurityissuesinJBossEAP">JBoss Troubleshooting</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-DatabaseConfiguration">Database Configuration</a>    </p>
-</li></ul>    <div class="section section-1" id="src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-ConfigureWebServerKeystoresConfigureWebServerKeystore">
-        <h1 class="heading section"><span id="src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-ConfigureWebServerKeystore" class="confluence-anchor-link"></span><span>Configure Web Server Keystores </span></h1>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-ConfigureWebServerKeystoresConfigureWebServerKeystore">Configure Web Server Keystores</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-ConfigureTLSandHTTP">Configure TLS and HTTP</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-78941117_safe-id-aWQtLldpbGRGbHk5YW5kSkJvc3NFQVA3LjB2NS4yLjAtV1NETExvY2F0aW9uRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ">WSDL Location</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-78941117_safe-id-aWQtLldpbGRGbHk5YW5kSkJvc3NFQVA3LjB2NS4yLjAtVVJJRW5jb2RpbmdKQm9zc0FTNy9FQVA2L1dpbGRGbHlVUkllbmNvZGluZw">URI Encoding</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-JBossTroubleshootingFixSecurityissuesinJBossEAP">JBoss Troubleshooting</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-DatabaseConfiguration">Database Configuration</a>    </p>
+</li></ul>    <div class="section section-1" id="src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-ConfigureWebServerKeystoresConfigureWebServerKeystore">
+        <h1 class="heading section"><span id="src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-ConfigureWebServerKeystore" class="confluence-anchor-link"></span><span>Configure Web Server Keystores </span></h1>
     <p  >To configure the Web Server TLS keystore, copy the keystore and truststore files to your application server keystore folder. The following displays the WildFly keystore folder location:    </p>
     <div  class="confbox programlisting">
                 <div class="content">
@@ -1417,7 +1421,7 @@
     </div>
     <p  >For testing purposes, you can use the provided test keystore (dss10_demo-tls.jks) and truststore (dss10_truststore.jks) provided in the <tt class=" ">res/test/dss10/</tt> folder in the SignServer release.    </p>
     </div>
-    <div class="section section-1" id="src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-ConfigureTLSandHTTP">
+    <div class="section section-1" id="src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-ConfigureTLSandHTTP">
         <h1 class="heading "><span>Configure TLS and HTTP</span></h1>
     <p  >The following steps cover how to configure TLS and HTTP.    </p>
 <ol class=" "><li class=" ">    <p  >Start JBoss CLI:    </p>
@@ -1435,7 +1439,6 @@
 <div class="line"><code class="plain">/</code><code class="keyword">interface</code><code class="plain">=httpspriv:add(inet-address=</code><code class="string">"0.0.0.0"</code><code class="plain">)</code></div>
 </div>
     </div>
-    <p  >    </p>
     <div  class="confbox admonition admonition-note">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
                 <div class="admonition-body">
@@ -1443,7 +1446,6 @@
     <p  >If a larger limit than the default 10 MB is specified for HTTPS listeners, check that the <tt class=" ">max-post-size</tt> value is updated in the <tt class=" ">standalone.xml</tt> file after running the CLI command. If the value was not updated in the XML file, stop the application server and manually update the <tt class=" ">max-post-size</tt> value in the standalone.xml file before starting the application server again.    </p>
         </div>
     </div>
-    <p  >    </p>
 </li><li class=" ">    <p  >Secure the CLI by removing the <tt class=" ">http-remoting-connector</tt> from using the HTTP port and instead use a separate port 4447:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1480,8 +1482,8 @@
 </div>
     </div>
 </li></ol>    </div>
-    <div class="section section-1" id="src-42959483_safe-id-aWQtLldpbGRGbHk5YW5kSkJvc3NFQVA3LjB2NS4wLjAtV1NETExvY2F0aW9uRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ">
-        <h1 class="heading "><span id="src-42959483_safe-id-aWQtLldpbGRGbHk5YW5kSkJvc3NFQVA3LjB2NS4wLjAtRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ" class="confluence-anchor-link"></span><span>WSDL Location </span></h1>
+    <div class="section section-1" id="src-78941117_safe-id-aWQtLldpbGRGbHk5YW5kSkJvc3NFQVA3LjB2NS4yLjAtV1NETExvY2F0aW9uRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ">
+        <h1 class="heading "><span id="src-78941117_safe-id-aWQtLldpbGRGbHk5YW5kSkJvc3NFQVA3LjB2NS4yLjAtRml4d2Vic2VydmljZXByb2JsZW1pbkpCb3NzQVM3L0VBUDYvV2lsZEZseQ" class="confluence-anchor-link"></span><span>WSDL Location </span></h1>
     <p  >In order for the web services to work correctly when requiring client certificate, you need to configure the Web Services Description Language (WSDL) web-host rewriting to use the request host.    </p>
     <p  >To configure the WSDL location, run:    </p>
     <div  class="confbox programlisting">
@@ -1497,8 +1499,8 @@
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-42959483_safe-id-aWQtLldpbGRGbHk5YW5kSkJvc3NFQVA3LjB2NS4wLjAtVVJJRW5jb2RpbmdKQm9zc0FTNy9FQVA2L1dpbGRGbHlVUkllbmNvZGluZw">
-        <h1 class="heading "><span id="src-42959483_safe-id-aWQtLldpbGRGbHk5YW5kSkJvc3NFQVA3LjB2NS4wLjAtSkJvc3NBUzcvRUFQNi9XaWxkRmx5VVJJZW5jb2Rpbmc" class="confluence-anchor-link"></span><span>URI Encoding </span></h1>
+    <div class="section section-1" id="src-78941117_safe-id-aWQtLldpbGRGbHk5YW5kSkJvc3NFQVA3LjB2NS4yLjAtVVJJRW5jb2RpbmdKQm9zc0FTNy9FQVA2L1dpbGRGbHlVUkllbmNvZGluZw">
+        <h1 class="heading "><span id="src-78941117_safe-id-aWQtLldpbGRGbHk5YW5kSkJvc3NFQVA3LjB2NS4yLjAtSkJvc3NBUzcvRUFQNi9XaWxkRmx5VVJJZW5jb2Rpbmc" class="confluence-anchor-link"></span><span>URI Encoding </span></h1>
     <p  >To configure the URI encoding, run the following:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1511,15 +1513,15 @@
     </div>
     <p  >(Failure messages for the two remove commands above are expected if this command is executed for the first time)    </p>
     </div>
-    <div class="section section-1" id="src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-JBossTroubleshootingFixSecurityissuesinJBossEAP">
-        <h1 class="heading "><span id="src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-FixSecurityissuesinJBossEAP" class="confluence-anchor-link"></span><span>JBoss Troubleshooting </span></h1>
+    <div class="section section-1" id="src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-JBossTroubleshootingFixSecurityissuesinJBossEAP">
+        <h1 class="heading "><span id="src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-FixSecurityissuesinJBossEAP" class="confluence-anchor-link"></span><span>JBoss Troubleshooting </span></h1>
     <p  >Make sure to apply the relevant security patches from Red Hat and pay special attention to the XML Security and Commons Collections libraries.    </p>
-    <div class="section section-2" id="src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-XMLSecurityLibraryIssueinJBossEAPFixXMLSecuritylibraryissue1inJBoss7">
-        <h2 class="heading "><span id="src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-FixXMLSecuritylibraryissue1inJBoss7" class="confluence-anchor-link"></span><span>XML Security Library Issue in JBoss EAP </span></h2>
+    <div class="section section-2" id="src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-XMLSecurityLibraryIssueinJBossEAPFixXMLSecuritylibraryissue1inJBoss7">
+        <h2 class="heading "><span id="src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-FixXMLSecuritylibraryissue1inJBoss7" class="confluence-anchor-link"></span><span>XML Security Library Issue in JBoss EAP </span></h2>
     <p  >    <span style="color: #000000;">
 The Xalan library bundled with SignServer is not properly overriding the JBoss-bundled version. You must therefore copy the JAR files from SignServer into JBoss' modules directory and modify the descriptor to use the new version.    </span>
     </p>
-    <div class="section section-3" id="src-42959483_safe-id-aWQtLldpbGRGbHk5YW5kSkJvc3NFQVA3LjB2NS4wLjAtTGludXgvVW5peA">
+    <div class="section section-3" id="src-78941117_safe-id-aWQtLldpbGRGbHk5YW5kSkJvc3NFQVA3LjB2NS4yLjAtTGludXgvVW5peA">
         <h3 class="heading "><span>Linux/Unix</span></h3>
     <p  >To copy the files, run the following:    </p>
     <div  class="confbox programlisting">
@@ -1535,7 +1537,7 @@ The Xalan library bundled with SignServer is not properly overriding the JBoss-b
 </div>
     </div>
     </div>
-    <div class="section section-3" id="src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-Windows">
+    <div class="section section-3" id="src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-Windows">
         <h3 class="heading prettyprint"><span>Windows</span></h3>
     <p  class="prettyprint">To copy the files, run the following:    </p>
     <div  class="confbox programlisting">
@@ -1547,10 +1549,10 @@ The Xalan library bundled with SignServer is not properly overriding the JBoss-b
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-DatabaseConfiguration">
+    <div class="section section-1" id="src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-DatabaseConfiguration">
         <h1 class="heading "><span>Database Configuration</span></h1>
-    <p  >Skip this step and instead see <a   href="Database_Setup.html#src-42959497_id-.DatabaseSetupv5.0.0-SignServer_without_DB">SignServer without Database</a> if you want to run SignServer without a database management system.    </p>
-    <div class="section section-2" id="src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-ConfigureDatabaseDriver">
+    <p  >Skip this step and instead see <a   href="http://confluence.primekey.com/display/SIGNDS/.Database+Setup+v5.0.0#id-.DatabaseSetupv5.0.0-SignServer_without_DB">SignServer without Database</a> if you want to run SignServer without a database management system.    </p>
+    <div class="section section-2" id="src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-ConfigureDatabaseDriver">
         <h2 class="heading "><span>Configure Database Driver</span></h2>
     <p  >Add the MariaDB database driver by hot-deploying it into the deployment directory. The driver will be picked up by WildFly and deployed, allowing creating the data source in the next step. You can use a generic name, without version number, to get a generic <tt class=" ">driver-name</tt> for the data source command.    </p>
     <div  class="confbox programlisting">
@@ -1566,10 +1568,10 @@ The Xalan library bundled with SignServer is not properly overriding the JBoss-b
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-ConfigureDataSourceConfiguredatasourceforJBossEAP6orWildFly">
-        <h2 class="heading section"><span id="src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-ConfiguredatasourceforJBossEAP6orWildFly" class="confluence-anchor-link"></span><span>Configure Data Source </span></h2>
+    <div class="section section-2" id="src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-ConfigureDataSourceConfiguredatasourceforJBossEAP6orWildFly">
+        <h2 class="heading section"><span id="src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-ConfiguredatasourceforJBossEAP6orWildFly" class="confluence-anchor-link"></span><span>Configure Data Source </span></h2>
     <p  >To add a data source for SignServer to use, run the command below using JBoss CLI (using APPSRV_HOME/bin/jboss-cli.sh).    </p>
-    <p  >The MariaDB data source example configuration uses the driver deployed in the previous step <a   href="#src-42959483_id-.WildFly9andJBossEAP7.0v5.0.0-ConfigureDatabaseDriver">Configure Database Driver</a>. The <tt class=" ">-jindi-name</tt> below is the default database.properties value. Also note that the <tt class=" ">--enabled=true</tt> option should be set for JBoss EAP 7.x.    </p>
+    <p  >The MariaDB data source example configuration uses the driver deployed in the previous step <a   href="#src-78941117_id-.WildFly9andJBossEAP7.0v5.2.0-ConfigureDatabaseDriver">Configure Database Driver</a>. The <tt class=" ">-jindi-name</tt> below is the default database.properties value. Also note that the <tt class=" ">--enabled=true</tt> option should be set for JBoss EAP 7.x.    </p>
     <p  >If you are using a database other than MariaDB, update the <tt class=" ">driver-name</tt>, <tt class=" ">connection-url,</tt> <tt class=" ">driver-class</tt> and <tt class=" ">check-valid-connection-sql</tt> values accordingly.    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">

@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="46137346">
+<body pageid="75861550">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.1.0</p>
+                    <p>Version: 5.2.0</p>
                 </div>
             </header>
 
@@ -1037,10 +1037,6 @@
         <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
 
             </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
-
-            </li>
                                         <li class="collapsed">
         <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
 
@@ -1222,6 +1218,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
 
             </li>
@@ -1326,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.2_Release_Notes.html">SignServer 5.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link current" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
 
             </li>
@@ -1391,30 +1395,29 @@
     <p  >The PrimeKey SignServer team is proud to announce the release of SignServer 5.1.0.    </p>
     <p  >    </p>
 <ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-75860282_id-.SignServer5.1ReleaseNotesv5.1.0-Highlights">Highlights</a>    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-75860282_id-.SignServer5.1ReleaseNotesv5.1.0-ClientCertificateAuthorizationImprovements">Client Certificate Authorization Improvements</a>    </p>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-75860282_id-.SignServer5.1ReleaseNotesv5.1.0-ImprovedClientCertificateAuthorization">Improved Client Certificate Authorization</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-75860282_id-.SignServer5.1ReleaseNotesv5.1.0-PGPSigningSupport">PGP Signing Support</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-75860282_id-.SignServer5.1ReleaseNotesv5.1.0-DebianPackageSigningSupport">Debian Package Signing Support</a>    </p>
 </li></ul></li><li class=" ">    <p  ><a   href="#src-75860282_id-.SignServer5.1ReleaseNotesv5.1.0-UpgradeInformation">Upgrade Information</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-75860282_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjFSZWxlYXNlTm90ZXN2NS4xLjAtQ2hhbmdlTG9nOlJlc29sdmVkSXNzdWVz">Change Log: Resolved Issues</a>    </p>
 </li></ul>    <div class="section section-1" id="src-75860282_id-.SignServer5.1ReleaseNotesv5.1.0-Highlights">
         <h1 class="heading "><span>Highlights</span></h1>
-    <div class="section section-2" id="src-75860282_id-.SignServer5.1ReleaseNotesv5.1.0-ClientCertificateAuthorizationImprovements">
-        <h2 class="heading "><span>Client Certificate Authorization Improvements</span></h2>
+    <div class="section section-2" id="src-75860282_id-.SignServer5.1ReleaseNotesv5.1.0-ImprovedClientCertificateAuthorization">
+        <h2 class="heading "><span>Improved Client Certificate Authorization</span></h2>
     <p  >Previously the client certificate authorization rules had to match on the certificate serial number causing a maintenance burden when renewing the certificates and all the rules had to be updated.    </p>
-    <p  >With this release we introduce the possibility to choose to match on other fields from the certificate such as RDN:s from Subject DN like Common Name (CN), Organization Unit (OU) and User ID (UID) etc.    </p>
+    <p  >With this release we introduce the possibility of matching on other fields from the certificate, such as RDN:s from Subject DN like Common Name (CN), Organization Unit (OU), and User ID (UID), etc.    </p>
     <p  >See <a   href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a> for step-by-step instructions on how to start using this feature.    </p>
     </div>
     <div class="section section-2" id="src-75860282_id-.SignServer5.1ReleaseNotesv5.1.0-PGPSigningSupport">
         <h2 class="heading "><span>PGP Signing Support</span></h2>
-    <p  >In addition to the support for all the X.509 based signers, with this release we also introduce support for PGP/GPG signing that can be used for signing of software release packages and repositories or for general signing.    </p>
-    <p  >The new <a   href="OpenPGP_Signer.html">OpenPGP Signer</a> can produce both detached and clear-text signatures. See <a   href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a> for step-by-step instructions on configuring and using this new signer.    </p>
-    <p  >Additionally support has been added to SignClient for doing PGP signing in client-side hashing mode (Enterprise only). See the OpenPGP section on the <a   href="Client-Side_Hashing.html">Client-Side Hashing</a> page.    </p>
+    <p  >In addition to supporting all X.509 based signers, we have now added support for PGP/GPG signing of software release packages and repositories, or for general signing.    </p>
+    <p  >The new <a   href="OpenPGP_Signer.html">OpenPGP Signer</a> can produce both detached and clear-text signatures. For step-by-step instructions on configuring and using this new signer, see <a   href="Setting_up_OpenPGP_Signer.html">Setting up OpenPGP Signer</a>.    </p>
+    <p  >Additionally, SignClient now supports PGP signing in client-side hashing mode (Enterprise only). For more information, see <a   href="Client-Side_Hashing.html">Client-Side Hashing</a>.    </p>
     </div>
     <div class="section section-2" id="src-75860282_id-.SignServer5.1ReleaseNotesv5.1.0-DebianPackageSigningSupport">
         <h2 class="heading "><span>Debian Package Signing Support</span></h2>
-    <p  >While the PGP signing support added the possibility to among other sign Debian software repositories, with this feature it is also possible to sign individual Debian packages.    </p>
-    <p  >See the new <a   href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer</a>.    </p>
-    <p  >Also for this feature additional support has been added to SignClient for signing this format in client-side hashing mode (Enterprise only). See the Debian Dpkg-sig section on the <a   href="Client-Side_Hashing.html">Client-Side Hashing</a> page.    </p>
+    <p  >While the added PGP signing support allows signing Debian software repositories, this new signer also lets you sign individual Debian packages. For more information, see the new <a   href="Debian_Dpkg-sig_Signer.html">Debian Dpkg-sig Signer.</a>    </p>
+    <p  >We also added support to SignClient for signing this format in client-side hashing mode (Enterprise only), see <a   href="Client-Side_Hashing.html">Client-Side Hashing</a>.    </p>
     </div>
     </div>
     <div class="section section-1" id="src-75860282_id-.SignServer5.1ReleaseNotesv5.1.0-UpgradeInformation">
@@ -1491,7 +1494,7 @@
 
 
             <nav id="ht-post-nav">
-                <a href="SignServer_Release_Notes.html" class="ht-post-nav-prev">
+                <a href="SignServer_5.2_Release_Notes.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1500,7 +1503,7 @@
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Release Notes</span>
+            <span>SignServer 5.2 Release Notes</span>
         </a>
                 <a href="SignServer_5.0_Release_Notes.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"

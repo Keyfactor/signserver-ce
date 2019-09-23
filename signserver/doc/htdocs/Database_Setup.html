@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="46137346">
+<body pageid="75861550">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.1.0</p>
+                    <p>Version: 5.2.0</p>
                 </div>
             </header>
 
@@ -1037,10 +1037,6 @@
         <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
 
             </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
-
-            </li>
                                         <li class="collapsed">
         <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
 
@@ -1222,6 +1218,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
 
             </li>
@@ -1326,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.2_Release_Notes.html">SignServer 5.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
 
             </li>
@@ -1381,14 +1385,14 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Installation.html">SignServer Installation</a></li>
                                                             </ul>
-</div>            <h1 id="src-42959497"> <span>Database Setup</span></h1>
+</div>            <h1 id="src-78940106"> <span>Database Setup</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >This section cover installing and configuring your database. For information on supported software, see <a   href="Prerequisites.html">Prerequisites</a>.    </p>
     <p  >If you are installing SignServer without a database, instead see <strong class=" ">Configure Deployment</strong> in <a   href="Install_SignServer.html">Install SignServer</a> for information on configuring the deployment properties.    </p>
-    <div class="section section-1" id="src-42959497_id-.DatabaseSetupv5.0.0-InstallDatabase">
+    <div class="section section-1" id="src-78940106_id-.DatabaseSetupv5.2.0-InstallDatabase">
         <h1 class="heading "><span>Install Database</span></h1>
     <p  >Depending on your setup, refer to information from your OS/Linux distribution or database vendor for instructions on how to install your database.    </p>
     <p  >For example, to install MariaDB in CentOS, run the following:    </p>
@@ -1398,15 +1402,15 @@
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-42959497_id-.DatabaseSetupv5.0.0-ConfigureDatabase">
+    <div class="section section-1" id="src-78940106_id-.DatabaseSetupv5.2.0-ConfigureDatabase">
         <h1 class="heading "><span>Configure Database</span></h1>
     <p  >This covers the following information on configuring your database:    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="#src-42959497_id-.DatabaseSetupv5.0.0-DatabaseAccount">Database Account</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-42959497_id-.DatabaseSetupv5.0.0-TableCreationandIndexes">Table Creation and Indexes</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-42959497_id-.DatabaseSetupv5.0.0-MariaDBbinlogFormatConfiguration">MariaDB binlog Format Configuration</a>    </p>
+<ul class=" "><li class=" ">    <p  ><a   href="#src-78940106_id-.DatabaseSetupv5.2.0-DatabaseAccount">Database Account</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-78940106_id-.DatabaseSetupv5.2.0-TableCreationandIndexes">Table Creation and Indexes</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-78940106_id-.DatabaseSetupv5.2.0-MariaDBbinlogFormatConfiguration">MariaDB binlog Format Configuration</a>    </p>
 </li></ul>    <p  >For more information on application server-specific database configuration such as configuring a database driver, see <a   href="Application_Server_Setup.html">Application Server Setup</a>.    </p>
-    <div class="section section-2" id="src-42959497_id-.DatabaseSetupv5.0.0-DatabaseAccountDatabaseaccount">
-        <h2 class="heading section"><span id="src-42959497_id-.DatabaseSetupv5.0.0-Databaseaccount" class="confluence-anchor-link"></span><span>Database Account </span></h2>
+    <div class="section section-2" id="src-78940106_id-.DatabaseSetupv5.2.0-DatabaseAccountDatabaseaccount">
+        <h2 class="heading section"><span id="src-78940106_id-.DatabaseSetupv5.2.0-Databaseaccount" class="confluence-anchor-link"></span><span>Database Account </span></h2>
     <p  class="section">Create a database and database user for SignServer. For more information, refer to documentation from the respective database vendor.    </p>
     <p  class="section">For example for MariaDB something like the following could typically be used:    </p>
     <div  class="confbox programlisting">
@@ -1417,13 +1421,13 @@
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-42959497_id-.DatabaseSetupv5.0.0-TableCreationandIndexesTablecreationandindexes">
-        <h2 class="heading section"><span id="src-42959497_id-.DatabaseSetupv5.0.0-Tablecreationandindexes" class="confluence-anchor-link"></span><span>Table Creation and Indexes </span></h2>
+    <div class="section section-2" id="src-78940106_id-.DatabaseSetupv5.2.0-TableCreationandIndexesTablecreationandindexes">
+        <h2 class="heading section"><span id="src-78940106_id-.DatabaseSetupv5.2.0-Tablecreationandindexes" class="confluence-anchor-link"></span><span>Table Creation and Indexes </span></h2>
     <p  class="section">The application server will attempt to create tables during startup of SignServer and if the database user does not have table create permissions, the tables must be created manually. For information on database schemas for different databases, refer to <tt class=" ">doc/sql-scripts/create-tables-signserver-*.sql</tt>.    </p>
-    <p  class="section">In order to improve performance, the appropriate database indices should also be applied. This is extra important for the AuditRecordData table, which otherwise will make SignServer slower to start. Refer to <tt class=" ">doc/sql-scripts/create-index-signserver.sql</tt>.    </p>
+    <p  class="section">In order to improve performance, the appropriate database indixes should also be applied. This is extra important for the AuditRecordData table, which otherwise will make SignServer slower to start. Refer to <tt class=" ">doc/sql-scripts/create-index-signserver.sql</tt>.    </p>
     </div>
-    <div class="section section-2" id="src-42959497_id-.DatabaseSetupv5.0.0-MariaDBbinlogFormatConfigurationMariaDBbinlogformatconfiguration">
-        <h2 class="heading section"><span id="src-42959497_id-.DatabaseSetupv5.0.0-MariaDBbinlogformatconfiguration" class="confluence-anchor-link"></span><span>MariaDB binlog Format Configuration </span></h2>
+    <div class="section section-2" id="src-78940106_id-.DatabaseSetupv5.2.0-MariaDBbinlogFormatConfigurationMariaDBbinlogformatconfiguration">
+        <h2 class="heading section"><span id="src-78940106_id-.DatabaseSetupv5.2.0-MariaDBbinlogformatconfiguration" class="confluence-anchor-link"></span><span>MariaDB binlog Format Configuration </span></h2>
     <p  >For MariaDB, set <tt class=" ">binlog_format</tt> to &quot;row&quot;, for instance in <tt class=" ">/etc/mysql/my.cnf</tt>, <tt class=" ">/etc/my.cnf</tt>, <tt class=" ">/etc/my.cnf.d/mariadb-server.cnf</tt> or similar:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">

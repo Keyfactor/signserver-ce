@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="46137346">
+<body pageid="75861550">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.1.0</p>
+                    <p>Version: 5.2.0</p>
                 </div>
             </header>
 
@@ -1037,10 +1037,6 @@
         <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
 
             </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
-
-            </li>
                                         <li class="collapsed">
         <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
 
@@ -1222,6 +1218,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
 
             </li>
@@ -1326,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.2_Release_Notes.html">SignServer 5.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
 
             </li>
@@ -1381,7 +1385,7 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Integration.html">SignServer Integration</a></li>
                                                             </ul>
-</div>            <h1 id="src-16221681"> <span>Apache HTTP Server as Reverse Proxy</span></h1>
+</div>            <h1 id="src-81887829"> <span>Apache HTTP Server as Reverse Proxy</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1415,7 +1419,7 @@
 </div>
     </div>
     <p  >    </p>
-    <div class="section section-1" id="src-16221681_safe-id-aWQtLkFwYWNoZUhUVFBTZXJ2ZXJhc1JldmVyc2VQcm94eXY0LjMuMC1FeGFtcGxlOlJld3JpdGVVUkxzZm9yVFNBKHVzaW5nbW9kX3Byb3h5YW5kbW9kX3Jld3JpdGUp">
+    <div class="section section-1" id="src-81887829_safe-id-aWQtLkFwYWNoZUhUVFBTZXJ2ZXJhc1JldmVyc2VQcm94eXY1LjIuMC1FeGFtcGxlOlJld3JpdGVVUkxzZm9yVFNBKHVzaW5nbW9kX3Byb3h5YW5kbW9kX3Jld3JpdGUp">
         <h1 class="heading "><span>Example: Rewrite URLs for TSA (using mod_proxy and mod_rewrite)</span></h1>
     <p  >The following sample configuration allows rendering nice URLs for time-stamping so that you can point your TSA clients to <tt class=" ">http://tsa.example.com/</tt> instead of <tt class=" ">http://tsa.example.com:8080/signserver/process?workerName=TimeStampSigner1</tt>.    </p>
     <p  >This configuration combines <tt class=" ">mod_proxy</tt> with <tt class=" ">mod_rewrite</tt> to enable setting the workerName or workerId, allowing different TSAs available on different URLs.    </p>
@@ -1442,7 +1446,7 @@
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-16221681_safe-id-aWQtLkFwYWNoZUhUVFBTZXJ2ZXJhc1JldmVyc2VQcm94eXY0LjMuMC1FeGFtcGxlOlJld3JpdGVVUkxzYW5kcmVkaXJlY3R0b0hUVFBTKHVzaW5nQUpQKQ">
+    <div class="section section-1" id="src-81887829_safe-id-aWQtLkFwYWNoZUhUVFBTZXJ2ZXJhc1JldmVyc2VQcm94eXY1LjIuMC1FeGFtcGxlOlJld3JpdGVVUkxzYW5kcmVkaXJlY3R0b0hUVFBTKHVzaW5nQUpQKQ">
         <h1 class="heading "><span>Example: Rewrite URLs and redirect to HTTPS (using AJP)</span></h1>
     <p  >The following example configures three virtual hosts.    </p>
     <p  >The first <tt class=" ">signserver.example.com:80</tt> redirects all requests to use HTTPS and thus the virtual host <tt class=" ">signserver.example.com:443</tt>.    </p>
@@ -1535,7 +1539,7 @@
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-16221681_safe-id-aWQtLkFwYWNoZUhUVFBTZXJ2ZXJhc1JldmVyc2VQcm94eXY0LjMuMC1FeGFtcGxlOkdyYW50aW5nYWNjZXNzdG9zcGVjaWZpY3dvcmtlcnNvbmx5">
+    <div class="section section-1" id="src-81887829_safe-id-aWQtLkFwYWNoZUhUVFBTZXJ2ZXJhc1JldmVyc2VQcm94eXY1LjIuMC1FeGFtcGxlOkdyYW50aW5nYWNjZXNzdG9zcGVjaWZpY3dvcmtlcnNvbmx5">
         <h1 class="heading "><span>Example: Granting access to specific workers only</span></h1>
     <p  >This example shows how to limit access to specified resources only.    </p>
     <p  >If you are going to grant different users access to different workers, always remember to first deny access from the root location since there are other ways to access a worker than the &quot;/worker/*&quot; or &quot;/sodworker/*&quot; pattern. For instance, /process, /tsa, /pdf and /sod etc, as well as using the web services interfaces /signserverws, /SignServerWSService, /validationws, /ValidationWSService, and /ClientWSService, all can be used to invoke <strong class=" ">any</strong> worker.    </p>
@@ -1556,8 +1560,8 @@
 <div class="line"><code class="plain">	Allow from all</code></div>
 <div class="line"><code class="plain">    &lt;/LocationMatch&gt;</code></div>
 <div class="line"> </div>
-<div class="line"><code class="plain">    # Allow demo web pages</code></div>
-<div class="line"><code class="plain">    &lt;Location /demo/&gt;</code></div>
+<div class="line"><code class="plain">    # Allow Client Web</code></div>
+<div class="line"><code class="plain">    &lt;Location /clientweb/&gt;</code></div>
 <div class="line"><code class="plain">	Order Allow,Deny</code></div>
 <div class="line"><code class="plain">	Allow from all</code></div>
 <div class="line"><code class="plain">    &lt;/Location&gt;</code></div>
@@ -1605,9 +1609,9 @@
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-16221681_id-.ApacheHTTPServerasReverseProxyv4.3.0-AdditionalConfiguration">
+    <div class="section section-1" id="src-81887829_id-.ApacheHTTPServerasReverseProxyv5.2.0-AdditionalConfiguration">
         <h1 class="heading "><span>Additional Configuration</span></h1>
-    <div class="section section-2" id="src-16221681_id-.ApacheHTTPServerasReverseProxyv4.3.0-CustomPrivateHTTPSport">
+    <div class="section section-2" id="src-81887829_id-.ApacheHTTPServerasReverseProxyv5.2.0-CustomPrivateHTTPSport">
         <h2 class="heading "><span>Custom Private HTTPS port</span></h2>
     <p  >For example, if a reverse proxy is used to change the ports used by SignServer, the links in the Administration Web interface might not be correct (for example, if the standard port 443 is used instead of 8443). In that case, configure the following in conf/signserver_deploy.properties:    </p>
     <div  class="confbox programlisting">
@@ -1616,7 +1620,7 @@
 </div>
     </div>
     </div>
-    <div class="section section-2" id="src-16221681_id-.ApacheHTTPServerasReverseProxyv4.3.0-CustomContextRoot">
+    <div class="section section-2" id="src-81887829_id-.ApacheHTTPServerasReverseProxyv5.2.0-CustomContextRoot">
         <h2 class="heading "><span>Custom Context Root</span></h2>
     <p  >With a reverse proxy, it is also possible to use a different beginning of the URL for accessing SignServer than the default &quot;/signserver&quot;. If for example the reverse proxy instead serves SignServer under &quot;/myservice/signserver&quot; this might have to be configured in <tt class=" ">conf/signserver_deploy.properties</tt> so that the URLs in the Administration Web interface, as well as the Web Services endpoints, work as expected:    </p>
     <div  class="confbox programlisting">

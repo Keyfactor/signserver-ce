@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="46137346">
+<body pageid="75861550">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.1.0</p>
+                    <p>Version: 5.2.0</p>
                 </div>
             </header>
 
@@ -1037,10 +1037,6 @@
         <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
 
             </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
-
-            </li>
                                         <li class="collapsed">
         <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
 
@@ -1222,6 +1218,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
 
             </li>
@@ -1326,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.2_Release_Notes.html">SignServer 5.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
 
             </li>
@@ -1384,18 +1388,18 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Dispatchers.html">SignServer Dispatchers</a></li>
                                                             </ul>
-</div>            <h1 id="src-5277503"> <span>RequestedPolicyDispatcher</span></h1>
+</div>            <h1 id="src-78939037"> <span>RequestedPolicyDispatcher</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >Fully qualified class name: <strong class=" ">org.signserver.module.tsa.RequestedPolicyDispatcher</strong>    </p>
-    <div class="section section-1" id="src-5277503_id-.RequestedPolicyDispatcherv4.1.0-Overview">
+    <div class="section section-1" id="src-78939037_id-.RequestedPolicyDispatcherv5.1.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >Dispatches the time-stamp request to an other signer based on the requested TSA Policy according to an configured mapping table. This dispatcher can be useful if you want to have multiple signers (Timestamp Units) signing with different TSA policies but don't want the client to have to call different workers.    </p>
     <p  >See also the <strong class=" ">DispatchedAuthorizer</strong> which if configured by a signer can allow all requests that has gone through a Dispatcher.    </p>
     </div>
-    <div class="section section-1" id="src-5277503_id-.RequestedPolicyDispatcherv4.1.0-AvailableProperties">
+    <div class="section section-1" id="src-78939037_id-.RequestedPolicyDispatcherv5.1.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties </span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1440,7 +1444,7 @@
         <p  >INCLUDESTATUSSTRING    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Specifies if the status string is to be included in the response. This setting only affects the behavior when USEDEFAULTIFMISMATCH is false, and there is no mapping for the requested policy. In case there is a mapping (or no mapping and USEDEFAULTIFMISMATCH is true, the state of INCLUDESTATUSSTRING of the used signer is used to determine if the status string is included. Setting this to true triggers a bug in some versions of OpenJDK's jarsigner utility. (OPTIONAL), default true.    </p>
+        <p  >Specifies if the status string is to be included in the response. This setting only affects the behavior when USEDEFAULTIFMISMATCH is false, and there is no mapping for the requested policy. In case there is a mapping (or no mapping and USEDEFAULTIFMISMATCH is true), the state of INCLUDESTATUSSTRING of the used signer is used to determine if the status string is included. Setting this to true triggers a bug in some versions of OpenJDK's jarsigner utility. (OPTIONAL), default true.    </p>
             </td>
         </tr>
 </tbody>        </table>

@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="46137346">
+<body pageid="75861550">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.1.0</p>
+                    <p>Version: 5.2.0</p>
                 </div>
             </header>
 
@@ -1037,10 +1037,6 @@
         <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
 
             </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
-
-            </li>
                                         <li class="collapsed">
         <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
 
@@ -1222,6 +1218,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
 
             </li>
@@ -1326,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.2_Release_Notes.html">SignServer 5.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
 
             </li>
@@ -1381,7 +1385,7 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Operations.html">SignServer Operations</a></li>
                                                             </ul>
-</div>            <h1 id="src-75860218"> <span>Setting up OpenPGP Signer</span></h1>
+</div>            <h1 id="src-81887821"> <span>Setting up OpenPGP Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1389,17 +1393,17 @@
     <p  >The OpenPGP signer signs arbitrary data and produces an OpenPGP detached signature in binary or ASCII armored form, or a cleartext signature. For more information on the OpenPGP format, refer to <a  class="external-link" href="https://tools.ietf.org/html/rfc4880">RFC 4880</a>.    </p>
     <p  >Follow the steps below to set up the OpenPGP signer.    </p>
     <p  >    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDE6QWRkT3BlblBHUFNpZ25lcg">Step 1: Add OpenPGP Signer</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDI6QWRkVXNlcklEL0NlcnRpZmljYXRpb24">Step 2: Add User ID / Certification</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDM6R2VuZXJhdGVhbmRTdG9yZVJldm9jYXRpb25DZXJ0aWZpY2F0ZQ">Step 3: Generate and Store Revocation Certificate</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDQ6VGVzdFNpZ25pbmc">Step 4: Test Signing</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDU6VmVyaWZ5U2lnbmF0dXJl">Step 5: Verify Signature</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDY6T3B0aW9uYWw6RGlzdHJpYnV0ZXRoZU9wZW5QR1BQdWJsaWNLZXk">Step 6: Optional: Distribute the OpenPGP Public Key</a>    </p>
-</li></ul>    <div class="section section-1" id="src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtUHJlcmVxdWlzaXRlOkNyeXB0b1dvcmtlckFscmVhZHlTZXRVcA">
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDE6QWRkT3BlblBHUFNpZ25lcg">Step 1: Add OpenPGP Signer</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDI6QWRkVXNlcklEL0NlcnRpZmljYXRpb24">Step 2: Add User ID / Certification</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDM6R2VuZXJhdGVhbmRTdG9yZVJldm9jYXRpb25DZXJ0aWZpY2F0ZQ">Step 3: Generate and Store Revocation Certificate</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDQ6VGVzdFNpZ25pbmc">Step 4: Test Signing</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDU6VmVyaWZ5U2lnbmF0dXJl">Step 5: Verify Signature</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDY6T3B0aW9uYWw6RGlzdHJpYnV0ZXRoZU9wZW5QR1BQdWJsaWNLZXk">Step 6: Optional: Distribute the OpenPGP Public Key</a>    </p>
+</li></ul>    <div class="section section-1" id="src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtUHJlcmVxdWlzaXRlOkNyeXB0b1dvcmtlckFscmVhZHlTZXRVcA">
         <h1 class="heading "><span>Prerequisite: Crypto Worker Already Set Up</span></h1>
     <p  >As with all signers, a crypto worker either using a software keystore or PKCS#11, should be available before setting up the OpenPGP signer.    </p>
     </div>
-    <div class="section section-1" id="src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDE6QWRkT3BlblBHUFNpZ25lcg">
+    <div class="section section-1" id="src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDE6QWRkT3BlblBHUFNpZ25lcg">
         <h1 class="heading "><span>Step 1: Add OpenPGP Signer</span></h1>
     <p  >Follow the steps below to add the OpenPGP signer using the sample configuration file openpgpsigner.properties as a template.    </p>
 <ol class=" "><li class=" ">    <p  >Select the SignServer AdminWeb <strong class=" ">Workers</strong> tab, and click <strong class=" ">Add</strong> to add a new worker.    </p>
@@ -1421,7 +1425,7 @@
 </li><li class=" ">    <p  >Select the worker in the list and confirm that the <strong class=" ">Worker status</strong> is Active and without errors listed. If not, confirm that the DEFAULTKEY property is correct and check in the Crypto Token tab of the crypto worker that a key with the specified name exists.    </p>
 </li></ol></li></ol>    <p  >For all OpenPGPSigner specific properties, see <a   href="OpenPGP_Signer.html">OpenPGP Signer</a>.    </p>
     </div>
-    <div class="section section-1" id="src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDI6QWRkVXNlcklEL0NlcnRpZmljYXRpb24">
+    <div class="section section-1" id="src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDI6QWRkVXNlcklEL0NlcnRpZmljYXRpb24">
         <h1 class="heading "><span>Step 2: Add User ID / Certification</span></h1>
     <p  >Follow the steps below to add User ID / Certification for the OpenPGP public key using the Generate CSR option.    </p>
 <ol class=" "><li class=" ">    <p  >Select the SignServer AdminWeb <strong class=" ">Workers</strong> tab.    </p>
@@ -1437,7 +1441,7 @@
 </li><li class=" ">    <p  >Paste the public key content in the <strong class=" ">Value</strong> field, and click <strong class=" ">Submit</strong>.    </p>
 </li><li class=" ">    <p  >Click <strong class=" ">Status Summary</strong> and confirm that fields like &quot;PGP Key ID&quot; and &quot;PGP Public key&quot; are listed. Also, note that the User ID is listed.    </p>
 </li></ol>    </div>
-    <div class="section section-1" id="src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDM6R2VuZXJhdGVhbmRTdG9yZVJldm9jYXRpb25DZXJ0aWZpY2F0ZQ">
+    <div class="section section-1" id="src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDM6R2VuZXJhdGVhbmRTdG9yZVJldm9jYXRpb25DZXJ0aWZpY2F0ZQ">
         <h1 class="heading "><span>Step 3: Generate and Store Revocation Certificate</span></h1>
     <p  >To generate and store a revocation certificate, do the following:    </p>
 <ol class=" "><li class=" ">    <p  >On the AdminWeb Worker page, click the <strong class=" ">Configuration</strong> tab.    </p>
@@ -1452,19 +1456,18 @@
 </li><li class=" ">    <p  >For the <strong class=" ">GENERATE_REVOCATION_CERTIFICATE</strong> property, click <strong class=" ">Edit</strong>.    </p>
 </li><li class=" ">    <p  >Set Value &quot;false&quot; and click <strong class=" ">Submit</strong>.    </p>
 </li></ol>    </div>
-    <div class="section section-1" id="src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDQ6VGVzdFNpZ25pbmc">
+    <div class="section section-1" id="src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDQ6VGVzdFNpZ25pbmc">
         <h1 class="heading "><span>Step 4: Test Signing</span></h1>
     <p  >The following example shows how to sign using the SignServer Public Web. You can test signing using any of the SignServer client interfaces.    </p>
-<ol class=" "><li class=" ">    <p  >Click <strong class=" ">Signing and Validation Demo</strong>.    </p>
-</li><li class=" ">    <p  >Click <strong class=" ">Generic</strong>.    </p>
-</li><li class=" ">    <p  >In the <strong class=" ">Sign by File Upload</strong> section, specify the <strong class=" ">Worker name</strong> used, for example, &quot;OpenPGPSigner&quot;.    </p>
+<ol class=" "><li class=" ">    <p  >Click <strong class=" ">Client Web</strong>.    </p>
+</li><li class=" ">    <p  >Specify the <strong class=" ">Worker name</strong> used, for example, &quot;OpenPGPSigner&quot;.    </p>
 </li><li class=" ">    <p  >Select the file to create a detached signature for, for example, &quot;release.zip&quot;.    </p>
 </li><li class=" ">    <p  >Click <strong class=" ">Submit</strong> and store the resulting signature file, for example, &quot;release.zip.asc&quot;.    </p>
 </li></ol>    </div>
-    <div class="section section-1" id="src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDU6VmVyaWZ5U2lnbmF0dXJl">
+    <div class="section section-1" id="src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDU6VmVyaWZ5U2lnbmF0dXJl">
         <h1 class="heading "><span>Step 5: Verify Signature</span></h1>
     <p  >The following example shows how to verify the signature using the OpenPGP tool GnuPG. It should be possible to use any OpenPGP tool to verify the signature.    </p>
-    <div class="section section-2" id="src-75860218_id-.SettingupOpenPGPSignerv5.1.0-ExampleforGnuPG">
+    <div class="section section-2" id="src-81887821_id-.SettingupOpenPGPSignerv5.2.0-ExampleforGnuPG">
         <h2 class="heading "><span>Example for GnuPG</span></h2>
     <p  >Run the following to verify the signature using GnuPG:    </p>
     <div  class="confbox programlisting">
@@ -1488,7 +1491,7 @@
     </div>
 </li></ol>    </div>
     </div>
-    <div class="section section-1" id="src-75860218_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4xLjAtU3RlcDY6T3B0aW9uYWw6RGlzdHJpYnV0ZXRoZU9wZW5QR1BQdWJsaWNLZXk">
+    <div class="section section-1" id="src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDY6T3B0aW9uYWw6RGlzdHJpYnV0ZXRoZU9wZW5QR1BQdWJsaWNLZXk">
         <h1 class="heading "><span>Step 6: Optional: Distribute the OpenPGP Public Key</span></h1>
     <p  >The OpenPGP Public Key can optionally be published to online key servers or distributed to clients otherwise.    </p>
     </div>

@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="46137346">
+<body pageid="75861550">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.1.0</p>
+                    <p>Version: 5.2.0</p>
                 </div>
             </header>
 
@@ -1037,10 +1037,6 @@
         <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
 
             </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
-
-            </li>
                                         <li class="collapsed">
         <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
 
@@ -1222,6 +1218,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
 
             </li>
@@ -1326,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.2_Release_Notes.html">SignServer 5.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
 
             </li>
@@ -1383,7 +1387,7 @@
                                         <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                                                      <li><a href="Logging.html">Logging</a></li>
                                                             </ul>
-</div>            <h1 id="src-16222945"> <span>Worker Log</span></h1>
+</div>            <h1 id="src-77889717"> <span>Worker Log</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1391,7 +1395,7 @@
     <p  >Worker Loggers log each transaction handled by a worker and can be configured per worker.    </p>
     <p  >By default, the worker logger AllFieldsWorkerLogger is used, which logs all the available fields one after another, separated by semi colons.    </p>
     <p  >To configure the Worker Logger, set the <strong class=" ">WORKERLOGGER</strong> property to the full class name of the IWorkerLogger implementation in the respective worker configuration.    </p>
-    <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-AllFieldsWorkerLogger">
+    <div class="section section-1" id="src-77889717_id-.WorkerLogv5.1.0-AllFieldsWorkerLogger">
         <h1 class="heading "><span>AllFieldsWorkerLogger</span></h1>
     <p  >The default worker logger for most workers. Can be used during testing to find which fields a worker logs, and may then be changed to the PatternWorkerLogger to only log fields that are of interest.    </p>
     <p  >The LOGLEVEL_DEFAULT sets the level of the log output. The log levels are specified as the standard Log4J levels (FATAL, ERROR, WARNING, INFO, DEBUG, and TRACE) and default to the log level INFO if not set.    </p>
@@ -1402,7 +1406,7 @@
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-SecurityEventsWorkerLogger">
+    <div class="section section-1" id="src-77889717_id-.WorkerLogv5.1.0-SecurityEventsWorkerLogger">
         <h1 class="heading section"><span>SecurityEventsWorkerLogger</span></h1>
     <p  class="section">The SecurityEventsWorkerLogger worker logger uses the CESeCore security events logger and includes all fields in the additionalDetails fields in the audit log, except for the worker ID, which is mapped to searchDetail2.    </p>
     <p  class="section">The properties LOGINCLUDEFIELDS and LOGEXCLUDEFIELDS can be used to restrict the fields included in additionalDetails by explicitly setting a comma-separated list of field names.    </p>
@@ -1413,7 +1417,7 @@
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-PatternWorkerLogger">
+    <div class="section section-1" id="src-77889717_id-.WorkerLogv5.1.0-PatternWorkerLogger">
         <h1 class="heading section"><span>PatternWorkerLogger</span></h1>
     <p  class="section">The LOGLEVEL_DEFAULT property has the same behavior as the AllFieldsWorkerLogger.    </p>
     <div  class="confbox programlisting">
@@ -1426,10 +1430,9 @@
 <div class="line"><code class="plain">LOGLEVEL_DEFAULT=INFO</code></div>
 </div>
     </div>
-    <p  class="section">    </p>
     </div>
-    <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-DefaultTimeStampLogger">
-        <h1 class="heading section"><span>DefaultTimeStampLogger</span></h1>
+    <div class="section section-1" id="src-77889717_id-.WorkerLogv5.1.0-DefaultTimeStampLogger">
+        <h1 class="heading "><span>DefaultTimeStampLogger</span></h1>
     <p  >Pattern logger with a default log order suitable for logging time-stamp requests. This logger is the default logger used by the <a   href="Time_Stamp_Signer.html">TimeStampSigner</a>.    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1437,7 +1440,7 @@
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-NullWorkerLogger">
+    <div class="section section-1" id="src-77889717_id-.WorkerLogv5.1.0-NullWorkerLogger">
         <h1 class="heading "><span>NullWorkerLogger</span></h1>
     <p  >Worker logger that does not log anything.    </p>
     <div  class="confbox programlisting">
@@ -1446,7 +1449,7 @@
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-CustomTimeStampLogger1">
+    <div class="section section-1" id="src-77889717_id-.WorkerLogv5.1.0-CustomTimeStampLogger1">
         <h1 class="heading "><span>CustomTimeStampLogger1</span></h1>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1454,7 +1457,7 @@
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-FileWorkerLogger">
+    <div class="section section-1" id="src-77889717_id-.WorkerLogv5.1.0-FileWorkerLogger">
         <h1 class="heading "><span>FileWorkerLogger</span></h1>
     <p  >Worker logger that writes the log values to a worker-specific log file. This logger logs all fields, similar to the AllFieldsWorkerLogger, and is mainly intended for use by unit tests, and is not thread safe.    </p>
     <div  class="confbox programlisting">
@@ -1465,7 +1468,7 @@
     </div>
     <p  >    </p>
     </div>
-    <div class="section section-1" id="src-16222945_id-.WorkerLogv4.3.0-AvailableLogFields">
+    <div class="section section-1" id="src-77889717_id-.WorkerLogv5.1.0-AvailableLogFields">
         <h1 class="heading "><span>Available Log Fields</span></h1>
     <p  >The following lists some of the available log fields and is not a complete listing of all log events.    </p>
     <div  class="tablewrap">

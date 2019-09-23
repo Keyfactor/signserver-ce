@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="46137346">
+<body pageid="75861550">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.1.0</p>
+                    <p>Version: 5.2.0</p>
                 </div>
             </header>
 
@@ -1037,10 +1037,6 @@
         <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
 
             </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
-
-            </li>
                                         <li class="collapsed">
         <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
 
@@ -1222,6 +1218,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
 
             </li>
@@ -1326,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.2_Release_Notes.html">SignServer 5.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
 
             </li>
@@ -1387,13 +1391,13 @@
                                                                                                          <li class="shortcut"><a href="Worker_Page.html">Worker Page</a></li>
                                                                                      <li><a href="Worker_Crypto_Token_Page.html">Worker Crypto Token Page</a></li>
                                                             </ul>
-</div>            <h1 id="src-16220161"> <span>Crypto Token Generate Key Page</span></h1>
+</div>            <h1 id="src-78940266"> <span>Crypto Token Generate Key Page</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >Generate one or more key-pairs in the crypto token.    </p>
-    <div class="section section-1" id="src-16220161_id-.CryptoTokenGenerateKeyPagev4.3.0-GenerateKey">
+    <div class="section section-1" id="src-78940266_id-.CryptoTokenGenerateKeyPagev5.2.0-GenerateKey">
         <h1 class="heading "><span>Generate Key</span></h1>
     <div  class="tablewrap">
         <table class="relative-table wrapped confluenceTable">
@@ -1424,11 +1428,13 @@
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Algorithm for the key to generate. The key can be generated as type asymmetric (key-pair) or symmetric (secret key), and either key type is determined by the key algorithm specified.    </p>
     <p  >For example, if RSA is specified as Key Algorithm, an asymmetric key (key-pair) is generated, and specifying AES generates a symmetric key (secret key).    </p>
+    <p  >By default, key algorithms can be selected from a drop-down list with the common options (RSA, DSA, ECDSA, and AES).    </p>
+    <p  >To manually specify another value, click <strong class=" ">&gt;</strong>.    </p>
     <p  >Examples of valid values:    </p>
 <ul class=" "><li class=" ">    <p  ><i class=" ">RSA</i>    </p>
 </li><li class=" ">    <p  ><i class=" ">ECDSA</i>    </p>
 </li><li class=" ">    <p  ><i class=" ">AES</i>    </p>
-</li></ul>    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
+</li></ul>    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_US/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/en_US/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
  If generating a symmetric (secret) key and the specified key algorithm name is not present in the predefined list of known secret key algorithms, the key algorithm name must be specified with the prefix &quot;SEC:&quot;, for example: <strong class=" ">SEC:Blowfish</strong>. Currently, the secret key list contains the algorithms AES and DES.    </p>
     <p  >If using the <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>, the algorithm name can be specified as a long or hexadecimal constant value. For more information, see <strong class=" ">Secret Key generation</strong> in <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>.    </p>
             </td>
@@ -1439,7 +1445,10 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Key specifications for the key to generate.    </p>
-    <p  >For RSA and DSA, this is the key length and is specified as a number. Additionally, for RSA it is possible to use a different exponent by suffixing the number with an &quot;e&quot; followed by the exponent in decimal, or prefixed with &quot;0x&quot; for hexadecimal.    </p>
+    <p  >By default, the key specification can be selected from a drop-down list with common values, depending on the key algorithm selected.    </p>
+    <p  >To manually specify another value, click <strong class=" ">&gt;</strong>.    </p>
+    <p  >Note that some key specifications presented might not be supported by the crypto token being used.    </p>
+    <p  >For RSA and DSA, this is the key length and is specified as a number. Additionally, for RSA it is possible to use a different exponent by suffixing the number with an &quot;e&quot; followed by the exponent in decimal or prefixed with &quot;0x&quot; for hexadecimal.    </p>
     <p  >For ECDSA, use the name of the curve.    </p>
     <p  >Examples:    </p>
 <ul class=" "><li class=" ">    <p  ><i class=" ">2048</i>    </p>
@@ -1462,7 +1471,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-16220161_id-.CryptoTokenGenerateKeyPagev4.3.0-Actions">
+    <div class="section section-1" id="src-78940266_id-.CryptoTokenGenerateKeyPagev5.2.0-Actions">
         <h1 class="heading "><span>Actions</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">

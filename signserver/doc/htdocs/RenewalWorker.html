@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="46137346">
+<body pageid="75861550">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.1.0</p>
+                    <p>Version: 5.2.0</p>
                 </div>
             </header>
 
@@ -1037,10 +1037,6 @@
         <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
 
             </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
-
-            </li>
                                         <li class="collapsed">
         <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
 
@@ -1222,6 +1218,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
 
             </li>
@@ -1326,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.2_Release_Notes.html">SignServer 5.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
 
             </li>
@@ -1384,23 +1388,23 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="Other_Workers.html">Other Workers</a></li>
                                                             </ul>
-</div>            <h1 id="src-11574089"> <span>RenewalWorker</span></h1>
+</div>            <h1 id="src-81887825"> <span>RenewalWorker</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >Fully qualified class name: <strong class=" ">org.signserver.module.renewal.worker.RenewalWorker</strong>.    </p>
-    <div class="section section-1" id="src-11574089_id-.RenewalWorkerv4.2.1-Overview">
+    <div class="section section-1" id="src-81887825_id-.RenewalWorkerv5.2.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The RenewalWorker can be used for generating a new key-pair and renewing a worker's certificate from EJBCA using web services (WS). The RenewalWorker should be configured with its own CryptoToken and an SSL client authentication certificate with permissions set up in EJBCA to issue certificates. Some properties are configured for the RenewalWorker, such as the EJBCA WS endpoint URL and truststore details, and other properties should be set on the worker to be renewed (the renewee) and some arguments are provided when the worker is invoked.    </p>
     <p  >Note the known limitation that it might not be possible to have multiple renewal workers using different crypto tokens, since the keys and certificates used by the TLS connection for the web service is setup globally.    </p>
     </div>
-    <div class="section section-1" id="src-11574089_id-.RenewalWorkerv4.2.1-Requestingtheworker">
+    <div class="section section-1" id="src-81887825_id-.RenewalWorkerv5.2.0-Requestingtheworker">
         <h1 class="heading "><span>Requesting the worker</span></h1>
     <p  >After setting up a RenewalWorker and installing its certificate, signers (and other workers) can easily be renewed using the SignServer AdminGUI. See Renew signer dialog in <a   href="Administration_GUI.html">Administration GUI</a>.    </p>
     <p  >As the RenewalWorker is a worker, it can also be invoked using the normal client APIs.    </p>
-    <p  ><strong class=" ">Using the client web pages</strong>:    </p>
-    <p  >Go to the Generic Signing Demo page, Sign by Direct Input, and specify Worker name: MyRenewalWorker.    </p>
+    <p  ><strong class=" ">Using the Client Web<br/></strong>    </p>
+    <p  >Go to the Client Web, click <strong class=" ">Direct Input</strong> and specify the Worker name: MyRenewalWorker.    </p>
     <p  >Data:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1408,14 +1412,14 @@
 <div class="line"><code class="plain">AUTHCODE=foo123</code></div>
 </div>
     </div>
-    <p  ><strong class=" ">Using the Client CLI</strong>:    </p>
+    <p  ><strong class=" ">Using the Client CLI</strong>    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">bin/signclient signdocument -workername MyRenewalWorker -data "WORKER=MySigner</code></div>
 <div class="line"><code class="plain">AUTHCODE=foo123"</code></div>
 </div>
     </div>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/en_US/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/en_US/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
  Note that the command is on two lines.    </p>
     <p  ><strong class=" ">Using the Admin CLI to initiate the renewal</strong>:    </p>
     <div  class="confbox programlisting">
@@ -1424,12 +1428,12 @@
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-11574089_id-.RenewalWorkerv4.2.1-RenewalWorkeroperations">
-        <h1 class="heading "><span>RenewalWorker operations</span></h1>
+    <div class="section section-1" id="src-81887825_id-.RenewalWorkerv5.2.0-RenewalWorkerOperations">
+        <h1 class="heading "><span>RenewalWorker Operations</span></h1>
     <p  >The RenewalWorker starts by generating a new key-pair. That is, unless a NEXTCERTSIGNKEY is already set for the renewee, or if the request property FORDEFAULTKEY=true is set in the request. The HSM/keystore password needs to be submitted as part of the request (AUTHCODE request property) to generate a new key-pair.    </p>
     <p  >When the key-pair has been generated and tested successfully, the key alias is set as the NEXTCERTSIGNKEY property. A certificate signing request is created for the key, and the worker sends the request to EJBCA to issue a certificate for the configured end entity. After receiving the certificate and certificate chain, they are installed for the worker and the DEFAULTKEY property is updated with the value from the NEXTCERTSIGNKEY property, and this property is then removed.    </p>
     </div>
-    <div class="section section-1" id="src-11574089_id-.RenewalWorkerv4.2.1-WorkerProperties">
+    <div class="section section-1" id="src-81887825_id-.RenewalWorkerv5.2.0-WorkerProperties">
         <h1 class="heading "><span>Worker Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable scroll-table-layout">
@@ -1504,7 +1508,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-11574089_id-.RenewalWorkerv4.2.1-Propertiesofrenewee">
+    <div class="section section-1" id="src-81887825_id-.RenewalWorkerv5.2.0-Propertiesofrenewee">
         <h1 class="heading "><span>Properties of renewee</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable scroll-table-layout">
@@ -1595,7 +1599,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-11574089_id-.RenewalWorkerv4.2.1-RequestProperties">
+    <div class="section section-1" id="src-81887825_id-.RenewalWorkerv5.2.0-RequestProperties">
         <h1 class="heading "><span>Request Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1638,10 +1642,10 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-11574089_id-.RenewalWorkerv4.2.1-ResponseProperties">
+    <div class="section section-1" id="src-81887825_id-.RenewalWorkerv5.2.0-ResponseProperties">
         <h1 class="heading "><span>Response Properties</span></h1>
     <div  class="tablewrap">
-        <table class="confluenceTable">
+        <table class="wrapped confluenceTable">
                     <colgroup>
                                     <col />
                                     <col />
@@ -1673,7 +1677,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-11574089_id-.RenewalWorkerv4.2.1-Renewalmodes">
+    <div class="section section-1" id="src-81887825_id-.RenewalWorkerv5.2.0-Renewalmodes">
         <h1 class="heading "><span>Renewal modes</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1771,7 +1775,8 @@
         <p  >-    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-                </td>
+        <p  >&nbsp;    </p>
+            </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Same alias    </p>
             </td>
@@ -1787,7 +1792,8 @@
         <p  >present    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-                </td>
+        <p  >&nbsp;    </p>
+            </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Same alias    </p>
             </td>

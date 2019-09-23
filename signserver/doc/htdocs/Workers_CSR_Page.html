@@ -60,7 +60,7 @@
     </script>
     </head>
 
-<body pageid="46137346">
+<body pageid="75861550">
 
 <div id="ht-loader">
     <noscript>
@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.1.0</p>
+                    <p>Version: 5.2.0</p>
                 </div>
             </header>
 
@@ -1037,10 +1037,6 @@
         <a class="ht-nav-page-link" href="Administration_CLI.html">Administration CLI</a>
 
             </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
-
-            </li>
                                         <li class="collapsed">
         <a class="ht-nav-page-link" href="Administration_Web.html">Administration Web</a>
 
@@ -1222,6 +1218,10 @@
                             </ul>
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Administration_GUI.html">Administration GUI</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Database_CLI.html">Database CLI</a>
 
             </li>
@@ -1326,6 +1326,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.2_Release_Notes.html">SignServer 5.2 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.1_Release_Notes.html">SignServer 5.1 Release Notes</a>
 
             </li>
@@ -1385,14 +1389,14 @@
                                                                                                          <li class="shortcut"><a href="Administration_Web.html">Administration Web</a></li>
                                                                                      <li><a href="Workers_Page.html">Workers Page</a></li>
                                                             </ul>
-</div>            <h1 id="src-5282331"> <span>Workers CSR Page</span></h1>
+</div>            <h1 id="src-78940263"> <span>Workers CSR Page</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >Generation of certificate signing requests.    </p>
-    <p  >Make sure each worker that should have a CSR generated are selected.    </p>
-    <div class="section section-1" id="src-5282331_id-.WorkersCSRPagev4.1.0-GenerateCSR">
+    <p  >Make sure each worker that should have a CSR generated is selected.    </p>
+    <div class="section section-1" id="src-78940263_id-.WorkersCSRPagev5.2.0-GenerateCSR">
         <h1 class="heading "><span>Generate CSR</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1413,8 +1417,7 @@
         <p  >Signer    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Name of the worker.    </p>
-    <p  >Clicking the link goes to the worker's page.    </p>
+        <p  >Name of the worker. Click the link to view the worker's page.    </p>
             </td>
         </tr>
     <tr>
@@ -1422,9 +1425,9 @@
         <p  >Key    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Select or fill in the name of the key for which the CSR should be generated.    </p>
-    <p  >If there are multiple known keys to choose from a drop down menu will allow you to select from.    </p>
-    <p  >Press the &quot;<strong class=" ">&gt;</strong>&quot; button to switch to editing of the alias manually and then press &quot;<strong class=" ">&lt;</strong>&quot; button when done.    </p>
+        <p  >Select or specify the name of the key for which the CSR should be generated.    </p>
+    <p  >If there are multiple known keys to choose from, select the option from the available drop-down list.    </p>
+    <p  >Click <strong class=" ">&gt;</strong> to edit the alias manually, and then press <strong class=" ">&lt; </strong>again when done.    </p>
             </td>
         </tr>
     <tr>
@@ -1433,7 +1436,9 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >The signature algorithm to use when creating the signature in the CSR (proof-of-possession).    </p>
-    <p  >The algorithm must work with the key algorithm used (i.e. RSA or ECDSA).    </p>
+    <p  >By default, the signature algorithms can be selected from a drop-down list listing common algorithms. Note that some of these algorithms might not be supported by the crypto token used.    </p>
+    <p  >To specify a signature algorithm manually, click <strong class=" ">&gt;</strong>.    </p>
+    <p  >Note that the algorithm must work with the key algorithm used (i.e. RSA or ECDSA).    </p>
     <p  >Examples:    </p>
 <ul class=" "><li class=" ">    <p  ><i class=" ">SHA256withRSA</i>    </p>
 </li><li class=" ">    <p  ><i class=" ">SHA256withECDSA</i>    </p>
@@ -1455,13 +1460,13 @@
         <p  >Result    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >After clicking the Generate button displays a button for each worker to download the generated CSR file.    </p>
+        <p  >After clicking the <strong class=" ">Generate</strong> button, this column shows a button for each worker to download the generated CSR file.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5282331_id-.WorkersCSRPagev4.1.0-FormatOptions">
+    <div class="section section-1" id="src-78940263_id-.WorkersCSRPagev5.2.0-FormatOptions">
         <h1 class="heading "><span>Format Options</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1483,13 +1488,13 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Create a PKCS#10 certificate signing request that is encapsulated in a PKCS#7/CMS SignedData structure.    </p>
-    <p  >If this option is selected then the drop-down menu should be used to select the CMS signer that will sign the request.    </p>
+    <p  >If selected, use the drop-down list to select the CMS signer that will sign the request.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-5282331_id-.WorkersCSRPagev4.1.0-Actions">
+    <div class="section section-1" id="src-78940263_id-.WorkersCSRPagev5.2.0-Actions">
         <h1 class="heading "><span>Actions</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1511,7 +1516,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Performs the CSR generation for each selected worker.    </p>
-    <p  >The result column will provide a download button for each CSR generated.    </p>
+    <p  >The <strong class=" ">Result</strong> column will provide a download button for each CSR generated.    </p>
             </td>
         </tr>
     <tr>

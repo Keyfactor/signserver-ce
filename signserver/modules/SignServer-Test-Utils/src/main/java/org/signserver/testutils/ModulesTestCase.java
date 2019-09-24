@@ -538,6 +538,15 @@ public class ModulesTestCase extends TestCase {
                                    KEYSTORE_SIGNER1_ALIAS);
     }
     
+    public void addZoneFileServerSideSigner(final int signerId, final String signerName,
+            final boolean autoActivate) throws FileNotFoundException {
+        addP12DummySigner("org.signserver.module.dnssec.signer.ZoneFileServerSideSigner",
+                signerId, signerName,
+                new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE),
+                autoActivate ? KEYSTORE_PASSWORD : null,
+                KEYSTORE_SIGNER1_ALIAS);
+    }
+    
     public void addXMLValidator() throws Exception {
         // VALIDATION SERVICE
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());

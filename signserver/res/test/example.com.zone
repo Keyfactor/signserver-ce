@@ -3,7 +3,7 @@ $TTL	86400 ; 24 hours could have been written as 24h or 1d
 $ORIGIN example.com.
 @  1D  IN  SOA ns1.example.com. hostmaster.example.com. (
 			      2002022401 ; serial
-			      3H ; refresh	
+			      3H ; refresh
 			      15 ; retry
 			      1w ; expire
 			      3h ; nxdomain ttl

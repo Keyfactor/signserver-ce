@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.2.0.Alpha4-dnssec-1-SNAPSHOT</version>
+        <version>5.2.0.Alpha4-dnssec-2-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-Module-XMLValidator</artifactId>
     <name>SignServer-Module-XMLValidator</name>

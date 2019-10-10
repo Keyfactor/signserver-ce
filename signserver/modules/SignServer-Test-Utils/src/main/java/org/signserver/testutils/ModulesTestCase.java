@@ -538,6 +538,15 @@ public class ModulesTestCase extends TestCase {
                                    KEYSTORE_SIGNER1_ALIAS);
     }
     
+    public void addZoneZipFileServerSideSigner(final int signerId, final String signerName,
+            final boolean autoActivate) throws FileNotFoundException {
+        addP12DummySigner("org.signserver.module.dnssec.signer.ZoneZipFileServerSideSigner",
+                signerId, signerName,
+                new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE),
+                autoActivate ? KEYSTORE_PASSWORD : null,
+                KEYSTORE_SIGNER1_ALIAS);
+    }
+
     public void addZoneFileServerSideSigner(final int signerId, final String signerName,
             final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.dnssec.signer.ZoneFileServerSideSigner",

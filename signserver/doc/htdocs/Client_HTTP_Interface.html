@@ -1499,7 +1499,12 @@
     <div class="section section-2" id="src-81887817_id-.ClientHTTPInterfacev5.2.0-Samples">
         <h2 class="heading "><span>Samples</span></h2>
 <ul class=" "><li class=" ">    <p  >HTTP GET:<br/>http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;data=%3Croot%3Ehej2%3C/root%3E<br/><a  class="external-link" href="http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D">http://localhost:8080/signserver/process?workerName=DemoXMLSigner&amp;encoding=base64&amp;data=PGhlajI%2Bb2s8L2hlajI%2BCg%3D%3D</a>    </p>
-</li><li class=" ">    <p  >HTTP POST with multipart/form-data or x-www-form-urlencoded:<br/>For example see /signserver/clientweb/xmlsign.jsp (multipart/form-data) and /signserver/clientweb/genericsign.jsp (x-www-form-urlencoded).    </p>
+</li><li class=" ">    <p  >HTTP POST with multipart/form-data or x-www-form-urlencoded:<br/>For example see /signserver/clientweb/genericfile.xhtml (multipart/form-data) and /signserver/clientweb/genericdirect.xhtml (x-www-form-urlencoded).<br/><br/>Example with cURL:    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">curl -F workerName=PDFSigner -F file=</code><code class="color1">@sample</code><code class="plain">.pdf --output sample-signed.pdf http:</code><code class="comments">//localhost:8080/signserver/process</code></div>
+</div>
+    </div>
 </li><li class=" ">    <p  >HTTP POST with other content-type:<br/>See the TimeStampClient.    </p>
 </li><li class=" ">    <p  >Samples of content output for certificate validation:    </p>
 <ul class=" "><li class=" ">    <p  >VALID;;This certificate is valid;-1;    </p>
@@ -1682,7 +1687,7 @@
     </div>
     <div class="section section-2" id="src-81887817_id-.ClientHTTPInterfacev5.2.0-Samples.2">
         <h2 class="heading "><span>Samples</span></h2>
-<ul class=" "><li class=" ">    <p  >See /signserver/clientweb/mrtdsodsign.jsp.    </p>
+<ul class=" "><li class=" ">    <p  >See /signserver/clientweb/mrtdsod.xhtml.    </p>
 </li><li class=" ">    <p  >To download the configured signer certificate:<br/>HTTP GET: <a  class="external-link" href="http://localhost:8080/signserver/sod?downloadCert=true&amp;workerName=CMSSigner">http://localhost:8080/signserver/sod?downloadCert=true&amp;workerName=CMSSigner</a>    </p>
 </li></ul>    </div>
     </div>
@@ -1742,7 +1747,7 @@
             </div>
     <div class="section section-2" id="src-81887817_id-.ClientHTTPInterfacev5.2.0-Samples.3">
         <h2 class="heading "><span>Samples</span></h2>
-    <p  >See /signserver/clientweb/mrtdsodsign.jsp.    </p>
+    <p  >See /signserver/clientweb/mrtdsod.xhtml.    </p>
     </div>
     </div>
         </div>

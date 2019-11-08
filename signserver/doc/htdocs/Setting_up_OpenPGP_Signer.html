@@ -1399,9 +1399,20 @@
 </li><li class=" ">    <p  ><a   href="#src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDQ6VGVzdFNpZ25pbmc">Step 4: Test Signing</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDU6VmVyaWZ5U2lnbmF0dXJl">Step 5: Verify Signature</a>    </p>
 </li><li class=" ">    <p  ><a   href="#src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDY6T3B0aW9uYWw6RGlzdHJpYnV0ZXRoZU9wZW5QR1BQdWJsaWNLZXk">Step 6: Optional: Distribute the OpenPGP Public Key</a>    </p>
-</li></ul>    <div class="section section-1" id="src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtUHJlcmVxdWlzaXRlOkNyeXB0b1dvcmtlckFscmVhZHlTZXRVcA">
-        <h1 class="heading "><span>Prerequisite: Crypto Worker Already Set Up</span></h1>
+</li></ul>    <div class="section section-1" id="src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtUHJlcmVxdWlzaXRlOkNvbmZpZ3VyZWRDcnlwdG9Xb3JrZXI">
+        <h1 class="heading "><span>Prerequisite: Configured Crypto Worker</span></h1>
     <p  >As with all signers, a crypto worker either using a software keystore or PKCS#11, should be available before setting up the OpenPGP signer.    </p>
+    <p  >If you do not already have a crypto worker configured, follow the steps below to set one up using a software keystore.    </p>
+    <div class="section section-2" id="src-81887821_id-.SettingupOpenPGPSignerv5.2.0-AddCryptoWorker">
+        <h2 class="heading "><span>Add Crypto Worker</span></h2>
+    <p  >Do the following to set up a crypto worker using the sample keystore:    </p>
+<ol class=" "><li class=" ">    <p  >Select the AdminWeb <strong class="western ">Workers</strong> tab, and click <strong class="western ">Add</strong>.<br/>    <img  class="confluence-embedded-image" src="images/download/attachments/81887821/SettingUpSigner.png" alt="images/download/attachments/81887821/SettingUpSigner.png" width="500"  />
+        </p>
+</li><li class=" ">    <p  >Click <strong class="western ">From Template</strong>, select <strong class=" ">keystore-crypto.properties</strong> in the list, and click <strong class="western ">Next</strong>.    </p>
+</li><li class=" ">    <p  >In the configuration text view, change the value for WORKERGENID1.KEYSTOREPATH so that the path corresponds to your SignServer installation, for example: WORKERGENID1.KEYSTOREPATH=/home/username/signserver/res/test/dss10/dss10_keystore.p12.    </p>
+</li><li class=" ">    <p  >Click <strong class="western ">Apply</strong>.    </p>
+</li></ol>    <p  >Remember the name of the crypto worker (for example, <strong class=" ">CryptoTokenP12</strong>) as you will need it in the next step when setting up the OpenPGP Signer.    </p>
+    </div>
     </div>
     <div class="section section-1" id="src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDE6QWRkT3BlblBHUFNpZ25lcg">
         <h1 class="heading "><span>Step 1: Add OpenPGP Signer</span></h1>
@@ -1411,15 +1422,15 @@
 </li><li class=" ">    <p  >Select <strong class=" ">openpgpsigner.properties</strong> in the <strong class=" ">Load from Template</strong> list and click <strong class=" ">Next</strong>.    </p>
 </li><li class=" ">    <p  >Change the sample configuration properties as needed, for example:    </p>
 <ul class=" "><li class=" ">    <p  >Update the <strong class=" ">NAME</strong> property.    </p>
-</li><li class=" ">    <p  >Update the <strong class=" ">CRYPTOTOKEN</strong> property to the name of your crypto worker.    </p>
+</li><li class=" ">    <p  >Update the <strong class=" ">CRYPTOTOKEN</strong> property to the name of your crypto worker, in the previous example, named <strong class=" ">CryptoTokenP12</strong>.    </p>
 </li><li class=" ">    <p  >Update the <strong class=" ">AUTHTYPE</strong> so that the worker cannot be accessed without authentication (if using a live system).    </p>
 </li><li class=" ">    <p  >Update <strong class=" ">DEFAULTKEY</strong> to an existing key (or do this in a later step).    </p>
 </li></ul></li><li class=" ">    <p  >Click <strong class=" ">Apply</strong> to load the configuration and list the worker in the All Workers list.    </p>
 </li><li class=" ">    <p  >Select the added worker in the list to open the Worker page.    </p>
 </li><li class=" ">    <p  >Check if the <strong class=" ">Worker status</strong> is Offline and if there are any errors listed. The &quot;No key available for purpose&quot; message means that the DEFAULTKEY property does not point to an existing key in the crypto token. In that case, either update the DEFAULTKEY property to point to an existing key or do the following to generate a new key to use with this signer:    </p>
 <ol class=" "><li class=" ">    <p  >Click <strong class=" ">Renew key</strong> and specify the following:    </p>
-<ul class=" "><li class=" ">    <p  >Specify a <strong class=" ">Key Algorithm</strong>, for example &quot;RSA&quot;, &quot;ECDSA&quot; or &quot;DSA&quot;.    </p>
-</li><li class=" ">    <p  >Specify a <strong class=" ">Key Specification</strong>, for example<strong class=" "> </strong>the key length &quot;2048&quot; (for RSA/DSA), or the cure name &quot;prime256v1&quot; (for ECDSA).    </p>
+<ul class=" "><li class=" ">    <p  >Set a <strong class=" ">Key Algorithm</strong>, for example &quot;RSA&quot;, &quot;ECDSA&quot; or &quot;DSA&quot;.    </p>
+</li><li class=" ">    <p  >Set a <strong class=" ">Key Specification</strong>, for example<strong class=" "> </strong>the key length &quot;2048&quot; (for RSA/DSA), or the cure name &quot;prime256v1&quot; (for ECDSA).    </p>
 </li><li class=" ">    <p  ><strong class=" "></strong>Update the <strong class=" ">New Key Alias</strong> to the name of DEFAULTKEY property (typically change to the same value as the Old Key Alias).    </p>
 </li></ul></li><li class=" ">    <p  >Click <strong class=" ">Generate</strong>.    </p>
 </li><li class=" ">    <p  >Select the worker in the list and confirm that the <strong class=" ">Worker status</strong> is Active and without errors listed. If not, confirm that the DEFAULTKEY property is correct and check in the Crypto Token tab of the crypto worker that a key with the specified name exists.    </p>
@@ -1435,11 +1446,10 @@
 </li><li class=" ">    <p  >Specify <strong class=" ">DN </strong>as<strong class=" "> </strong>the wanted User Id, for example &quot;Signer001 (Code Signing) &lt;signer001@example.com&gt;&quot;.    </p>
 </li><li class=" ">    <p  >Click <strong class=" ">Generate</strong>, and then click <strong class=" ">Download</strong>.    </p>
 </li><li class=" ">    <p  >Open the downloaded file using any text editor and copy its content.    </p>
-</li><li class=" ">    <p  >Click the link to the worker.    </p>
-</li><li class=" ">    <p  >Click the <strong class=" ">Configuration</strong> tab.    </p>
+</li><li class=" ">    <p  >Select the worker and click the <strong class=" ">Configuration</strong> tab.    </p>
 </li><li class=" ">    <p  >For the <strong class=" ">PGPPUBLICKEY</strong> property, click <strong class=" ">Edit</strong>.    </p>
 </li><li class=" ">    <p  >Paste the public key content in the <strong class=" ">Value</strong> field, and click <strong class=" ">Submit</strong>.    </p>
-</li><li class=" ">    <p  >Click <strong class=" ">Status Summary</strong> and confirm that fields like &quot;PGP Key ID&quot; and &quot;PGP Public key&quot; are listed. Also, note that the User ID is listed.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">Status Summary</strong> and confirm that fields like <strong class=" ">PGP Key ID</strong> and <strong class=" ">PGP Public key</strong> are listed. Also, note that the <strong class=" ">User ID</strong> is listed.    </p>
 </li></ol>    </div>
     <div class="section section-1" id="src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDM6R2VuZXJhdGVhbmRTdG9yZVJldm9jYXRpb25DZXJ0aWZpY2F0ZQ">
         <h1 class="heading "><span>Step 3: Generate and Store Revocation Certificate</span></h1>
@@ -1460,9 +1470,10 @@
         <h1 class="heading "><span>Step 4: Test Signing</span></h1>
     <p  >The following example shows how to sign using the SignServer Public Web. You can test signing using any of the SignServer client interfaces.    </p>
 <ol class=" "><li class=" ">    <p  >Click <strong class=" ">Client Web</strong>.    </p>
-</li><li class=" ">    <p  >Specify the <strong class=" ">Worker name</strong> used, for example, &quot;OpenPGPSigner&quot;.    </p>
-</li><li class=" ">    <p  >Select the file to create a detached signature for, for example, &quot;release.zip&quot;.    </p>
-</li><li class=" ">    <p  >Click <strong class=" ">Submit</strong> and store the resulting signature file, for example, &quot;release.zip.asc&quot;.    </p>
+    <img  class="confluence-embedded-image" src="images/download/attachments/81887821/PGPSigner.png" alt="images/download/attachments/81887821/PGPSigner.png" width="500"  />
+    </li><li class=" ">    <p  >Under File Upload, specify the <strong class=" ">Worker name</strong> used, for example, OpenPGPSigner.    </p>
+</li><li class=" ">    <p  >Select the file to create a detached signature for, for example, release.zip.    </p>
+</li><li class=" ">    <p  >Click <strong class=" ">Submit</strong> and store the resulting signature file, for example, release.zip.asc.    </p>
 </li></ol>    </div>
     <div class="section section-1" id="src-81887821_safe-id-aWQtLlNldHRpbmd1cE9wZW5QR1BTaWduZXJ2NS4yLjAtU3RlcDU6VmVyaWZ5U2lnbmF0dXJl">
         <h1 class="heading "><span>Step 5: Verify Signature</span></h1>

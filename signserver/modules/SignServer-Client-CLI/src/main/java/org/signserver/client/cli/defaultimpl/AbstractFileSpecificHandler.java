@@ -79,5 +79,16 @@ public abstract class AbstractFileSpecificHandler implements FileSpecificHandler
             }
         }
     }
+
+    @Override
+    public InputSource producePreRequestInput() {
+        // return null for default implementation
+           return null;
+    }
+
+    @Override
+    public void assemblePreResponse(OutputCollector oc) {
+       // Do nothing in default implementation
+    }
     
 }

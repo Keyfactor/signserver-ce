@@ -65,4 +65,15 @@ public class StraightFileSpecificHandler implements FileSpecificHandler {
     public String getFileTypeIdentifier() {
         return null;
     }
+    
+    @Override
+    public InputSource producePreRequestInput() {
+        // return null for default implementation
+           return null;
+    }
+
+    @Override
+    public void assemblePreResponse(OutputCollector oc) {
+       // Do nothing in default implementation
+    }
 }

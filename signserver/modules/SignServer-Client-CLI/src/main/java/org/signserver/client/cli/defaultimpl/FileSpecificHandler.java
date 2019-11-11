@@ -68,5 +68,9 @@ public interface FileSpecificHandler extends AutoCloseable {
      * @return The type identifier, or null if not applicable
      */
     String getFileTypeIdentifier();
+    
+    InputSource producePreRequestInput();
+    
+    void assemblePreResponse(OutputCollector oc);
 
 }

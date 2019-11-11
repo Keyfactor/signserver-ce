@@ -841,36 +841,20 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 } else {
                     outStream = new FileOutputStream(outFile);
                 }
-
-                final InputSource inputSource = handler.produceSignatureInput(digestAlgorithm);
+                
                 final DocumentSigner signer =
                     createSigner(handler, manager == null ? password : manager.getPassword());
                 
                 // Take start time
                 final long startTime = System.nanoTime();
         
-                final OutputStream os;
-
-                if (clientside) {
-                    os = new ByteArrayOutputStream();
-                } else {
-                    os = outStream;
-                }
-
-                /* add addional metadata from the file handler to the request
-                 * context
-                 */
-                final Map<String, String> extraMetadata =
-                        inputSource.getMetadata();
-
-                if (extraMetadata != null) {
-                    metadata.putAll(extraMetadata);
+                final InputSource inputSourceForPreRequest = handler.producePreRequestInput();
+                if (inputSourceForPreRequest != null) {
+                    produceAndAssembleInitial(handler, signer, requestContext);
+                    produceAndAssembleFinal(outStream, handler, signer, requestContext);
                 }
                 
-                // Get the data signed
-                signer.sign(inputSource.getInputStream(), inputSource.getSize(), os, requestContext);
-                
-                handler.assemble(new OutputCollector(os, clientside));
+                produceAndAssembleInOneGo(outStream, handler, signer, requestContext);
                 
                 // Take stop time
                 final long estimatedTime = System.nanoTime() - startTime;
@@ -965,6 +949,83 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             cleanUpOutputFileOnFailure(outFile);
         }
         return success;
+    }
+    
+    private void produceAndAssembleInOneGo(OutputStream outStream, final FileSpecificHandler handler, DocumentSigner signer, Map<String, Object> requestContext) throws IOException, IllegalRequestException, CryptoTokenOfflineException, SignServerException, NoSuchAlgorithmException {
+        final OutputStream os;
+
+        if (clientside) {
+            os = new ByteArrayOutputStream();
+        } else {
+            os = outStream;
+        }
+
+        final InputSource inputSource = handler.produceSignatureInput(digestAlgorithm);
+
+        /* add addional metadata from the file handler to the request
+                 * context
+         */
+        final Map<String, String> extraMetadata
+                = inputSource.getMetadata();
+
+        if (extraMetadata != null) {
+            metadata.putAll(extraMetadata);
+        }
+
+        // Get the data signed
+        signer.sign(inputSource.getInputStream(), inputSource.getSize(), os, requestContext);
+
+        handler.assemble(new OutputCollector(os, clientside));
+    }
+    
+    private void produceAndAssembleFinal(OutputStream outStream, final FileSpecificHandler handler, DocumentSigner signer, Map<String, Object> requestContext) throws IOException, IllegalRequestException, CryptoTokenOfflineException, SignServerException, NoSuchAlgorithmException {
+        final OutputStream os;
+
+        if (clientside) {
+            os = new ByteArrayOutputStream();
+        } else {
+            os = outStream;
+        }
+
+        final InputSource inputSource = handler.produceSignatureInput(digestAlgorithm);
+
+        /* add addional metadata from the file handler to the request
+                 * context
+         */
+        final Map<String, String> extraMetadata
+                = inputSource.getMetadata();
+
+        if (extraMetadata != null) {
+            metadata.putAll(extraMetadata);
+        }
+
+        // Get the data signed
+        signer.sign(inputSource.getInputStream(), inputSource.getSize(), os, requestContext);
+
+        handler.assemble(new OutputCollector(os, clientside));
+    }
+    
+    private void produceAndAssembleInitial(final FileSpecificHandler handler, DocumentSigner signer, Map<String, Object> requestContext) throws IOException, IllegalRequestException, CryptoTokenOfflineException, SignServerException, NoSuchAlgorithmException {
+        final OutputStream os;
+
+        os = new ByteArrayOutputStream();
+
+        /* add addional metadata from the file handler to the request
+                 * context
+         */
+        final InputSource inputSource = handler.produceSignatureInput(digestAlgorithm);
+        
+        final Map<String, String> extraMetadata
+                = inputSource.getMetadata();
+
+        if (extraMetadata != null) {
+            metadata.putAll(extraMetadata);
+        }
+
+        // Get the data signed
+        signer.sign(inputSource.getInputStream(), inputSource.getSize(), os, requestContext);
+
+        handler.assemblePreResponse(new OutputCollector(os, clientside));
     }
     
     private FileSpecificHandler createFileSpecificHandler(final FileSpecificHandlerFactory handlerFactory,

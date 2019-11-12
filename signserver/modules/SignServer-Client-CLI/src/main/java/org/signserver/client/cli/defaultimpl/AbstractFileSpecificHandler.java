@@ -87,7 +87,7 @@ public abstract class AbstractFileSpecificHandler implements FileSpecificHandler
     }
 
     @Override
-    public void assemblePreResponse(OutputCollector oc) {
+    public void assemblePreResponse(OutputCollector oc) throws IOException, IllegalArgumentException {
        // Do nothing in default implementation
     }
     

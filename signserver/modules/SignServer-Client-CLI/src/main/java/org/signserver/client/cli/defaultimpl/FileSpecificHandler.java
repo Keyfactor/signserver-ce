@@ -71,6 +71,6 @@ public interface FileSpecificHandler extends AutoCloseable {
     
     InputSource producePreRequestInput();
     
-    void assemblePreResponse(OutputCollector oc);
+    void assemblePreResponse(OutputCollector oc) throws IOException, IllegalArgumentException;
 
 }

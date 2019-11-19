@@ -113,6 +113,7 @@
                                 </h:column>
                                 <h:column>
                                     <h:commandButton class="buttonNeutral" value="-" action="#{generateKeyBean.removeAction()}" rendered="#{item.last and not item.first}"/> 
+                                    <h:inputText id="keysToBeGenerated" value="#{item.keysToBeGenerated}" maxlength="2" size="2" rendered="#{item.last}"/>
                                     <h:commandButton class="buttonNeutral" value="+" action="#{generateKeyBean.addAction()}" rendered="#{item.last}"/>
                                 </h:column>
                             </h:dataTable>

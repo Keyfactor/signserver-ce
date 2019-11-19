@@ -103,13 +103,45 @@ public class GenerateKeyBean {
     }
 
     public void addAction() throws AdminNotAuthorizedException {
-        final Item item = new Item(getWorkerConfig());
-        if (items.isEmpty()) {
-            item.setFirst(true);
-        } else {
-            items.get(items.size() - 1).setLast(false);
+        Item lastItem = items.get(items.size() - 1);
+        int keysToBeGenerated = lastItem.getKeysToBeGenerated();
+        String keyAlias = lastItem.getAlias();
+        String keyAlg = lastItem.getKeyAlg();
+        String keySpec = lastItem.getKeySpec();
+        
+        if (!items.isEmpty()) {
+            for (Item item : items) {
+                item.setLast(false);
+            }
         }
-        items.add(item);
+        
+        for (int i = 1; i <= keysToBeGenerated; i++) {
+            final Item item = new Item(getWorkerConfig());
+            
+            if (!StringUtils.isBlank(keyAlias)) {
+                item.setAlias(keyAlias + i);
+            }
+            
+            item.setKeyAlg(keyAlg);
+            item.setKeySpec(keySpec);
+
+            if (items.isEmpty()) {
+                item.setFirst(true);
+            }
+            
+            if (i < keysToBeGenerated) {
+                item.setLast(false);
+            }
+            items.add(item);
+        }
+        
+//        final Item item = new Item(getWorkerConfig());
+//        if (items.isEmpty()) {
+//            item.setFirst(true);
+//        } else {
+//            items.get(items.size() - 1).setLast(false);
+//        }
+//        items.add(item);
     }
 
     public void removeAction() {
@@ -225,6 +257,7 @@ public class GenerateKeyBean {
         private String errorMessage;
         private Map<String, Object> algMenuValues;
         private Map<String, Object> keySpecMenuValues;
+        private int keysToBeGenerated = 1;
 
         public Item(WorkerConfig config) {
             this.keyAlg = config.getProperty("KEYALG");
@@ -322,6 +355,14 @@ public class GenerateKeyBean {
             }
 
             return keySpecMenuValues;
+        }
+
+        public int getKeysToBeGenerated() {
+            return keysToBeGenerated;
+        }
+
+        public void setKeysToBeGenerated(int keysToBeGenerated) {
+            this.keysToBeGenerated = keysToBeGenerated;
         }
     }
 }

@@ -69,7 +69,7 @@ public interface FileSpecificHandler extends AutoCloseable {
      */
     String getFileTypeIdentifier();
     
-    InputSource producePreRequestInput();
+    InputSource producePreRequestInput() throws IOException, IllegalRequestException;
     
     void assemblePreResponse(OutputCollector oc) throws IOException, IllegalArgumentException;
 

@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import org.apache.log4j.Logger;
+import org.signserver.common.IllegalRequestException;
 
 /**
  * Handles a bit of plumbing for the file specific handlers.
@@ -81,7 +82,7 @@ public abstract class AbstractFileSpecificHandler implements FileSpecificHandler
     }
 
     @Override
-    public InputSource producePreRequestInput() {
+    public InputSource producePreRequestInput() throws IOException, IllegalRequestException {
         // return null for default implementation
            return null;
     }

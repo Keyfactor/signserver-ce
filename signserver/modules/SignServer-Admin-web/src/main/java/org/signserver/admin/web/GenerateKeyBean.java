@@ -119,6 +119,8 @@ public class GenerateKeyBean {
             String keyAlias = lastItem.getAlias();
             String keyAlg = lastItem.getKeyAlg();
             String keySpec = lastItem.getKeySpec();
+            boolean selectAlgFromList = lastItem.selectAlgFromList;
+            boolean selectKeySpecFromList = lastItem.selectKeySpecFromList;
             String tmpKeyAlias = keyAlias;
 
             if (!items.isEmpty()) {
@@ -137,6 +139,8 @@ public class GenerateKeyBean {
 
                 item.setKeyAlg(keyAlg);
                 item.setKeySpec(keySpec);
+                item.setSelectAlgFromList(selectAlgFromList);
+                item.setSelectKeySpecFromList(selectKeySpecFromList);
 
                 if (items.isEmpty()) {
                     item.setFirst(true);

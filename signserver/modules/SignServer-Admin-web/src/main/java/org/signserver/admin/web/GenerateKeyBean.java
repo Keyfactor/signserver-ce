@@ -110,7 +110,12 @@ public class GenerateKeyBean {
         if (keysToBeGenerated < 1) {
             lastItem.setLast(true);
             lastItem.setErrorMessage("Number of rows to be added should be more than 0");
-        } else {
+        }
+        else if (keysToBeGenerated > 99) {
+            lastItem.setLast(true);
+            lastItem.setErrorMessage("Number of rows to be added should be less than 100");
+        }
+        else {
             String keyAlias = lastItem.getAlias();
             String keyAlg = lastItem.getKeyAlg();
             String keySpec = lastItem.getKeySpec();

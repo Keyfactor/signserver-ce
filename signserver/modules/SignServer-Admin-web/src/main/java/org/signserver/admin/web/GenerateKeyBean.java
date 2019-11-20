@@ -106,16 +106,14 @@ public class GenerateKeyBean {
     public void addAction() throws AdminNotAuthorizedException {
         Item lastItem = items.get(items.size() - 1);
         int keysToBeGenerated = lastItem.getKeysToBeGenerated();
-        
+
         if (keysToBeGenerated < 1) {
             lastItem.setLast(true);
             lastItem.setErrorMessage("Number of rows to be added should be more than 0");
-        }
-        else if (keysToBeGenerated > 99) {
+        } else if (keysToBeGenerated > 99) {
             lastItem.setLast(true);
             lastItem.setErrorMessage("Number of rows to be added should be less than 100");
-        }
-        else {
+        } else {
             String keyAlias = lastItem.getAlias();
             String keyAlg = lastItem.getKeyAlg();
             String keySpec = lastItem.getKeySpec();
@@ -133,10 +131,10 @@ public class GenerateKeyBean {
             for (int i = 1; i <= keysToBeGenerated; i++) {
                 final Item item = new Item(getWorkerConfig());
 
-                 if (!StringUtils.isBlank(keyAlias)) {
+                if (!StringUtils.isBlank(keyAlias)) {
                     tmpKeyAlias = RekeyUtil.nextAliasInSequence(tmpKeyAlias);
                     item.setAlias(tmpKeyAlias);
-                 }
+                }
 
                 item.setKeyAlg(keyAlg);
                 item.setKeySpec(keySpec);
@@ -153,14 +151,6 @@ public class GenerateKeyBean {
                 items.add(item);
             }
         }
-        
-//        final Item item = new Item(getWorkerConfig());
-//        if (items.isEmpty()) {
-//            item.setFirst(true);
-//        } else {
-//            items.get(items.size() - 1).setLast(false);
-//        }
-//        items.add(item);
     }
 
     public void removeAction() {

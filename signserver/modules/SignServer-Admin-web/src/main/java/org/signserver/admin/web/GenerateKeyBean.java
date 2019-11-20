@@ -105,34 +105,40 @@ public class GenerateKeyBean {
     public void addAction() throws AdminNotAuthorizedException {
         Item lastItem = items.get(items.size() - 1);
         int keysToBeGenerated = lastItem.getKeysToBeGenerated();
-        String keyAlias = lastItem.getAlias();
-        String keyAlg = lastItem.getKeyAlg();
-        String keySpec = lastItem.getKeySpec();
         
-        if (!items.isEmpty()) {
-            for (Item item : items) {
-                item.setLast(false);
-            }
-        }
-        
-        for (int i = 1; i <= keysToBeGenerated; i++) {
-            final Item item = new Item(getWorkerConfig());
-            
-            if (!StringUtils.isBlank(keyAlias)) {
-                item.setAlias(keyAlias + i);
-            }
-            
-            item.setKeyAlg(keyAlg);
-            item.setKeySpec(keySpec);
+        if (keysToBeGenerated < 1) {
+            lastItem.setLast(true);
+            lastItem.setErrorMessage("Number of keys to be generated should be more than 0");
+        } else {
+            String keyAlias = lastItem.getAlias();
+            String keyAlg = lastItem.getKeyAlg();
+            String keySpec = lastItem.getKeySpec();
 
-            if (items.isEmpty()) {
-                item.setFirst(true);
+            if (!items.isEmpty()) {
+                for (Item item : items) {
+                    item.setLast(false);
+                }
             }
-            
-            if (i < keysToBeGenerated) {
-                item.setLast(false);
+
+            for (int i = 1; i <= keysToBeGenerated; i++) {
+                final Item item = new Item(getWorkerConfig());
+
+                if (!StringUtils.isBlank(keyAlias)) {
+                    item.setAlias(keyAlias + i);
+                }
+
+                item.setKeyAlg(keyAlg);
+                item.setKeySpec(keySpec);
+
+                if (items.isEmpty()) {
+                    item.setFirst(true);
+                }
+
+                if (i < keysToBeGenerated) {
+                    item.setLast(false);
+                }
+                items.add(item);
             }
-            items.add(item);
         }
         
 //        final Item item = new Item(getWorkerConfig());

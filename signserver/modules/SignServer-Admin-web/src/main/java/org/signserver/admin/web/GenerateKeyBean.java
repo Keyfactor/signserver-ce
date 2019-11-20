@@ -126,6 +126,7 @@ public class GenerateKeyBean {
             if (!items.isEmpty()) {
                 for (Item item : items) {
                     item.setLast(false);
+                    item.setErrorMessage(null);
                 }
             }
 

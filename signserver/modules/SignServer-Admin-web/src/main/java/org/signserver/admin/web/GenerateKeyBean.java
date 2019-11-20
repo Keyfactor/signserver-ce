@@ -28,6 +28,7 @@ import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.admin.common.config.RekeyUtil;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 
 /**
@@ -113,6 +114,7 @@ public class GenerateKeyBean {
             String keyAlias = lastItem.getAlias();
             String keyAlg = lastItem.getKeyAlg();
             String keySpec = lastItem.getKeySpec();
+            String tmpKeyAlias = keyAlias;
 
             if (!items.isEmpty()) {
                 for (Item item : items) {
@@ -123,9 +125,10 @@ public class GenerateKeyBean {
             for (int i = 1; i <= keysToBeGenerated; i++) {
                 final Item item = new Item(getWorkerConfig());
 
-                if (!StringUtils.isBlank(keyAlias)) {
-                    item.setAlias(keyAlias + i);
-                }
+                 if (!StringUtils.isBlank(keyAlias)) {
+                    tmpKeyAlias = RekeyUtil.nextAliasInSequence(tmpKeyAlias);
+                    item.setAlias(tmpKeyAlias);
+                 }
 
                 item.setKeyAlg(keyAlg);
                 item.setKeySpec(keySpec);

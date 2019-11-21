@@ -84,12 +84,12 @@ public abstract class AbstractFileSpecificHandler implements FileSpecificHandler
     @Override
     public InputSource producePreRequestInput() throws IOException, IllegalRequestException {
         // return null for default implementation
-           return null;
+        return null;
     }
 
     @Override
     public void assemblePreResponse(OutputCollector oc) throws IOException, IllegalArgumentException {
-       // Do nothing in default implementation
+        // Do nothing in default implementation
     }
     
 }

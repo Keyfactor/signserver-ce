@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.2.0.Final</version>
+        <version>5.2.1.Beta1-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-Test-AdminWS</artifactId>
     <name>SignServer-Test-AdminWS</name>

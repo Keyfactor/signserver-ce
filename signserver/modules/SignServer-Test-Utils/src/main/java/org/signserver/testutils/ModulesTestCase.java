@@ -512,6 +512,14 @@ public class ModulesTestCase extends TestCase {
         addP12DummySigner("org.signserver.module.msauthcode.signer.MSAuthCodeCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
     
+    public void addAppxSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+        addP12DummySigner("org.signserver.module.msauthcode.signer.AppxSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
+    }
+    
+    public void addAppxCMSSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+        addP12DummySigner("org.signserver.module.msauthcode.signer.AppxCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
+    }
+    
     public void addJArchiveSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
         addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }

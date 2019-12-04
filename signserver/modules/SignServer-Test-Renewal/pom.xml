@@ -13,7 +13,7 @@
         <dist.jar>${project.build.finalName}-tests.jar</dist.jar>
         <skipTests>true</skipTests>
         <appserver.conf.folder>jboss7</appserver.conf.folder>
-        <appserver.home>/opt/jboss-as-7.1.1.Final</appserver.home>
+        <appserver.home>/opt/wildfly-14.0.1.Final-signserver</appserver.home>
     </properties>
     <dependencies>
         <dependency>

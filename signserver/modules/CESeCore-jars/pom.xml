@@ -4,7 +4,7 @@
   <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.2.1.Beta1-SNAPSHOT</version>
+        <version>5.2.1.Beta1</version>
     </parent>
   
   <artifactId>SignServer-CESeCore-jars</artifactId>

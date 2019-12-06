@@ -38,6 +38,8 @@ b8c199973764655551ceff9809c5da0a6c3e446df92e1406c68e5e21450f6f6d  ./ext/cxf-rt-t
 4cf67de0343d35b6737c874689da0cbc3043b31ec3f4440d05c23e98f0cacead  ./ext/DeployTools-CLI-2.2.1.jar;                        "SignServer"
 44ace1f6ac971997bfeb6ba57543e8b453f7248cd55ca712d6d9fbba9769fef5  ./ext/DeployTools-Common-2.2.1.jar;                     "SignServer"
 214f789444c8c42f5389c6a94b2939118216bbd15d8bb80d788294ef9b2f3d92  ./ext/DeployTools-Maven-2.2.1.jar;                      "SignServer"
+c49f3a867a04e717ef67320f09661fd9d8f394535355922d2ff0b428710b6441  ./ext/dnsjava-2.1.9.jar;                                "DNS Java"
+3bf52fdbdcfb334bf51c4892b8446e806c69a3f712a70d8011e8d05bb2f631f8  ./ext/dnssecjava-1.2.0.jar;                             "DNSSEC Java"
 a2ef5fb4990b914a31176c51f6137f6f04253dd165420985051f9fd4fb032128  ./ext/dom4j-2.1.1.jar;                                  "Hibernate dependencies"
 5423a6e514ea3c7a2dc464ee441c03543ccfe5b85c09081e62f41b3346097507  ./ext/ext/geckodriver-v0.21.0-linux64.bin;              "Geckodriver"
 66fdef91e9739348df7a096aa384a5685f4e875584cce89386a7a47251c4d8e9  ./ext/ext/hamcrest-core-1.3.jar;                        "Hamcrest"

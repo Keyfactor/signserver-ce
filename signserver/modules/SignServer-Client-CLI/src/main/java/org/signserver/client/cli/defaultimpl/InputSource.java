@@ -38,12 +38,17 @@ public class InputSource {
     }
 
     public InputSource(final InputStream inputStream, final long size,
+                       final Map<String, String> metadata) {
+        this(inputStream, size, null, metadata);
+    }
+
+    public InputSource(final InputStream inputStream, final long size,
                        final String fileName) {
         this(inputStream, size, fileName, null);
     }
     
     public InputSource(final InputStream inputStream, final long size) {
-        this(inputStream, size, null);
+        this(inputStream, size, null, null);
     }
     
     public InputStream getInputStream() {

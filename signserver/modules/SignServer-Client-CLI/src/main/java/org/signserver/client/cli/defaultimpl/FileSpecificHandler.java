@@ -31,6 +31,26 @@ public interface FileSpecificHandler extends AutoCloseable {
     boolean isSignatureInputHash();
     
     /**
+     * Computes the Pre-Request signature input from the input file to send to SignServer
+     * for creating the Pre-Request response.
+     * 
+     *
+     * @return the Pre-Request signature input
+     * @throws IOException typically in case of issues reading the input file or writing to the output file
+     * @throws IllegalRequestException for example: failure during parsing input file
+     */
+    InputSource producePreRequestInput() throws IOException, IllegalRequestException;
+    
+    /**
+     * Finalizes the Pre-Response by embedding the Pre-Request signature response.
+     *
+     * @param oc Output collector to obtain output to embed in the intermediate in-memory output file
+     * @throws IOException typically in case of issues writing to the output file
+     * @throws IllegalArgumentException typically in case the output collector is unfit for assembling the result
+     */
+    void assemblePreResponse(OutputCollector oc) throws IOException, IllegalArgumentException;
+    
+    /**
      * Phase 1: compute the signature input from the input file to send to SignServer
      * for creating the signature.
      * 

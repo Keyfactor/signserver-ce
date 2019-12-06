@@ -28,6 +28,7 @@ import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
+import org.signserver.admin.common.config.RekeyUtil;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 
 /**
@@ -103,13 +104,61 @@ public class GenerateKeyBean {
     }
 
     public void addAction() throws AdminNotAuthorizedException {
-        final Item item = new Item(getWorkerConfig());
-        if (items.isEmpty()) {
-            item.setFirst(true);
-        } else {
-            items.get(items.size() - 1).setLast(false);
+        Item lastItem = items.get(items.size() - 1);
+
+        int keysToBeGeneratedInteger = -1;
+        
+        try {
+            keysToBeGeneratedInteger = Integer.parseInt(lastItem.getKeysToBeGenerated());
+
+            if (keysToBeGeneratedInteger < 1) {
+                lastItem.setLast(true);
+                lastItem.setErrorMessage("Number of rows to be added must be > 0");
+            } else if (keysToBeGeneratedInteger > 99) {
+                lastItem.setLast(true);
+                lastItem.setErrorMessage("Number of rows to be added must be < 100");
+            } else {
+                String keyAlias = lastItem.getAlias();
+                String keyAlg = lastItem.getKeyAlg();
+                String keySpec = lastItem.getKeySpec();
+                boolean selectAlgFromList = lastItem.selectAlgFromList;
+                boolean selectKeySpecFromList = lastItem.selectKeySpecFromList;
+                String tmpKeyAlias = keyAlias;
+
+                if (!items.isEmpty()) {
+                    for (Item item : items) {
+                        item.setLast(false);
+                        item.setErrorMessage(null);
+                    }
+                }
+
+                for (int i = 1; i <= keysToBeGeneratedInteger; i++) {
+                    final Item item = new Item(getWorkerConfig());
+
+                    if (!StringUtils.isBlank(keyAlias)) {
+                        tmpKeyAlias = RekeyUtil.nextAliasInSequence(tmpKeyAlias);
+                        item.setAlias(tmpKeyAlias);
+                    }
+
+                    item.setKeyAlg(keyAlg);
+                    item.setKeySpec(keySpec);
+                    item.setSelectAlgFromList(selectAlgFromList);
+                    item.setSelectKeySpecFromList(selectKeySpecFromList);
+
+                    if (items.isEmpty()) {
+                        item.setFirst(true);
+                    }
+
+                    if (i < keysToBeGeneratedInteger) {
+                        item.setLast(false);
+                    }
+                    items.add(item);
+                }
+            }
+        } catch (NumberFormatException ex) {
+            lastItem.setLast(true);
+            lastItem.setErrorMessage("Number of rows to be added must be a number > 0");
         }
-        items.add(item);
     }
 
     public void removeAction() {
@@ -225,6 +274,7 @@ public class GenerateKeyBean {
         private String errorMessage;
         private Map<String, Object> algMenuValues;
         private Map<String, Object> keySpecMenuValues;
+        private String keysToBeGenerated = "1";
 
         public Item(WorkerConfig config) {
             this.keyAlg = config.getProperty("KEYALG");
@@ -322,6 +372,14 @@ public class GenerateKeyBean {
             }
 
             return keySpecMenuValues;
+        }
+
+        public String getKeysToBeGenerated() {
+            return keysToBeGenerated;
+        }
+
+        public void setKeysToBeGenerated(String keysToBeGenerated) {
+            this.keysToBeGenerated = keysToBeGenerated;
         }
     }
 }

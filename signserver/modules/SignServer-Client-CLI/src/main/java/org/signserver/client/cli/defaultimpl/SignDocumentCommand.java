@@ -842,36 +842,28 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     outStream = new FileOutputStream(outFile);
                 }
 
-                final InputSource inputSource = handler.produceSignatureInput(digestAlgorithm);
-                final DocumentSigner signer =
-                    createSigner(handler, manager == null ? password : manager.getPassword());
-                
                 // Take start time
                 final long startTime = System.nanoTime();
-        
+                
+                // Perform pre-request if used by the handler
+                final InputSource preInputSource = handler.producePreRequestInput();
+                if (preInputSource != null) {
+                    final OutputStream os = new ByteArrayOutputStream();
+                    sign(preInputSource, os, manager, handler, requestContext);
+                    handler.assemblePreResponse(new OutputCollector(os, clientside));
+                }
+                
+                // Perform the real request
+                final InputSource inputSource = handler.produceSignatureInput(digestAlgorithm);
                 final OutputStream os;
-
                 if (clientside) {
                     os = new ByteArrayOutputStream();
                 } else {
                     os = outStream;
                 }
-
-                /* add addional metadata from the file handler to the request
-                 * context
-                 */
-                final Map<String, String> extraMetadata =
-                        inputSource.getMetadata();
-
-                if (extraMetadata != null) {
-                    metadata.putAll(extraMetadata);
-                }
-                
-                // Get the data signed
-                signer.sign(inputSource.getInputStream(), inputSource.getSize(), os, requestContext);
-                
+                sign(inputSource, os, manager, handler, requestContext);
                 handler.assemble(new OutputCollector(os, clientside));
-                
+
                 // Take stop time
                 final long estimatedTime = System.nanoTime() - startTime;
                 
@@ -965,6 +957,24 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             cleanUpOutputFileOnFailure(outFile);
         }
         return success;
+    }
+    
+    private void sign(InputSource inputSource, OutputStream os, TransferManager manager, FileSpecificHandler handler, Map<String, Object> requestContext) throws MalformedURLException, IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException {
+        final DocumentSigner signer =
+            createSigner(handler, manager == null ? password : manager.getPassword());
+
+        /* add addional metadata from the file handler to the request
+         * context
+         */
+        final Map<String, String> extraMetadata =
+                inputSource.getMetadata();
+
+        if (extraMetadata != null) {
+            metadata.putAll(extraMetadata);
+        }
+
+        // Get the data signed
+        signer.sign(inputSource.getInputStream(), inputSource.getSize(), os, requestContext);
     }
     
     private FileSpecificHandler createFileSpecificHandler(final FileSpecificHandlerFactory handlerFactory,

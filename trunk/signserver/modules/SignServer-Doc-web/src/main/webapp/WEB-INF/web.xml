@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <display-name>SignServer Server Documentation</display-name>
+    <filter>
+        <filter-name>ClickjackFilterDeny</filter-name>
+        <filter-class>org.signserver.web.common.owasp.filters.ClickjackFilter</filter-class>
+        <init-param>
+            <param-name>mode</param-name>
+            <param-value>DENY</param-value>
+        </init-param>
+    </filter>
+    <filter>
+        <filter-name>ContentSecurityPolicyFilter</filter-name>
+        <filter-class>org.signserver.web.common.owasp.filters.ContentSecurityPolicyFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>ClickjackFilterDeny</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ContentSecurityPolicyFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <session-config>
+        <cookie-config>
+            <http-only>true</http-only>
+        </cookie-config>
+    </session-config>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/errorpages/error404.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>400</error-code>
+        <location>/errorpages/error400.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/errorpages/error403.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>413</error-code>
+        <location>/errorpages/error413.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/errorpages/error500.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>503</error-code>
+        <location>/errorpages/error503.jsp</location>
+    </error-page>
+</web-app>

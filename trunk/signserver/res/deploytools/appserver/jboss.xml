@@ -1,0 +1,48 @@
+<project name="jboss" basedir="../.." default="j2ee:deploy">
+
+    <!-- Declare the JAR files needed to run EJB CLI/system tests using this appserver. -->
+    <property name="appserver.client.jars" value="${appserver.home}/bin/client/jboss-client.jar"/>
+
+    <property name="datasource.jndi-name-prefix" value="java:/"/>
+
+    <!--
+        Define all extra jar files that needs to be included in the lib
+        folder of signserver.ear when building for this application server.
+        The zipfileset should have the id "appserver.extralibs" and the
+        prefix "lib".
+    -->
+    <zipfileset id="appserver.extralibs" prefix="lib" dir="lib/ext/ext">
+        <!-- Currently no extra jars are needed for JBoss. -->
+        <exclude name="**/*"/>
+    </zipfileset>
+
+    <target name="j2ee:check">
+        <fail message="Please set the property 'appserver.home' or environment variable APPSRV_HOME" unless="appserver.home"/>    
+        <condition property="supported.appserver">
+            <or>
+                <equals arg1="${appserver.subtype}" arg2="jbosseap6" />
+            </or>
+        </condition>
+        <fail message="Unsupported application server, supported application servers are listed in the installation manual." unless="supported.appserver"/>
+
+        <!-- Exclude dom4j on JBoss EAP 6.x -->
+        <condition property="appserver.lib.excludes" value="lib/ext/hibernate/dom4j-*.jar">
+            <or>
+                <equals arg1="${appserver.subtype}" arg2="jbosseap6" />
+            </or>
+        </condition>
+    </target>
+
+    <target name="j2ee:configure"  unless="deploy.hostname.node1" depends="j2ee:check, -set-deploy-dir-jboss"/>
+
+    <target name="-set-deploy-dir-jboss" depends="j2ee:check">
+        <property name="jboss.deploy.dir" location="${appserver.home}/standalone/deployments"/>
+    </target>
+    
+    <target name="j2ee:deploy" depends="j2ee:configure" >
+        <echo message="Deploying ${ear.dist.file} to ${jboss.deploy.dir}"/>
+        <copy file="${ear.dist.file}" todir="${jboss.deploy.dir}" failonerror="true"/>
+        <echo/>
+    </target>
+
+</project>

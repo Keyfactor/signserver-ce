@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <f:metadata>
+        <f:viewParam name="id" value="#{workerBean.id}"/>
+        <f:viewParam name="id" value="#{removeKeysBean.id}"/>
+        <f:viewParam name="keys" value="#{removeKeysBean.keys}"/>
+        <f:viewParam name="id" value="#{removeKeysBean.workerIds}"/> <!-- Only 1 workerId supported -->
+    </f:metadata>
+    
+    <body>
+
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            <ui:param name="activeMenu" value="workers"/>
+
+            <ui:define name="title">
+                <h:outputFormat value="#{text['Worker_X']}">
+                    <f:param value="#{workerBean.worker.name}"/>
+                </h:outputFormat>
+                <h:outputText value="- #{text['Crypto_Token_-_Remove_Keys']}"/>
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <ui:include src="/worker-menu.xhtml">
+                    <ui:param name="worker" value="#{workerBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="worker-cryptotoken"/>
+                </ui:include>
+
+                <h2><h:outputText value="#{text['Remove_Key(s)']}"/></h2>
+
+                <div id="worker_content">
+                    <h:panelGroup rendered="#{workerBean.worker.existing}">
+                        <h:messages class="errorMessage" globalOnly="true"/>
+
+                        <h:form>
+                            <h:panelGroup rendered="#{!removeKeysBean.done}">
+                                <b><h:outputText value="#{text['WARNING_Will_attempt_to_permanently_remove_the_follwing_keys']}"/></b>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{removeKeysBean.done}">
+                                <b><h:outputText value="#{text['All_keys_removed']}"/></b>
+                            </h:panelGroup>
+
+                            <h:dataTable id="table1" value="#{removeKeysBean.items}" var="item">
+                                <f:facet name="header">
+                                </f:facet>
+                                <h:column>
+                                    <span class="alertArea"><h:outputText id ="alias" value="#{item.alias}"/></span>
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        <!-- Error -->
+                                    </f:facet>
+                                    <span class="errorMessage"><h:outputText value="#{item.errorMessage}"/></span> 
+                                    <span class="successMessage"><h:outputText value="#{item.successMessage}"/></span>
+                                </h:column>
+                                <f:facet name="footer">
+                                </f:facet>
+                            </h:dataTable>
+
+                            <h:panelGroup rendered="#{!removeKeysBean.done}">
+                                <p>
+                                    <h:outputText value="#{text['Note_the_keys_might_be_used_by_multiple_workers.']}"/>
+                                </p>
+                                <p>
+                                    <h:outputText value="#{text['Are_you_sure_you_want_to_destroy_the_keys?']}"/>
+                                </p>
+                                <h:commandButton class="buttonNegative" value="#{text['Destroy_keys']}" action="#{removeKeysBean.destroyAction()}"/> <h:link value="#{text['Cancel']}" outcome="${removeKeysBean.getBackToCryptoTokenLink(removeKeysBean.keysList)}"/>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{removeKeysBean.done}">
+                                <h:link value="#{text['Done']}" outcome="${removeKeysBean.cancelAction()}"/>
+                            </h:panelGroup>
+                        </h:form>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{!workerBean.worker.existing}">
+                        <h2><h:outputText value="#{text['Worker_Not_Found']}"/></h2>
+                        <p>
+                            <h:outputText value="#{text['The_specified_worker_can_not_be_found.']}"/>
+                        </p>
+                    </h:panelGroup>
+                </div>
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

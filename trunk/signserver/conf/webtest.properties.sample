@@ -1,0 +1,13 @@
+# Configuration for the SignServer WebTest module
+# $Id$
+
+# Basic configuration for connecting to SignServer
+webtest.appserver.domainname = localhost
+webtest.appserver.port = 8080
+webtest.appserver.secureport = 8443
+
+# Local temporary directory for files used in test
+webtest.execution.tmpdir = /tmp
+
+# Configuration for Firefox User Profiles
+webtest.firefox.profile.default = adminone

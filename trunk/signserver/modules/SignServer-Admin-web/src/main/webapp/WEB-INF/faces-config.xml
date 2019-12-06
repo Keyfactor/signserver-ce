@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config version="2.2"
+              xmlns="http://java.sun.com/xml/ns/javaee" 
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_2.xsd">         
+
+    <application>
+        <locale-config>
+            <default-locale>en</default-locale>
+            <supported-locale>en</supported-locale>
+            <supported-locale>sv</supported-locale>
+	    <supported-locale>vi</supported-locale>
+            <!-- Add additional languages below -->
+            
+        </locale-config>
+        <resource-bundle>
+            <base-name>org.signserver.admin.web.languagefile</base-name>
+            <var>text</var>
+        </resource-bundle>
+    </application>
+
+    <managed-bean>
+        <description>Holder of all component bindings.</description>
+        <managed-bean-name>components</managed-bean-name>
+        <managed-bean-class>java.util.HashMap</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+</faces-config>

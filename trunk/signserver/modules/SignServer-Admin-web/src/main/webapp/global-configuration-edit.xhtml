@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <f:metadata>
+        <f:viewParam name="property" value="#{globalConfigurationBean.property}"/>
+    </f:metadata>
+    
+    <body>
+
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            <ui:param name="activeMenu" value="global-configuration"/>
+
+            <ui:define name="title">
+                <h:outputText value="#{text['Edit_Property_-_Global_Configuration']}"/>
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <h1><h:outputText value="#{text['Edit_Property']}"/></h1>
+                
+                <h:form id="form">
+                    <h:inputHidden id="oldProperty" value="#{globalConfigurationBean.oldProperty}"/>
+
+                    <h:panelGrid columns="3">
+                        <h:outputLabel for="name"><h:outputText value="#{text['Name_COLON']}"/></h:outputLabel>
+                        <h:inputText id="name" value="#{globalConfigurationBean.property}" size="40" required="true" requiredMessage="*"/>
+                        <h:message for="name" class="errorMessage"/>
+
+                        <h:outputLabel for="value"><h:outputText value="#{text['Value_COLON']}"/></h:outputLabel>
+                        <h:inputTextarea id="value" value="#{globalConfigurationBean.propertyValue}" cols="70" rows="10"/>
+                        <h:message for="value" class="errorMessage"/>
+                    </h:panelGrid>
+                    <h:commandButton class="buttonFeatured" value="#{text['Submit']}" action="#{globalConfigurationBean.editPropertyAction()}"/> <h:link value="#{text['Cancel']}" outcome="global-configuration"/>
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# Find directory for this script
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ] ; do SOURCE="$(readlink -f "$SOURCE")"; done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
+# default
+ANT_EXEC=/usr/bin/ant
+
+if [[ x"$ANT_HOME" != x"" ]]; then
+    ANT_EXEC=$ANT_HOME/bin/ant
+fi
+
+$ANT_EXEC -f "$DIR/../build.xml" -q $@

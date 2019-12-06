@@ -1,0 +1,112 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.signserver</groupId>
+        <artifactId>SignServer-Enterprise-Modules</artifactId>
+        <version>5.2.1.Beta1</version>
+    </parent>
+
+    <groupId>org.signserver</groupId>
+    <artifactId>SignServer-PeerConnector-rar</artifactId>
+    <version>5.2.1.Beta1</version>
+    <packaging>rar</packaging>
+
+    <name>SignServer-PeerConnector-rar</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <dist.jar>${project.build.finalName}.rar</dist.jar>
+        <module.name>peerconnector.rar</module.name>
+        <module.priority>35</module.priority>
+        <module.connector>${project.build.finalName}.rar</module.connector>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>${bouncycastle.bcpkix.artifact}</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>${bouncycastle.bcprov.artifact}</artifactId>
+            <scope>provided</scope>
+          </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ejbca.cesecore</groupId>
+            <artifactId>cesecore-common</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ejbca.cesecore</groupId>
+            <artifactId>cesecore-interfaces</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SignServer-PeerConnector-Common</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-rar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <rarSourceDirectory>${basedir}/target/classes</rarSourceDirectory>
+                    <rarResources>
+                        <resource>
+                            <directory>${basedir}/src/resources</directory>
+                        </resource>
+                    </rarResources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

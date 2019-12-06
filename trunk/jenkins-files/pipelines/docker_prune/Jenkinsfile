@@ -1,0 +1,50 @@
+/**
+ * Jenkins pipeline for collecting the statistics of system space, container size, 
+ * images, networks, volumes info before system prune and after system prune
+ * Also deletes the stopped containers, dangling images, networks and build cache.
+ */
+pipeline {
+    agent {
+        label "dss-docker"
+    }
+    stages {
+        stage('Docker info before  system prune') {
+            steps {
+                echo "************All Containers and its size before system prune****************"
+                sh "docker container ls -as"
+                echo "************************All Images before system prune*********************"
+                sh "docker image ls -a --no-trunc"
+                echo "************************All volumes before system prune*********************"
+                sh "docker volume ls"
+                echo "************************All Networks before system prune*********************"
+                sh "docker network ls"
+                echo "************************Docker info before system prune*********************"
+                sh "docker info"
+                echo "**********************system space before system prune**********************"
+                sh "df -h"
+            }
+        }
+        stage('system prune') {
+            steps {
+                echo "*******************system prune*******************************************"
+                sh "docker system prune -f -a --volumes"
+            }
+        }
+        stage('Docker info after system prune') {
+            steps {
+                echo "************All Containers and its size after system prune****************"
+                sh "docker container ls -as"
+                echo "************************All Images info after system prune*********************"
+                sh "docker image ls -a --no-trunc"
+                echo "************************All volumes details after system prune*********************"
+                sh "docker volume ls"
+                echo "************************All Networks details after system prune*********************"
+                sh "docker network ls"
+                echo "************************Docker info after system prune*********************"
+                sh "docker info"
+                echo "**********************system space after system prune**********************"
+                sh "df -h"
+            }
+        }
+    }
+}

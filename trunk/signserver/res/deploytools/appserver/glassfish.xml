@@ -1,0 +1,103 @@
+<project name="glassfish" basedir="../.." default="j2ee:deploy">
+
+    <!-- Declare the JAR files needed to run EJB CLI/system tests using this appserver. -->
+    <property name="appserver.client.jars" value="${appserver.home}/lib/appserv-rt.jar:${appserver.home}/lib/gf-client.jar"/>
+
+    <property environment="env"/>
+
+    <property name="appserver.home" value="${env.APPSRV_HOME}"/>
+    <property name="glassfish.domain" value="domain1"/>
+    <property name="glassfish.server.home.dir" location="${appserver.home}/domains/${glassfish.domain}"/>
+    <property name="glassfish.conf.dir" location="${glassfish.server.home.dir}/config"/>
+    <property name="glassfish.deploy.dir" location="${glassfish.server.home.dir}/autodeploy"/>
+    <property name="datasource.jndi-name-prefix" value="jdbc/"/>
+
+    <!-- Load Payara version info -->
+    <property file="${appserver.home}/config/branding/glassfish-version.properties" prefix="glassfish"/>
+    
+    <!-- Check Payara version -->
+    <condition property="appserver.subtype" value="payara4">
+        <and>
+            <equals arg1="${glassfish.abbrev_product_name}" arg2="Payara" />
+            <equals arg1="${glassfish.major_version}" arg2="4" />
+        </and>
+    </condition>
+
+    <!-- Detect GlassFish 3 -->
+    <available file="${appserver.home}/modules/bean-validator.jar" property="glassfish3_detected"/>
+    <condition property="appserver.subtype" value="glassfish3">
+        <isset property="glassfish3_detected"/>
+    </condition>
+    
+    <condition property="appsrv.is.payara">
+        <equals arg1="${appserver.subtype}" arg2="payara4"/>
+    </condition>
+	
+    <target name="j2ee:check" depends="glassfish:check-appserver-home, glassfish:set-extralibs"/>
+        
+    <target name="glassfish:check-appserver-home">
+        <!--
+        we could have a dedicated jboss for ejbca, so give users a chance to override
+        otherwise, try to pick the one from environment if it exists
+        -->
+        <fail message="Please set the property 'appserver.home' for this project" unless="appserver.home"/>
+        <available file="${appserver.home}/lib/appserv-rt.jar" property="appserver.home.valid"/>
+        <fail message="'appserver.home' (${appserver.home}) does not seem to be a valid Glassfish home directory" unless="appserver.home.valid"/>
+    </target>
+
+    <!--
+        Define all extra jar files that needs to be included in the lib
+        folder of signserver.ear when building for this application server.
+        The zipfileset should have the id "appserver.extralibs" and the
+        prefix "lib".
+    -->
+    <target name="glassfish:set-extralibs" depends="glassfish:set-extralibs-payara4, glassfish:set-extralibs-glassfish3, glassfish:configure-persistence-provider"/>
+    
+    <target name="glassfish:set-extralibs-glassfish3" unless="appsrv.is.payara">
+        <zipfileset id="appserver.extralibs" prefix="lib" dir="${basedir}/lib/ext">
+            <!--
+               We use Hibernate as JPA provider and as it is
+               not shipped with GlassFish we need to bundle it.
+            -->
+            <include name="antlr-2.7.7.jar"/>
+            <!-- <include name="dom4j-2.1.1.jar"/> -->
+            <include name="ejb3-persistence.jar"/>
+            <include name="hibernate-commons-annotations-5.1.0.Final.jar"/>
+            <include name="hibernate-core-5.4.1.Final.jar"/>          
+            <include name="javassist-3.24.0-GA.jar"/>
+            <include name="jboss-logging-3.3.2.Final.jar"/>
+            <include name="jboss-transaction-api_1.2_spec-1.1.1.Final.jar"/>
+        </zipfileset>
+    </target>
+    
+    <target name="glassfish:set-extralibs-payara4" if="appsrv.is.payara">
+        <zipfileset id="appserver.extralibs" prefix="lib" dir="${basedir}/lib/ext">
+         <!--
+            We currently don't use Hibernate for Payara4
+         -->
+         <exclude name="**/*"/>
+        </zipfileset>
+    </target>
+
+    <!-- We currently use EclipseLinks for Payara -->
+    <target name="glassfish:configure-persistence-provider" if="appsrv.is.payara">
+        <property name="persistence.provider" value="org.eclipse.persistence.jpa.PersistenceProvider"/>
+    </target>
+
+    <target name="j2ee:configure" description="Configure the Java EE server with appropriate settings"/>
+
+    <target name="j2ee:deploy" description="Deploy the application"  depends="j2ee:check">
+        <echo>Deploying ${ear.dist.file} to ${glassfish.deploy.dir}</echo>
+        <copy file="${ear.dist.file}" todir="${glassfish.deploy.dir}" failonerror="true"/>
+    </target>
+
+
+    <target name="j2ee:assert-run" description="Check that the server is running">
+        <echo message="Checking that the J2EE server is up and running..."/>
+        <waitfor maxwait="2" maxwaitunit="second" timeoutproperty="j2ee.notrunning">
+            <http url="http://localhost:${httpserver.pubhttp}/"/>
+        </waitfor>
+        <fail message="Please start Java EE server before running this script" if="j2ee.notrunning"/>	
+    </target>
+	
+</project>

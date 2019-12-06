@@ -1,0 +1,12 @@
+[Unit] 
+Description=SignServer TimeMonitor
+After=network.target
+ 
+[Service]
+Type=forking
+# Below path need to be changed depending on the SignServer installation & SIGNSERVER_HOME directory: SIGNSERVER_HOME/bin/timemonitor-in-background.sh
+ExecStart=/opt/signserver/bin/timemonitor-in-background.sh
+
+[Install]
+WantedBy=multi-user.target
+

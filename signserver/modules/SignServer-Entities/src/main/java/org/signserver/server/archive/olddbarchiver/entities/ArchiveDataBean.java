@@ -14,6 +14,7 @@ package org.signserver.server.archive.olddbarchiver.entities;
 
 import java.beans.XMLEncoder;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -25,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.Base64GetHashMap;
 import org.cesecore.util.Base64PutHashMap;
+import org.cesecore.util.SecureXMLDecoder;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.ArchiveDataVO;
 
@@ -232,16 +234,16 @@ public class ArchiveDataBean implements Serializable {
      *
      * @return certificate request history object
      */
-    public ArchiveData getArchiveDataObject() {
+    public ArchiveData getArchiveDataObject() throws IOException {
         final ArchiveData result;
 
         if (dataEncoding != null && dataEncoding == DATA_ENCODING_BASE64) {
             result = new ArchiveData(Base64.decode(getArchiveData().getBytes(StandardCharsets.UTF_8)));
         } else {
-            java.beans.XMLDecoder decoder;
+            SecureXMLDecoder decoder;
 
                 decoder =
-                        new java.beans.XMLDecoder(
+                        new SecureXMLDecoder(
                         new java.io.ByteArrayInputStream(getArchiveData().getBytes(StandardCharsets.UTF_8)));
             HashMap<?, ?> h = (HashMap<?, ?>) decoder.readObject();
             decoder.close();
@@ -291,9 +293,13 @@ public class ArchiveDataBean implements Serializable {
                 getRequestIssuerDN(), getRequestCertSerialnumber(), getRequestIP(),
                 Base64.decode(getArchiveData().getBytes(StandardCharsets.UTF_8)));
         } else {
-            return new ArchiveDataVO(getType(), getSignerid(), getArchiveid(), new Date(getTime()),
-                getRequestIssuerDN(), getRequestCertSerialnumber(), getRequestIP(),
-                getArchiveDataObject());
+            try {
+                return new ArchiveDataVO(getType(), getSignerid(), getArchiveid(), new Date(getTime()),
+                    getRequestIssuerDN(), getRequestCertSerialnumber(), getRequestIP(),
+                    getArchiveDataObject());
+            } catch (IOException ex) {
+                throw new IllegalArgumentException("Unable to parse archive data", ex);
+            }
         }
     }
 }

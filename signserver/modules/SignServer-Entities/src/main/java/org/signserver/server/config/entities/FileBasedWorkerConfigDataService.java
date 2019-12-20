@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.server.config.entities;
 
-import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +27,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.util.Base64GetHashMap;
 import org.cesecore.util.Base64PutHashMap;
+import org.cesecore.util.SecureXMLDecoder;
 import org.signserver.common.FileBasedDatabaseException;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerConfig;
@@ -118,7 +118,7 @@ public class FileBasedWorkerConfigDataService implements IWorkerConfigDataServic
 
                 if (wcdb != null) {
                     HashMap h;
-                    try (XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(wcdb.getSignerConfigData().getBytes(StandardCharsets.UTF_8)))) {
+                    try (SecureXMLDecoder decoder = new SecureXMLDecoder(new ByteArrayInputStream(wcdb.getSignerConfigData().getBytes(StandardCharsets.UTF_8)))) {
                         h = (HashMap) decoder.readObject();
                     }
                     // Handle Base64 encoded string values

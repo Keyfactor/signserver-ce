@@ -99,6 +99,7 @@ a44bd80e82cb0f4cfac0dac8575746223802514e3cec9dc75235bc0de646af14  ./ext/xalan-2.
 47dcde8986019314ef78ae7280a94973a21d2ed95075a40a000b42da956429e1  ./ext/xml-resolver-1.2.jar;                             "Apache Xerxes"
 ffa13d70e827653d93dff3c76598a0821b29c7450538e139989f79fb2c5b4e65  ./ext/xmlschema-core-2.2.3.jar;                         "Apache XmlSchema Core"
 f5965da6ba78949bc17724c56de70c4aeb2598663f6abb1ece63854ba21713ba  ./ext/xmlsec-1.5.8.jar;                                 "Santuario"
+bfc90e9e32d0eab1f397fb974b5f150a815188382ac41f372a7149d5bc178008  ./ext/xpp3_min-1.1.4c.jar;                              "Xpp3"
                                                                   ./SignServer-Lib-iText.jar;                             "iText"
                                                                   ./SignServer-Lib-ODFDOM.jar;                            "ODFDOM"
                                                                   ./SignServer-Lib-OpenXML4J.jar;                         "OpenXML4J"

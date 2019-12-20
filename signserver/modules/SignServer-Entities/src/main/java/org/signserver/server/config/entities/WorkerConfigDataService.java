@@ -12,7 +12,6 @@
  *************************************************************************/
 package org.signserver.server.config.entities;
 
-import java.beans.XMLDecoder;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -26,6 +25,7 @@ import javax.persistence.Query;
 import org.apache.log4j.Logger;
 import org.cesecore.util.Base64GetHashMap;
 import org.cesecore.util.Base64PutHashMap;
+import org.cesecore.util.SecureXMLDecoder;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerType;
@@ -95,16 +95,15 @@ public class WorkerConfigDataService implements IWorkerConfigDataService {
     
     private WorkerConfig parseWorkerConfig(WorkerConfigDataBean wcdb) {
         final WorkerConfig workerConf = new WorkerConfig();
-        XMLDecoder decoder =
-                    new XMLDecoder(
+        SecureXMLDecoder decoder =
+                    new SecureXMLDecoder(
                     new ByteArrayInputStream(wcdb.getSignerConfigData().getBytes(StandardCharsets.UTF_8)));
 
-        HashMap h = (HashMap) decoder.readObject();
-        decoder.close();
-        // Handle Base64 encoded string values
-        HashMap data = new Base64GetHashMap(h);
-
         try {
+            HashMap h = (HashMap) decoder.readObject();
+            decoder.close();
+            // Handle Base64 encoded string values
+            HashMap data = new Base64GetHashMap(h);
             workerConf.loadData(data);
             workerConf.upgrade();
         } catch (Exception e) {

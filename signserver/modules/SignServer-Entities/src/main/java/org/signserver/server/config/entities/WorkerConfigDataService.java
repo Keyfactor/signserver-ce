@@ -25,10 +25,10 @@ import javax.persistence.Query;
 import org.apache.log4j.Logger;
 import org.cesecore.util.Base64GetHashMap;
 import org.cesecore.util.Base64PutHashMap;
-import org.cesecore.util.SecureXMLDecoder;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerType;
+import org.signserver.common.util.SecureXMLDecoder;
 
 /**
  * Entity Service class that acts as migration layer for

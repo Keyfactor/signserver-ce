@@ -39,6 +39,7 @@ import org.cesecore.certificates.certificateprofile.CertificatePolicy;
 import org.cesecore.certificates.certificateprofile.PKIDisclosureStatement;
 import org.cesecore.util.Base64GetHashMap;
 import org.cesecore.util.Base64PutHashMap;
+import org.signserver.common.AuthorizedClient;
 import org.signserver.common.CertificateMatchingRule;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -301,6 +302,9 @@ public class SecureXMLDecoder implements AutoCloseable {
                 break;
             case "org.signserver.common.CertificateMatchingRule":
                 value = parseObject(new CertificateMatchingRule());
+                break;
+            case "org.signserver.common.AuthorizedClient":
+                value = parseObject(new AuthorizedClient());
                 break;
             case "org.ejbca.core.model.ra.raadmin.UserNotification":
                 try {

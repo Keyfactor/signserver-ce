@@ -72,6 +72,7 @@ public class SecureXMLDecoder implements AutoCloseable {
     private final XmlPullParser parser;
     private boolean seenHeader = false;
     private boolean closed = false;
+    private Map<String, Object> idMap = new HashMap<>();
     
     public SecureXMLDecoder(final InputStream is) {
         this.is = is;
@@ -163,6 +164,7 @@ public class SecureXMLDecoder implements AutoCloseable {
     private Object readValue(boolean disallowTextAfterElement) throws XmlPullParserException, IOException {
         final String tag = parser.getName();
         final Object value;
+        String id = null;
         // Read the element contents depending on the type
         switch (tag) {
         case "string":
@@ -219,8 +221,27 @@ public class SecureXMLDecoder implements AutoCloseable {
             break;
         case "object":
             final String className = parser.getAttributeValue(null, "class");
+            final String idRef = parser.getAttributeValue(null, "idref");
+
+            id = parser.getAttributeValue(null, "id");
+            
             String method = parser.getAttributeValue(null, "method"); // used from java.util.Collections
             parser.nextTag();
+
+            if (idRef != null) {
+                // return referenced instance
+                final Object ref = idMap.get(idRef);
+ 
+                if (ref != null) {
+                    expectEndTag(tag);
+                    if (disallowTextAfterElement) {
+                        parser.nextTag();
+                    }
+                    return ref;
+                } else {
+                    throw new IOException("Unknown ID in object idref");
+                }
+            }
             
             // If we need to support a lot of more classes here (or custom classes), we could instead load the
             // classes dynamically with Class.forName (after checking the name whitelist). Then we could check
@@ -344,6 +365,11 @@ public class SecureXMLDecoder implements AutoCloseable {
         if (disallowTextAfterElement) {
             parser.nextTag();
         }
+
+        if (id != null) {
+            idMap.put(id, value);
+        }
+        
         return value;
     }
     

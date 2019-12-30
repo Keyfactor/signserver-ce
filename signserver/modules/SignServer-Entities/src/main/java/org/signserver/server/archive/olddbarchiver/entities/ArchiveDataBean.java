@@ -26,9 +26,9 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.util.Base64GetHashMap;
 import org.cesecore.util.Base64PutHashMap;
-import org.cesecore.util.SecureXMLDecoder;
 import org.signserver.common.ArchiveData;
 import org.signserver.common.ArchiveDataVO;
+import org.signserver.common.util.SecureXMLDecoder;
 
 /**
  * Entity Bean storing requests and responses of signer beans

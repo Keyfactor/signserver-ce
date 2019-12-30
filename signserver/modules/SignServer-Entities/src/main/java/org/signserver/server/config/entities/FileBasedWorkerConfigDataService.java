@@ -27,11 +27,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.util.Base64GetHashMap;
 import org.cesecore.util.Base64PutHashMap;
-import org.cesecore.util.SecureXMLDecoder;
 import org.signserver.common.FileBasedDatabaseException;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerType;
+import org.signserver.common.util.SecureXMLDecoder;
 import org.signserver.server.nodb.FileBasedDatabaseManager;
 
 /**

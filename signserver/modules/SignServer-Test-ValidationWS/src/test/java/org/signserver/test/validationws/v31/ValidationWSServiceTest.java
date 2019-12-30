@@ -72,36 +72,21 @@ public class ValidationWSServiceTest extends ModulesTestCase {
     
     private static final String NONEXISTING_WORKER = "_NonExistingWorker123_";
 
-        /**
+    /**
      * Certificate for xmlsigner4.
      * <pre>
-     * Serial Number: 23:14:08:b6:eb:aa:42:dc
+     * Serial Number: 73:9a:2f:10:6e:81:ba:04:77:2d:03:1a:66:02:a0:a5:49:78:b1:60
      *  Signature Algorithm: dsaWithSHA1
      *  Issuer: CN=DemoRootCA2, OU=EJBCA, O=SignServer Sample, C=SE
      *  Validity
-     *      Not Before: Nov 10 11:22:11 2009 GMT
-     *      Not After : Nov 10 11:22:11 2019 GMT
+     *      Not Before: Mon Dec 30 14:41:15 CET 2019
+     *      Not After : Fri Nov 10 17:09:48 CET 2034
      *  Subject: CN=xmlsigner4
      * </pre>
      */
-    private static final String CERT_XMLSIGNER4 =
-        "MIIDADCCAsCgAwIBAgIIIxQItuuqQtwwCQYHKoZIzjgEAzBPMRQwEgYDVQQDDAtE"
-        +"ZW1vUm9vdENBMjEOMAwGA1UECwwFRUpCQ0ExGjAYBgNVBAoMEVNpZ25TZXJ2ZXIg"
-        +"U2FtcGxlMQswCQYDVQQGEwJTRTAeFw0wOTExMTAxMTIyMTFaFw0xOTExMTAxMTIy"
-        +"MTFaMBUxEzARBgNVBAMMCnhtbHNpZ25lcjQwggG4MIIBLAYHKoZIzjgEATCCAR8C"
-        +"gYEA/X9TgR11EilS30qcLuzk5/YRt1I870QAwx4/gLZRJmlFXUAiUftZPY1Y+r/F"
-        +"9bow9subVWzXgTuAHTRv8mZgt2uZUKWkn5/oBHsQIsJPu6nX/rfGG/g7V+fGqKYV"
-        +"DwT7g/bTxR7DAjVUE1oWkTL2dfOuK2HXKu/yIgMZndFIAccCFQCXYFCPFSMLzLKS"
-        +"uYKi64QL8Fgc9QKBgQD34aCF1ps93su8q1w2uFe5eZSvu/o66oL5V0wLPQeCZ1FZ"
-        +"V4661FlP5nEHEIGAtEkWcSPoTCgWE7fPCTKMyKbhPBZ6i1R8jSjgo64eK7OmdZFu"
-        +"o38L+iE1YvH7YnoBJDvMpPG+qFGQiaiD3+Fa5Z8GkotmXoB7VSVkAUw7/s9JKgOB"
-        +"hQACgYEA1CXfT00olSOapmZl4zT1/tUQzOzttQ/DCB8qYwH5fKD4cw1O2IutdntO"
-        +"P+Pd+Q6PV6r/cckmpvO12/sMpxWOmY1oio44L8Pl76MWqKiBecAsNgxjXkXiFdJ8"
-        +"llhTj9Z8vSYP8TUyY4UaITm3oZOp60eamFL93LjvpOkrDj7orXijYDBeMB0GA1Ud"
-        +"DgQWBBRqEubbKMwapnZFeqgUNRFEkKGpWjAMBgNVHRMBAf8EAjAAMB8GA1UdIwQY"
-        +"MBaAFEnfFS7KXpmugPeUWbefD8CEI94lMA4GA1UdDwEB/wQEAwIGwDAJBgcqhkjO"
-        +"OAQDAy8AMCwCFDnp413fYl32LXvI/FrHLxfo5hW6AhRv3xxzl07QDdL/oWCtW0rs"
-        +"tmtQmg==";
+    static final String CERT_XMLSIGNER4 =
+        "MIIDLDCCAuugAwIBAgIUc5ovEG6BugR3LQMaZgKgpUl4sWAwCQYHKoZIzjgEAzBPMRQwEgYDVQQDDAtEZW1vUm9vdENBMjEOMAwGA1UECwwFRUpCQ0ExGjAYBgNVBAoMEVNpZ25TZXJ2ZXIgU2FtcGxlMQswCQYDVQQGEwJTRTAeFw0xOTEyMzAxMzQxMTVaFw0zNDExMTAxNjA5NDhaMBUxEzARBgNVBAMMCnhtbHNpZ25lcjQwggG4MIIBLAYHKoZIzjgEATCCAR8CgYEA/X9TgR11EilS30qcLuzk5/YRt1I870QAwx4/gLZRJmlFXUAiUftZPY1Y+r/F9bow9subVWzXgTuAHTRv8mZgt2uZUKWkn5/oBHsQIsJPu6nX/rfGG/g7V+fGqKYVDwT7g/bTxR7DAjVUE1oWkTL2dfOuK2HXKu/yIgMZndFIAccCFQCXYFCPFSMLzLKSuYKi64QL8Fgc9QKBgQD34aCF1ps93su8q1w2uFe5eZSvu/o66oL5V0wLPQeCZ1FZV4661FlP5nEHEIGAtEkWcSPoTCgWE7fPCTKMyKbhPBZ6i1R8jSjgo64eK7OmdZFuo38L+iE1YvH7YnoBJDvMpPG+qFGQiaiD3+Fa5Z8GkotmXoB7VSVkAUw7/s9JKgOBhQACgYEA1CXfT00olSOapmZl4zT1/tUQzOzttQ/DCB8qYwH5fKD4cw1O2IutdntOP+Pd+Q6PV6r/cckmpvO12/sMpxWOmY1oio44L8Pl76MWqKiBecAsNgxjXkXiFdJ8llhTj9Z8vSYP8TUyY4UaITm3oZOp60eamFL93LjvpOkrDj7orXijfzB9MAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUSd8VLspema6A95RZt58PwIQj3iUwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMB0GA1UdDgQWBBRqEubbKMwapnZFeqgUNRFEkKGpWjAOBgNVHQ8BAf8EBAMCBeAwCQYHKoZIzjgEAwMwADAtAhQ9OV4HFv9pTpRM4okw/R+H+jtgBgIVAIJfnJ5H8FRcjOANlGL61tg5ciJC";
+
 
     private ValidationWS ws;
     private final SSLSocketFactory socketFactory;

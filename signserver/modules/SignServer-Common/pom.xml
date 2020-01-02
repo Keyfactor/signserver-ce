@@ -74,6 +74,10 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpg-jdk15on</artifactId>
         </dependency>
+        <dependency>
+            <groupId>xmlpull</groupId>
+            <artifactId>xmlpull</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <!-- Filter SignServer version and edition in signservercompile.properties. -->

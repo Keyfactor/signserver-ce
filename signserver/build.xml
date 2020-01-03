@@ -557,6 +557,7 @@ Installation Guide for details.
             <param name="dist.zipdest" value="${basedir}/tmp/SignServer-ClientCLI-${app.version.number}-bin.zip"/>
             <param name="dist.zipprefix" value="signserver"/>
         </antcall>
+        <property name="clientcli.zip.file" location="${basedir}/tmp/SignServer-ClientCLI-${app.version.number}-bin.zip"/>
     </target>
     
     <target name="-create-clientcli-dist" if="web.clientcli.dist.conditionenabled">
@@ -818,7 +819,7 @@ mvn install
         </patternset>
     </target>
 
-    <target name="release" depends="-warn-build, -check-built, release:binary-zip, release:zip, release:source-tarball" description="Create all 3 SignServer release artifacts"/>
+    <target name="release" depends="-warn-build, -check-built, release:binary-zip, release:signclient-zip, release:zip" description="Create binary-zip, zip and signclient-zip release artifacts"/>
 
     <!-- Deprecated: New target called release:zip -->
     <target name="ziprelease" depends="release:zip"/>
@@ -966,6 +967,21 @@ SHA-512 checksum: ${zip.bin.sha512}
         </echo>
     </target>
 
+    <target name="release:signclient-zip" depends="init,-warn-build,dist:clientcli-zip" description="Make a binary zip for SignClient release">
+        <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
+        <move file="${clientcli.zip.file}" tofile="../signclient-${app.version.number}-bin.zip"/>
+        <property name="signclient.zip.bin" location="../signclient-${app.version.number}-bin.zip"/>
+        
+        <checksum file="${signclient.zip.bin}" algorithm="SHA-256" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${signclient.zip.bin}" algorithm="SHA-256" property="signclient.zip.bin.sha256"/>
+        <checksum file="${signclient.zip.bin}" algorithm="SHA-512" forceOverwrite="yes" format="MD5SUM"/>
+        <checksum file="${signclient.zip.bin}" algorithm="SHA-512" property="signclient.zip.bin.sha512"/>
+        <echo>
+File:             ${signclient.zip.bin}
+SHA-256 checksum: ${signclient.zip.bin.sha256}
+SHA-512 checksum: ${signclient.zip.bin.sha512}
+        </echo>
+    </target>
 
     <!-- =================================================================== -->
     <!-- Debian packaging                                                    -->

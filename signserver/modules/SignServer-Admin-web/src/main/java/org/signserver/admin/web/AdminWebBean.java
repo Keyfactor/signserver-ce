@@ -56,7 +56,7 @@ public class AdminWebBean {
     }
 
     public String getCopyright() {
-        return "Copyright © 2006–2019 PrimeKey Solutions AB";
+        return "Copyright © 2006–2020 PrimeKey Solutions AB";
     }
 
     public String getCurrentTime() {

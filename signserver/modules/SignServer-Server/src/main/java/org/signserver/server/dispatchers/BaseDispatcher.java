@@ -15,10 +15,9 @@ package org.signserver.server.dispatchers;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.signserver.common.AuthorizedClient;
 import org.signserver.common.SignServerConstants;
-import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerStatusInfo;
@@ -70,10 +69,12 @@ public abstract class BaseDispatcher extends BaseProcessable {
 
         // Clients
         final StringBuilder clientsValue = new StringBuilder();
-        for (AuthorizedClient client : config.getAuthorizedClients()) {
-            clientsValue.append("  ").append(client.getCertSN()).append(", ").append(properties.getProperty(client.getIssuerDN())).append("\n");
-        }
-        completeEntries.add(new WorkerStatusInfo.Entry("Authorized clients (serial number, issuer DN)", clientsValue.toString()));
+        config.getAuthorizedClientsGen2().forEach((client) -> {
+            clientsValue.append(client.getMatchSubjectWithType()).append(": ").append(client.getMatchSubjectWithValue()).append(" | ")
+                    .append(client.getMatchIssuerWithType()).append(": ").append(client.getMatchIssuerWithValue())
+                    .append(StringUtils.isBlank(client.getDescription()) ? "" : " | Description: " + client.getDescription()).append("\n");
+        });
+        completeEntries.add(new WorkerStatusInfo.Entry("Authorized clients", clientsValue.toString()));
 
         return new WorkerStatusInfo(workerId, config.getProperty("NAME"),
                                     "Dispatcher", WorkerStatus.STATUS_ACTIVE,

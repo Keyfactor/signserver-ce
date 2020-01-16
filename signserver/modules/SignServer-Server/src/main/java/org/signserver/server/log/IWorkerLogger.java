@@ -22,7 +22,7 @@ import org.signserver.server.SignServerContext;
 /**
  * Logger for events (transactions) performed by a worker processing a request.
  * Audit events not associated with a worker transaction should be logged by a
- * ISystemLogger instead.
+ * system logger instead.
  *
  * @author Markus Kilås
  * @version $Id$

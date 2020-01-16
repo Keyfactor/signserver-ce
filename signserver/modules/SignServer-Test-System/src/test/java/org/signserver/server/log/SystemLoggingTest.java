@@ -164,9 +164,9 @@ public class SystemLoggingTest extends ModulesTestCase {
         LOG.info(">test01ReadEntries");
         final File testFile = File.createTempFile("testreadentries", "tmp");
         testFile.deleteOnExit();
-        final String line0 = "2012-10-19 10:51:43,240 INFO  [ISystemLogger] EVENT: GLOBAL_CONFIG_RELOAD; MODULE: GLOBAL_CONFIG; CUSTOM_ID: ; REPLY_TIME:1350636703240\n";
-        final String line1 = "2012-10-19 10:51:43,277 INFO  [ISystemLogger] EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; REPLY_TIME:1350636703277\n";
-        final String line2 = "2012-10-19 10:51:44,048 INFO  [ISystemLogger] EVENT: CERTINSTALLED; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; CERTIFICATE: Subject: CN=Anyone\n"
+        final String line0 = "2012-10-19 10:51:43,240 INFO  [SignServerLog4jDevice] EVENT: GLOBAL_CONFIG_RELOAD; MODULE: GLOBAL_CONFIG; CUSTOM_ID: ; REPLY_TIME:1350636703240\n";
+        final String line1 = "2012-10-19 10:51:43,277 INFO  [SignServerLog4jDevice] EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; REPLY_TIME:1350636703277\n";
+        final String line2 = "2012-10-19 10:51:44,048 INFO  [SignServerLog4jDevice] EVENT: CERTINSTALLED; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; CERTIFICATE: Subject: CN=Anyone\n"
             + "Issuer: CN=Anyone\n"
             + "-----BEGIN CERTIFICATE-----\n"
             + "MIIBnTCCAQagAwIBAgIIFxjq8olIqcYwDQYJKoZIhvcNAQEFBQAwETEPMA0GA1UE\n"
@@ -180,7 +180,7 @@ public class SystemLoggingTest extends ModulesTestCase {
             + "j6aIoPC6sBAsyrSumCWxVjZvgQNoefuN6I1/KpC7QVYP\n"
             + "-----END CERTIFICATE-----\n"
             + "; SCOPE: GLOB.; REPLY_TIME:1350636704048\n";
-        final String line3 = "2012-10-19 10:51:44,130 INFO  [ISystemLogger] EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; REPLY_TIME:1350636704130\n";
+        final String line3 = "2012-10-19 10:51:44,130 INFO  [SignServerLog4jDevice] EVENT: SET_WORKER_CONFIG; MODULE: WORKER_CONFIG; CUSTOM_ID: 100; REPLY_TIME:1350636704130\n";
         
         PrintWriter writer = null;
         try {

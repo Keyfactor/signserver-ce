@@ -16,8 +16,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
 
@@ -205,18 +208,20 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
                 out.write(("Valid: " + Boolean.FALSE).getBytes());
             }
             out.write("\n".getBytes());            
-            
+        } catch (ConnectException | SocketTimeoutException | UnknownHostException ex) {
+            LOG.error("Connection failure occurred: " + ex.getMessage());
+            throw ex;
         } catch (HTTPException ex) {
             // let the validation command handle HTTP error responses
             throw ex;
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
         } finally {
             if (out != null) {
-                try {
-                    outStream.close();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                /* Note: we couldn't use try-with-resources here,
+                 * since the outStream depends on the connection, which
+                 * is set-up inside the body
+                 */
+                if (outStream != null) {
+                    IOUtils.closeQuietly(outStream);
                 }
             }
             if (responseIn != null) {

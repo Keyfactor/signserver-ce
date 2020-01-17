@@ -264,7 +264,9 @@ public class XMLSigner extends BaseSigner {
             throw new SignServerException("XML transformation error", ex);
         }
 
-        final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, responseData.toReadableData(), archiveId));
+        final Collection<? extends Archivable> archivables = Arrays.asList(
+                    new DefaultArchivable(Archivable.TYPE_REQUEST, CONTENT_TYPE, requestData, archiveId), 
+                    new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, responseData.toReadableData(), archiveId));
 
         // The client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);

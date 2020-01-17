@@ -82,6 +82,7 @@ import xades4j.providers.impl.DefaultSignaturePropertiesProvider;
 import xades4j.providers.impl.ExtendedTimeStampTokenProvider;
 import xades4j.verification.UnexpectedJCAException;
 import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
+import org.signserver.common.data.ReadableData;
 
 /**
  * A Signer using XAdES to createSigner XML documents.
@@ -349,10 +350,11 @@ public class XAdESSigner extends BaseSigner {
         }
         
         final WritableData responseData = sReq.getResponseData();
+        final ReadableData requestData = sReq.getRequestData();
         Certificate cert = null;
         ICryptoInstance crypto = null;
         try (
-                InputStream in = sReq.getRequestData().getAsInputStream();
+                InputStream in = requestData.getAsInputStream();
                 OutputStream out = responseData.getAsOutputStream()
             ) {
             crypto = acquireCryptoInstance(ICryptoTokenV4.PURPOSE_SIGN, signRequest, requestContext);
@@ -407,7 +409,9 @@ public class XAdESSigner extends BaseSigner {
         }
         
         // Response
-        final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, responseData.toReadableData(), archiveId));
+        final Collection<? extends Archivable> archivables = Arrays.asList(
+                    new DefaultArchivable(Archivable.TYPE_REQUEST, CONTENT_TYPE, requestData, archiveId), 
+                    new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, responseData.toReadableData(), archiveId));
 
         // The client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);

@@ -364,10 +364,9 @@ public class PDFSigner extends BaseSigner {
             
             addSignatureToPDFDocument(crypto, params, pdfBytes, pdfFile, password, 0,
                                               signRequest, responseData, requestContext, tsaDigestAlgorithm, tsaDigestAlgorithmName);
-            final Collection<? extends Archivable> archivables = Arrays.asList(new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, responseData.toReadableData(), archiveId));
-            
-            
-            
+            final Collection<? extends Archivable> archivables = Arrays.asList(
+                    new DefaultArchivable(Archivable.TYPE_REQUEST, CONTENT_TYPE, requestData, archiveId), 
+                    new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, responseData.toReadableData(), archiveId));
 
             // Archive to disk
             if (StringUtils.equalsIgnoreCase("TRUE",

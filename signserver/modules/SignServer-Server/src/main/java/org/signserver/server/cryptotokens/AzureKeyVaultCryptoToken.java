@@ -14,13 +14,8 @@ package org.signserver.server.cryptotokens;
 
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.NoSuchAliasException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -28,36 +23,24 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.ProviderException;
 import java.security.PublicKey;
+import java.security.Security;
 import java.security.SignatureException;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.spec.AlgorithmParameterSpec;
-import java.security.spec.ECGenParameterSpec;
-import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.x9.X9ECParameters;
-import org.bouncycastle.crypto.ec.CustomNamedCurves;
-import org.bouncycastle.jcajce.provider.asymmetric.util.ECUtil;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.cesecore.certificates.util.AlgorithmTools;
 import org.cesecore.keys.token.AzureCryptoToken;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
-import org.cesecore.keys.token.p11.Pkcs11SlotLabelType;
 import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
 import org.cesecore.util.query.QueryCriteria;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
-import org.signserver.common.PKCS11Settings;
 import org.signserver.common.ICertReqData;
 import org.signserver.common.ISignerCertReqInfo;
 import org.signserver.common.IllegalRequestException;
@@ -88,7 +71,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
 
     private static final Logger LOG = Logger.getLogger(AzureKeyVaultCryptoToken.class);
 
-    private KeyStoreAzureKeyVaultCryptoToken delegate;
+    private AzureCryptoToken delegate;
 
     /** Our worker cache entry name. */
     private static final String WORKERCACHE_ENTRY = "PKCS11CryptoToken.CRYPTO_INSTANCE";
@@ -143,22 +126,15 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
                 }
             }
 
-            delegate = new KeyStoreAzureKeyVaultCryptoToken();
+            delegate = new AzureCryptoToken();
             delegate.init(props, null, workerId);
-            try {
-                keystoreDelegator = new JavaKeyStoreDelegator(delegate.getActivatedKeyStore());
-            } catch (CryptoTokenOfflineException ex) {
-                // don't initialize keystore delegator when not auto-activated
-            }
+            keystoreDelegator = new AzureKeyVaultKeyStoreDelegator(delegate);
 
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException | NumberFormatException ex) {
             LOG.error("Init failed", ex);
             throw new CryptoTokenInitializationFailureException(ex.getMessage());
         } catch (NoSuchSlotException ex) {
             LOG.error("Slot not found", ex);
-            throw new CryptoTokenInitializationFailureException(ex.getMessage());
-        } catch (InstantiationException ex) {
-            LOG.error("PKCS11 key store initialization failed", ex);
             throw new CryptoTokenInitializationFailureException(ex.getMessage());
         }
     }
@@ -198,7 +174,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
     public void activate(String authenticationcode, IServices services) throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException {
         try {
             delegate.activate(authenticationcode.toCharArray());
-            keystoreDelegator = new JavaKeyStoreDelegator(delegate.getActivatedKeyStore());
+            keystoreDelegator = new AzureKeyVaultKeyStoreDelegator(delegate);
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
             LOG.error("Activate failed", ex);
             throw new CryptoTokenOfflineException(ex);
@@ -235,7 +211,9 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
     }
 
     private List<Certificate> getCertificateChain(String alias) throws CryptoTokenOfflineException {
-        try {
+        System.err.println("Fix chain");
+        return Collections.emptyList();
+        /*try {
             final List<Certificate> result;
             final Certificate[] certChain = delegate.getActivatedKeyStore().getCertificateChain(alias);
             if (certChain == null) {
@@ -246,7 +224,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
             return result;
         } catch (KeyStoreException ex) {
             throw new CryptoTokenOfflineException(ex);
-        }
+        }*/
     }
 
     @Override
@@ -277,13 +255,12 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
 
     @Override
     public Collection<KeyTestResult> testKey(String alias, char[] authCode, IServices services) throws CryptoTokenOfflineException, KeyStoreException {
-        final KeyStore keyStore = delegate.getActivatedKeyStore();
-        return CryptoTokenHelper.testKey(keystoreDelegator, alias, authCode, keyStore.getProvider().getName(), signatureAlgorithm);
+        return CryptoTokenHelper.testKey(keystoreDelegator, alias, authCode, delegate.getSignProviderName(), signatureAlgorithm);
     }
 
     @Override
     public KeyStore getKeyStore() throws UnsupportedOperationException, CryptoTokenOfflineException, KeyStoreException {
-        return delegate.getActivatedKeyStore();
+        throw new UnsupportedOperationException("KeyStore not supported");
     }
 
     private void generateKeyPair(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
@@ -388,11 +365,11 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
         if (keygenerationLimit != null && keygenerationLimit > -1) {
             final int current;
             try {
-                current = delegate.getActivatedKeyStore().size();
+                current = delegate.getAliases().size();
                 if (current >= keygenerationLimit) {
                     throw new TokenOutOfSpaceException("Key generation limit exceeded: " + current);
                 }
-            } catch (KeyStoreException ex) {
+            } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
                 LOG.error("Checking key generation limit failed", ex);
                 throw new TokenOutOfSpaceException("Current number of key entries could not be obtained: " + ex.getMessage(), ex);
             }
@@ -429,7 +406,8 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
                                        final Map<String, Object> params,
                                        final IServices services)
             throws CryptoTokenOfflineException {
-        try {
+        throw new UnsupportedOperationException("Import not supported by crypto token");
+        /*try {
             final KeyStore keyStore = delegate.getActivatedKeyStore();
             final Key key = keyStore.getKey(alias, athenticationCode);
             
@@ -441,7 +419,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
-        }
+        }*/
     }
 
     @Override
@@ -502,9 +480,9 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
         final PrivateKey privateKey = getPrivateKey(alias);
         final List<Certificate> certificateChain = getCertificateChain(alias);
         if ((certificateChain.size() == 1 && CryptoTokenHelper.isDummyCertificate(certificateChain.get(0)) && !includeDummyCertificate)) {
-            return new DefaultCryptoInstance(alias, context, delegate.getActivatedKeyStore().getProvider(), privateKey, certificateChain.get(0).getPublicKey());
+            return new DefaultCryptoInstance(alias, context, Security.getProvider(delegate.getSignProviderName()), privateKey, certificateChain.get(0).getPublicKey());
         } else {
-            return new DefaultCryptoInstance(alias, context, delegate.getActivatedKeyStore().getProvider(), privateKey, certificateChain);
+            return new DefaultCryptoInstance(alias, context, Security.getProvider(delegate.getSignProviderName()), privateKey, certificateChain);
         }
     }
 
@@ -522,21 +500,6 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
             result.add(new CK_ATTRIBUTE(attribute.getId(), attribute.getValue()));
         }
         return result.toArray(new CK_ATTRIBUTE[0]);
-    }
-
-    private static class KeyStoreAzureKeyVaultCryptoToken extends org.cesecore.keys.token.AzureCryptoToken {
-
-        public KeyStoreAzureKeyVaultCryptoToken() throws InstantiationException {
-            super();
-        }
-
-        public KeyStore getActivatedKeyStore() throws CryptoTokenOfflineException {
-            try {
-                return getKeyStore().getKeyStore(); // TODO: Consider if we should instead use the CachingKeystoreWrapper
-            } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
-                throw new CryptoTokenOfflineException(ex);
-            }
-        }
     }
 
 }

@@ -198,7 +198,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
     public void activate(String authenticationcode, IServices services) throws CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException {
         try {
             delegate.activate(authenticationcode.toCharArray());
-            //keystoreDelegator = new JavaKeyStoreDelegator(delegate.getActivatedKeyStore());
+            keystoreDelegator = new JavaKeyStoreDelegator(delegate.getActivatedKeyStore());
         } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
             LOG.error("Activate failed", ex);
             throw new CryptoTokenOfflineException(ex);
@@ -218,7 +218,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
     @Override
     public boolean deactivate(IServices services) throws CryptoTokenOfflineException {
         delegate.deactivate();
-        //keystoreDelegator = null;
+        keystoreDelegator = null;
         return true;
     }
 

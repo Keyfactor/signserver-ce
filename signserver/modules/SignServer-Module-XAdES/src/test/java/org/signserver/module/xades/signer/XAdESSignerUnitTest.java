@@ -685,7 +685,7 @@ public class XAdESSignerUnitTest {
     @Test
     public void testProcessData_basicSigningDefaultECDSA() throws Exception {
         testProcessData_basicSigningInternal(KeyType.ECDSA,
-                null, XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA1,
+                null, XAdESSigner.SIGNATURE_METHOD_ECDSA_SHA256,
                 "NONE", Collections.<String>emptyList(), null, false, false, null, null);
     }
     

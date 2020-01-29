@@ -529,7 +529,7 @@ public class XAdESSigner extends BaseSigner {
             if (signatureAlgorithm == null) {
                 if ("EC".equals(keyAlgorithmName)) {
                     // DefaultAlgorithmsProviderEx only handles RSA and DSA
-                    return new GenericAlgorithm(SIGNATURE_METHOD_ECDSA_SHA1);
+                    return new GenericAlgorithm(SIGNATURE_METHOD_ECDSA_SHA256);
                 }
                 // use default xades4j behavior when not configured for the worker
                 return super.getSignatureAlgorithm(keyAlgorithmName);

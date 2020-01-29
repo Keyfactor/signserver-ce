@@ -137,6 +137,11 @@ public class CryptoTokenHelper {
 
     public static final String PROPERTY_USE_CACHE = "USE_CACHE";
     public static final String DEFAULT_PROPERTY_USE_CACHE = "TRUE";
+ 
+    // properties for Azure Key Vault
+    public static final String PROPERTY_KEY_VAULT_NAME = "KEY_VAULT_NAME";
+    public static final String PROPERTY_KEY_VAULT_TYPE = "KEY_VAULT_TYPE";
+    public static final String PROPERTY_KEY_VAULT_CLIENT_ID = "KEY_VAULT_CLIENT_ID";
 
     public enum TokenEntryFields {
         /** Key alias of entry. */
@@ -224,6 +229,26 @@ public class CryptoTokenHelper {
         if (prop != null) {
             props.setProperty(org.cesecore.keys.token.PKCS11CryptoToken.SLOT_LABEL_TYPE, prop);
         }
+        return props;
+    }
+
+    public static Properties fixAzureKeyVaultProperties(final Properties props) {
+        String prop = props.getProperty(PROPERTY_KEY_VAULT_NAME);
+
+        if (prop != null) {
+            props.setProperty("keyVaultName", prop);
+        }
+
+        prop = props.getProperty(PROPERTY_KEY_VAULT_TYPE);
+        if (prop != null) {
+            props.setProperty("keyVaultType", prop);
+        }
+
+        prop = props.getProperty(PROPERTY_KEY_VAULT_CLIENT_ID);
+        if (prop != null) {
+            props.setProperty("keyVaultClientID", prop);
+        }
+        
         return props;
     }
     

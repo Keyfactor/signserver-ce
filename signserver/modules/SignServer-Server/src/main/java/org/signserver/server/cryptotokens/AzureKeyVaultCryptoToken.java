@@ -28,7 +28,6 @@ import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -56,7 +55,7 @@ import static org.signserver.server.cryptotokens.CryptoTokenHelper.SECRET_KEY_PR
 import sun.security.pkcs11.wrapper.CK_ATTRIBUTE;
 
 /**
- * CryptoToken implementation wrapping the new PKCS11CryptoToken from CESeCore.
+ * CryptoToken implementation wrapping the new AzureCryptoToken from CESeCore.
  * 
  * Note: The mapping between SignServer APIs and CESeCore is not perfect. In 
  * particular the SignServer calls for testing and generating key-pairs takes 

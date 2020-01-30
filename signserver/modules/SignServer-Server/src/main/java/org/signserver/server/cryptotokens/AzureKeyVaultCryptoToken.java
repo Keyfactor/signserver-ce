@@ -210,23 +210,6 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
         return delegate.getSignProviderName();
     }
 
-    private List<Certificate> getCertificateChain(String alias) throws CryptoTokenOfflineException {
-        System.err.println("Fix chain");
-        return Collections.emptyList();
-        /*try {
-            final List<Certificate> result;
-            final Certificate[] certChain = delegate.getActivatedKeyStore().getCertificateChain(alias);
-            if (certChain == null) {
-                result = null;
-            } else {
-                result = Arrays.asList(certChain);
-            }
-            return result;
-        } catch (KeyStoreException ex) {
-            throw new CryptoTokenOfflineException(ex);
-        }*/
-    }
-
     @Override
     public ICertReqData genCertificateRequest(ISignerCertReqInfo info,
             final boolean explicitEccParameters, String alias, IServices services)
@@ -477,12 +460,11 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
             InvalidAlgorithmParameterException,
             UnsupportedCryptoTokenParameter,
             IllegalRequestException {
-        final PrivateKey privateKey = getPrivateKey(alias);
-        final List<Certificate> certificateChain = getCertificateChain(alias);
-        if ((certificateChain.size() == 1 && CryptoTokenHelper.isDummyCertificate(certificateChain.get(0)) && !includeDummyCertificate)) {
-            return new DefaultCryptoInstance(alias, context, Security.getProvider(delegate.getSignProviderName()), privateKey, certificateChain.get(0).getPublicKey());
-        } else {
-            return new DefaultCryptoInstance(alias, context, Security.getProvider(delegate.getSignProviderName()), privateKey, certificateChain);
+        try {
+            final PrivateKey privateKey = getPrivateKey(alias);
+            return new DefaultCryptoInstance(alias, context, Security.getProvider(delegate.getSignProviderName()), privateKey, delegate.getPublicKey(alias));
+        } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+            throw new CryptoTokenOfflineException(ex);
         }
     }
 

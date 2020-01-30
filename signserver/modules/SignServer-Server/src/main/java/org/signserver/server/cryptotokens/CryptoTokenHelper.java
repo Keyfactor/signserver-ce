@@ -232,9 +232,9 @@ public class CryptoTokenHelper {
         return props;
     }
 
+    // TODO: some duplication from fixP11Properties
     public static Properties fixAzureKeyVaultProperties(final Properties props) {
         String prop = props.getProperty(PROPERTY_KEY_VAULT_NAME);
-
         if (prop != null) {
             props.setProperty("keyVaultName", prop);
         }
@@ -252,6 +252,16 @@ public class CryptoTokenHelper {
         prop = props.getProperty(PROPERTY_PIN);
         if (prop != null) {
             props.setProperty("pin", prop);
+        }
+
+        prop = props.getProperty(PROPERTY_DEFAULTKEY);
+        if (prop != null) {
+            props.setProperty("defaultKey", prop);
+        }
+
+        prop = props.getProperty(PROPERTY_NEXTCERTSIGNKEY);
+        if (prop != null) {
+            props.setProperty("nextCertSignKey", prop);
         }
         
         return props;

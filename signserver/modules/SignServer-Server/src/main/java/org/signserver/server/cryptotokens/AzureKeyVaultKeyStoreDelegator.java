@@ -5,6 +5,7 @@
  */
 package org.signserver.server.cryptotokens;
 
+import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -12,6 +13,7 @@ import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -33,12 +35,17 @@ class AzureKeyVaultKeyStoreDelegator implements KeyStoreDelegator {
 
     @Override
     public boolean containsAlias(String alias) throws KeyStoreException {
-        throw new UnsupportedOperationException("Not supported yet");
+        return delegate.isAliasUsed(alias);
     }
 
     @Override
     public void deleteEntry(String alias) throws KeyStoreException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            delegate.deleteEntry(alias);
+        } catch (NoSuchAlgorithmException | CertificateException | IOException |
+                 org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+            throw new KeyStoreException("Failed to delete entry", ex);
+        }
     }
 
     @Override

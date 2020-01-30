@@ -79,6 +79,7 @@ ab1784abbb9e0ed0869ab6568fe46f1faa79fb5e948cf96450daecd9d27ba1db  ./ext/jetty-io
 7da7c61926fd9ecc5ea8511efb4687893410b75fe17d4815137b83e74e7648f5  ./ext/jna-3.3.0.jar;                                    "JNA"
 6dcd46f79ff8927172869cab26b1d86fb9a56880f8f756216378c87f34ea05af  ./ext/jnr-ffi-0.6.0.jar;                                "jnr-ffi"
 3f8c1de6b30af673813adfbf02e8b3a18a48deac566179d4f13d3347e26f3e22  ./ext/jsign-core-2.1-signserver5.1.jar;                 "Jsign"
+108045c9675ebf6d6ec4d8dcc331693f9b944ac7c87de52dccff2c55e8dfa6f1  ./ext/json-simple-1.1.1.jar;                            "json-simple"
 1d31696445697720527091754369082a6651bd49781b6005deb94e56753406f9  ./ext/log4j-1.2.17.jar;                                 "Log4j"
 78134c71aa9f9cebbc96a837f12c85590a4f2b587b51831a45faafb68381b1fc  ./ext/no-clover/clover.jar;                             "SignServer"
 e3dab03c5c81f885f6a643aec5fe2257cfba3cb244f26cceb4011e7492cb76c9  ./ext/poi-4.0.1.jar;                                    "Apache POI"

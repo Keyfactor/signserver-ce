@@ -248,6 +248,11 @@ public class CryptoTokenHelper {
         if (prop != null) {
             props.setProperty("keyVaultClientID", prop);
         }
+
+        prop = props.getProperty(PROPERTY_PIN);
+        if (prop != null) {
+            props.setProperty("pin", prop);
+        }
         
         return props;
     }

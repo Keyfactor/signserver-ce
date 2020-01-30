@@ -8,6 +8,7 @@ package org.signserver.server.cryptotokens;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -41,9 +42,12 @@ class AzureKeyVaultKeyStoreDelegator implements KeyStoreDelegator {
     }
 
     @Override
-    public Certificate getCertificate(String keyAlias) throws KeyStoreException {
-        System.err.println("TODO: KeyStoreDelegator expected to return a certificate...");
-        return null;
+    public PublicKey getPublicKey(String keyAlias) throws KeyStoreException {
+        try {
+            return delegate.getPublicKey(keyAlias);
+        } catch (org.cesecore.keys.token.CryptoTokenOfflineException ex) {
+            throw new KeyStoreException(ex);
+        }
     }
 
     @Override

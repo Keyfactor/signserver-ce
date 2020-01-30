@@ -15,6 +15,7 @@ package org.signserver.server.cryptotokens;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.util.List;
@@ -54,7 +55,8 @@ public interface KeyStoreDelegator {
      * @return Certificate associated with alias
      * @throws KeyStoreException 
      */
-    public Certificate getCertificate(String keyAlias) throws KeyStoreException;
+    //public Certificate getCertificate(String keyAlias) throws KeyStoreException;
+    public PublicKey getPublicKey(String keyAlias) throws KeyStoreException;
     
     /**
      * Acquire exclusive use of a PrivateKey instance.

@@ -71,8 +71,15 @@ public class JavaKeyStoreDelegator implements KeyStoreDelegator {
     }
 
     @Override
-    public Certificate getCertificate(String keyAlias) throws KeyStoreException {
-        return keystore.getCertificate(keyAlias);
+    public PublicKey getPublicKey(String keyAlias) throws KeyStoreException {
+        final PublicKey result;
+        final Certificate certificate = keystore.getCertificate(keyAlias);
+        if (certificate == null) {
+            result = null;
+        } else {
+            result = certificate.getPublicKey();
+        }
+        return result;
     }
 
     @Override

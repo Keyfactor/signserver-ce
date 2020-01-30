@@ -323,16 +323,15 @@ public class CryptoTokenHelper {
                         PrivateKey privateKey = null;
                         try {
                             privateKey = keyStore.aquirePrivateKey(keyAlias, authCode);
-                            final Certificate entryCert = keyStore.getCertificate(keyAlias);
-                            if (entryCert != null) {
-                                final PublicKey publicKey = entryCert.getPublicKey();
+                            final PublicKey publicKey = keyStore.getPublicKey(keyAlias);
+                            if (publicKey != null) {
                                 publicKeyHash = createKeyHash(publicKey);
                                 testSignAndVerify(privateKey, publicKey, signatureProvider, signatureAlgorithm);
                                 success = true;
                                 status = "";
                             } else {
                                 status = "Not testing keys with alias "
-                                        + keyAlias + ". No certificate exists.";
+                                        + keyAlias + ". No public key exists.";
                             }
                         } catch (ClassCastException ce) {
                             status = "Not testing keys with alias "
@@ -735,8 +734,8 @@ public class CryptoTokenHelper {
      * @throws CryptoTokenOfflineException in case the keys does not match
      */
     public static void ensureNewPublicKeyMatchesOld(KeyStoreDelegator keyStore, String alias, Certificate newCertificate) throws KeyStoreException, CryptoTokenOfflineException {
-        Certificate oldCert = keyStore.getCertificate(alias);
-        if (!oldCert.getPublicKey().equals(newCertificate.getPublicKey())) {
+        PublicKey oldPublicKey = keyStore.getPublicKey(alias);
+        if (!oldPublicKey.equals(newCertificate.getPublicKey())) {
             throw new CryptoTokenOfflineException("New certificate public key does not match current one");
         }
     }
@@ -805,8 +804,8 @@ public class CryptoTokenHelper {
             PrivateKey key = null;
             try {
                 key = keyStore.aquirePrivateKey(alias, authCode);
-                final X509Certificate oldCert = (X509Certificate) keyStore.getCertificate(alias);
-                final X509Certificate newCert = createDummyCertificate(alias, params, new KeyPair(oldCert.getPublicKey(), key), provider);
+                final PublicKey oldPublicKey = keyStore.getPublicKey(alias);
+                final X509Certificate newCert = createDummyCertificate(alias, params, new KeyPair(oldPublicKey, key), provider);
 
                 keyStore.setKeyEntry(alias, key, authCode, new Certificate[] { newCert });
             } finally {

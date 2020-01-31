@@ -49,15 +49,14 @@ public interface KeyStoreDelegator {
     public void deleteEntry(String alias) throws KeyStoreException;
 
     /**
-     * Get a certificate associated with an alias.
+     * Get the public key associated with an alias.
      * 
      * @param keyAlias
-     * @return Certificate associated with alias
+     * @return Public key associated with alias
      * @throws KeyStoreException 
      */
-    //public Certificate getCertificate(String keyAlias) throws KeyStoreException;
     public PublicKey getPublicKey(String keyAlias) throws KeyStoreException;
-    
+
     /**
      * Acquire exclusive use of a PrivateKey instance.
      *

@@ -28,6 +28,7 @@ import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -102,6 +103,36 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
                 signatureAlgorithm = value;
             }
             
+            final String keyVaultName =
+                    props.getProperty(CryptoTokenHelper.PROPERTY_KEY_VAULT_NAME);
+            final String keyVaultClientId =
+                    props.getProperty(CryptoTokenHelper.PROPERTY_KEY_VAULT_CLIENT_ID);
+            final String pin = props.getProperty(CryptoTokenHelper.PROPERTY_PIN);
+            final List<String> missingRequiredProperties = new LinkedList<>();
+
+            if (StringUtils.isBlank(keyVaultName)) {
+                missingRequiredProperties.add(CryptoTokenHelper.PROPERTY_KEY_VAULT_NAME);
+            }
+
+            if (StringUtils.isBlank(keyVaultClientId)) {
+                missingRequiredProperties.add(CryptoTokenHelper.PROPERTY_KEY_VAULT_CLIENT_ID);
+            }
+            
+            if (StringUtils.isBlank(pin)) {
+                missingRequiredProperties.add(CryptoTokenHelper.PROPERTY_PIN);
+            }
+
+            if (!missingRequiredProperties.isEmpty()) {
+                final String message;
+
+                if (missingRequiredProperties.size() == 1) {
+                    message = "Missing value for " + missingRequiredProperties.get(0);
+                } else {
+                    message = "Missing values for " + missingRequiredProperties.toString();
+                }
+
+                throw new CryptoTokenInitializationFailureException(message);
+            }
             
             props = CryptoTokenHelper.fixAzureKeyVaultProperties(props);
 

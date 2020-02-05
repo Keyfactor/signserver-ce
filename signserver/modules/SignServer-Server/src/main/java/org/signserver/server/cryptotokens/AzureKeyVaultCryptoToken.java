@@ -434,19 +434,6 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
                                        final IServices services)
             throws CryptoTokenOfflineException {
         throw new UnsupportedOperationException("Import not supported by crypto token");
-        /*try {
-            final KeyStore keyStore = delegate.getActivatedKeyStore();
-            final Key key = keyStore.getKey(alias, athenticationCode);
-            
-            CryptoTokenHelper.ensureNewPublicKeyMatchesOld(keystoreDelegator,
-                                                           alias, certChain.get(0));
-
-            keyStore.setKeyEntry(alias, key, athenticationCode,
-                                 certChain.toArray(new Certificate[0]));
-        } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        }*/
     }
 
     @Override

@@ -27,6 +27,7 @@ import java.security.Security;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -91,6 +92,8 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
 
     private KeyStoreDelegator keystoreDelegator;
 
+    private final String[] allowedKeyVaultTypes = {"standard", "premium"};
+
     @Override
     public void init(int workerId, Properties props, org.signserver.server.IServices services) throws CryptoTokenInitializationFailureException {
         try {
@@ -107,6 +110,8 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
                     props.getProperty(CryptoTokenHelper.PROPERTY_KEY_VAULT_NAME);
             final String keyVaultClientId =
                     props.getProperty(CryptoTokenHelper.PROPERTY_KEY_VAULT_CLIENT_ID);
+            final String keyVaultType =
+                    props.getProperty(CryptoTokenHelper.PROPERTY_KEY_VAULT_TYPE);
             final String pin = props.getProperty(CryptoTokenHelper.PROPERTY_PIN);
             final List<String> missingRequiredProperties = new LinkedList<>();
 
@@ -122,6 +127,10 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
                 missingRequiredProperties.add(CryptoTokenHelper.PROPERTY_PIN);
             }
 
+            if (StringUtils.isBlank(keyVaultType)) {
+                missingRequiredProperties.add(CryptoTokenHelper.PROPERTY_KEY_VAULT_TYPE);
+            }
+            
             if (!missingRequiredProperties.isEmpty()) {
                 final String message;
 
@@ -132,6 +141,11 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
                 }
 
                 throw new CryptoTokenInitializationFailureException(message);
+            }
+
+            if (!Arrays.asList(allowedKeyVaultTypes).contains(keyVaultType)) {
+                throw new CryptoTokenInitializationFailureException("Unsupported KEY_VAULT_TYPE: " +
+                        keyVaultType + ", allowed values: " + Arrays.asList(allowedKeyVaultTypes).toString());
             }
             
             props = CryptoTokenHelper.fixAzureKeyVaultProperties(props);

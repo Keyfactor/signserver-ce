@@ -296,79 +296,9 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
                 && !keySpec.contains("dsa")) {
             keySpec = "dsa" + keySpec;
         }
-        
-        
-                
+   
         try {
-            
             delegate.generateKeyPair(keySpec, alias);
-            
-            /*
-            // Construct the apropriate AlgorithmParameterSpec
-            final AlgorithmParameterSpec spec;
-            if ("RSA".equalsIgnoreCase(keyAlgorithm)) {
-                if (keySpec.contains("exp")) {
-                    spec = CryptoTokenHelper.getPublicExponentParamSpecForRSA(keySpec);
-                } else {
-                    spec = new RSAKeyGenParameterSpec(Integer.valueOf(keySpec), RSAKeyGenParameterSpec.F4);
-                }
-            } else if ("DSA".equalsIgnoreCase(keyAlgorithm)) {
-                spec = null; // We don't currently support setting attributes for DSA keys. This could be added in future if needed but requires changes in underlaying APIs
-            } else if ("ECDSA".equalsIgnoreCase(keyAlgorithm)) {
-                // Convert it to the OID if possible since the human friendly name might differ in the provider
-                if (ECUtil.getNamedCurveOid(keySpec) != null) {
-                    final String oidOrName = AlgorithmTools.getEcKeySpecOidFromBcName(keySpec);
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("keySpecification '" + keySpec + "' transformed into OID " + oidOrName);
-                    }
-                    spec = new ECGenParameterSpec(oidOrName);
-                } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Curve did not have an OID in BC, trying to pick up Parameter spec: " + keySpec);
-                    }
-                    // This may be a new curve without OID, like curve25519 and we have to do something a bit different
-                    X9ECParameters ecP = CustomNamedCurves.getByName(keySpec);
-                    if (ecP == null) {
-                        throw new InvalidAlgorithmParameterException("Can not generate EC curve, no OID and no ECParameters found: " + keySpec);
-                    }
-                    spec = new org.bouncycastle.jce.spec.ECParameterSpec(ecP.getCurve(), ecP.getG(), ecP.getN(), ecP.getH(), ecP.getSeed()); 
-                }
-            } else {
-                throw new IllegalArgumentException("Unsupported key algorithm: " + keyAlgorithm);
-            }
-            
-            if (spec == null) {
-                // Generate the old way without support for attributes
-                delegate.generateKeyPair(keySpec, alias);
-            } else {
-                if (CryptoTokenHelper.isJREPatched()) {
-                    final CK_ATTRIBUTE[] publicTemplate = convert(attributeProperties.getPublicTemplate(keyAlgorithm));
-                    final CK_ATTRIBUTE[] privateTemplate = convert(attributeProperties.getPrivateTemplate(keyAlgorithm));
-
-                    // TODO: Later on we could override attribute properties from the params parameter
-
-                    // Use different P11AsymmetricParameterSpec classes as the underlaying library assumes the spec contains the string "RSA" or "EC"
-                    final AlgorithmParameterSpec specWithAttributes;
-                    if ("RSA".equalsIgnoreCase(keyAlgorithm)) {
-                        specWithAttributes = new RSAP11AsymmetricParameterSpec(publicTemplate, privateTemplate, spec);
-                    } else if ("ECDSA".equalsIgnoreCase(keyAlgorithm)) {
-                        specWithAttributes = new ECP11AsymmetricParameterSpec(publicTemplate, privateTemplate, spec);
-                    } else {
-                        throw new IllegalArgumentException("Unsupported key algorithm: " + keyAlgorithm);
-                    }
-                    
-                    delegate.generateKeyPair(specWithAttributes, alias);
-                } else {
-                    // Generate without support for attributes
-                    delegate.generateKeyPair(spec, alias);
-                }
-            }
-
-            if (params != null) {
-                final KeyStore ks = delegate.getActivatedKeyStore();
-                CryptoTokenHelper.regenerateCertIfWanted(alias, authCode, params, keystoreDelegator, ks.getProvider().getName());
-            }
-            */
         } catch (InvalidAlgorithmParameterException | org.cesecore.keys.token.CryptoTokenOfflineException  ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);

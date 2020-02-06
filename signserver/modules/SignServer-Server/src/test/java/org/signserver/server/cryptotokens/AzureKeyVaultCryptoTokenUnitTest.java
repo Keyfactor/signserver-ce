@@ -42,13 +42,76 @@ public class AzureKeyVaultCryptoTokenUnitTest extends TestCase {
         }
     }
 
+    private void testWithMissingProperty(final String missingProperty)
+            throws Exception {
+        final AzureKeyVaultCryptoToken instance = new AzureKeyVaultCryptoToken();
+
+        try {
+            final Properties props = new Properties();
+
+            props.setProperty(CryptoTokenHelper.PROPERTY_KEY_VAULT_NAME, "test-keyvault");
+            props.setProperty(CryptoTokenHelper.PROPERTY_KEY_VAULT_CLIENT_ID ,
+                              "dummy-client-id");
+            props.setProperty(CryptoTokenHelper.PROPERTY_PIN, "foo123");
+            props.setProperty(CryptoTokenHelper.PROPERTY_KEY_VAULT_TYPE,
+                              "standard");
+            props.remove(missingProperty);
+
+            instance.init(42, props, null);
+        } catch (CryptoTokenInitializationFailureException ex) {
+            assertEquals("Expected error message",
+                         "Missing value for " + missingProperty,
+                         ex.getMessage());
+        }
+    }
+
+    /**
+     * Test that missing KEY_VAULT_NAME gives expected error message.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test02MissingKeyVaultName() throws Exception {
+        testWithMissingProperty(CryptoTokenHelper.PROPERTY_KEY_VAULT_NAME);
+    }
+
+    /**
+     * Test that missing KEY_VAULT_CLIENT_ID gives expected error message.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test03MissingKeyVaultClientID() throws Exception {
+        testWithMissingProperty(CryptoTokenHelper.PROPERTY_KEY_VAULT_CLIENT_ID);
+    }
+
+    /**
+     * Test that missing KEY_VAULT_TYPE gives expected error message.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test03MissingKeyVaultType() throws Exception {
+        testWithMissingProperty(CryptoTokenHelper.PROPERTY_KEY_VAULT_TYPE);
+    }
+
+    /**
+     * Test that missing PIN gives expected error message.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test04MissingPin() throws Exception {
+        testWithMissingProperty(CryptoTokenHelper.PROPERTY_PIN);
+    }
+
     /**
      * Test that setting an unknown key vault type results in an error.
      *
      * @throws Exception 
      */
     @Test
-    public void test02UnknownKeyVaultType() throws Exception {
+    public void test05UnknownKeyVaultType() throws Exception {
         final AzureKeyVaultCryptoToken instance = new AzureKeyVaultCryptoToken();
 
         try {

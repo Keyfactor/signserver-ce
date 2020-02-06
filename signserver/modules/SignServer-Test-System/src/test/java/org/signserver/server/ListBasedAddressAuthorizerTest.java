@@ -670,19 +670,23 @@ public class ListBasedAddressAuthorizerTest extends ModulesTestCase {
     private int process(URL workerUrl, final String forwardIPs) {
         int responseCode = -1;
 
-        HttpURLConnection conn;
+        HttpURLConnection conn = null;
         try {
             conn = (HttpURLConnection) workerUrl.openConnection();
             conn.setAllowUserInteraction(false);
             conn.setRequestMethod("GET");
             conn.setDoOutput(false);
-            conn.setReadTimeout(2000);
+            conn.setReadTimeout(5000);
             if (forwardIPs != null) {
                 conn.addRequestProperty(RequestContext.X_FORWARDED_FOR, forwardIPs);
             }
             responseCode = conn.getResponseCode();
         } catch (IOException ex) {
             LOG.error(ex);
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
         }
         return responseCode;
     }

@@ -110,7 +110,6 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
                     props.getProperty(CryptoTokenHelper.PROPERTY_KEY_VAULT_CLIENT_ID);
             final String keyVaultType =
                     props.getProperty(CryptoTokenHelper.PROPERTY_KEY_VAULT_TYPE);
-            final String pin = props.getProperty(CryptoTokenHelper.PROPERTY_PIN);
             final List<String> missingRequiredProperties = new LinkedList<>();
 
             if (StringUtils.isBlank(keyVaultName)) {
@@ -119,10 +118,6 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
 
             if (StringUtils.isBlank(keyVaultClientId)) {
                 missingRequiredProperties.add(CryptoTokenHelper.PROPERTY_KEY_VAULT_CLIENT_ID);
-            }
-            
-            if (StringUtils.isBlank(pin)) {
-                missingRequiredProperties.add(CryptoTokenHelper.PROPERTY_PIN);
             }
 
             if (StringUtils.isBlank(keyVaultType)) {

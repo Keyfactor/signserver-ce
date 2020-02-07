@@ -37,7 +37,7 @@ public class AzureKeyVaultCryptoTokenUnitTest extends TestCase {
             instance.init(42, new Properties(), null);
         } catch (CryptoTokenInitializationFailureException ex) {
             assertEquals("Expected error message",
-                         "Missing values for [KEY_VAULT_NAME, KEY_VAULT_CLIENT_ID, PIN, KEY_VAULT_TYPE]",
+                         "Missing values for [KEY_VAULT_NAME, KEY_VAULT_CLIENT_ID, KEY_VAULT_TYPE]",
                          ex.getMessage());
         }
     }
@@ -52,7 +52,6 @@ public class AzureKeyVaultCryptoTokenUnitTest extends TestCase {
             props.setProperty(CryptoTokenHelper.PROPERTY_KEY_VAULT_NAME, "test-keyvault");
             props.setProperty(CryptoTokenHelper.PROPERTY_KEY_VAULT_CLIENT_ID ,
                               "dummy-client-id");
-            props.setProperty(CryptoTokenHelper.PROPERTY_PIN, "foo123");
             props.setProperty(CryptoTokenHelper.PROPERTY_KEY_VAULT_TYPE,
                               "standard");
             props.remove(missingProperty);
@@ -96,22 +95,12 @@ public class AzureKeyVaultCryptoTokenUnitTest extends TestCase {
     }
 
     /**
-     * Test that missing PIN gives expected error message.
-     *
-     * @throws Exception 
-     */
-    @Test
-    public void test04MissingPin() throws Exception {
-        testWithMissingProperty(CryptoTokenHelper.PROPERTY_PIN);
-    }
-
-    /**
      * Test that setting an unknown key vault type results in an error.
      *
      * @throws Exception 
      */
     @Test
-    public void test05UnknownKeyVaultType() throws Exception {
+    public void test04UnknownKeyVaultType() throws Exception {
         final AzureKeyVaultCryptoToken instance = new AzureKeyVaultCryptoToken();
 
         try {

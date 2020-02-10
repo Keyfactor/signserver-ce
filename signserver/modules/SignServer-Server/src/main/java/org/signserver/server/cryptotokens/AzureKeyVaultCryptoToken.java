@@ -52,7 +52,6 @@ import org.signserver.common.TokenOutOfSpaceException;
 import org.signserver.common.WorkerStatus;
 import org.signserver.server.ExceptionUtil;
 import org.signserver.server.IServices;
-import static org.signserver.server.cryptotokens.CryptoTokenHelper.SECRET_KEY_PREFIX;
 
 /**
  * CryptoToken implementation wrapping the new AzureCryptoToken from CESeCore.
@@ -330,24 +329,8 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
         }
 
         try {
-            if (CryptoTokenHelper.isKeyAlgorithmAsymmetric(keyAlgorithm)) {
-                generateKeyPair(keyAlgorithm, keySpec, alias, authCode, params, services);
-            } else {
-                generateSecretKey(keyAlgorithm, keySpec, alias);
-            }
+            generateKeyPair(keyAlgorithm, keySpec, alias, authCode, params, services);
         } catch (UnsupportedOperationException ex) {
-            LOG.error(ex, ex);
-            throw new CryptoTokenOfflineException(ex);
-        }
-    }
-    
-    private void generateSecretKey(String keyAlgorithm, String keySpec, String alias) throws CryptoTokenOfflineException {
-        if (keyAlgorithm.startsWith(SECRET_KEY_PREFIX)) {
-            keyAlgorithm = keyAlgorithm.substring(keyAlgorithm.indexOf(SECRET_KEY_PREFIX) + SECRET_KEY_PREFIX.length());
-        }
-        try {
-            delegate.generateKey(keyAlgorithm, Integer.valueOf(keySpec), alias);
-        } catch (IllegalArgumentException | NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException | org.cesecore.keys.token.CryptoTokenOfflineException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
         }
@@ -392,7 +375,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
                 synchronized (workerCache) {
                     result = (ICryptoInstance) workerCache.get(WORKERCACHE_ENTRY);
                     if (result == null) {
-                        result = createCryptoInstance(alias, context, params.containsKey(PARAM_INCLUDE_DUMMYCERTIFICATE));
+                        result = createCryptoInstance(alias, context);
                         workerCache.put(WORKERCACHE_ENTRY, result);
                     }
                 }
@@ -401,7 +384,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
         
         // In case of no caching just load the crypt instance
         if (result == null) {
-            result = createCryptoInstance(alias, context, params.containsKey(PARAM_INCLUDE_DUMMYCERTIFICATE));
+            result = createCryptoInstance(alias, context);
         }
         
         return result;
@@ -412,7 +395,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
      * the crypto instance.
      * Possibly expensive call if a network HSM is used.
      */
-    private ICryptoInstance createCryptoInstance(String alias, RequestContext context, boolean includeDummyCertificate) throws
+    private ICryptoInstance createCryptoInstance(String alias, RequestContext context) throws
             CryptoTokenOfflineException, 
             NoSuchAliasException, 
             InvalidAlgorithmParameterException,

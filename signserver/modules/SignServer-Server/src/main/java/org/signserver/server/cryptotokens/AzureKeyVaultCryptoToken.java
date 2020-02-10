@@ -300,6 +300,10 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
     
     @Override
     public void generateKey(String keyAlgorithm, String keySpec, String alias, char[] authCode, Map<String, Object> params, IServices services) throws CryptoTokenOfflineException, IllegalArgumentException {
+        if (!"RSA".equalsIgnoreCase(keyAlgorithm) &&
+            !"ECDSA".equalsIgnoreCase(keyAlgorithm)) {
+            throw new IllegalArgumentException("Only RSA and ECDSA is supported by AzureKeyVaultCryptoToken");
+        }
         if (keySpec == null) {
             throw new IllegalArgumentException("Missing keyspec parameter");
         }

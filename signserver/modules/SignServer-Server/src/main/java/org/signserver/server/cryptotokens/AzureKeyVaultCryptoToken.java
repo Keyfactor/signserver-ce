@@ -32,12 +32,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.keys.token.AzureCryptoToken;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
 import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
 import org.cesecore.util.query.QueryCriteria;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenInitializationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -333,6 +337,40 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
         } catch (UnsupportedOperationException ex) {
             LOG.error(ex, ex);
             throw new CryptoTokenOfflineException(ex);
+        } catch (CryptoTokenOfflineException ex) {
+            final String exMessage = ex.getMessage();
+            final String responseHeader = "JSON response: ";
+            
+            if (exMessage != null && exMessage.contains(responseHeader)) {
+                final String jsonText =
+                        exMessage.substring(exMessage.indexOf(responseHeader) +
+                                                              responseHeader.length());
+                final JSONParser parser = new JSONParser();
+
+                try {
+                    final JSONObject response =
+                            (JSONObject) parser.parse(jsonText);
+                    final JSONObject error = (JSONObject) response.get("error");
+
+                    if (error != null) {
+                        final String code = (String) error.get("code");
+                        final String message = (String) error.get("message");
+
+                        if ("BadParameter".equals(code)) {
+                            throw new IllegalArgumentException(message);
+                        } else {
+                            throw ex;
+                        }
+                    } else {
+                        throw ex;
+                    }
+                } catch (ParseException pex) {
+                    LOG.error("Failed to parse JSON response: " + pex.getMessage());
+                    throw ex;
+                }
+            } else {
+                throw ex;
+            }
         }
     }
 

@@ -681,12 +681,6 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             } catch (IllegalRequestException ok) {
                 LOG.debug("ok: " + ok.getMessage());
             }
-            try {
-                signPDF(sampleCertifiedFormFillingAllowed);
-                fail("Should not be possible to sign a certified document with FORM_FILLING");
-            } catch (IllegalRequestException ok) {
-                LOG.debug("ok: " + ok.getMessage());
-            }
         } finally {
             workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA256");
             workerSession.reloadConfiguration(WORKER1);
@@ -704,12 +698,6 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         try {
             signPDF(sampleCertifiedNoChangesAllowed256);
             fail("Should not be possible to sign a certified document with NO_CHANGES_ALLOWED");
-        } catch (IllegalRequestException ok) {
-            LOG.debug("ok: " + ok.getMessage());
-        }
-        try {
-            signPDF(sampleCertifiedFormFillingAllowed256);
-            fail("Should not be possible to sign a certified document with FORM_FILLING");
         } catch (IllegalRequestException ok) {
             LOG.debug("ok: " + ok.getMessage());
         }

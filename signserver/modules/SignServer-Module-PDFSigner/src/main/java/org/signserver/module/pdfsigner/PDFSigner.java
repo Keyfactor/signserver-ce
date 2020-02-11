@@ -609,11 +609,10 @@ public class PDFSigner extends BaseSigner {
         }
         
         // Don't sign documents where the certification does not allow it
-        if (reader.getCertificationLevel() == PdfSignatureAppearance.CERTIFIED_NO_CHANGES_ALLOWED
-                || reader.getCertificationLevel() == PdfSignatureAppearance.CERTIFIED_FORM_FILLING) {
+        if (reader.getCertificationLevel() == PdfSignatureAppearance.CERTIFIED_NO_CHANGES_ALLOWED) {
             throw new IllegalRequestException("Will not sign a certified document where signing is not allowed");
         }
-        
+  
         Permissions currentPermissions = Permissions.fromInt(reader.getPermissions());
         
         if (params.getSetPermissions() != null && params.getRemovePermissions() != null) {

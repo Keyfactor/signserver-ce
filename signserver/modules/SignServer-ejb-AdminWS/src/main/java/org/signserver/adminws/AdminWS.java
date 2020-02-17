@@ -1212,8 +1212,10 @@ public class AdminWS {
         final List<Elem> elements = QueryUtil.toElements(conditions);
         final QueryCriteria qc = QueryCriteria.create();
         
-        for (QueryOrdering order : orderings) {
-            qc.add(new Order(order.getColumn(), Order.Value.valueOf(order.getOrder().name())));
+        if (orderings != null) {
+            for (QueryOrdering order : orderings) {
+                qc.add(new Order(order.getColumn(), Order.Value.valueOf(order.getOrder().name())));
+            }
         }
         
         if (!elements.isEmpty()) {

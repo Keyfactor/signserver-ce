@@ -19,6 +19,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -1321,16 +1322,16 @@ public class AdminWS {
     public WSTokenSearchResults queryTokenEntries(@WebParam(name="workerId") int workerId, @WebParam(name="startIndex") int startIndex, @WebParam(name="max") int max, @WebParam(name="condition") final List<QueryCondition> conditions, @WebParam(name="ordering") final List<QueryOrdering> orderings, @WebParam(name="includeData") boolean includeData) throws OperationUnsupportedException, CryptoTokenOfflineException, QueryException, InvalidWorkerIdException, AuthorizationDeniedException, SignServerException, AdminNotAuthorizedException {
         try {
             final AdminInfo adminInfo = auth.requireAdminAuthorization(getCertificate(), "queryTokenEntries", String.valueOf(workerId), String.valueOf(startIndex), String.valueOf(max));
-            final List<Elem> elements = QueryUtil.toElements(conditions);
+            final List<Elem> elements = QueryUtil.toElements(conditions);    
             final QueryCriteria qc = QueryCriteria.create();
-            
-            for (QueryOrdering order : orderings) {
-                if (order.getColumn().equals(TOKEN_ENTRY_FIELDS_ALIAS)) {
-                    order.setColumn(TOKEN_ENTRY_FIELDS_KEY_ALIAS);
+            if (orderings != null) {
+                for (QueryOrdering order : orderings) {
+                    if (order.getColumn().equals(TOKEN_ENTRY_FIELDS_ALIAS)) {
+                        order.setColumn(TOKEN_ENTRY_FIELDS_KEY_ALIAS);
+                    }
+                    qc.add(new Order(order.getColumn(), Order.Value.valueOf(order.getOrder().name())));
                 }
-                qc.add(new Order(order.getColumn(), Order.Value.valueOf(order.getOrder().name())));
             }
-            
             if (!elements.isEmpty()) {
                 qc.add(QueryUtil.andAll(elements, 0));
             }

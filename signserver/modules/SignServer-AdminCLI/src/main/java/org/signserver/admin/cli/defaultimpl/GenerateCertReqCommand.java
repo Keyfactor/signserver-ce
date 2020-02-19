@@ -19,6 +19,7 @@ import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.common.AbstractCertReqData;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.PKCS10CertReqInfo;
 import org.signserver.common.WorkerIdentifier;
@@ -135,6 +136,8 @@ public class GenerateCertReqCommand extends AbstractAdminCommand {
             throw new IllegalCommandArgumentsException(ex.getMessage());
         } catch (IllegalCommandArgumentsException e) {
             throw e;
+        } catch (CryptoTokenOfflineException e) {
+             throw new CommandFailureException("Crypto token is offline: " + e.getLocalizedMessage());
         } catch (Exception e) {
             throw new UnexpectedCommandFailureException(e);
         }

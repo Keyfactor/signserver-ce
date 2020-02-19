@@ -139,7 +139,8 @@ public class AzureKeyVaultCryptoTokenSignTest {
     public void setUp() throws Exception {
         final boolean enabled =
                 Boolean.TRUE.toString().equalsIgnoreCase(testCase.getConfig().getProperty("test.azurekeyvault.enabled"));
-        Assume.assumeTrue(enabled);
+        Assume.assumeTrue("Assumes test.azurekeyvault.enabled in test-config.properties",
+                          enabled);
         SignServerUtil.installBCProvider();
     }
 

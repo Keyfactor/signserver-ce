@@ -748,24 +748,24 @@ public class AzureKeyVaultCryptoTokenSignTest {
     }
     
     /**
-     * Test signing by JackNJI11CryptoToken key with SHA256withRSA signature algorithm.
+     * Test signing by AzureKeyVaultCryptoToken key with SHA256withRSA signature algorithm.
      * 
      * @throws Exception
      */
     @Test
     public void testSign_SHA256withRSA_AzureKeyVaultCryptoToken() throws Exception {
-        LOG.info("testSign_SHA256withRSA_JackNJI11CryptoToken");
+        LOG.info("testSign_SHA256withRSA_AzureKeyVaultCryptoToken");
         testSigningWithProvidedSigAlgo("SHA256withRSA");
     }
     
     /**
-     * Test signing by JackNJI11CryptoToken key with SHA512withRSA signature algorithm.
+     * Test signing by AzureKeyVaultCryptoToken key with SHA512withRSA signature algorithm.
      * 
      * @throws Exception
      */
     @Test
     public void testSign_SHA512withRSA_AzureKeyVaultCryptoToken() throws Exception {
-        LOG.info("testSign_SHA512withRSA_JackNJI11CryptoToken");
+        LOG.info("testSign_SHA512withRSA_AzureKeyVaultCryptoToken");
         testSigningWithProvidedSigAlgo("SHA512withRSA");
     }
 }

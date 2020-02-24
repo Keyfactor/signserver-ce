@@ -42,12 +42,12 @@ to work on Windows. -->
     <echo level="verbose">basepath: ${basepath}</echo>
 
     <!-- copy in from ../signserver-custom -->
-    <property name="customsignserver.home" location="../signserver-custom" />
+    <property name="customsignserver.home" location="${basedir}/../signserver-custom" />
     <available file="${customsignserver.home}" type="dir" property="customsignserver.present" />
     <condition property="customsignserver.dir" value="${customsignserver.home}" else="conf">	<!-- This is just any dir that we know exists to avoid error messages.. -->
     	<isset property="customsignserver.present" />
     </condition>
-    <copy todir="." overwrite="true" failonerror="false" if:set="customsignserver.present">
+    <copy todir="${basedir}" overwrite="true" failonerror="false" if:set="customsignserver.present">
         <fileset dir="${customsignserver.dir}">
             <include name="**/*" unless="runoncesetup.hasrun"/>
         </fileset>

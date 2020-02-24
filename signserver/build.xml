@@ -12,7 +12,7 @@
 <!--                                                                         -->
 <!-- ======================================================================= -->
 <!-- Version: $Id$ -->
-<project name="signserver" default="usage" basedir=".">
+<project xmlns:if="ant:if" name="signserver" default="usage" basedir=".">
     <description>SignServer targets.</description>
     <property name="deploytools.version" value="2.2.1"/>
     <import file="res/deploytools/build-impl.xml"/>
@@ -40,6 +40,20 @@ to work on Windows. -->
         </filterchain>
     </loadresource>
     <echo level="verbose">basepath: ${basepath}</echo>
+
+    <!-- copy in from ../signserver-custom -->
+    <property name="customsignserver.home" location="../signserver-custom" />
+    <available file="${customsignserver.home}" type="dir" property="customsignserver.present" />
+    <condition property="customsignserver.dir" value="${customsignserver.home}" else="conf">	<!-- This is just any dir that we know exists to avoid error messages.. -->
+    	<isset property="customsignserver.present" />
+    </condition>
+    <copy todir="." overwrite="true" failonerror="false" if:set="customsignserver.present">
+        <fileset dir="${customsignserver.dir}">
+            <include name="**/*" unless="runoncesetup.hasrun"/>
+        </fileset>
+    </copy>
+    <!-- this property ensures that the copy operation is only made once -->
+    <property name="runoncesetup.hasrun" value="true"/>
 
     <available file="${conf}/${app.name}_build.properties" property="legacy-build-properties1.available" value="true"/>
     <available file="${app.name}_build.properties" property="legacy-build-properties2.available" value="true"/>

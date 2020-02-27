@@ -1,4 +1,5 @@
-<?xml version='1.0' encoding='UTF-8' ?>
+<?xml version="1.0" encoding="UTF-8"?>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -23,8 +24,8 @@
     Version: $Id$
     -->
     </ui:remove>
-
-    <f:metadata>
+    
+     <f:metadata>
         <f:viewParam name="workers" value="#{bulkBean.workerIds}"/>
         <f:viewParam name="previous" value="#{bulkBean.previous}"/>
     </f:metadata>
@@ -32,10 +33,10 @@
     <body>
 
         <ui:composition template="WEB-INF/templates/template.xhtml">
-            <ui:param name="activeMenu" value="workers"/>
+            <ui:param name="disableMenu" value="workers"/>
 
             <ui:define name="title">
-                <h:outputText value="#{text['Workers_-_Activate...']}"/>
+                <h:outputText value="#{text['Workers_-_Disable...']}"/>
             </ui:define>
 
             <ui:define name="top">
@@ -43,7 +44,7 @@
             </ui:define>
 
             <ui:define name="content">
-                <h1><h:outputText value="#{text['Activate']}"/></h1>
+                <h1><h:outputText value="#{text['Disable']}"/></h1>
 
                 <h:form>                    
                     <h:panelGroup rendered="#{empty bulkBean.workers}">
@@ -86,10 +87,8 @@
                         </h:dataTable>
 
                         <h:panelGrid columns="2">
-                            <h:outputLabel for="password"><h:outputText value="#{text['Authentication_Code_COLON']}"/></h:outputLabel> 
-                            <h:inputSecret id="password" value="#{bulkBean.activatePassword}" autocomplete="off"/>
                             <f:facet name="footer">
-                                <h:commandButton class="buttonFeatured" value="#{text['Activate']}" action="#{bulkBean.activateAction()}"/> <h:link value="#{text['Cancel']}" outcome="#{bulkBean.backLink}"></h:link>
+                                <h:commandButton class="buttonFeatured" value="#{text['Disable']}" action="#{bulkBean.disableAction()}"/> <h:link value="#{text['Cancel']}" outcome="#{bulkBean.backLink}"></h:link>
                             </f:facet>
                         </h:panelGrid>
 

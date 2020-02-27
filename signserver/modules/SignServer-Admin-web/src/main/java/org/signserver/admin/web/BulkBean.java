@@ -197,6 +197,48 @@ public class BulkBean {
             return "";
         }
     }
+    
+    public String enableAction() throws AdminNotAuthorizedException {
+        for (Worker worker : getSelectedWorkers()) {
+            try {
+               workerSessionBean.setWorkerProperty(authBean.getAdminCertificate(), worker.getId(), "Disabled", "FALSE");
+               workerSessionBean.reloadConfiguration(authBean.getAdminCertificate(), worker.getId());
+               selectedIds.remove(worker.getId());
+               worker.setError("");
+               worker.setSuccess("Enabled");
+            } catch (AdminNotAuthorizedException ex) {
+                worker.setError("Failed: " + ex.getMessage());
+            }
+        }
+
+        if (selectedIds.isEmpty()) {
+            return "workers?faces-redirect=true&amp;includeViewParams=true&amp;" + "selected=" + StringUtils.join(getWorkerIdsList(), ",");
+        } else {
+            return "";
+        }
+        
+    }
+    
+     public String disableAction() throws AdminNotAuthorizedException {
+        for (Worker worker : getSelectedWorkers()) {
+            try {
+               workerSessionBean.setWorkerProperty(authBean.getAdminCertificate(), worker.getId(), "Disabled", "TRUE");
+               workerSessionBean.reloadConfiguration(authBean.getAdminCertificate(), worker.getId());
+               selectedIds.remove(worker.getId());
+               worker.setError("");
+               worker.setSuccess("Disabled");
+            } catch (AdminNotAuthorizedException ex) {
+                worker.setError("Failed: " + ex.getMessage());
+            }
+        }
+
+        if (selectedIds.isEmpty()) {
+            return "workers?faces-redirect=true&amp;includeViewParams=true&amp;" + "selected=" + StringUtils.join(getWorkerIdsList(), ",");
+        } else {
+            return "";
+        }
+        
+    }
 
     public Map<String, Object> getAvailableWorkersMenu() throws AdminNotAuthorizedException {
         if (availableWorkersMenu == null) {

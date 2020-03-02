@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.3.0</p>
+                    <p>Version: 5.4.0-draft</p>
                 </div>
             </header>
 
@@ -855,6 +855,10 @@
         <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="AzureKeyVaultCryptoToken.html">AzureKeyVaultCryptoToken</a>
+
+            </li>
                             </ul>
             </li>
                                         <li class="collapsed">
@@ -1127,6 +1131,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Workers_Deactivation_Page.html">Workers Deactivation Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Enable_Page.html">Workers Enable Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Disable_Page.html">Workers Disable Page</a>
 
             </li>
                                         <li class="leaf">
@@ -1467,7 +1479,7 @@
     </div>
     <div class="section section-1" id="src-85921815_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjNSZWxlYXNlTm90ZXN2NS4zLjAtQ2hhbmdlTG9nOlJlc29sdmVkSXNzdWVz">
         <h1 class="heading "><span>Change Log: Resolved Issues</span></h1>
-    <p  >For full details of fixed bugs and implemented features in SignServer 5.3, refer to our <a  class="external-link" href="https://jira.primekey.se/issues/?jql=project%20%3D%20DSS%20AND%20resolution%20in%20(Fixed%2C%20Done)%20AND%20fixVersion%20%3D%205.3.0.Final">JIRA Issue Tracker</a>.    </p>
+    <p  >For full details of fixed bugs and implemented features in SignServer 5.3, refer to our <a  class="external-link" href="https://jira.primekey.se/issues/?jql=project%20%3D%20DSS%20AND%20resolution%20in%20(Fixed%2C%20Done)%20AND%20fixVersion%20%3D%205.3.0.Final%20ORDER%20BY%20resolution%20DESC">JIRA Issue Tracker</a>.    </p>
     <div class="section section-2" id="src-85921815_id-.SignServer5.3ReleaseNotesv5.3.0-IssuesResolvedin5.3.0">
         <h2 class="heading "><span>Issues Resolved in 5.3.0</span></h2>
     <p  >Released January 2020    </p>
@@ -1476,14 +1488,162 @@
     <div class="section section-2" id="src-85921815_id-.SignServer5.3ReleaseNotesv5.3.0-NewFeatures">
         <h2 class="heading "><span>New Features</span></h2>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2065">DSS-2065</a> - Implement APPX Signing    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2030">    <span style="color: #4a6ee0;">
+DSS-2030    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Initial SignClient support for Zone signing    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2032">    <span style="color: #4a6ee0;">
+DSS-2032    </span>
+</a>    <span style="color: #000000;">
+ - Initial Zone File server-side signer    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2028">    <span style="color: #4a6ee0;">
+DSS-2028    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Implement resigning avoidance algorithm in ZoneZipFile server-side signer    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2026">    <span style="color: #4a6ee0;">
+DSS-2026    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Releasable Zone File server-side signer    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2046">    <span style="color: #4a6ee0;">
+DSS-2046    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Fix issue in DNS Java library when PKCS#11 is used    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2078">    <span style="color: #4a6ee0;">
+DSS-2078    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Option to specify min remaining validity time for zone file signing with SignClient    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2029">    <span style="color: #4a6ee0;">
+DSS-2029    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Basic Zone Hash Signer    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2027">    <span style="color: #4a6ee0;">
+DSS-2027    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Basic ZoneZipFile server-side signer    </span>
+    </p>
+    <p  >    <span style="color: #4a6ee0;">
+<a  class="external-link" href="https://jira.primekey.se/browse/DSS-2068">DSS-2068</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Initial support for sending a pre-request in the SignClient file-specific handler SPI    </span>
+    </span>
+    </p>
     </div>
     <div class="section section-2" id="src-85921815_id-.SignServer5.3ReleaseNotesv5.3.0-Tasks">
         <h2 class="heading "><span>Tasks</span></h2>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2107">DSS-2107</a> - Update copyright year for 2020    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2038">    <span style="color: #4a6ee0;">
+DSS-2038    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Add the DNSSEC library    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2036">    <span style="color: #4a6ee0;">
+DSS-2036    </span>
+</a>    <span style="color: #000000;">
+ - Create new module: SignServer-DNSSEC-Signer    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2035">    <span style="color: #4a6ee0;">
+DSS-2035    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Create new module: SignServer-DNSSEC-Common    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2037">    <span style="color: #4a6ee0;">
+DSS-2037    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Create new skeleton signer: ZoneFileServerSideSigner    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2031">    <span style="color: #4a6ee0;">
+DSS-2031    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Test resigning avoidance algorithm with SignClient client-side    </span>
+    </p>
     </div>
     <div class="section section-2" id="src-85921815_id-.SignServer5.3ReleaseNotesv5.3.0-Improvements">
         <h2 class="heading "><span>Improvements</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2025">    <span style="color: #4a6ee0;">
+DSS-2025    </span>
+</a> -    <span style="color: #1c1e29;">
+     </span>
+    <span style="color: #000000;">
+Improved bulk key generation in Admin Web    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2053">    <span style="color: #4a6ee0;">
+DSS-2053    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Remove hardcoded TTL values from ZoneFileServerSideSigner    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2054">    <span style="color: #4a6ee0;">
+DSS-2054    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Different output from SignServer vs. dnssec-signzone for customer provided zone file    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2057">    <span style="color: #4a6ee0;">
+DSS-2057    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Refactor out duplicated code from ZoneZipFileServerSideSigner &amp; ZoneFileServerSideSigner    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2063">    <span style="color: #4a6ee0;">
+DSS-2063    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+Fix OOM error when running ZoneFileSigner with large input    </p>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2066">DSS-2066</a> - Implement tests for APPX    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2070">    <span style="color: #4a6ee0;">
+DSS-2070    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Cleanup and refactor the inital SignClient support for Zone signing    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2071">    <span style="color: #4a6ee0;">
+DSS-2071    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Proper Zone Hash Signer    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2080">    <span style="color: #4a6ee0;">
+DSS-2080    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Document zone signing options in SignClient with client-side hashing    </span>
+    </p>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2086">DSS-2086</a> - Set path to WildFly 14 as default for running system tests from within the IDE    </p>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2088">DSS-2088</a> - Implement test code helper for APPX verification    </p>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2091">DSS-2091</a> - AppxCMSSigner should fail if FILE_TYPE request metadata property is not the expected    </p>
@@ -1494,6 +1654,27 @@
     </div>
     <div class="section section-2" id="src-85921815_id-.SignServer5.3ReleaseNotesv5.3.0-BugFixes">
         <h2 class="heading "><span>Bug Fixes</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2052">    <span style="color: #4a6ee0;">
+DSS-2052    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+Different output from SignServer vs. dnssec-signzone for one entry    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2067">    <span style="color: #4a6ee0;">
+DSS-2067    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+BaseZoneFileSignerServerSideSigner has fields changed during processing    </span>
+    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2069">    <span style="color: #4a6ee0;">
+DSS-2069    </span>
+</a>    <span style="color: #1c1e29;">
+ -     </span>
+    <span style="color: #000000;">
+ZoneZipSigningAlgorithmTest does not verify the signature at 'fixed time' causing test failure    </span>
+    </p>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2072">DSS-2072</a> - Expired certificate in junit tests causes test failures    </p>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2090">DSS-2090</a> - Zone file signing test failures with NoClassDefFoundError after merge to trunk    </p>
     <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2092">DSS-2092</a> - Getting NegativeArrayIndexException with large APPX package    </p>

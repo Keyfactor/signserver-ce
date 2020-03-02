@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.3.0</p>
+                    <p>Version: 5.4.0-draft</p>
                 </div>
             </header>
 
@@ -855,6 +855,10 @@
         <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="AzureKeyVaultCryptoToken.html">AzureKeyVaultCryptoToken</a>
+
+            </li>
                             </ul>
             </li>
                                         <li class="collapsed">
@@ -1127,6 +1131,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Workers_Deactivation_Page.html">Workers Deactivation Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Enable_Page.html">Workers Enable Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Disable_Page.html">Workers Disable Page</a>
 
             </li>
                                         <li class="leaf">
@@ -1439,19 +1451,20 @@
                                         <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                                                      <li><a href="Developer_Reference.html">Developer Reference</a></li>
                                                             </ul>
-</div>            <h1 id="src-16235620"> <span>IDEs</span></h1>
+</div>            <h1 id="src-85923617"> <span>IDEs</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >This page contains information on how to open SignServer in different IDEs:    </p>
     <p  >    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-16235620_id-.IDEsv4.4.0-NetBeansIDE">NetBeans IDE</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-16235620_id-.IDEsv4.4.0-Eclipse">Eclipse</a>    </p>
-</li></ul>    <div class="section section-1" id="src-16235620_id-.IDEsv4.4.0-NetBeansIDE">
-        <h1 class="heading "><span>NetBeans IDE</span></h1>
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-85923617_id-.IDEsv5.4.0-draft-ApacheNetBeansIDE">Apache NetBeans IDE</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-85923617_id-.IDEsv5.4.0-draft-EclipseIDE">Eclipse IDE</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-85923617_id-.IDEsv5.4.0-draft-IntelliJIDEA">IntelliJ IDEA</a>    </p>
+</li></ul>    <div class="section section-1" id="src-85923617_id-.IDEsv5.4.0-draft-ApacheNetBeansIDE">
+        <h1 class="heading "><span>Apache NetBeans IDE</span></h1>
     <p  >Open the Maven projects directly in the IDE.    </p>
-    <p  >The latest NetBeans IDE (currently 8.2) is recommended with one exception:    </p>
+    <p  >The latest <a  class="external-link" href="https://netbeans.apache.org/">Apache NetBeans IDE</a> (currently 11.2) is recommended with one exception:    </p>
     <p  >The SignServer AdminGUI is implemented using the Swing Application Framework (JSR 296) and requires NetBeans IDE 7.0.x to allow GUI changes. Since JSR 296 didn't make it into the JDK, support for it was dropped in later versions of the IDE.    </p>
     <div  class="confbox admonition admonition-tip">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
@@ -1461,10 +1474,23 @@
     <p  >When deploying from within the IDE, specify the environment variable <tt class=" ">APPSRV_HOME</tt> to let the script know where to deploy to.    </p>
         </div>
     </div>
+    <div  class="confbox admonition admonition-tip">
+                            <span class="admonition-icon confluence-information-macro-icon"></span>
+                <div class="admonition-body">
+    <p  >When working with multiple branches or versions of the projects open in the IDE at the same time, it is useful to configure the IDE to display the version number after each open project:    </p>
+    <p  >Click <strong class=" ">Tools</strong> &rarr; <strong class=" ">Options</strong> &rarr; <strong class=" ">Java</strong> &rarr; <strong class=" ">Maven</strong> &rarr; <strong class=" ">Appearance</strong> and change <strong class=" ">Project node name</strong> to &quot;${project.artifactId}-${project.version}&quot;.    </p>
+        </div>
     </div>
-    <div class="section section-1" id="src-16235620_id-.IDEsv4.4.0-Eclipse">
-        <h1 class="heading "><span>Eclipse</span></h1>
-    <p  >Each SignServer subproject is a Maven project. Import it in Eclipse like any other Maven project.    </p>
+    <p  >    </p>
+    </div>
+    <div class="section section-1" id="src-85923617_id-.IDEsv5.4.0-draft-EclipseIDE">
+        <h1 class="heading "><span>Eclipse IDE</span></h1>
+    <p  >Each SignServer sub project is a Maven project so in theory it should be possible to import them into Eclipse like any other Maven project.    </p>
+    </div>
+    <div class="section section-1" id="src-85923617_id-.IDEsv5.4.0-draft-IntelliJIDEA">
+        <h1 class="heading "><span>IntelliJ IDEA</span></h1>
+    <p  >Each SignServer sub project is a Maven project so in theory it should be possible to open directly in IntelliJ IDEA like any other Maven project.    </p>
+    <p  >    </p>
     </div>
         </div>
 

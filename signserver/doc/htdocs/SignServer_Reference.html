@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.3.0</p>
+                    <p>Version: 5.4.0-draft</p>
                 </div>
             </header>
 
@@ -855,6 +855,10 @@
         <a class="ht-nav-page-link" href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="AzureKeyVaultCryptoToken.html">AzureKeyVaultCryptoToken</a>
+
+            </li>
                             </ul>
             </li>
                                         <li class="collapsed">
@@ -1127,6 +1131,14 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Workers_Deactivation_Page.html">Workers Deactivation Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Enable_Page.html">Workers Enable Page</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Workers_Disable_Page.html">Workers Disable Page</a>
 
             </li>
                                         <li class="leaf">
@@ -1436,58 +1448,181 @@
         <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                             </ul>
-</div>            <h1 id="src-75861570"> <span>SignServer Reference</span></h1>
+</div>            <h1 id="src-85922060"> <span>SignServer Reference</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >This Reference covers all configuration options, workers, and components.    </p>
-    <p  >The guide also contains information on the different SignServer User interfaces available: <a   href="Administration_Web.html">Administration Web</a>, <a   href="Administration_GUI.html">Administration GUI</a>, <a   href="Administration_CLI.html">Administration CLI</a>, and <a   href="Database_CLI.html">Database CLI</a>.    </p>
-    <p  >The Reference is divided in the following sections:    </p>
-<ul class="childpages-macro "><li class=" ">    <p  ><a   href="Deploy-time_Configuration.html">Deploy-time Configuration</a>    </p>
-</li><li class=" ">    <p  ><a   href="SignServer_Workers.html">SignServer Workers</a>    </p>
-<ul class="childpages-macro "><li class=" ">    <p  ><a   href="Common_Configuration.html">Common Configuration</a>    </p>
-</li><li class=" ">    <p  ><a   href="SignServer_Signers.html">SignServer Signers</a>    </p>
-</li><li class=" ">    <p  ><a   href="SignServer_Document_Validators.html">SignServer Document Validators</a>    </p>
-</li><li class=" ">    <p  ><a   href="SignServer_Dispatchers.html">SignServer Dispatchers</a>    </p>
-</li><li class=" ">    <p  ><a   href="SignServer_Validation_Service_Framework.html">SignServer Validation Service Framework</a>    </p>
-</li><li class=" ">    <p  ><a   href="SignServer_Timed_Services.html">SignServer Timed Services</a>    </p>
-</li><li class=" ">    <p  ><a   href="Other_Workers.html">Other Workers</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="SignServer_Components.html">SignServer Components</a>    </p>
-<ul class="childpages-macro "><li class=" ">    <p  ><a   href="CryptoTokens.html">CryptoTokens</a>    </p>
-</li><li class=" ">    <p  ><a   href="Archivers.html">Archivers</a>    </p>
-</li><li class=" ">    <p  ><a   href="Accounters.html">Accounters</a>    </p>
-</li><li class=" ">    <p  ><a   href="Alias_Selectors.html">Alias Selectors</a>    </p>
-</li><li class=" ">    <p  ><a   href="Authorizers.html">Authorizers</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="Logging.html">Logging</a>    </p>
-<ul class="childpages-macro "><li class=" ">    <p  ><a   href="Worker_Log.html">Worker Log</a>    </p>
-</li><li class=" ">    <p  ><a   href="System_Log.html">System Log</a>    </p>
-</li><li class=" ">    <p  ><a   href="CESeCore_Security_Events_Logger.html">CESeCore Security Events Logger</a>    </p>
-</li><li class=" ">    <p  ><a   href="Debug_Log.html">Debug Log</a>    </p>
-</li><li class=" ">    <p  ><a   href="Configure_Log4j_for_Audit_logs.html">Configure Log4j for Audit logs</a>    </p>
-</li><li class=" ">    <p  ><a   href="Status_Repository_Logging.html">Status Repository Logging</a>    </p>
-</li><li class=" ">    <p  ><a   href="Client_Logging.html">Client Logging</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="SignServer_Authentication_and_Authorization.html">SignServer Authentication and Authorization</a>    </p>
-</li><li class=" ">    <p  ><a   href="Status_Repository.html">Status Repository</a>    </p>
-</li><li class=" ">    <p  ><a   href="Health_Check.html">Health Check</a>    </p>
-</li><li class=" ">    <p  ><a   href="SignServer_TimeMonitor_Application.html">SignServer TimeMonitor Application</a>    </p>
-</li><li class=" ">    <p  ><a   href="SignServer_User_Interfaces.html">SignServer User Interfaces</a>    </p>
-<ul class="childpages-macro "><li class=" ">    <p  ><a   href="Administration_CLI.html">Administration CLI</a>    </p>
-</li><li class=" ">    <p  ><a   href="Administration_Web.html">Administration Web</a>    </p>
-</li><li class=" ">    <p  ><a   href="Administration_GUI.html">Administration GUI</a>    </p>
-</li><li class=" ">    <p  ><a   href="Database_CLI.html">Database CLI</a>    </p>
-</li></ul></li><li class=" ">    <p  ><a   href="Internationalization.html">Internationalization</a>    </p>
-</li><li class=" ">    <p  ><a   href="Peer_Systems.html">Peer Systems</a>    </p>
-</li><li class=" ">    <p  ><a   href="Client-Side_Hashing.html">Client-Side Hashing</a>    </p>
-</li><li class=" ">    <p  ><a   href="Key_Wrapping.html">Key Wrapping</a>    </p>
-</li><li class=" ">    <p  ><a   href="Developer_Reference.html">Developer Reference</a>    </p>
-<ul class="childpages-macro "><li class=" ">    <p  ><a   href="Checking_Out_from_Subversion.html">Checking Out from Subversion</a>    </p>
-</li><li class=" ">    <p  ><a   href="Building_SignServer_with_Maven.html">Building SignServer with Maven</a>    </p>
-</li><li class=" ">    <p  ><a   href="IDEs.html">IDEs</a>    </p>
-</li><li class=" ">    <p  ><a   href="Automated_Tests.html">Automated Tests</a>    </p>
-</li><li class=" ">    <p  ><a   href="WebTest_Module.html">WebTest Module</a>    </p>
-</li><li class=" ">    <p  ><a   href="Coding_Conventions.html">Coding Conventions</a>    </p>
-</li></ul></li></ul>    <p  >    </p>
+    <p  >This Reference covers information on configuration options, workers, and components, as well as information on the different SignServer User interfaces available.    </p>
+    <div class="section section-1" id="src-85922060_id-.SignServerReferencev5.3.0-Highlights">
+        <h1 class="heading "><span>Highlights</span></h1>
+    <div class="section section-2" id="src-85922060_id-.SignServerReferencev5.3.0-SignServerUserInterfaces">
+        <h2 class="heading "><span>SignServer User Interfaces</span></h2>
+    <p  >    <span style="color: #1c1e29;">
+The following <a   href="SignServer_User_Interfaces.html">SignServer user interfaces</a> are available for administrating SignServer.    </span>
+    </p>
+    <div class="section section-3" id="src-85922060_id-.SignServerReferencev5.3.0-AdministrationCLI">
+        <h3 class="heading "><span>Administration CLI </span></h3>
+    <p  >    <span style="color: #1c1e29;">
+The SignServer     </span>
+<a   href="Administration_CLI.html">    <span style="color: #4a6ee0;">
+Administration CLI    </span>
+</a>    <span style="color: #1c1e29;">
+ (AdminCLI) is a command-line interface for administrating SignServer.    </span>
+    </p>
+    </div>
+    <div class="section section-3" id="src-85922060_id-.SignServerReferencev5.3.0-AdministrationWeb">
+        <h3 class="heading "><span>Administration Web</span></h3>
+    <p  >    <span style="color: #1c1e29;">
+The SignServer     </span>
+<a   href="Administration_Web.html">    <span style="color: #4a6ee0;">
+Administration Web    </span>
+</a>    <span style="color: #1c1e29;">
+ (AdminWeb) is a web interface for administrating SignServer, supporting the configuration of workers and associated key management as well as querying the audit log and archive.    </span>
+    </p>
+    </div>
+    <div class="section section-3" id="src-85922060_id-.SignServerReferencev5.3.0-AdministrationGUI">
+        <h3 class="heading "><span>Administration GUI</span></h3>
+    <p  >    <span style="color: #1c1e29;">
+    </span>
+    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    <span style="color: #1c1e29;">
+The SignServer     </span>
+<a   href="Administration_GUI.html">    <span style="color: #4a6ee0;">
+Administration GUI    </span>
+</a>    <span style="color: #1c1e29;">
+ (AdminGUI) is a Java desktop application for administrating SignServer. Deprecated as of SignServer 5.2.0.    </span>
+    </p>
+    </div>
+    <div class="section section-3" id="src-85922060_id-.SignServerReferencev5.3.0-DatabaseCLI">
+        <h3 class="heading "><span>Database CLI</span></h3>
+    <p  >    <span style="color: #1c1e29;">
+    </span>
+    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    <span style="color: #1c1e29;">
+The SignServer     </span>
+<a   href="Database_CLI.html">    <span style="color: #4a6ee0;">
+Database CLI    </span>
+</a>    <span style="color: #1c1e29;">
+ uses the Java Persistence API (JPA) to connect to the SignServer database.    </span>
+    </p>
+    </div>
+    <div class="section section-3" id="src-85922060_id-.SignServerReferencev5.3.0-AdministrationWebServices">
+        <h3 class="heading "><span>Administration Web Services</span></h3>
+    <p  >    <span style="color: #1c1e29;">
+In addition, the     </span>
+<a   href="Administration_CLI.html">    <span style="color: #4a6ee0;">
+Administration Web Services    </span>
+</a>    <span style="color: #1c1e29;">
+ (WS) interface allows remote administration of SignServer over client authenticated HTTPS.    </span>
+    </p>
+    </div>
+    </div>
+    <div class="section section-2" id="src-85922060_id-.SignServerReferencev5.3.0-Deploy-timeConfiguration">
+        <h2 class="heading "><span>Deploy-time Configuration</span></h2>
+    <p  >    <span style="color: #1c1e29;">
+Information on <a   href="Deploy-time_Configuration.html">Deploy-time Configuration</a> properties used when deploying SignServer to the application server.    </span>
+    </p>
+    </div>
+    <div class="section section-2" id="src-85922060_id-.SignServerReferencev5.3.0-SignServerWorkers">
+        <h2 class="heading "><span>SignServer Workers</span></h2>
+    <p  >    <span style="color: #1c1e29;">
+Covers information on SignServer workers (such as Signers and Document Validators) configured to perform certain activities like signing files of a certain type, often with a specific key. For an overview, see <a   href="SignServer_Workers.html">SignServer Workers</a>    </span>
+    </p>
+    </div>
+    <div class="section section-2" id="src-85922060_id-.SignServerReferencev5.3.0-SignServerComponents">
+        <h2 class="heading "><span>SignServer Components</span></h2>
+    <p  >    <span style="color: #1c1e29;">
+SignServer Components (such as Crypto Tokens and     </span>
+<a  class="external-link" href="https://doc.primekey.com/signserver530/signserver-reference/signserver-components/authorizers">    <span style="color: #4a6ee0;">
+Authorizers    </span>
+</a>    <span style="color: #1c1e29;">
+) provide specific functionality and are configured in the SignServer workers. For more information, see <a   href="SignServer_Components.html">SignServer Components</a><br/>    </span>
+    </p>
+    </div>
+    <div class="section section-2" id="src-85922060_id-.SignServerReferencev5.3.0-Logging">
+        <h2 class="heading "><span>Logging</span></h2>
+    <p  >    <span style="color: #1c1e29;">
+SignServer uses Log4j for debug logging and the security events logger from CESeCore for system/audit logging. In addition, the worker logger (transaction log) can be configured to use Log4j and/or the security events logger. See <a   href="Logging.html">Logging</a>.    </span>
+    </p>
+    </div>
+    <div class="section section-2" id="src-85922060_id-.SignServerReferencev5.3.0-AuthenticationandAuthorization">
+        <h2 class="heading "><span>Authentication and Authorization</span></h2>
+    <p  >    <span style="color: #1c1e29;">
+Client <a   href="SignServer_Authentication_and_Authorization.html">Authentication and Authorization</a> can be configured per-worker and occurs in different components as the request comes in.    </span>
+    </p>
+    </div>
+    <div class="section section-2" id="src-85922060_id-.SignServerReferencev5.3.0-HealthCheck">
+        <h2 class="heading "><span>Health Check</span></h2>
+    <p  >    <span style="color: #1c1e29;">
+The <a   href="Health_Check.html">Health Check</a> service is used for health monitoring and is useful for clusters.    </span>
+    </p>
+    </div>
+    <div class="section section-2" id="src-85922060_id-.SignServerReferencev5.3.0-SignServerTimeMonitor">
+        <h2 class="heading "><span>SignServer TimeMonitor</span></h2>
+    <p  >    <span style="color: #1c1e29;">
+    </span>
+    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    <span style="color: #1c1e29;">
+The external SignServer TimeMonitor application can be used together with the     </span>
+<strong class=" ">    <span style="color: #1c1e29;">
+StatusReadingLocalComputerTimeSource    </span>
+</strong>    <span style="color: #1c1e29;">
+ for monitoring the local time and informing SignServer about its state. For more information, see <a   href="SignServer_TimeMonitor_Application.html">SignServer TimeMonitor Application</a>.    </span>
+    </p>
+    </div>
+    <div class="section section-2" id="src-85922060_id-.SignServerReferencev5.3.0-PeerSystems">
+        <h2 class="heading "><span>Peer Systems</span></h2>
+    <p  >    <span style="color: #1c1e29;">
+    </span>
+    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    <span style="color: #1c1e29;">
+For more information on the SignServer support for incoming peer connections, see <a   href="Peer_Systems.html">Peer Systems</a>.    </span>
+    </p>
+    </div>
+    <div class="section section-2" id="src-85922060_id-.SignServerReferencev5.3.0-Client-SideHashing">
+        <h2 class="heading "><span>Client-Side Hashing</span></h2>
+    <p  >    <span style="color: #1c1e29;">
+SignServer provides various options for performing the <a   href="Client-Side_Hashing.html">hashing on the client-side</a> instead of completing the signing steps on the server-side, allowing you to avoid sending the original file to the server.    </span>
+    </p>
+    </div>
+    <div class="section section-2" id="src-85922060_id-.SignServerReferencev5.3.0-KeyWrapping">
+        <h2 class="heading "><span>Key Wrapping</span></h2>
+    <p  >    <span style="color: #1c1e29;">
+    </span>
+    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    <span style="color: #1c1e29;">
+<a   href="Key_Wrapping.html">Key wrapping</a> allows solving issues arising when the number of keys you need to handle exceeds the amount that can be stored in a limited storage space for an HSM. The feature enables exporting the key material in a protected manner and storing the wrapped, encrypted key in an external database.<br/>    </span>
+    </p>
+    </div>
+    <div class="section section-2" id="src-85922060_id-.SignServerReferencev5.3.0-DeveloperReference">
+        <h2 class="heading "><span>Developer Reference</span></h2>
+    <p  >    <span style="color: #1c1e29;">
+For instructions needed for building and developing SignServer, see <a   href="Developer_Reference.html">Developer Reference</a>    </span>
+    </p>
+    </div>
+    <div class="section section-2" id="src-85922060_id-.SignServerReferencev5.3.0-Internationalization">
+        <h2 class="heading "><span>Internationalization</span></h2>
+    <p  >    <span style="color: #1c1e29;">
+For information on the different languages supported by the     </span>
+<a  class="external-link" href="https://doc.primekey.com/signserver530/signserver-reference/signserver-user-interfaces/administration-web">    <span style="color: #4a6ee0;">
+AdminWeb    </span>
+</a>    <span style="color: #1c1e29;">
+ and more information about the translation process, see    </span>
+    </p>
+    <p  >    </p>
+    <p  >    </p>
+    <p  >    </p>
+    <p  >    </p>
+    <p  >    </p>
+    <p  >    </p>
+    </div>
+    </div>
         </div>
 
     </article>

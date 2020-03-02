@@ -31,6 +31,7 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
+import static org.signserver.common.SignServerConstants.DISABLED;
 
 /**
  *
@@ -201,7 +202,7 @@ public class BulkBean {
     public String enableAction() throws AdminNotAuthorizedException {
         for (Worker worker : getSelectedWorkers()) {
             try {
-               workerSessionBean.setWorkerProperty(authBean.getAdminCertificate(), worker.getId(), "Disabled", "FALSE");
+               workerSessionBean.setWorkerProperty(authBean.getAdminCertificate(), worker.getId(), DISABLED, "FALSE");
                workerSessionBean.reloadConfiguration(authBean.getAdminCertificate(), worker.getId());
                selectedIds.remove(worker.getId());
                worker.setError("");
@@ -222,7 +223,7 @@ public class BulkBean {
      public String disableAction() throws AdminNotAuthorizedException {
         for (Worker worker : getSelectedWorkers()) {
             try {
-               workerSessionBean.setWorkerProperty(authBean.getAdminCertificate(), worker.getId(), "Disabled", "TRUE");
+               workerSessionBean.setWorkerProperty(authBean.getAdminCertificate(), worker.getId(), DISABLED, "TRUE");
                workerSessionBean.reloadConfiguration(authBean.getAdminCertificate(), worker.getId());
                selectedIds.remove(worker.getId());
                worker.setError("");

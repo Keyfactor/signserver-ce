@@ -14,6 +14,7 @@ package org.signserver.server;
 
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
@@ -38,10 +39,10 @@ public class CredentialUtils {
             "WWW-Authenticate";
 
     /** Prefix for HTTP Basic authorization token */
-    public static final String HTTP_AUTHORIZATION_BASIC = "Basic";
+    public static final String HTTP_AUTHORIZATION_BASIC = "basic";
 
     /** Prefix for HTTP Bearer authorization token (e.g. for JWT authorization) */ 
-    public static final String HTTP_AUTHORIZATION_BEARER = "Bearer";
+    public static final String HTTP_AUTHORIZATION_BEARER = "bearer";
     
     /**
      * Add all the found credentials to the request context.
@@ -84,7 +85,7 @@ public class CredentialUtils {
                 LOG.warn("Malformed HTTP Authorization header");
                 credentialPassword = null;
             } else {
-                switch (parts[0]) {
+                switch (parts[0].toLowerCase(Locale.ENGLISH)) {
                     case HTTP_AUTHORIZATION_BASIC:
                         final String decoded[] = new String(Base64.decode(
                             parts[1])).split(":", 2);

@@ -31,11 +31,17 @@ public class CredentialUtils {
     private static final Logger LOG = Logger.getLogger(CredentialUtils.class);
     
     /** HTTP request header for providing HTTP authentication data. */
-    public static final String HTTP_AUTH_BASIC_AUTHORIZATION = "Authorization";
+    public static final String HTTP_AUTHORIZATION = "Authorization";
     
     /** HTTP response header for requesting HTTP authentication. */
     public static final String HTTP_AUTH_BASIC_WWW_AUTHENTICATE =
             "WWW-Authenticate";
+
+    /** Prefix for HTTP Basic authorization token */
+    public static final String HTTP_AUTHORIZATION_BASIC = "Basic";
+
+    /** Prefix for HTTP Bearer authorization token (e.g. for JWT authorization) */ 
+    public static final String HTTP_AUTHORIZATION_BEARER = "Bearer";
     
     /**
      * Add all the found credentials to the request context.
@@ -47,7 +53,7 @@ public class CredentialUtils {
      */
     public static void addToRequestContext(RequestContext context, HttpServletRequest req, Certificate clientCertificate) {
         final CertificateClientCredential credentialCert;
-        final UsernamePasswordClientCredential credentialPassword;
+        UsernamePasswordClientCredential credentialPassword = null;
 
         if (clientCertificate instanceof X509Certificate) {
             final X509Certificate cert = (X509Certificate) clientCertificate;
@@ -67,10 +73,10 @@ public class CredentialUtils {
 
         // Check is client supplied basic-credentials
         final String authorization =
-                req.getHeader(HTTP_AUTH_BASIC_AUTHORIZATION);
+                req.getHeader(HTTP_AUTHORIZATION);
         if (authorization != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Password-authentication: true");
+                LOG.debug("Authorization: true");
             }
 
             final String[] parts = authorization.split("\\s");
@@ -78,20 +84,30 @@ public class CredentialUtils {
                 LOG.warn("Malformed HTTP Authorization header");
                 credentialPassword = null;
             } else {
-                final String decoded[] = new String(Base64.decode(
-                        parts[1])).split(":", 2);
-                if (decoded.length < 2) {
-                    LOG.warn("Malformed HTTP Authorization header");
-                    credentialPassword = null;
-                } else {
-                    credentialPassword = new UsernamePasswordClientCredential(
-                            decoded[0], decoded[1]);
-                    context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, credentialPassword);
+                switch (parts[0]) {
+                    case HTTP_AUTHORIZATION_BASIC:
+                        final String decoded[] = new String(Base64.decode(
+                            parts[1])).split(":", 2);
+                        if (decoded.length < 2) {
+                            LOG.warn("Malformed HTTP Authorization header");
+                            credentialPassword = null;
+                        } else {
+                            credentialPassword = new UsernamePasswordClientCredential(
+                                decoded[0], decoded[1]);
+                            context.put(RequestContext.CLIENT_CREDENTIAL_PASSWORD, credentialPassword);
+                        }
+                        break;
+                    case HTTP_AUTHORIZATION_BEARER:
+                        context.put(RequestContext.CLIENT_CREDENTIAL_BEARER, parts[1]);
+                        break;
+                    default:
+                        LOG.warn("Unsupported authorization method: " + parts[0]);
+                        break;
                 }
             }
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Password-authentication: false");
+                LOG.debug("HTTP Authorization: false");
             }
             credentialPassword = null;
         }

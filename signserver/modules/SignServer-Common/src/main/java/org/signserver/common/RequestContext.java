@@ -49,7 +49,7 @@ public class RequestContext implements Serializable {
      * 'null' returned.
      */
     public static final String CLIENT_CERTIFICATE = "CLIENT_CERTIFICATE";
-    
+
     /**
      * Used to fetch the client cookies used for the request if there exists any, otherwise is
      * 'null' returned.
@@ -129,6 +129,8 @@ public class RequestContext implements Serializable {
      * Holds the username/password, if provided.
      */
     public static final String CLIENT_CREDENTIAL_PASSWORD = "CLIENT_CREDENTIAL_PASSWORD";
+
+    public static final String CLIENT_CREDENTIAL_BEARER = "CLIENT_CREDENTIAL_BEARER";
     
     /**
      * Filename of file uploaded by client to the process servlet.

@@ -30,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.IllegalRequestException;
@@ -63,18 +64,21 @@ public class JWTAuthorizer implements IAuthorizer {
     private final String ISSUER_SUFFIX = ".ISSUER";
     private final String PUBLICKEY_SUFFIX = ".PUBLICKEY";
 
+    private final String MAX_ALLOWED_CLOCK_SCEW = "ALLOWED_CLOCK_SCEW";
+    
     // Log fields
     //...
 
     // Default values
-    //...
+    private final int DEFAULT_MAX_ALLOWED_CLOCK_SCEW = 5 * 60; // 5 minutes
 
     // Configuration errors
     private final LinkedList<String> configErrors = new LinkedList<>();
 
     // Configuration values
     private final Map<String, PublicKey> authServers = new HashMap<>();
-
+    private int maxAllowedClockScew;
+    
     @Override
     public void init(int workerId, WorkerConfig config, EntityManager em)
             throws SignServerException {
@@ -96,6 +100,23 @@ public class JWTAuthorizer implements IAuthorizer {
                                      publicKeyProperty + ": " + e.getMessage());
                 }
             }
+        }
+
+        final String maxAllowedClockScewString =
+                    config.getProperties().getProperty(MAX_ALLOWED_CLOCK_SCEW);
+
+        try {
+            if (StringUtils.isNotBlank(maxAllowedClockScewString)) {
+                maxAllowedClockScew = Integer.parseInt(maxAllowedClockScewString);
+                if (maxAllowedClockScew < 0) {
+                    configErrors.add(MAX_ALLOWED_CLOCK_SCEW + " must be positive");
+                }
+            } else {
+                maxAllowedClockScew = DEFAULT_MAX_ALLOWED_CLOCK_SCEW;
+            }
+        } catch (NumberFormatException e) {
+            configErrors.add("Illegal value for " + MAX_ALLOWED_CLOCK_SCEW +
+                             ": " + maxAllowedClockScewString);
         }
     }
 
@@ -129,7 +150,7 @@ public class JWTAuthorizer implements IAuthorizer {
                     return result;
                 }
 
-            }).setAllowedClockSkewSeconds(60*60*24).build().parseClaimsJws(token);
+            }).setAllowedClockSkewSeconds(maxAllowedClockScew).build().parseClaimsJws(token);
             System.out.println("Header: " + jws.getHeader());
             System.out.println("Body: " + jws.getBody());
             System.out.println("Subject: " + jws.getBody().getSubject());

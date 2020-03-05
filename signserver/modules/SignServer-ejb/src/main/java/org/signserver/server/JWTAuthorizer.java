@@ -64,7 +64,7 @@ public class JWTAuthorizer implements IAuthorizer {
     private final String ISSUER_SUFFIX = ".ISSUER";
     private final String PUBLICKEY_SUFFIX = ".PUBLICKEY";
 
-    private final String MAX_ALLOWED_CLOCK_SCEW = "ALLOWED_CLOCK_SCEW";
+    private final String MAX_ALLOWED_CLOCK_SCEW = "MAX_ALLOWED_CLOCK_SCEW";
     
     // Log fields
     //...

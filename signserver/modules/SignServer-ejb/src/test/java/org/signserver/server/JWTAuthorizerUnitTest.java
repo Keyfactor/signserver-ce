@@ -16,6 +16,7 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.KeyPair;
+import java.security.PrivateKey;
 import java.security.Security;
 import java.util.Base64;
 import java.util.Date;
@@ -44,6 +45,7 @@ public class JWTAuthorizerUnitTest {
     private static final String TEST_ISSUER2 = "issuer2";
     private static final String TEST_SUBJECT1 = "subject1";
     private static KeyPair keyPair;
+    private static KeyPair keyPair2;
     
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -53,6 +55,7 @@ public class JWTAuthorizerUnitTest {
     @Before
     public void beforeTests() throws Exception {
         keyPair = CryptoUtils.generateRSA(2048);
+        keyPair2 = CryptoUtils.generateRSA(2048);
     }
     
     /**
@@ -132,7 +135,8 @@ public class JWTAuthorizerUnitTest {
         try {
             final RequestContext context = new RequestContext();
         
-            context.put(RequestContext.CLIENT_CREDENTIAL_BEARER, generateToken());
+            context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
+                        generateToken(keyPair.getPrivate(), TEST_ISSUER1));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
             fail("Should be authorized");
@@ -184,14 +188,42 @@ public class JWTAuthorizerUnitTest {
         try {
             final RequestContext context = new RequestContext();
         
-            context.put(RequestContext.CLIENT_CREDENTIAL_BEARER, generateToken());
+            context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
+                        generateToken(keyPair.getPrivate(), TEST_ISSUER1));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
             assertEquals("Exception message", "Not authorized", e.getMessage());
         }
     }
 
-    private String generateToken() {
+    /**
+     * Test authorizing with a valid token issued by a non-trusted CA.
+     * Should not be authorized.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testValidTokenOtherPublicKey() throws Exception {
+        final JWTAuthorizer instance = new JWTAuthorizer();
+        final WorkerConfig config = new WorkerConfig();
+
+        config.setProperty("AUTH_SERVER_1.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTH_SERVER_1.PUBLICKEY",
+                           new String(Base64.getEncoder().encode(keyPair.getPublic().getEncoded())));
+        instance.init(42, config, null);
+        
+        try {
+            final RequestContext context = new RequestContext();
+        
+            context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
+                        generateToken(keyPair2.getPrivate(), TEST_ISSUER2));
+            instance.isAuthorized(null, context);
+        } catch (AuthorizationRequiredException e) {
+            assertEquals("Exception message", "Not authorized", e.getMessage());
+        }
+    }
+
+    private String generateToken(final PrivateKey privKey, final String issuer) {
         final SignatureAlgorithm sigAlg = SignatureAlgorithm.RS256;
         final long nowMs = System.currentTimeMillis();
         final Date now = new Date(nowMs);
@@ -199,9 +231,9 @@ public class JWTAuthorizerUnitTest {
         final JwtBuilder builder = Jwts.builder().setId("id")
                 .setIssuedAt(now)
                 .setSubject(TEST_SUBJECT1)
-                .setIssuer(TEST_ISSUER1)
+                .setIssuer(issuer)
                 .setExpiration(exp)
-                .signWith(keyPair.getPrivate(), sigAlg);
+                .signWith(privKey, sigAlg);
 
         return builder.compact();
     }

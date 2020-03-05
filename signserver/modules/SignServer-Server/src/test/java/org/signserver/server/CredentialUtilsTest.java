@@ -102,6 +102,18 @@ public class CredentialUtilsTest {
           +  "BQHSf/Icgab1tANxgQSk8IOhZ0/OQ6LdfoTmRVsrxz58tzvA8Fw+FcyyIni8p6ve"
           +  "2oETepx5f5yVfLJzAdcgTXwo6R52yBgw2w==";
 
+    private static final String BEARER_TOKEN =
+            "eyJraWQiOiJqd3Qua2V5IiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJzdW"
+          + "IiOiJ1c3VhbCIsInVwbiI6ImR1a2UiLCJhdXRoX3RpbWUiOjE1ODMzMTIyMTYsIml"
+          + "zcyI6ImFpcmhhY2tzMiIsImdyb3VwcyI6WyJtYWxsb3J5IiwiaGFja2VyIl0sImV4"
+          + "cCI6MTU4MzMxMzIxNiwiaWF0IjoxNTgzMzEyMjE2LCJqdGkiOiI0MiJ9.hPVExBJj"
+          + "oRHMgHUW6x5BL369gGtkZ0orfa0Y0TXJtY9ej6UhDMnyAKoVVylBQlUxLZLqEayhd"
+          + "tsgrE8f_7PlFhDLUDLW20CV5oh8WFv3QMvf05yIbvD8zt09f_JaP3ZSXQPO9GmIhO"
+          + "IA5AjK939yQlBLz56kGoXEfMrN_Z8KFWIPzUtDd5vxT8-MUC1vUbcjwxSLaSVM9sw"
+          + "gauBYVgsF0JHfX0c-HMVyhgSAGTIs-I3ocx6WsKsof64jnEIwHeUqWh8NDBmiJrZ_"
+          + "keNhj4SlGeD_SXKjuIlaPWjppIeT8-5QlT8jcAQ8k5k6tT9ra0hNAuy44ObLE74Fz"
+          + "RHAtZBuZw";
+
     public CredentialUtilsTest() {
     }
 
@@ -207,6 +219,57 @@ public class CredentialUtilsTest {
         assertEquals("username", username, credNew.getUsername());
         assertEquals("password", password, credNew.getPassword());
         assertEquals("same value in both fields", credNew, credLegacy);
+    }
+
+    /**
+     * Tests that the provided bearer token is available in the request
+     * context.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testAddToRequestContext_bearer() throws Exception {
+        LOG.info("testAddToRequestContext_bearer");
+
+        final RequestContext context = new RequestContext();
+        final HashMap<String, String> headers = new HashMap<>();
+
+        headers.put("Authorization", "Bearer " + BEARER_TOKEN);
+
+        final HttpServletRequest req = new MockedHttpServletRequest(headers);
+
+        CredentialUtils.addToRequestContext(context, req, null);
+
+        final String token = (String) context.get(RequestContext.CLIENT_CREDENTIAL_BEARER);
+
+        assertEquals("Found bearer token in request context", BEARER_TOKEN,
+                     token);
+    }
+
+    /**
+     * Tests that the provided bearer token is available in the request
+     * context, also with the the token containing lower-case "bearer", as the
+     * RFC stipulates this is case-insensitive.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testAddToRequestContext_bearerLowerCase() throws Exception {
+        LOG.info("testAddToRequestContext_bearer");
+
+        final RequestContext context = new RequestContext();
+        final HashMap<String, String> headers = new HashMap<>();
+
+        headers.put("Authorization", "bearer " + BEARER_TOKEN);
+
+        final HttpServletRequest req = new MockedHttpServletRequest(headers);
+
+        CredentialUtils.addToRequestContext(context, req, null);
+
+        final String token = (String) context.get(RequestContext.CLIENT_CREDENTIAL_BEARER);
+
+        assertEquals("Found bearer token in request context", BEARER_TOKEN,
+                     token);
     }
 
     /**

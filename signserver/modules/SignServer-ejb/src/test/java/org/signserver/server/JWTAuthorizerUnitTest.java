@@ -41,6 +41,7 @@ import org.signserver.test.utils.builders.CryptoUtils;
 public class JWTAuthorizerUnitTest {
 
     private static final String TEST_ISSUER1 = "issuer1";
+    private static final String TEST_ISSUER2 = "issuer2";
     private static final String TEST_SUBJECT1 = "subject1";
     private static KeyPair keyPair;
     
@@ -161,6 +162,32 @@ public class JWTAuthorizerUnitTest {
         } catch (AuthorizationRequiredException e) {
             assertEquals("Exception message", "Authorization required",
                          e.getMessage());
+        }
+    }
+
+    /**
+     * Test authorizing with a valid token for another issuer.
+     * Should not be authorized.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testValidTokenOtherIssuer() throws Exception {
+        final JWTAuthorizer instance = new JWTAuthorizer();
+        final WorkerConfig config = new WorkerConfig();
+
+        config.setProperty("AUTH_SERVER_1.ISSUER", TEST_ISSUER2);
+        config.setProperty("AUTH_SERVER_1.PUBLICKEY",
+                           new String(Base64.getEncoder().encode(keyPair.getPublic().getEncoded())));
+        instance.init(42, config, null);
+        
+        try {
+            final RequestContext context = new RequestContext();
+        
+            context.put(RequestContext.CLIENT_CREDENTIAL_BEARER, generateToken());
+            instance.isAuthorized(null, context);
+        } catch (AuthorizationRequiredException e) {
+            assertEquals("Exception message", "Not authorized", e.getMessage());
         }
     }
 

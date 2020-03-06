@@ -136,7 +136,8 @@ public class JWTAuthorizerUnitTest {
             final RequestContext context = new RequestContext();
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
-                        generateToken(keyPair.getPrivate(), TEST_ISSUER1));
+                        generateToken(keyPair.getPrivate(), TEST_ISSUER1,
+                                      System.currentTimeMillis()));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
             fail("Should be authorized");
@@ -189,7 +190,8 @@ public class JWTAuthorizerUnitTest {
             final RequestContext context = new RequestContext();
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
-                        generateToken(keyPair.getPrivate(), TEST_ISSUER1));
+                        generateToken(keyPair.getPrivate(), TEST_ISSUER1,
+                                      System.currentTimeMillis()));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
             assertEquals("Exception message", "Not authorized", e.getMessage());
@@ -216,23 +218,110 @@ public class JWTAuthorizerUnitTest {
             final RequestContext context = new RequestContext();
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
-                        generateToken(keyPair2.getPrivate(), TEST_ISSUER2));
+                        generateToken(keyPair2.getPrivate(), TEST_ISSUER2,
+                                      System.currentTimeMillis()));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
             assertEquals("Exception message", "Not authorized", e.getMessage());
         }
     }
 
-    private String generateToken(final PrivateKey privKey, final String issuer) {
+    /**
+     * Test that authorization fails with an expired token using the default
+     * max allowed clock scew.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testValidTokenExpiredDefaultScew() throws Exception {
+        final JWTAuthorizer instance = new JWTAuthorizer();
+        final WorkerConfig config = new WorkerConfig();
+
+        config.setProperty("AUTH_SERVER_1.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTH_SERVER_1.PUBLICKEY",
+                           new String(Base64.getEncoder().encode(keyPair.getPublic().getEncoded())));
+        instance.init(42, config, null);
+        
+        try {
+            final RequestContext context = new RequestContext();
+            final long issuedAt = System.currentTimeMillis() - 360000; // 6 min
+        
+            context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
+                        generateToken(keyPair.getPrivate(), TEST_ISSUER1,
+                                      issuedAt));
+            instance.isAuthorized(null, context);
+        } catch (AuthorizationRequiredException e) {
+            assertEquals("Exception message", "Not authorized", e.getMessage());
+        }
+    }
+
+    /**
+     * Test that authorization succeeds with a token within the default
+     * max allowed clock scew.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testValidTokenWithinDefaultScew() throws Exception {
+        final JWTAuthorizer instance = new JWTAuthorizer();
+        final WorkerConfig config = new WorkerConfig();
+
+        config.setProperty("AUTH_SERVER_1.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTH_SERVER_1.PUBLICKEY",
+                           new String(Base64.getEncoder().encode(keyPair.getPublic().getEncoded())));
+        instance.init(42, config, null);
+        
+        try {
+            final RequestContext context = new RequestContext();
+            final long issuedAt = System.currentTimeMillis() - 240000; // 4 min
+        
+            context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
+                        generateToken(keyPair.getPrivate(), TEST_ISSUER1,
+                                      issuedAt));
+            instance.isAuthorized(null, context);
+        } catch (AuthorizationRequiredException e) {
+            fail("Should be authorized");
+        }
+    }
+
+    /**
+     * Test that authorization fails with an expired token using a shorter
+     * allowed max clock scew.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testValidExpiredShortAllowedScew() throws Exception {
+        final JWTAuthorizer instance = new JWTAuthorizer();
+        final WorkerConfig config = new WorkerConfig();
+
+        config.setProperty("AUTH_SERVER_1.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTH_SERVER_1.PUBLICKEY",
+                           new String(Base64.getEncoder().encode(keyPair.getPublic().getEncoded())));
+        config.setProperty("MAX_ALLOWED_CLOCK_SCEW", "60");
+        instance.init(42, config, null);
+        
+        try {
+            final RequestContext context = new RequestContext();
+            final long issuedAt = System.currentTimeMillis() - 120000; // 2 min
+        
+            context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
+                        generateToken(keyPair.getPrivate(), TEST_ISSUER1,
+                                      issuedAt));
+            instance.isAuthorized(null, context);
+        } catch (AuthorizationRequiredException e) {
+            assertEquals("Exception message", "Not authorized", e.getMessage());
+        }
+    }
+
+    private String generateToken(final PrivateKey privKey, final String issuer,
+                                 final long issuedAt) {
         final SignatureAlgorithm sigAlg = SignatureAlgorithm.RS256;
-        final long nowMs = System.currentTimeMillis();
-        final Date now = new Date(nowMs);
-        final Date exp = new Date(nowMs + 10000); // 10 s
         final JwtBuilder builder = Jwts.builder().setId("id")
-                .setIssuedAt(now)
+                .setIssuedAt(new Date(issuedAt))
                 .setSubject(TEST_SUBJECT1)
                 .setIssuer(issuer)
-                .setExpiration(exp)
+                .setExpiration(new Date(issuedAt + 10000))
                 .signWith(privKey, sigAlg);
 
         return builder.compact();

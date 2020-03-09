@@ -216,6 +216,79 @@ public class JWTAuthorizerUnitTest {
     }
 
     /**
+     * Test authorizing with a valid token. With rules for different issuers.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testValidTokenAdditionalRule() throws Exception {
+        final JWTAuthorizer instance = new JWTAuthorizer();
+        final WorkerConfig config = new WorkerConfig();
+
+        config.setProperty("AUTH_SERVER_1.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTH_SERVER_1.PUBLICKEY",
+                           new String(Base64.getEncoder().encode(keyPair.getPublic().getEncoded())));
+        config.setProperty("AUTH_SERVER_2.ISSUER", TEST_ISSUER2);
+        config.setProperty("AUTH_SERVER_2.PUBLICKEY",
+                           new String(Base64.getEncoder().encode(keyPair2.getPublic().getEncoded())));
+        config.setProperty("AUTHJWT37.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTHJWT37.CLAIM.NAME", "scopes");
+        config.setProperty("AUTHJWT37.CLAIM.VALUE", "scope1");
+        config.setProperty("AUTHJWT38.ISSUER", TEST_ISSUER2);
+        config.setProperty("AUTHJWT38.CLAIM.NAME", "scopes");
+        config.setProperty("AUTHJWT38.CLAIM.VALUE", "scope2");
+        instance.init(42, config, null);
+        
+        try {
+            final RequestContext context = new RequestContext();
+                    
+            final Map<String, Object> claims = new HashMap<>();
+            claims.put("scopes", Arrays.asList("scope3", "scope4", "scope2"));
+        
+            context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
+                        generateToken(keyPair2.getPrivate(), TEST_ISSUER2,
+                                      System.currentTimeMillis(), claims));
+            instance.isAuthorized(null, context);
+        } catch (AuthorizationRequiredException e) {
+            fail("Should be authorized");
+        }
+    }
+
+    /**
+     * Test authorizing when auth rule does not match the token.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testInvalidTokenNotMatchingRule() throws Exception {
+        final JWTAuthorizer instance = new JWTAuthorizer();
+        final WorkerConfig config = new WorkerConfig();
+
+        config.setProperty("AUTH_SERVER_1.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTH_SERVER_1.PUBLICKEY",
+                           new String(Base64.getEncoder().encode(keyPair.getPublic().getEncoded())));
+        config.setProperty("AUTHJWT37.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTHJWT37.CLAIM.NAME", "scopes");
+        config.setProperty("AUTHJWT37.CLAIM.VALUE", "scope1");
+        instance.init(42, config, null);
+        
+        try {
+            final RequestContext context = new RequestContext();
+                    
+            final Map<String, Object> claims = new HashMap<>();
+            claims.put("scopes", Arrays.asList("scope3", "scope4", "scope2"));
+        
+            context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
+                        generateToken(keyPair.getPrivate(), TEST_ISSUER1,
+                                      System.currentTimeMillis(), claims));
+            instance.isAuthorized(null, context);
+        } catch (AuthorizationRequiredException e) {
+            assertEquals("Exception message", "Not authorized",
+                         e.getMessage());
+        }
+    }
+
+    /**
      * Test that we get "Authorization required" when there's no token in the
      * request.
      *

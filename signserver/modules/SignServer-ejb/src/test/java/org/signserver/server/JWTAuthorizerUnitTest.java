@@ -121,6 +121,68 @@ public class JWTAuthorizerUnitTest {
     }
 
     /**
+     * Test that ommitting AUTHJWTn.CLAIM.NAME results in an appropriate
+     * error message.
+     * 
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testNoClaimNameError() throws Exception {
+        final JWTAuthorizer instance = new JWTAuthorizer();
+        final WorkerConfig config = new WorkerConfig();
+
+        config.setProperty("AUTHJWT1.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTHJWT1.CLAIM.VALUE", "value");
+        instance.init(42, config, null);
+
+        final List<String> fatalErrors = instance.getFatalErrors();
+
+        assertTrue("Contains error: " + fatalErrors.toString(),
+                   fatalErrors.contains("CLAIM.NAME and CLAIM.VALUE needs to be specified for AUTHJWT rules"));
+    }
+
+    /**
+     * Test that ommitting AUTHJWTn.CLAIM.VALUE results in an appropriate
+     * error message.
+     * 
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testNoClaimValueError() throws Exception {
+        final JWTAuthorizer instance = new JWTAuthorizer();
+        final WorkerConfig config = new WorkerConfig();
+
+        config.setProperty("AUTHJWT1.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTHJWT1.CLAIM.NAME", "groups");
+        instance.init(42, config, null);
+
+        final List<String> fatalErrors = instance.getFatalErrors();
+
+        assertTrue("Contains error: " + fatalErrors.toString(),
+                   fatalErrors.contains("CLAIM.NAME and CLAIM.VALUE needs to be specified for AUTHJWT rules"));
+    }
+
+    /**
+     * Test that ommitting AUTHJWTn.CLAIM.NAME and .CLAIM.VALUE results in an appropriate
+     * error message.
+     * 
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testNoClaimNameAndValueError() throws Exception {
+        final JWTAuthorizer instance = new JWTAuthorizer();
+        final WorkerConfig config = new WorkerConfig();
+
+        config.setProperty("AUTHJWT1.ISSUER", TEST_ISSUER1);
+        instance.init(42, config, null);
+
+        final List<String> fatalErrors = instance.getFatalErrors();
+
+        assertTrue("Contains error: " + fatalErrors.toString(),
+                   fatalErrors.contains("CLAIM.NAME and CLAIM.VALUE needs to be specified for AUTHJWT rules"));
+    }
+
+    /**
      * Test authorizing with a valid token.
      * 
      * @throws Exception 

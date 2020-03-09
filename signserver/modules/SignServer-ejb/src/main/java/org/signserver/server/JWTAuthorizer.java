@@ -126,7 +126,7 @@ public class JWTAuthorizer implements IAuthorizer {
                 final String description = config.getProperty(descriptionProperty);
 
                 if (claimName == null || claimValue == null) {
-                    configErrors.add("CLAIM_NAME and CLAIM_VALUE needs to be specified for AUTHJWT rules");
+                    configErrors.add("CLAIM.NAME and CLAIM.VALUE needs to be specified for AUTHJWT rules");
                 } else {
                     matchRules.add(new JwtMatchingRule(claimName, claimValue,
                                                        issuer, description));

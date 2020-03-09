@@ -216,6 +216,39 @@ public class JWTAuthorizerUnitTest {
     }
 
     /**
+     * Test authorizing with a valid token. Using a claim with a numeric value.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testValidTokenNumberInAuthRule() throws Exception {
+        final JWTAuthorizer instance = new JWTAuthorizer();
+        final WorkerConfig config = new WorkerConfig();
+
+        config.setProperty("AUTH_SERVER_1.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTH_SERVER_1.PUBLICKEY",
+                           new String(Base64.getEncoder().encode(keyPair.getPublic().getEncoded())));
+        config.setProperty("AUTHJWT37.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTHJWT37.CLAIM.NAME", "num");
+        config.setProperty("AUTHJWT37.CLAIM.VALUE", "42");
+        instance.init(42, config, null);
+        
+        try {
+            final RequestContext context = new RequestContext();
+                    
+            final Map<String, Object> claims = new HashMap<>();
+            claims.put("num", 42);
+        
+            context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
+                        generateToken(keyPair.getPrivate(), TEST_ISSUER1,
+                                      System.currentTimeMillis(), claims));
+            instance.isAuthorized(null, context);
+        } catch (AuthorizationRequiredException e) {
+            fail("Should be authorized");
+        }
+    }
+
+    /**
      * Test authorizing with a valid token. With rules for different issuers.
      * 
      * @throws Exception 

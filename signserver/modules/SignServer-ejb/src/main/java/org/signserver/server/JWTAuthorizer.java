@@ -133,6 +133,10 @@ public class JWTAuthorizer implements IAuthorizer {
                 }
             }
         }
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Authorization rules: " + matchRules);
+        }
 
         final String maxAllowedClockScewString =
                     config.getProperties().getProperty(MAX_ALLOWED_CLOCK_SCEW);

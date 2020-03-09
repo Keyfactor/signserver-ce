@@ -24,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -38,6 +39,7 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.data.Request;
+import org.signserver.server.jwtauth.JwtMatchingRule;
 
 /**
  * Skeleton authorizer...
@@ -77,6 +79,7 @@ public class JWTAuthorizer implements IAuthorizer {
 
     // Configuration values
     private final Map<String, PublicKey> authServers = new HashMap<>();
+    private final List<JwtMatchingRule> matchRules = new ArrayList<>(2);
     private int maxAllowedClockScew;
     
     @Override

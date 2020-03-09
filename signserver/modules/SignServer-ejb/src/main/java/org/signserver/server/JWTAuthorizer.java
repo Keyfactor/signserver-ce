@@ -40,6 +40,7 @@ import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.data.Request;
 import org.signserver.server.jwtauth.JwtMatchingRule;
+import org.signserver.server.log.LogMap;
 
 /**
  * Skeleton authorizer...
@@ -167,87 +168,80 @@ public class JWTAuthorizer implements IAuthorizer {
             throw new AuthorizationRequiredException("Authorization required");
         }
         
-        if (!validateToken(bearerToken)) {
-            throw new AuthorizationRequiredException("Not authorized");
+        try {
+            final Jws<Claims> jws = validateToken(bearerToken);
+            final JwtMatchingRule matchedRule = findMatchingRule(jws.getBody());
+            
+            if (matchedRule == null) {
+                throw new AuthorizationRequiredException("Not authorized");
+            }
+            
+            // Put the authorized username in the log
+            logUsername(jws.getBody().getSubject(), requestContext);
+        } catch (JwtException ex) {
+            throw new AuthorizationRequiredException("Authorization failed: " + ex.getLocalizedMessage(), ex);
         }
     }
 
-    private boolean validateToken(String token) {
-        // Verification
-        try {
-            Jws<Claims> jws = Jwts.parserBuilder().setSigningKeyResolver(new SigningKeyResolverAdapter() {
+    protected final Jws<Claims> validateToken(String token) throws JwtException {
+        // Parse JWS
+        final Jws<Claims> jws = Jwts.parserBuilder().setSigningKeyResolver(new SigningKeyResolverAdapter() {
 
-                @Override
-                public Key resolveSigningKey(JwsHeader header, Claims claims) {
-                    final PublicKey result = authServers.get(claims.getIssuer());
-                    if (result == null) {
-                        throw new JwtException("Unknown issuer");
-                    }
-                    return result;
+            @Override
+            public Key resolveSigningKey(JwsHeader header, Claims claims) {
+                final PublicKey result = authServers.get(claims.getIssuer());
+                if (result == null) {
+                    throw new JwtException("Unknown issuer");
                 }
-
-            }).setAllowedClockSkewSeconds(maxAllowedClockScew).build().parseClaimsJws(token);
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Header: " + jws.getHeader());
-                LOG.debug("Body: " + jws.getBody());
-                LOG.debug("Subject: " + jws.getBody().getSubject());
-                LOG.debug("Audiance: " + jws.getBody().getAudience());
-
-                LOG.debug("** Checking algorithm **");
-                LOG.debug("Algorithm: " + jws.getHeader().getAlgorithm());
+                return result;
             }
 
-            if (!"none".equalsIgnoreCase(jws.getHeader().getAlgorithm())) {
-                LOG.debug("Algorithm is not none");
-            } else {
-                LOG.debug("Unsigned token!");
-                return false;
-            }
+        }).setAllowedClockSkewSeconds(maxAllowedClockScew).build().parseClaimsJws(token);
 
-            if ("JWT".equals(jws.getHeader().getType())) {
-                LOG.debug("Type is expected JWT");
-            } else {
-                LOG.debug("Unexpected type!");
-                return false;
-            }
-
-            if (jws.getBody().getAudience() == null) {
-                LOG.debug("Accepting token as no specific audiance specified");
-            } else {
-                LOG.error("Not for us!");
-                return false;
-            }
-            
-            // Find a matching rule
-            JwtMatchingRule matchedRule = null;
-            for (JwtMatchingRule rule : matchRules) {
-                // Check that issuer matches
-                if (rule.getIssuer().equals(jws.getBody().getIssuer())) {
-                    // Check if we find the claim and contains the value or equals the value
-                    Object claim = jws.getBody().get(rule.getClaimName());
-                    if (claim instanceof List) {
-                        final List<String> claimValues = (List<String>) claim;
-                        if (claimValues.contains(rule.getClaimValue())) {
-                            matchedRule = rule;
-                            break;
-                        }
-                    } else if (claim != null && claim.toString().equals(rule.getClaimValue())) {
-                        matchedRule = rule;
-                        break;
-                    }
-                }
-            }
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Matched rule: " + matchedRule);
-            }
-            return matchedRule != null;
-        } catch (JwtException ex) {
-            LOG.error("JWT validation failed", ex);
-            return false;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Header: " + jws.getHeader() 
+                    + "\nBody: " + jws.getBody());
         }
 
+        if ("none".equalsIgnoreCase(jws.getHeader().getAlgorithm())) {
+            throw new JwtException("Algorithm is none");
+        }
+
+        if (!"JWT".equals(jws.getHeader().getType())) {
+            throw new JwtException("Token type is not JWT");
+        }
+
+        if (jws.getBody().getAudience() != null) {
+            throw new JwtException("Specific audience specified");
+        }
+
+        return jws;
+    }
+
+    protected final JwtMatchingRule findMatchingRule(final Claims claims) {
+        JwtMatchingRule result = null;
+        for (JwtMatchingRule rule : matchRules) {
+            // Check that issuer matches
+            if (rule.getIssuer().equals(claims.getIssuer())) {
+                // Check if we find the claim and contains the value or equals the value
+                Object claim = claims.get(rule.getClaimName());
+                if (claim instanceof List) {
+                    final List<String> claimValues = (List<String>) claim;
+                    if (claimValues.contains(rule.getClaimValue())) {
+                        result = rule;
+                        break;
+                    }
+                } else if (claim != null && claim.toString().equals(rule.getClaimValue())) {
+                    result = rule;
+                    break;
+                }
+            }
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Matched rule: " + result);
+        }
+        return result;
     }
 
     @Override
@@ -255,4 +249,8 @@ public class JWTAuthorizer implements IAuthorizer {
         return configErrors;
     }
 
+    private static void logUsername(final String username,
+            final RequestContext requestContext) {
+        LogMap.getInstance(requestContext).put(IAuthorizer.LOG_USERNAME, username);
+    }
 }

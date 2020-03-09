@@ -271,7 +271,7 @@ public class JWTAuthorizerUnitTest {
                                       System.currentTimeMillis(), claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
-            assertEquals("Exception message", "Not authorized", e.getMessage());
+            assertEquals("Exception message", "Authorization failed: Unknown issuer", e.getMessage());
         }
     }
 
@@ -305,7 +305,7 @@ public class JWTAuthorizerUnitTest {
                                       System.currentTimeMillis(), claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
-            assertEquals("Exception message", "Not authorized", e.getMessage());
+            assertEquals("Exception message", "Authorization failed: Unknown issuer", e.getMessage());
         }
     }
 
@@ -340,7 +340,8 @@ public class JWTAuthorizerUnitTest {
                                       issuedAt, claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
-            assertEquals("Exception message", "Not authorized", e.getMessage());
+            assertTrue("Exception message: " + e.getMessage(), e.getMessage().contains("Authorization failed"));
+            assertTrue("Exception message: " + e.getMessage(), e.getMessage().contains("expired"));
         }
     }
 
@@ -411,7 +412,8 @@ public class JWTAuthorizerUnitTest {
                                       issuedAt, claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
-            assertEquals("Exception message", "Not authorized", e.getMessage());
+            assertTrue("Exception message: " + e.getMessage(), e.getMessage().contains("Authorization failed"));
+            assertTrue("Exception message: " + e.getMessage(), e.getMessage().contains("expired"));
         }
     }
 

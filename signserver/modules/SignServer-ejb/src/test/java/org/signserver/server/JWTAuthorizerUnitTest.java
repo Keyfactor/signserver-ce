@@ -322,6 +322,7 @@ public class JWTAuthorizerUnitTest {
                 .setSubject(TEST_SUBJECT1)
                 .setIssuer(issuer)
                 .setExpiration(new Date(issuedAt + 10000))
+                .setHeaderParam("typ", "JWT")
                 .signWith(privKey, sigAlg);
 
         return builder.compact();

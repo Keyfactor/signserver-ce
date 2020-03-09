@@ -67,6 +67,7 @@ public class JWTAuthorizer implements IAuthorizer {
     private final String AUTH_SERVER_PREFIX = "AUTH_SERVER_";
     private final String ISSUER_SUFFIX = ".ISSUER";
     private final String PUBLICKEY_SUFFIX = ".PUBLICKEY";
+    private final String KEYALG_SUFFIX = ".KEYALG";
     private final String AUTHJWT_PREFIX = "AUTHJWT";
     private final String CLAIM_NAME_SUFFIX = ".CLAIM.NAME";
     private final String CLAIM_VALUE_SUFFIX = ".CLAIM.VALUE";
@@ -93,18 +94,38 @@ public class JWTAuthorizer implements IAuthorizer {
     public void init(int workerId, WorkerConfig config, EntityManager em)
             throws SignServerException {
         // Read properties
-        config.getProperties().stringPropertyNames().forEach((property) -> {
+        for (String property : config.getProperties().stringPropertyNames()) {
             if (property.startsWith(AUTH_SERVER_PREFIX) &&
                     property.endsWith(ISSUER_SUFFIX)) {
                 final String publicKeyProperty =
                         AUTH_SERVER_PREFIX + property.substring(AUTH_SERVER_PREFIX.length(),
                                 property.indexOf(ISSUER_SUFFIX)) +
                         PUBLICKEY_SUFFIX;
+                final String keyalgProperty = 
+                            AUTH_SERVER_PREFIX + property.substring(AUTH_SERVER_PREFIX.length(),
+                                property.indexOf(ISSUER_SUFFIX)) +
+                        KEYALG_SUFFIX;
 
                 try {
                     final String issuer = config.getProperty(property);
                     final String publicKey = config.getProperty(publicKeyProperty);
-                    authServers.put(issuer,  KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(publicKey))));
+                    final X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(publicKey));
+                    // Java9: keySpec.getAlgorithm()
+                    final String keyAlg = config.getProperty(keyalgProperty, "RSA");
+                    final PublicKey pk;
+                    switch (keyAlg) {
+                        case "RSA":
+                            pk = KeyFactory.getInstance("RSA").generatePublic(keySpec);
+                            break;
+                        case "ECDSA":
+                        case "EC":
+                            pk = KeyFactory.getInstance("ECDSA").generatePublic(keySpec);
+                            break;
+                        default:
+                            configErrors.add("Unknown algorithm in " + keyalgProperty);
+                            continue;
+                    }
+                    authServers.put(issuer,  pk);
                 } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
                     configErrors.add("Could not parse public key " +
                             publicKeyProperty + ": " + e.getMessage());
@@ -135,8 +156,8 @@ public class JWTAuthorizer implements IAuthorizer {
                             issuer, description));
                 }
             }
-        });
-        
+        }
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Authorization rules: " + matchRules);
         }

@@ -49,6 +49,7 @@ public class JWTAuthorizerUnitTest {
     private static final String TEST_SUBJECT1 = "subject1";
     private static KeyPair keyPair;
     private static KeyPair keyPair2;
+    private static KeyPair keyPair3;
     
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -59,6 +60,7 @@ public class JWTAuthorizerUnitTest {
     public void beforeTests() throws Exception {
         keyPair = CryptoUtils.generateRSA(2048);
         keyPair2 = CryptoUtils.generateRSA(2048);
+        keyPair3 = CryptoUtils.generateEcCurve("secp256r1");
     }
     
     /**
@@ -207,7 +209,42 @@ public class JWTAuthorizerUnitTest {
             claims.put("scopes", Arrays.asList("scope3", "scope4", "scope1"));
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
-                        generateToken(keyPair.getPrivate(), TEST_ISSUER1,
+                        generateToken(keyPair.getPrivate(), SignatureAlgorithm.RS256, TEST_ISSUER1,
+                                      System.currentTimeMillis(), claims));
+            instance.isAuthorized(null, context);
+        } catch (AuthorizationRequiredException e) {
+            fail("Should be authorized");
+        }
+    }
+    
+        /**
+     * Test authorizing with a valid token.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testValidToken_ECDSA() throws Exception {
+        final JWTAuthorizer instance = new JWTAuthorizer();
+        final WorkerConfig config = new WorkerConfig();
+
+        config.setProperty("AUTH_SERVER_1.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTH_SERVER_1.PUBLICKEY",
+                           new String(Base64.getEncoder().encode(keyPair3.getPublic().getEncoded())));
+        config.setProperty("AUTH_SERVER_1.KEYALG", "ECDSA");
+        config.setProperty("AUTHJWT37.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTHJWT37.CLAIM.NAME", "scopes");
+        config.setProperty("AUTHJWT37.CLAIM.VALUE", "scope1");
+        instance.init(42, config, null);
+        System.err.println(instance.getFatalErrors());
+        
+        try {
+            final RequestContext context = new RequestContext();
+                    
+            final Map<String, Object> claims = new HashMap<>();
+            claims.put("scopes", Arrays.asList("scope3", "scope4", "scope1"));
+        
+            context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
+                        generateToken(keyPair3.getPrivate(), SignatureAlgorithm.ES256, TEST_ISSUER1,
                                       System.currentTimeMillis(), claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
@@ -240,7 +277,7 @@ public class JWTAuthorizerUnitTest {
             claims.put("num", 42);
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
-                        generateToken(keyPair.getPrivate(), TEST_ISSUER1,
+                        generateToken(keyPair.getPrivate(), SignatureAlgorithm.RS256, TEST_ISSUER1,
                                       System.currentTimeMillis(), claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
@@ -279,7 +316,7 @@ public class JWTAuthorizerUnitTest {
             claims.put("scopes", Arrays.asList("scope3", "scope4", "scope2"));
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
-                        generateToken(keyPair2.getPrivate(), TEST_ISSUER2,
+                        generateToken(keyPair2.getPrivate(), SignatureAlgorithm.RS256, TEST_ISSUER2,
                                       System.currentTimeMillis(), claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
@@ -312,7 +349,7 @@ public class JWTAuthorizerUnitTest {
             claims.put("scopes", Arrays.asList("scope3", "scope4", "scope2"));
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
-                        generateToken(keyPair.getPrivate(), TEST_ISSUER1,
+                        generateToken(keyPair.getPrivate(), SignatureAlgorithm.RS256, TEST_ISSUER1,
                                       System.currentTimeMillis(), claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
@@ -373,7 +410,7 @@ public class JWTAuthorizerUnitTest {
             claims.put("scopes", Arrays.asList("scope3", "scope4", "scope1"));
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
-                        generateToken(keyPair.getPrivate(), TEST_ISSUER1,
+                        generateToken(keyPair.getPrivate(), SignatureAlgorithm.RS256, TEST_ISSUER1,
                                       System.currentTimeMillis(), claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
@@ -407,7 +444,7 @@ public class JWTAuthorizerUnitTest {
             claims.put("scopes", Arrays.asList("scope3", "scope4", "scope1"));
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
-                        generateToken(keyPair2.getPrivate(), TEST_ISSUER2,
+                        generateToken(keyPair2.getPrivate(), SignatureAlgorithm.RS256, TEST_ISSUER2,
                                       System.currentTimeMillis(), claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
@@ -442,7 +479,7 @@ public class JWTAuthorizerUnitTest {
             claims.put("scopes", Arrays.asList("scope3", "scope4", "scope1"));
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
-                        generateToken(keyPair.getPrivate(), TEST_ISSUER1,
+                        generateToken(keyPair.getPrivate(), SignatureAlgorithm.RS256, TEST_ISSUER1,
                                       issuedAt, claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
@@ -478,7 +515,7 @@ public class JWTAuthorizerUnitTest {
             claims.put("scopes", Arrays.asList("scope3", "scope4", "scope1"));
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
-                        generateToken(keyPair.getPrivate(), TEST_ISSUER1,
+                        generateToken(keyPair.getPrivate(), SignatureAlgorithm.RS256, TEST_ISSUER1,
                                       issuedAt, claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
@@ -514,7 +551,7 @@ public class JWTAuthorizerUnitTest {
             claims.put("scopes", Arrays.asList("scope3", "scope4", "scope1"));
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
-                        generateToken(keyPair.getPrivate(), TEST_ISSUER1,
+                        generateToken(keyPair.getPrivate(), SignatureAlgorithm.RS256, TEST_ISSUER1,
                                       issuedAt, claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
@@ -523,9 +560,7 @@ public class JWTAuthorizerUnitTest {
         }
     }
 
-    private String generateToken(final PrivateKey privKey, final String issuer,
-                                 final long issuedAt, Map<String, Object> claims) {
-        final SignatureAlgorithm sigAlg = SignatureAlgorithm.RS256;
+    private String generateToken(final PrivateKey privKey, SignatureAlgorithm signatureAlgorithm, final String issuer, final long issuedAt, Map<String, Object> claims) {
         final JwtBuilder builder = Jwts.builder().setId("id")
                 .setIssuedAt(new Date(issuedAt))
                 .setSubject(TEST_SUBJECT1)
@@ -533,7 +568,7 @@ public class JWTAuthorizerUnitTest {
                 .setExpiration(new Date(issuedAt + 10000))
                 .setHeaderParam("typ", "JWT")
                 .addClaims(claims)
-                .signWith(privKey, sigAlg);
+                .signWith(privKey, signatureAlgorithm);
 
         return builder.compact();
     }

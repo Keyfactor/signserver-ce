@@ -18,9 +18,12 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.Security;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -130,14 +133,20 @@ public class JWTAuthorizerUnitTest {
         config.setProperty("AUTH_SERVER_1.ISSUER", TEST_ISSUER1);
         config.setProperty("AUTH_SERVER_1.PUBLICKEY",
                            new String(Base64.getEncoder().encode(keyPair.getPublic().getEncoded())));
+        config.setProperty("AUTHJWT37.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTHJWT37.CLAIM.NAME", "scopes");
+        config.setProperty("AUTHJWT37.CLAIM.VALUE", "scope1");
         instance.init(42, config, null);
         
         try {
             final RequestContext context = new RequestContext();
+                    
+            final Map<String, Object> claims = new HashMap<>();
+            claims.put("scopes", Arrays.asList("scope3", "scope4", "scope1"));
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
                         generateToken(keyPair.getPrivate(), TEST_ISSUER1,
-                                      System.currentTimeMillis()));
+                                      System.currentTimeMillis(), claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
             fail("Should be authorized");
@@ -184,14 +193,20 @@ public class JWTAuthorizerUnitTest {
         config.setProperty("AUTH_SERVER_1.ISSUER", TEST_ISSUER2);
         config.setProperty("AUTH_SERVER_1.PUBLICKEY",
                            new String(Base64.getEncoder().encode(keyPair.getPublic().getEncoded())));
+        config.setProperty("AUTHJWT1.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTHJWT1.CLAIM.NAME", "scopes");
+        config.setProperty("AUTHJWT1.CLAIM.VALUE", "scope1");
         instance.init(42, config, null);
         
         try {
             final RequestContext context = new RequestContext();
+            
+            final Map<String, Object> claims = new HashMap<>();
+            claims.put("scopes", Arrays.asList("scope3", "scope4", "scope1"));
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
                         generateToken(keyPair.getPrivate(), TEST_ISSUER1,
-                                      System.currentTimeMillis()));
+                                      System.currentTimeMillis(), claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
             assertEquals("Exception message", "Not authorized", e.getMessage());
@@ -212,14 +227,20 @@ public class JWTAuthorizerUnitTest {
         config.setProperty("AUTH_SERVER_1.ISSUER", TEST_ISSUER1);
         config.setProperty("AUTH_SERVER_1.PUBLICKEY",
                            new String(Base64.getEncoder().encode(keyPair.getPublic().getEncoded())));
+        config.setProperty("AUTHJWT37.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTHJWT37.CLAIM.NAME", "scopes");
+        config.setProperty("AUTHJWT37.CLAIM.VALUE", "scope1");
         instance.init(42, config, null);
         
         try {
             final RequestContext context = new RequestContext();
+            
+            final Map<String, Object> claims = new HashMap<>();
+            claims.put("scopes", Arrays.asList("scope3", "scope4", "scope1"));
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
                         generateToken(keyPair2.getPrivate(), TEST_ISSUER2,
-                                      System.currentTimeMillis()));
+                                      System.currentTimeMillis(), claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
             assertEquals("Exception message", "Not authorized", e.getMessage());
@@ -240,15 +261,21 @@ public class JWTAuthorizerUnitTest {
         config.setProperty("AUTH_SERVER_1.ISSUER", TEST_ISSUER1);
         config.setProperty("AUTH_SERVER_1.PUBLICKEY",
                            new String(Base64.getEncoder().encode(keyPair.getPublic().getEncoded())));
+        config.setProperty("AUTHJWT37.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTHJWT37.CLAIM.NAME", "scopes");
+        config.setProperty("AUTHJWT37.CLAIM.VALUE", "scope1");
         instance.init(42, config, null);
         
         try {
             final RequestContext context = new RequestContext();
             final long issuedAt = System.currentTimeMillis() - 360000; // 6 min
+            
+            final Map<String, Object> claims = new HashMap<>();
+            claims.put("scopes", Arrays.asList("scope3", "scope4", "scope1"));
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
                         generateToken(keyPair.getPrivate(), TEST_ISSUER1,
-                                      issuedAt));
+                                      issuedAt, claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
             assertEquals("Exception message", "Not authorized", e.getMessage());
@@ -269,15 +296,21 @@ public class JWTAuthorizerUnitTest {
         config.setProperty("AUTH_SERVER_1.ISSUER", TEST_ISSUER1);
         config.setProperty("AUTH_SERVER_1.PUBLICKEY",
                            new String(Base64.getEncoder().encode(keyPair.getPublic().getEncoded())));
+        config.setProperty("AUTHJWT37.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTHJWT37.CLAIM.NAME", "scopes");
+        config.setProperty("AUTHJWT37.CLAIM.VALUE", "scope1");
         instance.init(42, config, null);
         
         try {
             final RequestContext context = new RequestContext();
             final long issuedAt = System.currentTimeMillis() - 240000; // 4 min
+            
+            final Map<String, Object> claims = new HashMap<>();
+            claims.put("scopes", Arrays.asList("scope3", "scope4", "scope1"));
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
                         generateToken(keyPair.getPrivate(), TEST_ISSUER1,
-                                      issuedAt));
+                                      issuedAt, claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
             fail("Should be authorized");
@@ -298,16 +331,22 @@ public class JWTAuthorizerUnitTest {
         config.setProperty("AUTH_SERVER_1.ISSUER", TEST_ISSUER1);
         config.setProperty("AUTH_SERVER_1.PUBLICKEY",
                            new String(Base64.getEncoder().encode(keyPair.getPublic().getEncoded())));
+        config.setProperty("AUTHJWT37.ISSUER", TEST_ISSUER1);
+        config.setProperty("AUTHJWT37.CLAIM.NAME", "scopes");
+        config.setProperty("AUTHJWT37.CLAIM.VALUE", "scope1");
         config.setProperty("MAX_ALLOWED_CLOCK_SCEW", "60");
         instance.init(42, config, null);
         
         try {
             final RequestContext context = new RequestContext();
             final long issuedAt = System.currentTimeMillis() - 120000; // 2 min
+            
+            final Map<String, Object> claims = new HashMap<>();
+            claims.put("scopes", Arrays.asList("scope3", "scope4", "scope1"));
         
             context.put(RequestContext.CLIENT_CREDENTIAL_BEARER,
                         generateToken(keyPair.getPrivate(), TEST_ISSUER1,
-                                      issuedAt));
+                                      issuedAt, claims));
             instance.isAuthorized(null, context);
         } catch (AuthorizationRequiredException e) {
             assertEquals("Exception message", "Not authorized", e.getMessage());
@@ -315,7 +354,7 @@ public class JWTAuthorizerUnitTest {
     }
 
     private String generateToken(final PrivateKey privKey, final String issuer,
-                                 final long issuedAt) {
+                                 final long issuedAt, Map<String, Object> claims) {
         final SignatureAlgorithm sigAlg = SignatureAlgorithm.RS256;
         final JwtBuilder builder = Jwts.builder().setId("id")
                 .setIssuedAt(new Date(issuedAt))
@@ -323,6 +362,7 @@ public class JWTAuthorizerUnitTest {
                 .setIssuer(issuer)
                 .setExpiration(new Date(issuedAt + 10000))
                 .setHeaderParam("typ", "JWT")
+                .addClaims(claims)
                 .signWith(privKey, sigAlg);
 
         return builder.compact();

@@ -214,25 +214,36 @@ public class JWTAuthorizer implements IAuthorizer {
                 LOG.error("Not for us!");
                 return false;
             }
-
-            if ("airhacks".equals(jws.getBody().getIssuer())) {
-                System.out.println("Issuer is ok");
+            
+            // Find a matching rule
+            JwtMatchingRule matchedRule = null;
+            for (JwtMatchingRule rule : matchRules) {
+                // Check that issuer matches
+                if (rule.getIssuer().equals(jws.getBody().getIssuer())) {
+                    // Check if we find the claim and contains the value or equals the value
+                    Object claim = jws.getBody().get(rule.getClaimName());
+                    if (claim instanceof List) {
+                        final List<String> claimValues = (List<String>) claim;
+                        if (claimValues.contains(rule.getClaimValue())) {
+                            matchedRule = rule;
+                            break;
+                        }
+                    } else if (claim != null && claim.toString().equals(rule.getClaimValue())) {
+                        matchedRule = rule;
+                        break;
+                    }
+                }
             }
 
-            System.out.println("** Match on subject **");
-            final boolean subjectIsDuke = "duke".equals(jws.getBody().getSubject());
-            System.out.println("Is authorized as subject is duke: " + subjectIsDuke);
-
-            System.out.println("** Match on groups **");
-            final List<String> groups = jws.getBody().get("groups", List.class);
-            final boolean groupsContainsChief = groups != null && groups.contains("chief");
-            System.out.println("Is authorized as groups contains chief: " + groupsContainsChief);
-            return true;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Matched rule: " + matchedRule);
+            }
+            return matchedRule != null;
         } catch (JwtException ex) {
             LOG.error("JWT validation failed", ex);
             return false;
         }
-        
+
     }
 
     @Override

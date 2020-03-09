@@ -151,34 +151,38 @@ public class JWTAuthorizer implements IAuthorizer {
                 }
 
             }).setAllowedClockSkewSeconds(maxAllowedClockScew).build().parseClaimsJws(token);
-            System.out.println("Header: " + jws.getHeader());
-            System.out.println("Body: " + jws.getBody());
-            System.out.println("Subject: " + jws.getBody().getSubject());
-            System.out.println("Audiance: " + jws.getBody().getAudience());
 
-            System.out.println("** Checking algorithm **");
-            System.out.println("Algorithm: " + jws.getHeader().getAlgorithm());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Header: " + jws.getHeader());
+                LOG.debug("Body: " + jws.getBody());
+                LOG.debug("Subject: " + jws.getBody().getSubject());
+                LOG.debug("Audiance: " + jws.getBody().getAudience());
+
+                LOG.debug("** Checking algorithm **");
+                LOG.debug("Algorithm: " + jws.getHeader().getAlgorithm());
+            }
+
             if (!"none".equalsIgnoreCase(jws.getHeader().getAlgorithm())) {
-                System.out.println("Algorithm is not none");
+                LOG.debug("Algorithm is not none");
             } else {
-                System.out.println("Unsigned token!");
+                LOG.debug("Unsigned token!");
+                return false;
             }
 
-            System.out.println("** Checking type **");
             if ("JWT".equals(jws.getHeader().getType())) {
-                System.out.println("Type is expected JWT");
+                LOG.debug("Type is expected JWT");
             } else {
-                System.err.println("Unexpected type!");
+                LOG.debug("Unexpected type!");
+                return false;
             }
 
-            System.out.println("** Check audiance **");
             if (jws.getBody().getAudience() == null) {
-                System.out.println("Accepting token as no specific audiance specified");
+                LOG.debug("Accepting token as no specific audiance specified");
             } else {
-                System.err.println("Not for us!");
+                LOG.error("Not for us!");
+                return false;
             }
 
-            System.out.println("** Checking issuer **");
             if ("airhacks".equals(jws.getBody().getIssuer())) {
                 System.out.println("Issuer is ok");
             }

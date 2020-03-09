@@ -65,6 +65,10 @@ public class JWTAuthorizer implements IAuthorizer {
     private final String AUTH_SERVER_PREFIX = "AUTH_SERVER_";
     private final String ISSUER_SUFFIX = ".ISSUER";
     private final String PUBLICKEY_SUFFIX = ".PUBLICKEY";
+    private final String AUTHJWT_PREFIX = "AUTHJWT";
+    private final String CLAIM_NAME_SUFFIX = ".CLAIM.NAME";
+    private final String CLAIM_VALUE_SUFFIX = ".CLAIM.VALUE";
+    private final String DESCRIPTION_SUFFIX = ".DESCRIPTION";
 
     private final String MAX_ALLOWED_CLOCK_SCEW = "MAX_ALLOWED_CLOCK_SCEW";
     
@@ -101,6 +105,31 @@ public class JWTAuthorizer implements IAuthorizer {
                 } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
                     configErrors.add("Could not parse public key " +
                                      publicKeyProperty + ": " + e.getMessage());
+                }
+            } else if (property.startsWith(AUTHJWT_PREFIX) &&
+                       property.endsWith(ISSUER_SUFFIX)) {
+                final String claimNameProperty =
+                        AUTHJWT_PREFIX + property.substring(AUTHJWT_PREFIX.length(),
+                                                            property.indexOf(ISSUER_SUFFIX)) +
+                        CLAIM_NAME_SUFFIX;
+                final String claimValueProperty =
+                        AUTHJWT_PREFIX + property.substring(AUTHJWT_PREFIX.length(),
+                                                            property.indexOf(ISSUER_SUFFIX)) +
+                        CLAIM_VALUE_SUFFIX;
+                final String descriptionProperty =
+                        AUTHJWT_PREFIX + property.substring(AUTHJWT_PREFIX.length(),
+                                                            property.indexOf(ISSUER_SUFFIX)) +
+                        DESCRIPTION_SUFFIX;
+                final String issuer = config.getProperty(property);
+                final String claimName = config.getProperty(claimNameProperty);
+                final String claimValue = config.getProperty(claimValueProperty);
+                final String description = config.getProperty(descriptionProperty);
+
+                if (claimName == null || claimValue == null) {
+                    configErrors.add("CLAIM_NAME and CLAIM_VALUE needs to be specified for AUTHJWT rules");
+                } else {
+                    matchRules.add(new JwtMatchingRule(claimName, claimValue,
+                                                       issuer, description));
                 }
             }
         }

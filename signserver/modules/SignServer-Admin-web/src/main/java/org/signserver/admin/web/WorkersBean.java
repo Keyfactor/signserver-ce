@@ -156,7 +156,7 @@ public class WorkersBean {
         sb.append("?faces-redirect=true&amp;includeViewParams=true&amp;workers=");
         for (Map.Entry<Integer, Boolean> entry : getSelectedIds().entrySet()) {
             if (entry.getValue()) {
-                sb.append(entry.getKey()).append(",");
+                sb.append(entry.getKey()).append(",");               
             }
         }
         return sb.toString();

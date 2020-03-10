@@ -58,7 +58,7 @@
                                 <f:facet name="header">
                                     <h:selectBooleanCheckbox class="jsHidden" onclick="toggleCheckboxes(this, document.getElementsByClassName('allSelectable'))"/>
                                 </f:facet>
-                                <h:selectBooleanCheckbox value="#{bulkBean.selectedIds[item.id]}" disabled="#{!item.existing}" class="allSelectable"/>
+                                <h:selectBooleanCheckbox value="#{bulkBean.selectedIdsForActivation[item.id] }" disabled="#{!item.existing || !item.hasCrypto}" class="allSelectable"/>
                             </h:column>
                             <h:column>
                                 <f:facet name="header">
@@ -78,7 +78,15 @@
                                 <f:facet name="header">
                                     <h:outputText value="#{text['Result']}" />
                                 </f:facet>
-                                <span class="errorMessage"><h:outputText value="#{item.error}"/></span> 
+                                <span class="errorMessage">
+                                    <h:outputText value="#{item.error}"/>
+                                    <h:panelGroup class="warningMessage" rendered = "#{!item.hasCrypto &amp;&amp; item.success == null &amp;&amp; item.error == null}">
+                                        <h:outputText value="(#{ text['Not_a_crypto_worker']}, "/>
+                                        <h:outputText rendered = "#{bulkBean.getWorkerIdByName(item.config.get('CRYPTOTOKEN')) != -1}" value="#{  text['See']} "/>
+                                        <h:link value="#{(bulkBean.getWorkerIdByName(item.config.get('CRYPTOTOKEN')) != -1 ? (item.config.get('CRYPTOTOKEN')) : ( text['No_cryptotoken_configured']))}" disabled="#{bulkBean.getWorkerIdByName(item.config.get('CRYPTOTOKEN'))== -1}" outcome="worker.xhtml?id=#{item.config.get('CRYPTOTOKEN') ? '' : bulkBean.getWorkerIdByName(item.config.get('CRYPTOTOKEN'))}" />
+                                        <h:outputText value=")"/>
+                                    </h:panelGroup>
+                                </span> 
                                 <span class="successMessage"><h:outputText value="#{item.success}"/></span>
                             </h:column>
                             <f:facet name="footer">

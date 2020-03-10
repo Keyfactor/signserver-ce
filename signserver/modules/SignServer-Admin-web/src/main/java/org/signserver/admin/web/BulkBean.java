@@ -55,6 +55,7 @@ public class BulkBean {
     private List<Integer> workerIdsList;
 
     private final Map<Integer, Boolean> selectedIds = new HashMap<>();
+    private Map<Integer, Boolean> selectedIDsForActivation = null;
 
     private List<Worker> workers;
 
@@ -118,22 +119,33 @@ public class BulkBean {
         }
         return workerIdsList;
     }
+    
+    public int getWorkerIdByName(String workerName) throws AdminNotAuthorizedException {
+        int workerId = workerSessionBean.getWorkerId(authBean.getAdminCertificate(), workerName);
+        if (workerId == 0) 
+            return -1;
+        else
+            return workerId;
+    }
+    
+    public Worker getWorker(int workerId) throws AdminNotAuthorizedException {
+        WorkerConfig config = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), workerId);
+        String name = config.getProperty("NAME");
+        boolean exists = true;
+        if (name == null) {
+            name = "Not Found";
+            exists = false;
+        }
+        return new Worker(workerId, exists, name, config.getProperties());
+    }
 
     public List<Worker> getWorkers() throws AdminNotAuthorizedException {
         if (workers == null) {
             workers = new ArrayList<>();
             for (int id : getWorkerIdsList()) {
-                WorkerConfig config = workerSessionBean.getCurrentWorkerConfig(authBean.getAdminCertificate(), id);
-                String name = config.getProperty("NAME");
-                boolean exists = true;
-                if (name == null) {
-                    name = "Not Found";
-                    exists = false;
-                }
-                workers.add(new Worker(id, exists, name, config.getProperties()));
-
-                // Select checkbox
-                selectedIds.put(id, exists);
+                Worker newWorker = getWorker(id);
+                workers.add(newWorker);
+                selectedIds.put(id, newWorker.isExisting());
             }
         }
         return workers;
@@ -150,11 +162,35 @@ public class BulkBean {
     public Map<Integer, Boolean> getSelectedIds() {
         return selectedIds;
     }
+    
+    //This method returns an altered selected ID-list with the non-cryptoworkers removed
+    public Map<Integer, Boolean> getSelectedIdsForActivation() throws AdminNotAuthorizedException {
+        System.out.println(selectedIds);
+       if(selectedIDsForActivation == null) {
+           selectedIDsForActivation = new HashMap<>();
+            for(int ID: selectedIds.keySet()) {
+                if(!getWorker(ID).isHasCrypto()) {
+                    selectedIDsForActivation.put(ID, Boolean.FALSE);
+                } else {
+                    selectedIDsForActivation.put(ID, Boolean.TRUE);
+                }
+            }
+        } 
+        return selectedIDsForActivation;
+    }
 
     public List<Worker> getSelectedWorkers() throws AdminNotAuthorizedException {
-        final ArrayList<Worker> results = new ArrayList<>(selectedIds.size());
+        return getRelevantSelectedWorkers(selectedIds);
+    }
+    
+    public List<Worker> getSelectedWorkersForActivation() throws AdminNotAuthorizedException {
+        return getRelevantSelectedWorkers(selectedIDsForActivation);
+    }
+    
+    public List<Worker> getRelevantSelectedWorkers(Map<Integer, Boolean> selectedIDMap) throws AdminNotAuthorizedException {
+     final ArrayList<Worker> results = new ArrayList<>(selectedIDMap.size());
         for (Worker worker : getWorkers()) {
-            if (Boolean.TRUE.equals(selectedIds.get(worker.getId()))) {
+            if (Boolean.TRUE.equals(selectedIDMap.get(worker.getId()))) {
                 results.add(worker);
             }
         }
@@ -162,7 +198,7 @@ public class BulkBean {
     }
 
     public String activateAction() throws AdminNotAuthorizedException {
-        for (Worker worker : getSelectedWorkers()) {
+        for (Worker worker : getSelectedWorkersForActivation()) {
             try {
                 workerSessionBean.activateSigner(authBean.getAdminCertificate(), new WorkerIdentifier(worker.getId()), activatePassword);
                 selectedIds.remove(worker.getId());
@@ -181,7 +217,7 @@ public class BulkBean {
     }
 
     public String deactivateAction() throws AdminNotAuthorizedException {
-        for (Worker worker : getSelectedWorkers()) {
+        for (Worker worker : getSelectedWorkersForActivation()) {
             try {
                 workerSessionBean.deactivateSigner(authBean.getAdminCertificate(), new WorkerIdentifier(worker.getId()));
                 selectedIds.remove(worker.getId());

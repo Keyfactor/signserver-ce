@@ -44,7 +44,7 @@
             </ui:define>
 
             <ui:define name="content">
-                
+
                 <ui:include src="/worker-menu.xhtml">
                     <ui:param name="worker" value="#{workerBean.worker}"/>
                     <ui:param name="workerActiveMenu" value="worker"/>
@@ -55,7 +55,6 @@
                         <!-- Note: This buttons are somewhat duplicated in workers.xhtml -->
                         <h:form id="workerMenu">
                             <p>
-                                <h:commandButton class="buttonFeatured" value="#{text['Activate...']}" action="#{workerBean.bulkAction('workers-activation')}"/> <h:commandButton class="buttonNeutral" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation')}"/> &nbsp; 
                                 <h:commandButton class="buttonFeatured" value="#{text['Enable...']}" rendered="#{workerBean.worker.config.get('DISABLED')}" action="#{workerBean.bulkAction('workers-enable')}"/> <h:commandButton class="buttonNeutral" value="#{text['Disable...']}" rendered="#{!workerBean.worker.config.get('DISABLED')}" action="#{workerBean.bulkAction('workers-disable')}"/> &nbsp; 
                                 <h:commandButton class="buttonFeatured" value="#{text['Renew_Key...']}" action="#{workerBean.bulkAction('workers-renewkey')}"/> <h:commandButton class="buttonFeatured" value="Test key..." action="#{workerBean.bulkAction('workers-testkey')}"/> <h:commandButton class="buttonFeatured" value="#{text['Generate_CSR...']}" action="#{workerBean.bulkAction('workers-csr')}"/> <h:commandButton class="buttonFeatured" value="#{text['Install_Certificates...']}" action="#{workerBean.bulkAction('workers-certificates')}"/> &nbsp;
                                 <h:commandButton class="buttonNeutral" value="#{text['Renew_Signer...']}" action="#{workerBean.bulkAction('workers-renew')}"/> &nbsp;
@@ -80,7 +79,7 @@
                     </p>
                 </h:panelGroup>
             </ui:define>
-
+            
             <ui:define name="bottom">
             </ui:define>
 

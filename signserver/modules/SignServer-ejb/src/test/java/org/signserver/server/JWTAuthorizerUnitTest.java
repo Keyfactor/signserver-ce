@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -43,6 +44,9 @@ import org.signserver.test.utils.builders.CryptoUtils;
  * @version $Id$
  */
 public class JWTAuthorizerUnitTest {
+    
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(JWTAuthorizerUnitTest.class);
 
     private static final String TEST_ISSUER1 = "issuer1";
     private static final String TEST_ISSUER2 = "issuer2";
@@ -71,6 +75,8 @@ public class JWTAuthorizerUnitTest {
      */
     @Test
     public void testIllegalMaxAllowedClockScew() throws Exception {
+        LOG.info("testIllegalMaxAllowedClockScew");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 
@@ -91,6 +97,8 @@ public class JWTAuthorizerUnitTest {
      */
     @Test
     public void testNegativeMaxAllowedClockScew() throws Exception {
+        LOG.info("testNegativeMaxAllowedClockScew");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 
@@ -110,6 +118,8 @@ public class JWTAuthorizerUnitTest {
      */
     @Test
     public void testLegalMaxAllowedClockScew() throws Exception {
+        LOG.info("testLegalMaxAllowedClockScew");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 
@@ -130,6 +140,8 @@ public class JWTAuthorizerUnitTest {
      */
     @Test
     public void testNoClaimNameError() throws Exception {
+        LOG.info("testNoClaimNameError");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 
@@ -151,6 +163,8 @@ public class JWTAuthorizerUnitTest {
      */
     @Test
     public void testNoClaimValueError() throws Exception {
+        LOG.info("testNoClaimValueError");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 
@@ -165,13 +179,15 @@ public class JWTAuthorizerUnitTest {
     }
 
     /**
-     * Test that ommitting AUTHJWTn.CLAIM.NAME and .CLAIM.VALUE results in an appropriate
+     * Test that omitting AUTHJWTn.CLAIM.NAME and .CLAIM.VALUE results in an appropriate
      * error message.
      * 
      * @throws java.lang.Exception
      */
     @Test
     public void testNoClaimNameAndValueError() throws Exception {
+        LOG.info("testNoClaimNameAndValueError");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 
@@ -191,6 +207,8 @@ public class JWTAuthorizerUnitTest {
      */
     @Test
     public void testValidToken() throws Exception {
+        LOG.info("testValidToken");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 
@@ -217,13 +235,15 @@ public class JWTAuthorizerUnitTest {
         }
     }
     
-        /**
+    /**
      * Test authorizing with a valid token.
      * 
      * @throws Exception 
      */
     @Test
     public void testValidToken_ECDSA() throws Exception {
+        LOG.info("testValidToken_ECDSA");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 
@@ -259,6 +279,8 @@ public class JWTAuthorizerUnitTest {
      */
     @Test
     public void testValidTokenNumberInAuthRule() throws Exception {
+        LOG.info("testValidTokenNumberInAuthRule");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 
@@ -292,6 +314,8 @@ public class JWTAuthorizerUnitTest {
      */
     @Test
     public void testValidTokenAdditionalRule() throws Exception {
+        LOG.info("testValidTokenAdditionalRule");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 
@@ -331,6 +355,8 @@ public class JWTAuthorizerUnitTest {
      */
     @Test
     public void testInvalidTokenNotMatchingRule() throws Exception {
+        LOG.info("testInvalidTokenNotMatchingRule");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 
@@ -366,6 +392,8 @@ public class JWTAuthorizerUnitTest {
      */
     @Test
     public void testNoToken() throws Exception {
+        LOG.info("testNoToken");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 
@@ -392,6 +420,8 @@ public class JWTAuthorizerUnitTest {
      */
     @Test
     public void testValidTokenOtherIssuer() throws Exception {
+        LOG.info("testValidTokenOtherIssuer");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 
@@ -426,6 +456,8 @@ public class JWTAuthorizerUnitTest {
      */
     @Test
     public void testValidTokenOtherPublicKey() throws Exception {
+        LOG.info("testValidTokenOtherPublicKey");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 
@@ -460,6 +492,8 @@ public class JWTAuthorizerUnitTest {
      */
     @Test
     public void testValidTokenExpiredDefaultScew() throws Exception {
+        LOG.info("testValidTokenExpiredDefaultScew");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 
@@ -496,6 +530,8 @@ public class JWTAuthorizerUnitTest {
      */
     @Test
     public void testValidTokenWithinDefaultScew() throws Exception {
+        LOG.info("testValidTokenWithinDefaultScew");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 
@@ -531,6 +567,8 @@ public class JWTAuthorizerUnitTest {
      */
     @Test
     public void testValidExpiredShortAllowedScew() throws Exception {
+        LOG.info("testValidExpiredShortAllowedScew");
+
         final JWTAuthorizer instance = new JWTAuthorizer();
         final WorkerConfig config = new WorkerConfig();
 

@@ -55,7 +55,7 @@ public class BulkBean {
     private List<Integer> workerIdsList;
 
     private final Map<Integer, Boolean> selectedIds = new HashMap<>();
-    private Map<Integer, Boolean> selectedIDsForActivation = null;
+    private Map<Integer, Boolean> selectedIDsForActivation;
 
     private List<Worker> workers;
 
@@ -122,10 +122,11 @@ public class BulkBean {
     
     public int getWorkerIdByName(String workerName) throws AdminNotAuthorizedException {
         int workerId = workerSessionBean.getWorkerId(authBean.getAdminCertificate(), workerName);
-        if (workerId == 0) 
+        if (workerId == 0) {
             return -1;
-        else
+        } else {
             return workerId;
+        }
     }
     
     public Worker getWorker(int workerId) throws AdminNotAuthorizedException {
@@ -163,13 +164,14 @@ public class BulkBean {
         return selectedIds;
     }
     
-    //This method returns an altered selected ID-list with the non-cryptoworkers removed
+    /**
+     * This method returns an altered selected ID-list with the non-cryptoworkers removed
+     */
     public Map<Integer, Boolean> getSelectedIdsForActivation() throws AdminNotAuthorizedException {
-        System.out.println(selectedIds);
-       if(selectedIDsForActivation == null) {
+       if (selectedIDsForActivation == null) {
            selectedIDsForActivation = new HashMap<>();
-            for(int ID: selectedIds.keySet()) {
-                if(!getWorker(ID).isHasCrypto()) {
+            for (int ID: selectedIds.keySet()) {
+                if (!getWorker(ID).isHasCrypto()) {
                     selectedIDsForActivation.put(ID, Boolean.FALSE);
                 } else {
                     selectedIDsForActivation.put(ID, Boolean.TRUE);

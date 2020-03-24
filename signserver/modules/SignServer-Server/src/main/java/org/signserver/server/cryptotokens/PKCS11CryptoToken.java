@@ -358,7 +358,10 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
     @Override
     public boolean deactivate(IServices services) throws CryptoTokenOfflineException {
         delegate.deactivate();
-        keystoreDelegator = null;
+        // unset delegator is CESeCore token is not auto-activated
+        if (!delegate.isActive()) {
+            keystoreDelegator = null;
+        }
         return true;
     }
 

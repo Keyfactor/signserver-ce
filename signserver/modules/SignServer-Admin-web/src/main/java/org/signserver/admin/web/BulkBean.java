@@ -170,12 +170,8 @@ public class BulkBean {
     public Map<Integer, Boolean> getSelectedIdsForActivation() throws AdminNotAuthorizedException {
        if (selectedIDsForActivation == null) {
            selectedIDsForActivation = new HashMap<>();
-            for (int ID: selectedIds.keySet()) {
-                if (!getWorker(ID).isHasCrypto()) {
-                    selectedIDsForActivation.put(ID, Boolean.FALSE);
-                } else {
-                    selectedIDsForActivation.put(ID, Boolean.TRUE);
-                }
+            for (int id: selectedIds.keySet()) {
+                selectedIDsForActivation.put(id, getWorker(id).isHasCrypto());
             }
         } 
         return selectedIDsForActivation;

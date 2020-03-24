@@ -80,7 +80,7 @@
                                 </f:facet>
                                 <span class="errorMessage">
                                     <h:outputText value="#{item.error}"/>
-                                    <h:panelGroup class="warningMessage" rendered = "#{!item.hasCrypto and item.success == null and item.error == null}">
+                                    <h:panelGroup class="warningMessage" rendered="#{!item.hasCrypto and item.success == null and item.error == null}">
                                         <h:outputText value="(#{text['Not_a_crypto_worker']}, "/>
                                         <h:outputText rendered="#{bulkBean.getWorkerIdByName(item.config.get('CRYPTOTOKEN')) != -1}" value="#{text['See']} "/>
                                         <h:link value="#{(bulkBean.getWorkerIdByName(item.config.get('CRYPTOTOKEN')) != -1 ? (item.config.get('CRYPTOTOKEN')) : (text['No_cryptotoken_configured']))}" disabled="#{bulkBean.getWorkerIdByName(item.config.get('CRYPTOTOKEN'))== -1}" outcome="worker.xhtml?id=#{item.config.get('CRYPTOTOKEN') ? '' : bulkBean.getWorkerIdByName(item.config.get('CRYPTOTOKEN'))}" />

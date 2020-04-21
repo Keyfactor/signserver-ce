@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.4.0-draft</p>
+                    <p>Version: 5.4.0</p>
                 </div>
             </header>
 
@@ -995,6 +995,10 @@
         <a class="ht-nav-page-link" href="Cookie_Authorizer.html">Cookie Authorizer</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JWT_Authorizer.html">JWT Authorizer</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -1382,6 +1386,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.4_Release_Notes.html">SignServer 5.4 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.3_Release_Notes.html">SignServer 5.3 Release Notes</a>
 
             </li>
@@ -1453,16 +1461,36 @@
                                                                                                          <li class="shortcut"><a href="Administration_Web.html">Administration Web</a></li>
                                                                                      <li><a href="Workers_Page.html">Workers Page</a></li>
                                                             </ul>
-</div>            <h1 id="src-5282288"> <span>Workers Activation Page</span></h1>
+</div>            <h1 id="src-85929041"> <span>Workers Activation Page</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >Activation (login) could be needed for crypto tokens that are not configured to be automatically activated (i.e. that has the password stored in the configuration).    </p>
-    <p  >The page lists each worker selected for activation.    </p>
-    <p  >Make sure all workers that should be activated are selected with the check box.    </p>
-    <p  >Fill in the authentication code (i.e. key store or HSM slot/partition password) if any.    </p>
-    <div class="section section-1" id="src-5282288_id-.WorkersActivationPagev4.1.0-Actions">
+    <p  >    <span style="color: #0e101a;">
+The Activation page lists workers selected for activation.    </span>
+    </p>
+    <p  >    <span style="color: #0e101a;">
+Activating (logging in) a crypto token is, for example, useful for crypto tokens that are not set to     </span>
+<strong class=" ">    <span style="color: #0e101a;">
+Auto-activation    </span>
+</strong>    <span style="color: #0e101a;">
+. Such a crypto token does not have the a    </span>
+    <span style="color: #0e101a;">
+u    </span>
+    <span style="color: #0e101a;">
+thentication    </span>
+    <span style="color: #0e101a;">
+ code    </span>
+    <span style="color: #0e101a;">
+ (password) stored in its configuration and will not automatically be activated and available after a reboot, for example.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+Note that it is not possible to activate a worker that does not have a crypto token configured since the activation of such a worker is controlled by the activation of its crypto worker. If a crypto worker is configured for the worker, a link to that crypto worker is displayed. Otherwise, a message is displayed indicating that no crypto worker is set.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+To activate workers, ensure that the <strong class=" ">Activate</strong> option is selected for all workers you want to activate. Specify the authentication code (the key store or HSM slot/partition password) if any.    </span>
+    </p>
+    <div class="section section-1" id="src-85929041_id-.WorkersActivationPagev5.4.0-Actions">
         <h1 class="heading "><span>Actions</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1483,9 +1511,15 @@
         <p  >Activate    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Performs the worker activation for each selected worker.    </p>
-    <p  >The result of the activation is written out in the Result column.    </p>
-    <p  >If all workers was successfully activated the page is automatically switched back to the previous otherwise the page remains and the user has the ability to try again, possibly with a different password for the workers that failed.    </p>
+        <p  >    <span style="color: #000000;">
+Select to activate the worker(s).    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+The result of the activation is displayed in the Result column.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+If all workers are successfully activated, the page will automatically return to the previous page. If all workers are not activated, try to activate the worker(s) again and consider using a different password for the worker(s) that failed.    </span>
+    </p>
             </td>
         </tr>
     <tr>

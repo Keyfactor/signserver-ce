@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.4.0-draft</p>
+                    <p>Version: 5.4.0</p>
                 </div>
             </header>
 
@@ -995,6 +995,10 @@
         <a class="ht-nav-page-link" href="Cookie_Authorizer.html">Cookie Authorizer</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JWT_Authorizer.html">JWT Authorizer</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -1382,6 +1386,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.4_Release_Notes.html">SignServer 5.4 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.3_Release_Notes.html">SignServer 5.3 Release Notes</a>
 
             </li>
@@ -1457,7 +1465,14 @@
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >The workers page lists all configured workers (if any), along with their status (ACTIVE/OFFLINE/DISABLED). Click a worker in the list to open the page for that worker.    </p>
+    <p  >The workers page lists all configured workers and allows you to perform a number of actions or add new workers. For a list of all available actions, see <a   href="#src-85926513_id-.WorkersPagev5.4.0-Actions">Actions</a> below.    </p>
+    <p  >The list of workers display the worker status, one of:    </p>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">ACTIVE:</strong> An Active worker has not reported any issues with its configuration or the configuration or state of its crypto token.    </p>
+</li><li class=" ">    <p  ><strong class=" ">OFFLINE:</strong> An offline worker has issues with its configuration of any of its dependencies. For example, its crypto token may not be active.    </p>
+</li><li class=" ">    <p  ><strong class=" ">DISABLED:</strong> A worker disabled in its configuration will not handle any requests until it is enabled again.    </p>
+</li></ul>    <p  >Click a worker in the list to open the <a   href="Worker_Page.html">Worker Page</a> for the worker, displaying information about its state and configuration.    </p>
+    <div class="section section-1" id="src-85926513_id-.WorkersPagev5.4.0-Actions">
+        <h1 class="heading "><span>Actions</span></h1>
     <p  >You can add new workers and perform the following actions on one or multiple workers:    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1579,6 +1594,7 @@
         </tr>
 </tbody>        </table>
             </div>
+    </div>
         </div>
 
     </article>

@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <title>Archive Page - SignServer - Documentation Space</title> -->
-    <title>Archive Page - SignServer Manual</title>
+    <!-- <title>JWT Authorizer - SignServer - Documentation Space</title> -->
+    <title>JWT Authorizer - SignServer Manual</title>
 
     <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
@@ -996,7 +996,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="JWT_Authorizer.html">JWT Authorizer</a>
+        <a class="ht-nav-page-link current" href="JWT_Authorizer.html">JWT Authorizer</a>
 
             </li>
                             </ul>
@@ -1272,7 +1272,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link current" href="Archive_Page.html">Archive Page</a>
+        <a class="ht-nav-page-link" href="Archive_Page.html">Archive Page</a>
 
             </li>
                             </ul>
@@ -1457,162 +1457,188 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                                              <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
                                         <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
-                                                                                                         <li class="shortcut"><a href="SignServer_User_Interfaces.html">SignServer User Interfaces</a></li>
-                                                                                     <li><a href="Administration_Web.html">Administration Web</a></li>
+                                                                                                         <li class="shortcut"><a href="SignServer_Components.html">SignServer Components</a></li>
+                                                                                     <li><a href="Authorizers.html">Authorizers</a></li>
                                                             </ul>
-</div>            <h1 id="src-11573927"> <span>Archive Page</span></h1>
+</div>            <h1 id="src-85929317"> <span>JWT Authorizer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >Allows querying the archive.    </p>
-    <div  class="confbox admonition admonition-info">
-                            <span class="admonition-icon confluence-information-macro-icon"></span>
-                <div class="admonition-body">
-    <p  >Access to the Audit log is only granted to administrators explicitly granted the Auditor role. For more information, see <a   href="Administrators_Page.html">Administrators Page.</a>    </p>
-        </div>
+    <p  >    <span style="color: #000000;">
+The JWT Authorizer is used to authorize signature requests based on the provided JSON Web Token (JWT) included in the request.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+AUTHTYPE=<strong class=" ">org.signserver.server.jwtauth.JwtAuthorizer</strong>    </span>
+    </p>
+    <div class="section section-1" id="src-85929317_id-.JWTAuthorizerv5.4.0-Introduction">
+        <h1 class="heading "><span>Introduction</span></h1>
+    <p  >    <span style="color: #000000;">
+JSON Web Token (JWT) is an internet standard for JSON-based token authentication. JWTs allow you to digitally sign information (referred to as claims) with a signature and can be verified at a later time with the public key of the issuer. JWT claims are typically used to pass the identity of authenticated users between an     <span style="color: #0e101a;">
+authorization server    </span>
+ and a     <span style="color: #0e101a;">
+resource server    </span>
+. The JWT Authorizer allows having the authorization server separate from the SignServer application.    </span>
+    </p>
+    <div class="section section-2" id="src-85929317_id-.JWTAuthorizerv5.4.0-UseCaseExample">
+        <h2 class="heading "><span>Use Case Example</span></h2>
+    <p  >    <span style="color: #0e101a;">
+There are several authorization servers available and this implementation has been tested with     </span>
+<a  class="external-link" href="https://www.keycloak.org/">    <span style="color: #4a6ee0;">
+Keycloak    </span>
+</a>    <span style="color: #0e101a;">
+. The following use case example outlines authenticating with Keycloak (as the authorization server) to obtain a signed token, then used in the request sent from the client to SignServer (the resource server). The client in the following overview could, for example, be an app using     </span>
+<a  class="external-link" href="https://openid.net/connect/">    <span style="color: #4a6ee0;">
+OpenID Connect    </span>
+</a>    <span style="color: #0e101a;">
+ (OIDC).<br/>    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+    <img  class="drawio-diagram-image" src="images/inline/be15de36d9c6d93476f19119bb8b0c043f86bc26.png" alt="images/inline/be15de36d9c6d93476f19119bb8b0c043f86bc26.png" width="400"  />
+    </span>
+    </p>
+<ol class=" "><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">Public key trusted</strong>: The worker in SignServer is configured to trust the authorization server's public key. Authorization rules matching claims from the tokens are also configured.<br/>    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">Credentials</strong>: The client authenticates toward the authorization server using its credentials.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">Token</strong>: The authorization server creates and signs a token using its private key and returns it to the client.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">Request with token</strong>: The client sends its request to SignServer and includes the token.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">Response</strong>: SignServer verifies the token (including its signature and validity etcetera) and matches its claims against the configured authorization rules. If a rule matches, the request is processed and the response is returned to the client.    </span>
+    </p>
+</li></ol>    </div>
     </div>
-    <div class="section section-1" id="src-11573927_id-.ArchivePagev4.2.1-SearchResults">
-        <h1 class="heading "><span>Search Results</span></h1>
-    <p  class="confluence-link">The table displays the currently filtered out search result. For more information on the different columns, see <a   href="OldDatabaseArchiver.html#src-11573934_id-.OldDatabaseArchiverv4.2.1-ArchiveDatatable">ArchiveData table in OldDatabaseArchiver</a>.    </p>
-    <div class="section section-2" id="src-11573927_id-.ArchivePagev4.2.1-Actions">
-        <h2 class="heading "><span>Actions</span></h2>
-    <div  class="tablewrap">
-        <table class="wrapped confluenceTable">
-                    <colgroup>
-                                    <col />
-                                    <col />
-                            </colgroup>
-        <thead class=" ">    <tr>
-            <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Action    </p>
-            </td>
-                <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Description    </p>
-            </td>
-        </tr>
-</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >First    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Jumps to the first page of archive entries.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Previous    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Go to the previous page.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Reload    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Applies the current search conditions and performs the search.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Next    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Go to the next page.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Displaying results    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Indicates the number of the first archive row in the current page.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Entries per page    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The maximum number of archive rows displayed in a page.<br/>Click <strong class=" ">Reload</strong> after changing the value.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Download    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Link for downloading an individual archive entry.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Download Selected in ZIP    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Provides a ZIP file download containing each selected archive entry.    </p>
-            </td>
-        </tr>
-</tbody>        </table>
-            </div>
+    <div class="section section-1" id="src-85929317_id-.JWTAuthorizerv5.4.0-Configuration">
+        <h1 class="heading "><span>Configuration</span></h1>
+    <p  >    <span style="color: #0e101a;">
+Several trusted authorization servers can be set up using indexed worker properties starting with an AUTHSERVER prefix.    </span>
+    </p>
+    <p  >    <span style="color: #0e101a;">
+Currently, the algorithm types RSA and ECDSA are supported and public keys use RSA by default. To use ECDSA, set the key algorithm to     </span>
+<strong class=" ">    <span style="color: #0e101a;">
+EC    </span>
+</strong>    <span style="color: #0e101a;">
+ or     </span>
+<strong class=" ">    <span style="color: #0e101a;">
+ECDSA    </span>
+</strong>    <span style="color: #0e101a;">
+ (AUTHSERVERn.KEYALG=ECDSA). It is also allowed to explicitly set the key algorithm to <strong class=" ">RSA,</strong> but not needed as this is the default.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+    <span style="color: #0e101a;">
+The issuer field needs to be matched to the value provided as the Issuer Claim (iss) in the tokens, according to the following example. For more information on Issuer Claim (iss), refer to     </span>
+    </span>
+    <span style="color: #000000;">
+<a  class="external-link" href="https://tools.ietf.org/html/rfc7519#section-4.1.1">RFC 7519, section 4.1.1. &quot;iss&quot; (Issuer) Claim.</a>    </span>
+    </p>
+<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
+AUTHSERVER1.ISSUER=&lt;issuer&gt;    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+AUTHSERVER1.PUBLICKEY=&lt;base 64-encoded public key of issuer&gt;    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+&hellip;    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+AUTHSERVERn.ISSUER=&lt;issuer&gt;    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+AUTHSERVERn.PUBLICKEY=&lt;base 64-encoded public key of issuer&gt;    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+AUTHSERVERn.KEYALG=ECDSA    </span>
+    </p>
+</li></ul>    <p  >    <span style="color: #000000;">
+Each issuer needs a matching rule for matching on the claims in the token:    </span>
+    </p>
+<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
+AUTHJWT1.ISSUER=&lt;issuer&gt;    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+AUTHJWT1.CLAIM.NAME=groups    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+AUTHJWT1.CLAIM.VALUE=SignServer-users    </span>
+    </p>
+</li></ul>    <p  >    <span style="color: #000000;">
+This allows access to the request which provides a token of type (<tt class=" ">typ</tt>) JWT, with a valid (and not expired) signature that:    </span>
+    </p>
+<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
+Can be verified by the public key configured with that issuer name/URI.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+Contains a claim named &quot;groups, that    </span>
+    <span style="color: #000000;">
+ either has the value <strong class=" ">SignServer-users</strong> or contains a list of values including that value.    </span>
+    </p>
+</li></ul>    <p  >    <span style="color: #000000;">
+It is also possible to configure a list of accepted audiences that are checked against the intended audiences from the claim of the token (if present). If the token has an audience, it must match a configured audience. If the audiences do not match, the request is not authorized.    </span>
+    </p>
+<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
+ACCEPTED_AUDIENCES=&lt;comma-separated list of audience names&gt;    </span>
+    </p>
+</li></ul>    <div class="section section-2" id="src-85929317_id-.JWTAuthorizerv5.4.0-Examples">
+        <h2 class="heading "><span>Examples</span></h2>
+    <p  >The following displays an example JWT token:    </p>
+    <div  class="confbox programlisting">
+                    <div class="title">Base 64-encoded</div>
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Base 64-encoded" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">eyJraWQiOiJqd3Qua2V5IiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJ1c2VyMSIsInVwbiI6ImR1a2UiLCJhdXRoX3RpbWUiOjE1ODM4MzAwMzcsImlzcyI6Im15LWF1dGgtc2VydmVyIiwiZ3JvdXBzIjpbInN0YWZmIiwiU2lnblNlcnZlci11c2VycyIsInJlbGVhc2UtbWFuYWdlcnMiLCJtYWlsdXNlcnMiXSwiZXhwIjoxNTgzODMxMDM3LCJpYXQiOjE1ODM4MzAwMzcsImp0aSI6IjQyIn0.Tzy6hoLKwmiQ4C7exBaEUVjH_TK6qiY6KUJUu2QLC-52QxJRXKdBXR1t6l2JqbhWm20o_yKcgp6d4n03AyX8IUGOVul5xY5nWP4Uyn_SfWznuANCXKIf9y8a99ucO4yTEtsrAw2Hiv88LSpia768m1epUXe8_fgoFxfZr8adtRkJ2mT5evHtFwbWtUTT2r3-okuQPvmUfhBrECVKYrBwrV3JlXgXGTjSz4j3XwFfdh516EhKXY8dSn4PMG4hmcnmLNJkz59sUOSTgpwgtp8JzqGBLqtsehJGSYVFDueIDCEbljEAXNgfIbUpT7PuE1IY8VyTm792RB_u_Dq5f03TEQ</code></div>
+</div>
+    </div>
+    <p  >    <span style="color: #000000;">
+The following displays the header and payload for the above token:    </span>
+    </p>
+    <div  class="confbox programlisting">
+                    <div class="title">Header</div>
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Header" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"kid"</code><code class="plain">:</code><code class="string">"jwt.key"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"typ"</code><code class="plain">:</code><code class="string">"JWT"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"alg"</code><code class="plain">:</code><code class="string">"RS256"</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+    </div>
+    <div  class="confbox programlisting">
+                    <div class="title">Payload</div>
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Payload" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">{</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"sub"</code><code class="plain">:</code><code class="string">"user1"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"upn"</code><code class="plain">:</code><code class="string">"duke"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"auth_time"</code><code class="plain">:</code><code class="value">1583830037</code><code class="plain">,</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"iss"</code><code class="plain">:</code><code class="string">"my-auth-server"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"groups"</code><code class="plain">: [</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"staff"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"SignServer-users"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"release-managers"</code><code class="plain">,</code></div>
+<div class="line"><code class="plain">    </code><code class="string">"mailusers"</code></div>
+<div class="line"><code class="plain">  ],</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"exp"</code><code class="plain">:</code><code class="value">1583831037</code><code class="plain">,</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"iat"</code><code class="plain">:</code><code class="value">1583830037</code><code class="plain">,</code></div>
+<div class="line"><code class="plain"> </code><code class="string">"jti"</code><code class="plain">:</code><code class="string">"42"</code></div>
+<div class="line"><code class="plain">}</code></div>
+</div>
+    </div>
+    <p  >    <span style="color: #000000;">
+The following displays an example (using curl) that sends a request authenticating using JWT:    </span>
+    </p>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ curl -H </code><code class="string">"Authorization: Bearer eyJraWQiOiJqd3Qua2V5IiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJ1c2VyMSIsInVwbiI6ImR1a2UiLCJhdXRoX3RpbWUiOjE1ODM4MzAwMzcsImlzcyI6Im15LWF1dGgtc2VydmVyIiwiZ3JvdXBzIjpbInN0YWZmIiwiU2lnblNlcnZlci11c2VycyIsInJlbGVhc2UtbWFuYWdlcnMiLCJtYWlsdXNlcnMiXSwiZXhwIjoxNTgzODMxMDM3LCJpYXQiOjE1ODM4MzAwMzcsImp0aSI6IjQyIn0.Tzy6hoLKwmiQ4C7exBaEUVjH_TK6qiY6KUJUu2QLC-52QxJRXKdBXR1t6l2JqbhWm20o_yKcgp6d4n03AyX8IUGOVul5xY5nWP4Uyn_SfWznuANCXKIf9y8a99ucO4yTEtsrAw2Hiv88LSpia768m1epUXe8_fgoFxfZr8adtRkJ2mT5evHtFwbWtUTT2r3-okuQPvmUfhBrECVKYrBwrV3JlXgXGTjSz4j3XwFfdh516EhKXY8dSn4PMG4hmcnmLNJkz59sUOSTgpwgtp8JzqGBLqtsehJGSYVFDueIDCEbljEAXNgfIbUpT7PuE1IY8VyTm792RB_u_Dq5f03TEQ"</code><code class="plain"> --data </code><code class="string">"data=&lt;document/&gt;"</code><code class="plain"> https:</code><code class="comments">//sign.example.com/signserver/worker/XMLSigner</code></div>
+</div>
     </div>
     </div>
-    <div class="section section-1" id="src-11573927_id-.ArchivePagev4.2.1-CurrentConditions">
-        <h1 class="heading "><span>Current Conditions</span></h1>
-    <p  >Lists the current search criteria and offer the ability to add additional ones.    </p>
-    <div  class="tablewrap">
-        <table class="wrapped confluenceTable">
-                    <colgroup>
-                                    <col />
-                                    <col />
-                            </colgroup>
-        <thead class=" ">    <tr>
-            <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Column    </p>
-            </td>
-                <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Description    </p>
-            </td>
-        </tr>
-</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Column    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The archive column to filter on.    </p>
-    <p  >The <strong class=" ">Add...</strong> button at the end allows for adding an additional rule for the column chosen in the drop-down menu.    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Condition    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The operators available depend on the chosen column. Possible values:    </p>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">Equals:</strong> The column's value should be equal to the value provided.    </p>
-</li><li class=" ">    <p  ><strong class=" ">Greater or equals</strong>: The column's value should be equal to the value provided or be <strong class=" ">greater.</strong>    </p>
-</li><li class=" ">    <p  ><strong class=" ">Greater than:</strong> The column's value should be greater than the provided value.    </p>
-</li><li class=" ">    <p  ><strong class=" ">Lesser or equals</strong>: The column's value should be equal to the value provided or be <strong class=" ">lesser.</strong>    </p>
-</li><li class=" ">    <p  ><strong class=" ">Lesser than:</strong> The column's value should be lesser than the provided <strong class=" ">value.</strong>    </p>
-</li><li class=" ">    <p  ><strong class=" ">Like:</strong> The column's value should be 'like' to the value provided.<br/>The <strong class=" ">%</strong> sign can be used as a wild card in the beginning and/or end to match on values containing the provided value.    </p>
-</li><li class=" ">    <p  ><strong class=" ">Not Equals</strong>: The column's value should be any other value than the provided.    </p>
-</li><li class=" ">    <p  ><strong class=" ">Is not null</strong>: The column's value should not be null.    </p>
-</li><li class=" ">    <p  ><strong class=" ">Is null</strong>: The column's value should be null.    </p>
-</li></ul>            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Value    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The value to match on.    </p>
-            </td>
-        </tr>
-</tbody>        </table>
-            </div>
-    <p  >Click <strong class=" ">Reload</strong> after changing the search criteria to view the new search result.    </p>
+    </div>
+    <div class="section section-1" id="src-85929317_id-.JWTAuthorizerv5.4.0-Logging">
+        <h1 class="heading "><span>Logging</span></h1>
+    <p  >If the request is allowed, the provided subject claim <tt class=" ">(sub)</tt> is logged in the AUTHORIZED_USERNAME field.    </p>
     <p  >    </p>
     </div>
         </div>
@@ -1621,7 +1647,7 @@
 
 
             <nav id="ht-post-nav">
-                <a href="Audit_Log_Page.html" class="ht-post-nav-prev">
+                <a href="Cookie_Authorizer.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1630,9 +1656,9 @@
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Audit Log Page</span>
+            <span>Cookie Authorizer</span>
         </a>
-                <a href="Administration_GUI.html" class="ht-post-nav-next">
+                <a href="Logging.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1641,7 +1667,7 @@
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Administration GUI</span>
+            <span>Logging</span>
         </a>
     </nav>    
             

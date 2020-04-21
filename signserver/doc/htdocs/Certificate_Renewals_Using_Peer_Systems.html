@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.4.0-draft</p>
+                    <p>Version: 5.4.0</p>
                 </div>
             </header>
 
@@ -995,6 +995,10 @@
         <a class="ht-nav-page-link" href="Cookie_Authorizer.html">Cookie Authorizer</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JWT_Authorizer.html">JWT Authorizer</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -1382,6 +1386,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.4_Release_Notes.html">SignServer 5.4 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.3_Release_Notes.html">SignServer 5.3 Release Notes</a>
 
             </li>
@@ -1463,7 +1471,7 @@
         <h1 class="heading "><span>Initial Setup</span></h1>
     <div class="section section-2" id="src-82938908_id-.CertificateRenewalsUsingPeerSystemsv5.3.0-ConfiguringEJBCAforOutgoingPeerConnections">
         <h2 class="heading "><span>Configuring EJBCA for Outgoing Peer Connections</span></h2>
-    <p  >For information on how to setup Peer Connectors for outgoing connections, refer to EJBCA documentation on <a   href="http://confluence.primekey.com/display/EJBCADS/Peer+Systems+Operations">Peer Systems Operations</a>.    </p>
+    <p  >For information on how to setup Peer Connectors for outgoing connections, refer to EJBCA documentation on <a   href="http://confluence.primekey.com/display/EJBCADS/.Peer+Systems+Operations+v7.3.1">Peer Systems Operations</a>.    </p>
     <p  >The following is required at the EJBCA side is:    </p>
 <ul class=" "><li class=" ">    <p  >An AuthenticationKeyBinding with a TLS client certificate and key-pair to use for authentication towards SignServer.    </p>
 </li><li class=" ">    <p  >Allowing outgoing connections checked.    </p>
@@ -1512,7 +1520,7 @@
     </div>
     <div class="section section-2" id="src-82938908_id-.CertificateRenewalsUsingPeerSystemsv5.3.0-ExposingWorkersasKeyBindings">
         <h2 class="heading "><span>Exposing Workers as Key Bindings</span></h2>
-    <p  >In EJBCA, click <strong class=" ">Manage</strong> on the configured <strong class=" ">Peer System</strong> and then select the <strong class=" ">Remote Key Bindings</strong> tag. For more information, refer to the EJBCA documentation on <a   href="http://confluence.primekey.com/display/EJBCADS/Peer+Systems+Operations">Peer Systems Operations</a>.    </p>
+    <p  >In EJBCA, click <strong class=" ">Manage</strong> on the configured <strong class=" ">Peer System</strong> and then select the <strong class=" ">Remote Key Bindings</strong> tag. For more information, refer to the EJBCA documentation on <a   href="http://confluence.primekey.com/display/EJBCADS/.Peer+Systems+Operations+v7.3.1">Peer Systems Operations</a>.    </p>
     <p  >The list should display all remote key bindings found, or a message like &quot;No authorized remote Internal Key Bindings found&quot;. Note that the list might at this stage be empty, or not show any of the workers from SignServer. To display the worker listed as a key binding in EJBCA, edit the worker by adding the worker property <strong class=" ">PEERS_VISIBLE</strong> with the value <strong class=" ">true.</strong> Then refresh the page in EJBCA to list the worker.    </p>
     </div>
     <div class="section section-2" id="src-82938908_id-.CertificateRenewalsUsingPeerSystemsv5.3.0-IssuingtheFirstCertificate">

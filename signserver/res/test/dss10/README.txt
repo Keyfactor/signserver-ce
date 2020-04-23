@@ -43,6 +43,8 @@ Signer crypto token keystore:
         Key with certificates issued directly by the root CA.
 	Alias for TLS: ra00001
 	    Keys with a certificate suitable for TLS (with EKU tlsClient).
+        Aliases for APK signing (with self-signed certificates): apk00001, apk00002
+            Using RSA 2048 and ECDSA prime256v1.
 
 TLS Server keystores:
     dss10_demo-tls.jks

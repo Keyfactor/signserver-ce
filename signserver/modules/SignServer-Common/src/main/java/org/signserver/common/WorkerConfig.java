@@ -131,6 +131,11 @@ public class WorkerConfig extends UpgradeableDataHashMap {
      * token PIN) in place of the actual value.
      */
     public static final String WORKER_PROPERTY_MASK_PLACEHOLDER = "_MASKED_";
+
+    /**
+     * Additional signers that can be referenced by the worker (for instance in order to request crypto instances from).
+     */
+    public static String NEXT_SIGNERS = "NEXT_SIGNERS";
     
     @SuppressWarnings("unchecked")
     public WorkerConfig() {

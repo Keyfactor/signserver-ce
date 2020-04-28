@@ -244,6 +244,36 @@ public class WorkerFactory {
             });
 
         }
+        
+        // NEXT_SIGNERS
+        final String nextSignersValue = config.getProperty(WorkerConfig.NEXT_SIGNERS);
+        if (nextSignersValue != null) {
+            final List<String> nextSigners = new ArrayList<>(5);
+            final String[] values = nextSignersValue.trim().split(",");
+            for (String value : values) {
+                value = value.trim();
+                if (!value.isEmpty()) {
+                    nextSigners.add(value);
+                }
+            }
+
+            context.setNextSignersSupplier((IServices services) -> {
+                synchronized (WorkerFactory.this) {
+                    final List<IWorker> results = new ArrayList<>();
+                    try {
+                        for (String next : nextSigners) {
+                            IWorker nextWorker = getWorker(new WorkerIdentifier(next));
+                            results.add(nextWorker);
+                            
+                        }
+                    } catch (NoSuchWorkerException ex) {
+                        LOG.info("Unable to get NEXT_SIGNERS: " + nextSigners);
+                        return null;
+                    }
+                    return results;
+                }
+            });
+        }
         worker.init(workerId, config, context, null);
         if (LOG.isTraceEnabled()) {
             LOG.trace("<initWorker(" + workerId + ")");

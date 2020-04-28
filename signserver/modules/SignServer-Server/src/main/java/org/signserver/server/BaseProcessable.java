@@ -181,6 +181,10 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
         return alias;
     }
+    
+    public String getAlias(final int purpose, final Request request, final RequestContext context) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        return aliasSelector.getAlias(purpose, this, request, context);
+    }
 
     /**
      * Get the name of the configured crypto token or if none, the name or
@@ -793,9 +797,32 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
      * @throws org.signserver.common.UnsupportedCryptoTokenParameter
      */
     protected ICryptoInstance acquireCryptoInstance(final int purpose, final Request request, final Map<String, Object> params, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
+        return acquireCryptoInstance(this, purpose, request, params, context);
+    }
+    
+    /**
+     * Acquire a crypto instance in order to perform crypto operations during
+     * a limited scope.It is the caller's responsibility to make sure the call is followed up
+ by a call to releaseCryptoInstance() for each instance.
+     *
+     * Use try-final.
+     *
+     * @param worker to acquire the crypto instance from
+     * @param purpose Key purpose
+     * @param request Process request
+     * @param params Additional parameters to pass to the crypto token
+     * @param context the request context
+     * @return an crypto instance
+     * @throws CryptoTokenOfflineException
+     * @throws IllegalRequestException
+     * @throws SignServerException
+     * @throws java.security.InvalidAlgorithmParameterException
+     * @throws org.signserver.common.UnsupportedCryptoTokenParameter
+     */
+    protected static ICryptoInstance acquireCryptoInstance(BaseProcessable worker, final int purpose, final Request request, final Map<String, Object> params, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
         final ICryptoInstance result;
-        final String alias = getAliasAndLog(purpose, request, context);
-        ICryptoTokenV4 token = getCryptoToken(context.getServices());
+        final String alias = worker.getAliasAndLog(purpose, request, context);
+        ICryptoTokenV4 token = worker.getCryptoToken(context.getServices());
         if (token == null) {
             throw new CryptoTokenOfflineException("Crypto token not available");
         }
@@ -803,9 +830,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
             // Add our params with caching support
             final HashMap<String, Object> newParams = new HashMap<>(params);
             // Add a per-worker instance cache
-            newParams.put(ICryptoTokenV4.PARAM_WORKERCACHE, workerCache);
+            newParams.put(ICryptoTokenV4.PARAM_WORKERCACHE, worker.workerCache);
             // Request caching for the default key only
-            newParams.put(ICryptoTokenV4.PARAM_CACHEPRIVATEKEY, cachePrivateKey && alias != null && alias.equals(config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY)));
+            newParams.put(ICryptoTokenV4.PARAM_CACHEPRIVATEKEY, worker.cachePrivateKey && alias != null && alias.equals(worker.config.getProperty(CryptoTokenHelper.PROPERTY_DEFAULTKEY)));
 
             result = token.acquireCryptoInstance(alias, newParams, context);
         } catch (NoSuchAliasException ex) {
@@ -815,6 +842,19 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         // Register the new instance
         CryptoInstances.getInstance(context).add(result);
 
+        return result;
+    }
+    
+    protected List<ICryptoInstance> acquireCryptoInstancesFromNextSigners(final int purpose, final Request request, final Map<String, Object> params, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
+        List<ICryptoInstance> result;
+        final IServices services = context.getServices();
+        List<IWorker> nextSigners = getSignServerContext().getNextSigners(services);
+        result = new ArrayList<>(5);
+        for (IWorker next : nextSigners) {
+            if (next instanceof BaseProcessable) {
+                result.add(BaseProcessable.acquireCryptoInstance((BaseProcessable) next, purpose, request, params, context));
+            }
+        }
         return result;
     }
 

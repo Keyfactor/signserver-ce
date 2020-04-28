@@ -100,6 +100,8 @@ public class ModulesTestCase extends TestCase {
     protected static final String KEYSTORE_AUTHCODESIGNER1_ALIAS = "code00003";
     protected static final String KEYSTORE_KEYSTORE_FILE = "res/test/dss10/dss10_keystore.p12";
     protected static final String KEYSTORE_CODE00002_ECDSA_ALIAS = "code00002";
+    protected static final String KEYSTORE_APK00001_ALIAS = "apk00001";
+    protected static final String KEYSTORE_APK00002_ECDSA_ALIAS = "apk00002";
     public static final String KEYSTORE_PASSWORD = "foo123";
 
     /**
@@ -534,6 +536,14 @@ public class ModulesTestCase extends TestCase {
     
     public void addJArchiveCMSSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
         addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_CODE00002_ECDSA_ALIAS);
+    }
+
+    public void addApkSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+        addP12DummySigner("org.signserver.module.apk.signer.ApkSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_APK00001_ALIAS);
+    }
+    
+    public void addApkSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+        addP12DummySigner("org.signserver.module.apk.signer.ApkSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_APK00002_ECDSA_ALIAS);
     }
     
     public void addExtendedCMSSigner(final int signerId, final String signerName,

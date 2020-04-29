@@ -850,9 +850,11 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         final IServices services = context.getServices();
         List<IWorker> nextSigners = getSignServerContext().getNextSigners(services);
         result = new ArrayList<>(5);
-        for (IWorker next : nextSigners) {
-            if (next instanceof BaseProcessable) {
-                result.add(BaseProcessable.acquireCryptoInstance((BaseProcessable) next, purpose, request, params, context));
+        if (nextSigners != null) {
+            for (IWorker next : nextSigners) {
+                if (next instanceof BaseProcessable) {
+                    result.add(BaseProcessable.acquireCryptoInstance((BaseProcessable) next, purpose, request, params, context));
+                }
             }
         }
         return result;

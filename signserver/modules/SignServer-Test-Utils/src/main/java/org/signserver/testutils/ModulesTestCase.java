@@ -545,7 +545,11 @@ public class ModulesTestCase extends TestCase {
     public void addApkSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
         addP12DummySigner("org.signserver.module.apk.signer.ApkSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_APK00002_ECDSA_ALIAS);
     }
-    
+
+    public void addApkRotateSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+        addP12DummySigner("org.signserver.module.apk.signer.ApkRotateSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_APK00001_ALIAS);
+    }
+
     public void addExtendedCMSSigner(final int signerId, final String signerName,
                                      final boolean autoActivate)
             throws CertificateException, FileNotFoundException {

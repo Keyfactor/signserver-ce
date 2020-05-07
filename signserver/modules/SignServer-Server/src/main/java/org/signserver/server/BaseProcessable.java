@@ -802,10 +802,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     
     /**
      * Acquire a crypto instance in order to perform crypto operations during
-     * a limited scope.It is the caller's responsibility to make sure the call is followed up
- by a call to releaseCryptoInstance() for each instance.
-     *
-     * Use try-final.
+     * a limited scope. 
+     * It is the caller's responsibility to make sure the call is followed up
+     * by a call to releaseCryptoInstance() for each instance. Use try-final.
      *
      * @param worker to acquire the crypto instance from
      * @param purpose Key purpose

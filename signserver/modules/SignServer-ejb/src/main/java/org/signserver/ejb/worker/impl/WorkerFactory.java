@@ -245,29 +245,29 @@ public class WorkerFactory {
 
         }
         
-        // NEXT_SIGNERS
-        final String nextSignersValue = config.getProperty(WorkerConfig.NEXT_SIGNERS);
-        if (nextSignersValue != null) {
-            final List<String> nextSigners = new ArrayList<>(5);
-            final String[] values = nextSignersValue.trim().split(",");
+        // OTHER_SIGNERS
+        final String otherSignersValue = config.getProperty(WorkerConfig.OTHER_SIGNERS);
+        if (otherSignersValue != null) {
+            final List<String> otherSigners = new ArrayList<>(5);
+            final String[] values = otherSignersValue.trim().split(",");
             for (String value : values) {
                 value = value.trim();
                 if (!value.isEmpty()) {
-                    nextSigners.add(value);
+                    otherSigners.add(value);
                 }
             }
 
-            context.setNextSignersSupplier((IServices services) -> {
+            context.setOtherSignersSupplier((IServices services) -> {
                 synchronized (WorkerFactory.this) {
                     final List<IWorker> results = new ArrayList<>();
                     try {
-                        for (String next : nextSigners) {
-                            IWorker nextWorker = getWorker(new WorkerIdentifier(next));
-                            results.add(nextWorker);
+                        for (String other : otherSigners) {
+                            IWorker otherWorker = getWorker(new WorkerIdentifier(other));
+                            results.add(otherWorker);
                             
                         }
                     } catch (NoSuchWorkerException ex) {
-                        LOG.info("Unable to get NEXT_SIGNERS: " + nextSigners);
+                        LOG.info("Unable to get NEXT_SIGNERS: " + otherSigners);
                         return null;
                     }
                     return results;

@@ -31,7 +31,7 @@ public class SignServerContext extends WorkerContext {
     private final EntityManager em;
     private final IKeyUsageCounterDataService keyUsageCounterDataService;
     private CryptoTokenSupplier cryptoTokenSupplier;
-    private NextSignersSupplier nextSignersSupplier;
+    private OtherSignersSupplier otherSignersSupplier;
 
     public SignServerContext() {
         this(null, null);
@@ -81,14 +81,14 @@ public class SignServerContext extends WorkerContext {
         return result;
     }
 
-    public void setNextSignersSupplier(NextSignersSupplier nextSignersSupplier) {
-        this.nextSignersSupplier = nextSignersSupplier;
+    public void setOtherSignersSupplier(OtherSignersSupplier otherSignersSupplier) {
+        this.otherSignersSupplier = otherSignersSupplier;
     }
 
-    public List<IWorker> getNextSigners(IServices services) throws SignServerException {
+    public List<IWorker> getOtherSigners(IServices services) throws SignServerException {
         final List<IWorker> result;
-        if (nextSignersSupplier != null) {
-            result = nextSignersSupplier.getCurrentNextSigners(services);
+        if (otherSignersSupplier != null) {
+            result = otherSignersSupplier.getCurrentOtherSigners(services);
         } else {
             result = Collections.emptyList();
         }

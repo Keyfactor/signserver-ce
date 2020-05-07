@@ -135,7 +135,7 @@ public class WorkerConfig extends UpgradeableDataHashMap {
     /**
      * Additional signers that can be referenced by the worker (for instance in order to request crypto instances from).
      */
-    public static String NEXT_SIGNERS = "NEXT_SIGNERS";
+    public static String OTHER_SIGNERS = "OTHER_SIGNERS";
     
     @SuppressWarnings("unchecked")
     public WorkerConfig() {

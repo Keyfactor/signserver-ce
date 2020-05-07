@@ -16,17 +16,17 @@ import java.util.List;
 import org.signserver.common.SignServerException;
 
 /**
- * Supplier of the current next signers.
+ * Supplier of the current other signers.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-public interface NextSignersSupplier {
+public interface OtherSignersSupplier {
     /**
      * @param services implementations to use
-     * @return the current list of next signer instances
+     * @return the current list of other signer instances
      * @throws SignServerException in case initialization of the crypto token
      * failed
      */
-    List<IWorker> getCurrentNextSigners(final IServices services) throws SignServerException;
+    List<IWorker> getCurrentOtherSigners(final IServices services) throws SignServerException;
 }

@@ -267,7 +267,7 @@ public class WorkerFactory {
                             
                         }
                     } catch (NoSuchWorkerException ex) {
-                        LOG.info("Unable to get NEXT_SIGNERS: " + otherSigners);
+                        LOG.info("Unable to get OTHER_SIGNERS: " + otherSigners);
                         return null;
                     }
                     return results;

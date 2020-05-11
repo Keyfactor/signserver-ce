@@ -847,13 +847,13 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     protected List<ICryptoInstance> acquireCryptoInstancesFromOtherSigners(final int purpose, final Request request, final Map<String, Object> params, final RequestContext context) throws SignServerException, CryptoTokenOfflineException, IllegalRequestException, InvalidAlgorithmParameterException, UnsupportedCryptoTokenParameter {
         List<ICryptoInstance> result;
         final IServices services = context.getServices();
-        List<IWorker> nextSigners = getSignServerContext().getOtherSigners(services);
+        List<IWorker> otherSigners = getSignServerContext().getOtherSigners(services);
         if (log.isDebugEnabled()) {
-            log.debug("Got OTHER_SIGNERS workers: " + nextSigners);
+            log.debug("Got OTHER_SIGNERS workers: " + otherSigners);
         }
         result = new ArrayList<>(5);
-        if (nextSigners != null) {
-            for (IWorker next : nextSigners) {
+        if (otherSigners != null) {
+            for (IWorker next : otherSigners) {
                 if (next instanceof BaseProcessable) {
                     result.add(BaseProcessable.acquireCryptoInstance((BaseProcessable) next, purpose, request, params, context));
                 }

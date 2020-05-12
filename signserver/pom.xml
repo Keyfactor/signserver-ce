@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.signserver</groupId>
     <artifactId>SignServer</artifactId>
-    <version>5.4.1.CR1-APKv3-2</version>
+    <version>5.4.1.CR2-APKv3-2-SNAPHOT</version>
     <packaging>pom</packaging>
     <name>SignServer</name>
     <properties>

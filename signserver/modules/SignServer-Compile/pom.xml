@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.4.1.CR1-APKv3-2</version>
+        <version>5.4.1.CR2-APKv3-2-SNAPHOT</version>
     </parent>
     <artifactId>SignServer-Compile</artifactId>
     <packaging>jar</packaging>

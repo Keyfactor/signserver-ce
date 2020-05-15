@@ -554,6 +554,11 @@ public class ModulesTestCase extends TestCase {
         addP12DummySigner("org.signserver.module.apk.signer.ApkLineageSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_APK00001_ALIAS);
     }
 
+    public void addApkHashSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+        addP12DummySigner("org.signserver.module.apk.signer.ApkHashSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_APK00001_ALIAS);
+    }
+
+
     public void addExtendedCMSSigner(final int signerId, final String signerName,
                                      final boolean autoActivate)
             throws CertificateException, FileNotFoundException {

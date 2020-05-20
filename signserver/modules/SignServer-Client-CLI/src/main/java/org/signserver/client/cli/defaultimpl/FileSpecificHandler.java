@@ -32,10 +32,13 @@ public interface FileSpecificHandler extends AutoCloseable {
     
     /**
      * Computes the Pre-Request signature input from the input file to send to SignServer
-     * for creating the Pre-Request response.
+     * for creating the Pre-Request response. The implementation can return
+     * null to bypass the default calling of a plain or CMS-style signer
+     * by the caller, i.e. instead implementing a custom JCA crypto provider
+     * to perform the cryptographic operations.
      * 
      *
-     * @return the Pre-Request signature input
+     * @return the Pre-Request signature input or null to bypass genral signing
      * @throws IOException typically in case of issues reading the input file or writing to the output file
      * @throws IllegalRequestException for example: failure during parsing input file
      */

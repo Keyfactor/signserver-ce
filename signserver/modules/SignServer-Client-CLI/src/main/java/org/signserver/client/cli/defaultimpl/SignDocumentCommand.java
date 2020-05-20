@@ -861,7 +861,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 } else {
                     os = outStream;
                 }
-                sign(inputSource, os, manager, handler, requestContext);
+                if (inputSource != null) {
+                    sign(inputSource, os, manager, handler, requestContext);
+                }
                 handler.assemble(new OutputCollector(os, clientside));
 
                 // Take stop time

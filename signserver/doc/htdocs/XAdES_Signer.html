@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.4.0-draft</p>
+                    <p>Version: 5.4.0</p>
                 </div>
             </header>
 
@@ -995,6 +995,10 @@
         <a class="ht-nav-page-link" href="Cookie_Authorizer.html">Cookie Authorizer</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JWT_Authorizer.html">JWT Authorizer</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -1382,6 +1386,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.4_Release_Notes.html">SignServer 5.4 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.3_Release_Notes.html">SignServer 5.3 Release Notes</a>
 
             </li>
@@ -1458,11 +1466,11 @@
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >Fully qualified class name: <strong class=" ">org.signserver.module.xades.signer.XAdESSigner</strong>    </p>
-    <div class="section section-1" id="src-85923563_id-.XAdESSignerv5.4.0-draft-Overview">
+    <div class="section section-1" id="src-85923563_id-.XAdESSignerv5.4.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The XAdES Signer creates XML signatures according to the specified profile of XAdES.    </p>
     </div>
-    <div class="section section-1" id="src-85923563_id-.XAdESSignerv5.4.0-draft-AvailableProperties">
+    <div class="section section-1" id="src-85923563_id-.XAdESSignerv5.4.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1491,7 +1499,7 @@
         <p  >COMMITMENT_TYPES    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >List of commitment types to be indicated in the signature. Multiple values can be given separated by &quot;,&quot;. See <a   href="#src-85923563_id-.XAdESSignerv5.4.0-draft-CommitmentTypes">Commitment Types</a> for valid values. Optionally, the constant NONE can be used to explicitly state that no commitment types should be included (this constant can only be used alone). Optional. Default: no commitment types are included.    </p>
+        <p  >List of commitment types to be indicated in the signature. Multiple values can be given separated by &quot;,&quot;. See <a   href="#src-85923563_id-.XAdESSignerv5.4.0-CommitmentTypes">Commitment Types</a> for valid values. Optionally, the constant NONE can be used to explicitly state that no commitment types should be included (this constant can only be used alone). Optional. Default: no commitment types are included.    </p>
             </td>
         </tr>
     <tr>
@@ -1528,17 +1536,17 @@
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_URL<span id="src-85923563_id-.XAdESSignerv5.4.0-draft-TSA_URL"></span>    </p>
+        <p  >TSA_URL<span id="src-85923563_id-.XAdESSignerv5.4.0-TSA_URL"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >URL of Time-Stamping Authority. Required if XADESFORM=T and TSA_WORKER not specified.    </p>
     <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
- Cannot be set at the same time as <a   href="#src-85923563_id-.XAdESSignerv5.4.0-draft-TSA_WORKER">TSA_WORKER</a>.    </p>
+ Cannot be set at the same time as <a   href="#src-85923563_id-.XAdESSignerv5.4.0-TSA_WORKER">TSA_WORKER</a>.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_WORKER<span id="src-85923563_id-.XAdESSignerv5.4.0-draft-TSA_WORKER"></span>    </p>
+        <p  >TSA_WORKER<span id="src-85923563_id-.XAdESSignerv5.4.0-TSA_WORKER"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Specify a worker ID or worker name for a time stamp signer. Required if XADESFORM=T and TSA_URL are not specified. This will use internal calls and can only be used for a time stamp authority running in the same SignServer instance.    </p>
@@ -1573,7 +1581,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-85923563_id-.XAdESSignerv5.4.0-draft-CommitmentTypes">
+    <div class="section section-1" id="src-85923563_id-.XAdESSignerv5.4.0-CommitmentTypes">
         <h1 class="heading "><span>Commitment Types</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">

@@ -12,8 +12,6 @@
  *************************************************************************/
 package org.signserver.server;
 
-import java.util.Collections;
-import java.util.List;
 import javax.persistence.EntityManager;
 import org.signserver.common.SignServerException;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
@@ -31,7 +29,6 @@ public class SignServerContext extends WorkerContext {
     private final EntityManager em;
     private final IKeyUsageCounterDataService keyUsageCounterDataService;
     private CryptoTokenSupplier cryptoTokenSupplier;
-    private OtherSignersSupplier otherSignersSupplier;
 
     public SignServerContext() {
         this(null, null);
@@ -77,20 +74,6 @@ public class SignServerContext extends WorkerContext {
         ICryptoTokenV4 result = null;
         if (cryptoTokenSupplier != null) {
             result = cryptoTokenSupplier.getCurrentCryptoToken(services);
-        }
-        return result;
-    }
-
-    public void setOtherSignersSupplier(OtherSignersSupplier otherSignersSupplier) {
-        this.otherSignersSupplier = otherSignersSupplier;
-    }
-
-    public List<IWorker> getOtherSigners(IServices services) throws SignServerException {
-        final List<IWorker> result;
-        if (otherSignersSupplier != null) {
-            result = otherSignersSupplier.getCurrentOtherSigners(services);
-        } else {
-            result = Collections.emptyList();
         }
         return result;
     }

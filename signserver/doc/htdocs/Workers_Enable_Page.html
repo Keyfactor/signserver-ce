@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.4.0-draft</p>
+                    <p>Version: 5.4.0</p>
                 </div>
             </header>
 
@@ -995,6 +995,10 @@
         <a class="ht-nav-page-link" href="Cookie_Authorizer.html">Cookie Authorizer</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JWT_Authorizer.html">JWT Authorizer</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -1382,6 +1386,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.4_Release_Notes.html">SignServer 5.4 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.3_Release_Notes.html">SignServer 5.3 Release Notes</a>
 
             </li>
@@ -1458,11 +1466,23 @@
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >The enable action is required before it is possible to <a   href="Workers_Activation_Page.html">activate</a> a worker that has previously been <a   href="Workers_Disable_Page.html">disabled</a>.    </p>
-    <p  >Enabling a worker will also simultaneously activate the worker if it has a correct password stored in its configurations.    </p>
-    <p  >The page lists each worker selected to be enabled.    </p>
-    <p  >Make sure all worker are selected to be enabled.    </p>
-    <div class="section section-1" id="src-85926520_id-.WorkersEnablePagev5.4.0-draft-Actions">
+    <p  >    <span style="color: #0e101a;">
+The Enable page lists workers selected to be enabled.    </span>
+    </p>
+    <p  >    <span style="color: #0e101a;">
+It is required to enable a worker before it is possible to <a   href="Workers_Activation_Page.html">activate</a> a worker that has previously been <a   href="Workers_Disable_Page.html">disabled</a>.    </span>
+    </p>
+    <p  >    <span style="color: #0e101a;">
+Enabling a worker will simultaneously <a   href="Workers_Activation_Page.html">activate</a> the worker if the correct authentication code (password) is stored in its configuration.    </span>
+    </p>
+    <p  >    <span style="color: #0e101a;">
+To enable workers, ensure that the     </span>
+<strong class=" ">    <span style="color: #0e101a;">
+Enable    </span>
+</strong>    <span style="color: #0e101a;">
+ action is selected for all workers you want to enable.    </span>
+    </p>
+    <div class="section section-1" id="src-85926520_id-.WorkersEnablePagev5.4.0-Actions">
         <h1 class="heading "><span>Actions</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1472,28 +1492,38 @@
                             </colgroup>
         <thead class=" ">    <tr>
             <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Action    </p>
+        <p  >    <span style="color: #003366;">
+Action    </span>
+    </p>
             </td>
                 <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >Description    </p>
+        <p  >    <span style="color: #003366;">
+Description    </span>
+    </p>
             </td>
         </tr>
 </thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Enable    </p>
+        <p  >    <span style="color: #003366;">
+Enable    </span>
+    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Performs the enable action for each selected worker.    </p>
-    <p  >The result of the enable action is written out in the Result column.    </p>
-    <p  >If all workers was successfully enabled the page is automatically switched back to the previous otherwise the page remains and the user has the ability to try again.    </p>
+        <p  >Select to enable the worker(s).    </p>
+    <p  >The result of the enable action is displayed in the Result column.    </p>
+    <p  >If all workers are successfully enabled, the page will automatically return to the previous page. If all workers are not enabled, you will stay on the page and can try again.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Cancel    </p>
+        <p  >    <span style="color: #003366;">
+Cancel    </span>
+    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Returns to the previous page.    </p>
+        <p  >    <span style="color: #003366;">
+Return to the previous page.    </span>
+    </p>
             </td>
         </tr>
 </tbody>        </table>

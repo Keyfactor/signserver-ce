@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.4.0-draft</p>
+                    <p>Version: 5.4.0</p>
                 </div>
             </header>
 
@@ -995,6 +995,10 @@
         <a class="ht-nav-page-link" href="Cookie_Authorizer.html">Cookie Authorizer</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JWT_Authorizer.html">JWT Authorizer</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -1382,6 +1386,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.4_Release_Notes.html">SignServer 5.4 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.3_Release_Notes.html">SignServer 5.3 Release Notes</a>
 
             </li>
@@ -1452,18 +1460,18 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Components.html">SignServer Components</a></li>
                                                                                      <li><a href="CryptoTokens.html">CryptoTokens</a></li>
                                                             </ul>
-</div>            <h1 id="src-78940628"> <span>PKCS11CryptoToken</span></h1>
+</div>            <h1 id="src-85929967"> <span>PKCS11CryptoToken</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div class="section section-1" id="src-78940628_id-.PKCS11CryptoTokenv5.2.0-Overview">
+    <div class="section section-1" id="src-85929967_id-.PKCS11CryptoTokenv5.4.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >PKCS11 allows using an HSM that has a PKCS11 module, such as Utimaco, nCipher, SafeNet or AEP KeyPer.    </p>
-    <p  >SignServer uses the same underlying implementation of PKCS11 crypto tokens as EJBCA but since the token labels strings differ, it is important to use the properties listed in this section for SignServer. The EJBCA ClientToolbox tool can be used to generate and test PKCS11 keys to confirm that the keys can be used with SignServer. For more information, refer to the EJBCA documentation on <a   href="http://confluence.primekey.com/display/EJBCADS/.EJBCA+Client+Toolbox+v6.12.0">EJBCA ClientToolbox</a> and <a   href="http://confluence.primekey.com/display/EJBCADS/.Hardware+Security+Modules+%28HSM%29+v6.15.0">Hardware Security Modules (HSM)</a>.    </p>
+    <p  >SignServer uses the same underlying implementation of PKCS11 crypto tokens as EJBCA but since the token labels strings differ, it is important to use the properties listed in this section for SignServer. The EJBCA ClientToolbox tool can be used to generate and test PKCS11 keys to confirm that the keys can be used with SignServer. For more information, refer to the EJBCA documentation on <a   href="http://confluence.primekey.com/display/EJBCADS/.EJBCA+Client+Toolbox+v7.1.0">EJBCA ClientToolbox</a> and <a   href="http://confluence.primekey.com/display/EJBCADS/.Hardware+Security+Modules+%28HSM%29+v7.4.0">Hardware Security Modules (HSM)</a>.    </p>
     <p  >CRYPTOTOKEN_IMPLEMENTATION=<strong class=" ">org.signserver.server.cryptotokens.PKCS11CryptoToken</strong>    </p>
     </div>
-    <div class="section section-1" id="src-78940628_id-.PKCS11CryptoTokenv5.2.0-AvailableProperties">
+    <div class="section section-1" id="src-85929967_id-.PKCS11CryptoTokenv5.4.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1484,7 +1492,10 @@
         <p  >DEFAULTKEY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The key alias. Required.    </p>
+        <p  >The key alias of the private key to be used for testing that this crypto token is working.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
+ If this key does not exist, the crypto token/worker will show as OFFLINE even if it has been activated. This is typically the case when the crypto token has been set up for the first time and the key has not yet been generated. To resolve, generate a key with the key alias name.    </p>
+    <p  >A property with this name is typically also accepted by the worker using this crypto token and will then be the key to use for actual signing.    </p>
             </td>
         </tr>
     <tr>
@@ -1492,7 +1503,7 @@
         <p  >NEXTCERTSIGNKEY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The next key to use. This property can be used to hold the name of the next key to use. Certificate signing requests (CSR) can be made for this key while to the current key (DEFAULTKEY) is still in production. After uploading the new certificate the value of NEXTCERTSIGNKEY can be moved to DEFAULTKEY. Optional.    </p>
+        <p  >A property with this name is typically configured in the worker using this crypto token to hold the name of the next key to use. Certificate signing requests (CSR) can be made for this key while the current key (DEFAULTKEY) is still in production. After uploading the new certificate the value of NEXTCERTSIGNKEY can be moved to DEFAULTKEY. Optional.    </p>
             </td>
         </tr>
     <tr>
@@ -1624,7 +1635,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-78940628_id-.PKCS11CryptoTokenv5.2.0-DefaultGlobalProperties">
+    <div class="section section-1" id="src-85929967_id-.PKCS11CryptoTokenv5.4.0-DefaultGlobalProperties">
         <h1 class="heading "><span>Default Global Properties </span></h1>
     <p  >Certain worker properties can instead be specified as default values in the global configuration, to avoid having to repeat the propertied in every worker. Individual workers can override the default global values (if any), by specifying the property as usual.    </p>
     <p  >Global default values are specified as global values in the global configuration with the name prefixed with &quot;DEFAULT.&quot;. The following properties can currently be specified in the global configuration:    </p>
@@ -1637,7 +1648,7 @@
 </li><li class=" ">    <p  >ATTRIBUTES    </p>
 </li><li class=" ">    <p  >ATTRIBUTESFILE    </p>
 </li><li class=" ">    <p  >PIN    </p>
-</li></ul>    <div class="section section-2" id="src-78940628_id-.PKCS11CryptoTokenv5.2.0-ExampleUsage">
+</li></ul>    <div class="section section-2" id="src-85929967_id-.PKCS11CryptoTokenv5.4.0-ExampleUsage">
         <h2 class="heading "><span>Example Usage </span></h2>
     <p  >Edit (preferably a copy of) pkcs11-crypto.properties to match your PKCS#11 token.    </p>
     <p  >Run the following command to set up the token:    </p>
@@ -1703,7 +1714,7 @@
     <p  >Specify a PKCS#11 attribute to override the statically configured attribute to use when generating a key.<br/>Where x is the object class: PUBLIC or PRIVATE.<br/>Where y is the key type: RSA, ECDSA, etc.<br/>Where z is the attribute name or ID as decimal number or a hexadecimal number prefixed with &quot;0x&quot;.    </p>
     </div>
     </div>
-    <div class="section section-1" id="src-78940628_id-.PKCS11CryptoTokenv5.2.0-NoteonFIPSMode">
+    <div class="section section-1" id="src-85929967_id-.PKCS11CryptoTokenv5.4.0-NoteonFIPSMode">
         <h1 class="heading "><span>Note on FIPS Mode</span></h1>
     <p  >Some HSM vendors have started to enforce stricter rules on keys when the HSM is in FIPS mode. For instance, with Utimaco SecurityServer V4.10.0, the following is needed in order to generate key-pairs and activate the crypto token when the PKCS11CryptoToken is used:    </p>
 <ul class=" "><li class=" ">    <p  >Patched Java/SunPKCS11 (i.e. for RSASSA-PSS signature support and for setting allowed mechanisms).    </p>

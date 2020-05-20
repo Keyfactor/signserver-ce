@@ -244,36 +244,6 @@ public class WorkerFactory {
             });
 
         }
-        
-        // OTHER_SIGNERS
-        final String otherSignersValue = config.getProperty(WorkerConfig.OTHER_SIGNERS);
-        if (otherSignersValue != null) {
-            final List<String> otherSigners = new ArrayList<>(5);
-            final String[] values = otherSignersValue.trim().split(",");
-            for (String value : values) {
-                value = value.trim();
-                if (!value.isEmpty()) {
-                    otherSigners.add(value);
-                }
-            }
-
-            context.setOtherSignersSupplier((IServices services) -> {
-                synchronized (WorkerFactory.this) {
-                    final List<IWorker> results = new ArrayList<>();
-                    try {
-                        for (String other : otherSigners) {
-                            IWorker otherWorker = getWorker(new WorkerIdentifier(other));
-                            results.add(otherWorker);
-                            
-                        }
-                    } catch (NoSuchWorkerException ex) {
-                        LOG.info("Unable to get OTHER_SIGNERS: " + otherSigners);
-                        return null;
-                    }
-                    return results;
-                }
-            });
-        }
         worker.init(workerId, config, context, null);
         if (LOG.isTraceEnabled()) {
             LOG.trace("<initWorker(" + workerId + ")");

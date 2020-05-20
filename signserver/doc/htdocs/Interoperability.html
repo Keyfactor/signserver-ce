@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.4.0-draft</p>
+                    <p>Version: 5.4.0</p>
                 </div>
             </header>
 
@@ -995,6 +995,10 @@
         <a class="ht-nav-page-link" href="Cookie_Authorizer.html">Cookie Authorizer</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JWT_Authorizer.html">JWT Authorizer</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -1382,6 +1386,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.4_Release_Notes.html">SignServer 5.4 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.3_Release_Notes.html">SignServer 5.3 Release Notes</a>
 
             </li>
@@ -1449,7 +1457,7 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Introduction.html">SignServer Introduction</a></li>
                                                             </ul>
-</div>            <h1 id="src-81887773"> <span>Interoperability</span></h1>
+</div>            <h1 id="src-85929474"> <span>Interoperability</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1460,7 +1468,7 @@ The following provides an overview of SignServer's capabilities and support, wit
     <p  >    <span style="color: #000000;">
 SignServer supports multiple application servers and standard, high-performance databases. For more information on SignServer requirements, see <a   href="Prerequisites.html">Prerequisites</a>.    </span>
     </p>
-    <div class="section section-1" id="src-81887773_id-.Interoperabilityv5.3.0-Algorithms">
+    <div class="section section-1" id="src-85929474_id-.Interoperabilityv5.4.0-Algorithms">
         <h1 class="heading "><span>Algorithms</span></h1>
     <p  >    <span style="color: #000000;">
 SignServer supports the following algorithm types and key size/curves.    </span>
@@ -1542,9 +1550,9 @@ Compliant with NSA SUITE B algorithms and certificates.    </span>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-81887773_id-.Interoperabilityv5.3.0-SignatureFormats">
+    <div class="section section-1" id="src-85929474_id-.Interoperabilityv5.4.0-SignatureFormats">
         <h1 class="heading "><span>Signature Formats</span></h1>
-    <div class="section section-2" id="src-81887773_id-.Interoperabilityv5.3.0-DocumentSigning">
+    <div class="section section-2" id="src-85929474_id-.Interoperabilityv5.4.0-DocumentSigning">
         <h2 class="heading "><span>Document Signing</span></h2>
     <p  >    <span style="color: #000000;">
 SignServer can easily be adapted to customer-specific needs by using plug-ins and supports document signing formats such as the ones listed below.<br/>    </span>
@@ -1662,7 +1670,7 @@ Office Open XML (OOXML)    </span>
             </div>
     <p  >    </p>
     </div>
-    <div class="section section-2" id="src-81887773_id-.Interoperabilityv5.3.0-CodeSigning">
+    <div class="section section-2" id="src-85929474_id-.Interoperabilityv5.4.0-CodeSigning">
         <h2 class="heading "><span>Code Signing</span></h2>
     <p  >    <span style="color: #000000;">
 SignServer supports code signing formats such as the following.    </span>
@@ -1791,7 +1799,7 @@ Debian package signing (dpkg-sig)    </span>
             </div>
     <p  >    </p>
     </div>
-    <div class="section section-2" id="src-81887773_id-.Interoperabilityv5.3.0-ePassport">
+    <div class="section section-2" id="src-85929474_id-.Interoperabilityv5.4.0-ePassport">
         <h2 class="heading "><span>ePassport</span></h2>
     <p  >    <span style="color: #000000;">
 SignServer is used both for MRTD signing and for ICAO CSCA Master list signing.    </span>
@@ -1873,7 +1881,7 @@ Brainpool ECC curves    </span>
             </div>
     <p  >    </p>
     </div>
-    <div class="section section-2" id="src-81887773_id-.Interoperabilityv5.3.0-Time-stamping">
+    <div class="section section-2" id="src-85929474_id-.Interoperabilityv5.4.0-Time-stamping">
         <h2 class="heading "><span>Time-stamping</span></h2>
     <p  >    <span style="color: #000000;">
 SignServer can be used as the time stamp unit within a Time Stamp Authority (TSA) to generate digitally signed time stamps and includes monitoring of time synchronization, offering both RFC 3161 and MS Authenticode time-stamps.    </span>
@@ -1933,7 +1941,7 @@ eIDAS Qualified Electronic Time-stamping extension    </span>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-2" id="src-81887773_id-.Interoperabilityv5.3.0-ValidationService">
+    <div class="section section-2" id="src-85929474_id-.Interoperabilityv5.4.0-ValidationService">
         <h2 class="heading "><span>Validation Service</span></h2>
     <p  >    <span style="color: #333333;">
 Validators for signed documents, built-in support for XML validation, and     <span style="color: #000000;">
@@ -1945,9 +1953,9 @@ The SignServer Validation Service also allows you to make your own validator plu
     </p>
     </div>
     </div>
-    <div class="section section-1" id="src-81887773_id-.Interoperabilityv5.3.0-Third-partyHardware">
+    <div class="section section-1" id="src-85929474_id-.Interoperabilityv5.4.0-Third-partyHardware">
         <h1 class="heading "><span>Third-party Hardware</span></h1>
-    <div class="section section-2" id="src-81887773_id-.Interoperabilityv5.3.0-HardwareSecurityModules">
+    <div class="section section-2" id="src-85929474_id-.Interoperabilityv5.4.0-HardwareSecurityModules">
         <h2 class="heading "><span>Hardware Security Modules</span></h2>
     <p  >    <span style="color: #333333;">
 SignServer supports Hardware Security Modules (HSMs) and has built-in support for various HSMs such as the ones listed below    </span>
@@ -2068,12 +2076,20 @@ CryptoServer    </span>
     </p>
             </td>
         </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Microsoft Azure    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Key Vault    </p>
+            </td>
+        </tr>
 </tbody>        </table>
             </div>
     <p  >For HSM vendor specific installation and configuration information, refer to the EJBCA Documentation section <a  class="external-link" href="https://doc.primekey.com/ejbca/ejbca-integration/hardware-security-modules-hsm#HardwareSecurityModules(HSM)-VendorSpecificInformation">Vendor Specific Information</a>.    </p>
     </div>
     </div>
-    <div class="section section-1" id="src-81887773_id-.Interoperabilityv5.3.0-IntegrationInterfaces">
+    <div class="section section-1" id="src-85929474_id-.Interoperabilityv5.4.0-IntegrationInterfaces">
         <h1 class="heading "><span>Integration Interfaces</span></h1>
     <p  >    <span style="color: #000000;">
 SignServer provides multiple integration interfaces such as:    </span>

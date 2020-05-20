@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.4.0-draft</p>
+                    <p>Version: 5.4.0</p>
                 </div>
             </header>
 
@@ -995,6 +995,10 @@
         <a class="ht-nav-page-link" href="Cookie_Authorizer.html">Cookie Authorizer</a>
 
             </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JWT_Authorizer.html">JWT Authorizer</a>
+
+            </li>
                             </ul>
             </li>
                             </ul>
@@ -1382,6 +1386,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.4_Release_Notes.html">SignServer 5.4 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.3_Release_Notes.html">SignServer 5.3 Release Notes</a>
 
             </li>
@@ -1477,16 +1485,16 @@ The following outlines SignServer's flexible, component-based architecture.    <
     <img  class="drawio-diagram-image" src="images/inline/2a7a9c72bac84322c6f5189b884cda601034c8d9.png" alt="images/inline/2a7a9c72bac84322c6f5189b884cda601034c8d9.png" width="900"  />
 <br/>    </span>
     </p>
-    <div class="section section-1" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-SignServerConcepts">
+    <div class="section section-1" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-SignServerConcepts">
         <h1 class="heading "><span>SignServer Concepts </span></h1>
-    <div class="section section-2" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-Workers">
+    <div class="section section-2" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-Workers">
         <h2 class="heading "><span>Workers</span></h2>
     <p  >    <span style="color: #333333;">
     <span style="color: #000000;">
 Workers are configured to perform certain activities like signing files of a certain type, often with a specific key.    </span>
     </span>
     </p>
-    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-Signers">
+    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-Signers">
         <h3 class="heading "><span>Signers</span></h3>
     <p  >    <span style="color: #333333;">
     <span style="color: #000000;">
@@ -1501,58 +1509,58 @@ available for signing different formats and additional implementations can be de
     </span>
     </p>
     </div>
-    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-CryptoWorker">
+    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-CryptoWorker">
         <h3 class="heading "><span>Crypto Worker</span></h3>
     <p  >    <span style="color: #333333;">
 A <a   href="CryptoWorker.html">Crypto Worker</a> is a holder for configuring the <a   href="CryptoTokens.html">Crypto Token</a> component that is used to access key material. By configuring the Crypto Token in a Crypto Worker other workers can reference this crypto worker and use it for signing etc.    </span>
     </p>
     </div>
-    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-Dispatchers">
+    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-Dispatchers">
         <h3 class="heading "><span>Dispatchers</span></h3>
     <p  >    <span style="color: #333333;">
 A <a   href="SignServer_Dispatchers.html">SignServer Dispatcher</a> does not perform any processing (i.e. signing) of its own but instead forwards the request to another worker. Dispatchers forward the request to the first available worker that has a valid certificate (<a   href="FirstActiveDispatcher.html">FirstActiveDispatcher</a>), or forward a time-stamp request depending on the requested time-stamp policy (<a   href="RequestedPolicyDispatcher.html">RequestedPolicyDispatcher</a>).    </span>
     </p>
     </div>
-    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-TimedService">
+    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-TimedService">
         <h3 class="heading "><span>Timed Service</span></h3>
     <p  >    <span style="color: #333333;">
 A <a   href="SignServer_Timed_Services.html">SignServer Timed Service</a> does not accept any input but instead runs at a fixed time interval (like a cron job). This can be useful for setting up an hourly timed service keeping the connection to the Hardware Security Module (HSM) from timing out. For more information, see <a   href="HSMKeepAliveTimedService.html">HSM Keep Alive Timed Service</a>.    </span>
     </p>
     </div>
     </div>
-    <div class="section section-2" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-Components">
+    <div class="section section-2" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-Components">
         <h2 class="heading "><span>Components</span></h2>
     <p  ><a   href="SignServer_Components.html">SignServer Components</a> provide specific functionality and are configured in the workers.    </p>
-    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-CryptoToken">
+    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-CryptoToken">
         <h3 class="heading "><span>Crypto Token</span></h3>
     <p  ><a   href="CryptoTokens.html">Crypto Tokens</a> provide access to the keys and cryptography operations. Each Signer is typically configured with a reference to a Crypto Worker having a Crypto Token configured. A Crypto Token using a software keystore is the <a   href="P12CryptoToken.html">P12 Crypto Token</a> and one using an HSM is the <a   href="PKCS11CryptoToken.html">PKCS11 Crypto Token</a>.    </p>
     </div>
-    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-Authorizer">
+    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-Authorizer">
         <h3 class="heading "><span>Authorizer</span></h3>
     <p  ><a   href="Authorizers.html">Authorizers</a> are responsible for deciding if a request should be allowed or not. Options include HTTPS/TLS client certificate authentication, HTTP Basic Authentication, IP address restrictions or using a reverse proxy. For more information, see <a   href="SignServer_Authentication_and_Authorization.html">SignServer Authentication and Authorization</a>.    </p>
     </div>
-    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-WorkerLogger">
+    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-WorkerLogger">
         <h3 class="heading "><span>Worker Logger</span></h3>
     <p  >Signing requests are logged in the <a   href="Worker_Log.html">Worker Log</a> and the configured Worker Logger handles selecting, formatting and storing the log fields. By default, logs are written to files but can also be configured to be written to the database (using the SecurityEventsWrokerLogger).    </p>
-    <div class="section section-4" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-Archiver">
+    <div class="section section-4" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-Archiver">
         <h4 class="heading "><span>Archiver</span></h4>
     <p  >By configuring one or more <a   href="Archivers.html">Archivers</a> on a worker, the request and/or response can be stored by the Archiver, for example, to the database (using the <a   href="Base64DatabaseArchiver.html">Base64DatabaseArchiver</a>).    </p>
     </div>
     </div>
-    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-Accounter">
+    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-Accounter">
         <h3 class="heading "><span>Accounter</span></h3>
     <p  >An <a   href="Accounters.html">Accounter</a> component can be implemented and configured to integrate with for example an external accounting or billing system.    </p>
     </div>
     </div>
-    <div class="section section-2" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-Integration">
+    <div class="section section-2" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-Integration">
         <h2 class="heading "><span>Integration</span></h2>
-    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-ClientApplications">
+    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-ClientApplications">
         <h3 class="heading "><span>Client Applications</span></h3>
     <p  >    <span style="color: #333333;">
 Easily submit files or data for signing using the available <a   href="Client_CLI.html">Client CLI / SignClient</a> application, use a standard tool like cURL, a web browser or implement your own application using the <a   href="Client_HTTP_Interface.html">Client HTTP Interface</a> or <a   href="http://confluence.primekey.com/display/SIGNDS/.Client+Web+Service+v4.2.0">Client Web Service</a> interface.<br/>    </span>
     </p>
     </div>
-    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-Plug-ins">
+    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-Plug-ins">
         <h3 class="heading "><span>Plug-ins</span></h3>
     <p  >    <span style="color: #000000;">
 Plug-ins provide functionality allowing you to bring your own code and implement own functionality and workflows.    </span>
@@ -1561,7 +1569,7 @@ Plug-ins provide functionality allowing you to bring your own code and implement
 Service Provider Interface (SPI) for creating new workers and components.    </span>
     </p>
     </div>
-    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-IntegrationwithEJBCA">
+    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-IntegrationwithEJBCA">
         <h3 class="heading "><span>Integration with EJBCA</span></h3>
     <p  >    <span style="color: #333333;">
 Automatic signer certificate renewal when used together with     </span>
@@ -1580,26 +1588,26 @@ EJBCA    </span>
 Peer Connector support).    </span>
     </p>
     </div>
-    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-ExternalCAs">
+    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-ExternalCAs">
         <h3 class="heading "><span>External CAs</span></h3>
     <p  >    <span style="color: #333333;">
 Get your document signer certificate, such as PDF signing certificates, signed by public recognized CAs using PKCS#10.    </span>
     </p>
     </div>
-    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-HealthCheck">
+    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-HealthCheck">
         <h3 class="heading "><span>Health Check</span></h3>
     <p  >    <span style="color: #333333;">
 Use the health check service to query the status of a node from a load balancer.    </span>
     </p>
     </div>
-    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-ReverseProxy">
+    <div class="section section-3" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-ReverseProxy">
         <h3 class="heading "><span>Reverse Proxy</span></h3>
     <p  >    <span style="color: #333333;">
 Allows you to, for instance, put an <a   href="Apache_HTTP_Server_as_Reverse_Proxy.html">Apache HTTP Server as Reverse Proxy</a> in front of SignServer to add support for additional authentication mechanisms or perform URL rewrites, etc.    </span>
     </p>
     </div>
     </div>
-    <div class="section section-2" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-draft-Administration">
+    <div class="section section-2" id="src-85926990_id-.ArchitectureandConceptsv5.4.0-Administration">
         <h2 class="heading "><span>Administration</span></h2>
     <p  >    <span style="color: #000000;">
 SignServer provides    </span>

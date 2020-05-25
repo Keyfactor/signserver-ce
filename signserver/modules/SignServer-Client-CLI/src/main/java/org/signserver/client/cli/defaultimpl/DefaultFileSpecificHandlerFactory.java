@@ -39,6 +39,30 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
     }
 
     @Override
+    public FileSpecificHandler createHandler(final File inFile, final File outFile,
+                                             final boolean clientSide,
+                                             final Map<String, String> metadata,
+                                             final String workerName)
+            throws IOException {
+        if (clientSide) {
+            throw new IllegalArgumentException("Client-side contruction is not supported");
+        }
+        return new StraightFileSpecificHandler(new FileInputStream(inFile), inFile.length());
+    }
+
+    @Override
+    public FileSpecificHandler createHandler(final File inFile, final File outFile,
+                                             final boolean clientSide,
+                                             final Map<String, String> metadata,
+                                             final int workerId)
+            throws IOException {
+        if (clientSide) {
+            throw new IllegalArgumentException("Client-side contruction is not supported");
+        }
+        return new StraightFileSpecificHandler(new FileInputStream(inFile), inFile.length());
+    }
+
+    @Override
     public FileSpecificHandler createHandler(final InputStream inStream,
                                              final long size,
                                              final File outFile,
@@ -54,6 +78,36 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final File inFile,
                                              final File outFile,
                                              final boolean clientSide, Map<String, String> metadata)
+        throws IOException {
+        if (clientSide) {
+            throw new IllegalArgumentException("Client-side contruction is not supported");
+        }
+        return new StraightFileSpecificHandler(new FileInputStream(inFile),
+                                               inFile.length());
+    }
+
+    @Override
+    public FileSpecificHandler createHandler(final String fileType,
+                                             final File inFile,
+                                             final File outFile,
+                                             final boolean clientSide,
+                                             final Map<String, String> metadata,
+                                             final String workerName)
+        throws IOException {
+        if (clientSide) {
+            throw new IllegalArgumentException("Client-side contruction is not supported");
+        }
+        return new StraightFileSpecificHandler(new FileInputStream(inFile),
+                                               inFile.length());
+    }
+
+    @Override
+    public FileSpecificHandler createHandler(final String fileType,
+                                             final File inFile,
+                                             final File outFile,
+                                             final boolean clientSide,
+                                             final Map<String, String> metadata,
+                                             final int workerId)
         throws IOException {
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");

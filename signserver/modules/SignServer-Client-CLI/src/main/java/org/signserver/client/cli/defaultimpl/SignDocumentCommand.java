@@ -984,10 +984,23 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                                                           final File outFile, Map<String, String> extraOptions)
             throws IOException {
         if (fileType != null) {
-            return handlerFactory.createHandler(fileType, inFile, outFile,
-                                                clientside, extraOptions);
+            if (workerName != null) {
+                return handlerFactory.createHandler(fileType, inFile, outFile,
+                                                    clientside, extraOptions,
+                                                    workerName);
+            } else {
+                return handlerFactory.createHandler(fileType, inFile, outFile,
+                                                    clientside, extraOptions,
+                                                    workerId);
+            }
         } else {
-            return handlerFactory.createHandler(inFile, outFile, clientside, extraOptions);
+            if (workerName != null) {
+                return handlerFactory.createHandler(inFile, outFile, clientside,
+                                                    extraOptions, workerName);
+            } else {
+                return handlerFactory.createHandler(inFile, outFile, clientside,
+                                                    extraOptions, workerId);
+            }
         }
     }
     

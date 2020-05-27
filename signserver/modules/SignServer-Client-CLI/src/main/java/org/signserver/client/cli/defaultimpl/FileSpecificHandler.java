@@ -38,7 +38,7 @@ public interface FileSpecificHandler extends AutoCloseable {
      * to perform the cryptographic operations.
      * 
      *
-     * @return the Pre-Request signature input or null to bypass genral signing
+     * @return the Pre-Request signature input or null to bypass general signing
      * @throws IOException typically in case of issues reading the input file or writing to the output file
      * @throws IllegalRequestException for example: failure during parsing input file
      */

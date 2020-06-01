@@ -4,12 +4,12 @@
     <parent>
         <artifactId>SignServer-Modules</artifactId>
         <groupId>org.signserver</groupId>
-        <version>5.4.2.Alpha1-APKv3-3</version>
+        <version>5.4.2.Alpha2-APKv3-4-SNAPSHOT</version>
     </parent>
 
     <groupId>org.signserver</groupId>
     <artifactId>SignServer-Admin-web</artifactId>
-    <version>5.4.2.Alpha1-APKv3-3</version>
+    <version>5.4.2.Alpha2-APKv3-4-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <name>SignServer-Admin-web</name>

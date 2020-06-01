@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.4.2.Alpha1-APKv3-3</version>
+        <version>5.4.2.Alpha2-APKv3-4-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-Client-ClientWS</artifactId>
     <name>SignServer-Client-ClientWS</name>

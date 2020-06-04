@@ -640,111 +640,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     }
 
     /**
-     * Creates a DocumentSigner using the choosen protocol.
-     *
-     * @return a DocumentSigner using the choosen protocol
-     * @throws MalformedURLException in case an URL can not be constructed
-     * using the given host and port
-     */
-    private DocumentSigner createSigner(final FileSpecificHandler handler,
-                                        final String currentPassword)
-            throws MalformedURLException {
-        final DocumentSigner signer;
-
-        final SSLSocketFactory sf = keyStoreOptions.setupHTTPS(createConsolePasswordReader(), out); // TODO: Should be done earlier and only once (not for each signer)
-
-        if (port == null) {
-            if (keyStoreOptions.isUsePrivateHTTPS()) {
-                port = KeyStoreOptions.DEFAULT_PRIVATE_HTTPS_PORT;
-            } else if (keyStoreOptions.isUseHTTPS()) {
-                port = KeyStoreOptions.DEFAULT_PUBLIC_HTTPS_PORT;
-            } else {
-                port = KeyStoreOptions.DEFAULT_HTTP_PORT;
-            }
-        }
-        
-        if (clientside) {
-            if (handler.isSignatureInputHash()) {
-                metadata.put("USING_CLIENTSUPPLIED_HASH", "true");
-            }
-            metadata.put("CLIENTSIDE_HASHDIGESTALGORITHM", digestAlgorithm);
-        }
-
-        final String typeId = handler.getFileTypeIdentifier();
-
-        if (typeId != null) {
-            metadata.put("FILE_TYPE", typeId);
-        }
-
-        switch (protocol) {
-            case WEBSERVICES: {
-                LOG.debug("Using SignServerWS as procotol");
-            
-                final String workerIdOrName;
-                if (workerId == 0) {
-                    workerIdOrName = workerName;
-                } else {
-                    workerIdOrName = String.valueOf(workerId);
-                }
-
-                signer = new WebServicesDocumentSigner(
-                    host,
-                    port,
-                    servlet,
-                    workerIdOrName,
-                    keyStoreOptions.isUseHTTPS(),
-                    username, currentPassword,
-                    pdfPassword, sf, metadata);
-                break;
-            }
-            case CLIENTWS: {
-                LOG.debug("Using ClientWS as procotol");
-            
-                final String workerIdOrName;
-                if (workerId == 0) {
-                    workerIdOrName = workerName;
-                } else {
-                    workerIdOrName = String.valueOf(workerId);
-                }
-
-                signer = new ClientWSDocumentSigner(
-                    host,
-                    port,
-                    servlet,
-                    workerIdOrName,
-                    keyStoreOptions.isUseHTTPS(),
-                    username, currentPassword,
-                    pdfPassword, sf, metadata);
-                break;
-            }
-            case HTTP:
-            default: {
-                LOG.debug("Using HTTP as procotol");
-                
-                if (sf != null) {
-                    HttpsURLConnection.setDefaultSSLSocketFactory(sf);
-                }
-                
-                if (workerId == 0) {
-                    signer = new HTTPDocumentSigner(hostsManager, port, servlet,
-                                                    keyStoreOptions.isUseHTTPS(),
-                                                    workerName, username,
-                                                    currentPassword, pdfPassword,
-                                                    metadata, timeOutLimit);
-                } else {
-                    signer = new HTTPDocumentSigner(hostsManager, port, servlet,
-                                                    keyStoreOptions.isUseHTTPS(),
-                                                    workerId, username,
-                                                    currentPassword, pdfPassword,
-                                                    metadata, timeOutLimit);
-                }
-            }
-        }
-
-        return signer;
-    }
-
-    /**
      * Execute the signing operation.
      * @param manager for managing the threads
      * @param inFile directory
@@ -829,6 +724,16 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     private boolean runFile(TransferManager manager, Map<String, Object> requestContext, final File inFile, final InputStream bytes, final long size, final File outFile) {  // TODO: merge with runBatch ?, inFile here is only used when removing the file
         boolean success = true;
         boolean cleanUpOutputFileOnFailure = false;
+
+        final String currentPassword =
+                manager == null ? password : manager.getPassword();
+        final DocumentSignerFactory signerFactory =
+                    new DocumentSignerFactory(protocol, keyStoreOptions, host,
+                                              servlet, port,
+                                              digestAlgorithm, username,
+                                              currentPassword, pdfPassword,
+                                              hostsManager, timeOutLimit);
+
         try {
             OutputStream outStream = null;
 
@@ -842,6 +747,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     outStream = new FileOutputStream(outFile);
                 }
 
+                
+
                 // Take start time
                 final long startTime = System.nanoTime();
                 
@@ -849,7 +756,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 final InputSource preInputSource = handler.producePreRequestInput();
                 if (preInputSource != null) {
                     final OutputStream os = new ByteArrayOutputStream();
-                    sign(preInputSource, os, manager, handler, requestContext);
+                    sign(preInputSource, os, signerFactory, handler, requestContext);
                     handler.assemblePreResponse(new OutputCollector(os, clientside));
                 }
                 
@@ -862,7 +769,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     os = outStream;
                 }
                 if (inputSource != null) {
-                    sign(inputSource, os, manager, handler, requestContext);
+                    sign(inputSource, os, signerFactory, handler, requestContext);
                 }
                 handler.assemble(new OutputCollector(os, clientside));
 
@@ -961,9 +868,25 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         return success;
     }
     
-    private void sign(InputSource inputSource, OutputStream os, TransferManager manager, FileSpecificHandler handler, Map<String, Object> requestContext) throws MalformedURLException, IllegalRequestException, CryptoTokenOfflineException, SignServerException, IOException {
-        final DocumentSigner signer =
-            createSigner(handler, manager == null ? password : manager.getPassword());
+    private void sign(final InputSource inputSource, final OutputStream os,
+                      final DocumentSignerFactory signerFactory,
+                      final FileSpecificHandler handler,
+                      final Map<String, Object> requestContext)
+            throws MalformedURLException, IllegalRequestException,
+                   CryptoTokenOfflineException, SignServerException, IOException {
+        /*final DocumentSigner signer =
+            createSigner(handler, manager == null ? password : manager.getPassword());*/
+        final DocumentSigner signer;
+
+        if (workerId == 0) {
+            signer = signerFactory.createSigner(workerName, clientside,
+                                                handler.isSignatureInputHash(),
+                                                handler.getFileTypeIdentifier());
+        } else {
+            signer = signerFactory.createSigner(workerId, clientside,
+                                                handler.isSignatureInputHash(),
+                                                handler.getFileTypeIdentifier());
+        }
 
         /* add addional metadata from the file handler to the request
          * context

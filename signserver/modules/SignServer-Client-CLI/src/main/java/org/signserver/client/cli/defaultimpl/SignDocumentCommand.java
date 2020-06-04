@@ -739,8 +739,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
             try (final FileSpecificHandler handler =
                     inFile != null ?
-                    createFileSpecificHandler(handlerFactory, inFile, outFile, extraOptions) :
-                    createFileSpecificHandler(handlerFactory, bytes, size, outFile, extraOptions)) {
+                    createFileSpecificHandler(handlerFactory, signerFactory,
+                                              inFile, outFile, extraOptions) :
+                    createFileSpecificHandler(handlerFactory, signerFactory,
+                                              bytes, size, outFile,
+                                              extraOptions)) {
                 if (outFile == null) {
                     outStream = System.out;
                 } else {
@@ -903,6 +906,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     }
     
     private FileSpecificHandler createFileSpecificHandler(final FileSpecificHandlerFactory handlerFactory,
+                                                          final DocumentSignerFactory signerFactory,
                                                           final File inFile,
                                                           final File outFile, Map<String, String> extraOptions)
             throws IOException {
@@ -928,6 +932,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     }
     
     private FileSpecificHandler createFileSpecificHandler(final FileSpecificHandlerFactory handlerFactory,
+                                                          final DocumentSignerFactory signerFactory,
                                                           final InputStream inStream,
                                                           final long size,
                                                           final File outFile, Map<String, String> extraOptions)

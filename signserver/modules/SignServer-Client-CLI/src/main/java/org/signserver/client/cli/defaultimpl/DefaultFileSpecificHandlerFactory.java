@@ -54,7 +54,33 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
     public FileSpecificHandler createHandler(final File inFile, final File outFile,
                                              final boolean clientSide,
                                              final Map<String, String> metadata,
+                                             final String workerName,
+                                             final DocumentSignerFactory signerFactory)
+            throws IOException {
+        if (clientSide) {
+            throw new IllegalArgumentException("Client-side contruction is not supported");
+        }
+        return new StraightFileSpecificHandler(new FileInputStream(inFile), inFile.length());
+    }
+
+    @Override
+    public FileSpecificHandler createHandler(final File inFile, final File outFile,
+                                             final boolean clientSide,
+                                             final Map<String, String> metadata,
                                              final int workerId)
+            throws IOException {
+        if (clientSide) {
+            throw new IllegalArgumentException("Client-side contruction is not supported");
+        }
+        return new StraightFileSpecificHandler(new FileInputStream(inFile), inFile.length());
+    }
+
+    @Override
+    public FileSpecificHandler createHandler(final File inFile, final File outFile,
+                                             final boolean clientSide,
+                                             final Map<String, String> metadata,
+                                             final int workerId,
+                                             final DocumentSignerFactory signerFactory)
             throws IOException {
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
@@ -107,7 +133,39 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final File outFile,
                                              final boolean clientSide,
                                              final Map<String, String> metadata,
+                                             final String workerName,
+                                             final DocumentSignerFactory signerFactory)
+        throws IOException {
+        if (clientSide) {
+            throw new IllegalArgumentException("Client-side contruction is not supported");
+        }
+        return new StraightFileSpecificHandler(new FileInputStream(inFile),
+                                               inFile.length());
+    }
+
+    @Override
+    public FileSpecificHandler createHandler(final String fileType,
+                                             final File inFile,
+                                             final File outFile,
+                                             final boolean clientSide,
+                                             final Map<String, String> metadata,
                                              final int workerId)
+        throws IOException {
+        if (clientSide) {
+            throw new IllegalArgumentException("Client-side contruction is not supported");
+        }
+        return new StraightFileSpecificHandler(new FileInputStream(inFile),
+                                               inFile.length());
+    }
+
+    @Override
+    public FileSpecificHandler createHandler(final String fileType,
+                                             final File inFile,
+                                             final File outFile,
+                                             final boolean clientSide,
+                                             final Map<String, String> metadata,
+                                             final int workerId,
+                                             final DocumentSignerFactory signerFactory)
         throws IOException {
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");

@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import org.signserver.client.cli.defaultimpl.DocumentSignerFactory;
 import org.signserver.client.cli.defaultimpl.FileSpecificHandler;
 
 /**
@@ -64,6 +65,25 @@ public interface FileSpecificHandlerFactory {
      * @param outFile output file for the handler to use
      * @param clientSide true if the handler should be able to do client-side hashing and construction
      * @param extraOptions extra settings for the implementation
+     * @param workerName worker name of signer being used
+     * @param signerFactory
+     * @return A FileSpecificHandler
+     * @throws java.io.IOException if unable to use the input file, i.e. file non-existing
+     */
+    FileSpecificHandler createHandler(File inFile, File outFile,
+                                      boolean clientSide,
+                                      Map<String, String> extraOptions,
+                                      String workerName,
+                                      DocumentSignerFactory signerFactory)
+            throws IOException, IllegalArgumentException;
+
+    /**
+     * Create a handler for given input and output file.
+     * 
+     * @param inFile input for the handler given as a file
+     * @param outFile output file for the handler to use
+     * @param clientSide true if the handler should be able to do client-side hashing and construction
+     * @param extraOptions extra settings for the implementation
      * @param workerId worker ID of signer being used
      * @return A FileSpecificHandler
      * @throws java.io.IOException if unable to use the input file, i.e. file non-existing
@@ -72,6 +92,25 @@ public interface FileSpecificHandlerFactory {
                                       boolean clientSide,
                                       Map<String, String> extraOptions,
                                       int workerId)
+            throws IOException, IllegalArgumentException;
+
+    /**
+     * Create a handler for given input and output file.
+     * 
+     * @param inFile input for the handler given as a file
+     * @param outFile output file for the handler to use
+     * @param clientSide true if the handler should be able to do client-side hashing and construction
+     * @param extraOptions extra settings for the implementation
+     * @param workerId worker ID of signer being used
+     * @param signerFactory
+     * @return A FileSpecificHandler
+     * @throws java.io.IOException if unable to use the input file, i.e. file non-existing
+     */
+    FileSpecificHandler createHandler(File inFile, File outFile,
+                                      boolean clientSide,
+                                      Map<String, String> extraOptions,
+                                      int workerId,
+                                      DocumentSignerFactory signerFactory)
             throws IOException, IllegalArgumentException;
     
     /**
@@ -134,6 +173,27 @@ public interface FileSpecificHandlerFactory {
      * @param outFile output file for the handler to use
      * @param clientSide true if the handler should be able to do client-side hashing and construction
      * @param extraOptions extra settings for the implementation
+     * @param workerName worker name of the signer being used
+     * @param signerFactory
+     * @return A FileSpecificHandler
+     * @throws IOException if unable to use the input file, i.e. file non-existing
+     */
+    FileSpecificHandler createHandler(String fileType, File inFile, File outFile,
+                                      boolean clientSide,
+                                      Map<String, String> extraOptions,
+                                      String workerName,
+                                      DocumentSignerFactory signerFactory)
+            throws IOException, IllegalArgumentException;
+
+    /**
+     * Create a file specific handler given a file type name, input, and output
+     * files.
+     * 
+     * @param fileType file type identifier, overriding any autodetection done by the factory
+     * @param inFile input for the handler given as a file
+     * @param outFile output file for the handler to use
+     * @param clientSide true if the handler should be able to do client-side hashing and construction
+     * @param extraOptions extra settings for the implementation
      * @param workerId worker ID of the signer being used
      * @return A FileSpecificHandler
      * @throws IOException if unable to use the input file, i.e. file non-existing
@@ -142,6 +202,27 @@ public interface FileSpecificHandlerFactory {
                                       boolean clientSide,
                                       Map<String, String> extraOptions,
                                       int workerId)
+            throws IOException, IllegalArgumentException;
+
+    /**
+     * Create a file specific handler given a file type name, input, and output
+     * files.
+     * 
+     * @param fileType file type identifier, overriding any autodetection done by the factory
+     * @param inFile input for the handler given as a file
+     * @param outFile output file for the handler to use
+     * @param clientSide true if the handler should be able to do client-side hashing and construction
+     * @param extraOptions extra settings for the implementation
+     * @param workerId worker ID of the signer being used
+     * @param signerFactory
+     * @return A FileSpecificHandler
+     * @throws IOException if unable to use the input file, i.e. file non-existing
+     */
+    FileSpecificHandler createHandler(String fileType, File inFile, File outFile,
+                                      boolean clientSide,
+                                      Map<String, String> extraOptions,
+                                      int workerId,
+                                      DocumentSignerFactory signerFactory)
             throws IOException, IllegalArgumentException;
 
     /**

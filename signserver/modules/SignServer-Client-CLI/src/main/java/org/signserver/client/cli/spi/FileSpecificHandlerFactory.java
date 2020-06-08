@@ -67,6 +67,7 @@ public interface FileSpecificHandlerFactory {
      * @param extraOptions extra settings for the implementation
      * @param workerName worker name of signer being used
      * @param signerFactory
+     * @param requestContext
      * @return A FileSpecificHandler
      * @throws java.io.IOException if unable to use the input file, i.e. file non-existing
      */
@@ -74,7 +75,8 @@ public interface FileSpecificHandlerFactory {
                                       boolean clientSide,
                                       Map<String, String> extraOptions,
                                       String workerName,
-                                      DocumentSignerFactory signerFactory)
+                                      DocumentSignerFactory signerFactory,
+                                      Map<String, Object> requestContext)
             throws IOException, IllegalArgumentException;
 
     /**
@@ -103,6 +105,7 @@ public interface FileSpecificHandlerFactory {
      * @param extraOptions extra settings for the implementation
      * @param workerId worker ID of signer being used
      * @param signerFactory
+     * @param requestContext
      * @return A FileSpecificHandler
      * @throws java.io.IOException if unable to use the input file, i.e. file non-existing
      */
@@ -110,7 +113,8 @@ public interface FileSpecificHandlerFactory {
                                       boolean clientSide,
                                       Map<String, String> extraOptions,
                                       int workerId,
-                                      DocumentSignerFactory signerFactory)
+                                      DocumentSignerFactory signerFactory,
+                                      Map<String, Object> requestContext)
             throws IOException, IllegalArgumentException;
     
     /**
@@ -175,6 +179,7 @@ public interface FileSpecificHandlerFactory {
      * @param extraOptions extra settings for the implementation
      * @param workerName worker name of the signer being used
      * @param signerFactory
+     * @param requestContext
      * @return A FileSpecificHandler
      * @throws IOException if unable to use the input file, i.e. file non-existing
      */
@@ -182,7 +187,8 @@ public interface FileSpecificHandlerFactory {
                                       boolean clientSide,
                                       Map<String, String> extraOptions,
                                       String workerName,
-                                      DocumentSignerFactory signerFactory)
+                                      DocumentSignerFactory signerFactory,
+                                      Map<String, Object> requestContext)
             throws IOException, IllegalArgumentException;
 
     /**
@@ -215,6 +221,7 @@ public interface FileSpecificHandlerFactory {
      * @param extraOptions extra settings for the implementation
      * @param workerId worker ID of the signer being used
      * @param signerFactory
+     * @param requestContext
      * @return A FileSpecificHandler
      * @throws IOException if unable to use the input file, i.e. file non-existing
      */
@@ -222,7 +229,8 @@ public interface FileSpecificHandlerFactory {
                                       boolean clientSide,
                                       Map<String, String> extraOptions,
                                       int workerId,
-                                      DocumentSignerFactory signerFactory)
+                                      DocumentSignerFactory signerFactory,
+                                      Map<String, Object> requestContext)
             throws IOException, IllegalArgumentException;
 
     /**

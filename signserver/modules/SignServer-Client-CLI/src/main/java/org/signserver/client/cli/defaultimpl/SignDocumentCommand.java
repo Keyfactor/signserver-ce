@@ -740,8 +740,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             try (final FileSpecificHandler handler =
                     inFile != null ?
                     createFileSpecificHandler(handlerFactory, signerFactory,
+                                              requestContext,
                                               inFile, outFile, extraOptions) :
-                    createFileSpecificHandler(handlerFactory, signerFactory,
+                    createFileSpecificHandler(handlerFactory,
                                               bytes, size, outFile,
                                               extraOptions)) {
                 if (outFile == null) {
@@ -907,6 +908,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     
     private FileSpecificHandler createFileSpecificHandler(final FileSpecificHandlerFactory handlerFactory,
                                                           final DocumentSignerFactory signerFactory,
+                                                          final Map<String, Object> requestContext,
                                                           final File inFile,
                                                           final File outFile, Map<String, String> extraOptions)
             throws IOException {
@@ -914,25 +916,30 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             if (workerName != null) {
                 return handlerFactory.createHandler(fileType, inFile, outFile,
                                                     clientside, extraOptions,
-                                                    workerName);
+                                                    workerName, signerFactory,
+                                                    requestContext);
             } else {
                 return handlerFactory.createHandler(fileType, inFile, outFile,
                                                     clientside, extraOptions,
-                                                    workerId);
+                                                    workerId, signerFactory,
+                                                    requestContext);
             }
         } else {
             if (workerName != null) {
                 return handlerFactory.createHandler(inFile, outFile, clientside,
-                                                    extraOptions, workerName);
+                                                    extraOptions, workerName,
+                                                    signerFactory,
+                                                    requestContext);
             } else {
                 return handlerFactory.createHandler(inFile, outFile, clientside,
-                                                    extraOptions, workerId);
+                                                    extraOptions, workerId,
+                                                    signerFactory,
+                                                    requestContext);
             }
         }
     }
     
     private FileSpecificHandler createFileSpecificHandler(final FileSpecificHandlerFactory handlerFactory,
-                                                          final DocumentSignerFactory signerFactory,
                                                           final InputStream inStream,
                                                           final long size,
                                                           final File outFile, Map<String, String> extraOptions)

@@ -55,7 +55,8 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final boolean clientSide,
                                              final Map<String, String> metadata,
                                              final String workerName,
-                                             final DocumentSignerFactory signerFactory)
+                                             final DocumentSignerFactory signerFactory,
+                                             final Map<String, Object> requestContext)
             throws IOException {
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
@@ -80,7 +81,8 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final boolean clientSide,
                                              final Map<String, String> metadata,
                                              final int workerId,
-                                             final DocumentSignerFactory signerFactory)
+                                             final DocumentSignerFactory signerFactory,
+                                             final Map<String, Object> requestContext)
             throws IOException {
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
@@ -134,7 +136,8 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final boolean clientSide,
                                              final Map<String, String> metadata,
                                              final String workerName,
-                                             final DocumentSignerFactory signerFactory)
+                                             final DocumentSignerFactory signerFactory,
+                                             final Map<String, Object> requestContext)
         throws IOException {
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");
@@ -165,7 +168,8 @@ public class DefaultFileSpecificHandlerFactory implements FileSpecificHandlerFac
                                              final boolean clientSide,
                                              final Map<String, String> metadata,
                                              final int workerId,
-                                             final DocumentSignerFactory signerFactory)
+                                             final DocumentSignerFactory signerFactory,
+                                             final Map<String, Object> requestContext)
         throws IOException {
         if (clientSide) {
             throw new IllegalArgumentException("Client-side contruction is not supported");

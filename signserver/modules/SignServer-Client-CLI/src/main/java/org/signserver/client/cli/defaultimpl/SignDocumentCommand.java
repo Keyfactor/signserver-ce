@@ -882,11 +882,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         final DocumentSigner signer;
 
         if (workerId == 0) {
-            signer = signerFactory.createSigner(workerName, clientside,
+            signer = signerFactory.createSigner(workerName, metadata, clientside,
                                                 handler.isSignatureInputHash(),
                                                 handler.getFileTypeIdentifier());
         } else {
-            signer = signerFactory.createSigner(workerId, clientside,
+            signer = signerFactory.createSigner(workerId, metadata, clientside,
                                                 handler.isSignatureInputHash(),
                                                 handler.getFileTypeIdentifier());
         }

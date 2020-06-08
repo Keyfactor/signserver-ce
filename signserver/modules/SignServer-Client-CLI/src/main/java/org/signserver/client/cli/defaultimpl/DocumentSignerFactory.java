@@ -80,28 +80,30 @@ public class DocumentSignerFactory {
     }
 
     public DocumentSigner createSigner(final String workerName,
+                                       final Map<String, String> metadata,
                                        final boolean clientSide,
                                        final boolean isSignatureInputHash,
                                        final String typeId) {
-        return createSigner(0, workerName, clientSide, isSignatureInputHash,
-                            typeId);
+        return createSigner(0, workerName, metadata, clientSide,
+                            isSignatureInputHash, typeId);
     }
 
     public DocumentSigner createSigner(final int workerId,
+                                       final Map<String, String> metadata,
                                        final boolean clientSide,
                                        final boolean isSignatureInputHash,
                                        final String typeId) {
-        return createSigner(workerId, null, clientSide, isSignatureInputHash,
-                            typeId);
+        return createSigner(workerId, null, metadata, clientSide,
+                            isSignatureInputHash, typeId);
     }
 
     private DocumentSigner createSigner(final int workerId,
                                         final String workerName,
+                                        final Map<String, String> metadata,
                                         final boolean clientside,
                                         final boolean isSignatureInputHash,
                                         final String typeId) {
         final DocumentSigner signer;
-        final Map<String, String> metadata = new HashMap<>();
 
         if (clientside) {
             if (isSignatureInputHash) {

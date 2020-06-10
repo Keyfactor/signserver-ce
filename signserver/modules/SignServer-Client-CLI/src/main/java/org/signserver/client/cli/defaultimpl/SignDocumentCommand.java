@@ -913,24 +913,24 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 return handlerFactory.createHandler(fileType, inFile, outFile,
                                                     clientside, extraOptions,
                                                     workerName, signerFactory,
-                                                    requestContext);
+                                                    requestContext, metadata);
             } else {
                 return handlerFactory.createHandler(fileType, inFile, outFile,
                                                     clientside, extraOptions,
                                                     workerId, signerFactory,
-                                                    requestContext);
+                                                    requestContext, metadata);
             }
         } else {
             if (workerName != null) {
                 return handlerFactory.createHandler(inFile, outFile, clientside,
                                                     extraOptions, workerName,
                                                     signerFactory,
-                                                    requestContext);
+                                                    requestContext, metadata);
             } else {
                 return handlerFactory.createHandler(inFile, outFile, clientside,
                                                     extraOptions, workerId,
                                                     signerFactory,
-                                                    requestContext);
+                                                    requestContext, metadata);
             }
         }
     }

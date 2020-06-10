@@ -13,7 +13,6 @@
 package org.signserver.client.cli.defaultimpl;
 
 import static java.lang.System.out;
-import java.util.HashMap;
 import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
@@ -21,6 +20,8 @@ import org.apache.log4j.Logger;
 import org.signserver.client.cli.defaultimpl.SignDocumentCommand.Protocol;
 
 /**
+ * Factory for creating DocumentSigner instances associated with an invocation
+ * of the signdocument command.
  *
  * @author Marcus Lundblad
  * @version $Id$
@@ -43,6 +44,21 @@ public class DocumentSignerFactory {
     private final HostManager hostsManager;
     private final int timeOutLimit;
 
+    /**
+     * Create a signer factory given command invocation parameters.
+     * 
+     * @param protocol Request protococl (HTTP, CLIENTWS, or WEBSERVICES)
+     * @param keyStoreOptions Options for client certificate keystore
+     * @param host Servlet host
+     * @param servlet Servlet enpoint
+     * @param port Servlet port
+     * @param digestAlgorithm Digest algorithm
+     * @param username Username when using HTTP Basic authentication
+     * @param currentPassword Password for HTTP Basic authentication
+     * @param pdfPassword PDF password (used by PDFSigner for password-protected PDFs)
+     * @param hostsManager Hosts manager
+     * @param timeOutLimit Timeout limit
+     */
     public DocumentSignerFactory(final Protocol protocol,
                                  final KeyStoreOptions keyStoreOptions,
                                  final String host,
@@ -79,6 +95,16 @@ public class DocumentSignerFactory {
         }
     }
 
+    /**
+     * Create a signer instance given a worker name.
+     * 
+     * @param workerName Worker name to send the request to
+     * @param metadata Metadata to include in the request
+     * @param clientSide True if the request is using client-side hashing and contruction
+     * @param isSignatureInputHash True if input is a hash
+     * @param typeId File type
+     * @return DocumentSigner instance for sending the request given the parameters
+     */
     public DocumentSigner createSigner(final String workerName,
                                        final Map<String, String> metadata,
                                        final boolean clientSide,
@@ -88,6 +114,16 @@ public class DocumentSignerFactory {
                             isSignatureInputHash, typeId);
     }
 
+    /**
+     * Create a signer instance given a worker ID.
+     * 
+     * @param workerId Worker ID to send the request to
+     * @param metadata Metadata to include in the request
+     * @param clientSide True if the request is using client-side hashing and contruction
+     * @param isSignatureInputHash True if input is a hash
+     * @param typeId File type
+     * @return DocumentSigner instance for sending the request given the parameters
+     */
     public DocumentSigner createSigner(final int workerId,
                                        final Map<String, String> metadata,
                                        final boolean clientSide,

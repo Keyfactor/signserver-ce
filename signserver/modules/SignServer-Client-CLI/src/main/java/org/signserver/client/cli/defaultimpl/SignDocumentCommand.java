@@ -751,8 +751,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     outStream = new FileOutputStream(outFile);
                 }
 
-                
-
                 // Take start time
                 final long startTime = System.nanoTime();
                 

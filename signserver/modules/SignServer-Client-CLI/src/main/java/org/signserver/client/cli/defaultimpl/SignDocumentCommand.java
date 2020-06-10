@@ -876,8 +876,6 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                       final Map<String, Object> requestContext)
             throws MalformedURLException, IllegalRequestException,
                    CryptoTokenOfflineException, SignServerException, IOException {
-        /*final DocumentSigner signer =
-            createSigner(handler, manager == null ? password : manager.getPassword());*/
         final DocumentSigner signer;
 
         if (workerId == 0) {

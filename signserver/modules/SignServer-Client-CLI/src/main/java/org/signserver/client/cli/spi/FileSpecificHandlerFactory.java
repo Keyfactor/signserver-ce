@@ -66,7 +66,7 @@ public interface FileSpecificHandlerFactory {
      * @param clientSide true if the handler should be able to do client-side hashing and construction
      * @param extraOptions extra settings for the implementation
      * @param workerName worker name of signer being used
-     * @param signerFactory factory creating remote siging service instances
+     * @param signerFactory factory creating remote signing service instances
      * @param requestContext request context
      * @return A FileSpecificHandler
      * @throws java.io.IOException if unable to use the input file, i.e. file non-existing
@@ -104,7 +104,7 @@ public interface FileSpecificHandlerFactory {
      * @param clientSide true if the handler should be able to do client-side hashing and construction
      * @param extraOptions extra settings for the implementation
      * @param workerId worker ID of signer being used
-     * @param signerFactory factory creating remote siging service instances
+     * @param signerFactory factory creating remote signing service instances
      * @param requestContext request context
      * @return A FileSpecificHandler
      * @throws java.io.IOException if unable to use the input file, i.e. file non-existing
@@ -178,7 +178,7 @@ public interface FileSpecificHandlerFactory {
      * @param clientSide true if the handler should be able to do client-side hashing and construction
      * @param extraOptions extra settings for the implementation
      * @param workerName worker name of the signer being used
-     * @param signerFactory factory creating remote siging service instances
+     * @param signerFactory factory creating remote signing service instances
      * @param requestContext request context
      * @return A FileSpecificHandler
      * @throws IOException if unable to use the input file, i.e. file non-existing
@@ -220,7 +220,7 @@ public interface FileSpecificHandlerFactory {
      * @param clientSide true if the handler should be able to do client-side hashing and construction
      * @param extraOptions extra settings for the implementation
      * @param workerId worker ID of the signer being used
-     * @param signerFactory factory creating remote siging service instances
+     * @param signerFactory factory creating remote signing service instances
      * @param requestContext request context
      * @return A FileSpecificHandler
      * @throws IOException if unable to use the input file, i.e. file non-existing

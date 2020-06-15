@@ -711,6 +711,24 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         }
     }
 
+    protected DocumentSignerFactory createDocumentSignerFactory(final Protocol protocol,
+                                                                final KeyStoreOptions keyStoreOptions,
+                                                                final String host,
+                                                                final String servlet,
+                                                                final int port,
+                                                                final String digestAlgorithm,
+                                                                final String username,
+                                                                final String currentPassword,
+                                                                final String pdfPassword,
+                                                                final HostManager hostsManager,
+                                                                final int timeoutLimit) {
+        return new DocumentSignerFactory(protocol, keyStoreOptions, host,
+                                              servlet, port,
+                                              digestAlgorithm, username,
+                                              currentPassword, pdfPassword,
+                                              hostsManager, timeOutLimit);
+    }
+    
     /**
      * Runs the signing operation for one file.
      *
@@ -728,11 +746,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         final String currentPassword =
                 manager == null ? password : manager.getPassword();
         final DocumentSignerFactory signerFactory =
-                    new DocumentSignerFactory(protocol, keyStoreOptions, host,
-                                              servlet, port,
-                                              digestAlgorithm, username,
-                                              currentPassword, pdfPassword,
-                                              hostsManager, timeOutLimit);
+                    createDocumentSignerFactory(protocol, keyStoreOptions, host,
+                                                servlet, port,
+                                                digestAlgorithm, username,
+                                                currentPassword, pdfPassword,
+                                                hostsManager, timeOutLimit);
 
         try {
             OutputStream outStream = null;

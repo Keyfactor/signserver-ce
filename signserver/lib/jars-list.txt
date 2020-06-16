@@ -1,5 +1,6 @@
 88fbda4b912596b9f56e8e12e580cc954bacfb51776ecfddd3e18fc1cf56dc4c  ./ext/antlr-2.7.7.jar;                                  "Hibernate dependencies"
 0addec670fedcd3f113c5c8091d783280d23f75e3acb841b61a9cdb079376a08  ./ext/aopalliance-1.0.jar;                              "AOP Alliance"
+42ae502030df68b4a876879479a2b8eff6b3ac70190f40974bb9402f30f91516  ./ext/apksig-30.0.2-signserver5-1.jar;                  "Android"
 50044403f23114ab40e20a2f5a2f2077d67e2b66c3ccb7d5c409fa9e323147e8  ./ext/appframework-1.0.3.jar;                           "Swing Appframework"
 d31561762756bdc8b70be5c1c72d9e972914e5549eaffe25e684b73aa15d1f63  ./ext/bcpg-jdk15on-1.61.jar;                            "Bouncy Castle"
 326eb81c2a0cb0d665733a9cc7c03988081101ad17d1453b334368453658591f  ./ext/bcpkix-jdk15on-1.61.jar;                          "Bouncy Castle"

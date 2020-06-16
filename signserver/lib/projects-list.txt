@@ -1,4 +1,5 @@
 "Project";                    "License(s)";                                    "Project URL";                                          "Usage description";                   "Modifications";
+"Android";                    "Apache 2.0";                                    "https://android.googlesource.com/";                    "Dependency of the APK Signer";        "No.";
 "AOP Alliance";               "Public Domain";                                 "http://aopalliance.sourceforge.net";                   "Dependency of Guice.";                "No.";
 "Apache Commons";             "Apache 2.0";                                    "http://commons.apache.org";                            "Core dependency used for multiple tasks such as file handling, configuration and collections support.";  "No.";
 "Apache CXF";                 "Apache 2.0";                                    "https://cxf.apache.org/";                              "Needed for client CLI webservices on Java 10+";  "No." ;

@@ -323,6 +323,11 @@
                 <version>0.11.0</version>
                 <scope>runtime</scope>
             </dependency>
+            <dependency>
+                <groupId>org.signserver.apksig</groupId>
+                <artifactId>apksig</artifactId>
+                <version>30.0.2-signserver5-1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     

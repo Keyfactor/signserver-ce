@@ -715,7 +715,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                                                                 final KeyStoreOptions keyStoreOptions,
                                                                 final String host,
                                                                 final String servlet,
-                                                                final int port,
+                                                                final Integer port,
                                                                 final String digestAlgorithm,
                                                                 final String username,
                                                                 final String currentPassword,

@@ -63,6 +63,7 @@ import org.bouncycastle.tsp.TimeStampRequestGenerator;
 import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -746,8 +747,73 @@ public class P11SignTest {
         assertEquals("errors: " + errors, 0, errors.size());
 
         // Test signing
-        testCase.signGenericDocument(workerId, "Sample data".getBytes());
+        cmsSignAndAssertOk(workerId, "Sample data".getBytes(), workerSession.getSignerCertificate(new WorkerIdentifier(workerId)));
     }
+
+    private void cmsSigner_existingCertInToken(final int workerId) throws Exception {
+        
+
+        // Test active
+        List<String> errors = workerSession.getStatus(new WorkerIdentifier(workerId)).getFatalErrors();
+        
+        if (!errors.isEmpty()) {
+            throw new Exception("This test assumes the existing key " + existingKey1 + " to have a certificate: " + errors);
+        }
+        
+        // Test signing
+        cmsSignAndAssertOk(workerId, "Sample data".getBytes(), workerSession.getSignerCertificate(new WorkerIdentifier(workerId)));
+    }
+    
+    /**
+     * Tests setting up a CMS Signer, not giving it any certificate.
+     * Note: This test expects the existing key to have a proper certificate.
+     */
+    @Test
+    public void testCMSSigner_existingCertInToken() throws Exception {
+        final int workerId = WORKER_CMS;
+        try {
+            setCMSSignerProperties(workerId, false);
+            workerSession.reloadConfiguration(workerId);
+            
+            cmsSigner_existingCertInToken(workerId);
+        } finally {
+            testCase.removeWorker(workerId);
+        }
+    }
+    
+    private void cmsSignAndAssertOk(int workerId, byte[] data, Certificate expectedSignerCert) throws Exception {
+        GenericSignResponse resp = testCase.signGenericDocument(workerId, data);
+        
+        CMSSignedData s = new CMSSignedData(resp.getProcessedData());
+
+        int verified = 0;
+        Store certStore = s.getCertificates();
+        SignerInformationStore signers = s.getSignerInfos();
+        Collection c = signers.getSigners();
+        Iterator it = c.iterator();
+        X509CertificateHolder signerCert = null;
+        
+        while (it.hasNext()) {
+            SignerInformation signer = (SignerInformation) it.next();
+            Collection certCollection = certStore.getMatches(signer.getSID());
+
+            Iterator certIt = certCollection.iterator();
+            signerCert = (X509CertificateHolder) certIt.next();
+
+            if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC").build(signerCert))) {
+                verified++;
+            }
+        }
+        
+        assertEquals("signer verified", 1, verified);
+        if (signerCert != null) {
+            assertEquals("Same certificate", Hex.toHexString(expectedSignerCert.getEncoded()), Hex.toHexString(signerCert.getEncoded()));
+        } else {
+            fail("No certificate");
+        }
+        
+    }
+    
     
     private void setXMLSignerProperties(final int workerId, final boolean cache) throws IOException {
         // Setup worker

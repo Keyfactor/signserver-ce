@@ -617,10 +617,10 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     
     
     /*
-    *  Saves all adjusted properties from the Admin Web Page to the database
+     *
     */
     @Override
-    public void saveChangedProperties(AdminInfo adminInfo, int workerId, Map propertiesAndValues, List<String> propertiesToRemove) {
+    public void updateWorkerProperties(AdminInfo adminInfo, int workerId, Map propertiesAndValues, List<String> propertiesToRemove) {
 
         WorkerConfig config = getWorkerConfig(workerId);
 

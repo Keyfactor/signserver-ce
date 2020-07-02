@@ -142,17 +142,18 @@ public interface WorkerSessionLocal extends WorkerSession {
      */
     boolean removeWorkerProperty(final AdminInfo adminInfo, int workerId, String key);
 
-     /**
+    /**
      * Sets several parameters in a workers configuration, additions, deletions and edits
      *
      * Observe that the worker isn't activated with this config until reload is
      * performed.
+     *
      * @param adminInfo
      * @param workerId
      * @param propertiesAndValues new/adjusted values that are to be saved
      * @param propertiesToRemove 
      */
-    void saveChangedProperties(AdminInfo adminInfo, int workerId, Map propertiesAndValues, List<String> propertiesToRemove);
+    void updateWorkerProperties(AdminInfo adminInfo, int workerId, Map propertiesAndValues, List<String> propertiesToRemove);
     
     /**
      * Method adding an authorized client to a signer.

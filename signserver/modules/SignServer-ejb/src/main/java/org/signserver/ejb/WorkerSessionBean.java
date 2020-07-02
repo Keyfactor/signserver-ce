@@ -614,11 +614,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
         config.setKeystoreData(keystoreData);
         setWorkerConfig(adminInfo, signerId, config, "set:keystore_data", null);
     }
-    
-    
-    /*
-     *
-    */
+
     @Override
     public void updateWorkerProperties(AdminInfo adminInfo, int workerId, Map propertiesAndValues, List<String> propertiesToRemove) {
 

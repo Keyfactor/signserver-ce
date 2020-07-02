@@ -506,6 +506,11 @@ public class WorkerSessionMock implements WorkerSessionLocal,
         return false;
     }
 
+    @Override
+    public void saveChangedProperties(AdminInfo adminInfo, int workerId, Map propertiesAndValues, List<String> propertiesToRemove) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
     private static class Worker {
         private final IProcessable processable;
         private final WorkerConfig config;

@@ -165,7 +165,7 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             }
         }
     }
-
+    
     /**
      * Gets the last date the specified worker can do signings.
      * @param wi Id of worker to check.
@@ -616,7 +616,41 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     }
     
     
-    
+    /*
+    *  Saves all adjusted properties from the Admin Web Page to the database
+    */
+    @Override
+    public void saveChangedProperties(AdminInfo adminInfo, int workerId, Map propertiesAndValues, List<String> propertiesToRemove) {
+
+        WorkerConfig config = getWorkerConfig(workerId);
+
+        
+        //First we add the added and changed properties to the config
+        HashMap<String,String> hm = (HashMap<String,String>) propertiesAndValues;
+        for (Map.Entry mapElement: hm.entrySet()) {
+            config.setProperty((String)mapElement.getKey(), (String)mapElement.getValue());
+        }
+       
+        //We extend the hashmap with all values that shall be removed
+        //for logging ourposes, the log will go through all items in the HM-hashmap
+        for (String toDelete: propertiesToRemove) {
+            hm.put(toDelete, "REMOVED");
+        }
+        
+        //Then we remove all properties that are on the remove-list
+        for (String propertyToRemove: propertiesToRemove) {
+            config.removeProperty(propertyToRemove.toUpperCase());
+        }
+        if (config.getProperties().size() <= config.getVirtualPropertiesNumber()) {
+            workerConfigService.removeWorkerConfig(workerId);
+            LOG.debug("WorkerConfig is empty and therefore removed.");
+            auditLog(adminInfo, SignServerEventTypes.SET_WORKER_CONFIG, SignServerModuleTypes.WORKER_CONFIG, new WorkerIdentifier(workerId));
+        } else {
+            setWorkerConfig(adminInfo, workerId, config, null, null);
+        }
+        
+        auditLogWorkerPropertyChange(adminInfo, new WorkerIdentifier(workerId), config, hm.keySet().toString(), hm.values().toString());
+    }
     
     @Override
     public void setWorkerProperty(int workerId, String key, String value) {
@@ -1481,5 +1515,5 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     @Override
     public boolean isKeyGenerationDisabled() {
         return SignServerUtil.isKeyGenerationDisabled();
-    }
+    }  
 }

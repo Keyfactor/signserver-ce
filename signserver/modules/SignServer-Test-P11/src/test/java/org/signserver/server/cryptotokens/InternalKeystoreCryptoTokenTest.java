@@ -512,6 +512,13 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
                     public boolean isKeyGenerationDisabled() {
                         return false;
                     }
+
+                    @Override
+                    public void saveChangedProperties(AdminInfo adminInfo, int workerId, Map propertiesAndValues, List<String> propertiesToRemove) {
+                        throw new UnsupportedOperationException("Not supported yet."); 
+                    }
+
+                    
                 };
             }
             return workerSession;

@@ -153,7 +153,9 @@ public interface WorkerSessionLocal extends WorkerSession {
      * @param propertiesAndValues new/adjusted values that are to be saved
      * @param propertiesToRemove 
      */
-    void updateWorkerProperties(AdminInfo adminInfo, int workerId, Map propertiesAndValues, List<String> propertiesToRemove);
+    void updateWorkerProperties(AdminInfo adminInfo, int workerId,
+                                Map<String, String> propertiesAndValues,
+                                List<String> propertiesToRemove);
     
     /**
      * Method adding an authorized client to a signer.

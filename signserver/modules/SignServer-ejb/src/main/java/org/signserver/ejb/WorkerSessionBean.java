@@ -616,21 +616,22 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     }
 
     @Override
-    public void updateWorkerProperties(AdminInfo adminInfo, int workerId, Map propertiesAndValues, List<String> propertiesToRemove) {
+    public void updateWorkerProperties(AdminInfo adminInfo, int workerId,
+                                       Map<String, String> propertiesAndValues,
+                                       List<String> propertiesToRemove) {
 
         WorkerConfig config = getWorkerConfig(workerId);
 
         
         //First we add the added and changed properties to the config
-        HashMap<String,String> hm = (HashMap<String,String>) propertiesAndValues;
-        for (Map.Entry mapElement: hm.entrySet()) {
+        for (Map.Entry mapElement : propertiesAndValues.entrySet()) {
             config.setProperty((String)mapElement.getKey(), (String)mapElement.getValue());
         }
        
         //We extend the hashmap with all values that shall be removed
         //for logging ourposes, the log will go through all items in the HM-hashmap
         for (String toDelete: propertiesToRemove) {
-            hm.put(toDelete, "REMOVED");
+            propertiesAndValues.put(toDelete, "REMOVED");
         }
         
         //Then we remove all properties that are on the remove-list
@@ -645,7 +646,9 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
             setWorkerConfig(adminInfo, workerId, config, null, null);
         }
         
-        auditLogWorkerPropertyChange(adminInfo, new WorkerIdentifier(workerId), config, hm.keySet().toString(), hm.values().toString());
+        auditLogWorkerPropertyChange(adminInfo, new WorkerIdentifier(workerId),
+                                     config, propertiesAndValues.keySet().toString(),
+                                     propertiesAndValues.values().toString());
     }
     
     @Override

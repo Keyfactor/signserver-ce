@@ -513,6 +513,13 @@ public class WorkerSessionMock implements WorkerSessionLocal,
         throw new UnsupportedOperationException("Not supported yet."); 
     }
 
+    @Override
+    public void updateWorkerProperties(int workerId,
+                                       Map<String, String> propertiesAndValues,
+                                       List<String> propertiesToRemove) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
     private static class Worker {
         private final IProcessable processable;
         private final WorkerConfig config;

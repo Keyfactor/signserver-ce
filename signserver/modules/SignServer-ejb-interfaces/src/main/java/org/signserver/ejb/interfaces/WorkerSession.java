@@ -20,6 +20,7 @@ import java.security.cert.CertificateException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import org.cesecore.authorization.AuthorizationDeniedException;
 import org.cesecore.util.query.QueryCriteria;
@@ -154,6 +155,20 @@ public interface WorkerSession {
      */
     boolean removeWorkerProperty(int workerId, String key);
 
+    /**
+     * Sets several parameters in a workers configuration, additions, deletions and edits.
+     *
+     * Observe that the worker isn't activated with this config until reload is
+     * performed.
+     *
+     * @param workerId ID of worker to set (add/edit/delete) properties on
+     * @param propertiesAndValues new/adjusted properties that are to be saved
+     * @param propertiesToRemove properties to remove
+     */
+    void updateWorkerProperties(int workerId,
+                                Map<String, String> propertiesAndValues,
+                                List<String> propertiesToRemove);
+    
     /**
      * Method that returns a collection of AuthorizedClient of
      * client certificate sn and issuerid accepted for a given signer.

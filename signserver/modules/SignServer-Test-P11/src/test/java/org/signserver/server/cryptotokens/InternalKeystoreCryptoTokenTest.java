@@ -514,6 +514,13 @@ public class InternalKeystoreCryptoTokenTest extends CryptoTokenTestBase {
                     }
 
                     @Override
+                    public void updateWorkerProperties(int workerId,
+                                                       Map<String, String> propertiesAndValues,
+                                                       List<String> propertiesToRemove) {
+                        throw new UnsupportedOperationException("Not supported yet."); 
+                    }
+                    
+                    @Override
                     public void updateWorkerProperties(AdminInfo adminInfo,
                                                        int workerId,
                                                        Map<String, String> propertiesAndValues,

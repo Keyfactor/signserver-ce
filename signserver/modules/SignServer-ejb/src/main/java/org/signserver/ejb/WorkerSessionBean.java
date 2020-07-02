@@ -616,6 +616,14 @@ public class WorkerSessionBean implements WorkerSessionLocal, WorkerSessionRemot
     }
 
     @Override
+    public void updateWorkerProperties(int workerId,
+                                       Map<String, String> propertiesAndValues,
+                                       List<String> propertiesToRemove) {
+        updateWorkerProperties(new AdminInfo("CLI user", null, null), workerId,
+                               propertiesAndValues, propertiesToRemove);
+    }
+    
+    @Override
     public void updateWorkerProperties(AdminInfo adminInfo, int workerId,
                                        Map<String, String> propertiesAndValues,
                                        List<String> propertiesToRemove) {

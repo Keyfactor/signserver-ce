@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.4.2.Alpha2-APKv3-4-SNAPSHOT</version>
+        <version>5.4.2.CR1-APKv3-4</version>
     </parent>
     <artifactId>SignServer-Module-MRTDSODSigner</artifactId>
     <name>SignServer-Module-MRTDSODSigner</name>

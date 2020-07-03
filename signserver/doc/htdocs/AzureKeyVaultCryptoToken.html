@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.4.0-draft</p>
+                    <p>Version: 5.4.2</p>
                 </div>
             </header>
 
@@ -289,6 +289,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Android_Signing.html">Setting up Android Signing</a>
 
             </li>
                                         <li class="leaf">
@@ -609,6 +613,22 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="ZoneZipFileServerSideSigner.html">ZoneZipFileServerSideSigner</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Signer.html">APK Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Rotate_Signer.html">APK Rotate Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Lineage_Signer.html">APK Lineage Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Hash_Signer.html">APK Hash Signer</a>
 
             </li>
                             </ul>
@@ -993,6 +1013,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Cookie_Authorizer.html">Cookie Authorizer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JWT_Authorizer.html">JWT Authorizer</a>
 
             </li>
                             </ul>
@@ -1382,6 +1406,14 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.4.0.1_Release_Notes.html">SignServer 5.4.0.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.4_Release_Notes.html">SignServer 5.4 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.3_Release_Notes.html">SignServer 5.3 Release Notes</a>
 
             </li>
@@ -1457,17 +1489,19 @@
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div class="section section-1" id="src-85925910_id-.AzureKeyVaultCryptoTokenv5.4.0-draft-Overview">
+    <div class="section section-1" id="src-85925910_id-.AzureKeyVaultCryptoTokenv5.4.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
-    <p  >Crypto token implementation storing keys in an Azure cloud key vault.    </p>
+    <p  >The Azure Key Vault Crypto Token implements storing keys in an Azure Key Vault, leveraging the advantages of cloud-stored keys.    </p>
+    <p  >For more information on the Microsoft Azure cloud Key Vault for HSM storage of cryptographic keys, refer to the Microsoft <a  class="external-link" href="https://docs.microsoft.com/en-us/azure/key-vault">Azure Key Vault documentation</a>.    </p>
     <p  >CRYPTOTOKEN_IMPLEMENTATION=<strong class=" ">org.signserver.server.cryptotokens.AzureKeyVaultCryptoToken</strong>    </p>
     </div>
-    <div class="section section-1" id="src-85925910_id-.AzureKeyVaultCryptoTokenv5.4.0-draft-AvailableProperties">
+    <div class="section section-1" id="src-85925910_id-.AzureKeyVaultCryptoTokenv5.4.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
-        <table class="wrapped confluenceTable">
+        <table class="wrapped relative-table confluenceTable">
                     <colgroup>
-                                    <col />
+                                    <col  width="16%"/>
+                                    <col  width="83%"/>
                                     <col />
                             </colgroup>
         <thead class=" ">    <tr>
@@ -1477,13 +1511,23 @@
                 <td  class="confluenceTh" rowspan="1" colspan="1">
         <p  >Description    </p>
             </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Required    </p>
+            </td>
         </tr>
 </thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >DEFAULTKEY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The key alias. Required.    </p>
+        <p  >The key alias of the private key to be used for testing that this crypto token is working.    </p>
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
+ If this key does not exist, the crypto token/worker will show as OFFLINE even if it has been activated. This is typically the case when the crypto token has been set up for the first time and the key has not yet been generated. To resolve, generate a key with the key alias name.    </p>
+    <p  >A property with this name is typically also accepted by the worker using this crypto token and will then be the key to use for actual signing.    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <img  class="emoticon emoticon-tick" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/check.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/check.svg"   />
+    </p>
             </td>
         </tr>
     <tr>
@@ -1491,7 +1535,10 @@
         <p  >NEXTCERTSIGNKEY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The next key to use. This property can be used to hold the name of the next key to use. Certificate signing requests (CSR) can be made for this key while to the current key (DEFAULTKEY) is still in production. After uploading the new certificate the value of NEXTCERTSIGNKEY can be moved to DEFAULTKEY. Optional.    </p>
+        <p  >A property with this name is typically configured in the worker using this crypto token to hold the name of the next key to use. Certificate signing requests (CSR) can be made for this key while the current key (DEFAULTKEY) is still in production. After uploading the new certificate the value of NEXTCERTSIGNKEY can be moved to DEFAULTKEY.    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    </p>
             </td>
         </tr>
     <tr>
@@ -1499,7 +1546,10 @@
         <p  >PIN    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Authentication code for activation. Only required for auto-activation, otherwise the token can be manually activated.    </p>
+        <p  >Authentication code for activation. Only required for auto-activation and is not required when the token is manually activated.    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    </p>
             </td>
         </tr>
     <tr>
@@ -1507,7 +1557,11 @@
         <p  >KEY_VAULT_NAME    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The name of the key vault. Required.    </p>
+        <p  >The name of the key vault.    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <img  class="emoticon emoticon-tick" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/check.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/check.svg"   />
+    </p>
             </td>
         </tr>
     <tr>
@@ -1515,7 +1569,11 @@
         <p  >KEY_VAULT_CLIENTID    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Client ID, this is the &ldquo;AD user&rdquo; that is authorized to connect to and use the key vault. Required.    </p>
+        <p  >Client ID, this is the &ldquo;AD user&rdquo; that is authorized to connect to and use the key vault.    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <img  class="emoticon emoticon-tick" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/check.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/check.svg"   />
+    </p>
             </td>
         </tr>
     <tr>
@@ -1523,19 +1581,25 @@
         <p  >KEY_VAULT_TYPE    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The type of key vault. Can be either &ldquo;standard&rdquo; or &rdquo;premium&rdquo;. Required.    </p>
+        <p  >The type of key vault. Valid values: &ldquo;standard&rdquo; or &rdquo;premium&rdquo;.    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >    <img  class="emoticon emoticon-tick" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/check.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/check.svg"   />
+    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-85925910_id-.AzureKeyVaultCryptoTokenv5.4.0-draft-KnowLimitations">
+    <div class="section section-1" id="src-85925910_id-.AzureKeyVaultCryptoTokenv5.4.0-KnowLimitations">
         <h1 class="heading "><span>Know Limitations</span></h1>
-<ul class=" "><li class=" ">    <p  >Importing certificate <strong class=" ">in token</strong> is not supported for this crypto token.    </p>
-</li><li class=" ">    <p  >This crypto token does not provide any certificates and can not be used with signers that require a certificate from the token such as the OpenPGP-based signers: <a  class="external-link" href="https://jira.primekey.se/browse/DSS-2127">DSS-2127</a>    </p>
-</li><li class=" ">    <p  >If the Key Vault has Soft Delete enabled the keys will not be completely deleted by SignServer. New keys can not be created with the same name of keys that has only been soft-deleted.    </p>
-</li></ul>    <p  >    </p>
-    </div>
+    <p  >The following lists limitations of the current implementation.    </p>
+<ul class=" "><li class=" ">    <p  >Import of certificate <strong class=" ">in token</strong> is not supported for this crypto token.    </p>
+</li><li class=" ">    <p  >The Azure Key Vault Crypto Token does not provide any certificates and cannot be used with signers that require a certificate from the token such as OpenPGP-based signers. For details on PGP signing support, refer to <a  class="external-link" href="https://jira.primekey.se/browse/DSS-2127">DSS-2127.</a>    </p>
+</li><li class=" ">    <p  >    <span style="color: #0e101a;">
+If the Key Vault has soft-delete enabled, the keys will not be completely deleted by SignServer and new keys cannot be created with the same name as keys that have been soft-deleted. For more information on the Key Vault's soft-delete feature, allowing recovery of the deleted vaults and vault objects, refer to the Microsoft <a  class="external-link" href="https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete">Azure Key Vault soft-delete overview</a>.    </span>
+    </p>
+</li></ul>    </div>
         </div>
 
     </article>

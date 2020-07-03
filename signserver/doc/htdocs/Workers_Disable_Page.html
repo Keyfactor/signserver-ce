@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.4.0-draft</p>
+                    <p>Version: 5.4.2</p>
                 </div>
             </header>
 
@@ -289,6 +289,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Certificate_Renewals_Using_Peer_Systems.html">Certificate Renewals Using Peer Systems</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Android_Signing.html">Setting up Android Signing</a>
 
             </li>
                                         <li class="leaf">
@@ -609,6 +613,22 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="ZoneZipFileServerSideSigner.html">ZoneZipFileServerSideSigner</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Signer.html">APK Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Rotate_Signer.html">APK Rotate Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Lineage_Signer.html">APK Lineage Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Hash_Signer.html">APK Hash Signer</a>
 
             </li>
                             </ul>
@@ -993,6 +1013,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="Cookie_Authorizer.html">Cookie Authorizer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="JWT_Authorizer.html">JWT Authorizer</a>
 
             </li>
                             </ul>
@@ -1382,6 +1406,14 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.4.0.1_Release_Notes.html">SignServer 5.4.0.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.4_Release_Notes.html">SignServer 5.4 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.3_Release_Notes.html">SignServer 5.3 Release Notes</a>
 
             </li>
@@ -1458,12 +1490,31 @@
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >The disable option will disable the worker, and causes the worker to become inactivated.    </p>
-    <p  >The worker will need to be <a   href="Workers_Enable_Page.html">enabled</a> before it can become <a   href="Workers_Activation_Page.html">active</a> again.    </p>
-    <p  >While disabled the worker's configurations can be adjusted but it cannot perform any functions that depends on it being active.    </p>
-    <p  >The page lists each worker selected for disablement.    </p>
-    <p  >Make sure all workers that should be disabled are selected with the check box.    </p>
-    <div class="section section-1" id="src-85926839_id-.WorkersDisablePagev5.4.0-draft-Actions">
+    <p  >    <span style="color: #0e101a;">
+The Disable page lists workers selected to be disabled.    </span>
+    </p>
+    <p  >    <span style="color: #0e101a;">
+A worker with status DISABLED cannot handle any requests or perform any functions that depend on it being active. It is, however, possible to update the worker configuration while it is disabled.    </span>
+    </p>
+    <p  >    <span style="color: #0e101a;">
+A disabled worker needs to     </span>
+<a   href="Workers_Enable_Page.html">    <span style="color: #4a6ee0;">
+enabled    </span>
+</a>    <span style="color: #0e101a;">
+ before it can become     </span>
+<a   href="Workers_Activation_Page.html">    <span style="color: #4a6ee0;">
+active    </span>
+</a>    <span style="color: #0e101a;">
+ again. Enabling a worker activates the worker if the correct authentication code (password) is stored in its configuration, see <a   href="Workers_Enable_Page.html">Workers Enable Page</a>.    </span>
+    </p>
+    <p  >    <span style="color: #0e101a;">
+To disable workers, ensure that the     </span>
+<strong class=" ">    <span style="color: #0e101a;">
+Disable    </span>
+</strong>    <span style="color: #0e101a;">
+ action is selected for all workers you want to disable.    </span>
+    </p>
+    <div class="section section-1" id="src-85926839_id-.WorkersDisablePagev5.4.0-Actions">
         <h1 class="heading "><span>Actions</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1484,9 +1535,9 @@
         <p  >Disable    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Performs the worker disable action for each selected worker.    </p>
-    <p  >The result of the disable action is written out in the Result column.    </p>
-    <p  >If all workers was successfully disabled the page is automatically switched back to the previous otherwise the page remains and the user has the ability to try again.    </p>
+        <p  >Select to disable the worker(s).    </p>
+    <p  >The result of the disable action is displayed in the Result column.    </p>
+    <p  >If all workers are successfully disabled, the page will automatically return to the previous page. If all workers are not disabled, you will stay on the page and can try again.    </p>
             </td>
         </tr>
     <tr>

@@ -21,6 +21,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -52,6 +53,7 @@ import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
+import org.cesecore.util.CertTools;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
@@ -507,6 +509,8 @@ public class TimeStampCommand extends AbstractCommand {
                     out.println("            Serial Number:          " + cert.getSerialNumber().toString(16));
                     out.println("            Subject:                " + cert.getSubject());
                     out.println("            Issuer:                 " + cert.getIssuer());
+                    out.println("            Algo:                   " + cert.getSignatureAlgorithm().getAlgorithm());
+                    out.println(CertTools.dumpCertificateAsString(CertTools.getCertfromByteArray(cert.getEncoded(), Certificate.class)));
                 } else {
                     out.println("Not an X.509 certificate: " + o);
                 }
@@ -521,6 +525,8 @@ public class TimeStampCommand extends AbstractCommand {
                     out.println("            Serial Number:          " + cert.getSerialNumber().toString(16));
                     out.println("            Subject:                " + cert.getSubject());
                     out.println("            Issuer:                 " + cert.getIssuer());
+                    out.println("            Algo:                   " + cert.getSignatureAlgorithm().getAlgorithm());
+                    out.println(CertTools.dumpCertificateAsString(CertTools.getCertfromByteArray(cert.getEncoded(), Certificate.class)));
                 } else {
                     out.println("Not an X.509 certificate: " + o);
                 }

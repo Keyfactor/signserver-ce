@@ -43,18 +43,18 @@
             <dependency>
                 <artifactId>${bouncycastle.bcpkix.artifact}</artifactId>
                 <groupId>org.bouncycastle</groupId>
-                <version>1.61</version>
+                <version>1.64</version>
             </dependency>
             <dependency>
                 <artifactId>${bouncycastle.bcprov.artifact}</artifactId>
                 <groupId>org.bouncycastle</groupId>
                 <type>jar</type>
-                <version>1.61</version>
+                <version>1.64</version>
             </dependency>
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcpg-jdk15on</artifactId>
-                <version>1.61</version>
+                <version>1.64</version>
                 <type>jar</type>
             </dependency>
             <dependency>
@@ -190,7 +190,7 @@
             <dependency>
                 <groupId>org.signserver.jsign</groupId>
                 <artifactId>jsign-core</artifactId>
-                <version>2.1-signserver5.1</version>
+                <version>3.1-signserver5.5</version>
             </dependency>
 
             <dependency>
@@ -293,8 +293,8 @@
             </dependency>
             <dependency>
             <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>4.0.1</version>
+                <artifactId>poi</artifactId>
+                <version>4.1.2</version>
             </dependency>
             <dependency>
                 <groupId>xmlpull</groupId>
@@ -327,6 +327,22 @@
                 <groupId>org.signserver.apksig</groupId>
                 <artifactId>apksig</artifactId>
                 <version>30.0.2-signserver5-1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>4.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-math3</artifactId>
+                <version>3.6.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>SparseBitSet</artifactId>
+                <version>1.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

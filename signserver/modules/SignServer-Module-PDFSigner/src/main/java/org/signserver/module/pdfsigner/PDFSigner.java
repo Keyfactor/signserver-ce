@@ -911,12 +911,14 @@ public class PDFSigner extends BaseSigner {
     static URL getCRLDistributionPoint(final Certificate certificate)
             throws CertificateParsingException {
         final String cdp = CertTools.getCrlDistributionPoint(certificate);
-        try {
-            return new URL(cdp);
-        } catch (MalformedURLException e) {
-            LOG.info("Error parsing '" + cdp + "' as a URL. " + e.getLocalizedMessage());
-            return null;
+        if (cdp != null) {
+            try {
+                return new URL(cdp);
+            } catch (MalformedURLException e) {
+                LOG.info("Error parsing '" + cdp + "' as a URL. " + e.getLocalizedMessage());
+            }
         }
+        return null;
     }
 
     /**

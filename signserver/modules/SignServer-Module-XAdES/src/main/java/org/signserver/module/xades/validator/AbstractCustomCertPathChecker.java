@@ -57,7 +57,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.util.Store;
-import org.cesecore.util.CertTools;
+import org.signserver.server.cesecore.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
@@ -172,8 +172,8 @@ public abstract class AbstractCustomCertPathChecker extends PKIXCertPathChecker 
         // Try with CRL instead
         if (failOverToCRL) {
             try {
-                URL crlURL = CertTools.getCrlDistributionPoint(certificate);
-                if (crlURL == null) {
+                final String uri = CertTools.getCrlDistributionPoint(certificate);
+                if (uri == null) {
                     if (cert.equals(rootCert)) {
                         // Don't require revokation information for the Root CA certificate
                         if (LOG.isDebugEnabled()) {
@@ -184,9 +184,12 @@ public abstract class AbstractCustomCertPathChecker extends PKIXCertPathChecker 
                     }
                 } else {
                     // CDP found inside certificate fetch CRL and verify
+                    final URL crlURL = new URL(uri);
                     X509CRL crl = fetchCRL(crlURL);
                     verifyCRL(certificate, crl, issuerCertificate, crlURL);
                 }
+            } catch (MalformedURLException ex) {
+                throw new CertPathValidatorException("Failed to parse CDP as URL: " + ex.getMessage());
             } catch (CertificateParsingException ex) {
                 throw new CertPathValidatorException("Failed to obtain CDP URL: " + ex.getMessage());
             } catch (CertificateException | IOException ex) {

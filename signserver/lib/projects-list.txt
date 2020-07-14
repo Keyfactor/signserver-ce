@@ -37,6 +37,7 @@
 "Santuario";                  "Apache 2.0";                                    "http://santuario.apache.org";                          "Used for XML digital signature support in all XML based signers. Dependency of XAdES4j.";  "No." ;
 "Selenium";                   "Apache 2.0";                                    "https://www.seleniumhq.org";                           "Dependency of the WebTest module.";   "No.";
 "SignServer";                 "LGPLv2.1+";                                     "http://signserver.org";                                "Clover.jar is an empty jar included for technical reasons in order to be able to build and run both with and without Clover installed. DeployTools JARs are used to build and deploy SignServer. Source JARs are available.";  "No.";
+"SparseBitSet";               "Apache 2.0";                                    "https://github.com/brettwooldridge/SparseBitSet";      "Dependency of Apache POI";            "No." ;
 "Stax2 API";                  "BSD";                                           "https://github.com/FasterXML/stax2-api";               "Needed for client CLI webservices on Java 10+";  "No." ;
 "Swing Appframework";         "LGPLv2.1";                                      "https://java.net/projects/appframework";               "Framework used for desktop application/GUI support in the Admin GUI.";  "No.";
 "WSDL4J";                     "CPL 1.0";                                       "https://sourceforge.net/projects/wsdl4j/" ;            "Needed for client CLI webservices on Java 10+";  "No.";

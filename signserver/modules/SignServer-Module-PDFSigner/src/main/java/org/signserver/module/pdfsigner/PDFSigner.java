@@ -17,6 +17,7 @@ import com.lowagie.text.exceptions.BadPasswordException;
 import com.lowagie.text.pdf.*;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.*;
 import java.security.cert.*;
@@ -35,7 +36,7 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
-import org.cesecore.util.CertTools;
+import org.signserver.server.cesecore.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.data.ReadableData;
 import org.signserver.common.data.Request;
@@ -909,7 +910,13 @@ public class PDFSigner extends BaseSigner {
 
     static URL getCRLDistributionPoint(final Certificate certificate)
             throws CertificateParsingException {
-        return CertTools.getCrlDistributionPoint(certificate);
+        final String cdp = CertTools.getCrlDistributionPoint(certificate);
+        try {
+            return new URL(cdp);
+        } catch (MalformedURLException e) {
+            LOG.info("Error parsing '" + cdp + "' as a URL. " + e.getLocalizedMessage());
+            return null;
+        }
     }
 
     /**

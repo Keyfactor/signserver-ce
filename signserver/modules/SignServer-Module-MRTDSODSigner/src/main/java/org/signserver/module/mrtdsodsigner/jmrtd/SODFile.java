@@ -56,6 +56,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
@@ -271,7 +272,7 @@ public class SODFile extends PassportFile
 			//DERTaggedObject o = (DERTaggedObject)seq.getObjectAt(1);
 			/* TODO: where is this tagNo specified? */
 		// int tagNo =  o.getTagNo();
-		ASN1Sequence s2 = (ASN1Sequence)((DERTaggedObject)seq.getObjectAt(1)).getObject();			
+		ASN1Sequence s2 = (ASN1Sequence)((ASN1TaggedObject)seq.getObjectAt(1)).getObject();			
 			
 		this.signedData = SignedData.getInstance(s2);
 	}
@@ -591,7 +592,7 @@ public class SODFile extends PassportFile
 			LOGGER.warning("Found " + signerInfos.size() + " signerInfos");
 		}
 		for (int i = 0; i < signerInfos.size(); i++) {
-			SignerInfo info = SignerInfo.getInstance((DERSequence)signerInfos.getObjectAt(i));
+			SignerInfo info = SignerInfo.getInstance((ASN1Sequence)signerInfos.getObjectAt(i));
 			return info;
 		}
 		return null;
@@ -689,7 +690,7 @@ public class SODFile extends PassportFile
 	private IssuerAndSerialNumber getIssuerAndSerialNumber() {
 		SignerInfo signerInfo = getSignerInfo(signedData);
 		SignerIdentifier signerIdentifier = signerInfo.getSID();
-		DERSequence idSeq = (DERSequence)signerIdentifier.getId();
+		ASN1Sequence idSeq = (ASN1Sequence)signerIdentifier.getId();
 		IssuerAndSerialNumber issuerAndSerialNumber = IssuerAndSerialNumber.getInstance(idSeq);
 		return issuerAndSerialNumber;
 	}

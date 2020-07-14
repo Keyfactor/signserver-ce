@@ -399,7 +399,7 @@ public class PdfPKCS7 {
             ASN1ObjectIdentifier objId = (ASN1ObjectIdentifier)signedData.getObjectAt(0);
             if (!objId.getId().equals(ID_PKCS7_SIGNED_DATA))
                 throw new IllegalArgumentException("Not a valid PKCS#7 object - not signed data");
-            ASN1Sequence content = (ASN1Sequence)((DERTaggedObject)signedData.getObjectAt(1)).getObject();
+            ASN1Sequence content = (ASN1Sequence)((ASN1TaggedObject)signedData.getObjectAt(1)).getObject();
             // the positions that we care are:
             //     0 - version
             //     1 - digestAlgorithms
@@ -431,13 +431,13 @@ public class PdfPKCS7 {
             // the possible ID_PKCS7_DATA
             ASN1Sequence rsaData = (ASN1Sequence)content.getObjectAt(2);
             if (rsaData.size() > 1) {
-                DEROctetString rsaDataContent = (DEROctetString)((DERTaggedObject)rsaData.getObjectAt(1)).getObject();
+                DEROctetString rsaDataContent = (DEROctetString)((ASN1TaggedObject)rsaData.getObjectAt(1)).getObject();
                 RSAdata = rsaDataContent.getOctets();
             }
 
             // the signerInfos
             int next = 3;
-            while (content.getObjectAt(next) instanceof DERTaggedObject)
+            while (content.getObjectAt(next) instanceof ASN1TaggedObject)
                 ++next;
             ASN1Set signerInfos = (ASN1Set)content.getObjectAt(next);
             if (signerInfos.size() != 1)
@@ -496,7 +496,7 @@ public class PdfPKCS7 {
             digestEncryptionAlgorithm = ((ASN1ObjectIdentifier)((ASN1Sequence)signerInfo.getObjectAt(next++)).getObjectAt(0)).getId();
             digest = ((DEROctetString)signerInfo.getObjectAt(next++)).getOctets();
             if (next < signerInfo.size() && (signerInfo.getObjectAt(next) instanceof DERTaggedObject)) {
-                DERTaggedObject taggedObject = (DERTaggedObject) signerInfo.getObjectAt(next);
+                ASN1TaggedObject taggedObject = (ASN1TaggedObject) signerInfo.getObjectAt(next);
                 ASN1Set unat = ASN1Set.getInstance(taggedObject, false);
                 AttributeTable attble = new AttributeTable(unat);
                 Attribute ts = attble.get(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
@@ -1017,7 +1017,7 @@ public class PdfPKCS7 {
     }
     
     private static String getStringFromGeneralName(ASN1Object names) throws IOException {
-        DERTaggedObject taggedObject = (DERTaggedObject) names ;
+        ASN1TaggedObject taggedObject = (ASN1TaggedObject) names;
         return new String(ASN1OctetString.getInstance(taggedObject, false).getOctets(), "ISO-8859-1");
     }
 

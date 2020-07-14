@@ -3,10 +3,10 @@
 # and which project it comes from (filled in manually).
 
 # External dependencies
-EXT=`find ./ext -name "*.jar" -o -name "*.bin" | sort`
+EXT=`find ./ext -name "*.jar" -o -name "*.bin" | LC_ALL=C sort`
 
 # Things we build our self
-INT=`find . -name "*-Lib-*.jar" | sort`
+INT=`find . -name "*-Lib-*.jar" | LC_ALL=C sort`
 VERSION=`grep "app.version.number=" ../res/deploytools/app.properties | sed "s/app.version.number=//"`
 
 # Previous list of dependencies

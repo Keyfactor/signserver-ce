@@ -5,7 +5,7 @@
 "Apache Commons";             "Apache 2.0";                                    "http://commons.apache.org";                            "Core dependency used for multiple tasks such as file handling, configuration and collections support.";  "No.";
 "Apache Geronimo";            "Apache 2.0";                                    "https://geronimo.apache.org/";                         "Needed for client CLI webservices on Java 10+";  "No." ;
 "Apache HttpComponents";      "Apache 2.0";                                    "https://hc.apache.org";                                "Dependency of EJBCA Peer Connectors" ;  "No." ;
-"Apache OpenEJB";             ;                                                ;                                                       ;                                      ;
+"Apache OpenEJB";             "Apache 2.0";                                    "http://openejb.apache.org";                            "Core dependency providing the Java EE and Servet APIs.";  "No." ;
 "Apache POI";                 "Apache 2.0";                                    "https://poi.apache.org";                               "Dependency used for signing MSI installers.";  "Yes. Fixed checksum calculation DSS-2158.";
 "Apache Xerxes";              "Apache 2.0";                                    "https://xerces.apache.org/xml-commons/components/resolver/";  "Needed for client CLI webservices on Java 10+";  "No.";
 "Apache XmlSchema Core";      "Apache 2.0";                                    "https://ws.apache.org/xmlschema/xmlschema-core/ ;      "Needed for client CLI webservices on Java 10+" ;  "No.";

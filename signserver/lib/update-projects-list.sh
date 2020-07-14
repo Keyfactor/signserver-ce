@@ -4,7 +4,7 @@
 # manually.
 
 # Each project name
-PROJECTS=`cat jars-list.txt | awk -F\; '{ print $2}' | sed -e 's/^[ \t]*//'| LC_ALL=C sort | uniq`
+PROJECTS=`cat jars-list.txt | awk -F\; '{ print $2}' | sed -e 's/^[ \t]*//'| sed -e 's/[ \t]*$//' | LC_ALL=C sort | uniq`
 
 # Previous list of dependencies
 PREVFILE="../tmp/projects-list.txt"

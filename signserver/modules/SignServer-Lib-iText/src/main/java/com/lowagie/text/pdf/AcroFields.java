@@ -65,6 +65,7 @@ import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.codec.Base64;
+import org.apache.log4j.Logger;
 
 /**
  * Query and change fields in existing documents either by method
@@ -73,6 +74,9 @@ import com.lowagie.text.pdf.codec.Base64;
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class AcroFields {
+    
+        /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(AcroFields.class);
 
     PdfReader reader;
     PdfWriter writer;
@@ -2204,6 +2208,9 @@ public class AcroFields {
             return pk;
         }
         catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("PDF PKCS7 issue", e);
+            }
             throw new ExceptionConverter(e);
         }
     }

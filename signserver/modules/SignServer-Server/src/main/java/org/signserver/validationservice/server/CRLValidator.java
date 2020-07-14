@@ -27,7 +27,7 @@ import java.util.Properties;
 import javax.persistence.EntityManager;
 
 import org.apache.log4j.Logger;
-import org.cesecore.util.CertTools;
+import org.signserver.server.cesecore.util.CertTools;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.SignServerException;
@@ -151,7 +151,10 @@ public class CRLValidator extends BaseValidator {
             try {
 
                 try {
-                    certURL = CertTools.getCrlDistributionPoint(x509CurrentCert);
+                    final String uri = CertTools.getCrlDistributionPoint(x509CurrentCert);
+                    if (uri != null) {
+                        certURL = new URL(uri);
+                    }
                 } catch (Exception ex) {
                     if (LOG.isDebugEnabled()) {
                         // CertTools.getCrlDistributionPoint throws an exception if it can't find an URL

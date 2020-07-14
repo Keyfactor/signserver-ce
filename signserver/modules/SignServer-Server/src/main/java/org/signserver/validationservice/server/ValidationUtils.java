@@ -25,7 +25,7 @@ import java.security.PublicKey;
 import java.security.cert.*;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1Enumerated;
-import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.ocsp.OCSPResponseStatus;
 import org.bouncycastle.asn1.x509.CRLReason;
 import org.bouncycastle.asn1.x509.Extension;
@@ -294,7 +294,7 @@ public class ValidationUtils {
         }
 
         final RespID id = brep.getResponderId();
-        final DERTaggedObject to = (DERTaggedObject) id.toASN1Primitive().toASN1Primitive();
+        final ASN1TaggedObject to = (ASN1TaggedObject) id.toASN1Primitive().toASN1Primitive();
         final RespID respId;
         
         final X509CertificateHolder[] chain = brep.getCerts();

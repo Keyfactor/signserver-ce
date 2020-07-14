@@ -63,7 +63,7 @@ import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.bouncycastle.cert.ocsp.RevokedStatus;
 import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
-import org.cesecore.util.CertTools;
+import org.signserver.server.cesecore.util.CertTools;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.signserver.common.SignServerException;

@@ -529,13 +529,14 @@ Installation Guide for details.
         </antcall>
     </target>
     
-    <target name="dist:clientcli" depends="-dist-clientcli-standard,-dist-clientcli-enterprise,-dist-clientcli-stresstest"/>
+    <target name="dist:clientcli" depends="-dist-clientcli-standard,-dist-clientcli-enterprise,-dist-clientcli-stresstest,-dist-clientcli-validation"/>
     
     <target name="-dist-clientcli-standard">
         <available file="${basedir}/lib/SignServer-Client-CLI.jar" property="clientcli.jar" value="SignServer-Client-CLI.jar"/>
         <available file="${basedir}/lib/SignServer-Client-CLI-${app.version.number}.jar" property="clientcli.jar" value="SignServer-Client-CLI-${app.version.number}.jar"/>
         <available file="${basedir}/lib/SignServer-ClientCLI-Enterprise-${app.version.number}.jar" property="eeclientcli.jar" value="SignServer-ClientCLI-Enterprise-${app.version.number}.jar"/>
         <available file="${basedir}/lib/SignServer-Test-Performance-${app.version.number}.jar" property="performancecli.jar" value="SignServer-Test-Performance-${app.version.number}.jar"/>
+        <available file="${basedir}/lib/SignServer-Client-ValidationCLI-${app.version.number}.jar" property="validationcli.jar" value="SignServer-Client-ValidationCLI-${app.version.number}.jar"/>
         <fail unless="clientcli.jar" message="Must build SignServer-Client-CLI first"/>
         <antcall target="dist">
             <param name="dist.jars" value="${clientcli.jar}"/>
@@ -553,6 +554,13 @@ Installation Guide for details.
         <!-- Include the Enterprise ClientCLI (if available) -->
         <antcall target="dist">
             <param name="dist.jars" value="${eeclientcli.jar}"/>
+            <param name="dist.includes" value="_nothing_"/>
+        </antcall>
+    </target>
+    <target name="-dist-clientcli-validation" if="validationcli.jar">
+        <!-- Include the Validation CLI (if available) -->
+        <antcall target="dist">
+            <param name="dist.jars" value="${validationcli.jar}"/>
             <param name="dist.includes" value="_nothing_"/>
         </antcall>
     </target>

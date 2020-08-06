@@ -14,7 +14,8 @@ package org.signserver.common;
 
 import java.io.IOException;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.util.Strings;
+import org.cesecore.util.Base64;
 
 /**
  * Represents a certificate signing request in PKCS#10 format.
@@ -40,7 +41,7 @@ public class Pkcs10CertReqData extends AbstractCertReqData {
     public String toArmoredForm() throws IOException {
         final StringBuilder result = new StringBuilder();
         result.append(PEM_PKCS10_HEADER);
-        result.append(Base64.toBase64String(data));
+        result.append(Strings.fromByteArray(Base64.encode(data, true)));
         result.append(PEM_PKCS10_FOOTER);
         return result.toString();
     }

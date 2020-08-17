@@ -992,8 +992,8 @@ SHA-512 checksum: ${zip.bin.sha512}
 
     <target name="release:signclient-zip" depends="init,-warn-build,dist:clientcli-zip" description="Make a binary zip for SignClient release">
         <copy file="doc/lgpl-2.1.txt" tofile="LICENSE" />
-        <move file="${clientcli.zip.file}" tofile="../signclient-${app.version.number}-bin.zip"/>
-        <property name="signclient.zip.bin" location="../signclient-${app.version.number}-bin.zip"/>
+        <move file="${clientcli.zip.file}" tofile="../signclient-${app.edition.lc}-${app.version.number}-bin.zip"/>
+        <property name="signclient.zip.bin" location="../signclient-${app.edition.lc}-${app.version.number}-bin.zip"/>
         
         <checksum file="${signclient.zip.bin}" algorithm="SHA-256" forceOverwrite="yes" format="MD5SUM"/>
         <checksum file="${signclient.zip.bin}" algorithm="SHA-256" property="signclient.zip.bin.sha256"/>

@@ -124,6 +124,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     /** Option PASSWORD. */
     public static final String PASSWORD = "password";
 
+    /** Option ACCESS_TOKEN. */
+    public static final String ACCESS_TOKEN = "accesstoken";
+    
     /** Option PDFPASSWORD. */
     public static final String PDFPASSWORD = "pdfpassword";
 
@@ -193,6 +196,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 TEXTS.getString("USERNAME_DESCRIPTION"));
         OPTIONS.addOption(PASSWORD, true,
                 TEXTS.getString("PASSWORD_DESCRIPTION"));
+        OPTIONS.addOption(ACCESS_TOKEN, true,
+                TEXTS.getString("ACCESS_TOKEN_DESCRIPTION"));
         OPTIONS.addOption(PDFPASSWORD, true,
                 TEXTS.getString("PDFPASSWORD_DESCRIPTION"));
         OPTIONS.addOption(METADATA, true,
@@ -279,6 +284,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     private String password;
     private boolean promptForPassword;
 
+    private String accessToken;
+    
     private String pdfPassword;
     
     private boolean clientside;
@@ -416,6 +423,9 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         }
         if (line.hasOption(PASSWORD)) {
             password = line.getOptionValue(PASSWORD, null);
+        }
+        if (line.hasOption(ACCESS_TOKEN)) {
+            accessToken = line.getOptionValue(ACCESS_TOKEN, null);
         }
         if (line.hasOption(PDFPASSWORD)) {
             pdfPassword = line.getOptionValue(PDFPASSWORD, null);
@@ -637,6 +647,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
 
         //  it is right time to initialize HostsManager after all validations
         hostsManager = new HostManager(hosts, useLoadBalancing);
+
+        // don't allow both -username and -access-token at the same time
+        if (username != null && accessToken != null) {
+            throw new IllegalCommandArgumentsException("Can not specify both -username and -access-token");
+        }
     }
 
     /**
@@ -719,13 +734,15 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                                                                 final String digestAlgorithm,
                                                                 final String username,
                                                                 final String currentPassword,
+                                                                final String accessToken,
                                                                 final String pdfPassword,
                                                                 final HostManager hostsManager,
                                                                 final int timeoutLimit) {
         return new DocumentSignerFactory(protocol, keyStoreOptions, host,
                                               servlet, port,
                                               digestAlgorithm, username,
-                                              currentPassword, pdfPassword,
+                                              currentPassword, accessToken,
+                                              pdfPassword,
                                               hostsManager, timeOutLimit);
     }
     
@@ -749,7 +766,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                     createDocumentSignerFactory(protocol, keyStoreOptions, host,
                                                 servlet, port,
                                                 digestAlgorithm, username,
-                                                currentPassword, pdfPassword,
+                                                currentPassword, accessToken,
+                                                pdfPassword,
                                                 hostsManager, timeOutLimit);
 
         try {

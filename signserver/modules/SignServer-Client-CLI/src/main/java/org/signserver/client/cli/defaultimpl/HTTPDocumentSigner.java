@@ -49,6 +49,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     private static final String BASICAUTH_AUTHORIZATION = "Authorization";
 
     private static final String BASICAUTH_BASIC = "Basic";
+    private static final String BASICAUTH_BEARER = "Bearer";
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(HTTPDocumentSigner.class);
@@ -69,6 +70,9 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     private String username;
     private String password;
 
+    /** Access token when using JWT authentication. */
+    private String accessToken;
+    
     /** Password used for changing the PDF if required (user or owner password). */
     private String pdfPassword;
     
@@ -83,6 +87,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             final boolean useHTTPS,
             final String workerName,
             final String username, final String password,
+            final String accessToken,
             final String pdfPassword,
             final Map<String, String> metadata, final int timeOutLimit) {        
         this.hostsManager = hostsManager;
@@ -93,6 +98,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         this.workerId = 0;
         this.username = username;
         this.password = password;
+        this.accessToken = accessToken;
         this.pdfPassword = pdfPassword;
         this.metadata = metadata;
         this.timeOutLimit = timeOutLimit;
@@ -104,6 +110,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             final boolean useHTTPS,
             final int workerId, 
             final String username, final String password,
+            final String accessToken,
             final String pdfPassword,
             final Map<String, String> metadata, final int timeOutLimit) {        
         this.hostsManager = hostsManager;
@@ -114,6 +121,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         this.workerId = workerId;
         this.username = username;
         this.password = password;
+        this.accessToken = accessToken;
         this.pdfPassword = pdfPassword;
         this.metadata = metadata;
         this.timeOutLimit = timeOutLimit;
@@ -209,6 +217,9 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
                 conn.setRequestProperty(BASICAUTH_AUTHORIZATION, 
                         BASICAUTH_BASIC + " "
                         + new String(Base64.encode((username + ":" + password).getBytes())));
+            } else if (accessToken != null) {
+                conn.setRequestProperty(BASICAUTH_AUTHORIZATION,
+                        BASICAUTH_BEARER + " " + accessToken);
             }
             
             final StringBuilder sb = new StringBuilder();

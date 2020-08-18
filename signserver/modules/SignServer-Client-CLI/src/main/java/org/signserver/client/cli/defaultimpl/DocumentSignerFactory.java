@@ -40,6 +40,7 @@ public class DocumentSignerFactory {
     private final KeyStoreOptions keyStoreOptions;
     private final String username;
     private final String currentPassword;
+    private final String accessToken;
     private final String pdfPassword;
     private final HostManager hostsManager;
     private final int timeOutLimit;
@@ -55,6 +56,7 @@ public class DocumentSignerFactory {
      * @param digestAlgorithm Digest algorithm
      * @param username Username when using HTTP Basic authentication
      * @param currentPassword Password for HTTP Basic authentication
+     * @param accessToken Access token to use with JWT authentication
      * @param pdfPassword PDF password (used by PDFSigner for password-protected PDFs)
      * @param hostsManager Hosts manager
      * @param timeOutLimit Timeout limit
@@ -67,6 +69,7 @@ public class DocumentSignerFactory {
                                  final String digestAlgorithm,
                                  final String username,
                                  final String currentPassword,
+                                 final String accessToken,
                                  final String pdfPassword,
                                  final HostManager hostsManager,
                                  final int timeOutLimit) {
@@ -77,6 +80,7 @@ public class DocumentSignerFactory {
         this.keyStoreOptions = keyStoreOptions;
         this.username = username;
         this.currentPassword = currentPassword;
+        this.accessToken = accessToken;
         this.pdfPassword = pdfPassword;
         this.hostsManager = hostsManager;
         this.timeOutLimit = timeOutLimit;
@@ -205,14 +209,16 @@ public class DocumentSignerFactory {
                     signer = new HTTPDocumentSigner(hostsManager, port, servlet,
                                                     keyStoreOptions.isUseHTTPS(),
                                                     workerName, username,
-                                                    currentPassword, pdfPassword,
-                                                    metadata, timeOutLimit);
+                                                    currentPassword, accessToken,
+                                                    pdfPassword, metadata,
+                                                    timeOutLimit);
                 } else {
                     signer = new HTTPDocumentSigner(hostsManager, port, servlet,
                                                     keyStoreOptions.isUseHTTPS(),
                                                     workerId, username,
-                                                    currentPassword, pdfPassword,
-                                                    metadata, timeOutLimit);
+                                                    currentPassword, accessToken,
+                                                    pdfPassword, metadata,
+                                                    timeOutLimit);
                 }
             }
         }

@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.signserver.cli.spi.AbstractCommand;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
+import static org.signserver.client.cli.defaultimpl.SignDocumentCommand.ACCESS_TOKEN;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -85,6 +86,9 @@ public class ValidateDocumentCommand extends AbstractCommand {
     /** Option PASSWORD. */
     public static final String PASSWORD = "password";
 
+    /** Option ACCESS_TOKEN. */
+    public static final String ACCESS_TOKEN = "accesstoken";
+
     /** Option SERVLET. */
     public static final String SERVLET = "servlet";
     
@@ -122,6 +126,8 @@ public class ValidateDocumentCommand extends AbstractCommand {
                 TEXTS.getString("PROTOCOL_DESCRIPTION_VALIDATE"));
         OPTIONS.addOption(USERNAME, true, "Username for authentication.");
         OPTIONS.addOption(PASSWORD, true, "Password for authentication.");
+        OPTIONS.addOption(ACCESS_TOKEN, true,
+                TEXTS.getString("ACCESS_TOKEN_DESCRIPTION"));
         OPTIONS.addOption(SERVLET, true, "URL to the webservice servlet. Default: " +
         		SignServerWSClientFactory.DEFAULT_WSDL_URL);
         OPTIONS.addOption(METADATA, true,
@@ -151,6 +157,7 @@ public class ValidateDocumentCommand extends AbstractCommand {
 
     private String username;
     private String password;
+    private String accessToken;
 
     /** Servlet URL */
     private String servlet;
@@ -221,6 +228,9 @@ public class ValidateDocumentCommand extends AbstractCommand {
         if (line.hasOption(PASSWORD)) {
             password = line.getOptionValue(PASSWORD, null);
         }
+        if (line.hasOption(ACCESS_TOKEN)) {
+            accessToken = line.getOptionValue(ACCESS_TOKEN, null);
+        }
         servlet = SignServerWSClientFactory.DEFAULT_WSDL_URL;
         if (line.hasOption(SERVLET)) {
         	servlet = line.getOptionValue(SERVLET);
@@ -274,6 +284,10 @@ public class ValidateDocumentCommand extends AbstractCommand {
             throw new ParseException("Missing -data or -infile");
         }
         keyStoreOptions.validateOptions();
+        // don't allow both -username and -access-token at the same time
+        if (username != null && accessToken != null) {
+            throw new IllegalCommandArgumentsException("Can not specify both -username and -access-token");
+        }
     }
 
     /**
@@ -327,9 +341,9 @@ public class ValidateDocumentCommand extends AbstractCommand {
             }
             
             if (workerId == 0) {
-                validator = new HTTPDocumentValidator(url, workerName, username, password, metadata);
+                validator = new HTTPDocumentValidator(url, workerName, username, password, accessToken, metadata);
             } else {
-                validator = new HTTPDocumentValidator(url, workerId, username, password, metadata);
+                validator = new HTTPDocumentValidator(url, workerId, username, password, accessToken, metadata);
             }
             break;
         default:

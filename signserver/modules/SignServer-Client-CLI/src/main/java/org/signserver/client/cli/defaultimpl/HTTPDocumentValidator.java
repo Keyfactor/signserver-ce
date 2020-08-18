@@ -44,6 +44,7 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
     public static final String CRLF = "\r\n";
     private static final String BASICAUTH_AUTHORIZATION = "Authorization";
     private static final String BASICAUTH_BASIC = "Basic";
+    private static final String BASICAUTH_BEARER = "Bearer";
     private static final String BOUNDARY = "------------------signserver";
     
     private URL processServlet;
@@ -51,29 +52,34 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
     private int workerId;
     private String username;
     private String password;
+    private String accessToken;
     private Map<String, String> metadata;
 
     public HTTPDocumentValidator(final URL processServlet,
             final String workerName, final String username,
             final String password,
+            final String accessToken,
             final Map<String, String> metadata) {
         this.processServlet = processServlet;
         this.workerName = workerName;
         this.workerId = 0;
         this.username = username;
         this.password = password;
+        this.accessToken = accessToken;
         this.metadata = metadata;
     }
     
     public HTTPDocumentValidator(final URL processServlet,
             final int workerId, final String username,
             final String password,
+            final String accessToken,
             final Map<String, String> metadata) {
         this.processServlet = processServlet;
         this.workerName = null;
         this.workerId = workerId;
         this.username = username;
         this.password = password;
+        this.accessToken = accessToken;
         this.metadata = metadata;
     }
     
@@ -98,6 +104,9 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
                 conn.setRequestProperty(BASICAUTH_AUTHORIZATION, 
                         BASICAUTH_BASIC + " "
                         + new String(Base64.encode((username + ":" + password).getBytes())));
+            } else if (accessToken != null) {
+                conn.setRequestProperty(BASICAUTH_AUTHORIZATION,
+                        BASICAUTH_BEARER + " " + accessToken);
             }
             
             final StringBuilder sb = new StringBuilder();

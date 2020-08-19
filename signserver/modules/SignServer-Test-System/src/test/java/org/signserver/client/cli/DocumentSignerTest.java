@@ -12,8 +12,14 @@
  *************************************************************************/
 package org.signserver.client.cli;
 
+import io.jsonwebtoken.SignatureAlgorithm;
 import java.io.*;
+import java.security.KeyPair;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -33,6 +39,8 @@ import org.signserver.cli.spi.CommandFactoryContext;
 import org.signserver.client.cli.defaultimpl.ConsolePasswordReader;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.test.utils.builders.CryptoUtils;
+import org.signserver.testutils.JwtUtils;
 
 /**
  * Tests for the signdocument command of Client CLI.
@@ -60,8 +68,14 @@ public class DocumentSignerTest extends ModulesTestCase {
     private static final int[] WORKERS = new int[] {WORKERID, WORKERID2, WORKERID3};
 
     private static File signserverhome;
+
+    // issuer and subject for JWT auth test
+    private static final String TEST_ISSUER1 = "issuer1";
+    private static final String TEST_SUBJECT1 = "subject1";
     
     private final WorkerSession workerSession = getWorkerSession();
+
+    private static KeyPair keyPair;
     
     @Before
     @Override
@@ -70,6 +84,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         TestingSecurityManager.install();
         signserverhome = PathUtil.getAppHome();
         setupSSLKeystores();
+        keyPair = CryptoUtils.generateRSA(2048);
     }
 
     @After
@@ -378,6 +393,60 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         } finally {
             FileUtils.deleteQuietly(doc);
+        }
+    }
+
+    @Test
+    public void test02signDocumentFromFileJwtAuth() throws Exception {
+        LOG.info("test02signDocumentFromFile");
+        File doc = null;
+        try {
+            doc = File.createTempFile("test.xml", null);
+            try (FileOutputStream out = new FileOutputStream(doc)) {
+                out.write("<tag/>".getBytes());
+            }
+
+            workerSession.setWorkerProperty(WORKERID, "AUTHTYPE",
+                                            "org.signserver.server.jwtauth.JwtAuthorizer");
+            workerSession.setWorkerProperty(WORKERID, "AUTHSERVER4.ISSUER",
+                                            TEST_ISSUER1);
+            workerSession.setWorkerProperty(WORKERID, "AUTHSERVER4.PUBLICKEY",
+                           new String(Base64.getEncoder().encode(keyPair.getPublic().getEncoded())));
+            workerSession.setWorkerProperty(WORKERID, "AUTHJWT37.ISSUER",
+                                            TEST_ISSUER1);
+            workerSession.setWorkerProperty(WORKERID, "AUTHJWT37.CLAIM.NAME",
+                                            "scopes");
+            workerSession.setWorkerProperty(WORKERID, "AUTHJWT37.CLAIM.VALUE",
+                                            "scope1");
+            workerSession.reloadConfiguration(WORKERID);
+
+            final Map<String, Object> claims = new HashMap<>();
+            claims.put("scopes", Arrays.asList("scope3", "scope4", "scope1"));
+
+            final String token =
+                    JwtUtils.generateToken(keyPair.getPrivate(),
+                                           SignatureAlgorithm.RS256, TEST_ISSUER1,
+                                           System.currentTimeMillis(),
+                                           TEST_SUBJECT1, claims);
+            
+            String res =
+                    new String(execute("signdocument", "-workername", 
+                    "TestXMLSigner", "-infile", doc.getAbsolutePath(),
+                    "-accesstoken", token));
+            assertTrue("contains signature tag: "
+                    + res, res.contains("<tag><Signature"));
+        } catch (IllegalCommandArgumentsException ex) {
+            LOG.error("Execution failed", ex);
+            fail(ex.getMessage());
+        } finally {
+            FileUtils.deleteQuietly(doc);
+            workerSession.setWorkerProperty(WORKERID, "AUTHTYPE", "NOAUTH");
+            workerSession.removeWorkerProperty(WORKERID, "AUTHSERVER4.ISSUER");
+            workerSession.removeWorkerProperty(WORKERID, "AUTHSERVER4.PUBLICKEY");
+            workerSession.removeWorkerProperty(WORKERID, "AUTHJWT37.ISSUER");
+            workerSession.removeWorkerProperty(WORKERID, "AUTHJWT37.CLAIM.NAME");
+            workerSession.removeWorkerProperty(WORKERID, "AUTHJWT37.CLAIM.VALUE");
+            workerSession.reloadConfiguration(WORKERID);
         }
     }
     

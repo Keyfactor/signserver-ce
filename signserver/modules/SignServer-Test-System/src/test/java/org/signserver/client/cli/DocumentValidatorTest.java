@@ -12,10 +12,15 @@
  *************************************************************************/
 package org.signserver.client.cli;
 
+import io.jsonwebtoken.SignatureAlgorithm;
 import java.io.*;
+import java.security.KeyPair;
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.junit.After;
@@ -33,6 +38,8 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.test.utils.builders.CryptoUtils;
+import org.signserver.testutils.JwtUtils;
 
 /**
  * Tests for the validatedocument command of Client CLI.
@@ -52,16 +59,24 @@ public class DocumentValidatorTest extends ModulesTestCase {
 
     private static final String VALIDATION_WORKER = "TestValidationWorker";
 
+    // issuer and subject for JWT auth test
+    private static final String TEST_ISSUER1 = "issuer1";
+    private static final String TEST_SUBJECT1 = "subject1";
+
     private static File signserverhome;
 
     private final WorkerSession workerSession = getWorkerSession();
 
+    // key pair used to generate test JWT token
+    private static KeyPair keyPair;
+    
     @Before
     @Override
     protected void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         TestingSecurityManager.install();
         signserverhome = PathUtil.getAppHome();
+        keyPair = CryptoUtils.generateRSA(2048);
     }
 
     @After
@@ -144,7 +159,16 @@ public class DocumentValidatorTest extends ModulesTestCase {
         }
     }
 
-    private void testValidateDocumentFromFile(final String protocol, final String[] metadatas) throws Exception {
+    private void testValidateDocumentFromFile(final String protocol,
+                                              final String[] metadatas)
+            throws Exception {
+        testValidateDocumentFromFile(protocol, metadatas, null);
+    }
+    
+    private void testValidateDocumentFromFile(final String protocol,
+                                              final String[] metadatas,
+                                              final String accessToken)
+            throws Exception {
         try {
             final File doc = File.createTempFile("test2.xml", null);
             try (FileOutputStream out = new FileOutputStream(doc)) {
@@ -168,6 +192,11 @@ public class DocumentValidatorTest extends ModulesTestCase {
                     argList.add("-metadata");
                     argList.add(metadataParam);
                 }
+            }
+
+            if (accessToken != null) {
+                argList.add("-accesstoken");
+                argList.add(accessToken);
             }
             
             String res =
@@ -237,6 +266,48 @@ public class DocumentValidatorTest extends ModulesTestCase {
     public void test07ValidateDocumentFromFileHTTP() throws Exception {
         testValidateDocumentFromFile("HTTP", null);
     }
+
+    /**
+     * Test with -protocol HTTP and -infile. Using a JWT authentication
+     * and the -acesstoken argument.
+     * 
+     * @throws Exception
+     */
+    public void test08ValidateDocumentFromFileHTTPJwt() throws Exception {
+        try {
+            workerSession.setWorkerProperty(WORKERID, "AUTHTYPE",
+                                            "org.signserver.server.jwtauth.JwtAuthorizer");
+            workerSession.setWorkerProperty(WORKERID, "AUTHSERVER4.ISSUER",
+                                            TEST_ISSUER1);
+            workerSession.setWorkerProperty(WORKERID, "AUTHSERVER4.PUBLICKEY",
+                           new String(Base64.getEncoder().encode(keyPair.getPublic().getEncoded())));
+            workerSession.setWorkerProperty(WORKERID, "AUTHJWT37.ISSUER",
+                                            TEST_ISSUER1);
+            workerSession.setWorkerProperty(WORKERID, "AUTHJWT37.CLAIM.NAME",
+                                            "scopes");
+            workerSession.setWorkerProperty(WORKERID, "AUTHJWT37.CLAIM.VALUE",
+                                            "scope1");
+            workerSession.reloadConfiguration(WORKERID);
+
+            final Map<String, Object> claims = new HashMap<>();
+            claims.put("scopes", Arrays.asList("scope3", "scope4", "scope1"));
+
+            final String token =
+                    JwtUtils.generateToken(keyPair.getPrivate(),
+                                           SignatureAlgorithm.RS256, TEST_ISSUER1,
+                                           System.currentTimeMillis(),
+                                           TEST_SUBJECT1, claims);
+            testValidateDocumentFromFile("HTTP", null, token);
+        } finally {
+            workerSession.setWorkerProperty(WORKERID, "AUTHTYPE", "NOAUTH");
+            workerSession.removeWorkerProperty(WORKERID, "AUTHSERVER4.ISSUER");
+            workerSession.removeWorkerProperty(WORKERID, "AUTHSERVER4.PUBLICKEY");
+            workerSession.removeWorkerProperty(WORKERID, "AUTHJWT37.ISSUER");
+            workerSession.removeWorkerProperty(WORKERID, "AUTHJWT37.CLAIM.NAME");
+            workerSession.removeWorkerProperty(WORKERID, "AUTHJWT37.CLAIM.VALUE");
+            workerSession.reloadConfiguration(WORKERID);
+        }
+    }
     
     /**
      * Test validating with additional metadata.
@@ -244,7 +315,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
-    public void test08ValidateDocumentWithMetadataParam() throws Exception {
+    public void test09ValidateDocumentWithMetadataParam() throws Exception {
         testValidateDocumentFromFile("HTTP", new String[]{"foo=bar"});
     }
 
@@ -254,7 +325,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
-    public void test09ValidateDocumentWithMultipleMetadataParam() throws Exception {
+    public void test10ValidateDocumentWithMultipleMetadataParam() throws Exception {
         testValidateDocumentFromFile("HTTP", new String[]{"foo=bar", "foo2=bar2"});
     }
 
@@ -264,7 +335,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
      * 
      * @throws Exception
      */
-    public void test10ValidateDocumentWithMultipleMetadataParamsOverWS() throws Exception {
+    public void test11ValidateDocumentWithMultipleMetadataParamsOverWS() throws Exception {
         testValidateDocumentFromFile("WEBSERVICES", new String[]{"foo=bar", "foo2=bar2"});
     }
  

@@ -75,6 +75,7 @@ public class DocumentSignerTest extends ModulesTestCase {
     
     private final WorkerSession workerSession = getWorkerSession();
 
+    // key pair used to generate test JWT token
     private static KeyPair keyPair;
     
     @Before
@@ -396,6 +397,11 @@ public class DocumentSignerTest extends ModulesTestCase {
         }
     }
 
+    /**
+     * Test with JWT authentication using the -accesstoken option.
+     *
+     * @throws Exception 
+     */
     @Test
     public void test02signDocumentFromFileJwtAuth() throws Exception {
         LOG.info("test02signDocumentFromFile");

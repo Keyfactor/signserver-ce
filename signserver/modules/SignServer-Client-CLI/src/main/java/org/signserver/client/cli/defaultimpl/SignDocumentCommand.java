@@ -29,8 +29,6 @@ import java.util.ResourceBundle;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.concurrent.TimeUnit;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;

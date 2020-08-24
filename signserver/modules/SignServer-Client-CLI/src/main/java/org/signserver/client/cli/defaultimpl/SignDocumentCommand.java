@@ -652,6 +652,11 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         if (username != null && accessToken != null) {
             throw new IllegalCommandArgumentsException("Can not specify both -username and -access-token");
         }
+
+        // only support JWT auth with HTTP
+        if (accessToken != null && protocol != Protocol.HTTP) {
+            throw new IllegalCommandArgumentsException("Can only use -acesstoken with protocol HTTP");
+        }
     }
 
     /**

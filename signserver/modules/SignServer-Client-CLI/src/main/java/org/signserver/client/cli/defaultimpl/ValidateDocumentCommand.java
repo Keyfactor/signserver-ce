@@ -86,7 +86,7 @@ public class ValidateDocumentCommand extends AbstractCommand {
     public static final String PASSWORD = "password";
 
     /** Option ACCESS_TOKEN. */
-    public static final String ACCESS_TOKEN = "accesstoken";
+    public static final String ACCESSTOKEN = "accesstoken";
 
     /** Option SERVLET. */
     public static final String SERVLET = "servlet";
@@ -125,8 +125,8 @@ public class ValidateDocumentCommand extends AbstractCommand {
                 TEXTS.getString("PROTOCOL_DESCRIPTION_VALIDATE"));
         OPTIONS.addOption(USERNAME, true, "Username for authentication.");
         OPTIONS.addOption(PASSWORD, true, "Password for authentication.");
-        OPTIONS.addOption(ACCESS_TOKEN, true,
-                TEXTS.getString("ACCESS_TOKEN_DESCRIPTION"));
+        OPTIONS.addOption(ACCESSTOKEN, true,
+                TEXTS.getString("ACCESSTOKEN_DESCRIPTION"));
         OPTIONS.addOption(SERVLET, true, "URL to the webservice servlet. Default: " +
         		SignServerWSClientFactory.DEFAULT_WSDL_URL);
         OPTIONS.addOption(METADATA, true,
@@ -227,8 +227,8 @@ public class ValidateDocumentCommand extends AbstractCommand {
         if (line.hasOption(PASSWORD)) {
             password = line.getOptionValue(PASSWORD, null);
         }
-        if (line.hasOption(ACCESS_TOKEN)) {
-            accessToken = line.getOptionValue(ACCESS_TOKEN, null);
+        if (line.hasOption(ACCESSTOKEN)) {
+            accessToken = line.getOptionValue(ACCESSTOKEN, null);
         }
         servlet = SignServerWSClientFactory.DEFAULT_WSDL_URL;
         if (line.hasOption(SERVLET)) {

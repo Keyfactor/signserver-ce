@@ -123,7 +123,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
     public static final String PASSWORD = "password";
 
     /** Option ACCESS_TOKEN. */
-    public static final String ACCESS_TOKEN = "accesstoken";
+    public static final String ACCESSTOKEN = "accesstoken";
     
     /** Option PDFPASSWORD. */
     public static final String PDFPASSWORD = "pdfpassword";
@@ -194,8 +194,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 TEXTS.getString("USERNAME_DESCRIPTION"));
         OPTIONS.addOption(PASSWORD, true,
                 TEXTS.getString("PASSWORD_DESCRIPTION"));
-        OPTIONS.addOption(ACCESS_TOKEN, true,
-                TEXTS.getString("ACCESS_TOKEN_DESCRIPTION"));
+        OPTIONS.addOption(ACCESSTOKEN, true,
+                TEXTS.getString("ACCESSTOKEN_DESCRIPTION"));
         OPTIONS.addOption(PDFPASSWORD, true,
                 TEXTS.getString("PDFPASSWORD_DESCRIPTION"));
         OPTIONS.addOption(METADATA, true,
@@ -422,8 +422,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
         if (line.hasOption(PASSWORD)) {
             password = line.getOptionValue(PASSWORD, null);
         }
-        if (line.hasOption(ACCESS_TOKEN)) {
-            accessToken = line.getOptionValue(ACCESS_TOKEN, null);
+        if (line.hasOption(ACCESSTOKEN)) {
+            accessToken = line.getOptionValue(ACCESSTOKEN, null);
         }
         if (line.hasOption(PDFPASSWORD)) {
             pdfPassword = line.getOptionValue(PDFPASSWORD, null);

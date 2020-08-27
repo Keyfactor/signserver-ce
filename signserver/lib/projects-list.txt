@@ -25,10 +25,7 @@
 "JNA";                        "Apache 2.0";                                    "https://github.com/java-native-access/jna";            "Dependency of JackNJI11" ;            "No." ;
 "JUnit";                      "Eclipse Public License";                        "http://junit.org";                                     "Core dependency used for automated testing.";  "No.";
 "JackNJI11";                  "MIT";                                           "https://github.com/joelhockey/jacknji11/";             "Alternative PKCS#11 provider/wrapper implementation." ;  "Yes, added support for multiple libraries and with different names etc. Patches has been contributed to upstreams." ;
-"Jackson Annotations";        "Apache 2.0";                                    "https://github.com/FasterXML/jackson-annotations";     "Dependency of JWT tests";             "No.";
-"Jackson Core";               "Apache 2.0";                                    "https://github.com/FasterXML/jackson-core";            "Dependency of JWT tests";             "No.";
-"Jackson Databind";           "Apache 2.0";                                    "https://github.com/FasterXML/jackson-databind";        "Dependency of JWT tests";             "No.";
-"Java JWT";                   "Apache 2.0";                                    "https://java.jsonwebtoken.io";                         "Used by the JWTAuthorizer";           "No." ;
+"Jackson";                    "Apache 2.0";                                    "https://github.com/FasterXML/";                        "Dependency of Java JWT";              "No.";
 "Jaxen";                      "BSD";                                           "http://jaxen.codehaus.org";                            "Dependency of OpenXML4J.";            "No.";
 "Jsign";                      "Apache 2.0";                                    "https://ebourg.github.io/jsign";                       "Used by MSAuthCodeSigner to sign Portable Executables";  "Yes, fixed issue with SHA-512 merged upstreams but for now built from https://github.com/netmackan/jsign/tree/signserver-sha512-1 until official release. Yes, fixed checksum calculation DSS-2177.";
 "Log4j";                      "Apache 2.0";                                    "http://logging.apache.org/log4j";                      "Core dependency used for producing logs." ;  "No.";

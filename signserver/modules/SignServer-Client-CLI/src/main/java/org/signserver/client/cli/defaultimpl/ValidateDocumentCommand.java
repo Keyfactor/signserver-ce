@@ -85,7 +85,7 @@ public class ValidateDocumentCommand extends AbstractCommand {
     /** Option PASSWORD. */
     public static final String PASSWORD = "password";
 
-    /** Option ACCESS_TOKEN. */
+    /** Option ACCESSTOKEN. */
     public static final String ACCESSTOKEN = "accesstoken";
 
     /** Option SERVLET. */
@@ -285,12 +285,12 @@ public class ValidateDocumentCommand extends AbstractCommand {
         keyStoreOptions.validateOptions();
         // don't allow both -username and -access-token at the same time
         if (username != null && accessToken != null) {
-            throw new IllegalCommandArgumentsException("Can not specify both -username and -access-token");
+            throw new IllegalCommandArgumentsException("Can not specify both -username and -accesstoken");
         }
 
         // only support JWT auth with HTTP
         if (accessToken != null && protocol != Protocol.HTTP) {
-            throw new IllegalCommandArgumentsException("Can only use -acesstoken with protocol HTTP");
+            throw new IllegalCommandArgumentsException("Can only use -accesstoken with protocol HTTP");
         }
     }
 

@@ -93,7 +93,7 @@ ab1784abbb9e0ed0869ab6568fe46f1faa79fb5e948cf96450daecd9d27ba1db  ./ext/jetty-io
 1d31696445697720527091754369082a6651bd49781b6005deb94e56753406f9  ./ext/log4j-1.2.17.jar;                                 "Log4j"
 78134c71aa9f9cebbc96a837f12c85590a4f2b587b51831a45faafb68381b1fc  ./ext/no-clover/clover.jar;                             "SignServer"
 cbe6a7bd0b38e4acf44ae25b11812de967c2f74ea105c89a074ffce5797cfc1e  ./ext/poi-4.1.2.jar;                                    "Apache POI"
-739b70bc472f91cbaa8e3e4ce5ec5c8354a43b0d4b16516319f3ffcd7b05920a  ./ext/quartz-2.2.2.jar;                                 "Quartz Scheduler"
+639c6a675bc472e1568df9d8c954ff702da6f83ed27da0ff9a7bd12ed73b8bf0  ./ext/quartz-2.3.2.jar;                                 "Quartz Scheduler"
 e8f5b4340d3b12a0cfa44ac2db4be4e0639e479ae847df04c4ed8b521734bb4a  ./ext/serializer-2.7.2.jar;                             "Santuario"
 47b624903c712f9118330ad2fb91d0780f7f666c3f22919d0fc14522c5cad9ea  ./ext/slf4j-api-1.7.29.jar;                             "SLF4J"
 ddb343954deb6f046f862606c534178730c02ed23d0b7f6ca1012c1e3fa74273  ./ext/slf4j-log4j12-1.7.25.jar;                         "SLF4J"

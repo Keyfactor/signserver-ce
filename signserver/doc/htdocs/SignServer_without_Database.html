@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.4.2</p>
+                    <p>Version: 5.5.0</p>
                 </div>
             </header>
 
@@ -358,7 +358,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
 
             </li>
                                         <li class="leaf">
@@ -512,6 +512,22 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Signer.html">APK Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Hash_Signer.html">APK Hash Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Lineage_Signer.html">APK Lineage Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Rotate_Signer.html">APK Rotate Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Appx_CMS_Signer.html">Appx CMS Signer</a>
 
             </li>
@@ -613,22 +629,6 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="ZoneZipFileServerSideSigner.html">ZoneZipFileServerSideSigner</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Signer.html">APK Signer</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Rotate_Signer.html">APK Rotate Signer</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Lineage_Signer.html">APK Lineage Signer</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Hash_Signer.html">APK Hash Signer</a>
 
             </li>
                             </ul>
@@ -852,18 +852,6 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="JKSCryptoToken.html">JKSCryptoToken</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="KeystoreInConfigCryptoToken.html">KeystoreInConfigCryptoToken</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="P12CryptoToken.html">P12CryptoToken</a>
-
-            </li>
-                                        <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
 
             </li>
@@ -877,6 +865,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="AzureKeyVaultCryptoToken.html">AzureKeyVaultCryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="KeyStoreCryptoToken.html">KeyStoreCryptoToken</a>
 
             </li>
                             </ul>
@@ -1406,6 +1398,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.5_Release_Notes.html">SignServer 5.5 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.4.0.1_Release_Notes.html">SignServer 5.4.0.1 Release Notes</a>
 
             </li>
@@ -1483,27 +1479,30 @@
                                         <li class="shortcut"><a href="SignServer_Installation.html">SignServer Installation</a></li>
                                                                                      <li><a href="Install_SignServer.html">Install SignServer</a></li>
                                                             </ul>
-</div>            <h1 id="src-42959503"> <span>SignServer without Database</span></h1>
+</div>            <h1 id="src-93592389"> <span>SignServer without Database</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div class="section section-1" id="src-42959503_id-.SignServerwithoutDatabasev5.0.0-SignServer_without_DB">
-        <h1 class="heading "><span id="src-42959503_id-.SignServerwithoutDatabasev5.0.0-SignServer_without_DB2" class="confluence-anchor-link"></span><span></span></h1>
+    <div class="section section-1" id="src-93592389_id-.SignServerwithoutDatabasev5.4.2-SignServer_without_DB">
+        <h1 class="heading "><span id="src-93592389_id-.SignServerwithoutDatabasev5.4.2-SignServer_without_DB2" class="confluence-anchor-link"></span><span></span></h1>
     <p  >It is possible to operate SignServer without a database management system and instead rely on SignServer to manage persistence using local files.    </p>
-    <p  >Note that all features of SignServer are not supported without having a database and the performance and scalability characteristics might differ. Currently, archiving to local files is not supported.    </p>
-    <p  >To increase throughput it is recommended to disable the key usage counter, as every request would otherwise have to lock and update that file. For more information, see the property DISABLEKEYUSAGECOUNTER in the section <a   href="Limiting_the_number_of_signatures.html">Limiting the number of signatures</a>.    </p>
+    <p  >Note that all features of SignServer are not supported without having a database and the performance and scalability characteristics might differ. Features not available without database:    </p>
+<ul class=" "><li class=" ">    <p  >Audit logging to database / database protection    </p>
+</li><li class=" ">    <p  >Archiving to database    </p>
+</li><li class=" ">    <p  >Key wrapping    </p>
+</li></ul>    <p  >To increase throughput it is recommended to disable the key usage counter, as every request would otherwise have to lock and update that file. For more information, see the property DISABLEKEYUSAGECOUNTER in the section <a   href="Limiting_the_number_of_signatures.html">Limiting the number of signatures</a>.    </p>
     <div  class="confbox admonition admonition-warning">
                             <span class="admonition-icon confluence-information-macro-icon"></span>
                 <div class="admonition-body">
     <p  >Upgrading to a later version should generally be handled automatically during the first startup. Review <a   href="Upgrade_SignServer.html">Upgrade SignServer</a> and <a   href="SignServer_Upgrade_Notes.html">SignServer Upgrade Notes</a> and create a backup of the file-based database files before attempting to run a later version.    </p>
         </div>
     </div>
-    <div class="section section-2" id="src-42959503_id-.SignServerwithoutDatabasev5.0.0-Configuration">
+    <div class="section section-2" id="src-93592389_id-.SignServerwithoutDatabasev5.4.2-Configuration">
         <h2 class="heading "><span>Configuration</span></h2>
     <p  >For all steps included in installing SignServer, see <a   href="Install_SignServer.html">Install SignServer</a>.    </p>
     <p  >The following section highlights configuring deployment properties when running SignServer without a database.    </p>
-    <div class="section section-3" id="src-42959503_id-.SignServerwithoutDatabasev5.0.0-DeploymentProperties">
+    <div class="section section-3" id="src-93592389_id-.SignServerwithoutDatabasev5.4.2-DeploymentProperties">
         <h3 class="heading "><span>Deployment Properties</span></h3>
     <p  >To run SignServer without a database, set <strong class=" ">database.name</strong> to <strong class=" ">nodb</strong> in the <tt class=" ">signserver_deploy.properties </tt>file :    </p>
     <div  class="confbox programlisting">
@@ -1525,11 +1524,11 @@
     </div>
     </div>
     </div>
-    <div class="section section-2" id="src-42959503_id-.SignServerwithoutDatabasev5.0.0-StructureofData">
+    <div class="section section-2" id="src-93592389_id-.SignServerwithoutDatabasev5.4.2-StructureofData">
         <h2 class="heading section"><span>Structure of Data</span></h2>
     <p  class="section">The file-based database uses a number of files in the specified directory. Read/write synchronization is handled internally in the application and it is thus not supported to manually change files while the application server is running. Generally, it is neither supported to have multiple application servers running with SignServer using the same database directory.    </p>
     </div>
-    <div class="section section-2" id="src-42959503_safe-id-aWQtLlNpZ25TZXJ2ZXJ3aXRob3V0RGF0YWJhc2V2NS4wLjAtTWlncmF0aW5ndG8vZnJvbURhdGFiYXNl">
+    <div class="section section-2" id="src-93592389_safe-id-aWQtLlNpZ25TZXJ2ZXJ3aXRob3V0RGF0YWJhc2V2NS40LjItTWlncmF0aW5ndG8vZnJvbURhdGFiYXNl">
         <h2 class="heading "><span>Migrating to/from Database</span></h2>
     <p  >When migrating either to or from another database management system, without setting up all worker configurations from scratch, it is recommended to use the admin command <tt class=" ">dumpproperties</tt> to dump the current configuration to a file, and then on the new system use <tt class=" ">setproperties</tt> followed by the <tt class=" ">reload</tt> command for every worker id.    </p>
     <p  >Note that the <tt class=" ">dumpproperties</tt> command will not include the list of authorized clients and these need to be set up again in the new system. To check for authorized clients, run the admin command <tt class=" ">listauthorizedclients.</tt>    </p>

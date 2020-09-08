@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.4.2</p>
+                    <p>Version: 5.5.0</p>
                 </div>
             </header>
 
@@ -358,7 +358,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
 
             </li>
                                         <li class="leaf">
@@ -512,6 +512,22 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Signer.html">APK Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Hash_Signer.html">APK Hash Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Lineage_Signer.html">APK Lineage Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Rotate_Signer.html">APK Rotate Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Appx_CMS_Signer.html">Appx CMS Signer</a>
 
             </li>
@@ -613,22 +629,6 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="ZoneZipFileServerSideSigner.html">ZoneZipFileServerSideSigner</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Signer.html">APK Signer</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Rotate_Signer.html">APK Rotate Signer</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Lineage_Signer.html">APK Lineage Signer</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Hash_Signer.html">APK Hash Signer</a>
 
             </li>
                             </ul>
@@ -852,18 +852,6 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="JKSCryptoToken.html">JKSCryptoToken</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="KeystoreInConfigCryptoToken.html">KeystoreInConfigCryptoToken</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="P12CryptoToken.html">P12CryptoToken</a>
-
-            </li>
-                                        <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
 
             </li>
@@ -877,6 +865,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="AzureKeyVaultCryptoToken.html">AzureKeyVaultCryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="KeyStoreCryptoToken.html">KeyStoreCryptoToken</a>
 
             </li>
                             </ul>
@@ -1406,6 +1398,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.5_Release_Notes.html">SignServer 5.5 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.4.0.1_Release_Notes.html">SignServer 5.4.0.1 Release Notes</a>
 
             </li>
@@ -1484,13 +1480,13 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-77889713"> <span>Time Stamp Signer</span></h1>
+</div>            <h1 id="src-99156889"> <span>Time Stamp Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The signer has the class name: <strong class=" ">org.signserver.server.signers.TimeStampSigner</strong>.    </p>
-    <div class="section section-1" id="src-77889713_id-.TimeStampSignerv5.1.0-Overview">
+    <div class="section section-1" id="src-99156889_id-.TimeStampSignerv5.5.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >The time stamp server generates time stamp tokens and supports the following options:    </p>
 <ul class=" "><li class=" ">    <p  >Set of accepted policies    </p>
@@ -1511,7 +1507,7 @@
     <p  >The time-stamp signer requires a time-stamp certificate with the extended key usage <strong class=" ">time-stamp</strong> only. The extended key usage extension must be critical.    </p>
     <p  >If the time-stamp request contains a nonce value, this value will also be included in the time-stamp token.    </p>
     </div>
-    <div class="section section-1" id="src-77889713_id-.TimeStampSignerv5.1.0-AvailableProperties">
+    <div class="section section-1" id="src-99156889_id-.TimeStampSignerv5.5.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <p  >The following properties can be configured with the signer:    </p>
     <p  >    </p>
@@ -1607,7 +1603,7 @@
         <p  >ACCURACYMICROS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Accuracy in micro seconds, Only decimal number format, only one of the accuracy properties should be set. OPTIONAL.    </p>
+        <p  >Accuracy in microseconds as an integer, can be combined additively with ACCURACYMILLIS and ACCURACYSECONDS. OPTIONAL.    </p>
             </td>
         </tr>
     <tr>
@@ -1615,7 +1611,7 @@
         <p  >ACCURACYMILLIS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Accuracy in milliseconds, Only decimal number format, only one of the accuracy properties should be set. OPTIONAL.    </p>
+        <p  >Accuracy in milliseconds as an integer, can be combined additively with ACCURACYMICROS and ACCURACYSECONDS. OPTIONAL.    </p>
             </td>
         </tr>
     <tr>
@@ -1623,7 +1619,7 @@
         <p  >ACCURACYSECONDS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Accuracy in seconds. Only decimal number format, only one of the accuracy properties should be set. OPTIONAL.    </p>
+        <p  >Accuracy in seconds as an integer, can be combined additively with ACCURACYMICROS and ACCURACYMILLIS. OPTIONAL.    </p>
             </td>
         </tr>
     <tr>
@@ -1741,7 +1737,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-77889713_id-.TimeStampSignerv5.1.0-CertificateRequirements">
+    <div class="section section-1" id="src-99156889_id-.TimeStampSignerv5.5.0-CertificateRequirements">
         <h1 class="heading "><span>Certificate Requirements</span></h1>
 <ul class=" "><li class=" ">    <p  >Specifying a signer certificate is required as information from that certificate will be used to indicate which signer signed the time-stamp token.    </p>
 </li><li class=" ">    <p  >The signer certificate chain contains all certificates included in the token if the client requests the certificates.    </p>

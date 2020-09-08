@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.4.2</p>
+                    <p>Version: 5.5.0</p>
                 </div>
             </header>
 
@@ -358,7 +358,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
 
             </li>
                                         <li class="leaf">
@@ -512,6 +512,22 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Signer.html">APK Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link current" href="APK_Hash_Signer.html">APK Hash Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Lineage_Signer.html">APK Lineage Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Rotate_Signer.html">APK Rotate Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Appx_CMS_Signer.html">Appx CMS Signer</a>
 
             </li>
@@ -613,22 +629,6 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="ZoneZipFileServerSideSigner.html">ZoneZipFileServerSideSigner</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Signer.html">APK Signer</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Rotate_Signer.html">APK Rotate Signer</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Lineage_Signer.html">APK Lineage Signer</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link current" href="APK_Hash_Signer.html">APK Hash Signer</a>
 
             </li>
                             </ul>
@@ -852,18 +852,6 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="JKSCryptoToken.html">JKSCryptoToken</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="KeystoreInConfigCryptoToken.html">KeystoreInConfigCryptoToken</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="P12CryptoToken.html">P12CryptoToken</a>
-
-            </li>
-                                        <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
 
             </li>
@@ -877,6 +865,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="AzureKeyVaultCryptoToken.html">AzureKeyVaultCryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="KeyStoreCryptoToken.html">KeyStoreCryptoToken</a>
 
             </li>
                             </ul>
@@ -1406,6 +1398,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.5_Release_Notes.html">SignServer 5.5 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.4.0.1_Release_Notes.html">SignServer 5.4.0.1 Release Notes</a>
 
             </li>
@@ -1484,15 +1480,19 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-93589646"> <span>APK Hash Signer</span></h1>
+</div>            <h1 id="src-99156935"> <span>APK Hash Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >    <span style="color: #000000;">
+    </span>
+    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    <span style="color: #000000;">
 The APK Hash signer has the fully qualified class name: <strong class=" ">org.signserver.module.apk.signer.ApkHashSigner</strong>    </span>
     </p>
-    <div class="section section-1" id="src-93589646_id-.APKHashSignerv5.4.2-Overview">
+    <div class="section section-1" id="src-99156935_id-.APKHashSignerv5.5.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >    <span style="color: #000000;">
 The APK Hash Signer can sign hashed data for <a   href="Client-Side_Hashing.html">Client-Side Hashing</a> and construction of signed Android Package Kit (APK) files.     <span style="color: #0e101a;">
@@ -1507,13 +1507,13 @@ Setting up Android Signing    </span>
 The signer supports the following types of requests:    </span>
     </p>
 <ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
-<strong class=" ">Pre-request with an empty body</strong>: The result is a pre-response with information containing the signer certificate chain and the following signers. For more information, see <a   href="#src-93589646_id-.APKHashSignerv5.4.2-Pre-responseFormat">Pre-response Format</a>.<br/>    </span>
+<strong class=" ">Pre-request with an empty body</strong>: The result is a pre-response with information containing the signer certificate chain and the following signers. For more information, see <a   href="#src-99156935_id-.APKHashSignerv5.5.0-Pre-responseFormat">Pre-response Format</a>.<br/>    </span>
     </p>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
 <strong class=" ">Signing request with a non-empty body</strong>: The result is a plain signature, as when using the <a   href="Plain_Signer.html">Plain SIgner</a>.    </span>
     </p>
 </li></ul>    </div>
-    <div class="section section-1" id="src-93589646_id-.APKHashSignerv5.4.2-AvailableProperties">
+    <div class="section section-1" id="src-99156935_id-.APKHashSignerv5.5.0-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1587,7 +1587,7 @@ When requesting a pre-response (by sending a request with an empty request body)
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >    <span style="color: #000000;">
-LINEAGE_FILE_CONTENT<span id="src-93589646_id-.APKHashSignerv5.4.2-LINEAGE_FILE_CONTENT"></span><br/>    </span>
+LINEAGE_FILE_CONTENT<span id="src-99156935_id-.APKHashSignerv5.5.0-LINEAGE_FILE_CONTENT"></span><br/>    </span>
     </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
@@ -1598,7 +1598,7 @@ The base 64-encoded content of a lineage file to include. Optional.    </span>
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-93589646_id-.APKHashSignerv5.4.2-WorkerLogFields">
+    <div class="section section-2" id="src-99156935_id-.APKHashSignerv5.5.0-WorkerLogFields">
         <h2 class="heading "><span>Worker Log Fields</span></h2>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1657,7 +1657,7 @@ The response document (plain signature) in base64 encoding.    </span>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-2" id="src-93589646_id-.APKHashSignerv5.4.2-Pre-responseFormat">
+    <div class="section section-2" id="src-99156935_id-.APKHashSignerv5.5.0-Pre-responseFormat">
         <h2 class="heading "><span>Pre-response Format</span></h2>
     <p  >    <span style="color: #000000;">
 The pre-response is encoded using key/value pairs (KEY=Value), in the same manner as used in Java properties files.    </span>
@@ -1683,7 +1683,7 @@ Description    </span>
 </thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >    <span style="color: #000000;">
-SIGNER_CERTIFICATE_CHAIN<span id="src-93589646_id-.APKHashSignerv5.4.2-SIGNER_CERTIFICATE_CHAIN"></span><br/>    </span>
+SIGNER_CERTIFICATE_CHAIN<span id="src-99156935_id-.APKHashSignerv5.5.0-SIGNER_CERTIFICATE_CHAIN"></span><br/>    </span>
     </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
@@ -1712,7 +1712,7 @@ LINEAGE_FILE_CONTENT    </span>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >    <span style="color: #000000;">
-The base 64-encoded content of the lineage file, when one is configured with the corresponding worker property <a   href="#src-93589646_id-.APKHashSignerv5.4.2-LINEAGE_FILE_CONTENT">LINEAGE_FILE_CONTENT</a>.<br/>    </span>
+The base 64-encoded content of the lineage file, when one is configured with the corresponding worker property <a   href="#src-99156935_id-.APKHashSignerv5.5.0-LINEAGE_FILE_CONTENT">LINEAGE_FILE_CONTENT</a>.<br/>    </span>
     </p>
             </td>
         </tr>
@@ -1736,7 +1736,7 @@ OTHER_SIGNER_n.CERTIFICATE_CHAIN    </span>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >    <span style="color: #000000;">
-Certificate chain of other signer with index n. Index is 0-based. Certificate chain uses the same encoding as for <a   href="#src-93589646_id-.APKHashSignerv5.4.2-SIGNER_CERTIFICATE_CHAIN">SIGNER_CERTIFICATE_CHAIN</a>.    </span>
+Certificate chain of other signer with index n. Index is 0-based. Certificate chain uses the same encoding as for <a   href="#src-99156935_id-.APKHashSignerv5.5.0-SIGNER_CERTIFICATE_CHAIN">SIGNER_CERTIFICATE_CHAIN</a>.    </span>
     </p>
             </td>
         </tr>
@@ -1750,7 +1750,7 @@ Certificate chain of other signer with index n. Index is 0-based. Certificate ch
 
 
             <nav id="ht-post-nav">
-                <a href="APK_Lineage_Signer.html" class="ht-post-nav-prev">
+                <a href="APK_Signer.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1759,9 +1759,9 @@ Certificate chain of other signer with index n. Index is 0-based. Certificate ch
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>APK Lineage Signer</span>
+            <span>APK Signer</span>
         </a>
-                <a href="SignServer_Document_Validators.html" class="ht-post-nav-next">
+                <a href="APK_Lineage_Signer.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1770,7 +1770,7 @@ Certificate chain of other signer with index n. Index is 0-based. Certificate ch
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Document Validators</span>
+            <span>APK Lineage Signer</span>
         </a>
     </nav>    
             

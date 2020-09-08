@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.4.2</p>
+                    <p>Version: 5.5.0</p>
                 </div>
             </header>
 
@@ -358,7 +358,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
 
             </li>
                                         <li class="leaf">
@@ -512,6 +512,22 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Signer.html">APK Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Hash_Signer.html">APK Hash Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Lineage_Signer.html">APK Lineage Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Rotate_Signer.html">APK Rotate Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Appx_CMS_Signer.html">Appx CMS Signer</a>
 
             </li>
@@ -613,22 +629,6 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="ZoneZipFileServerSideSigner.html">ZoneZipFileServerSideSigner</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Signer.html">APK Signer</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Rotate_Signer.html">APK Rotate Signer</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Lineage_Signer.html">APK Lineage Signer</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Hash_Signer.html">APK Hash Signer</a>
 
             </li>
                             </ul>
@@ -852,18 +852,6 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="JKSCryptoToken.html">JKSCryptoToken</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="KeystoreInConfigCryptoToken.html">KeystoreInConfigCryptoToken</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="P12CryptoToken.html">P12CryptoToken</a>
-
-            </li>
-                                        <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
 
             </li>
@@ -877,6 +865,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="AzureKeyVaultCryptoToken.html">AzureKeyVaultCryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="KeyStoreCryptoToken.html">KeyStoreCryptoToken</a>
 
             </li>
                             </ul>
@@ -1406,6 +1398,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.5_Release_Notes.html">SignServer 5.5 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.4.0.1_Release_Notes.html">SignServer 5.4.0.1 Release Notes</a>
 
             </li>
@@ -1484,31 +1480,32 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
                                                                                      <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
                                                             </ul>
-</div>            <h1 id="src-16221254"> <span>PDF Signer</span></h1>
+</div>            <h1 id="src-96862482"> <span>PDF Signer</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >The PDF signer has the class name: <strong class=" ">org.signserver.module.PDFSigner</strong>.    </p>
-    <div class="section section-1" id="src-16221254_id-.PDFSignerv4.3.0-Overview">
+    <p  >The PDF signer has the class name: <strong class=" ">org.signserver.module.pdfsigner.PDFSigner</strong>.    </p>
+    <div class="section section-1" id="src-96862482_id-.PDFSignerv5.5.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
-    <p  >The main purpose of the PDF signer is to add digital signatures to PDF documents.<br/>The signer supports the addition of visible or invisible signatures. Both visible and invisible signatures serve the same purpose of signing document, and technically are equivalent in that sense. The difference is that when visible signature is applied to a document, signature image (in shape of rectangle) is placed at the specified place in the document, clicking on which will allow seeing properties of the signature (Adobe Acrobat Reader).    </p>
+    <p  >The main purpose of the PDF signer is to add digital signatures to PDF documents.    </p>
+    <p  >The signer supports the addition of visible or invisible signatures. Both visible and invisible signatures serve the same purpose of signing document, and technically are equivalent in that sense. The difference is that when visible signature is applied to a document, signature image (in shape of rectangle) is placed at the specified place in the document, clicking on which will allow seeing properties of the signature (Adobe Acrobat Reader).    </p>
     <p  >On the other hand when invisible signature is applied, signature properties are accessed through menu items. For visible signatures properties such as : custom signature image, signature rectangle, page at which signature rectangle to be drawn and others can be specified (see Available Properties below)    </p>
     <p  >PDF Signer can also apply timestamp to a signature. If the signature is timestamped, it can be viewable through signature properties in Adobe Acrobat Reader. Timestamping is used to prove that document was signed before the time specified by timestamp token. If the signature is not timestamped then the signature time specified in the signature properties is not considered to be trusted. It is strongly advised to apply timestamp to a signature, and the TSA module can be used for this purpose.    </p>
     <p  >Also CRL or OCSP Response of the signer's certificate can be embedded inside the signature package. Embedding CRL or OCSP response with the package will help validate signature even after the signer's certificate is expired. (Though it will not totally guarantee the long term signature preservation. Topic of long term signature preservation for archival purposes is a large one and is discussed to be implemented in future versions of SignServer).    </p>
     <p  >The PDF Signer can also be configured to enforce that certain PDF permissions are not available in the signed document and/or that certain permissions should be removed.    </p>
     </div>
-    <div class="section section-1" id="src-16221254_id-.PDFSignerv4.3.0-PDFpasswords">
+    <div class="section section-1" id="src-96862482_id-.PDFSignerv5.5.0-PDFpasswords">
         <h1 class="heading "><span>PDF passwords</span></h1>
     <p  >PDF documents can optionally be protected by a password. There are two different types of passwords:    </p>
 <ul class=" "><li class=" ">    <p  >User password: Also sometimes referred to as &quot;open password&quot; or &quot;document password&quot;. Can be used for reading an encrypted document.    </p>
 </li><li class=" ">    <p  >Owner password: Also sometimes referred to as &quot;permission password&quot; or &quot;security restriction password&quot;. It can be used for reading an encrypted document and making changes to a document that has permissions.    </p>
 </li></ul>    <p  >If a document is protected by an Owner password, it has to be supplied with the request for SignServer to sign the document. If the document is protected by a User password, either the User password or the Owner password has to be supplied with the request for SignServer to sign the document.    </p>
     </div>
-    <div class="section section-1" id="src-16221254_id-.PDFSignerv4.3.0-PDFSignerRequests">
+    <div class="section section-1" id="src-96862482_id-.PDFSignerv5.5.0-PDFSignerRequests">
         <h1 class="heading "><span>PDFSigner Requests</span></h1>
     <p  >PDF signing requests can be served using either web services or the web server interface (HTTP). See Integration for general information about the different interfaces.<br/>For the web server interface the GenericProcessServlet can be used. The PDFSigner supports the extra request field &quot;pdfPassword&quot; letting the client supply a PDF password to be used for opening the PDF for signing (not required unless the PDF is already password protected).<br/>For the old web services interface the request should contain an encoded GenericProcessesRequest and the response will be an GenericProcessResponse. It is possible to supply a PDF password by including it in the requestMetaData with the key &quot;pdfPassword&quot;.    </p>
-    <div class="section section-2" id="src-16221254_id-.PDFSignerv4.3.0-WorkerProperties">
+    <div class="section section-2" id="src-96862482_id-.PDFSignerv5.5.0-WorkerProperties">
         <h2 class="heading "><span>Worker Properties</span></h2>
     <p  >The following properties can be configured with the signer:    </p>
     <div  class="tablewrap">
@@ -1603,27 +1600,27 @@
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_URL<span id="src-16221254_id-.PDFSignerv4.3.0-TSA_URL"></span>    </p>
+        <p  >TSA_URL<span id="src-96862482_id-.PDFSignerv5.5.0-TSA_URL"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >If we want to timestamp document signature, specify timestamp authority URL.<br/>This will cause time stamp requests to be issued via HTTP requests. Under high load, this can lead to thread deadlocks in the application server if using a localhost URL (using a time stamp signer running in the same server). In this case, use the internal mechanism described below). To not timestamp document signature, do not set the property.    </p>
     <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
  iI path contains characters &quot;\&quot; or &quot;=&quot; , these characters should be escaped (thus &quot;\&quot; = &quot;\\&quot;, &quot;=&quot; =&gt;&quot;\=&quot;).    </p>
     <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
- Cannot be set at the same time as <a   href="#src-16221254_id-.PDFSignerv4.3.0-TSA_WORKER">TSA_WORKER</a>.    </p>
+ Cannot be set at the same time as <a   href="#src-96862482_id-.PDFSignerv5.5.0-TSA_WORKER">TSA_WORKER</a>.    </p>
     <p  >Default: not set (no timestamping).    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >TSA_WORKER<span id="src-16221254_id-.PDFSignerv4.3.0-TSA_WORKER"></span>    </p>
+        <p  >TSA_WORKER<span id="src-96862482_id-.PDFSignerv5.5.0-TSA_WORKER"></span>    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Specify a worker ID or worker name for a time stamp signer<br/>This will use internal calls and can only be used for a time stamp authority running in the same SignServer instance.    </p>
     <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
  Use instead of TSA_URL when using a time stamp signer running in the same SignServer instance to avoid thread deadlocks under high load.    </p>
     <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
- Cannot be set at the same time as <a   href="#src-16221254_id-.PDFSignerv4.3.0-TSA_URL">TSA_URL</a>.    </p>
+ Cannot be set at the same time as <a   href="#src-96862482_id-.PDFSignerv5.5.0-TSA_URL">TSA_URL</a>.    </p>
     <p  >Default: Not set (no timestamping).    </p>
             </td>
         </tr>

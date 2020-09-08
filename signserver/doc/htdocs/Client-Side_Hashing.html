@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.4.2</p>
+                    <p>Version: 5.5.0</p>
                 </div>
             </header>
 
@@ -358,7 +358,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="Client_CLI_signdocument_Command.html">Client CLI signdocument Command</a>
+        <a class="ht-nav-page-link" href="signdocument.html">signdocument</a>
 
             </li>
                                         <li class="leaf">
@@ -512,6 +512,22 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Signer.html">APK Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Hash_Signer.html">APK Hash Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Lineage_Signer.html">APK Lineage Signer</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="APK_Rotate_Signer.html">APK Rotate Signer</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Appx_CMS_Signer.html">Appx CMS Signer</a>
 
             </li>
@@ -613,22 +629,6 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="ZoneZipFileServerSideSigner.html">ZoneZipFileServerSideSigner</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Signer.html">APK Signer</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Rotate_Signer.html">APK Rotate Signer</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Lineage_Signer.html">APK Lineage Signer</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="APK_Hash_Signer.html">APK Hash Signer</a>
 
             </li>
                             </ul>
@@ -852,18 +852,6 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="JKSCryptoToken.html">JKSCryptoToken</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="KeystoreInConfigCryptoToken.html">KeystoreInConfigCryptoToken</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="P12CryptoToken.html">P12CryptoToken</a>
-
-            </li>
-                                        <li class="leaf">
         <a class="ht-nav-page-link" href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>
 
             </li>
@@ -877,6 +865,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="AzureKeyVaultCryptoToken.html">AzureKeyVaultCryptoToken</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="KeyStoreCryptoToken.html">KeyStoreCryptoToken</a>
 
             </li>
                             </ul>
@@ -1406,6 +1398,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.5_Release_Notes.html">SignServer 5.5 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.4.0.1_Release_Notes.html">SignServer 5.4.0.1 Release Notes</a>
 
             </li>
@@ -1481,27 +1477,29 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                             </ul>
-</div>            <h1 id="src-93588522"> <span>Client-Side Hashing</span></h1>
+</div>            <h1 id="src-93592689"> <span>Client-Side Hashing</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >The following describes various options for performing the hashing on the client-side instead of making all the steps in the signing on the server-side. Client-side hashing is also sometimes referred to as &quot;hash signing&quot; and the main advantage is that the original file does not need to be sent to the server.    </p>
     <p  >    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-93588522_id-.Client-SideHashingv5.4.2-CMSDetachedSignatures">CMS Detached Signatures</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-93588522_id-.Client-SideHashingv5.4.2-PlainSignatures">Plain Signatures</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-93588522_id-.Client-SideHashingv5.4.2-EmbeddedSignatureFormats">Embedded Signature Formats</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-93588522_id-.Client-SideHashingv5.4.2-OpenPGP">OpenPGP</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-93588522_id-.Client-SideHashingv5.4.2-DebianDpkg-sig">Debian Dpkg-sig</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-93588522_id-.Client-SideHashingv5.4.2-DNSSECSigning">DNSSEC Signing</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-93588522_id-.Client-SideHashingv5.4.2-APPXSigning">APPX Signing</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-93588522_id-.Client-SideHashingv5.4.2-APKSigning">APK Signing</a>    </p>
-</li></ul>    <div class="section section-1" id="src-93588522_id-.Client-SideHashingv5.4.2-CMSDetachedSignatures">
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-CMSDetachedSignatures">CMS Detached Signatures</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-PlainSignatures">Plain Signatures</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-EmbeddedSignatureFormats">Embedded Signature Formats</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-AuthenticodeSigning">Authenticode Signing</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-JARSigning">JAR Signing</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-OpenPGPSigning">OpenPGP Signing</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-DebianDpkg-sigSigning">Debian Dpkg-sig Signing</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-DNSSECSigning">DNSSEC Signing</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-APPXSigning">APPX Signing</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-APKSigning">APK Signing</a>    </p>
+</li></ul>    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-CMSDetachedSignatures">
         <h1 class="heading "><span>CMS Detached Signatures</span></h1>
     <p  >Detached signatures allow the signature to be placed in a separate file next to the original file, and thus the original file does not have to be updated. With CMS signatures, what is covered by the signature is a set of attributes (unless it is a direct signature) where one of the attributes is called messageDigest, which is the hash of the original file. This means that in order to create a CMS detached signature, it is sufficient to get the hash of the original file as input.    </p>
     <p  >The <a   href="CMS_Signer.html">CMS Signer</a> is for instance configured to accept a hash as input by setting CLIENTSIDEHASHING=TRUE, or by allowing the client to specify if the input is the original file or a hash of it, by configuring ALLOW_CLIENTSIDEHASHING_OVERRIDE=TRUE.    </p>
     <p  >When the client sends the request, the following properties need to be provided as request metadata:    </p>
-<ul class=" "><li class=" "><pre class=" ">USING_CLIENTSUPPLIED_HASH=true</pre></li><li class=" "><pre class=" ">CLIENTSIDE_HASHDIGESTALGORITHM=SHA-256</pre></li></ul>    <p  >where SHA-256 should be replaced with the name of the hash algorithm used to digest the data. The algorithm must be one of those configured in signer with the ACCEPTED_HASH_DIGEST_ALGORITHM property.    </p>
+<ul class=" "><li class=" "><pre class=" ">USING_CLIENTSUPPLIED_HASH=true</pre></li><li class=" "><pre class=" ">CLIENTSIDE_HASHDIGESTALGORITHM=SHA-256</pre></li></ul>    <p  >where SHA-256 should be replaced with the name of the hash algorithm used to digest the data. The algorithm must be one of those configured in the signer with the ACCEPTED_HASH_DIGEST_ALGORITHM property.    </p>
     <p  >The following commands can be used to create a detached CMS signature using this mode with a CMSSigner set up to default to consider requests as client-side computed hash (using the CLIENTSIDEHASHING property) (assuming a GNU/Linux, or Unix-like system is used):    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1512,11 +1510,11 @@
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-93588522_id-.Client-SideHashingv5.4.2-PlainSignatures">
+    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-PlainSignatures">
         <h1 class="heading "><span>Plain Signatures</span></h1>
-    <p  >For plain signatures (as produced by the <a   href="Plain_Signer.html">Plain Signer</a>), generally the whole file is sent to the signer and returned is the small signature. However, as the plain signature schemes involves a hash operation, it is be possible to perform that on the client side.    </p>
+    <p  >For plain signatures (as produced by the <a   href="Plain_Signer.html">Plain Signer</a>), generally the whole file is sent to the signer and returned is the small signature. However, as the plain signature schemes involve a hash operation, it is possible to perform that on the client-side.    </p>
     <p  >For the Plain Signer, this can be achieved by configuring the signer with a signature algorithm with the word NONE instead of the name of the hash. For example: &quot;NONEwithRSA&quot; or &quot;NONEwithECDSA&quot;. Note that the input to the signer has to be in a particular format when using the &quot;NONEwithRSA&quot; algorithm for the final signature to be correct. See RFC#3447 for details.    </p>
-    <div class="section section-2" id="src-93588522_safe-id-aWQtLkNsaWVudC1TaWRlSGFzaGluZ3Y1LjQuMi1TYW1wbGVVc2FnZSh3aXRoTk9ORXdpdGhFQ0RTQWFsZ29yaXRobSk">
+    <div class="section section-2" id="src-93592689_safe-id-aWQtLkNsaWVudC1TaWRlSGFzaGluZ3Y1LjUuMC1TYW1wbGVVc2FnZSh3aXRoTk9ORXdpdGhFQ0RTQWFsZ29yaXRobSk">
         <h2 class="heading "><span>Sample Usage (with NONEwithECDSA algorithm)</span></h2>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1529,13 +1527,11 @@
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-93588522_id-.Client-SideHashingv5.4.2-EmbeddedSignatureFormats">
+    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-EmbeddedSignatureFormats">
         <h1 class="heading "><span>Embedded Signature Formats</span></h1>
-    <p  >    </p>
-    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >For signature formats where the signature is to be placed within the original document, additional logic has to be implemented on the client-side in order to, typically, first prepare the document for signing, compute the digest and send it to the server, and then finally embed the signature within the file.    </p>
-    <p  >On the client-side, support has been implemented for &quot;client-side hashing and construction&quot; for Authenticode signing of Portable Executable (PE) files (i.e. EXE, .DLL,..), Windows Installer files (.MSI), and for Java Archives (.JAR,.APK,..) in the <a   href="Client_CLI.html">SignClient</a> signdocument command. Support for other file types such as PDF may also be implemented.    </p>
-    <p  >On the server-side, typically a CMS Signer is needed but since Authenticode and JAR signing are producing slightly different variants of the CMS signatures, different implementations are available for use. For Authenticode, there is the <a   href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a>, and for JAR signing the <a   href="JArchive_CMS_Signer.html">JArchive CMS Signer</a>.    </p>
+    <p  >On the client-side, support has been implemented for &quot;client-side hashing and construction&quot; for various signature formats (see below) for instance for Java Archives (.JAR, .APK,...) and for Authenticode signing of Portable Executable (PE) files (i.e. EXE, .DLL,..), Windows Installer files (.MSI) etc. Support for other file types such as PDF may also be implemented.    </p>
+    <p  >On the server-side, typically a CMS Signer is needed but since Authenticode and JAR signing are producing slightly different variants of the CMS signatures, different implementations are available for use. For instance for Authenticode, there is the <a   href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a>, and for JAR signing the <a   href="JArchive_CMS_Signer.html">JArchive CMS Signer</a>.    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
                     <colgroup>
@@ -1563,15 +1559,136 @@
         <p  >-digestalgorithm    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >The digest algorithm to use for the hash (or for the hashes within the hash file depending on file type). This option may be ignored if the algorithm to be used is determined so other way by the implementation.    </p>
+        <p  >The digest algorithm to use for the hash (or for the hashes within the hash file depending on file type). This option may be ignored if the algorithm to be used is determined in other way by the implementation.    </p>
             </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >-extraoption    </p>
+        <p  >-filetype    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Flag to provide extra options for signing supported by a particular file type:    </p>
+        <p  >Optional. One of the supported file type identifiers (see below). If not provided the implementation tries to guess the file type base on the file extension or content of the file.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-extraoption KEY=VALUE    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Flag to provide extra options for signing supported by a particular file type.    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    </div>
+    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-AuthenticodeSigning">
+        <h1 class="heading "><span>Authenticode Signing</span></h1>
+    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >When using the client-side hashing and construction for Authenticode file signing using the <a   href="MS_Authenticode_CMS_Signer.html">MS Authenticode CMS Signer</a> the following options are available. Note that the MS Authenticode Signer supports the following formats:    </p>
+<ul class=" "><li class=" ">    <p  >PE: Portable Executable files (.exe, .dll, ...)    </p>
+</li><li class=" ">    <p  >MSI: Windows Installer files (.msi)    </p>
+</li><li class=" ">    <p  >PS1: PowerShell (.ps1, .psd, .psm)    </p>
+</li></ul>    <p  >Another signer is available for signing of AppX/MSIX. See the APPX Signing section.    </p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Parameter    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Description    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-clientside    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Required in order to use client-side hashing otherwise a normal request is sent.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-digestalgorithm    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The digest algorithm to use for the hash.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-filetype PE    </p>
+    <p  >-filetype MSI    </p>
+    <p  >-filetype PS1    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Optional. For specifying a particular file type. If not provided SignClient will try to guess the type.    </p>
+            </td>
+        </tr>
+</tbody>        </table>
+            </div>
+    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-SampleUsage">
+        <h2 class="heading "><span>Sample Usage</span></h2>
+    <div  class="confbox programlisting">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
+<div class="line"><code class="plain">$ signclient signdocument -clientside -workername MSAuthCodeCMSSigner -infile unsigned.exe</code></div>
+<div class="line"><code class="plain">-outfile signed.exe -digestalgorithm SHA-</code><code class="value">512</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">$ signclient signdocument -clientside -workername MSAuthCodeCMSSigner -infile unsigned.msi</code></div>
+<div class="line"><code class="plain">-outfile signed.msi -digestalgorithm SHA-</code><code class="value">256</code></div>
+<div class="line"> </div>
+<div class="line"><code class="plain">$ signclient signdocument -clientside -workername MSAuthCodeCMSSigner -infile unsigned.ps1</code></div>
+<div class="line"><code class="plain">-outfile signed.ps1 -digestalgorithm SHA-</code><code class="value">256</code></div>
+</div>
+    </div>
+    </div>
+    </div>
+    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-JARSigning">
+        <h1 class="heading "><span>JAR Signing</span></h1>
+    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >When using the client-side hashing and construction for JAR file signing using the <a   href="JArchive_CMS_Signer.html">JArchive CMS Signer</a>, the following options are available.    </p>
+    <div  class="tablewrap">
+        <table class="wrapped confluenceTable">
+                    <colgroup>
+                                    <col />
+                                    <col />
+                            </colgroup>
+        <thead class=" ">    <tr>
+            <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Parameter    </p>
+            </td>
+                <td  class="confluenceTh" rowspan="1" colspan="1">
+        <p  >Description    </p>
+            </td>
+        </tr>
+</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-clientside    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Required in order to use client-side hashing otherwise a normal request is sent.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-digestalgorithm    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >The digest algorithm to use for the hashes in the manifest / signature file.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >-filetype JAR    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Specify that a JAR signature is wanted.    </p>
             </td>
         </tr>
     <tr>
@@ -1579,7 +1696,7 @@
         <p  >-extraoption KEEPSIGNATURE=    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Only for signing JAR files. For more information on the property KEEPSIGNATURE, see <a   href="JArchive_Signer.html">JArchive Signer</a>.    </p>
+        <p  >For more information on the property KEEPSIGNATURE, see <a   href="JArchive_Signer.html">JArchive Signer</a>.    </p>
             </td>
         </tr>
     <tr>
@@ -1587,7 +1704,7 @@
         <p  >-extraoption REPLACESIGNATURE=    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Only for signing JAR files. For more information on the property REPLACESIGNATURE, see <a   href="JArchive_Signer.html">JArchive Signer</a>.    </p>
+        <p  >For more information on the property REPLACESIGNATURE, see <a   href="JArchive_Signer.html">JArchive Signer</a>.    </p>
             </td>
         </tr>
     <tr>
@@ -1595,7 +1712,7 @@
         <p  >-extraoption SIGNATURE_NAME_VALUE=    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Only for signing JAR files. For more information on the property SIGNATURE_NAME_VALUE, see <a   href="JArchive_Signer.html">JArchive Signer</a>.    </p>
+        <p  >For more information on the property SIGNATURE_NAME_VALUE, see <a   href="JArchive_Signer.html">JArchive Signer</a>.    </p>
             </td>
         </tr>
     <tr>
@@ -1603,21 +1720,15 @@
         <p  >-extraoption ZIPALIGN=    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Only for signing JAR files. For more information on the property ZIPALIGN, see <a   href="JArchive_Signer.html">JArchive Signer</a>.    </p>
+        <p  >For more information on the property ZIPALIGN, see <a   href="JArchive_Signer.html">JArchive Signer</a>.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-93588522_id-.Client-SideHashingv5.4.2-SampleUsages">
-        <h2 class="heading "><span>Sample Usages</span></h2>
+    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-SampleUsage.1">
+        <h2 class="heading "><span>Sample Usage</span></h2>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
-<div class="line"><code class="plain">$ signclient signdocument -clientside -workername MSAuthCodeCMSSigner -infile unsigned.exe</code></div>
-<div class="line"><code class="plain">-outfile signed.exe -digestalgorithm SHA-</code><code class="value">256</code></div>
-<div class="line"> </div>
-<div class="line"><code class="plain">$ signclient signdocument -clientside -workername MSAuthCodeCMSSigner -infile unsigned.msi</code></div>
-<div class="line"><code class="plain">-outfile signed.msi -digestalgorithm SHA-</code><code class="value">512</code></div>
-<div class="line"> </div>
 <div class="line"><code class="plain">$ signclient signdocument -clientside -workername JArchiveCMSSigner -infile unsigned.jar</code></div>
 <div class="line"><code class="plain">-outfile signed.jar -digestalgorithm SHA-</code><code class="value">256</code></div>
 <div class="line"> </div>
@@ -1627,8 +1738,10 @@
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-93588522_id-.Client-SideHashingv5.4.2-OpenPGP">
-        <h1 class="heading "><span>OpenPGP</span></h1>
+    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-OpenPGPSigning">
+        <h1 class="heading "><span>OpenPGP Signing</span></h1>
+    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >When using the client-side hashing and construction with OpenPGP using the OpenPGPPlainSigner, the parameters key ID and key algorithm (when using a key with an algorithm other than RSA) need to be specified with the request using the <tt class=" ">-extraoption</tt> options.    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1649,7 +1762,7 @@
         <p  >-filetype PGP    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Specify that a OpenPGP signature is wanted.    </p>
+        <p  >Specify that an OpenPGP signature is wanted.    </p>
             </td>
         </tr>
     <tr>
@@ -1687,7 +1800,7 @@
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-93588522_id-.Client-SideHashingv5.4.2-SampleUsage">
+    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-SampleUsage.2">
         <h2 class="heading "><span>Sample Usage</span></h2>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1702,8 +1815,10 @@
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-93588522_id-.Client-SideHashingv5.4.2-DebianDpkg-sig">
-        <h1 class="heading "><span>Debian Dpkg-sig</span></h1>
+    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-DebianDpkg-sigSigning">
+        <h1 class="heading "><span>Debian Dpkg-sig Signing</span></h1>
+    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >When using the client-side hashing and construction with Dpkg-sig using the OpenPGPPlainSigner, the key ID, key fingerprint, and key algorithm (when using a key with an algorithm other than RSA) need to be specified with the request using the <tt class=" ">-extraoption</tt> options.    </p>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1759,11 +1874,11 @@
     <p  >You can run without the required KEY_ options and the server will give an error message that includes the values that can be used.    </p>
         </div>
     </div>
-    <div class="section section-2" id="src-93588522_id-.Client-SideHashingv5.4.2-AlgorithmSupport">
+    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-AlgorithmSupport">
         <h2 class="heading "><span>Algorithm Support</span></h2>
     <p  >Note that specifically for DSA signatures in client-side mode, other algorithms than SHA1 may not be supported due to the underlying implementation.    </p>
     </div>
-    <div class="section section-2" id="src-93588522_id-.Client-SideHashingv5.4.2-SampleUsages.1">
+    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-SampleUsages">
         <h2 class="heading "><span>Sample Usages</span></h2>
     <p  >The key ID is the hex-encoded representation, and the key algorithm can be specified as either a name (RSA, DSA, or ECDSA) or using one of the PGP constant values (for example 19 for ECDSA).    </p>
     <div  class="confbox programlisting">
@@ -1779,8 +1894,10 @@
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-93588522_id-.Client-SideHashingv5.4.2-DNSSECSigning">
+    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-DNSSECSigning">
         <h1 class="heading "><span>DNSSEC Signing</span></h1>
+    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >When using the client-side hashing and construction for DNSSEC zone file signing using the <a   href="ZoneHashSigner.html">ZoneHashSigner</a>, the following <tt class=" ">-extraoption</tt> options should be provided on the command line in addition to the required request metadata property specifying which keys to use.    </p>
     <div  class="tablewrap">
         <table class="wrapped relative-table confluenceTable">
@@ -1860,7 +1977,7 @@ Minimum remaining time in seconds required to be able to re-use a previously sig
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-93588522_id-.Client-SideHashingv5.4.2-SampleUsages.2">
+    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-SampleUsages.1">
         <h2 class="heading "><span>Sample Usages</span></h2>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1870,9 +1987,11 @@ Minimum remaining time in seconds required to be able to re-use a previously sig
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-93588522_id-.Client-SideHashingv5.4.2-APPXSigning">
+    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-APPXSigning">
         <h1 class="heading "><span>APPX Signing</span></h1>
-    <p  >When using the client-side hashing and construction for Appx file signing using the <a   href="Appx_CMS_Signer.html">Appx CMS Signer</a>, the following <tt class=" ">-extraoption</tt> options should be provided on the command line in addition to the required request metadata property specifying which keys to use.    </p>
+    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >When using the client-side hashing and construction for Appx file signing using the <a   href="Appx_CMS_Signer.html">Appx CMS Signer</a>, the following options are available.    </p>
     <div  class="tablewrap">
         <table class="relative-table wrapped confluenceTable">
                     <colgroup>
@@ -1913,7 +2032,7 @@ Minimum remaining time in seconds required to be able to re-use a previously sig
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-93588522_id-.Client-SideHashingv5.4.2-SampleUsages.3">
+    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-SampleUsages.2">
         <h2 class="heading "><span>Sample Usages</span></h2>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1922,8 +2041,10 @@ Minimum remaining time in seconds required to be able to re-use a previously sig
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-93588522_id-.Client-SideHashingv5.4.2-APKSigning">
+    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-APKSigning">
         <h1 class="heading "><span>APK Signing</span></h1>
+    <p  >    </p>
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >When using the client-side hashing and construction for Android Package Kit (APK) file signing using the <a   href="APK_Hash_Signer.html">APK Hash Signer</a>, the following -extraoptions can be used.    </p>
     <div  class="tablewrap">
         <table class="relative-table wrapped confluenceTable">
@@ -2039,22 +2160,21 @@ True if debuggable APK should be allowed to be signed. Valid values: true, or fa
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-93588522_id-.Client-SideHashingv5.4.2-AlgorithmSupport.1">
+    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-AlgorithmSupport.1">
         <h2 class="heading "><span>Algorithm Support</span></h2>
     <p  >SignClient assumes the server-side signer is configured with either NONEwithECDSA, or NONEwithRSA as signature algorithm. SignClient currently supports SHA1, SHA-256, SHA-384, and SHA-512 with RSA and SHA1, SHA-224, SHA-256, SHA-384, and SHA-512 with ECDSA. DSA is not supported.    </p>
     </div>
-    <div class="section section-2" id="src-93588522_id-.Client-SideHashingv5.4.2-SampleUsages.4">
+    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-SampleUsages.3">
         <h2 class="heading "><span>Sample Usages</span></h2>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
-<div class="line"><code class="plain">$ signclient -workername AphHashSigner -infile unsigned.apk -outfile signed.apk -clientside -digestalgorithm SHA-</code><code class="value">256</code><code class="plain"> -filetype APK</code></div>
+<div class="line"><code class="plain">$ signclient -workername ApkHashSigner -infile unsigned.apk -outfile signed.apk -clientside -digestalgorithm SHA-</code><code class="value">256</code><code class="plain"> -filetype APK</code></div>
 <div class="line"> </div>
-<div class="line"><code class="plain">$ signclient -workername AphHashSigner -infile unsigned.apk -outfile signed.apk -clientside -digestalgorithm SHA-</code><code class="value">256</code><code class="plain"> -filetype APK -extraoption V3_SIGNATURE=</code><code class="keyword">false</code></div>
+<div class="line"><code class="plain">$ signclient -workername ApkHashSigner -infile unsigned.apk -outfile signed.apk -clientside -digestalgorithm SHA-</code><code class="value">256</code><code class="plain"> -filetype APK -extraoption V3_SIGNATURE=</code><code class="keyword">false</code></div>
 <div class="line"> </div>
-<div class="line"><code class="plain">$ signclient -workername AphHashSigner -infile unsigned.apk -outfile signed.apk -clientside -digestalgorithm SHA-</code><code class="value">256</code><code class="plain"> -filetype APK -extraoption V1_SIGNATURE=</code><code class="keyword">true</code></div>
+<div class="line"><code class="plain">$ signclient -workername ApkHashSigner -infile unsigned.apk -outfile signed.apk -clientside -digestalgorithm SHA-</code><code class="value">256</code><code class="plain"> -filetype APK -extraoption V1_SIGNATURE=</code><code class="keyword">true</code></div>
 </div>
     </div>
-    <p  >    </p>
     </div>
     </div>
         </div>

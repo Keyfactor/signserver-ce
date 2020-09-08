@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.signserver</groupId>
     <artifactId>SignServer</artifactId>
-    <version>5.5.0.Final</version>
+    <version>5.5.1.Alpha1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>SignServer</name>
     <properties>

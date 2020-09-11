@@ -22,6 +22,7 @@ import javax.servlet.AsyncContext;
 import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.log4j.Logger;
 
 /**
  * Refactored-out from QoSFilter.
@@ -30,6 +31,8 @@ import javax.servlet.http.HttpServletResponse;
  * @version $Id$
  */
 class QoSAsyncListener implements AsyncListener {
+    // Logger for this class
+    private static final Logger LOG = Logger.getLogger(QoSAsyncListener.class);
     
     private final int priority;
     private final QoSFilter outer;
@@ -62,7 +65,11 @@ class QoSAsyncListener implements AsyncListener {
         // Remove before it's redispatched, so it won't be
         // redispatched again at the end of the filtering.
         AsyncContext asyncContext = event.getAsyncContext();
-        outer.getQueues()[priority].remove(asyncContext);
+        if (outer == null) {
+            LOG.error("Filter unavailable");
+        } else {
+            outer.getQueues()[priority].remove(asyncContext);
+        }
         ((HttpServletResponse) event.getSuppliedResponse()).sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         asyncContext.complete();
     }

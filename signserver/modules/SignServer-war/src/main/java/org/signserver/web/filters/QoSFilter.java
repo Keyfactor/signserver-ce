@@ -287,7 +287,7 @@ public class QoSFilter implements Filter
         
         final String prioValue = request.getParameter("prio");
         
-        if (prioValue.contains("high")) {
+        if (prioValue != null && prioValue.contains("high")) {
             return 1;
         } else {
             return 0;

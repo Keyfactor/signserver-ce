@@ -4,6 +4,7 @@
     <filter>
         <filter-name>ClickjackFilterDeny</filter-name>
         <filter-class>org.signserver.web.common.owasp.filters.ClickjackFilter</filter-class>
+        <async-supported>true</async-supported>
         <init-param>
             <param-name>mode</param-name>
             <param-value>DENY</param-value>
@@ -30,12 +31,10 @@
         <filter-name>ClickjackFilterDeny</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    <!--
     <filter-mapping>
         <filter-name>QoSFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    -->
     <!--<filter-mapping>
         <filter-name>ContentSecurityPolicyFilter</filter-name>
         <url-pattern>/*</url-pattern>

@@ -23,6 +23,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import javax.ejb.EJB;
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncListener;
 import javax.servlet.Filter;
@@ -36,6 +37,9 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.signserver.common.GlobalConfiguration;
+import static org.signserver.common.GlobalConfiguration.SCOPE_GLOBAL;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 
 /*J import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.util.annotation.ManagedAttribute;
@@ -100,6 +104,9 @@ public class QoSFilter implements Filter
     private Semaphore _passes;
     private Queue<AsyncContext>[] _queues;
 
+    @EJB
+    private GlobalConfigurationSessionLocal globalSession;
+
     public Queue<AsyncContext>[] getQueues() {
         return _queues;
     }
@@ -145,6 +152,32 @@ public class QoSFilter implements Filter
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
     {
         boolean accepted = false;
+
+        // TODO: should cache the value instead of looking up through global config each time
+        final String maxRequestsString =
+                globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
+                                                                   "QOS_MAX_REQUESTS");
+
+        if (maxRequestsString != null) {
+            try {
+                final int maxRequests = Integer.parseInt(maxRequestsString);
+
+                if (maxRequests < 1) {
+                    LOG.error("Illegal value for QOS_MAX_REQUESTS: " +
+                              maxRequestsString + ", ignoring");
+                } else {
+                    final int oldMaxRequests = getMaxRequests();
+
+                    if (maxRequests != oldMaxRequests) {
+                        setMaxRequests(maxRequests);
+                    }
+                }
+            } catch (NumberFormatException e) {
+                LOG.error("Illegal value for QOS_MAX_REQUESTS: " +
+                          maxRequestsString + ", ignoring");
+            }
+        }
+        
         try
         {
             Boolean suspended = (Boolean)request.getAttribute(_suspended);

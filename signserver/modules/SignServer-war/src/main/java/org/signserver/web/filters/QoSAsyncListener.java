@@ -26,6 +26,13 @@ import org.apache.log4j.Logger;
 
 /**
  * Refactored-out from QoSFilter.
+ *
+ * To be able to deploy the filter on JBoss/WildFly we had to move the listener
+ * to an outer-level class with a public constructor (and make adjustments to
+ * the filter class to access its priority queues).
+ *
+ * Error message: WFLYEE0048: Could not find default contructor for class
+ * org.signserver.web.filter.QoSFilter$QoSAsyncListener
  * 
  * @author Marcus Lundblad
  * @version $Id$

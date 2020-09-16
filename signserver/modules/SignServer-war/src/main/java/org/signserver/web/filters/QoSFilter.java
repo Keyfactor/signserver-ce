@@ -114,18 +114,9 @@ public class QoSFilter implements Filter
     private AsyncListener[] _listeners;
 
     @Override
-    public void init(FilterConfig filterConfig)
+    public void init(final FilterConfig filterConfig)
     {
-        int maxPriority = __DEFAULT_MAX_PRIORITY;
-        if (filterConfig.getInitParameter(MAX_PRIORITY_INIT_PARAM) != null)
-            maxPriority = Integer.parseInt(filterConfig.getInitParameter(MAX_PRIORITY_INIT_PARAM));
-        _queues = new Queue[maxPriority + 1];
-        _listeners = new AsyncListener[_queues.length];
-        for (int p = 0; p < _queues.length; ++p)
-        {
-            _queues[p] = new ConcurrentLinkedQueue<>();
-            _listeners[p] = new QoSAsyncListener(p, this);
-        }
+        initQueuesAndListeners(filterConfig);
 
         int maxRequests = __DEFAULT_PASSES;
         if (filterConfig.getInitParameter(MAX_REQUESTS_INIT_PARAM) != null)
@@ -146,6 +137,24 @@ public class QoSFilter implements Filter
         ServletContext context = filterConfig.getServletContext();
         if (context != null && Boolean.parseBoolean(filterConfig.getInitParameter(MANAGED_ATTR_INIT_PARAM)))
             context.setAttribute(filterConfig.getFilterName(), this);
+    }
+
+    private void initQueuesAndListeners(final FilterConfig filterConfig) {
+        int maxPriority = __DEFAULT_MAX_PRIORITY;
+        if (filterConfig.getInitParameter(MAX_PRIORITY_INIT_PARAM) != null)
+            maxPriority = Integer.parseInt(filterConfig.getInitParameter(MAX_PRIORITY_INIT_PARAM));
+
+        createQueuesAndListeners(maxPriority);
+    }
+
+    private void createQueuesAndListeners(final int maxPriority) {
+        _queues = new Queue[maxPriority + 1];
+        _listeners = new AsyncListener[_queues.length];
+        for (int p = 0; p < _queues.length; ++p)
+        {
+            _queues[p] = new ConcurrentLinkedQueue<>();
+            _listeners[p] = new QoSAsyncListener(p, this);
+        }
     }
 
     @Override

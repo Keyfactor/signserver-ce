@@ -141,8 +141,30 @@ public class QoSFilter implements Filter
 
     private void initQueuesAndListeners(final FilterConfig filterConfig) {
         int maxPriority = __DEFAULT_MAX_PRIORITY;
-        if (filterConfig.getInitParameter(MAX_PRIORITY_INIT_PARAM) != null)
-            maxPriority = Integer.parseInt(filterConfig.getInitParameter(MAX_PRIORITY_INIT_PARAM));
+        final String maxPrioInitParamString =
+                filterConfig.getInitParameter(MAX_PRIORITY_INIT_PARAM);
+        final String maxPrioGlobalConfString =
+                globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
+                                                                   "QOS_MAX_PRIO");
+
+        if (maxPrioGlobalConfString != null) {
+            try {
+                maxPriority = Integer.parseInt(maxPrioGlobalConfString);
+
+                if (maxPriority < 0) {
+                    LOG.error("QOS_MAX_PRIO can not be negative");
+                    // should we bail out? would mean deployment failure...
+                    maxPriority = __DEFAULT_MAX_PRIORITY;
+                }
+            } catch (NumberFormatException e) {
+                LOG.error("Illegal value for QOS_MAX_PRIO: " +
+                          maxPrioGlobalConfString);
+                // should we bail out? would mean deployment failure...
+                maxPriority = __DEFAULT_MAX_PRIORITY;
+            }
+        } else if (maxPrioInitParamString != null) {
+            maxPriority = Integer.parseInt(maxPrioInitParamString);
+        }
 
         createQueuesAndListeners(maxPriority);
     }
@@ -184,6 +206,34 @@ public class QoSFilter implements Filter
             } catch (NumberFormatException e) {
                 LOG.error("Illegal value for QOS_MAX_REQUESTS: " +
                           maxRequestsString + ", ignoring");
+            }
+        }
+
+        final String maxPrioGlobalConfString =
+                globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
+                                                                   "QOS_MAX_PRIO");
+
+        if (maxPrioGlobalConfString != null) {
+            int maxPriority;
+            final int oldMaxPriority = _queues.length - 1;
+
+            try {
+                maxPriority = Integer.parseInt(maxPrioGlobalConfString);
+
+                if (maxPriority < 0) {
+                    LOG.error("QOS_MAX_PRIO can not be negative");
+                    // should we bail out? would mean deployment failure...
+                    maxPriority = __DEFAULT_MAX_PRIORITY;
+                }
+            } catch (NumberFormatException e) {
+                LOG.error("Illegal value for QOS_MAX_PRIO: " +
+                          maxPrioGlobalConfString);
+                // should we bail out? would mean deployment failure...
+                maxPriority = __DEFAULT_MAX_PRIORITY;
+            }
+
+            if (maxPriority != oldMaxPriority) {
+                createQueuesAndListeners(maxPriority);
             }
         }
         

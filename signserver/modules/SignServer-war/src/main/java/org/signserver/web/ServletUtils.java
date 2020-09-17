@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
  * @author Marcus Lundblad
  * @version $Id$
  */
-class ServletUtils {
+public class ServletUtils {
     /* Logger for this class */
     private static Logger LOG = Logger.getLogger(ServletUtils.class);
 
@@ -38,7 +38,7 @@ class ServletUtils {
      * @param uriPrefix The prefix of the request URI (such as /process/worker/)
      * @return A worker name if matching, otherwise null
      */
-    static String parseWorkerName(final HttpServletRequest req,
+    public static String parseWorkerName(final HttpServletRequest req,
                            final String uriPrefix) {
         final String requestURI = req.getRequestURI();
 

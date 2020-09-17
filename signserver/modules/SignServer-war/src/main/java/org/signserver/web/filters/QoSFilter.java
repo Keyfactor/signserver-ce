@@ -40,7 +40,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import static org.signserver.common.GlobalConfiguration.SCOPE_GLOBAL;
+import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
+import org.signserver.web.ServletUtils;
 
 /*J import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.util.annotation.ManagedAttribute;
@@ -108,6 +111,9 @@ public class QoSFilter implements Filter
     @EJB
     private GlobalConfigurationSessionLocal globalSession;
 
+    @EJB
+    private WorkerSessionLocal workerSession;
+    
     public Queue<AsyncContext>[] getQueues() {
         return _queues;
     }
@@ -159,7 +165,7 @@ public class QoSFilter implements Filter
         }
     }
 
-    private void populatePriorityMap(final String property)
+    private synchronized void populatePriorityMap(final String property)
         throws IllegalArgumentException {
         for (final String part : property.split(",")) {
             final String trimmedPart = part.trim();
@@ -220,7 +226,7 @@ public class QoSFilter implements Filter
         createQueuesAndListeners(maxPriority);
     }
 
-    private void createQueuesAndListeners(final int maxPriority) {
+    private synchronized void createQueuesAndListeners(final int maxPriority) {
         _queues = new Queue[maxPriority + 1];
         _listeners = new AsyncListener[_queues.length];
         for (int p = 0; p < _queues.length; ++p)
@@ -437,35 +443,44 @@ public class QoSFilter implements Filter
     }*/
     protected int getPriority(ServletRequest request)
     {
-        HttpServletRequest baseRequest = (HttpServletRequest)request;
-        
-        final String prioValue = request.getParameter("prio");
-        
-        if (prioValue != null && prioValue.contains("high")) {
-            return 1;
+        final HttpServletRequest baseRequest = (HttpServletRequest)request;
+        final String servletPath = baseRequest.getServletPath();
+
+        if ("/worker".equals(servletPath)) {
+            int workerId;
+            final String workerURIStart =
+                baseRequest.getServletContext().getContextPath() + "/worker/";
+            final String workerName = ServletUtils.parseWorkerName(baseRequest,
+                                                                   workerURIStart);
+            
+            try {
+                workerId = workerSession.getWorkerId(workerName);
+            } catch (InvalidWorkerIdException ex) {
+                LOG.error("Trying to get priority for a non-existing worker");
+                return 0;
+            }
+
+            final Integer configuredPriority = workerPriorities.get(workerId);
+
+            if (configuredPriority != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Returning priotity for worker: " + workerId +
+                              ": " + configuredPriority);
+                }
+                return configuredPriority;
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Priority not configured for worker: " + workerId +
+                              ", using default (0)");
+                }
+                return 0;
+            }
         } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Not a /worker request, using default prio (0)");
+            }
             return 0;
         }
-        
-        
-        /*if (prioValue == null) {
-            out.println("Missing parameter prio=high or prio=low");
-                response.sendError(400, "Missing prio parameter");
-                return;
-        }
-        
-        if (baseRequest.getUserPrincipal() != null)
-        {
-            return 2;
-        }
-        else
-        {
-            HttpSession session = baseRequest.getSession(false);
-            if (session != null && !session.isNew())
-                return 1;
-            else
-                return 0;
-        }*/
     }
 
     @Override
@@ -537,7 +552,7 @@ public class QoSFilter implements Filter
      *
      * @param value the number of requests
      */
-    public void setMaxRequests(int value)
+    public synchronized void setMaxRequests(int value)
     {
         _passes = new Semaphore((value - getMaxRequests() + _passes.availablePermits()), true);
         _maxRequests = value;

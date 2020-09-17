@@ -39,7 +39,6 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.signserver.common.GlobalConfiguration;
 import static org.signserver.common.GlobalConfiguration.SCOPE_GLOBAL;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 

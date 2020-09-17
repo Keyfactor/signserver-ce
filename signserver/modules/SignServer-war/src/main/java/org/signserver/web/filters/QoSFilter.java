@@ -19,6 +19,8 @@
 package org.signserver.web.filters; 
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
@@ -113,6 +115,11 @@ public class QoSFilter implements Filter
 
     private AsyncListener[] _listeners;
 
+    // mapping of worker IDs to priority to use
+    private Map<Integer, Integer> workerPriorities = new HashMap<>();
+    // keep track of last set priority conf, to avoid re-creating if it has not changed
+    private String currentPriorityConfigString;
+
     @Override
     public void init(final FilterConfig filterConfig)
     {
@@ -137,6 +144,44 @@ public class QoSFilter implements Filter
         ServletContext context = filterConfig.getServletContext();
         if (context != null && Boolean.parseBoolean(filterConfig.getInitParameter(MANAGED_ATTR_INIT_PARAM)))
             context.setAttribute(filterConfig.getFilterName(), this);
+
+        final String priorityMappingString =
+                globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
+                                                                   "QOS_PRIORITIES");
+        if (priorityMappingString != null) {
+            populatePriorityMap(priorityMappingString);
+        }
+    }
+
+    private void populatePriorityMap(final String property)
+        throws IllegalArgumentException {
+        for (final String part : property.split(",")) {
+            final String trimmedPart = part.trim();
+            final String[] splitPart = part.split(":");
+
+            if (splitPart.length != 2) {
+                throw new IllegalArgumentException("Malformed QOS_PRIORITIES property: " +
+                                                   property);
+            }
+
+            try {
+                final int workerId = Integer.parseInt(splitPart[0].trim());
+                final int priority = Integer.parseInt(splitPart[1].trim());
+
+                workerPriorities.put(workerId, priority);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Malformed QOS_PRIORITIES property: " +
+                                                   property);
+            }
+        }
+
+        currentPriorityConfigString = property;
+    }
+
+    private boolean priorityMappingNeedsUpdate(final String property) {
+        return currentPriorityConfigString == null ||
+               currentPriorityConfigString.length() != property.length() ||
+               !currentPriorityConfigString.equals(property);
     }
 
     private void initQueuesAndListeners(final FilterConfig filterConfig) {
@@ -235,6 +280,17 @@ public class QoSFilter implements Filter
             if (maxPriority != oldMaxPriority) {
                 createQueuesAndListeners(maxPriority);
             }
+        }
+
+        final String priorityMappingString =
+                globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
+                                                                   "QOS_PRIORITIES");
+
+        if (priorityMappingString != null &&
+            priorityMappingNeedsUpdate(priorityMappingString)) {
+            // clear mapping
+            workerPriorities = new HashMap<>();
+            populatePriorityMap(priorityMappingString);
         }
         
         try

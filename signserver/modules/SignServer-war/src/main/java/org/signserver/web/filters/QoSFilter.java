@@ -120,6 +120,13 @@ public class QoSFilter implements Filter
     // keep track of last set priority conf, to avoid re-creating if it has not changed
     private String currentPriorityConfigString;
 
+    // Preliminary global properties for setting up filter:
+    // GLOB.QOS_MAX_REQUESTS=<maximum number of concurrent requests to be handled>
+    // GLOB.QOS_MAX_PRIO=<highest priority level to be used>
+    // GLOB.QOS_PRIORITIES=<comma-separated list of workerID:priority pairs>
+    //
+    // Example: GLOB.QOS_PRIORITIES=1:1,2:10,3:5
+
     @Override
     public void init(final FilterConfig filterConfig)
     {

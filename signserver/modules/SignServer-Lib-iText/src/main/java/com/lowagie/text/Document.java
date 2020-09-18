@@ -111,6 +111,8 @@ public class Document implements DocListener {
 	private static final String RELEASE = "2.1.7";
 	/** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
 	private static final String ITEXT_VERSION = ITEXT + " " + RELEASE + " by 1T3XT";
+        
+    private static final String SIGNSERVER_VERSION = "SignServer";
     
 	/**
 	 * Allows the pdf documents to be produced without compression for debugging
@@ -803,7 +805,7 @@ public class Document implements DocListener {
      * @return iText version
      */    
     public static final String getVersion() {
-        return ITEXT_VERSION;
+        return SIGNSERVER_VERSION;
     }
 
 	/**

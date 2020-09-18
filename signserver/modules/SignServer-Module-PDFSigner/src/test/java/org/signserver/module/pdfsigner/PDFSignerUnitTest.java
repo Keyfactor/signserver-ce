@@ -1740,6 +1740,16 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         assertFalse("Should not contain error", fatalErrors.contains(ILLEGAL_DIGEST_FOR_DSA_MESSAGE));
     }
+    
+    public void test20MetadataProducerField() throws Exception {
+        byte[] result = signPDF(sample);
+
+        PdfReader reader = new PdfReader(result);
+        PRIndirectReference iInfo = (PRIndirectReference)reader.getTrailer().get(PdfName.INFO);
+        PdfDictionary info = (PdfDictionary)PdfReader.getPdfObject(iInfo);
+        reader.close();
+        assertEquals("LibreOffice 3.3; modified using SignServer", info.getAsString(PdfName.PRODUCER).toUnicodeString());
+    }
 
     /**
      * Helper method creating a mocked token, using DSA or RSA keys.

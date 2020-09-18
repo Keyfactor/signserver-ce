@@ -161,7 +161,11 @@ public class QoSFilter implements Filter
                 globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
                                                                    "QOS_PRIORITIES");
         if (priorityMappingString != null) {
-            populatePriorityMap(priorityMappingString);
+            try {
+                populatePriorityMap(priorityMappingString);
+            } catch (IllegalArgumentException e) {
+                LOG.error("Failed to create priorities: " + e.getMessage());
+            }
         }
     }
 
@@ -180,7 +184,13 @@ public class QoSFilter implements Filter
                 final int workerId = Integer.parseInt(splitPart[0].trim());
                 final int priority = Integer.parseInt(splitPart[1].trim());
 
-                workerPriorities.put(workerId, priority);
+                if (priority < 0) {
+                    throw new IllegalArgumentException("A priority can not be negative");
+                } else if (priority > _queues.length - 1) {
+                    throw new IllegalArgumentException("A priority can not be higher than the maximum value");
+                } else {
+                    workerPriorities.put(workerId, priority);
+                }
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("Malformed QOS_PRIORITIES property: " +
                                                    property);
@@ -302,7 +312,11 @@ public class QoSFilter implements Filter
             priorityMappingNeedsUpdate(priorityMappingString)) {
             // clear mapping
             workerPriorities = new HashMap<>();
-            populatePriorityMap(priorityMappingString);
+            try {
+                populatePriorityMap(priorityMappingString);
+            } catch (IllegalArgumentException e) {
+                LOG.error("Failed to create priorities: " + e.getMessage());
+            }
         }
         
         try

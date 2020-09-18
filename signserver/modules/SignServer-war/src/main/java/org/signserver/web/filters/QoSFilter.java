@@ -129,8 +129,6 @@ public class QoSFilter implements Filter
     @Override
     public void init(final FilterConfig filterConfig)
     {
-        initQueuesAndListeners(filterConfig);
-
         int maxRequests = __DEFAULT_PASSES;
         if (filterConfig.getInitParameter(MAX_REQUESTS_INIT_PARAM) != null)
             maxRequests = Integer.parseInt(filterConfig.getInitParameter(MAX_REQUESTS_INIT_PARAM));
@@ -186,36 +184,6 @@ public class QoSFilter implements Filter
         }
 
         return workerPriorities;
-    }
-
-    private void initQueuesAndListeners(final FilterConfig filterConfig) {
-        int maxPriority = __DEFAULT_MAX_PRIORITY;
-        final String maxPrioInitParamString =
-                filterConfig.getInitParameter(MAX_PRIORITY_INIT_PARAM);
-        final String maxPrioGlobalConfString =
-                globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
-                                                                   "QOS_MAX_PRIO");
-
-        if (maxPrioGlobalConfString != null) {
-            try {
-                maxPriority = Integer.parseInt(maxPrioGlobalConfString);
-
-                if (maxPriority < 0) {
-                    LOG.error("QOS_MAX_PRIO can not be negative");
-                    // should we bail out? would mean deployment failure...
-                    maxPriority = __DEFAULT_MAX_PRIORITY;
-                }
-            } catch (NumberFormatException e) {
-                LOG.error("Illegal value for QOS_MAX_PRIO: " +
-                          maxPrioGlobalConfString);
-                // should we bail out? would mean deployment failure...
-                maxPriority = __DEFAULT_MAX_PRIORITY;
-            }
-        } else if (maxPrioInitParamString != null) {
-            maxPriority = Integer.parseInt(maxPrioInitParamString);
-        }
-
-        createQueuesAndListeners(maxPriority);
     }
 
     private void createQueuesAndListeners(final int maxPriority) {
@@ -357,34 +325,11 @@ public class QoSFilter implements Filter
 
     /**
      * Computes the request priority.
-     * <p>
-     * The default implementation assigns the following priorities:
-     * <ul>
-     * <li> 2 - for an authenticated request
-     * <li> 1 - for a request with valid / non new session
-     * <li> 0 - for all other requests.
-     * </ul>
-     * This method may be overridden to provide application specific priorities.
      *
      * @param request the incoming request
+     * @param workerPriorities mapping of worker IDs to priority levels
      * @return the computed request priority
      */
-    /*protected int getPriority(ServletRequest request)
-    {
-        HttpServletRequest baseRequest = (HttpServletRequest)request;
-        if (baseRequest.getUserPrincipal() != null)
-        {
-            return 2;
-        }
-        else
-        {
-            HttpSession session = baseRequest.getSession(false);
-            if (session != null && !session.isNew())
-                return 1;
-            else
-                return 0;
-        }
-    }*/
     protected int getPriority(ServletRequest request,
                               Map<Integer, Integer> workerPriorities)
     {
@@ -420,6 +365,9 @@ public class QoSFilter implements Filter
                 }
                 return 0;
             }
+        } else if ("/adminweb".equals(servletPath)) {
+            // always prioritize requests to the admin web interfaces at highest prio
+            return _queues.length - 1;
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Not a /worker request, using default prio (0)");

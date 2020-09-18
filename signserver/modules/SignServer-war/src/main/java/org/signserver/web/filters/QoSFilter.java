@@ -151,6 +151,7 @@ public class QoSFilter implements Filter
         if (context != null && Boolean.parseBoolean(filterConfig.getInitParameter(MANAGED_ATTR_INIT_PARAM)))
             context.setAttribute(filterConfig.getFilterName(), this);
 
+        // TODO: should be read from config
         createQueuesAndListeners(__DEFAULT_MAX_PRIORITY);
     }
 

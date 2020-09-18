@@ -89,7 +89,7 @@ public class QoSFilter implements Filter
 {
     private static final Logger LOG = Logger.getLogger(QoSFilter.class);
 
-    static final int __DEFAULT_MAX_PRIORITY = 10;
+    static final int __DEFAULT_MAX_PRIORITY = 5;
     static final int __DEFAULT_PASSES = 10;
     static final int __DEFAULT_WAIT_MS = 50;
     static final long __DEFAULT_TIMEOUT_MS = -1;
@@ -120,17 +120,11 @@ public class QoSFilter implements Filter
 
     private AsyncListener[] _listeners;
 
-    // mapping of worker IDs to priority to use
-    private Map<Integer, Integer> workerPriorities = new HashMap<>();
-    // keep track of last set priority conf, to avoid re-creating if it has not changed
-    private String currentPriorityConfigString;
-
     // Preliminary global properties for setting up filter:
     // GLOB.QOS_MAX_REQUESTS=<maximum number of concurrent requests to be handled>
-    // GLOB.QOS_MAX_PRIO=<highest priority level to be used>
     // GLOB.QOS_PRIORITIES=<comma-separated list of workerID:priority pairs>
     //
-    // Example: GLOB.QOS_PRIORITIES=1:1,2:10,3:5
+    // Example: GLOB.QOS_PRIORITIES=1:1,2:2,3:5
 
     @Override
     public void init(final FilterConfig filterConfig)
@@ -157,20 +151,13 @@ public class QoSFilter implements Filter
         if (context != null && Boolean.parseBoolean(filterConfig.getInitParameter(MANAGED_ATTR_INIT_PARAM)))
             context.setAttribute(filterConfig.getFilterName(), this);
 
-        final String priorityMappingString =
-                globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
-                                                                   "QOS_PRIORITIES");
-        if (priorityMappingString != null) {
-            try {
-                populatePriorityMap(priorityMappingString);
-            } catch (IllegalArgumentException e) {
-                LOG.error("Failed to create priorities: " + e.getMessage());
-            }
-        }
+        createQueuesAndListeners(__DEFAULT_MAX_PRIORITY);
     }
 
-    private synchronized void populatePriorityMap(final String property)
+    private Map<Integer, Integer> createPriorityMap(final String property)
         throws IllegalArgumentException {
+        final Map<Integer, Integer> workerPriorities = new HashMap<>();
+        
         for (final String part : property.split(",")) {
             final String trimmedPart = part.trim();
             final String[] splitPart = part.split(":");
@@ -197,13 +184,7 @@ public class QoSFilter implements Filter
             }
         }
 
-        currentPriorityConfigString = property;
-    }
-
-    private boolean priorityMappingNeedsUpdate(final String property) {
-        return currentPriorityConfigString == null ||
-               currentPriorityConfigString.length() != property.length() ||
-               !currentPriorityConfigString.equals(property);
+        return workerPriorities;
     }
 
     private void initQueuesAndListeners(final FilterConfig filterConfig) {
@@ -236,7 +217,7 @@ public class QoSFilter implements Filter
         createQueuesAndListeners(maxPriority);
     }
 
-    private synchronized void createQueuesAndListeners(final int maxPriority) {
+    private void createQueuesAndListeners(final int maxPriority) {
         _queues = new Queue[maxPriority + 1];
         _listeners = new AsyncListener[_queues.length];
         for (int p = 0; p < _queues.length; ++p)
@@ -252,68 +233,16 @@ public class QoSFilter implements Filter
         boolean accepted = false;
 
         // TODO: should cache the value instead of looking up through global config each time
-        final String maxRequestsString =
-                globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
-                                                                   "QOS_MAX_REQUESTS");
-
-        if (maxRequestsString != null) {
-            try {
-                final int maxRequests = Integer.parseInt(maxRequestsString);
-
-                if (maxRequests < 1) {
-                    LOG.error("Illegal value for QOS_MAX_REQUESTS: " +
-                              maxRequestsString + ", ignoring");
-                } else {
-                    final int oldMaxRequests = getMaxRequests();
-
-                    if (maxRequests != oldMaxRequests) {
-                        setMaxRequests(maxRequests);
-                    }
-                }
-            } catch (NumberFormatException e) {
-                LOG.error("Illegal value for QOS_MAX_REQUESTS: " +
-                          maxRequestsString + ", ignoring");
-            }
-        }
-
-        final String maxPrioGlobalConfString =
-                globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
-                                                                   "QOS_MAX_PRIO");
-
-        if (maxPrioGlobalConfString != null) {
-            int maxPriority;
-            final int oldMaxPriority = _queues.length - 1;
-
-            try {
-                maxPriority = Integer.parseInt(maxPrioGlobalConfString);
-
-                if (maxPriority < 0) {
-                    LOG.error("QOS_MAX_PRIO can not be negative");
-                    // should we bail out? would mean deployment failure...
-                    maxPriority = __DEFAULT_MAX_PRIORITY;
-                }
-            } catch (NumberFormatException e) {
-                LOG.error("Illegal value for QOS_MAX_PRIO: " +
-                          maxPrioGlobalConfString);
-                // should we bail out? would mean deployment failure...
-                maxPriority = __DEFAULT_MAX_PRIORITY;
-            }
-
-            if (maxPriority != oldMaxPriority) {
-                createQueuesAndListeners(maxPriority);
-            }
-        }
-
+        // TODO: should update max requests and priority levels if needed
+        
         final String priorityMappingString =
                 globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
                                                                    "QOS_PRIORITIES");
-
-        if (priorityMappingString != null &&
-            priorityMappingNeedsUpdate(priorityMappingString)) {
-            // clear mapping
-            workerPriorities = new HashMap<>();
+        Map<Integer, Integer> workerPriorities = new HashMap<>();
+        
+        if (priorityMappingString != null) {
             try {
-                populatePriorityMap(priorityMappingString);
+                workerPriorities = createPriorityMap(priorityMappingString);
             } catch (IllegalArgumentException e) {
                 LOG.error("Failed to create priorities: " + e.getMessage());
             }
@@ -334,7 +263,7 @@ public class QoSFilter implements Filter
                 else
                 {
                     request.setAttribute(_suspended, Boolean.TRUE);
-                    int priority = getPriority(request);
+                    int priority = getPriority(request, workerPriorities);
                     AsyncContext asyncContext = request.startAsync();
                     long suspendMs = getSuspendMs();
                     if (suspendMs > 0)
@@ -455,7 +384,8 @@ public class QoSFilter implements Filter
                 return 0;
         }
     }*/
-    protected int getPriority(ServletRequest request)
+    protected int getPriority(ServletRequest request,
+                              Map<Integer, Integer> workerPriorities)
     {
         final HttpServletRequest baseRequest = (HttpServletRequest)request;
         final String servletPath = baseRequest.getServletPath();
@@ -566,7 +496,7 @@ public class QoSFilter implements Filter
      *
      * @param value the number of requests
      */
-    public synchronized void setMaxRequests(int value)
+    public void setMaxRequests(int value)
     {
         _passes = new Semaphore((value - getMaxRequests() + _passes.availablePermits()), true);
         _maxRequests = value;

@@ -517,10 +517,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
      * Checks that all mandatory options are given.
      */
     private void validateOptions() throws IllegalCommandArgumentsException {
-        if (workerName == null && workerId == 0) {
-            throw new IllegalCommandArgumentsException(
-                    "Missing -workername or -workerid");
-        } else if (data == null && inFile == null && inDir == null && outDir == null) {
+        if (data == null && inFile == null && inDir == null && outDir == null) {
             throw new IllegalCommandArgumentsException("Missing -data, -infile or -indir");
         }
         

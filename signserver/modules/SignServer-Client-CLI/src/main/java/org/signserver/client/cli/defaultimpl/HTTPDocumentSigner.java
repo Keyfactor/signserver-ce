@@ -24,6 +24,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
@@ -57,7 +58,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
     private static final String BOUNDARY = "------------------signserver";
 
     private final String workerName;
-    private final int workerId;
+    private final Optional<Integer> workerId;
 
     /** List of host names to try to connect to, or distribute load on for
      *  load balancing
@@ -95,7 +96,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         this.servlet = servlet;
         this.useHTTPS = useHTTPS;
         this.workerName = workerName;
-        this.workerId = 0;
+        this.workerId = Optional.empty();
         this.username = username;
         this.password = password;
         this.accessToken = accessToken;
@@ -118,7 +119,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         this.servlet = servlet;
         this.useHTTPS = useHTTPS;
         this.workerName = null;
-        this.workerId = workerId;
+        this.workerId = Optional.of(workerId);
         this.username = username;
         this.password = password;
         this.accessToken = accessToken;
@@ -137,7 +138,7 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending sign request "
                     + " containing data of length " + size + " bytes"
-                    + " to worker " + workerName);
+                    + (workerName != null ? " to worker " + workerName : ""));
         }
         
         final String nextHost = hostsManager.getNextHostForRequest();
@@ -226,18 +227,19 @@ public class HTTPDocumentSigner extends AbstractDocumentSigner {
             sb.append("--" + BOUNDARY);
             sb.append(CRLF);
             
-            if (workerName == null) {
+            if (workerName == null && workerId.isPresent()) {
                 sb.append("Content-Disposition: form-data; name=\"workerId\"");
                 sb.append(CRLF);
                 sb.append(CRLF);
-                sb.append(workerId);
-            } else {
+                sb.append(workerId.get());
+                sb.append(CRLF);
+            } else if (workerName != null) {
                 sb.append("Content-Disposition: form-data; name=\"workerName\"");
                 sb.append(CRLF);
                 sb.append(CRLF);
                 sb.append(workerName);
+                sb.append(CRLF);
             }
-            sb.append(CRLF);
             
             if (pdfPassword != null) {
                 sb.append("--" + BOUNDARY).append(CRLF)

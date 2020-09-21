@@ -22,6 +22,7 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.io.IOUtils;
 
 import org.apache.log4j.Logger;
@@ -49,7 +50,7 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
     
     private URL processServlet;
     private String workerName;
-    private int workerId;
+    private Optional<Integer> workerId;
     private String username;
     private String password;
     private String accessToken;
@@ -62,7 +63,7 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
             final Map<String, String> metadata) {
         this.processServlet = processServlet;
         this.workerName = workerName;
-        this.workerId = 0;
+        this.workerId = Optional.empty();
         this.username = username;
         this.password = password;
         this.accessToken = accessToken;
@@ -76,7 +77,7 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
             final Map<String, String> metadata) {
         this.processServlet = processServlet;
         this.workerName = null;
-        this.workerId = workerId;
+        this.workerId = Optional.of(workerId);
         this.username = username;
         this.password = password;
         this.accessToken = accessToken;
@@ -113,18 +114,20 @@ public class HTTPDocumentValidator extends AbstractDocumentValidator {
             sb.append("--" + BOUNDARY);
             sb.append(CRLF);
             
-            if (workerName == null) {
+            if (workerName == null && workerId.isPresent()) {
                 sb.append("Content-Disposition: form-data; name=\"workerId\"");
                 sb.append(CRLF);
                 sb.append(CRLF);
-                sb.append(workerId);
-            } else {
+                sb.append(workerId.get());
+                sb.append(CRLF);
+            } else if (workerName != null) {
                 sb.append("Content-Disposition: form-data; name=\"workerName\"");
                 sb.append(CRLF);
                 sb.append(CRLF);
                 sb.append(workerName);
+                sb.append(CRLF);
             }
-            sb.append(CRLF);
+
             sb.append("--" + BOUNDARY);
             sb.append(CRLF);
             

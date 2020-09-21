@@ -517,6 +517,10 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
      * Checks that all mandatory options are given.
      */
     private void validateOptions() throws IllegalCommandArgumentsException {
+        if (workerName == null && workerId == 0 && protocol != Protocol.HTTP) {
+            throw new IllegalCommandArgumentsException("Must specify -workername or -workerid when not using protocol HTTP");
+        }
+
         if (data == null && inFile == null && inDir == null && outDir == null) {
             throw new IllegalCommandArgumentsException("Missing -data, -infile or -indir");
         }

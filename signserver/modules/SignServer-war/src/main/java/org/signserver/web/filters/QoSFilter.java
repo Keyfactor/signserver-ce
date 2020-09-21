@@ -370,7 +370,7 @@ public class QoSFilter implements Filter
             return _queues.length - 1;
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Not a /worker request, using default prio (0)");
+                LOG.debug("Not a /worker or /adminweb request, using default prio (0)");
             }
             return 0;
         }

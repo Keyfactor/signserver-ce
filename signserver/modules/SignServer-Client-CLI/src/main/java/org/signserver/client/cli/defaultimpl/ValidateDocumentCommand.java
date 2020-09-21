@@ -183,8 +183,9 @@ public class ValidateDocumentCommand extends AbstractCommand {
             .append("c) ").append(COMMAND).append(" -workerid 2 -infile /tmp/signed.xml -truststore truststore.jks -truststorepwd changeit").append(NL)
             .append("d) ").append(COMMAND).append(" -workerid 2 -infile /tmp/signed.xml -keystore superadmin.jks -keystorepwd foo123").append(NL)
             .append("e) ").append(COMMAND).append(" -workername XMLValidator -protocol HTTP -infile /tmp/signed.xml").append(NL)
-            .append("f) ").append(COMMAND).append(" -workername XMLValidator -infile /tmp/signed.xml -metadata param1=value1 -metadata param2=value2").append(NL);
-
+            .append("f) ").append(COMMAND).append(" -workername XMLValidator -infile /tmp/signed.xml -metadata param1=value1 -metadata param2=value2").append(NL)
+            .append("g) ").append(COMMAND).append(" -data \"<root><Signature... -servlet /signserver/worker/XMLValidator -protocol HTTP");
+                
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();
         try (PrintWriter pw = new PrintWriter(bout)) {

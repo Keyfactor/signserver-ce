@@ -328,7 +328,8 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
             .append("j) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11 -keystore libcryptoki.so").append(NL)
             .append("k) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11 -keystore libcryptoki.so -keyaliasprompt").append(NL)
             .append("l) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11 -keystore libcryptoki.so -keyalias admin3").append(NL)
-            .append("m) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11_CONFIG -keystore sunpkcs11.cfg").append(NL);
+            .append("m) ").append(COMMAND).append(" -workerid 2 -data \"<root/>\" -keystoretype PKCS11_CONFIG -keystore sunpkcs11.cfg").append(NL)
+            .append("n) ").append(COMMAND).append(" -data \"<root/>\" -servlet /signserver/worker/XMLSigner").append(NL); 
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final HelpFormatter formatter = new HelpFormatter();

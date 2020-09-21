@@ -276,9 +276,9 @@ public class ValidateDocumentCommand extends AbstractCommand {
      * Checks that all mandadory options are given.
      */
     private void validateOptions() throws ParseException, IllegalCommandArgumentsException {
-        if (workerName == null && workerId == 0) {
+        if (workerName == null && workerId == 0 && protocol != Protocol.HTTP) {
             throw new ParseException(
-                    "Missing -workername or -workerid");
+                    "Must specify -workername or -workerid when not using protocol HTTP");
         } else if (data == null && inFile == null) {
             throw new ParseException("Missing -data or -infile");
         }

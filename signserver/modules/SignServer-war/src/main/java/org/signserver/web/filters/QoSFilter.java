@@ -296,27 +296,31 @@ public class QoSFilter implements Filter
             {
                 _passes.release();
 
-                for (int p = _queues.length - 1; p >= 0; --p)
+                processQueues();
+            }
+        }
+    }
+    
+    protected final void processQueues() {
+        for (int p = _queues.length - 1; p >= 0; --p)
+        {
+            AsyncContext asyncContext = _queues[p].poll();
+            if (asyncContext != null)
+            {
+                ServletRequest candidate = asyncContext.getRequest();
+                Boolean suspended = (Boolean)candidate.getAttribute(_suspended);
+                if (Boolean.TRUE.equals(suspended))
                 {
-                    AsyncContext asyncContext = _queues[p].poll();
-                    if (asyncContext != null)
+                    try
+                    {  
+                        candidate.setAttribute(_resumed, Boolean.TRUE);
+                        asyncContext.dispatch();
+                        break;
+                    }
+                    catch (IllegalStateException x)
                     {
-                        ServletRequest candidate = asyncContext.getRequest();
-                        Boolean suspended = (Boolean)candidate.getAttribute(_suspended);
-                        if (Boolean.TRUE.equals(suspended))
-                        {
-                            try
-                            {  
-                                candidate.setAttribute(_resumed, Boolean.TRUE);
-                                asyncContext.dispatch();
-                                break;
-                            }
-                            catch (IllegalStateException x)
-                            {
-                                LOG.warn(x);
-                                continue;
-                            }
-                        }
+                        LOG.warn(x);
+                        continue;
                     }
                 }
             }

@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
@@ -65,6 +66,17 @@ class QoSAsyncListener implements AsyncListener {
 
     @Override
     public void onComplete(AsyncEvent event) throws IOException {
+        // Note: This is different from the original QoSFilter.
+        // As it turned out the original filter (when running on WildFly at 
+        // least) did not call the filter again after asyncContext.dispatch()
+        // and thus the queues are only processed when there is a new request
+        // coming in and which is accepted. This means that it could happen that
+        // requests gets stuck in the queue if no more requests are coming in.
+        // Instead poll the first entry from the first queue now.
+        // Note that this does not require a pass so it needs to be investigated
+        // if this could lead to too many requests being served at the same
+        // time (?).
+        outer.processQueues();
     }
 
     @Override

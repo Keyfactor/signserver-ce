@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.5.0</p>
+                    <p>Version: 5.5.1</p>
                 </div>
             </header>
 
@@ -1477,29 +1477,29 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Reference.html">SignServer Reference</a></li>
                                                             </ul>
-</div>            <h1 id="src-85197075"> <span>SignServer Components</span></h1>
+</div>            <h1 id="src-99157360"> <span>SignServer Components</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >SignServer Components provide specific functionality and are configured in the SignServer workers.    </p>
-    <div class="section section-1" id="src-85197075_id-.SignServerComponentsv5.3.0-CryptoTokens">
+    <div class="section section-1" id="src-99157360_id-.SignServerComponentsv5.5.0-CryptoTokens">
         <h1 class="heading "><span>Crypto Tokens</span></h1>
-    <p  ><a   href="CryptoTokens.html">Crypto Tokens</a> provide access to the keys and cryptography operations. Each Signer is typically configured with a reference to a Crypto Worker having a Crypto Token configured. A Crypto Token using a software keystore is the <a   href="http://confluence.primekey.com/display/SIGNDS/.P12CryptoToken+v5.5.0">P12CryptoToken</a> and one using a Hardware Security Module (HSM) is the <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>.    </p>
+    <p  ><a   href="CryptoTokens.html">Crypto Tokens</a> provide access to the keys and cryptography operations. Each Signer is typically configured with a reference to a Crypto Worker having a Crypto Token configured. A Crypto Token using a software keystore is the <a   href="KeyStoreCryptoToken.html">P12CryptoToken</a> and one using a Hardware Security Module (HSM) is the <a   href="PKCS11CryptoToken.html">PKCS11CryptoToken</a>.    </p>
     </div>
-    <div class="section section-1" id="src-85197075_id-.SignServerComponentsv5.3.0-Archivers">
+    <div class="section section-1" id="src-99157360_id-.SignServerComponentsv5.5.0-Archivers">
         <h1 class="heading "><span>Archivers</span></h1>
     <p  >By configuring one or more <a   href="Archivers.html">Archivers</a> on a worker, the request and/or response can be stored by the Archiver, for example, to the database (using the <a   href="Base64DatabaseArchiver.html">Base64DatabaseArchiver</a>).    </p>
     </div>
-    <div class="section section-1" id="src-85197075_id-.SignServerComponentsv5.3.0-Accounters">
+    <div class="section section-1" id="src-99157360_id-.SignServerComponentsv5.5.0-Accounters">
         <h1 class="heading "><span>Accounters</span></h1>
     <p  ><a   href="Accounters.html">Accounters</a> can be implemented and configured to integrate with for example an external accounting or billing system.    </p>
     </div>
-    <div class="section section-1" id="src-85197075_id-.SignServerComponentsv5.3.0-AliasSelectors">
+    <div class="section section-1" id="src-99157360_id-.SignServerComponentsv5.5.0-AliasSelectors">
         <h1 class="heading "><span>Alias Selectors</span></h1>
     <p  ><a   href="Alias_Selectors.html">Alias Selectors</a> allow controlling how the key used for signing is selected at run-time based on the signing request. For example, it is possible to have keys selected based on the authenticated user for a signing request.    </p>
     </div>
-    <div class="section section-1" id="src-85197075_id-.SignServerComponentsv5.3.0-Authorizers">
+    <div class="section section-1" id="src-99157360_id-.SignServerComponentsv5.5.0-Authorizers">
         <h1 class="heading "><span>Authorizers</span></h1>
     <p  ><a   href="Authorizers.html">Authorizers</a> are responsible for deciding if a request should be allowed or not. Options include HTTPS/TLS client certificate authentication, HTTP Basic Authentication, IP address restrictions or using a reverse proxy. For more information, see <a   href="SignServer_Authentication_and_Authorization.html">SignServer Authentication and Authorization</a>.    </p>
     <p  >    </p>

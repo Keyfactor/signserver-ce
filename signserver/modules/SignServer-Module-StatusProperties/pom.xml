@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.5.1.Alpha1-SNAPSHOT</version>
+        <version>5.5.1.Beta1-prio-wp1-1</version>
     </parent>
     <artifactId>SignServer-Module-StatusProperties</artifactId>
     <name>SignServer-Module-StatusProperties</name>

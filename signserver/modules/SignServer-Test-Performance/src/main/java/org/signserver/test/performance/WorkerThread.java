@@ -48,11 +48,9 @@ public class WorkerThread extends Thread {
     private final File statFile;
     protected Random random;
     protected Task task;
-    private boolean continueOnFailure;
        
     public WorkerThread(final String name, final FailureCallback failureCallback,
-            long maxWaitTime, int seed, long warmupTime, final long limitedTime,
-            final File statFile, final boolean continueOnFailure) {
+            long maxWaitTime, int seed, long warmupTime, final long limitedTime, final File statFile) {
         super(name);
         this.failureCallback = failureCallback;
         this.maxWaitTime = maxWaitTime;
@@ -60,7 +58,6 @@ public class WorkerThread extends Thread {
         this.limitedTime = limitedTime;
         this.statFile = statFile;
         this.random = new Random(seed);
-        this.continueOnFailure = continueOnFailure;
     }
 
     @Override
@@ -76,8 +73,7 @@ public class WorkerThread extends Thread {
             }
             while (!isStop()) {
                 long currentTime = (new Date().getTime());
-                long estimatedTime = 0;
-                boolean successfull;
+                long estimatedTime;
                 
                 if (limitedTime > 0 && currentTime > startTime + limitedTime) {
                     break;
@@ -85,16 +81,12 @@ public class WorkerThread extends Thread {
                 
                 try {
                     estimatedTime = task.run();
-                    successfull = true;
                 } catch (FailedException ex) {
-                    if (!continueOnFailure) {
-                        fireFailure("Thread " + getName() + ": Failed after " + getOperationsPerformed() + " signings: " + ex.getMessage());
-                        break;
-                    }
-                    successfull = false;
+                    fireFailure("Thread " + getName() + ": Failed after " + getOperationsPerformed() + " signings: " + ex.getMessage());
+                    break;
                 }
               
-                if (currentTime > startTime + warmupTime && successfull) {
+                if (currentTime > startTime + warmupTime) {
                     addResponseTime(estimatedTime);
                     if (out != null) {
                         out.write((System.currentTimeMillis() /*- startTime*/) + ";" + estimatedTime);

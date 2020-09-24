@@ -31,10 +31,8 @@ public class DocumentSignerThread extends WorkerThread {
             final boolean useWorkerServlet, final byte[] data, final File infile, final String workerNameOrId, final String processType,
             int maxWaitTime,
             int seed, long warmupTime, final long limitedTime, final File statFile,
-            final String userPrefix, final Integer userSuffixMin, final Integer userSuffixMax,
-            final boolean continueOnFailure) {
-        super(name, failureCallback, maxWaitTime, seed, warmupTime, limitedTime,
-              statFile, continueOnFailure);
+            final String userPrefix, final Integer userSuffixMin, final Integer userSuffixMax) {
+        super(name, failureCallback, maxWaitTime, seed, warmupTime, limitedTime, statFile);
         this.task = new DocumentSigner(url, useWorkerServlet, data, infile, workerNameOrId, processType, random, userPrefix, userSuffixMin, userSuffixMax);
     }
 }

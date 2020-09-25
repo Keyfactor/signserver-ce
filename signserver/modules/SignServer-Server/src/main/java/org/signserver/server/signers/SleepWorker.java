@@ -75,6 +75,9 @@ public class SleepWorker extends BaseProcessable {
     private static final String REQUEST_CONTENT_TYPE = "text/plain";
     private static final String RESPONSE_CONTENT_TYPE = "text/plain";
 
+    // Priority log field
+    private static final String QOS_PRIORITY = "QOS_PRIORITY";
+    
     // Configuration errors
     private final LinkedList<String> configErrors = new LinkedList<>();
 
@@ -125,6 +128,14 @@ public class SleepWorker extends BaseProcessable {
             // Log anything interesting from the request to the worker logger
             LogMap.getInstance(requestContext).put(LOG_NAME, name);
 
+            // Log priority level if available
+            final Integer qosPrio = (Integer) requestContext.get(QOS_PRIORITY);
+
+            LogMap.getInstance(requestContext).put(QOS_PRIORITY,
+                                                   qosPrio != null ?
+                                                   qosPrio.toString() :
+                                                   "not set");
+            
             // Additional debug logging using Log4j
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Will produce a greeting for: " + name);

@@ -59,6 +59,7 @@ import org.signserver.validationservice.common.Validation;
 import javax.servlet.http.Cookie;
 import org.signserver.common.RequestContext;
 import static org.signserver.common.SignServerConstants.X_SIGNSERVER_ERROR_MESSAGE;
+import org.signserver.web.filters.QoSFilter;
 
 /**
  * GenericProcessServlet is a general Servlet passing on it's request info to the worker configured by either
@@ -539,6 +540,13 @@ public class GenericProcessServlet extends AbstractProcessServlet {
             LOG.debug("Received bytes of length: " + data.getLength());
         }
 
+        final Integer qosPrio =
+                (Integer) req.getAttribute(QoSFilter.QOS_PRIORITY_ATTRIBUTE);
+
+        if (qosPrio != null) {
+            context.put(QoSFilter.QOS_PRIORITY_ATTRIBUTE, qosPrio);
+        }
+        
         final int requestId = ThreadLocalRandom.current().nextInt();
 
         try (CloseableWritableData responseData = dataFactory.createWritableData(data, uploadConfig.getRepository())) {

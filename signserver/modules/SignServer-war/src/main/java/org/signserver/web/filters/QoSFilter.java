@@ -108,6 +108,9 @@ public class QoSFilter implements Filter
     private Semaphore _passes;
     private Queue<AsyncContext>[] _queues;
 
+    // request attributes
+    public static String QOS_PRIORITY_ATTRIBUTE = "QOS_PRIORITY";
+    
     @EJB
     private GlobalConfigurationSessionLocal globalSession;
 
@@ -241,6 +244,7 @@ public class QoSFilter implements Filter
                     _queues[priority].add(asyncContext);
                     if (LOG.isDebugEnabled())
                         LOG.debug("Suspended " + request);
+                    request.setAttribute(QOS_PRIORITY_ATTRIBUTE, priority);
                     return;
                 }
             }

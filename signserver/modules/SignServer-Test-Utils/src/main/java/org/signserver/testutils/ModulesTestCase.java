@@ -469,10 +469,17 @@ public class ModulesTestCase extends TestCase {
     public void addDummySigner(final String className, final String cryptoTokenClassName, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
         getWorkerSession().setWorkerProperty(signerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         getWorkerSession().setWorkerProperty(signerId, "IMPLEMENTATION_CLASS", className);
-        getWorkerSession().setWorkerProperty(signerId, "CRYPTOTOKEN_IMPLEMENTATION_CLASS", cryptoTokenClassName);
+        if (cryptoTokenClassName != null) {
+            getWorkerSession().setWorkerProperty(signerId,
+                                                 "CRYPTOTOKEN_IMPLEMENTATION_CLASS",
+                                                 cryptoTokenClassName);
+        }
         getWorkerSession().setWorkerProperty(signerId, "NAME", signerName);
         getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
-        getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPATH", keystore.getAbsolutePath());
+        if (keystore != null) {
+            getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPATH",
+                                                 keystore.getAbsolutePath());
+        }
         if (alias != null) {
             getWorkerSession().setWorkerProperty(signerId, "DEFAULTKEY", alias);
         }

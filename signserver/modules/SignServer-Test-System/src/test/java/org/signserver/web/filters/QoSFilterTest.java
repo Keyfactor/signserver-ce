@@ -27,6 +27,8 @@ import org.cesecore.util.query.Criteria;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.Term;
 import org.junit.AfterClass;
+import org.junit.Assume;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.signserver.admin.common.query.AuditLogFields;
@@ -62,6 +64,13 @@ public class QoSFilterTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID1, "WORKERLOGGER",
                                         "org.signserver.server.log.SecurityEventsWorkerLogger");
         workerSession.reloadConfiguration(WORKERID1);
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        Assume.assumeFalse("Test does not run in NODB mode",
+                           "nodb".equalsIgnoreCase(getDeployConfig().getProperty("database.name")));
+        
     }
 
     /**

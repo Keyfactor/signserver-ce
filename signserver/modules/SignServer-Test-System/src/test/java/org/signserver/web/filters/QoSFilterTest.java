@@ -27,11 +27,8 @@ import org.cesecore.util.query.Criteria;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.Term;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runners.MethodSorters;
 import org.signserver.admin.common.query.AuditLogFields;
 import org.signserver.admin.common.query.QueryUtil;
 import org.signserver.common.CESeCoreModules;
@@ -66,10 +63,16 @@ public class QoSFilterTest extends ModulesTestCase {
                                         "org.signserver.server.log.SecurityEventsWorkerLogger");
         workerSession.reloadConfiguration(WORKERID1);
     }
-    
+
+    /**
+     * Test that a single request will not be queued by the QoSFilter.
+     *
+     * @throws Exception 
+     */
     @Test
     public void test02SingleRequest() throws Exception {
-        clientCLI.execute("signdocument", "-workername", WORKERNAME1,
+        clientCLI.execute("signdocument", "-servlet",
+                          "/signserver/worker" + WORKERNAME1,
                           "-data", "foo");
         final List<Map<String, Object>> lastLogFields = queryLastLogFields(1);
 
@@ -85,6 +88,8 @@ public class QoSFilterTest extends ModulesTestCase {
     /**
      * Query the last log field of events of type PROCESS.
      *
+     * @param numRows number of last rows to include, will cause failure if
+     *                this number of rows are not found
      * @return additional details map
      * @throws Exception 
      */
@@ -104,9 +109,9 @@ public class QoSFilterTest extends ModulesTestCase {
                 workerSession.selectAuditLogs(0, numRows, qc, device);
         assertEquals("new log rows", numRows, logs.size());
         
-        for (final AuditLogEntry row : logs) {
+        logs.forEach(row -> {
             result.add(row.getMapAdditionalDetails());
-        }
+        });
 
         return result;
     }

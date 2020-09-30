@@ -34,7 +34,9 @@ import org.junit.Test;
 import org.signserver.admin.common.query.AuditLogFields;
 import org.signserver.admin.common.query.QueryUtil;
 import org.signserver.common.CESeCoreModules;
+import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ServiceLocator;
+import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
@@ -54,6 +56,7 @@ public class QoSFilterTest extends ModulesTestCase {
     
     private final CLITestHelper clientCLI = getClientCLI();
     private final WorkerSessionRemote workerSession = getWorkerSession();
+    private final GlobalConfigurationSessionRemote globalSession = getGlobalSession();
     private SecurityEventsAuditorSessionRemote auditorSession = null;
     
     @BeforeClass
@@ -64,6 +67,10 @@ public class QoSFilterTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID1, "WORKERLOGGER",
                                         "org.signserver.server.log.SecurityEventsWorkerLogger");
         workerSession.reloadConfiguration(WORKERID1);
+        // set priority mapping
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                  "QOS_PRIORITIES",
+                                  WORKERID1 + ":5");
     }
 
     @Before

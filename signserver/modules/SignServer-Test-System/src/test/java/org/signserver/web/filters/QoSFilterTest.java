@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.naming.NamingException;
+import static junit.framework.TestCase.assertEquals;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.audit.audit.SecurityEventsAuditorSessionRemote;
@@ -47,21 +48,25 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Marcus Lundblad
  * @version $Id$
  */
-public class QoSFilterTest extends ModulesTestCase {
+public class QoSFilterTest {
     /** Logger for this class */
     private static final Logger LOG = Logger.getLogger(QoSFilterTest.class);
 
     private static final int WORKERID1 = 1000;
     private static final String WORKERNAME1 = "SleepWorkerTest";
-    
-    private final CLITestHelper clientCLI = getClientCLI();
-    private final WorkerSessionRemote workerSession = getWorkerSession();
-    private final GlobalConfigurationSessionRemote globalSession = getGlobalSession();
+
+    private static ModulesTestCase modulesTestCase = new ModulesTestCase();
+    private static final CLITestHelper clientCLI = modulesTestCase.getClientCLI();
+    private static final WorkerSessionRemote workerSession =
+            modulesTestCase.getWorkerSession();
+    private static final GlobalConfigurationSessionRemote globalSession =
+            modulesTestCase.getGlobalSession();
     private SecurityEventsAuditorSessionRemote auditorSession = null;
     
+    
     @BeforeClass
-    public void test01Setup() throws Exception {
-        addDummySigner("org.signserver.server.signers.SleepWorker", null,
+    public static void setupClass() throws Exception {
+        modulesTestCase.addDummySigner("org.signserver.server.signers.SleepWorker", null,
                        WORKERID1, WORKERNAME1, null, null, null);
         workerSession.setWorkerProperty(WORKERID1, "SLEEP_TIME", "1000");
         workerSession.setWorkerProperty(WORKERID1, "WORKERLOGGER",
@@ -76,7 +81,7 @@ public class QoSFilterTest extends ModulesTestCase {
     @Before
     public void setUp() throws Exception {
         Assume.assumeFalse("Test does not run in NODB mode",
-                           "nodb".equalsIgnoreCase(getDeployConfig().getProperty("database.name")));
+                           "nodb".equalsIgnoreCase(modulesTestCase.getDeployConfig().getProperty("database.name")));
         
     }
 
@@ -86,7 +91,7 @@ public class QoSFilterTest extends ModulesTestCase {
      * @throws Exception 
      */
     @Test
-    public void test02SingleRequest() throws Exception {
+    public void test01SingleRequest() throws Exception {
         clientCLI.execute("signdocument", "-servlet",
                           "/signserver/worker/" + WORKERNAME1,
                           "-data", "foo");
@@ -97,8 +102,8 @@ public class QoSFilterTest extends ModulesTestCase {
     }
 
     @AfterClass
-    public void test99TearDown() throws Exception {
-        removeWorker(WORKERID1);
+    public static void tearDownClass() throws Exception {
+        modulesTestCase.removeWorker(WORKERID1);
     }
 
     /**

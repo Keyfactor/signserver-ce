@@ -88,7 +88,7 @@ public class QoSFilterTest extends ModulesTestCase {
     @Test
     public void test02SingleRequest() throws Exception {
         clientCLI.execute("signdocument", "-servlet",
-                          "/signserver/worker" + WORKERNAME1,
+                          "/signserver/worker/" + WORKERNAME1,
                           "-data", "foo");
         final List<Map<String, Object>> lastLogFields = queryLastLogFields(1);
 

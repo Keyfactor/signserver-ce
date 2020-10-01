@@ -12,6 +12,9 @@
  *************************************************************************/
 package org.signserver.web.filters;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -20,6 +23,8 @@ import java.util.Map;
 import java.util.Set;
 import javax.naming.NamingException;
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.audit.audit.SecurityEventsAuditorSessionRemote;
@@ -31,7 +36,9 @@ import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.signserver.admin.common.query.AuditLogFields;
 import org.signserver.admin.common.query.QueryUtil;
 import org.signserver.common.CESeCoreModules;
@@ -62,8 +69,13 @@ public class QoSFilterTest {
     private static final GlobalConfigurationSessionRemote globalSession =
             modulesTestCase.getGlobalSession();
     private SecurityEventsAuditorSessionRemote auditorSession = null;
+
+    @Rule
+    public final TemporaryFolder inDir = new TemporaryFolder();
     
-    
+    @Rule
+    public final TemporaryFolder outDir = new TemporaryFolder();
+
     @BeforeClass
     public static void setupClass() throws Exception {
         modulesTestCase.addDummySigner("org.signserver.server.signers.SleepWorker", null,
@@ -101,11 +113,51 @@ public class QoSFilterTest {
                      lastLogFields.get(0).get("QOS_PRIORITY"));
     }
 
+    /**
+     * Test that sending more more requests to the SleepWorker that the
+     * hard-coded max concurrent requests will result in some requests getting
+     * queued by the filter (and thus having the worker log field set
+     * accordingly).
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test02SomeRequestsQueuedAndPrioritized() throws Exception {
+        createTestFiles(20);
+        clientCLI.execute("signdocument", "-servlet",
+                          "/signserver/worker/" + WORKERNAME1,
+                          "-threads", "20",
+                          "-indir", inDir.getRoot().getAbsolutePath(),
+                          "-outdir", outDir.getRoot().getAbsolutePath());
+        final List<Map<String, Object>> lastLogFields =
+                queryLastLogFields(20);
+        int queuedRequests = 0;
+
+        for (final Map<String, Object> details : lastLogFields) {
+            final String prio = (String) details.get("QOS_PRIORITY");
+
+            if ("5".equals(prio)) {
+                queuedRequests++;
+            }
+        }
+
+        assertTrue("Some requests should have been queued at prio 5",
+                   queuedRequests > 0);
+    }
+    
     @AfterClass
     public static void tearDownClass() throws Exception {
         modulesTestCase.removeWorker(WORKERID1);
     }
 
+    private void createTestFiles(final int numFiles) throws IOException {
+        for (int i = 0; i < numFiles; i++) {
+            final File file = inDir.newFile("file-" + i);
+            FileUtils.writeStringToFile(file, "hello", StandardCharsets.UTF_8,
+                                        false);
+        }
+    }
+    
     /**
      * Query the last log field of events of type PROCESS.
      *

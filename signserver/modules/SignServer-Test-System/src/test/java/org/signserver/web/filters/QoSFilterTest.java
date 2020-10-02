@@ -61,6 +61,8 @@ public class QoSFilterTest {
 
     private static final int WORKERID1 = 1000;
     private static final String WORKERNAME1 = "SleepWorkerTest";
+    private static final int WORKERID2 = 1001;
+    private static final String WORKERNAME2 = "SleepWorkerTest2";
 
     private static ModulesTestCase modulesTestCase = new ModulesTestCase();
     private static final CLITestHelper clientCLI = modulesTestCase.getClientCLI();
@@ -84,10 +86,16 @@ public class QoSFilterTest {
         workerSession.setWorkerProperty(WORKERID1, "WORKERLOGGER",
                                         "org.signserver.server.log.SecurityEventsWorkerLogger");
         workerSession.reloadConfiguration(WORKERID1);
-        // set priority mapping
+        modulesTestCase.addDummySigner("org.signserver.server.signers.SleepWorker", null,
+                       WORKERID2, WORKERNAME2, null, null, null);
+        workerSession.setWorkerProperty(WORKERID2, "SLEEP_TIME", "1000");
+        workerSession.setWorkerProperty(WORKERID2, "WORKERLOGGER",
+                                        "org.signserver.server.log.SecurityEventsWorkerLogger");
+        workerSession.reloadConfiguration(WORKERID2);
+        // set priority mapping, include some unused signers to test that parsing
+        // the set works as expected
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                                  "QOS_PRIORITIES",
-                                  WORKERID1 + ":5");
+                                  "QOS_PRIORITIES", "1:1,1000:5,1002:2");
     }
 
     @Before
@@ -144,10 +152,44 @@ public class QoSFilterTest {
         assertTrue("Some requests should have been queued at prio 5",
                    queuedRequests > 0);
     }
+
+    /**
+     * Test that sending more more requests to the SleepWorker that the
+     * hard-coded max concurrent requests will result in some requests getting
+     * queued by the filter (and thus having the worker log field set
+     * accordingly). Using a signer with explicit priority mapping, should
+     * get default (0) prio.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test03SomeRequestsQueuedAndPrioritizedDefaultPrio() throws Exception {
+        createTestFiles(20);
+        clientCLI.execute("signdocument", "-servlet",
+                          "/signserver/worker/" + WORKERNAME2,
+                          "-threads", "20",
+                          "-indir", inDir.getRoot().getAbsolutePath(),
+                          "-outdir", outDir.getRoot().getAbsolutePath());
+        final List<Map<String, Object>> lastLogFields =
+                queryLastLogFields(20);
+        int queuedRequests = 0;
+
+        for (final Map<String, Object> details : lastLogFields) {
+            final String prio = (String) details.get("QOS_PRIORITY");
+
+            if ("0".equals(prio)) {
+                queuedRequests++;
+            }
+        }
+
+        assertTrue("Some requests should have been queued at prio 0",
+                   queuedRequests > 0);
+    }
     
     @AfterClass
     public static void tearDownClass() throws Exception {
         modulesTestCase.removeWorker(WORKERID1);
+        modulesTestCase.removeWorker(WORKERID2);
     }
 
     private void createTestFiles(final int numFiles) throws IOException {

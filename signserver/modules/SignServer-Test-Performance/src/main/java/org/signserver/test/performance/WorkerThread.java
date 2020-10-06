@@ -48,9 +48,13 @@ public class WorkerThread extends Thread {
     private final File statFile;
     protected Random random;
     protected Task task;
-       
+    private boolean continueOnFailure;
+    private long operationsFailed;
+    private long operationsAttempted;
+    
     public WorkerThread(final String name, final FailureCallback failureCallback,
-            long maxWaitTime, int seed, long warmupTime, final long limitedTime, final File statFile) {
+            long maxWaitTime, int seed, long warmupTime, final long limitedTime,
+            final File statFile, final boolean continueOnFailure) {
         super(name);
         this.failureCallback = failureCallback;
         this.maxWaitTime = maxWaitTime;
@@ -58,6 +62,7 @@ public class WorkerThread extends Thread {
         this.limitedTime = limitedTime;
         this.statFile = statFile;
         this.random = new Random(seed);
+        this.continueOnFailure = continueOnFailure;
     }
 
     @Override
@@ -73,7 +78,8 @@ public class WorkerThread extends Thread {
             }
             while (!isStop()) {
                 long currentTime = (new Date().getTime());
-                long estimatedTime;
+                long estimatedTime = 0;
+                boolean successfull;
                 
                 if (limitedTime > 0 && currentTime > startTime + limitedTime) {
                     break;
@@ -81,12 +87,20 @@ public class WorkerThread extends Thread {
                 
                 try {
                     estimatedTime = task.run();
+                    successfull = true;
                 } catch (FailedException ex) {
-                    fireFailure("Thread " + getName() + ": Failed after " + getOperationsPerformed() + " signings: " + ex.getMessage());
-                    break;
+                    if (continueOnFailure) {
+                        LOG.info("Failure occurred in thread " + getName() +
+                                 " after " + operationsAttempted + " requests");
+                    } else {
+                        fireFailure("Thread " + getName() + ": Failed after " + getOperationsPerformed() + " signings: " + ex.getMessage());
+                        break;
+                    }
+                    successfull = false;
+                    operationsFailed++;
                 }
               
-                if (currentTime > startTime + warmupTime) {
+                if (currentTime > startTime + warmupTime && successfull) {
                     addResponseTime(estimatedTime);
                     if (out != null) {
                         out.write((System.currentTimeMillis() /*- startTime*/) + ";" + estimatedTime);
@@ -96,6 +110,8 @@ public class WorkerThread extends Thread {
                 
                 // Sleep
                 Thread.sleep((int) (random.nextDouble() * maxWaitTime));
+
+                operationsAttempted++;
             }
         } catch (IOException ex) {
             if (LOG.isDebugEnabled()) {
@@ -145,6 +161,14 @@ public class WorkerThread extends Thread {
      */
     public long getOperationsPerformed() {
         return operationsPerformed;
+    }
+
+    /**
+     * @return The number of operations that has failed
+     *         (when continue on failure is set).
+     */
+    public long getOperationsFailed() {
+        return operationsFailed;
     }
     
     /**

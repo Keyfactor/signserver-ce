@@ -31,8 +31,12 @@ public class TimeStampThread extends WorkerThread {
     private TimeStamp tsa;
     
     public TimeStampThread(final String name, final FailureCallback failureCallback, final String url, int maxWaitTime,
-    		int seed, long warmupTime, final long limitedTime, final File statFile, final byte[] hashValue, final ASN1ObjectIdentifier hashAlgorithm) {
-        super(name, failureCallback, maxWaitTime, seed, warmupTime, limitedTime, statFile);
+    		int seed, long warmupTime, final long limitedTime,
+                final File statFile, final byte[] hashValue,
+                final ASN1ObjectIdentifier hashAlgorithm,
+                final boolean continueOnFailure) {
+        super(name, failureCallback, maxWaitTime, seed, warmupTime, limitedTime,
+              statFile, continueOnFailure);
         this.task = new TimeStamp(url, random, hashValue, hashAlgorithm);
     }
 

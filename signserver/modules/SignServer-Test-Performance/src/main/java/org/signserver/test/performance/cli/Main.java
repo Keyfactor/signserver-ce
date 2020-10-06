@@ -55,6 +55,7 @@ public class Main {
     private static final String USERPREFIX = "userprefix";
     private static final String USERSUFFIXMIN = "usersuffixmin";
     private static final String USERSUFFIXMAX = "usersuffixmax";
+    private static final String CONTINUE_ON_FAILURE = "continueonfailure";
 
     private static final String NL = System.getProperty("line.separator");
     private static final String COMMAND = "stresstest";
@@ -98,6 +99,7 @@ public class Main {
         OPTIONS.addOption(USERPREFIX, true, "Prefix for usernames.");
         OPTIONS.addOption(USERSUFFIXMIN, true, "Lowest suffix for usernames in form of an integer value (inclusive).");
         OPTIONS.addOption(USERSUFFIXMAX, true, "Highest suffix for usernames in form of an integer value (inclusive).");
+        OPTIONS.addOption(CONTINUE_ON_FAILURE, false, "Specify if test should continue running a failure.");
     }
 
     /**
@@ -256,6 +258,9 @@ public class Main {
                 }
             }
 
+            final boolean continueOnFailure =
+                    commandLine.hasOption(CONTINUE_ON_FAILURE);
+
             // Print info
             LOG.info(String.format(
                   "-- Configuration -----------------------------------------------------------%n"
@@ -308,16 +313,16 @@ public class Main {
             try {
                 switch (ts) {
                 case TimeStamp1:
-                    timeStamp1(threads, numThreads, callback, url, maxWaitTime, warmupTime, limitedTime, statFolder);
+                    timeStamp1(threads, numThreads, callback, url, maxWaitTime, warmupTime, limitedTime, statFolder, continueOnFailure);
                     break;
                 case TimeStamp2:
-                    timeStamp2(threads, numThreads, callback, url, maxWaitTime, warmupTime, limitedTime, statFolder);
+                    timeStamp2(threads, numThreads, callback, url, maxWaitTime, warmupTime, limitedTime, statFolder, continueOnFailure);
                     break;
                 case DocumentSigner1:
-                    documentSigner1(threads, numThreads, callback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder, userPrefix, usersuffixMin, usersuffixMax);
+                    documentSigner1(threads, numThreads, callback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder, userPrefix, usersuffixMin, usersuffixMax, continueOnFailure);
                     break;
                 case DocumentValidator1:
-                    documentValidator1(threads, numThreads, callback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder, userPrefix, usersuffixMin, usersuffixMax);
+                    documentValidator1(threads, numThreads, callback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder, userPrefix, usersuffixMin, usersuffixMax, continueOnFailure);
                     break;
                 default:
                     throw new Exception("Unsupported test suite");
@@ -375,6 +380,7 @@ public class Main {
         // Total statistics
         long totalRunTime = System.currentTimeMillis() - startTime - warmupTime;
         long totalOperationsPerformed = 0;
+        long totalOperationsFailed = 0;
         long totalResponseTime = 0;
         double totalAverageResponseTime;
         long totalMaxResponseTime = 0;
@@ -389,9 +395,11 @@ public class Main {
                 w.join();
 
                 final long operationsPerformed = w.getOperationsPerformed();
+                final long operationsFailed = w.getOperationsFailed();
                 final long maxResponseTime = w.getMaxResponseTime();
                 final long minResponseTime = w.getMinResponseTime();
                 totalOperationsPerformed += operationsPerformed;
+                totalOperationsFailed += operationsFailed;
                 totalResponseTime += w.getResponseTimeSum();
 
                 totalMaxResponseTime = Math.max(totalMaxResponseTime, maxResponseTime);
@@ -419,18 +427,31 @@ public class Main {
             totalRunTime = 0;
         }
 
+        logOutput(totalOperationsPerformed, totalOperationsFailed,
+                  totalMinResponseTime, totalAverageResponseTime,
+                  totalMaxResponseTime, totalRunTime, tps);
+    }
+
+    private static void logOutput(final long totalOperationsPerformed,
+                                  final long totalOperationsFailed,
+                                  final long totalMinResponseTime,
+                                  final double totalAverageResponseTime,
+                                  final long totalMaxResponseTime,
+                                  final long totalRunTime,
+                                  final double tps) {
         LOG.info(String.format(
                   "%n-- Summary -------------------------------------------------------------------%n"
                 + "   End time:                %s%n"
                 + "   Operations performed:    %10d%n"
+                + "   Operations failed:       %10d%n"
                 + "   Minimum response time:   %10d   ms%n"
                 + "   Average response time:   %12.1f ms%n"
                 + "   Maximum response time:   %10d   ms%n"
                 + "   Run time:                %10d   ms%n"
                 + "   Transactions per second: %12.1f tps%n"
-                + "------------------------------------------------------------------------------%n", new Date(), totalOperationsPerformed, totalMinResponseTime, totalAverageResponseTime, totalMaxResponseTime, totalRunTime, tps));
-    }
+                + "------------------------------------------------------------------------------%n", new Date(), totalOperationsPerformed, totalOperationsFailed, totalMinResponseTime, totalAverageResponseTime, totalMaxResponseTime, totalRunTime, tps));
 
+    }
 
     /**
      * Initialize the worker thread list for the time stamp test suite.
@@ -446,7 +467,8 @@ public class Main {
      * @throws Exception
      */
     private static void timeStamp1(final List<WorkerThread> threads, final int numThreads, final FailureCallback failureCallback,
-            final String url, int maxWaitTime, long warmupTime, final long limitedTime, final File statFolder) throws Exception {
+            final String url, int maxWaitTime, long warmupTime, final long limitedTime, final File statFolder,
+            final boolean continueOnFailure) throws Exception {
         final Random random = new Random();
         for (int i = 0; i < numThreads; i++) {
             final String name = "TimeStamp1-" + i;
@@ -457,7 +479,8 @@ public class Main {
                 statFile = new File(statFolder, name + ".csv");
             }
             threads.add(new TimeStampThread(name, failureCallback, url, maxWaitTime, random.nextInt(),
-                    warmupTime, limitedTime, statFile, new byte[20], TSPAlgorithms.SHA1));
+                    warmupTime, limitedTime, statFile, new byte[20], TSPAlgorithms.SHA1,
+                    continueOnFailure));
         }
     }
     
@@ -475,7 +498,8 @@ public class Main {
      * @throws Exception
      */
     private static void timeStamp2(final List<WorkerThread> threads, final int numThreads, final FailureCallback failureCallback,
-            final String url, int maxWaitTime, long warmupTime, final long limitedTime, final File statFolder) throws Exception {
+            final String url, int maxWaitTime, long warmupTime, final long limitedTime, final File statFolder,
+            final boolean continueOnFailure) throws Exception {
         final Random random = new Random();
         for (int i = 0; i < numThreads; i++) {
             final String name = "TimeStamp2-" + i;
@@ -486,7 +510,8 @@ public class Main {
                 statFile = new File(statFolder, name + ".csv");
             }
             threads.add(new TimeStampThread(name, failureCallback, url, maxWaitTime, random.nextInt(),
-                    warmupTime, limitedTime, statFile, new byte[32], TSPAlgorithms.SHA256));
+                    warmupTime, limitedTime, statFile, new byte[32], TSPAlgorithms.SHA256,
+                    continueOnFailure));
         }
     }
 
@@ -508,8 +533,9 @@ public class Main {
             final FailureCallback failureCallback, final String url, final boolean useWorkerServlet,
             final String workerNameOrId, int maxWaitTime, long warmupTime,
             final long limitedTime, final File statFolder,
-            final String userPrefix, final Integer userSuffixMin, final Integer userSuffixMax) throws Exception {
-        documentSignerOrValidator1(threads, numThreads, failureCallback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder, userPrefix, userSuffixMin, userSuffixMax, "DocumentSigner1-", "signDocument");
+            final String userPrefix, final Integer userSuffixMin, final Integer userSuffixMax,
+            final boolean continueOnFailure) throws Exception {
+        documentSignerOrValidator1(threads, numThreads, failureCallback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder, userPrefix, userSuffixMin, userSuffixMax, "DocumentSigner1-", "signDocument", continueOnFailure);
     }
 
     /**
@@ -530,8 +556,9 @@ public class Main {
             final FailureCallback failureCallback, final String url, final boolean useWorkerServlet,
             final String workerNameOrId, int maxWaitTime, long warmupTime,
             final long limitedTime, final File statFolder,
-            final String userPrefix, final Integer userSuffixMin, final Integer userSuffixMax) throws Exception {
-        documentSignerOrValidator1(threads, numThreads, failureCallback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder, userPrefix, userSuffixMin, userSuffixMax, "DocumentValidator1-", "validateDocument");
+            final String userPrefix, final Integer userSuffixMin, final Integer userSuffixMax,
+            final boolean continueOnFailure) throws Exception {
+        documentSignerOrValidator1(threads, numThreads, failureCallback, url, useWorkerServlet, workerNameOrId, maxWaitTime, warmupTime, limitedTime, statFolder, userPrefix, userSuffixMin, userSuffixMax, "DocumentValidator1-", "validateDocument", continueOnFailure);
     }
 
     private static void documentSignerOrValidator1(final List<WorkerThread> threads, final int numThreads,
@@ -539,7 +566,8 @@ public class Main {
             final String workerNameOrId, int maxWaitTime, long warmupTime,
             final long limitedTime, final File statFolder,
             final String userPrefix, final Integer userSuffixMin, final Integer userSuffixMax,
-            final String workerNamePrefix, final String processType) throws Exception {
+            final String workerNamePrefix, final String processType,
+            final boolean continueOnFailure) throws Exception {
         final Random random = new Random();
         for (int i = 0; i < numThreads; i++) {
             final String name = workerNamePrefix + i;
@@ -551,7 +579,7 @@ public class Main {
             }
             threads.add(new DocumentSignerThread(name, failureCallback, url, useWorkerServlet, bytes, infile, workerNameOrId, processType, maxWaitTime,
                     random.nextInt(), warmupTime, limitedTime, statFile,
-                    userPrefix, userSuffixMin, userSuffixMax));
+                    userPrefix, userSuffixMin, userSuffixMax, continueOnFailure));
         }
     }
 }

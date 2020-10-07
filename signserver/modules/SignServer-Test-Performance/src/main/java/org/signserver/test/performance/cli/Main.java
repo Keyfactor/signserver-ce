@@ -99,7 +99,7 @@ public class Main {
         OPTIONS.addOption(USERPREFIX, true, "Prefix for usernames.");
         OPTIONS.addOption(USERSUFFIXMIN, true, "Lowest suffix for usernames in form of an integer value (inclusive).");
         OPTIONS.addOption(USERSUFFIXMAX, true, "Highest suffix for usernames in form of an integer value (inclusive).");
-        OPTIONS.addOption(CONTINUE_ON_FAILURE, false, "Specify if test should continue running a failure.");
+        OPTIONS.addOption(CONTINUE_ON_FAILURE, false, "When this option is specified the test will continue running if a request fails. Failed requests will not be considered for the calculation of the total number of requests and response times. The total number of failed requests will presented in the statistics.");
     }
 
     /**

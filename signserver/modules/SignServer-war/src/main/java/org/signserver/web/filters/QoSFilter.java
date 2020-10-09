@@ -45,12 +45,6 @@ import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.web.ServletUtils;
 
-/*J import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.util.annotation.ManagedAttribute;
-import org.eclipse.jetty.util.annotation.ManagedObject;
-import org.eclipse.jetty.util.log.Log;
-import org.eclipse.jetty.util.log.Logger;*/
-
 /**
  * Quality of Service Filter.
  * <p>
@@ -96,7 +90,6 @@ public class QoSFilter implements Filter
 
     static final String MANAGED_ATTR_INIT_PARAM = "managedAttr";
     static final String MAX_REQUESTS_INIT_PARAM = "maxRequests";
-    static final String MAX_PRIORITY_INIT_PARAM = "maxPriority";
     static final String MAX_WAIT_INIT_PARAM = "waitMs";
     static final String SUSPEND_INIT_PARAM = "suspendMs";
 

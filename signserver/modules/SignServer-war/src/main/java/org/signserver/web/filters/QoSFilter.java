@@ -21,6 +21,7 @@ package org.signserver.web.filters;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
@@ -100,6 +101,11 @@ public class QoSFilter implements Filter
     private int _maxRequests;
     private Semaphore _passes;
     private Queue<AsyncContext>[] _queues;
+    /* Default value of max requests, either hard-coded or from the filter config
+     * from web.xml, used to reset when unsetting QOS_MAX_REQUESTS, or when
+     * getting an invalid value.
+     */
+    private int defaultMaxRequests;
 
     // request attributes
     public static String QOS_PRIORITY_ATTRIBUTE = "QOS_PRIORITY";
@@ -128,6 +134,16 @@ public class QoSFilter implements Filter
         int maxRequests = __DEFAULT_PASSES;
         if (filterConfig.getInitParameter(MAX_REQUESTS_INIT_PARAM) != null)
             maxRequests = Integer.parseInt(filterConfig.getInitParameter(MAX_REQUESTS_INIT_PARAM));
+
+        defaultMaxRequests = maxRequests;
+        
+        final Optional<Integer> maxRequestsGlobalConfig =
+                getMaxRequestsFromConfig();
+
+        if (maxRequestsGlobalConfig.isPresent()) {
+            maxRequests = maxRequestsGlobalConfig.get();
+        }
+        
         _passes = new Semaphore(maxRequests, true);
         _maxRequests = maxRequests;
 
@@ -147,6 +163,29 @@ public class QoSFilter implements Filter
 
         // TODO: should be read from config
         createQueuesAndListeners(__DEFAULT_MAX_PRIORITY);
+    }
+
+    private Optional<Integer> getMaxRequestsFromConfig() {
+        final String maxRequestsConfig = getGlobalParam("QOS_MAX_REQUESTS");
+
+        if (maxRequestsConfig != null) {
+            try {
+                final int maxRequests = Integer.parseInt(maxRequestsConfig);
+
+                if (maxRequests < 1) {
+                    LOG.error("QOS_MAX_REQUESTS must be a positive value");
+                    return Optional.empty();
+                }
+
+                return Optional.of(maxRequests);
+            } catch (NumberFormatException ex) {
+                LOG.error("Illegal value for QOS_MAX_REQUESTS: " + maxRequestsConfig +
+                          ", using default value " + __DEFAULT_PASSES);
+                return Optional.empty();
+            }
+        } else {
+            return Optional.empty();
+        }
     }
 
     private Map<Integer, Integer> createPriorityMap(final String property)
@@ -198,8 +237,20 @@ public class QoSFilter implements Filter
         boolean accepted = false;
 
         // TODO: should cache the value instead of looking up through global config each time
-        // TODO: should update max requests and priority levels if needed
-        
+        // TODO: should update max priority levels if needed
+
+        final Optional<Integer> maxRequestsConfig = getMaxRequestsFromConfig();
+        final int maxRequests = maxRequestsConfig.orElse(defaultMaxRequests);
+
+        if (maxRequests != _maxRequests) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Got new value for max requests: " + maxRequests);
+            }
+
+            _passes = new Semaphore(maxRequests, true);
+            _maxRequests = maxRequests;
+        }
+
         final String priorityMappingString =
                 globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
                                                                    "QOS_PRIORITIES");
@@ -450,6 +501,20 @@ public class QoSFilter implements Filter
     {
         _passes = new Semaphore((value - getMaxRequests() + _passes.availablePermits()), true);
         _maxRequests = value;
+    }
+
+    /**
+     * Get the value of a global configuration value.
+     * 
+     * TODO: later cache the values for some time to avoid doing excessive
+     *       EJB lookups.
+     *
+     * @param param
+     * @return global config parameter value
+     */
+    private String getGlobalParam(final String param) {
+        return globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
+                                                                  param);
     }
 
 }

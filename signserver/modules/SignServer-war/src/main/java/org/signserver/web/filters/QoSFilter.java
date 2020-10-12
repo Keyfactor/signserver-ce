@@ -123,7 +123,8 @@ public class QoSFilter implements Filter
     private AsyncListener[] _listeners;
 
     // Preliminary global properties for setting up filter:
-    // GLOB.QOS_MAX_REQUESTS=<maximum number of concurrent requests to be handled>
+    // GLOB.QOS_MAX_REQUESTS=<maximum number of concurrent requests to be
+    //                        accepted before queueing requests based on priority>
     // GLOB.QOS_PRIORITIES=<comma-separated list of workerID:priority pairs>
     //
     // Example: GLOB.QOS_PRIORITIES=1:1,2:2,3:5

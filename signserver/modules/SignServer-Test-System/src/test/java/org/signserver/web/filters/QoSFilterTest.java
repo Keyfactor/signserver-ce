@@ -185,6 +185,42 @@ public class QoSFilterTest {
         assertTrue("Some requests should have been queued at prio 0",
                    queuedRequests > 0);
     }
+
+    /**
+     * Test that setting max accepted requests to a higher value than
+     * the number of concurrent threads run will not result in queueing requests.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test04HigherMaxRequests() throws Exception {
+        try {
+            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                      "QOS_MAX_REQUESTS", "50");
+            createTestFiles(20);
+            clientCLI.execute("signdocument", "-servlet",
+                              "/signserver/worker/" + WORKERNAME1,
+                              "-threads", "20",
+                              "-indir", inDir.getRoot().getAbsolutePath(),
+                              "-outdir", outDir.getRoot().getAbsolutePath());
+            final List<Map<String, Object>> lastLogFields =
+                    queryLastLogFields(20);
+            int nonQueuedRequests = 0;
+
+            for (final Map<String, Object> details : lastLogFields) {
+                final String prio = (String) details.get("QOS_PRIORITY");
+
+                if ("not set".equals(prio)) {
+                    nonQueuedRequests++;
+                }
+            }
+
+            assertEquals("No requests should be queued", 20, nonQueuedRequests);
+        } finally {
+            globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                         "QOS_MAX_REQUESTS");
+        }
+    }
     
     @AfterClass
     public static void tearDownClass() throws Exception {

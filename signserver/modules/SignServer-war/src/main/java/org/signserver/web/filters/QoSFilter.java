@@ -166,6 +166,13 @@ public class QoSFilter implements Filter
         createQueuesAndListeners(__DEFAULT_MAX_PRIORITY);
     }
 
+    /**
+     * Get maximum number of request configuration parameter from global
+     * configuration, if defined.
+     *
+     * @return number of accepted concurrent requests, or empty if not
+     *         configured
+     */
     private Optional<Integer> getMaxRequestsFromConfig() {
         final String maxRequestsConfig = getGlobalParam("QOS_MAX_REQUESTS");
 

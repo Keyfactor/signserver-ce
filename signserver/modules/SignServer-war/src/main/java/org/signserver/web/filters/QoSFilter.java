@@ -101,11 +101,6 @@ public class QoSFilter implements Filter
     private int _maxRequests;
     private Semaphore _passes;
     private Queue<AsyncContext>[] _queues;
-    /* Default value of max requests, either hard-coded or from the filter config
-     * from web.xml, used to reset when unsetting QOS_MAX_REQUESTS, or when
-     * getting an invalid value.
-     */
-    private int defaultMaxRequests;
 
     // request attributes
     public static String QOS_PRIORITY_ATTRIBUTE = "QOS_PRIORITY";
@@ -132,19 +127,8 @@ public class QoSFilter implements Filter
     @Override
     public void init(final FilterConfig filterConfig)
     {
-        int maxRequests = __DEFAULT_PASSES;
-        if (filterConfig.getInitParameter(MAX_REQUESTS_INIT_PARAM) != null)
-            maxRequests = Integer.parseInt(filterConfig.getInitParameter(MAX_REQUESTS_INIT_PARAM));
+        int maxRequests = getMaxRequestsFromConfig().orElse(__DEFAULT_PASSES);
 
-        defaultMaxRequests = maxRequests;
-        
-        final Optional<Integer> maxRequestsGlobalConfig =
-                getMaxRequestsFromConfig();
-
-        if (maxRequestsGlobalConfig.isPresent()) {
-            maxRequests = maxRequestsGlobalConfig.get();
-        }
-        
         _passes = new Semaphore(maxRequests, true);
         _maxRequests = maxRequests;
 
@@ -248,7 +232,7 @@ public class QoSFilter implements Filter
         // TODO: should update max priority levels if needed
 
         final Optional<Integer> maxRequestsConfig = getMaxRequestsFromConfig();
-        final int maxRequests = maxRequestsConfig.orElse(defaultMaxRequests);
+        final int maxRequests = maxRequestsConfig.orElse(__DEFAULT_PASSES);
 
         if (maxRequests != _maxRequests) {
             if (LOG.isDebugEnabled()) {

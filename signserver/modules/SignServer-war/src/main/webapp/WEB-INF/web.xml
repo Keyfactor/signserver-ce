@@ -18,14 +18,6 @@
         <filter-name>QoSFilter</filter-name>
         <filter-class>org.signserver.web.filters.QoSFilter</filter-class>
         <async-supported>true</async-supported>
-        <init-param>
-            <param-name>maxRequests</param-name>
-            <param-value>10</param-value>
-        </init-param>
-        <init-param>
-            <param-name>maxPriority</param-name>
-            <param-value>10</param-value>
-        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>ClickjackFilterDeny</filter-name>

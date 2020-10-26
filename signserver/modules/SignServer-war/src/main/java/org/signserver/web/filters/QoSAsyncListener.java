@@ -21,7 +21,6 @@ import java.io.IOException;
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
@@ -87,7 +86,7 @@ class QoSAsyncListener implements AsyncListener {
         if (outer == null) {
             LOG.error("Filter unavailable");
         } else {
-            outer.getQueues()[priority].remove(asyncContext);
+            outer.getQueues().get(priority).remove(asyncContext);
         }
         ((HttpServletResponse) event.getSuppliedResponse()).sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         asyncContext.complete();

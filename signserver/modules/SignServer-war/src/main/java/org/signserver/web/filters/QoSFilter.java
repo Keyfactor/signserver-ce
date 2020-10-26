@@ -19,7 +19,9 @@
 package org.signserver.web.filters; 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
@@ -100,7 +102,8 @@ public class QoSFilter implements Filter
     private long _suspendMs;
     private int _maxRequests;
     private Semaphore _passes;
-    private Queue<AsyncContext>[] _queues;
+    private ArrayList<Queue<AsyncContext>> _queues;
+    private int maxPriorityLevel;
 
     // request attributes
     public static String QOS_PRIORITY_ATTRIBUTE = "QOS_PRIORITY";
@@ -111,11 +114,11 @@ public class QoSFilter implements Filter
     @EJB
     private WorkerSessionLocal workerSession;
     
-    public Queue<AsyncContext>[] getQueues() {
+    public List<Queue<AsyncContext>> getQueues() {
         return _queues;
     }
 
-    private AsyncListener[] _listeners;
+    private ArrayList<AsyncListener> _listeners;
 
     // Preliminary global properties for setting up filter:
     // GLOB.QOS_MAX_REQUESTS=<maximum number of concurrent requests to be
@@ -146,8 +149,7 @@ public class QoSFilter implements Filter
         if (context != null && Boolean.parseBoolean(filterConfig.getInitParameter(MANAGED_ATTR_INIT_PARAM)))
             context.setAttribute(filterConfig.getFilterName(), this);
 
-        // TODO: should be read from config
-        createQueuesAndListeners(__DEFAULT_MAX_PRIORITY);
+        createQueuesAndListeners(getMaxPriorityLevelFromConfig().orElse(__DEFAULT_MAX_PRIORITY));
     }
 
     /**
@@ -158,28 +160,49 @@ public class QoSFilter implements Filter
      *         configured
      */
     private Optional<Integer> getMaxRequestsFromConfig() {
-        final String maxRequestsConfig = getGlobalParam("QOS_MAX_REQUESTS");
+        return getOptionalPositiveIntegerFromConfig("QOS_MAX_REQUESTS");
+    }
 
-        if (maxRequestsConfig != null) {
+    /**
+     * Get maximum priority level configuration parameter from global
+     * configuration, if defined.
+     *
+     * @return number of accepted concurrent requests, or empty if not
+     *         configured
+     */
+    private Optional<Integer> getMaxPriorityLevelFromConfig() {
+        return getOptionalPositiveIntegerFromConfig("QOS_MAX_PRIORITY");
+    }
+
+    /**
+     * Gets the value of a global configuration parameter, if defined.
+     *
+     * @param property to get value of
+     * @return the value, or empty if the property is not set
+     */
+    private Optional<Integer> getOptionalPositiveIntegerFromConfig(final String property) {
+        final String valueString = getGlobalParam(property);
+
+        if (valueString != null) {
             try {
-                final int maxRequests = Integer.parseInt(maxRequestsConfig);
+                final int value = Integer.parseInt(valueString);
 
-                if (maxRequests < 1) {
-                    LOG.error("QOS_MAX_REQUESTS must be a positive value");
+                if (value < 1) {
+                    LOG.error(property + " must be a positive value");
                     return Optional.empty();
                 }
 
-                return Optional.of(maxRequests);
+                return Optional.of(value);
             } catch (NumberFormatException ex) {
-                LOG.error("Illegal value for QOS_MAX_REQUESTS: " + maxRequestsConfig +
-                          ", using default value " + __DEFAULT_PASSES);
+                LOG.error("Illegal value for " + property + ": " + valueString +
+                          ", using default value");
                 return Optional.empty();
             }
         } else {
             return Optional.empty();
         }
     }
-
+    
     private Map<Integer, Integer> createPriorityMap(final String property)
         throws IllegalArgumentException {
         final Map<Integer, Integer> workerPriorities = new HashMap<>();
@@ -199,7 +222,7 @@ public class QoSFilter implements Filter
 
                 if (priority < 0) {
                     throw new IllegalArgumentException("A priority can not be negative");
-                } else if (priority > _queues.length - 1) {
+                } else if (priority > maxPriorityLevel) {
                     throw new IllegalArgumentException("A priority can not be higher than the maximum value");
                 } else {
                     workerPriorities.put(workerId, priority);
@@ -213,14 +236,39 @@ public class QoSFilter implements Filter
         return workerPriorities;
     }
 
+    /**
+     * Create initial lists for queues and listeners.
+     *
+     * @param maxPriority The maximum number of priority levels to use
+     */
     private void createQueuesAndListeners(final int maxPriority) {
-        _queues = new Queue[maxPriority + 1];
-        _listeners = new AsyncListener[_queues.length];
-        for (int p = 0; p < _queues.length; ++p)
+        _queues = new ArrayList<>(maxPriority + 1);
+        _listeners = new ArrayList<AsyncListener>(maxPriority + 1);
+        maxPriorityLevel = maxPriority;
+        for (int p = 0; p <= maxPriority; ++p)
         {
-            _queues[p] = new ConcurrentLinkedQueue<>();
-            _listeners[p] = new QoSAsyncListener(p, this);
+            _queues.add(p, new ConcurrentLinkedQueue<>());
+            _listeners.add(p, new QoSAsyncListener(p, this));
         }
+    }
+
+    /**
+     * Resize priority queues and listeners list for a new max priority level.
+     * Just increase the size if needed, keep the old size if a lower max
+     * prio level is set to avoid having to deal with resizing down and
+     * potential race condition-like issues with remaining requests at higher
+     * levels.
+     * 
+     * @param newMaxPriority New maximum level to use
+     */
+    private void resizeQueuesAndListenersIfNeeded(final int newMaxPriority) {
+        _queues.ensureCapacity(newMaxPriority);
+        _listeners.ensureCapacity(newMaxPriority);
+        for (int p = maxPriorityLevel; p <= newMaxPriority; p++) {
+            _queues.add(p, new ConcurrentLinkedQueue<>());
+            _listeners.add(p, new QoSAsyncListener(p, this));
+        }
+        maxPriorityLevel = newMaxPriority;
     }
 
     @Override
@@ -229,7 +277,6 @@ public class QoSFilter implements Filter
         boolean accepted = false;
 
         // TODO: should cache the value instead of looking up through global config each time
-        // TODO: should update max priority levels if needed
 
         final Optional<Integer> maxRequestsConfig = getMaxRequestsFromConfig();
         final int maxRequests = maxRequestsConfig.orElse(__DEFAULT_PASSES);
@@ -241,6 +288,13 @@ public class QoSFilter implements Filter
 
             _passes = new Semaphore(maxRequests, true);
             _maxRequests = maxRequests;
+        }
+
+        final Optional<Integer> maxPrioConfig = getMaxPriorityLevelFromConfig();
+        final int maxPrio = maxPrioConfig.orElse(__DEFAULT_MAX_PRIORITY);
+
+        if (maxPrio != maxPriorityLevel) {
+            resizeQueuesAndListenersIfNeeded(maxPrio);
         }
 
         final String priorityMappingString =
@@ -276,8 +330,8 @@ public class QoSFilter implements Filter
                     long suspendMs = getSuspendMs();
                     if (suspendMs > 0)
                         asyncContext.setTimeout(suspendMs);
-                    asyncContext.addListener(_listeners[priority]);
-                    _queues[priority].add(asyncContext);
+                    asyncContext.addListener(_listeners.get(priority));
+                    _queues.get(priority).add(asyncContext);
                     if (LOG.isDebugEnabled())
                         LOG.debug("Suspended " + request);
                     request.setAttribute(QOS_PRIORITY_ATTRIBUTE, priority);
@@ -342,9 +396,9 @@ public class QoSFilter implements Filter
     }
     
     protected final void processQueues() {
-        for (int p = _queues.length - 1; p >= 0; --p)
+        for (int p = _queues.size() - 1; p >= 0; --p)
         {
-            AsyncContext asyncContext = _queues[p].poll();
+            AsyncContext asyncContext = _queues.get(p).poll();
             if (asyncContext != null)
             {
                 ServletRequest candidate = asyncContext.getRequest();
@@ -411,7 +465,7 @@ public class QoSFilter implements Filter
             }
         } else if ("/adminweb".equals(servletPath)) {
             // always prioritize requests to the admin web interfaces at highest prio
-            return _queues.length - 1;
+            return maxPriorityLevel;
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Not a /worker or /adminweb request, using default prio (0)");

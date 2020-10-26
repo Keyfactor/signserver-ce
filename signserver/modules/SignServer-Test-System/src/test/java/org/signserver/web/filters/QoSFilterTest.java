@@ -221,6 +221,48 @@ public class QoSFilterTest {
                                          "QOS_MAX_REQUESTS");
         }
     }
+
+    /**
+     * Test that setting a higher max priority level correctly works with
+     * a worker configured to that level.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test05HigherMaxPriorityLevel() throws Exception {
+        try {
+            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                      "QOS_MAX_PRIORITY", "50");
+            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                  "QOS_PRIORITIES", "1:1,1000:50,1002:2");
+            createTestFiles(20);
+            clientCLI.execute("signdocument", "-servlet",
+                              "/signserver/worker/" + WORKERNAME1,
+                              "-threads", "20",
+                              "-indir", inDir.getRoot().getAbsolutePath(),
+                              "-outdir", outDir.getRoot().getAbsolutePath());
+            final List<Map<String, Object>> lastLogFields =
+                    queryLastLogFields(20);
+            int queuedRequests = 0;
+
+            for (final Map<String, Object> details : lastLogFields) {
+                final String prio = (String) details.get("QOS_PRIORITY");
+
+                if ("50".equals(prio)) {
+                    queuedRequests++;
+                }
+            }
+
+            assertTrue("Some requests were queued at priority 50",
+                       queuedRequests > 0);
+        } finally {
+            globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                         "QOS_MAX_PRIORITY");
+            // reset priority level mapping
+            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                  "QOS_PRIORITIES", "1:1,1000:5,1002:2");
+        }
+    }
     
     @AfterClass
     public static void tearDownClass() throws Exception {

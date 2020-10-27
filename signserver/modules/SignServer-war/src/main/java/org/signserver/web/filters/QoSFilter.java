@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
@@ -121,6 +122,7 @@ public class QoSFilter implements Filter
     private ArrayList<AsyncListener> _listeners;
 
     // Preliminary global properties for setting up filter:
+    // GLOB.QOS_FILTER_ENABLED=true (to enable filter), default false (not enabled)
     // GLOB.QOS_MAX_REQUESTS=<maximum number of concurrent requests to be
     //                        accepted before queueing requests based on priority>
     // GLOB.QOS_PRIORITIES=<comma-separated list of workerID:priority pairs>
@@ -172,6 +174,31 @@ public class QoSFilter implements Filter
      */
     private Optional<Integer> getMaxPriorityLevelFromConfig() {
         return getOptionalPositiveIntegerFromConfig("QOS_MAX_PRIORITY");
+    }
+
+    /**
+     * Get status for filter enablement. Default to false if global configuration
+     * parameter is not set (and when set to an invalid boolean value).
+     * 
+     * @return true if filter should be invoked on requests 
+     */
+    private boolean getFilterEnabled() {
+        final String enabledString = getGlobalParam("QOS_FILTER_ENABLED");
+
+        if (enabledString != null) {
+            switch(enabledString.toLowerCase(Locale.ENGLISH)) {
+                case "true":
+                    return true;
+                case "false":
+                    return false;
+                default:
+                    LOG.error("Illegal value for QOS_FILTER_ENABLED: " +
+                              enabledString + ", default to disabled");
+                    return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -272,8 +299,35 @@ public class QoSFilter implements Filter
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
-    {
+    public void doFilter(final ServletRequest request,
+                         final ServletResponse response,
+                         final FilterChain chain)
+        throws IOException, ServletException {
+        final boolean enabled = getFilterEnabled();
+
+        /* if filter is disabled, just act like a pass-through to the rest of
+         * the filter chain
+         */
+        if (!enabled) {
+            chain.doFilter(request, response);
+        } else {
+            doFilterWithPriorities(request, response, chain);
+        }
+    }
+
+    /**
+     * Process request with queueing based on configured priorities.
+     * 
+     * @param request servlet request
+     * @param response servlet response
+     * @param chain filter chain
+     * @throws IOException
+     * @throws ServletException 
+     */
+    private void doFilterWithPriorities(final ServletRequest request,
+                                        final ServletResponse response,
+                                        final FilterChain chain)
+            throws IOException, ServletException {
         boolean accepted = false;
 
         // TODO: should cache the value instead of looking up through global config each time

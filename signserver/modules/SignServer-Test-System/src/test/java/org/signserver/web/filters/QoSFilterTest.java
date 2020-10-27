@@ -96,6 +96,9 @@ public class QoSFilterTest {
         // the set works as expected
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                   "QOS_PRIORITIES", "1:1,1000:5,1002:2");
+        // unset enabled parameter to get default behaviour
+        globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                     "QOS_FILTER_ENABLED");
     }
 
     @Before
@@ -112,13 +115,20 @@ public class QoSFilterTest {
      */
     @Test
     public void test01SingleRequest() throws Exception {
-        clientCLI.execute("signdocument", "-servlet",
-                          "/signserver/worker/" + WORKERNAME1,
-                          "-data", "foo");
-        final List<Map<String, Object>> lastLogFields = queryLastLogFields(1);
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                  "QOS_FILTER_ENABLED", "true");
+        try {
+            clientCLI.execute("signdocument", "-servlet",
+                              "/signserver/worker/" + WORKERNAME1,
+                              "-data", "foo");
+            final List<Map<String, Object>> lastLogFields = queryLastLogFields(1);
 
-        assertEquals("Priority not set by filter", "not set",
-                     lastLogFields.get(0).get("QOS_PRIORITY"));
+            assertEquals("Priority not set by filter", "not set",
+                         lastLogFields.get(0).get("QOS_PRIORITY"));
+        } finally {
+            globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                         "QOS_FILTER_ENABLED");
+        }
     }
 
     /**
@@ -132,25 +142,32 @@ public class QoSFilterTest {
     @Test
     public void test02SomeRequestsQueuedAndPrioritized() throws Exception {
         createTestFiles(20);
-        clientCLI.execute("signdocument", "-servlet",
-                          "/signserver/worker/" + WORKERNAME1,
-                          "-threads", "20",
-                          "-indir", inDir.getRoot().getAbsolutePath(),
-                          "-outdir", outDir.getRoot().getAbsolutePath());
-        final List<Map<String, Object>> lastLogFields =
-                queryLastLogFields(20);
-        int queuedRequests = 0;
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                  "QOS_FILTER_ENABLED", "true");
+        try {
+            clientCLI.execute("signdocument", "-servlet",
+                              "/signserver/worker/" + WORKERNAME1,
+                              "-threads", "20",
+                              "-indir", inDir.getRoot().getAbsolutePath(),
+                              "-outdir", outDir.getRoot().getAbsolutePath());
+            final List<Map<String, Object>> lastLogFields =
+                    queryLastLogFields(20);
+            int queuedRequests = 0;
 
-        for (final Map<String, Object> details : lastLogFields) {
-            final String prio = (String) details.get("QOS_PRIORITY");
+            for (final Map<String, Object> details : lastLogFields) {
+                final String prio = (String) details.get("QOS_PRIORITY");
 
-            if ("5".equals(prio)) {
-                queuedRequests++;
+                if ("5".equals(prio)) {
+                    queuedRequests++;
+                }
             }
-        }
 
-        assertTrue("Some requests should have been queued at prio 5",
-                   queuedRequests > 0);
+            assertTrue("Some requests should have been queued at prio 5",
+                       queuedRequests > 0);
+        } finally {
+            globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                         "QOS_FILTER_ENABLED");
+        }
     }
 
     /**
@@ -165,25 +182,32 @@ public class QoSFilterTest {
     @Test
     public void test03SomeRequestsQueuedAndPrioritizedDefaultPrio() throws Exception {
         createTestFiles(20);
-        clientCLI.execute("signdocument", "-servlet",
-                          "/signserver/worker/" + WORKERNAME2,
-                          "-threads", "20",
-                          "-indir", inDir.getRoot().getAbsolutePath(),
-                          "-outdir", outDir.getRoot().getAbsolutePath());
-        final List<Map<String, Object>> lastLogFields =
-                queryLastLogFields(20);
-        int queuedRequests = 0;
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                  "QOS_FILTER_ENABLED", "true");
+        try {
+            clientCLI.execute("signdocument", "-servlet",
+                              "/signserver/worker/" + WORKERNAME2,
+                              "-threads", "20",
+                              "-indir", inDir.getRoot().getAbsolutePath(),
+                              "-outdir", outDir.getRoot().getAbsolutePath());
+            final List<Map<String, Object>> lastLogFields =
+                    queryLastLogFields(20);
+            int queuedRequests = 0;
 
-        for (final Map<String, Object> details : lastLogFields) {
-            final String prio = (String) details.get("QOS_PRIORITY");
+            for (final Map<String, Object> details : lastLogFields) {
+                final String prio = (String) details.get("QOS_PRIORITY");
 
-            if ("0".equals(prio)) {
-                queuedRequests++;
+                if ("0".equals(prio)) {
+                    queuedRequests++;
+                }
             }
-        }
 
-        assertTrue("Some requests should have been queued at prio 0",
-                   queuedRequests > 0);
+            assertTrue("Some requests should have been queued at prio 0",
+                       queuedRequests > 0);
+        } finally {
+            globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                         "QOS_FILTER_ENABLED");
+        }
     }
 
     /**
@@ -197,6 +221,8 @@ public class QoSFilterTest {
         try {
             globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                       "QOS_MAX_REQUESTS", "50");
+            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                      "QOS_FILTER_ENABLED", "true");
             createTestFiles(20);
             clientCLI.execute("signdocument", "-servlet",
                               "/signserver/worker/" + WORKERNAME1,
@@ -219,6 +245,8 @@ public class QoSFilterTest {
         } finally {
             globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                          "QOS_MAX_REQUESTS");
+            globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                         "QOS_FILTER_ENABLED");
         }
     }
 
@@ -235,6 +263,8 @@ public class QoSFilterTest {
                                       "QOS_MAX_PRIORITY", "50");
             globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                   "QOS_PRIORITIES", "1:1,1000:50,1002:2");
+            globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                      "QOS_FILTER_ENABLED", "true");
             createTestFiles(20);
             clientCLI.execute("signdocument", "-servlet",
                               "/signserver/worker/" + WORKERNAME1,
@@ -261,6 +291,110 @@ public class QoSFilterTest {
             // reset priority level mapping
             globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                   "QOS_PRIORITIES", "1:1,1000:5,1002:2");
+
+            globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                         "QOS_FILTER_ENABLED");
+        }
+    }
+
+    /**
+     * Test that when not setting GLOB.QOS_FILTER_ENABLED it default to
+     * inactive, not prioritizing any requests.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test06NoRequestsPrioritizedDefault() throws Exception {
+        createTestFiles(20);
+        clientCLI.execute("signdocument", "-servlet",
+                          "/signserver/worker/" + WORKERNAME1,
+                          "-threads", "20",
+                          "-indir", inDir.getRoot().getAbsolutePath(),
+                          "-outdir", outDir.getRoot().getAbsolutePath());
+        final List<Map<String, Object>> lastLogFields =
+                queryLastLogFields(20);
+        int noPrioritySet = 0;
+
+        for (final Map<String, Object> details : lastLogFields) {
+            final String prio = (String) details.get("QOS_PRIORITY");
+
+            if ("not set".equals(prio)) {
+                noPrioritySet++;
+            }
+        }
+
+        assertEquals("No requests prioritized", 20, noPrioritySet);
+    }
+
+    /**
+     * Test that setting GLOB.QOS_FILTER_ENABLED to explicitly false results in
+     * inactive, not prioritizing any requests.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test07NoRequestsPrioritizedExplicitFalse() throws Exception {
+        createTestFiles(20);
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                      "QOS_FILTER_ENABLED", "false");
+        try {
+            clientCLI.execute("signdocument", "-servlet",
+                              "/signserver/worker/" + WORKERNAME1,
+                              "-threads", "20",
+                              "-indir", inDir.getRoot().getAbsolutePath(),
+                              "-outdir", outDir.getRoot().getAbsolutePath());
+            final List<Map<String, Object>> lastLogFields =
+                    queryLastLogFields(20);
+            int noPrioritySet = 0;
+
+            for (final Map<String, Object> details : lastLogFields) {
+                final String prio = (String) details.get("QOS_PRIORITY");
+
+                if ("not set".equals(prio)) {
+                    noPrioritySet++;
+                }
+            }
+
+            assertEquals("No requests prioritized", 20, noPrioritySet);
+        } finally {
+            globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                         "QOS_FILTER_ENABLED");
+        }
+    }
+
+    /**
+     * Test that setting GLOB.QOS_FILTER_ENABLED to an invalid value results in
+     * inactive, not prioritizing any requests.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void test08NoRequestsPrioritizedInvalidEnabled() throws Exception {
+        createTestFiles(20);
+        globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                      "QOS_FILTER_ENABLED", "_invalid_");
+        try {
+            clientCLI.execute("signdocument", "-servlet",
+                              "/signserver/worker/" + WORKERNAME1,
+                              "-threads", "20",
+                              "-indir", inDir.getRoot().getAbsolutePath(),
+                              "-outdir", outDir.getRoot().getAbsolutePath());
+            final List<Map<String, Object>> lastLogFields =
+                    queryLastLogFields(20);
+            int noPrioritySet = 0;
+
+            for (final Map<String, Object> details : lastLogFields) {
+                final String prio = (String) details.get("QOS_PRIORITY");
+
+                if ("not set".equals(prio)) {
+                    noPrioritySet++;
+                }
+            }
+
+            assertEquals("No requests prioritized", 20, noPrioritySet);
+        } finally {
+            globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
+                                         "QOS_FILTER_ENABLED");
         }
     }
     

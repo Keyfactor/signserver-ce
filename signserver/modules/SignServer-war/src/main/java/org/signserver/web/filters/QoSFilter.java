@@ -43,6 +43,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.signserver.common.AbstractQoSFilterStatistics;
 import static org.signserver.common.GlobalConfiguration.SCOPE_GLOBAL;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
@@ -105,7 +106,7 @@ public class QoSFilter implements Filter
     private Semaphore _passes;
     private ArrayList<Queue<AsyncContext>> _queues;
     private int maxPriorityLevel;
-
+    
     // request attributes
     public static String QOS_PRIORITY_ATTRIBUTE = "QOS_PRIORITY";
     
@@ -114,6 +115,8 @@ public class QoSFilter implements Filter
 
     @EJB
     private WorkerSessionLocal workerSession;
+
+    private AbstractQoSFilterStatistics statisticsCollector;
     
     public List<Queue<AsyncContext>> getQueues() {
         return _queues;
@@ -152,6 +155,16 @@ public class QoSFilter implements Filter
             context.setAttribute(filterConfig.getFilterName(), this);
 
         createQueuesAndListeners(getMaxPriorityLevelFromConfig().orElse(__DEFAULT_MAX_PRIORITY));
+
+        statisticsCollector = new QoSFilterStatistics(this);
+    }
+
+    public int getMaxPriorityLevel() {
+        return maxPriorityLevel;
+    }
+
+    public int getQueueSizeForPriorityLevel(final int priorityLevel) {
+        return _queues.get(priorityLevel).size();
     }
 
     /**
@@ -616,5 +629,4 @@ public class QoSFilter implements Filter
         return globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
                                                                   param);
     }
-
 }

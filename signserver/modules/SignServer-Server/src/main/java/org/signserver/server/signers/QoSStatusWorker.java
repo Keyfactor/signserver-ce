@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -28,7 +29,9 @@ import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerStatusInfo;
+import org.signserver.common.WorkerStatusInfo.Entry;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
@@ -109,9 +112,36 @@ public class QoSStatusWorker extends BaseProcessable {
 
     @Override
     public WorkerStatusInfo getStatus(List<String> additionalFatalErrors, IServices services) {
-        return super.getStatus(additionalFatalErrors, services); //To change body of generated methods, choose Tools | Templates.
+        final WorkerStatusInfo info =
+                new WorkerStatusInfo(workerId, config.getProperty("NAME"),
+                                    "Worker", WorkerStatus.STATUS_ACTIVE,
+                                    generateBriefEntries(),
+                                    additionalFatalErrors, Collections.emptyList(),
+                                    config);
+
+        return info;
     }
 
+    private List<Entry> generateBriefEntries() {
+        final List<Entry> results = new LinkedList<>();
+        final int maxPriorityLevel = statistics.getMaxPriorityLevel();
+        final Entry maxPriorityEntry =
+                new Entry("Maximum priority level",
+                          Integer.toString(maxPriorityLevel));
+
+        results.add(maxPriorityEntry);
+
+        for (int i = 0; i <= maxPriorityLevel; i++) {
+            final Entry queueSizeEntry =
+                    new Entry("Queue size(" + i + ")",
+                              Integer.toString(statistics.getQueueSizeForPriorityLevel(i)));
+
+            results.add(queueSizeEntry);
+        }
+        
+        return results;
+    }
+    
     private String generateResponseMessage() {
         final StringBuilder sb = new StringBuilder();
         final int maxPriorityLevel;

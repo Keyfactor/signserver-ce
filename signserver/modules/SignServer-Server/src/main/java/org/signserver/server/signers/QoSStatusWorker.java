@@ -20,21 +20,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import javax.ejb.EJB;
-import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
 import org.signserver.common.AbstractQoSFilterStatistics;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.SignServerException;
-import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerStatusInfo;
 import org.signserver.common.WorkerStatusInfo.Entry;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.IServices;
-import org.signserver.server.WorkerContext;
 import org.signserver.server.archive.Archivable;
 import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.common.data.ReadableData;
@@ -43,7 +39,6 @@ import org.signserver.common.data.Response;
 import org.signserver.common.data.SignatureRequest;
 import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.WritableData;
-import org.signserver.server.log.LogMap;
 
 /**
  * Diagnostics worker giving status for the QoSFilter in the process response.

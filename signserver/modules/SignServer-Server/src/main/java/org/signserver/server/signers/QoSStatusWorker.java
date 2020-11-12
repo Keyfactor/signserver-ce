@@ -117,6 +117,11 @@ public class QoSStatusWorker extends BaseProcessable {
         return info;
     }
 
+    /**
+     * Generate a list of brief status entries for the queue statuses.
+     *
+     * @return list of status entries
+     */
     private List<Entry> generateBriefEntries() {
         final List<Entry> results = new LinkedList<>();
         final int maxPriorityLevel = statistics.getMaxPriorityLevel();
@@ -136,7 +141,12 @@ public class QoSStatusWorker extends BaseProcessable {
         
         return results;
     }
-    
+
+    /**
+     * Generate a response text body for the process response.
+     *
+     * @return textual response with queue statuses
+     */
     private String generateResponseMessage() {
         final StringBuilder sb = new StringBuilder();
         final int maxPriorityLevel;

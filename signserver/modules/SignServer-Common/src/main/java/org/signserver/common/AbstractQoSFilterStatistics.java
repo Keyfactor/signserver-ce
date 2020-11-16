@@ -28,6 +28,8 @@ public abstract class AbstractQoSFilterStatistics {
     
     public abstract int getMaxPriorityLevel();
 
+    public abstract int getMaxRequests();
+
     public abstract int getQueueSizeForPriorityLevel(final int priorityLevel);
 
     public abstract boolean getFilterEnabled();

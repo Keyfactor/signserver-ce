@@ -40,6 +40,11 @@ public class QoSFilterStatistics extends AbstractQoSFilterStatistics {
     }
 
     @Override
+    public int getMaxRequests() {
+        return filter.getMaxRequests();
+    }
+
+    @Override
     public boolean getFilterEnabled() {
         return filter.getFilterEnabled();
     }

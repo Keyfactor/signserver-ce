@@ -129,11 +129,16 @@ public class QoSStatusWorker extends BaseProcessable {
         results.add(new Entry("Filter enabled", Boolean.toString(enabled)));
 
         if (enabled) {
+            final int maxRequests = statistics.getMaxRequests();
             final int maxPriorityLevel = statistics.getMaxPriorityLevel();
+            final Entry maxRequestsEntry =
+                    new Entry("Maximum requests",
+                              Integer.toString(maxRequests));
             final Entry maxPriorityEntry =
                     new Entry("Maximum priority level",
                               Integer.toString(maxPriorityLevel));
 
+            results.add(maxRequestsEntry);
             results.add(maxPriorityEntry);
 
             for (int i = 0; i <= maxPriorityLevel; i++) {
@@ -160,8 +165,10 @@ public class QoSStatusWorker extends BaseProcessable {
         sb.append("FILTER_ENABLED=").append(enabled).append("\n");
 
         if (enabled) {
+            final int maxRequests = statistics.getMaxRequests();
             final int maxPriorityLevel = statistics.getMaxPriorityLevel();
 
+            sb.append("MAX_REQUESTS=").append(maxRequests).append("\n");
             sb.append("MAX_PRIORITY_LEVEL=").append(maxPriorityLevel);
             sb.append("\n");
 

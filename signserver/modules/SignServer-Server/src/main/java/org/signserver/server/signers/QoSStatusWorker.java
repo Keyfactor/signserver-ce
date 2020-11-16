@@ -124,21 +124,27 @@ public class QoSStatusWorker extends BaseProcessable {
      */
     private List<Entry> generateBriefEntries() {
         final List<Entry> results = new LinkedList<>();
-        final int maxPriorityLevel = statistics.getMaxPriorityLevel();
-        final Entry maxPriorityEntry =
-                new Entry("Maximum priority level",
-                          Integer.toString(maxPriorityLevel));
+        final boolean enabled = statistics.getFilterEnabled();
 
-        results.add(maxPriorityEntry);
+        results.add(new Entry("Filter enabled", Boolean.toString(enabled)));
 
-        for (int i = 0; i <= maxPriorityLevel; i++) {
-            final Entry queueSizeEntry =
-                    new Entry("Queue size(" + i + ")",
-                              Integer.toString(statistics.getQueueSizeForPriorityLevel(i)));
+        if (enabled) {
+            final int maxPriorityLevel = statistics.getMaxPriorityLevel();
+            final Entry maxPriorityEntry =
+                    new Entry("Maximum priority level",
+                              Integer.toString(maxPriorityLevel));
 
-            results.add(queueSizeEntry);
+            results.add(maxPriorityEntry);
+
+            for (int i = 0; i <= maxPriorityLevel; i++) {
+                final Entry queueSizeEntry =
+                        new Entry("Queue size(" + i + ")",
+                                  Integer.toString(statistics.getQueueSizeForPriorityLevel(i)));
+
+                results.add(queueSizeEntry);
+            }
         }
-        
+
         return results;
     }
 
@@ -149,18 +155,23 @@ public class QoSStatusWorker extends BaseProcessable {
      */
     private String generateResponseMessage() {
         final StringBuilder sb = new StringBuilder();
-        final int maxPriorityLevel;
+        final boolean enabled = statistics.getFilterEnabled();
 
-        maxPriorityLevel = statistics.getMaxPriorityLevel();
-        sb.append("MAX_PRIORITY_LEVEL=").append(maxPriorityLevel);
-        sb.append("\n");
+        sb.append("FILTER_ENABLED=").append(enabled).append("\n");
 
-        for (int i = 0; i <= maxPriorityLevel; i++) {
-            sb.append("QUEUE_SIZE(").append(i).append(")=");
-            sb.append(statistics.getQueueSizeForPriorityLevel(i));
+        if (enabled) {
+            final int maxPriorityLevel = statistics.getMaxPriorityLevel();
+
+            sb.append("MAX_PRIORITY_LEVEL=").append(maxPriorityLevel);
             sb.append("\n");
+
+            for (int i = 0; i <= maxPriorityLevel; i++) {
+                sb.append("QUEUE_SIZE(").append(i).append(")=");
+                sb.append(statistics.getQueueSizeForPriorityLevel(i));
+                sb.append("\n");
+            }
         }
-        
+
         return sb.toString();
     }
 }

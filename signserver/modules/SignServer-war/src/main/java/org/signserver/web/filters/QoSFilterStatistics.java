@@ -38,4 +38,9 @@ public class QoSFilterStatistics extends AbstractQoSFilterStatistics {
     public int getMaxPriorityLevel() {
         return filter.getMaxPriorityLevel();
     }
+
+    @Override
+    public boolean getFilterEnabled() {
+        return filter.getFilterEnabled();
+    }
 }

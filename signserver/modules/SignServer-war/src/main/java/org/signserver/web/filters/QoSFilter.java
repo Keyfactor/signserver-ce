@@ -195,7 +195,7 @@ public class QoSFilter implements Filter
      * 
      * @return true if filter should be invoked on requests 
      */
-    private boolean getFilterEnabled() {
+    public boolean getFilterEnabled() {
         final String enabledString = getGlobalParam("QOS_FILTER_ENABLED");
 
         if (enabledString != null) {

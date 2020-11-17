@@ -55,9 +55,6 @@ public class QoSStatusWorker extends BaseProcessable {
     private static final String REQUEST_CONTENT_TYPE = "text/plain";
     private static final String RESPONSE_CONTENT_TYPE = "text/plain";
 
-    private AbstractQoSFilterStatistics statistics =
-            AbstractQoSFilterStatistics.getInstance();
-
     @Override
     public Response processData(Request signRequest,
             RequestContext requestContext) throws IllegalRequestException,
@@ -124,13 +121,13 @@ public class QoSStatusWorker extends BaseProcessable {
      */
     private List<Entry> generateBriefEntries() {
         final List<Entry> results = new LinkedList<>();
-        final boolean enabled = statistics.getFilterEnabled();
+        final boolean enabled = getFilterStatistics().getFilterEnabled();
 
         results.add(new Entry("Filter enabled", Boolean.toString(enabled)));
 
         if (enabled) {
-            final int maxRequests = statistics.getMaxRequests();
-            final int maxPriorityLevel = statistics.getMaxPriorityLevel();
+            final int maxRequests = getFilterStatistics().getMaxRequests();
+            final int maxPriorityLevel = getFilterStatistics().getMaxPriorityLevel();
             final Entry maxRequestsEntry =
                     new Entry("Maximum requests",
                               Integer.toString(maxRequests));
@@ -144,7 +141,7 @@ public class QoSStatusWorker extends BaseProcessable {
             for (int i = 0; i <= maxPriorityLevel; i++) {
                 final Entry queueSizeEntry =
                         new Entry("Queue size(" + i + ")",
-                                  Integer.toString(statistics.getQueueSizeForPriorityLevel(i)));
+                                  Integer.toString(getFilterStatistics().getQueueSizeForPriorityLevel(i)));
 
                 results.add(queueSizeEntry);
             }
@@ -160,13 +157,14 @@ public class QoSStatusWorker extends BaseProcessable {
      */
     private String generateResponseMessage() {
         final StringBuilder sb = new StringBuilder();
-        final boolean enabled = statistics.getFilterEnabled();
+        final boolean enabled = getFilterStatistics().getFilterEnabled();
 
         sb.append("FILTER_ENABLED=").append(enabled).append("\n");
 
         if (enabled) {
-            final int maxRequests = statistics.getMaxRequests();
-            final int maxPriorityLevel = statistics.getMaxPriorityLevel();
+            final int maxRequests = getFilterStatistics().getMaxRequests();
+            final int maxPriorityLevel =
+                    getFilterStatistics().getMaxPriorityLevel();
 
             sb.append("MAX_REQUESTS=").append(maxRequests).append("\n");
             sb.append("MAX_PRIORITY_LEVEL=").append(maxPriorityLevel);
@@ -174,11 +172,15 @@ public class QoSStatusWorker extends BaseProcessable {
 
             for (int i = 0; i <= maxPriorityLevel; i++) {
                 sb.append("QUEUE_SIZE(").append(i).append(")=");
-                sb.append(statistics.getQueueSizeForPriorityLevel(i));
+                sb.append(getFilterStatistics().getQueueSizeForPriorityLevel(i));
                 sb.append("\n");
             }
         }
 
         return sb.toString();
+    }
+
+    AbstractQoSFilterStatistics getFilterStatistics() {
+        return AbstractQoSFilterStatistics.getInstance();
     }
 }

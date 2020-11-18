@@ -33,6 +33,12 @@ import org.signserver.testutils.ModulesTestCase;
 
 /**
  * Tests for the QosStatusWorker.
+ *
+ * This only includes a test for the default, disabled case, due to synchronization /
+ * timing issues with global configuration making it hard to get reliable
+ * deterministic tests setting run-time behavior.
+ * See QoSStatusWorkerUnitTest for tests excersizing the status and response
+ * generations.
  * 
  * @author Marcus Lundblad
  * @version $Id$

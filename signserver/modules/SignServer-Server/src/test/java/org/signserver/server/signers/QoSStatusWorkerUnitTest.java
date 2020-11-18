@@ -23,7 +23,9 @@ import org.signserver.common.WorkerStatusInfo;
 import org.signserver.common.data.ReadableData;
 import org.signserver.common.data.SignatureRequest;
 import org.signserver.common.data.WritableData;
-import org.signserver.testutils.ModulesTestCase;
+import org.signserver.server.data.impl.ByteArrayReadableData;
+import org.signserver.server.data.impl.TemporarlyWritableData;
+import org.signserver.server.data.impl.UploadConfig;
 
 /**
  * Unit tests for the QoSStatusWorker.
@@ -47,8 +49,12 @@ public class QoSStatusWorkerUnitTest extends TestCase {
 
         checkWorkerStatusInfo(status, false, 1, 0, 0, null);
 
-        final ReadableData readable = ModulesTestCase.createRequestData("".getBytes());
-        final WritableData writable = ModulesTestCase.createResponseData(false);
+        final ReadableData readable =
+                new ByteArrayReadableData("".getBytes(),
+                                          new UploadConfig().getRepository());
+        final WritableData writable =
+                new TemporarlyWritableData(false,
+                                           new UploadConfig().getRepository());
         final RequestContext requestContext = new RequestContext();
 
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
@@ -73,8 +79,12 @@ public class QoSStatusWorkerUnitTest extends TestCase {
 
         checkWorkerStatusInfo(status, true, 9, 10, 5, queueSizes);
 
-        final ReadableData readable = ModulesTestCase.createRequestData("".getBytes());
-        final WritableData writable = ModulesTestCase.createResponseData(false);
+        final ReadableData readable =
+                new ByteArrayReadableData("".getBytes(),
+                                          new UploadConfig().getRepository());
+        final WritableData writable =
+                new TemporarlyWritableData(false,
+                                           new UploadConfig().getRepository());
         final RequestContext requestContext = new RequestContext();
 
         requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");

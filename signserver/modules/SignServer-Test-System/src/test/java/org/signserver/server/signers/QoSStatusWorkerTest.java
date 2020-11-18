@@ -14,7 +14,6 @@ package org.signserver.server.signers;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;import static junit.framework.TestCase.assertEquals;
-import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,7 +27,6 @@ import org.signserver.common.WorkerStatusInfo.Entry;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
-import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
 
 /**
@@ -44,14 +42,10 @@ import org.signserver.testutils.ModulesTestCase;
  * @version $Id$
  */
 public class QoSStatusWorkerTest {
-    /** Logger for this class */
-    private static final Logger LOG = Logger.getLogger(QoSStatusWorkerTest.class);
-
     private static final int WORKERID = 1000;
     private static final String WORKERNAME = "TestQoSStatusWorker";
 
     private static final ModulesTestCase modulesTestCase = new ModulesTestCase();
-    private static final CLITestHelper clientCLI = modulesTestCase.getClientCLI();
     private static final WorkerSessionRemote workerSession =
             modulesTestCase.getWorkerSession();
     private static final GlobalConfigurationSessionRemote globalSession =

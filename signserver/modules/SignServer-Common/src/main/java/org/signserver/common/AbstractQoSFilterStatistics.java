@@ -22,15 +22,43 @@ public abstract class AbstractQoSFilterStatistics {
 
     protected static AbstractQoSFilterStatistics instance;
 
+    /**
+     * Gets an instance of a instance of the concrete implementation of a
+     * statistics collector.
+     *
+     * @return concrete instance of AbstractQoSFilterStatistics
+     */
     public static AbstractQoSFilterStatistics getInstance() {
         return instance;
     }
-    
+
+    /**
+     * Get maximum priority level configured in web filter.
+     *
+     * @return maximum priority level
+     */
     public abstract int getMaxPriorityLevel();
 
+    /**
+     * Get the maximum number of requests handled concurrently by filter
+     * before placing request in priority queues.
+     *
+     * @return maxium number of requests
+     */
     public abstract int getMaxRequests();
 
+    /**
+     * Get current number of queued requests at a given priority level.
+     *
+     * @param priorityLevel
+     * @return number of requests in the queue for the given priority level
+     */
     public abstract int getQueueSizeForPriorityLevel(final int priorityLevel);
 
+    /**
+     * Get enabled status of the QoS web filter.
+     *
+     * @return enabled status
+     */
     public abstract boolean getFilterEnabled();
 }

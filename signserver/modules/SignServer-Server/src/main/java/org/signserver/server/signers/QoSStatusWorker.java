@@ -47,10 +47,6 @@ import org.signserver.common.data.WritableData;
  * @version $Id$
  */
 public class QoSStatusWorker extends BaseProcessable {
-
-    /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(QoSStatusWorker.class);
-
     // Content types
     private static final String REQUEST_CONTENT_TYPE = "text/plain";
     private static final String RESPONSE_CONTENT_TYPE = "text/plain";
@@ -103,15 +99,14 @@ public class QoSStatusWorker extends BaseProcessable {
     }
 
     @Override
-    public WorkerStatusInfo getStatus(List<String> additionalFatalErrors, IServices services) {
-        final WorkerStatusInfo info =
-                new WorkerStatusInfo(workerId, config.getProperty("NAME"),
+    public WorkerStatusInfo getStatus(final List<String> additionalFatalErrors,
+                                      final IServices services) {
+        return new WorkerStatusInfo(workerId, config.getProperty("NAME"),
                                     "Worker", WorkerStatus.STATUS_ACTIVE,
                                     generateBriefEntries(),
-                                    additionalFatalErrors, Collections.emptyList(),
+                                    additionalFatalErrors,
+                                    Collections.emptyList(),
                                     config);
-
-        return info;
     }
 
     /**

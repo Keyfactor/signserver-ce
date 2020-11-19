@@ -181,6 +181,6 @@ public class QoSStatusWorker extends BaseProcessable {
     }
 
     AbstractQoSFilterStatistics getFilterStatistics() {
-        return AbstractQoSFilterStatistics.getInstance();
+        return AbstractQoSFilterStatistics.getDefaultInstance();
     }
 }

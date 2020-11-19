@@ -26,7 +26,6 @@ public class QoSFilterStatistics extends AbstractQoSFilterStatistics {
 
     public QoSFilterStatistics(final QoSFilter filter) {
         this.filter = filter;
-        instance = this;
     }
 
     @Override

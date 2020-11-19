@@ -116,8 +116,6 @@ public class QoSFilter implements Filter
     @EJB
     private WorkerSessionLocal workerSession;
 
-    private AbstractQoSFilterStatistics statisticsCollector;
-    
     public List<Queue<AsyncContext>> getQueues() {
         return _queues;
     }
@@ -156,7 +154,7 @@ public class QoSFilter implements Filter
 
         createQueuesAndListeners(getMaxPriorityLevelFromConfig().orElse(__DEFAULT_MAX_PRIORITY));
 
-        statisticsCollector = new QoSFilterStatistics(this);
+        AbstractQoSFilterStatistics.setDefaultInstance(new QoSFilterStatistics(this));
     }
 
     public int getMaxPriorityLevel() {

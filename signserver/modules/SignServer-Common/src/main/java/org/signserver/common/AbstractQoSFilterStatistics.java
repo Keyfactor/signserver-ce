@@ -23,13 +23,23 @@ public abstract class AbstractQoSFilterStatistics {
     protected static AbstractQoSFilterStatistics instance;
 
     /**
-     * Gets an instance of a instance of the concrete implementation of a
+     * Gets an instance of a concrete implementation of a
      * statistics collector.
      *
-     * @return concrete instance of AbstractQoSFilterStatistics
+     * @return concrete instance of AbstractQoSFilterStatistics, if set, otherwise null
      */
-    public static AbstractQoSFilterStatistics getInstance() {
+    public static AbstractQoSFilterStatistics getDefaultInstance() {
         return instance;
+    }
+
+    /**
+     * Sets a default singleton instance of AbstractQoSFilterStatistics.
+     * This would be set by the web filter using its concrete implementation.
+     *
+     * @param instance 
+     */
+    public static void setDefaultInstance(final AbstractQoSFilterStatistics instance) {
+        AbstractQoSFilterStatistics.instance = instance;
     }
 
     /**

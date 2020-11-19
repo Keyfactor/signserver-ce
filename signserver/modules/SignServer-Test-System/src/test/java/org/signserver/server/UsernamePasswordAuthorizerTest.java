@@ -36,6 +36,10 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.fail;
+
 /**
  * Tests for the UsernamePasswordAuthorizer.
  *
@@ -50,9 +54,8 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
 
     private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
-    
+
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
@@ -69,39 +72,38 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
         // Add a user account: user1, foo123 (plain-text password)
         workerSession.setWorkerProperty(getSignerIdDummy1(), "USER.USER1",
                 "foo123");
-        
+
         // Add a user account: user2, foo123 (SHA1 hashed password) = SHA1(foo123)
         workerSession.setWorkerProperty(getSignerIdDummy1(), "USER.USER2",
                 "3b303d8b0364d9265c06adc8584258376150c9b5:SHA1");
 
-        // Add a user account: user3, foo123 (SHA1 hashed password and salted 
+        // Add a user account: user3, foo123 (SHA1 hashed password and salted
         // with "salt123") = SHA1(foo123salt123)
         workerSession.setWorkerProperty(getSignerIdDummy1(), "USER.USER3",
                 "26c110963ad873c9b7db331e4c3130c266416d47:SHA1:salt123");
-        
+
         workerSession.reloadConfiguration(getSignerIdDummy1());
-        
+
         // MRTD SOD Signer
         addSigner("org.signserver.module.mrtdsodsigner.MRTDSODSigner", getSignerIdSODSigner1(), getSignerNameSODSigner1(), true);
-        
+
         // Set auth type
         workerSession.setWorkerProperty(getSignerIdSODSigner1(), "AUTHTYPE",
                 "org.signserver.server.UsernamePasswordAuthorizer");
-        
+
         workerSession.setWorkerProperty(getSignerIdSODSigner1(), "USER.USER3",
                 "26c110963ad873c9b7db331e4c3130c266416d47:SHA1:salt123");
-        
-        
+
+
         workerSession.reloadConfiguration(getSignerIdSODSigner1());
     }
 
     /**
      * Tests that the worker throws an AuthorizationRequiredException if no
      * username/password is supplied.
-     * @throws Exception in case of exception
      */
     @Test
-    public void test01AuthorizationRequired() throws Exception {
+    public void test01AuthorizationRequired() {
         final RemoteRequestContext context = new RemoteRequestContext();
 
         final GenericSignRequest request =
@@ -134,10 +136,9 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
 
     /**
      * Tests that the worker accepts a correct user/password.
-     * @throws Exception in case of exception
      */
     @Test
-    public void test02PlainTextPassword() throws Exception {
+    public void test02PlainTextPassword() {
         final RemoteRequestContext context = new RemoteRequestContext();
 
         final GenericSignRequest request =
@@ -158,10 +159,9 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
 
      /**
      * Tests that the worker accepts a correct user/password.
-     * @throws Exception in case of exception
      */
     @Test
-    public void test03HashedPassword() throws Exception {
+    public void test03HashedPassword() {
         final RemoteRequestContext context = new RemoteRequestContext();
 
         final GenericSignRequest request =
@@ -182,10 +182,9 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
 
     /**
      * Tests that the worker accepts a correct user/password.
-     * @throws Exception in case of exception
      */
     @Test
-    public void test04HashedAndSaltedPassword() throws Exception {
+    public void test04HashedAndSaltedPassword() {
         final RemoteRequestContext context = new RemoteRequestContext();
 
         final GenericSignRequest request =
@@ -203,11 +202,11 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
             fail("Exception: " + ex.getMessage());
         }
     }
-    
+
     @Test
     public void test04HashedAndSaltedPasswordOverClientWS() throws Exception {
         try {
-            byte[] res = execute(new SignDocumentCommand(), "signdocument", "-workerid", 
+            byte[] res = execute(new SignDocumentCommand(), "signdocument", "-workerid",
                     String.valueOf(getSignerIdDummy1()), "-data", "<root/>",
                     "-username", "user3", "-password", "foo123", "-protocol", "CLIENTWS",
                     "-truststore", new File(getSignServerHome(), "p12/truststore.jks").getAbsolutePath(), "-truststorepwd", "changeit",
@@ -219,7 +218,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
-    
+
     @Test
     public void test04HashedAndSaltedPasswordSODOverClientWS() throws Exception {
         workerSession.setWorkerProperty(getSignerIdSODSigner1(), "DODATAGROUPHASHING", "true");
@@ -240,7 +239,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
             workerSession.reloadConfiguration(getSignerIdSODSigner1());
         }
     }
-    
+
     @Test
     public void test04HashedAndSaltedPasswordSODOverHTTP() throws Exception {
         workerSession.setWorkerProperty(getSignerIdSODSigner1(), "DODATAGROUPHASHING", "true");
@@ -268,7 +267,7 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
         removeWorker(getSignerIdSODSigner1());
         workerSession.reloadConfiguration(getSignerIdSODSigner1());
     }
-   
+
     private byte[] execute(Command command, String... args) throws IOException, IllegalCommandArgumentsException, CommandFailureException, UnexpectedCommandFailureException {
         byte[] output;
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -282,5 +281,5 @@ public class UsernamePasswordAuthorizerTest extends ModulesTestCase {
         }
         return output;
     }
-    
+
 }

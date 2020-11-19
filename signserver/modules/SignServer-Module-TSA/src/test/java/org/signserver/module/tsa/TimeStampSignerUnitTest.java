@@ -20,8 +20,7 @@ import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertNull;
+
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
@@ -49,27 +48,32 @@ import org.bouncycastle.tsp.TimeStampTokenInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.RequestContext;
-import org.signserver.common.SignServerException;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.data.Request;
-import org.signserver.server.LocalComputerTimeSource;
-import org.signserver.server.log.LogMap;
-import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
-import org.signserver.test.utils.mock.WorkerSessionMock;
-import org.signserver.testutils.ModulesTestCase;
+import org.signserver.common.data.SignatureRequest;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.IServices;
+import org.signserver.server.LocalComputerTimeSource;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
-import org.signserver.common.data.SignatureRequest;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.log.AdminInfo;
+import org.signserver.server.log.LogMap;
 import org.signserver.test.utils.builders.CertBuilder;
 import org.signserver.test.utils.builders.CertExt;
+import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
 import org.signserver.test.utils.mock.MockedRequestContext;
 import org.signserver.test.utils.mock.MockedServicesImpl;
+import org.signserver.test.utils.mock.WorkerSessionMock;
+import org.signserver.testutils.ModulesTestCase;
+
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit tests for the TimeStampSigner.
@@ -98,14 +102,13 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             "org.signserver.server.cryptotokens.KeystoreCryptoToken";
 
     private static final String KEY_ALIAS = "TS Signer 1";
-    
+
     private GlobalConfigurationSessionLocal globalConfig;
     private WorkerSessionLocal workerSession;
     private WorkerSessionMock processSession;
     private IServices services;
 
     @Before
-    @Override
     public void setUp() throws Exception {
         setupWorkers();
         Security.addProvider(new BouncyCastleProvider());
@@ -113,7 +116,6 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
 
     /**
      * Tests that the log contains the TSA_TIMESOURCE entry.
-     * @throws Exception
      */
     @Test
     public void testLogTimeSource() throws Exception {
@@ -130,13 +132,11 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         assertEquals("timesource", LocalComputerTimeSource.class.getSimpleName(),
                      String.valueOf(loggable));
     }
-    
+
     /**
      * Test that the base 64-encoded log entries for request and response
      * are not encoded with newlines, as this causes an extra base 64 encoding
      * with a B64: prefix by Base64PutHashMap.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testLogBase64Entries() throws Exception {
@@ -152,10 +152,10 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         final Object responseLoggable =
                 logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPRESPONSE_ENCODED);
         assertNotNull("response", responseLoggable);
-        
+
         assertEquals("log line doesn't contain newlines", -1,
                 responseLoggable.toString().lastIndexOf('\n'));
-        
+
         final Object requestLoggable =
                 logMap.get(ITimeStampLogger.LOG_TSA_TIMESTAMPREQUEST_ENCODED);
         assertNotNull("request", requestLoggable);
@@ -259,7 +259,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                     new TimeStampSigner());
             workerSession.reloadConfiguration(workerId);
         }
-        
+
         // WORKER5: with one additional extension
         {
             final int workerId = WORKER5;
@@ -276,7 +276,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             config.setProperty("ACCEPTANYPOLICY", "true");
-            
+
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner() {
                 @Override
@@ -290,7 +290,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             });
             workerSession.reloadConfiguration(workerId);
         }
-        
+
         // WORKER6: with additional extensions
         {
             final int workerId = WORKER6;
@@ -307,7 +307,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             config.setProperty("ACCEPTANYPOLICY", "true");
-            
+
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner() {
                 @Override
@@ -327,7 +327,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             });
             workerSession.reloadConfiguration(workerId);
         }
-        
+
         // WORKER7: accepting only a specific request policy
         {
             final int workerId = WORKER7;
@@ -345,12 +345,12 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             config.setProperty("ACCEPTEDPOLICIES",
                                "1.3.6.1.4.1.22408.1.2.3.45");
-            
+
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner());
             workerSession.reloadConfiguration(workerId);
         }
-        
+
         // WORKER8: accepting only a specific set of request policies
         {
             final int workerId = WORKER8;
@@ -368,7 +368,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             config.setProperty("ACCEPTEDPOLICIES",
                                "1.3.6.1.4.1.22408.1.2.3.45; 1.3.6.1.4.1.22408.1.2.3.46");
-            
+
             workerMock.setupWorker(workerId, CRYPTOTOKEN_CLASSNAME, config,
                     new TimeStampSigner());
             workerSession.reloadConfiguration(workerId);
@@ -378,7 +378,6 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     /**
      * Tests that a request including an extension not listed will cause a
      * rejection.
-     * @throws Exception
      */
     @Test
     public void testNotAcceptedExtensionPrevented() throws Exception {
@@ -391,7 +390,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         byte[] requestBytes = timeStampRequest.getEncoded();
         try (
                 CloseableReadableData requestData = createRequestData(requestBytes);
-                CloseableWritableData responseData = createResponseData(false);
+                CloseableWritableData responseData = createResponseData(false)
             ) {
             SignatureRequest signRequest = new SignatureRequest(100, requestData, responseData);
             processSession.process(new AdminInfo("Client user", null, null),
@@ -401,15 +400,12 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             timeStampResponse.validate(timeStampRequest);
             assertEquals("rejection", PKIStatus.REJECTION, timeStampResponse.getStatus());
             assertEquals("unacceptedExtension", PKIFailureInfo.unacceptedExtension, timeStampResponse.getFailInfo().intValue());
-        } finally {
-            
         }
     }
-    
+
     /**
      * Tests that a request including an extension listed will accept
      * the extension.
-     * @throws Exception
      */
     @Test
     public void testAcceptedExtensions() throws Exception {
@@ -430,7 +426,6 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     /**
      * Tests that a request including an extension listed will accept
      * the extension also when ACCEPTEDEXTENSIONS contains spaces.
-     * @throws Exception
      */
     @Test
     public void testAcceptedExtensionsWithSpaces() throws Exception {
@@ -451,7 +446,6 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     /**
      * Tests that a request without extension is accepted also when the list of
      * extensions is empty.
-     * @throws Exception
      */
     @Test
     public void testEmptyAcceptedExtensionsOk() throws Exception {
@@ -465,26 +459,24 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         assertEquals("granted", PKIStatus.GRANTED, timeStampResponse.getStatus());
         assertNull("extensions in token", timeStampResponse.getTimeStampToken().getTimeStampInfo().toASN1Structure().getExtensions());
     }
-    
+
     private TimeStampResponse timestamp(TimeStampRequest timeStampRequest, int workerId) throws Exception {
         byte[] requestBytes = timeStampRequest.getEncoded();
         try (
                 CloseableReadableData requestData = createRequestData(requestBytes);
-                CloseableWritableData responseData = createResponseData(false);
+                CloseableWritableData responseData = createResponseData(false)
             ) {
             SignatureRequest signRequest = new SignatureRequest(100, requestData, responseData);
-        
+
             processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId), signRequest, new MockedRequestContext(services));
 
-            final TimeStampResponse timeStampResponse = new TimeStampResponse(responseData.toReadableData().getAsInputStream());
-            return timeStampResponse;
+            return new TimeStampResponse(responseData.toReadableData().getAsInputStream());
         }
     }
 
     /**
      * Tests that a request including an extension not listed will cause a
      * rejection also when the list of extensions is empty.
-     * @throws Exception
      */
     @Test
     public void testEmptyAcceptedExtensionsPreventsExtension() throws Exception {
@@ -499,11 +491,9 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         assertEquals("rejection", PKIStatus.REJECTION, timeStampResponse.getStatus());
         assertEquals("unacceptedExtension", PKIFailureInfo.unacceptedExtension, timeStampResponse.getFailInfo().intValue());
     }
-    
+
     /**
      * Test with a custom time stamp signer adding an additional extension.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testAdditionalExtension() throws Exception {
@@ -514,13 +504,13 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER5);
         timeStampResponse.validate(timeStampRequest);
-    
+
         TimeStampTokenInfo timeStampInfo = timeStampResponse.getTimeStampToken().getTimeStampInfo();
         TSTInfo tstInfo = timeStampInfo.toASN1Structure();
-        
+
         Extensions extensions = tstInfo.getExtensions();
         Extension extension = extensions.getExtension(new ASN1ObjectIdentifier("1.2.7.9"));
-        
+
         assertEquals("Number of critical extensions", 0,
                      extensions.getCriticalExtensionOIDs().length);
         assertEquals("Number of extensions", 1,
@@ -529,11 +519,9 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         assertEquals("Should contain extension value", new DEROctetString("Value".getBytes()),
                 extension.getExtnValue());
     }
-    
+
     /**
      * Test with a custom time stamp signer adding two additional extensions.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testTwoAdditionalExtensions() throws Exception {
@@ -544,10 +532,10 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
                 TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER6);
         timeStampResponse.validate(timeStampRequest);
-    
+
         TimeStampTokenInfo timeStampInfo = timeStampResponse.getTimeStampToken().getTimeStampInfo();
         TSTInfo tstInfo = timeStampInfo.toASN1Structure();
-        
+
         Extensions extensions = tstInfo.getExtensions();
         Extension extension1 = extensions.getExtension(new ASN1ObjectIdentifier("1.2.7.9"));
         Extension extension2 = extensions.getExtension(new ASN1ObjectIdentifier("1.2.7.10"));
@@ -562,41 +550,32 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         assertEquals("Should contain extension value", new DEROctetString("Critical".getBytes()),
                 extension2.getExtnValue());
     }
-    
+
     /**
      * Test that setting an invalid value for INCLUDE_CERTID_ISSUERSERIAL
      * results in an error.
-     *
-     * @throws Exception 
      */
     @Test
-    public void testIncludeCertIDIssuerSerialInvalid() throws Exception {
-        LOG.info("testIncludeCertIDIssuerSerialInvalid"); 
-        
+    public void testIncludeCertIDIssuerSerialInvalid() {
+        LOG.info("testIncludeCertIDIssuerSerialInvalid");
+
         final WorkerConfig config = new WorkerConfig();
 
         config.setProperty("INCLUDE_CERTID_ISSUERSERIAL", "_not_a_boolean_");
-      
-        final TimeStampSigner signer = new TimeStampSigner() {
-            @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
-                return null;
-            }
-        };
-        
+
+        final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
+
         signer.init(WORKER1, config, null, null);
-        
+
         final List<String> fatalErrors = signer.getFatalErrors(null);
-        
+
         assertTrue("should contain configuration error but was " + fatalErrors,
                    fatalErrors.contains("Illegal value for property INCLUDE_CERTID_ISSUERSERIAL"));
     }
-     
+
     /**
      * Test that the default for INCLUDE_CERTID_ISSUERSERIAL is to include
      * when the property is not set.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testIncludeCertIDIssuerSerialDefaultUnset() throws Exception {
@@ -616,8 +595,6 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     /**
      * Test that the default for INCLUDE_CERTID_ISSUERSERIAL is to include
      * when an empty property value is specified.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testIncludeCertIDIssuerSerialDefaultEmpty() throws Exception {
@@ -633,11 +610,9 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
 
         assertIncludeCertIDIssuerSerial("default", true, timeStampResponse);
     }
-    
+
     /**
      * Test that INCLUDE_CERTID_ISSUERSERIAL=true includes the IssuerSerial.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testIncludeCertIDIssuerSerialTrue() throws Exception {
@@ -653,11 +628,9 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
 
         assertIncludeCertIDIssuerSerial("explicit true", true, timeStampResponse);
     }
-    
+
     /**
      * Test that INCLUDE_CERTID_ISSUERSERIAL=false includes the IssuerSerial.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testIncludeCertIDIssuerSerialFalse() throws Exception {
@@ -673,7 +646,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
 
         assertIncludeCertIDIssuerSerial("explicit false", false, timeStampResponse);
     }
-    
+
     /**
      * Tests the default value for INCLUDECMSALGORITHMPROTECT.
      * @throws Exception in case of error
@@ -717,11 +690,11 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKER6);
         final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER6);
         timeStampResponse.validate(timeStampRequest);
-        
+
         // check the signingTime signed attribute
         final AttributeTable attrs = timeStampResponse.getTimeStampToken().getSignedAttributes();
         final Attribute attr = attrs.get(CMSAttributes.cmsAlgorithmProtect);
-        
+
         if (includeCmsProtectAlgorithmAttribute == null || includeCmsProtectAlgorithmAttribute) {
             assertNotNull("Should contain cmsProtectAlgorithmAttribute signed attribute", attr);
         } else {
@@ -731,7 +704,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
 
     private void assertIncludeCertIDIssuerSerial(String message, boolean expected, TimeStampResponse timeStampResponse) {
         IssuerSerial issuerSerial;
-        
+
         AttributeTable attribs = timeStampResponse.getTimeStampToken().getSignedAttributes();
         Attribute attrib = attribs.get(PKCSObjectIdentifiers.id_aa_signingCertificate);
         if (attrib == null) {
@@ -742,15 +715,13 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             SigningCertificate signingCertificate = SigningCertificate.getInstance(attrib.getAttributeValues()[0]);
             issuerSerial = signingCertificate.getCerts()[0].getIssuerSerial();
         }
-        
+
         assertEquals(message, expected, issuerSerial != null);
     }
 
     /**
      * Test that setting an accepted policy works with that policy in the
      * request.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testOnlyAcceptedPolicy() throws Exception {
@@ -764,12 +735,10 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         timeStampResponse.validate(timeStampRequest);
         assertEquals("acceptance", PKIStatus.GRANTED, timeStampResponse.getStatus());
     }
-    
+
     /**
      * Test that a request policy is accepted for a signer accepting a set
      * of request policies.
-     *
-     * @throws Exception 
      */
     @Test
     public void testOnlyAcceptedPolicyInSet() throws Exception {
@@ -783,12 +752,10 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         timeStampResponse.validate(timeStampRequest);
         assertEquals("acceptance", PKIStatus.GRANTED, timeStampResponse.getStatus());
     }
-    
+
     /**
      * Test that requesting a policy not in the set of accepted policies is
      * rejected.
-     *
-     * @throws Exception 
      */
     @Test
     public void testNonAcceptedPolicy() throws Exception {
@@ -802,11 +769,9 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         timeStampResponse.validate(timeStampRequest);
         assertEquals("acceptance", PKIStatus.REJECTION, timeStampResponse.getStatus());
     }
-    
+
     /**
      * Test that requesting a policy works with ACCEPTANYPOLICY set to true.
-     *
-     * @throws Exception 
      */
     @Test
     public void testAnyAcceptedPolicy() throws Exception {
@@ -820,95 +785,74 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         timeStampResponse.validate(timeStampRequest);
         assertEquals("acceptance", PKIStatus.GRANTED, timeStampResponse.getStatus());
     }
-    
+
     /**
      * Test that setting both ACCEPTANYPOLICY and ACCEPTEDPOLICIES results in
      * a configuration error.
-     *
-     * @throws Exception 
      */
     @Test
-    public void testBothAnyAcceptedAndAcceptedPoliciesError() throws Exception {
-        LOG.info("testBothAnyAcceptedAndAcceptedPoliciesError"); 
-        
+    public void testBothAnyAcceptedAndAcceptedPoliciesError() {
+        LOG.info("testBothAnyAcceptedAndAcceptedPoliciesError");
+
         final WorkerConfig config = new WorkerConfig();
-        
+
         config.setProperty("ACCEPTANYPOLICY", "true");
         config.setProperty("ACCEPTEDPOLICIES", "1.3.6.1.4.1.22408.1.2.3.45");
-        
-        final TimeStampSigner signer = new TimeStampSigner() {
-            @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
-                return null;
-            }
-        };
-        
+
+        final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
+
         signer.init(WORKER1, config, null, null);
-        
+
         final List<String> fatalErrors = signer.getFatalErrors(null);
-        
+
         assertTrue("should contain configuration error",
                    fatalErrors.contains("Can not set ACCEPTANYPOLICY to true and ACCEPTEDPOLICIES at the same time"));
     }
-    
+
     /**
      * Test that setting both ACCEPTANYPOLICY (with caps, TRUE) and ACCEPTEDPOLICIES results in
      * a configuration error for defining conflicts, but not for the ACCEPTANYPOLICY value.
-     *
-     * @throws Exception 
      */
     @Test
-    public void testBothAnyAcceptedAndAcceptedPoliciesCapsError() throws Exception {
-        LOG.info("testBothAnyAcceptedAndAcceptedPoliciesError"); 
-        
+    public void testBothAnyAcceptedAndAcceptedPoliciesCapsError() {
+        LOG.info("testBothAnyAcceptedAndAcceptedPoliciesError");
+
         final WorkerConfig config = new WorkerConfig();
-        
+
         config.setProperty("ACCEPTANYPOLICY", "TRUE");
         config.setProperty("ACCEPTEDPOLICIES", "1.3.6.1.4.1.22408.1.2.3.45");
-        
-        final TimeStampSigner signer = new TimeStampSigner() {
-            @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
-                return null;
-            }
-        };
-        
+
+        final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
+
         signer.init(WORKER1, config, null, null);
-        
+
         final List<String> fatalErrors = signer.getFatalErrors(null);
-        
+
         assertTrue("should contain configuration error",
                    fatalErrors.contains("Can not set ACCEPTANYPOLICY to true and ACCEPTEDPOLICIES at the same time"));
         assertFalse("should not contain error about ACCEPTANYPOLICY",
                     fatalErrors.contains("Illegal value for ACCEPTANYPOLICY: TRUE"));
     }
-    
+
     /**
      * Test that setting ACCEPTANYPOLICY to explicitely false and
      * ACCEPTEDPOLICIES is accepted.
-     * 
-     * @throws Exception 
      */
     @Test
-    public void testAcceptAnyPolicyFalseAndAcceptedPolicies() throws Exception {
-        LOG.info("testAcceptAnyPolicyFalseAndAcceptedPolicies"); 
-        
+    public void testAcceptAnyPolicyFalseAndAcceptedPolicies() {
+        LOG.info("testAcceptAnyPolicyFalseAndAcceptedPolicies");
+
         final WorkerConfig config = new WorkerConfig();
-        
+
         config.setProperty("ACCEPTANYPOLICY", "false");
         config.setProperty("ACCEPTEDPOLICIES", "1.3.6.1.4.1.22408.1.2.3.45");
-        
-        final TimeStampSigner signer = new TimeStampSigner() {
-            @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
-                return null;
-            }
-        };
-        
+
+        final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
+
         signer.init(WORKER1, config, null, null);
-        
+
         final List<String> fatalErrors = signer.getFatalErrors(null);
-        
+
         assertFalse("should not contain error",
                 fatalErrors.contains("Can not set ACCEPTANYPOLICY to true and ACCEPTEDPOLICIES at the same time"));
         assertFalse("should not contain error",
@@ -916,217 +860,166 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         assertFalse("should not contain error",
                 fatalErrors.contains("Illegal value for ACCEPTANYPOLICY: false"));
     }
-    
+
     /**
      * Test that setting ACCEPTANYPOLICY to an empty value and
      * ACCEPTEDPOLICIES is accepted.
-     * 
-     * @throws Exception 
      */
     @Test
-    public void testAcceptAnyPolicyEmptyAndAcceptedPolicies() throws Exception {
-        LOG.info("testAcceptAnyPolicyEmptyAndAcceptedPolicies"); 
-        
+    public void testAcceptAnyPolicyEmptyAndAcceptedPolicies() {
+        LOG.info("testAcceptAnyPolicyEmptyAndAcceptedPolicies");
+
         final WorkerConfig config = new WorkerConfig();
-        
+
         config.setProperty("ACCEPTANYPOLICY", "");
         config.setProperty("ACCEPTEDPOLICIES", "1.3.6.1.4.1.22408.1.2.3.45");
-        
-        final TimeStampSigner signer = new TimeStampSigner() {
-            @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
-                return null;
-            }
-        };
-        
+
+        final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
+
         signer.init(WORKER1, config, null, null);
-        
+
         final List<String> fatalErrors = signer.getFatalErrors(null);
-        
+
         assertFalse("should not contain error",
                 fatalErrors.contains("Can not set ACCEPTANYPOLICY to true and ACCEPTEDPOLICIES at the same time"));
         assertFalse("should not contain error",
                 fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true"));
     }
-    
+
     /**
      * Test that not setting any of ACCEPTANYPOLICY or ACCEPTEDPOLICIES results in
      * a configuration error.
-     *
-     * @throws Exception 
      */
     @Test
-    public void testNoneOfAnyAcceptedOrAcceptedPoliciesError() throws Exception {
-        LOG.info("testBothAnyAcceptedAndAcceptedPoliciesError"); 
-        
+    public void testNoneOfAnyAcceptedOrAcceptedPoliciesError() {
+        LOG.info("testBothAnyAcceptedAndAcceptedPoliciesError");
+
         final WorkerConfig config = new WorkerConfig();
-      
-        final TimeStampSigner signer = new TimeStampSigner() {
-            @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
-                return null;
-            }
-        };
-        
+
+        final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
+
         signer.init(WORKER1, config, null, null);
-        
+
         final List<String> fatalErrors = signer.getFatalErrors(null);
-        
+
         assertTrue("should contain configuration error",
                    fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true"));
     }
-    
+
     /**
      * Test that not setting an invalid value for ACCEPTANYPOLICY results in
      * an error.
-     *
-     * @throws Exception 
      */
     @Test
-    public void testAcceptAnyPolicyInvalid() throws Exception {
-        LOG.info("testBothAnyAcceptedAndAcceptedPoliciesError"); 
-        
+    public void testAcceptAnyPolicyInvalid() {
+        LOG.info("testBothAnyAcceptedAndAcceptedPoliciesError");
+
         final WorkerConfig config = new WorkerConfig();
-        
+
         config.setProperty("ACCEPTANYPOLICY", "foo");
-      
-        final TimeStampSigner signer = new TimeStampSigner() {
-            @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
-                return null;
-            }
-        };
-        
+
+        final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
+
         signer.init(WORKER1, config, null, null);
-        
+
         final List<String> fatalErrors = signer.getFatalErrors(null);
-        
+
         assertTrue("should contain configuration error",
                    fatalErrors.contains("Illegal value for ACCEPTANYPOLICY: foo"));
     }
-    
+
     /**
      * Test that setting ACCEPTANYPOLICY to false without setting ACCEPTEDPOLICIES
      * is not allowed.
-     *
-     * @throws Exception 
      */
     @Test
-    public void testAcceptAnyPolicyFalseAndNoAcceptedPolicies() throws Exception {
-        LOG.info("testAcceptAnyPolicyFalseAndNoAcceptedPolicies"); 
-        
+    public void testAcceptAnyPolicyFalseAndNoAcceptedPolicies() {
+        LOG.info("testAcceptAnyPolicyFalseAndNoAcceptedPolicies");
+
         final WorkerConfig config = new WorkerConfig();
-        
+
         config.setProperty("ACCEPTANYPOLICY", "false");
-      
-        final TimeStampSigner signer = new TimeStampSigner() {
-            @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
-                return null;
-            }
-        };
-        
+
+        final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
+
         signer.init(WORKER1, config, null, null);
-        
+
         final List<String> fatalErrors = signer.getFatalErrors(null);
-        
+
         assertTrue("should contain configuration error",
                    fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true"));
     }
-    
+
     /**
      * Test that setting ACCEPTANYPOLICY to FALSE (with caps) without setting ACCEPTEDPOLICIES
      * is not allowed.
-     *
-     * @throws Exception 
      */
     @Test
-    public void testAcceptAnyPolicyFalseCapitalAndNoAcceptedPolicies() throws Exception {
-        LOG.info("testAcceptAnyPolicyFalseAndNoAcceptedPolicies"); 
-        
+    public void testAcceptAnyPolicyFalseCapitalAndNoAcceptedPolicies() {
+        LOG.info("testAcceptAnyPolicyFalseAndNoAcceptedPolicies");
+
         final WorkerConfig config = new WorkerConfig();
-        
+
         config.setProperty("ACCEPTANYPOLICY", "FALSE");
-      
-        final TimeStampSigner signer = new TimeStampSigner() {
-            @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
-                return null;
-            }
-        };
-        
+
+        final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
+
         signer.init(WORKER1, config, null, null);
-        
+
         final List<String> fatalErrors = signer.getFatalErrors(null);
-        
+
         assertTrue("should contain configuration error",
                    fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true"));
         assertFalse("should not contain error about ACCEPTANYPOLICY",
                     fatalErrors.contains("Illegal value for ACCEPTANYPOLICY: FALSE"));
     }
-    
+
     /**
      * Test that setting ACCEPTANYPOLICY empty without setting ACCEPTEDPOLICIES
      * is not allowed.
-     *
-     * @throws Exception 
      */
     @Test
-    public void testAcceptAnyPolicyEmptyAndNoAcceptedPolicies() throws Exception {
-        LOG.info("testAcceptAnyPolicyEmptyAndNoAcceptedPolicies"); 
-        
+    public void testAcceptAnyPolicyEmptyAndNoAcceptedPolicies() {
+        LOG.info("testAcceptAnyPolicyEmptyAndNoAcceptedPolicies");
+
         final WorkerConfig config = new WorkerConfig();
-        
+
         config.setProperty("ACCEPTANYPOLICY", "");
-      
-        final TimeStampSigner signer = new TimeStampSigner() {
-            @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
-                return null;
-            }
-        };
-        
+
+        final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
+
         signer.init(WORKER1, config, null, null);
-        
+
         final List<String> fatalErrors = signer.getFatalErrors(null);
-        
+
         assertTrue("should contain configuration error",
                    fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true"));
     }
-    
+
     /**
      * Test that setting ACCEPTEDPOLICIES to an empty list is accepted without
      * setting ACCEPTANYPOLICY.
-     *
-     * @throws Exception 
      */
     @Test
-    public void testAcceptedPoliciesEmpty() throws Exception {
-        LOG.info("testAcceptedPoliciesEmpty"); 
-        
+    public void testAcceptedPoliciesEmpty() {
+        LOG.info("testAcceptedPoliciesEmpty");
+
         final WorkerConfig config = new WorkerConfig();
-        
+
         config.setProperty("ACCEPTEDPOLICIES", "");
-      
-        final TimeStampSigner signer = new TimeStampSigner() {
-            @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
-                return null;
-            }
-        };
-        
+
+        final TimeStampSigner signer = new NullICryptoTokenV4TimeStampSigner();
+
         signer.init(WORKER1, config, null, null);
-        
+
         final List<String> fatalErrors = signer.getFatalErrors(null);
-        
+
         assertFalse("should not contain error",
                 fatalErrors.contains("Must specify either ACCEPTEDPOLICIES or ACCEPTANYPOLICY true"));
     }
 
     /**
      * Tests for the certificate requirements.
-     *
-     * @throws Exception 
      */
     @Test
     public void testCertificateIssues() throws Exception {
@@ -1136,29 +1029,27 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
 
         // Certifiate without id_kp_timeStamping
         final Certificate certNoEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=Without EKU").build());
-        assertEquals(Arrays.asList("Missing extended key usage timeStamping", "The extended key usage extension must be present and marked as critical"), instance.getCertificateIssues(Arrays.asList(certNoEku)));
-        
+        assertEquals(Arrays.asList("Missing extended key usage timeStamping", "The extended key usage extension must be present and marked as critical"), instance.getCertificateIssues(Collections.singletonList(certNoEku)));
+
         // Certificate with non-critical id_kp_timeStamping
         boolean critical = false;
         final Certificate certEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=With non-critical EKU").addExtension(new CertExt(Extension.extendedKeyUsage, critical, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping))).build());
-        assertEquals(Arrays.asList("The extended key usage extension must be present and marked as critical"), instance.getCertificateIssues(Arrays.asList(certEku)));
-        
+        assertEquals(Collections.singletonList("The extended key usage extension must be present and marked as critical"), instance.getCertificateIssues(Collections.singletonList(certEku)));
+
         // Certificate with critical id_kp_timeStamping but also with codeSigning
         critical = true;
         final Certificate certCritEkuButAlsoOther = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=With critical EKU and other").addExtension(new CertExt(Extension.extendedKeyUsage, critical, new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_timeStamping, KeyPurposeId.id_kp_codeSigning }))).build());
-        assertEquals(Arrays.asList("No other extended key usages than timeStamping is allowed"), instance.getCertificateIssues(Arrays.asList(certCritEkuButAlsoOther)));
-        
+        assertEquals(Collections.singletonList("No other extended key usages than timeStamping is allowed"), instance.getCertificateIssues(Collections.singletonList(certCritEkuButAlsoOther)));
+
         // OK: Certificate with critical id_kp_timeStamping
         critical = true;
         final Certificate certCritEku = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSubject("CN=With critical EKU").addExtension(new CertExt(Extension.extendedKeyUsage, critical, new ExtendedKeyUsage(KeyPurposeId.id_kp_timeStamping))).build());
-        assertEquals(Collections.<String>emptyList(), instance.getCertificateIssues(Arrays.asList(certCritEku)));
-        
+        assertEquals(Collections.<String>emptyList(), instance.getCertificateIssues(Collections.singletonList(certCritEku)));
+
     }
-    
+
     /**
      * Test that Signing works with parameters specified as empty values.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testEmptyParamsWorks() throws Exception {
@@ -1180,6 +1071,13 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKER1);
         final TimeStampResponse timeStampResponse = timestamp(timeStampRequest, WORKER1);
         timeStampResponse.validate(timeStampRequest);
+    }
+
+    private static class NullICryptoTokenV4TimeStampSigner extends TimeStampSigner {
+        @Override
+        public ICryptoTokenV4 getCryptoToken(final IServices services) {
+            return null;
+        }
     }
 }
 

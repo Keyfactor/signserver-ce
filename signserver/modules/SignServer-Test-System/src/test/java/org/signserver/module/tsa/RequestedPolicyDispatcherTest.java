@@ -33,6 +33,11 @@ import org.junit.Test;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 /**
  * Tests for RequestedProfileDistpatcher.
  *
@@ -44,7 +49,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
     /** Worker ID for test dispatcher. */
     private static final int DISPATCHER0 = 8910;
     private static final int DISPATCHER9 = 8909;
-    
+
     /** Worker ID for test worker. */
     private static final int WORKER1 = 8911;
 
@@ -64,21 +69,19 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
             new ASN1ObjectIdentifier("1.2.13.3");
     private static final ASN1ObjectIdentifier UNSUPPORTED_PROFILE =
             new ASN1ObjectIdentifier("1.2.13.55");
-    
-    private Random random = new Random(4711);
+
+    private final Random RANDOM = new Random(4711);
 
     private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
 
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
     @After
-    @Override
-    protected void tearDown() throws Exception {
+    public void tearDown() {
         TestingSecurityManager.remove();
     }
 
@@ -87,14 +90,14 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
      */
     @Test
     public void test00SetupDatabase() throws Exception {
-        
+
         Properties conf = new Properties();
         // TSDispatcher
         conf.setProperty("GLOB.WORKER8910.CLASSPATH", "org.signserver.module.tsa.RequestedPolicyDispatcher");
         conf.setProperty("WORKER8910.IMPLEMENTATION_CLASS", "org.signserver.module.tsa.RequestedPolicyDispatcher");
         conf.setProperty("GLOB.WORKER8910.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
         conf.setProperty("WORKER8910.NAME", "TestTSDispatcher1");
-        conf.setProperty("WORKER8910.KEYSTOREPATH", getSignServerHome() + 
+        conf.setProperty("WORKER8910.KEYSTOREPATH", getSignServerHome() +
                 File.separator + "res" + File.separator + "test" + File.separator +
                 "dss10" + File.separator + "dss10_tssigner1.p12");
         conf.setProperty("WORKER8910.KEYSTORETYPE", "PKCS12");
@@ -103,13 +106,13 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         conf.setProperty("WORKER8910.AUTHTYPE", "NOAUTH");
         conf.setProperty("WORKER8910.MAPPINGS", "1.2.13.1:TestTSUnit1;1.2.13.2:TestTSUnit2;1.2.13.3:TestTSUnit3");
         conf.setProperty("WORKER8910.DEFAULTWORKER", "TestTSUnit1");
-        
+
         // TSDispatcher2
         conf.setProperty("GLOB.WORKER8909.CLASSPATH", "org.signserver.module.tsa.RequestedPolicyDispatcher");
         conf.setProperty("WORKER8909.IMPLEMENTATION_CLASS", "org.signserver.module.tsa.RequestedPolicyDispatcher");
         conf.setProperty("GLOB.WORKER8909.SIGNERTOKEN.CLASSPATH", "org.signserver.server.cryptotokens.KeystoreCryptoToken");
         conf.setProperty("WORKER8909.NAME", "TestTSDispatcher2");
-        conf.setProperty("WORKER8909.KEYSTOREPATH", getSignServerHome() + 
+        conf.setProperty("WORKER8909.KEYSTOREPATH", getSignServerHome() +
                 File.separator + "res" + File.separator + "test" + File.separator +
                 "dss10" + File.separator + "dss10_tssigner1.p12");
         conf.setProperty("WORKER8909.KEYSTORETYPE", "PKCS12");
@@ -119,11 +122,11 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         conf.setProperty("WORKER8909.MAPPINGS", "1.2.13.1:TestTSUnit1;1.2.13.2:TestTSUnit2;1.2.13.3:TestTSUnit3");
         conf.setProperty("WORKER8909.DEFAULTWORKER", "TestTSUnit1");
         conf.setProperty("WORKER8909.USEDEFAULTIFMISMATCH", "true");
-        
+
         setProperties(conf);
         workerSession.reloadConfiguration(DISPATCHER0);
         workerSession.reloadConfiguration(DISPATCHER9);
-        
+
         addTimeStampSigner(WORKER1, "TestTSUnit1", true);
         workerSession.setWorkerProperty(WORKER1, "DEFAULTTSAPOLICYOID", "1.2.13.1");
         workerSession.removeWorkerProperty(WORKER1, "ACCEPTANYPOLICY");
@@ -135,7 +138,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         workerSession.removeWorkerProperty(WORKER2, "ACCEPTANYPOLICY");
         workerSession.setWorkerProperty(WORKER2, "ACCEPTEDPOLICIES", "1.2.13.2");
         workerSession.reloadConfiguration(WORKER2);
-        
+
         addTimeStampSigner(WORKER3, "TestTSUnit3", true);
         workerSession.setWorkerProperty(WORKER3, "DEFAULTTSAPOLICYOID", "1.2.13.3");
         workerSession.removeWorkerProperty(WORKER3, "ACCEPTANYPOLICY");
@@ -153,7 +156,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         assertSuccessfulTimestamp(WORKER2);
         assertSuccessfulTimestamp(WORKER3);
     }
-    
+
     /**
      * Sets the DispatchedAuthorizer for the dispatchees.
      */
@@ -168,7 +171,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKER2);
         workerSession.reloadConfiguration(WORKER3);
     }
-    
+
     /**
      * Resets authorization for the dispatchees to be able to call them directly.
      */
@@ -183,7 +186,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKER2);
         workerSession.reloadConfiguration(WORKER3);
     }
-    
+
     /**
      * Tests that the signers only accepts requests with their profile.
      */
@@ -192,9 +195,9 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
         TimeStampRequest req;
         TimeStampResponse res;
-        
+
         resetDispatchedAuthorizerForAllWorkers();
-        
+
         // Test that worker1 accepts its profile but not the other
         gen.setReqPolicy(WORKER1_PROFILE);
         req = gen.generate(TSPAlgorithms.SHA1, new byte[20], createNonce());
@@ -202,21 +205,21 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         assertEquals("token granted", PKIStatus.GRANTED, res.getStatus());
         assertEquals("right profile", WORKER1_PROFILE, res.getTimeStampToken().getTimeStampInfo().getPolicy());
         assertValid(req, res);
-        
+
         gen.setReqPolicy(WORKER2_PROFILE);
         req = gen.generate(TSPAlgorithms.SHA1, new byte[20], createNonce());
         res = requestTimeStamp(WORKER1, req);
         assertEquals("token rejection", PKIStatus.REJECTION, res.getStatus());
         assertEquals(new PKIFailureInfo(PKIFailureInfo.unacceptedPolicy), res.getFailInfo());
         assertValid(req, res);
-        
+
         gen.setReqPolicy(WORKER3_PROFILE);
         req = gen.generate(TSPAlgorithms.SHA1, new byte[20], createNonce());
         res = requestTimeStamp(WORKER1, req);
         assertEquals("token rejection", PKIStatus.REJECTION, res.getStatus());
         assertEquals(new PKIFailureInfo(PKIFailureInfo.unacceptedPolicy), res.getFailInfo());
         assertValid(req, res);
-        
+
         // Test that worker2 accepts its profile but not the other
         gen.setReqPolicy(WORKER2_PROFILE);
         req = gen.generate(TSPAlgorithms.SHA1, new byte[20], createNonce());
@@ -224,19 +227,19 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         assertEquals("token granted", PKIStatus.GRANTED, res.getStatus());
         assertEquals("right profile", WORKER2_PROFILE, res.getTimeStampToken().getTimeStampInfo().getPolicy());
         assertValid(req, res);
-        
+
         gen.setReqPolicy(WORKER1_PROFILE);
         req = gen.generate(TSPAlgorithms.SHA1, new byte[20], createNonce());
         res = requestTimeStamp(WORKER2, req);
         assertEquals("token rejection", PKIStatus.REJECTION, res.getStatus());
         assertEquals(new PKIFailureInfo(PKIFailureInfo.unacceptedPolicy), res.getFailInfo());
-        
+
         gen.setReqPolicy(WORKER3_PROFILE);
         req = gen.generate(TSPAlgorithms.SHA1, new byte[20], createNonce());
         res = requestTimeStamp(WORKER2, req);
         assertEquals("token rejection", PKIStatus.REJECTION, res.getStatus());
         assertEquals(new PKIFailureInfo(PKIFailureInfo.unacceptedPolicy), res.getFailInfo());
-        
+
         // Test that worker3 accepts its profile but not the other
         gen.setReqPolicy(WORKER3_PROFILE);
         req = gen.generate(TSPAlgorithms.SHA1, new byte[20], createNonce());
@@ -244,20 +247,20 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         assertEquals("token granted", PKIStatus.GRANTED, res.getStatus());
         assertEquals("right profile", WORKER3_PROFILE, res.getTimeStampToken().getTimeStampInfo().getPolicy());
         assertValid(req, res);
-        
+
         gen.setReqPolicy(WORKER1_PROFILE);
         req = gen.generate(TSPAlgorithms.SHA1, new byte[20], createNonce());
         res = requestTimeStamp(WORKER3, req);
         assertEquals("token rejection", PKIStatus.REJECTION, res.getStatus());
         assertEquals(new PKIFailureInfo(PKIFailureInfo.unacceptedPolicy), res.getFailInfo());
-        
+
         gen.setReqPolicy(WORKER2_PROFILE);
         req = gen.generate(TSPAlgorithms.SHA1, new byte[20], createNonce());
         res = requestTimeStamp(WORKER3, req);
         assertEquals("token rejection", PKIStatus.REJECTION, res.getStatus());
         assertEquals(new PKIFailureInfo(PKIFailureInfo.unacceptedPolicy), res.getFailInfo());
     }
-    
+
     /**
      * Tests that requests going through the dispatcher gets the right profiles.
      */
@@ -267,9 +270,9 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
             TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
             TimeStampRequest req;
             TimeStampResponse res;
-            
+
             setDispatchedAuthorizerForAllWorkers();
-            
+
             // Test that a request with WORKER1_PROFILE is accepted
             gen.setReqPolicy(WORKER1_PROFILE);
             req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
@@ -277,7 +280,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
             assertEquals("token granted", PKIStatus.GRANTED, res.getStatus());
             assertEquals("right profile", WORKER1_PROFILE, res.getTimeStampToken().getTimeStampInfo().getPolicy());
             assertValid(req, res);
-            
+
             // Test that a request with WORKER2_PROFILE is accepted
             gen.setReqPolicy(WORKER2_PROFILE);
             req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
@@ -285,7 +288,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
             assertEquals("token granted", PKIStatus.GRANTED, res.getStatus());
             assertEquals("right profile", WORKER2_PROFILE, res.getTimeStampToken().getTimeStampInfo().getPolicy());
             assertValid(req, res);
-            
+
             // Test that a request with WORKER3_PROFILE is accepted
             gen.setReqPolicy(WORKER3_PROFILE);
             req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
@@ -293,14 +296,14 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
             assertEquals("token granted", PKIStatus.GRANTED, res.getStatus());
             assertEquals("right profile", WORKER3_PROFILE, res.getTimeStampToken().getTimeStampInfo().getPolicy());
             assertValid(req, res);
-            
+
             // Test that an unknown profile is not accepted (USEDEFAULTIFMISMATCH=false)
             gen.setReqPolicy(UNSUPPORTED_PROFILE);
             req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
             res = requestTimeStamp(DISPATCHER0, req);
             assertEquals("token rejection", PKIStatus.REJECTION, res.getStatus());
             assertEquals(new PKIFailureInfo(PKIFailureInfo.unacceptedPolicy), res.getFailInfo());
-            
+
             // Test that an unknown profile is not accepted (USEDEFAULTIFMISMATCH=true but profile not known by the default worker)
             gen.setReqPolicy(UNSUPPORTED_PROFILE);
             req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
@@ -311,9 +314,9 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
             resetDispatchedAuthorizerForAllWorkers();
         }
      }
-     
+
     /**
-     * Tests that requests which does not request a certain profile gets dispatched 
+     * Tests that requests which does not request a certain profile gets dispatched
      * to the default worker.
      */
     @Test
@@ -322,9 +325,9 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
             TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
             TimeStampRequest req;
             TimeStampResponse res;
-        
+
             setDispatchedAuthorizerForAllWorkers();
-        
+
             // Test that a request with no reqPolicy goes to WORKER1_PROFILE
             req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
             res = requestTimeStamp(DISPATCHER0, req);
@@ -335,9 +338,9 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
             resetDispatchedAuthorizerForAllWorkers();
         }
     }
-    
+
     /**
-     * Tests the USEDEFAULTIFMISMATCH option which dispatches requests to the 
+     * Tests the USEDEFAULTIFMISMATCH option which dispatches requests to the
      * default worker if no mapping matched.
      */
     @Test
@@ -346,23 +349,23 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
             TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
             TimeStampRequest req;
             TimeStampResponse res;
-            
+
             setDispatchedAuthorizerForAllWorkers();
-            
+
             // Test that an profile not known by DISPATCHER0 but by a TSUnit1 is not accepted (USEDEFAULTIFMISMATCH=false)
             gen.setReqPolicy(WORKER1_ALTERNATIVE_PROFILE);
             req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
             res = requestTimeStamp(DISPATCHER0, req);
             assertEquals("token rejection", PKIStatus.REJECTION, res.getStatus());
             assertEquals(new PKIFailureInfo(PKIFailureInfo.unacceptedPolicy), res.getFailInfo());
-            
+
             // Test that an profile not known by DISPATCHER9 but by a TSUnit1 is accepted (USEDEFAULTIFMISMATCH=true)
             gen.setReqPolicy(WORKER1_ALTERNATIVE_PROFILE);
             req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
             res = requestTimeStamp(DISPATCHER9, req);
             assertEquals("token granted", PKIStatus.GRANTED, res.getStatus());
             assertEquals("right profile", WORKER1_ALTERNATIVE_PROFILE, res.getTimeStampToken().getTimeStampInfo().getPolicy());
-            
+
             // Test that an profile not known by DISPATCHER9 and not by a TSUnit1 is rejected even though USEDEFAULTIFMISMATCH=true
             gen.setReqPolicy(UNSUPPORTED_PROFILE);
             req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
@@ -373,11 +376,10 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
             resetDispatchedAuthorizerForAllWorkers();
         }
     }
-    
+
     /**
      * Test that the status string is included by default when mismatched policy
      * and no default worker is configured for mismatched policy.
-     * @throws Exception
      */
     @Test
     public void test06IncludeStatusStringFailure() throws Exception {
@@ -385,11 +387,11 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
             TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
             TimeStampRequest req;
             TimeStampResponse res;
-            
+
             setDispatchedAuthorizerForAllWorkers();
-            
+
             workerSession.setWorkerProperty(DISPATCHER0, TimeStampSigner.INCLUDESTATUSSTRING, "TRUE");
-            
+
             // Test that an profile not known by DISPATCHER0 but by a TSUnit1 is not accepted (USEDEFAULTIFMISMATCH=false)
             gen.setReqPolicy(WORKER1_ALTERNATIVE_PROFILE);
             req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
@@ -399,11 +401,10 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
             resetDispatchedAuthorizerForAllWorkers();
         }
     }
-    
+
     /**
      * Test that the status string is not included when setting the INCLUDESTATUSSTRING to "FALSE"
      * on the dispatcher and no default worker is configured for mismatched policy.
-     * @throws Exception
      */
     @Test
     public void test07ExcludeStatusStringFailure() throws Exception {
@@ -411,12 +412,12 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
             TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
             TimeStampRequest req;
             TimeStampResponse res;
-            
+
             setDispatchedAuthorizerForAllWorkers();
-            
+
             workerSession.setWorkerProperty(DISPATCHER0, TimeStampSigner.INCLUDESTATUSSTRING, "FALSE");
             workerSession.reloadConfiguration(DISPATCHER0);
-            
+
             // Test that an profile not known by DISPATCHER0 but by a TSUnit1 is not accepted (USEDEFAULTIFMISMATCH=false)
             gen.setReqPolicy(WORKER1_ALTERNATIVE_PROFILE);
             req = gen.generate(TSPAlgorithms.SHA256, new byte[32], createNonce());
@@ -426,19 +427,18 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
             resetDispatchedAuthorizerForAllWorkers();
         }
     }
-    
+
     /**
      * Test that trying to send a request directly to a signer using the DispatchedAuthorizer fails.
-     * @throws Exception
      */
     @Test
-    public void test08DispatchedAuthorizerNonDispatched() throws Exception {
+    public void test08DispatchedAuthorizerNonDispatched() {
         try {
             setDispatchedAuthorizerForAllWorkers();
-            
+
             TimeStampRequestGenerator gen = new TimeStampRequestGenerator();
             TimeStampRequest req;
-           
+
             req = gen.generate(TSPAlgorithms.SHA1, new byte[20], createNonce());
             requestTimeStamp(WORKER1, req);
             fail("Should not allow direct requests to a signer using a DispatchedAuthorizer");
@@ -450,7 +450,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
             resetDispatchedAuthorizerForAllWorkers();
         }
     }
-    
+
     /**
      * Clean up.
      */
@@ -462,7 +462,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         removeWorker(WORKER2);
         removeWorker(WORKER3);
     }
-    
+
     private void assertValid(TimeStampRequest req, TimeStampResponse res) {
         try {
             res.validate(req);
@@ -472,7 +472,7 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
     }
 
     private void assertSuccessfulTimestamp(int worker) throws Exception {
-        final int reqid = random.nextInt();
+        final int reqid = RANDOM.nextInt();
         final BigInteger nounce = createNonce();
 
         TimeStampRequestGenerator timeStampRequestGenerator = new TimeStampRequestGenerator();
@@ -488,25 +488,25 @@ public class RequestedPolicyDispatcherTest extends ModulesTestCase {
         Certificate signercert = res.getSignerCertificate();
         assertNotNull("contains certificate", signercert);
 
-        final TimeStampResponse timeStampResponse = new TimeStampResponse((byte[]) res.getProcessedData());
+        final TimeStampResponse timeStampResponse = new TimeStampResponse(res.getProcessedData());
         timeStampResponse.validate(timeStampRequest);
 
         assertEquals("Token granted", PKIStatus.GRANTED, timeStampResponse.getStatus());
         assertNotNull("Got timestamp token", timeStampResponse.getTimeStampToken());
     }
-    
+
     private TimeStampResponse requestTimeStamp(int worker, TimeStampRequest request) throws IOException, IllegalRequestException, CryptoTokenOfflineException, TSPException, SignServerException {
-        final int reqid = random.nextInt();
+        final int reqid = RANDOM.nextInt();
         byte[] requestBytes = request.getEncoded();
 
         GenericSignRequest signRequest = new GenericSignRequest(reqid, requestBytes);
         final GenericSignResponse res = (GenericSignResponse) processSession.process(new WorkerIdentifier(worker), signRequest, new RemoteRequestContext());
-        return new TimeStampResponse((byte[]) res.getProcessedData());
+        return new TimeStampResponse(res.getProcessedData());
     }
-    
+
     private BigInteger createNonce() {
         byte[] bytes = new byte[8];
-        random.nextBytes(bytes);
+        RANDOM.nextBytes(bytes);
         return new BigInteger(bytes);
     }
 

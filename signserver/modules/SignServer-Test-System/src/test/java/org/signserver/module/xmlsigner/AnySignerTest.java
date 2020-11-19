@@ -35,18 +35,22 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.WorkerSession;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Tests for any Signer.
  *
  * Can be used for testing key generation, key testing, csr generation etc.
- * 
+ *
  * @author Markus Kilås
  * @version $Id$
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AnySignerTest extends ModulesTestCase {
 
-    private static final int WORKERID = 5803;    
+    private static final int WORKERID = 5803;
     private static final int[] WORKERS = new int[] {WORKERID};
 
     private static File signserverhome;
@@ -54,19 +58,17 @@ public class AnySignerTest extends ModulesTestCase {
     private static File keystoreFile;
 
     private final WorkerSession workerSession = getWorkerSession();
-    
+
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         signserverhome = PathUtil.getAppHome();
     }
 
     @After
-    @Override
     public void tearDown() throws Exception {
         TestingSecurityManager.remove();
-    }	
+    }
 
     @Test
     public void test00SetupDatabase() throws Exception {
@@ -80,7 +82,7 @@ public class AnySignerTest extends ModulesTestCase {
 
         KeyStore keystore = KeyStore.getInstance("PKCS12", "BC");
         keystore.load(null, null);
-        keystore.store(new FileOutputStream(newKeystore), 
+        keystore.store(new FileOutputStream(newKeystore),
                 "foo123".toCharArray());
 
         assertTrue("Exists new keystore: " + newKeystore.getAbsolutePath(),
@@ -102,7 +104,7 @@ public class AnySignerTest extends ModulesTestCase {
 
         final String actualNewAlias = workerSession.generateSignerKey(new WorkerIdentifier(WORKERID), "RSA",
                 "2048", newKeyAlias, authCode);
-        
+
         assertEquals("alias", newKeyAlias, actualNewAlias);
 
         final Collection<KeyTestResult> results = workerSession.testKey(new WorkerIdentifier(WORKERID),
@@ -118,13 +120,13 @@ public class AnySignerTest extends ModulesTestCase {
         final byte[] pubKeyBytes = pubKey.getEncoded();
         final String expectedKeyHash = createKeyHash(pubKeyBytes);
         final String actualKeyHash = result.getPublicKeyHash();
-        
+
         assertEquals("key hash", expectedKeyHash, actualKeyHash);
 
         // Set new key as NEXTCERTSIGNKEY
         workerSession.setWorkerProperty(WORKERID, "NEXTCERTSIGNKEY", newKeyAlias);
         workerSession.reloadConfiguration(WORKERID);
-        
+
         // Generate CSR
         final PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA",
                 "CN=test01GenerateKey,C=SE", null);
@@ -136,7 +138,7 @@ public class AnySignerTest extends ModulesTestCase {
         final PublicKey actualPubKey = getPublicKeyFromRequest(req);
 
         assertEquals("key in request", pubKey, actualPubKey);
-        
+
         // Test that the DN is in the correct order
         String actualDN = req.getSubject().toString();
         assertTrue("dn: " + actualDN, actualDN.startsWith("CN=test01GenerateKey") && actualDN.endsWith("C=SE"));
@@ -152,7 +154,7 @@ public class AnySignerTest extends ModulesTestCase {
         final char[] authCode = "foo123".toCharArray();
         final String newKeyAlias = "newkey0002";
 
-        final String actualNewAlias = workerSession.generateSignerKey(new WorkerIdentifier(WORKERID), 
+        final String actualNewAlias = workerSession.generateSignerKey(new WorkerIdentifier(WORKERID),
                 "ECDSA", "secp256r1", newKeyAlias, authCode);
 
         assertEquals("alias", newKeyAlias, actualNewAlias);
@@ -243,8 +245,7 @@ public class AnySignerTest extends ModulesTestCase {
         // returned
 
         // The same object
-        assertTrue("Not converted to explicit",
-                actualPubKey.hashCode() == afterConvert.hashCode());
+        assertEquals("Not converted to explicit", actualPubKey.hashCode(), afterConvert.hashCode());
     }
 
     @Test

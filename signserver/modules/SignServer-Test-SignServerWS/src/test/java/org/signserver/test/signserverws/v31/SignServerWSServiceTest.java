@@ -40,7 +40,9 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.encoders.Base64;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
@@ -59,6 +61,11 @@ import org.signserver.test.signserverws.signserverws.v31.SignServerWS;
 import org.signserver.test.signserverws.signserverws.v31.SignServerWSService;
 import org.signserver.test.signserverws.signserverws.v31.WorkerStatusWS;
 import org.signserver.testutils.ModulesTestCase;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * Test calling SignServerWSService using SignServer 3.1 WSDL.
@@ -84,17 +91,17 @@ public class SignServerWSServiceTest extends ModulesTestCase {
         "signserver_deploy.properties",
         "conf/signserver_deploy.properties",
     };
-    
+
     /** Worker ID as defined in test-configuration.properties. **/
     private static final String WORKERID = "7003";
 
     /** A worker ID assumed to not be existing. */
     private static final String NONEXISTING_WORKERID = "1231231";
 
-    
-    
+
+
     private SignServerWS ws;
-    private SSLSocketFactory sf;
+    private final SSLSocketFactory sf;
 
     public SignServerWSServiceTest() {
         super();
@@ -104,7 +111,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
     /** Setup keystores for SSL. **/
     private SSLSocketFactory setupKeystores() {
         Properties config = new Properties();
-        
+
         final File home;
         final File path1 = new File("../..");
         final File path2 = new File(".");
@@ -115,7 +122,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
             } else {
             throw new RuntimeException("Unable to detect SignServer path");
             }
-        
+
         File confFile = null;
         for (String file : CONF_FILES) {
             final File f = new File(home, file);
@@ -127,7 +134,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
         if (confFile == null) {
             throw new RuntimeException("No signserver_deploy.properties found");
         } else {
-        
+
             try {
                 config.load(new FileInputStream(confFile));
         } catch (FileNotFoundException ignored) {
@@ -135,18 +142,18 @@ public class SignServerWSServiceTest extends ModulesTestCase {
         } catch (IOException ex) {
             LOG.error("Not using signserver_deploy.properties: " + ex.getMessage());
         }
-    
+
         final File truststore = new File(home, "p12/truststore.jks");
         final String truststorePassword = config.getProperty("java.trustpassword", "changeit");
         SSLSocketFactory socketFactory = null;
-        
+
         try {
             final KeyStore keystore = KeyStore.getInstance("JKS");
             keystore.load(new FileInputStream(truststore), truststorePassword.toCharArray());
-            
+
             final TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
             tmf.init(keystore);
-            
+
             final SSLContext context = SSLContext.getInstance("TLS");
             context.init(null, tmf.getTrustManagers(), new SecureRandom());
 
@@ -155,14 +162,13 @@ public class SignServerWSServiceTest extends ModulesTestCase {
                  NoSuchAlgorithmException | CertificateException e) {
             LOG.error("Could not read truststore: " + e.getMessage());
         }
-        
+
         return socketFactory;
     }
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() {
         LOG.info("Initilizing test using WS URL: " + getWsEndPointUrl());
         QName qname = new QName("gen.ws.protocol.signserver.org",
                 "SignServerWSService");
@@ -171,35 +177,31 @@ public class SignServerWSServiceTest extends ModulesTestCase {
         SignServerWSService signServerWSService = new SignServerWSService(
                resource, qname);
         ws =  signServerWSService.getSignServerWSPort();
-        
+
         final BindingProvider bp = (BindingProvider) ws;
         final Map<String, Object> requestContext = bp.getRequestContext();
-            
+
         requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT);
-        
+
         if (sf != null) {
             final Client client = ClientProxy.getClient(bp);
             final HTTPConduit http = (HTTPConduit) client.getConduit();
             final TLSClientParameters params = new TLSClientParameters();
-            
+
             params.setSSLSocketFactory(sf);
             http.setTlsClientParameters(params);
-            
+
             final HTTPClientPolicy policy = http.getClient();
             policy.setAutoRedirect(true);
         }
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-    
     /** Overridden by org.signserver.test.signserverws.v32.SignServerWSServiceTest */
     protected String getWsEndPointUrl() {
     	return ENDPOINT;
     }
-    
+
+    @Test
     public void test00SetupDatabase() throws Exception {
         addDummySigner(7003, "SignServerWSServiceTest_XMLSigner1", true);
     }
@@ -207,6 +209,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
     // TODO add test methods here. The name must begin with 'test'. For example:
     // public void testHello() {}
 
+    @Test
     public void test01GetStatusExisting() {
         try {
             final List<WorkerStatusWS> statuses = ws.getStatus(WORKERID);
@@ -215,7 +218,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
             LOG.debug("Status: " + toString(status));
 
             assertEquals("workerName", "7003", status.getWorkerName());
-            assertEquals("errormessage", null, status.getErrormessage());
+            assertNull("errormessage", status.getErrormessage());
             assertEquals("overallStatus", "ALLOK", status.getOverallStatus());
         } catch (InvalidWorkerIdException_Exception ex) {
             fail("Worker not found: " + WORKERID
@@ -223,6 +226,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test02GetStatusNonExisting() {
         try {
             final List<WorkerStatusWS> statuses
@@ -234,6 +238,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test03ProcessOk() {
         try {
             final List<ProcessRequestWS> requests = new ArrayList<>();
@@ -256,6 +261,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test04ProcessNonExisting() {
         try {
             final List<ProcessRequestWS> requests = new ArrayList<>();
@@ -272,6 +278,7 @@ public class SignServerWSServiceTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void test05ProcessIllegalRequest() {
         try {
             final List<ProcessRequestWS> requests = new ArrayList<>();
@@ -291,30 +298,22 @@ public class SignServerWSServiceTest extends ModulesTestCase {
                     + " Hasn't test-configuration.properties been applied?");
         }
         // OK (sort of, better would have been an illegalrequest)
-        
+
     }
-    
-    public void test99RemoveDatabase() throws Exception {
+
+    @Test
+    public void test99RemoveDatabase() {
         removeWorker(7003);
     }
 
     private String toString(WorkerStatusWS status) {
         final StringBuilder builder = new StringBuilder();
-        builder.append("WorkerStatusWS {");
-        builder.append("\n\t");
+        builder.append("WorkerStatusWS {").append("\n\t");
 
-        builder.append("errormessage: ");
-        builder.append(status.getErrormessage());
-        builder.append("\n\t");
+        builder.append("errormessage: ").append(status.getErrormessage()).append("\n\t");
+        builder.append("overallStatus: ").append(status.getOverallStatus()).append("\n\t");
+        builder.append("workerName: ").append(status.getWorkerName()).append("\n");
 
-        builder.append("overallStatus: ");
-        builder.append(status.getOverallStatus());
-        builder.append("\n\t");
-
-        builder.append("workerName: ");
-        builder.append(status.getWorkerName());
-        
-        builder.append("\n");
         builder.append("}");
         return builder.toString();
     }

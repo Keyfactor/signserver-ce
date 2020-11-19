@@ -16,6 +16,7 @@ import org.signserver.testutils.WebTestCase;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -34,9 +35,12 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.server.signers.EchoRequestMetadataSigner;
 import org.signserver.testutils.ModulesTestCase;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 /**
  * Tests that the right HTTP status codes are returned in different situations.
- * 
+ *
  * @author Markus Kilås
  * @version $Id$
  */
@@ -44,7 +48,7 @@ import org.signserver.testutils.ModulesTestCase;
 public class GenericProcessServletResponseTest extends WebTestCase {
 
     private static final long UPLOAD_CONFIG_CACHE_TIME = 2000; // Note: From GeneriProcessServlet.UPLOAD_CONFIG_CACHE_TIME
-    
+
     @Override
     protected String getServletURL() {
         return getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/process";
@@ -186,7 +190,7 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         // Set any bad properties that will make the signer fail with an exception
         final String originalSignatureAlgorithm = getWorkerSession().getCurrentWorkerConfig(
                 getSignerIdDummy1()).getProperty("SIGNATUREALGORITHM");
-        
+
         final String badKeyData = "_any-non-existing-alg_";
         getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "SIGNATUREALGORITHM",
                 badKeyData);
@@ -213,27 +217,25 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameCMSSigner1());
         fields.put("data", "Something to sign...");
-        
+
         final String expectedResponseFilename = "mydocument.dat.p7s";
         final String expected = "attachment; filename=\"" + expectedResponseFilename + "\"";
-        
+
         HttpURLConnection con = sendPostMultipartFormData(getServletURL(), fields, "mydocument.dat");
         assertEquals(200, con.getResponseCode());
-        
+
         final String actual = con.getHeaderField("Content-Disposition");
         assertEquals("Returned filename", expected, actual);
 
         con.disconnect();
     }
-    
+
     /**
      * Test explicitly setting the processType request parameter
      * to signDocument (the default value).
-     * 
-     * @throws Exception
      */
     @Test
-    public void test07ExplicitProcessTypeSignDocument() throws Exception {
+    public void test07ExplicitProcessTypeSignDocument() {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("processType", "signDocument");
@@ -244,11 +246,9 @@ public class GenericProcessServletResponseTest extends WebTestCase {
 
     /**
      * Test setting processType to validateDocument for a signer.
-     * 
-     * @throws Exception
      */
     @Test
-    public void test08WrongProcessType() throws Exception {
+    public void test08WrongProcessType() {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("processType", "validateDocument");
@@ -256,14 +256,12 @@ public class GenericProcessServletResponseTest extends WebTestCase {
 
         assertStatusReturned(fields, 400);
     }
-    
+
     /**
      * Test setting processType to signDocument for a validator.
-     * 
-     * @throws Exception
      */
     @Test
-    public void test08WrongProcessTypeValidator() throws Exception {
+    public void test08WrongProcessTypeValidator() {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getWorkerNameXmlValidator());
         fields.put("processType", "signDocument");
@@ -271,14 +269,12 @@ public class GenericProcessServletResponseTest extends WebTestCase {
 
         assertStatusReturned(fields, 400);
     }
-    
+
     /**
      * Test setting an invalid value for processType.
-     * 
-     * @throws Exception
      */
     @Test
-    public void test10InvalidProcessType() throws Exception {
+    public void test10InvalidProcessType() {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerName", getSignerNameDummy1());
         fields.put("processType", "foobar");
@@ -286,11 +282,9 @@ public class GenericProcessServletResponseTest extends WebTestCase {
 
         assertStatusReturned(fields, 400);
     }
-    
+
     /**
      * Test issuing a validateDocument call.
-     * 
-     * @throws Exception
      */
     @Test
     public void test11ValidateDocument() throws Exception {
@@ -302,11 +296,9 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         final byte[] content = sendPostFormUrlencodedReadBody(getServletURL(), fields);
         assertEquals("Response content", "VALID", new String(content));
     }
-    
+
     /**
      * Test validating a document with an invalid signature.
-     * 
-     * @throws Exception
      */
     @Test
     public void test12ValidateDocumentInvalid() throws Exception {
@@ -318,11 +310,9 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         final byte[] content = sendPostFormUrlencodedReadBody(getServletURL(), fields);
         assertEquals("Response content", "INVALID", new String(content));
     }
-    
+
     /**
      * Test validating a valid certificate using the validation service through the HTTP servlet.
-     * 
-     * @throws Exception
      */
     @Test
     public void test13ValidateCertificate() throws Exception {
@@ -331,47 +321,43 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         fields.put("processType", "validateCertificate");
         fields.put("data", XMLValidatorTestData.CERT_ISSUER);
         fields.put("encoding", "base64");
-        
+
         // test returned status (GET, POST and POST with multi-part content)
         assertStatusReturned(fields, 200);
-        
+
         // check the returned content
         final byte[] content = sendAndReadyBody(fields);
         assertEquals("Response content", "VALID;;This certificate is valid;-1;", new String(content));
     }
-    
+
     /**
      * Test validating an other, non-supported issuer using the validation service through the HTTP servlet.
-     * 
-     * @throws Exception
      */
     @Test
-    public void test14ValidateCertificateOther() throws Exception {        
+    public void test14ValidateCertificateOther() throws Exception {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerId", Integer.toString(getWorkerIdValidationService()));
         fields.put("processType", "validateCertificate");
         fields.put("data", XMLValidatorTestData.CERT_OTHER);
         fields.put("encoding", "base64");
-        
+
         // check the returned content
         final byte[] content = sendAndReadyBody(fields);
         assertEquals("Response content", "ISSUERNOTSUPPORTED;;Issuer of given certificate isn't supported;-1;", new String(content));
     }
-    
-    private Properties parseMetadataResponse(final byte[] resp) 
+
+    private Properties parseMetadataResponse(final byte[] resp)
         throws IOException {
         final String propsString = new String(resp);
         final Properties props = new Properties();
-        
+
         props.load(new StringReader(propsString));
-        
+
         return props;
     }
-    
+
     /**
      * Test setting a single REQUEST_METADATA.x param.
-     * 
-     * @throws Exception
      */
     @Test
     public void test15RequestMetadataSingleParam() throws Exception {
@@ -379,19 +365,17 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         fields.put("workerId", "123");
         fields.put("data", "foo");
         fields.put("REQUEST_METADATA.FOO", "BAR");
-        
+
         assertStatusReturned(fields, 200);
-        
+
         final byte[] resp = sendAndReadyBody(fields);
         final Properties props = parseMetadataResponse(resp);
-        
+
         assertEquals("Contains property", "BAR", props.getProperty("FOO"));
     }
-  
+
     /**
      * Test passing in metdata parameters using the properties file syntax.
-     * 
-     * @throws Exception
      */
     @Test
     public void test16RequestMetadataPropertiesFile() throws Exception {
@@ -399,21 +383,19 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         fields.put("workerId", "123");
         fields.put("data", "foo");
         fields.put("REQUEST_METADATA", "FOO=BAR\nFOO2=BAR2");
-        
+
         assertStatusReturned(fields, 200);
-        
+
         final byte[] resp = sendAndReadyBody(fields);
         final Properties props = parseMetadataResponse(resp);
-        
+
         assertEquals("Contains property", "BAR", props.getProperty("FOO"));
         assertEquals("Contains property", "BAR2", props.getProperty("FOO2"));
     }
-    
+
     /**
-     * Test passing in metdata parameters using the properties file syntax
+     * Test passing in metadata parameters using the properties file syntax
      * and also override a single parameter.
-     * 
-     * @throws Exception
      */
     @Test
     public void test17RequestMetadataOverride() throws Exception {
@@ -422,19 +404,18 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         fields.put("data", "foo");
         fields.put("REQUEST_METADATA", "FOO=BAR\nFOO2=BAR2");
         fields.put("REQUEST_METADATA.FOO", "OVERRIDE");
-        
+
         assertStatusReturned(fields, 200);
-        
+
         final byte[] resp = sendAndReadyBody(fields);
         final Properties props = parseMetadataResponse(resp);
-        
+
         assertEquals("Contains property", "OVERRIDE", props.getProperty("FOO"));
         assertEquals("Contains property", "BAR2", props.getProperty("FOO2"));
     }
-    
+
     /**
      * Test including properties with an escaped "=" sign as part of a property value.
-     * @throws Exception
      */
     @Test
     public void test18RequestMetadataEscaped() throws Exception {
@@ -442,20 +423,18 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         fields.put("workerId", "123");
         fields.put("data", "foo");
         fields.put("REQUEST_METADATA", "FOO=FOO\\=BAR\nFOO2=BAR2");
-        
+
         assertStatusReturned(fields, 200);
-        
+
         final byte[] resp = sendAndReadyBody(fields);
         final Properties props = parseMetadataResponse(resp);
-        
+
         assertEquals("Contains property", "FOO=BAR", props.getProperty("FOO"));
         assertEquals("Contains property", "BAR2", props.getProperty("FOO2"));
     }
-    
+
     /**
      * Test including a property value broken up on two lines with a line-ending \.
-     * 
-     * @throws Exception
      */
     @Test
     public void test19RequestMetadataLineEndingBackslash() throws Exception {
@@ -463,20 +442,18 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         fields.put("workerId", "123");
         fields.put("data", "foo");
         fields.put("REQUEST_METADATA", "FOO=BAR\\\nNEXT_LINE\nFOO2=BAR2");
-        
+
         assertStatusReturned(fields, 200);
-        
+
         final byte[] resp = sendAndReadyBody(fields);
         final Properties props = parseMetadataResponse(resp);
-        
+
         assertEquals("Contains property", "BARNEXT_LINE", props.getProperty("FOO"));
         assertEquals("Contains property", "BAR2", props.getProperty("FOO2"));
     }
-    
+
     /**
      * Test with a comment line in the property file.
-     * 
-     * @throws Exception
      */
     @Test
     public void test20RequestMetadataWithCommentLine() throws Exception {
@@ -484,20 +461,18 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         fields.put("workerId", "123");
         fields.put("data", "foo");
         fields.put("REQUEST_METADATA", "FOO=BAR\n# Comment = a comment\nFOO2=BAR2");
-        
+
         assertStatusReturned(fields, 200);
-        
+
         final byte[] resp = sendAndReadyBody(fields);
         final Properties props = parseMetadataResponse(resp);
-        
+
         // Properties.load() seems to include some sort of marker as the first entry...
         assertEquals("Number of properties", 3, props.size());
     }
-    
+
     /**
      * Test with extra whitespace surrounding the "=".
-     * 
-     * @throws Exception
      */
     @Test
     public void test21RequestMetadataExtraWhitespace() throws Exception {
@@ -505,19 +480,18 @@ public class GenericProcessServletResponseTest extends WebTestCase {
         fields.put("workerId", "123");
         fields.put("data", "foo");
         fields.put("REQUEST_METADATA", "FOO = BAR\nFOO2 = BAR2");
-        
+
         assertStatusReturned(fields, 200);
-        
+
         final byte[] resp = sendAndReadyBody(fields);
         final Properties props = parseMetadataResponse(resp);
-        
+
         assertEquals("Contains property", "BAR", props.getProperty("FOO"));
         assertEquals("Contains property", "BAR2", props.getProperty("FOO2"));
     }
 
     /**
      * Tests that the maximum upload size can be configured and is enforced.
-     * @throws Exception 
      */
     @Test
     public void test22MaxUploadSize() throws Exception {
@@ -529,20 +503,20 @@ public class GenericProcessServletResponseTest extends WebTestCase {
 
             Map<String, String> fields = new HashMap<>();
             fields.put("workerName", getSignerNameCMSSigner1());
-            
+
             // Test with a small number of bytes
             // Note we can not test with 700 bytes as there is also headers that take up space
             byte[] data = new byte[10];
-            Arrays.fill(data, "a".getBytes("ASCII")[0]);
-            fields.put("data", new String(data, "ASCII"));
-            
+            Arrays.fill(data, "a".getBytes(StandardCharsets.US_ASCII)[0]);
+            fields.put("data", new String(data, StandardCharsets.US_ASCII));
+
             assertStatusReturned(fields, 200);
-            
+
             // Test with more than 700 bytes upload
             data = new byte[701];
-            Arrays.fill(data, "a".getBytes("ASCII")[0]);
-            fields.put("data", new String(data, "ASCII"));
-            
+            Arrays.fill(data, "a".getBytes(StandardCharsets.US_ASCII)[0]);
+            fields.put("data", new String(data, StandardCharsets.US_ASCII));
+
             assertStatusReturned(fields, 413);
         } finally {
             getGlobalSession().removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "HTTP_MAX_UPLOAD_SIZE");

@@ -39,6 +39,13 @@ import org.junit.Test;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 /**
  * Unit tests for the PDFSigner.
  *
@@ -61,17 +68,12 @@ public class PDFSignerTest extends ModulesTestCase {
     private final ProcessSessionRemote processSession = getProcessSession();
 
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#tearDown()
-     */
     @After
-    @Override
-    public void tearDown() throws Exception {
+    public void tearDown() {
         TestingSecurityManager.remove();
     }
 
@@ -86,29 +88,27 @@ public class PDFSignerTest extends ModulesTestCase {
 
     /**
      * Test signing a PDF, optionally with given hash algorithm.
-     * 
      */
-    protected GenericSignResponse signGenericPDFWithHash(final int workerId, 
-            final byte[] data, final String digestAlgorithm,
-            final boolean checkTimestamp,
-            final String tsaDigestAlgorithm)
+    protected void signGenericPDFWithHash(final byte[] data, final String digestAlgorithm,
+                                          final boolean checkTimestamp,
+                                          final String tsaDigestAlgorithm)
                     throws IllegalRequestException, CryptoTokenOfflineException,
                         SignServerException, IOException {
         try {
             if (digestAlgorithm != null) {
-                workerSession.setWorkerProperty(workerId, PDFSigner.DIGESTALGORITHM, 
+                workerSession.setWorkerProperty(WORKERID, PDFSigner.DIGESTALGORITHM,
                         digestAlgorithm);
-                workerSession.reloadConfiguration(workerId);
+                workerSession.reloadConfiguration(WORKERID);
             }
-            
+
             if (tsaDigestAlgorithm != null) {
-                workerSession.setWorkerProperty(workerId, PDFSigner.TSA_DIGESTALGORITHM,
+                workerSession.setWorkerProperty(WORKERID, PDFSigner.TSA_DIGESTALGORITHM,
                         tsaDigestAlgorithm);
-                workerSession.reloadConfiguration(workerId);
+                workerSession.reloadConfiguration(WORKERID);
             }
-            
-            final GenericSignResponse response = signGenericDocument(workerId, data);
-         
+
+            final GenericSignResponse response = signGenericDocument(WORKERID, data);
+
             final String expectedDigestAlgorithm;
             if (digestAlgorithm == null) {
                 // if no hash algorithm was specified, the default should be "SHA256"
@@ -116,27 +116,27 @@ public class PDFSignerTest extends ModulesTestCase {
             } else {
                 expectedDigestAlgorithm = digestAlgorithm;
             }
-                
+
             // check PDF version
             final PdfReader reader = new PdfReader(response.getProcessedData());
             final char version = reader.getPdfVersion();
-            
+
             if (digestAlgorithm != null) {
                 checkPdfVersion(version, digestAlgorithm);
             }
-            
+
             final AcroFields af = reader.getAcroFields();
             final List<String> sigNames = af.getSignatureNames();
-            
+
             for (final String sigName : sigNames) {
                 final PdfPKCS7 pk = af.verifySignature(sigName);
-                
+
                 // PdfPKCS7.getDigestAlgorithm() seems to give <algo>withRSA
                 assertEquals("Digest algorithm", expectedDigestAlgorithm + "withRSA",
                         pk.getDigestAlgorithm());
                 assertEquals("Hash algorithm", expectedDigestAlgorithm,
                         pk.getHashAlgorithm());
-                
+
                 if (checkTimestamp) {
                     // for now only check that the token is using the
                     // expected digest algorithm
@@ -144,40 +144,38 @@ public class PDFSignerTest extends ModulesTestCase {
 
                     assertNotNull("Timestamp token should be available",
                                   timeStampToken);
-                    
+
                     final AlgorithmIdentifier algId = timeStampToken.getTimeStampInfo().getHashAlgorithm();
                     final String expectedTsaDigestAlgorithm =
                             tsaDigestAlgorithm != null ? tsaDigestAlgorithm : "SHA256";
                     final DefaultDigestAlgorithmIdentifierFinder algFinder =
                         new DefaultDigestAlgorithmIdentifierFinder();
                     final AlgorithmIdentifier ai = algFinder.find(expectedTsaDigestAlgorithm);
-                    
+
                     assertEquals("Expected TSA digest algorithm",
                                  ai.getAlgorithm(), algId.getAlgorithm());
                 }
             }
-            
-            return response;
-            
+
         } finally {
-            workerSession.removeWorkerProperty(workerId, PDFSigner.DIGESTALGORITHM);
-            workerSession.reloadConfiguration(workerId);
+            workerSession.removeWorkerProperty(WORKERID, PDFSigner.DIGESTALGORITHM);
+            workerSession.reloadConfiguration(WORKERID);
         }
     }
-    
+
     /**
      * Check PDF version against minimum expected value given by hash algorithm.
-     * 
+     *
      * @param pdfVersion Actual PDF version of signed document (x in 1.x)
      * @param digestAlgorithm Digest algorithm used when signing
      */
     private void checkPdfVersion(final char pdfVersion, final String digestAlgorithm) {
         final int version = Character.digit(pdfVersion, 10);
-        
+
         if (version == -1) {
             fail("Unknown PDF version: " + pdfVersion);
         }
-        
+
         if ("SHA1".equals(digestAlgorithm)) {
             assertTrue("Insufficent PDF version: " + version, version >= 3);
         } else if ("SHA256".equals(digestAlgorithm)) {
@@ -192,7 +190,7 @@ public class PDFSignerTest extends ModulesTestCase {
             fail("Unknown digest algorithm: " + digestAlgorithm);
         }
     }
-    
+
     @Test
     public void test01BasicPdfSign() throws Exception {
 
@@ -204,16 +202,16 @@ public class PDFSignerTest extends ModulesTestCase {
 
         try ( // TODO: verify PDF file
                 FileOutputStream fos = new FileOutputStream(getSignServerHome() + "/tmp/signedpdf.pdf")) {
-            fos.write((byte[]) res.getProcessedData());
+            fos.write(res.getProcessedData());
         }
     }
 
     @Test
     public void test02GetStatus() throws Exception {
         StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(WORKERID));
-        assertTrue(stat.getTokenStatus() == WorkerStatus.STATUS_ACTIVE);
+        assertEquals(stat.getTokenStatus(), WorkerStatus.STATUS_ACTIVE);
     }
-    
+
     /**
      * Tests that Empty value for AUTHTYPE property should be allowed.
      *
@@ -226,7 +224,7 @@ public class PDFSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID, "AUTHTYPE", "         ");
         workerSession.reloadConfiguration(WORKERID);
 
-        StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(WORKERID));        
+        StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(WORKERID));
         assertTrue(stat.getFatalErrors().isEmpty());
 
         String errorMessage = "client authentication is required";
@@ -239,16 +237,15 @@ public class PDFSignerTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID);
         }
     }
-    
+
      /**
      * Test signing PDF with Default (SHA256) hash.
-     * @throws Exception
      */
     @Test
     public void test21WithDefaultDigestAlgorithm() throws Exception {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
 
-        signGenericPDFWithHash(WORKERID, pdfOk, null, false, null);
+        signGenericPDFWithHash(pdfOk, null, false, null);
     }
 
     /**
@@ -352,34 +349,29 @@ public class PDFSignerTest extends ModulesTestCase {
     }
 
     @Test
-    public void test08GetCrlDistributionPoint() throws Exception {
+    public void test08GetCrlDistributionPoint() {
         Collection<Certificate> certs;
-        URL url;
 
         // Test with normal cert
         try {
-            certs = CertTools.getCertsFromPEM(
-                    new ByteArrayInputStream(CERT_PDFSIGNER12.getBytes()));
-            url = PDFSigner.getCRLDistributionPoint(certs.iterator().next());
-            assertNotNull(url);
+            certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(CERT_PDFSIGNER12.getBytes()), Certificate.class);
+            assertNotNull(PDFSigner.getCRLDistributionPoint(certs.iterator().next()));
         } catch (CertificateParsingException ex) {
             fail("Exception: " + ex.getMessage());
         }
 
         // Test with cert that contains CDP without URI
         try {
-            certs = CertTools.getCertsFromPEM(
-                    new ByteArrayInputStream(CERT_ADOBE_ROOT.getBytes()));
-            url = PDFSigner.getCRLDistributionPoint(certs.iterator().next());
-            assertNull(url);
+            certs = CertTools.getCertsFromPEM(new ByteArrayInputStream(CERT_ADOBE_ROOT.getBytes()), Certificate.class);
+            assertNull(PDFSigner.getCRLDistributionPoint(certs.iterator().next()));
         } catch (CertificateParsingException ex) {
             fail("Exception: " + ex.getMessage());
         }
     }
 
     @Test
-    public void test09FormatFromPattern() throws Exception {
-        Pattern p1 = Pattern.compile("\\$\\{(.+?)\\}");
+    public void test09FormatFromPattern() {
+        Pattern p1 = Pattern.compile("\\$\\{(.+?)}");
 
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, 2010);
@@ -421,16 +413,14 @@ public class PDFSignerTest extends ModulesTestCase {
         final Calendar cal = Calendar.getInstance();
         final String year = String.valueOf(cal.get(Calendar.YEAR));
 
-        final File exptectedFile = new File(archiveFolder,
-                year + "/" + String.valueOf(WORKERID) + "/"
-                + String.valueOf(res.getRequestID()) + ".pdf");
+        final File expectedFile = new File(archiveFolder, year + "/" + WORKERID + "/" + res.getRequestID() + ".pdf");
 
-        assertTrue("File: " + exptectedFile, exptectedFile.exists());
+        assertTrue("File: " + expectedFile, expectedFile.exists());
 
         final PdfReader reader = new PdfReader(res.getProcessedData());
         assertNotNull("ok archived doc", reader);
 
-        exptectedFile.delete();
+        expectedFile.delete();
     }
 
     @Test
@@ -444,7 +434,7 @@ public class PDFSignerTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID);
 
             // Just test that we can sign a normal PDF
-            signNoCheck(WORKERID, pdfOk);
+            signNoCheck(pdfOk);
 
             // Test that we can sign a strange PDF when the check is disabled
             signGenericDocument(WORKERID, pdf2Catalogs);
@@ -473,75 +463,69 @@ public class PDFSignerTest extends ModulesTestCase {
     /**
      * Test signing PDF with timestamping using
      * internal invocation of TSA.
-     * 
-     * @throws Exception
      */
     @Test
     public void test12UsingInternalTSA() throws Exception {
         try {
             final byte[] pdfOk = getTestFile(TESTPDF_OK);
-        
-            workerSession.setWorkerProperty(WORKERID, PDFSigner.TSA_WORKER, 
+
+            workerSession.setWorkerProperty(WORKERID, PDFSigner.TSA_WORKER,
                     String.valueOf(TSAWORKERID));
             workerSession.reloadConfiguration(WORKERID);
-            
+
             // TODO: check the timestamp
             // this should probably be added as a test when implementing the PDF validator
-            signGenericPDFWithHash(WORKERID, pdfOk, "SHA256", true, null);           
+            signGenericPDFWithHash(pdfOk, "SHA256", true, null);
         } finally {
             workerSession.removeWorkerProperty(WORKERID, PDFSigner.TSA_WORKER);
             workerSession.reloadConfiguration(WORKERID);
         }
     }
-    
+
     /**
      * Test signing PDF with timestamping using
      * internal invocation of TSA. Using SHA-384 as the TSA digest algorithm.
-     * 
-     * @throws Exception
      */
     @Test
     public void test12UsingInternalTSASha384() throws Exception {
         try {
             final byte[] pdfOk = getTestFile(TESTPDF_OK);
-        
-            workerSession.setWorkerProperty(WORKERID, PDFSigner.TSA_WORKER, 
+
+            workerSession.setWorkerProperty(WORKERID, PDFSigner.TSA_WORKER,
                     String.valueOf(TSAWORKERID));
             workerSession.reloadConfiguration(WORKERID);
-            
+
             // TODO: check the timestamp
             // this should probably be added as a test when implementing the PDF validator
-            signGenericPDFWithHash(WORKERID, pdfOk, "SHA256", true, "SHA384");           
+            signGenericPDFWithHash(pdfOk, "SHA256", true, "SHA384");
         } finally {
             workerSession.removeWorkerProperty(WORKERID, PDFSigner.TSA_WORKER);
             workerSession.reloadConfiguration(WORKERID);
         }
     }
-    
+
     /**
      * Test signing PDF with timestamping using
      * internal invocation of TSA. Using SHA1 as the TSA digest algorithm.
-     * 
-     * @throws Exception
      */
     @Test
     public void test12UsingInternalTSASha1() throws Exception {
         try {
             final byte[] pdfOk = getTestFile(TESTPDF_OK);
-        
-            workerSession.setWorkerProperty(WORKERID, PDFSigner.TSA_WORKER, 
+
+            workerSession.setWorkerProperty(WORKERID, PDFSigner.TSA_WORKER,
                     String.valueOf(TSAWORKERID));
             workerSession.reloadConfiguration(WORKERID);
-            
+
             // TODO: check the timestamp
             // this should probably be added as a test when implementing the PDF validator
-            signGenericPDFWithHash(WORKERID, pdfOk, "SHA256", true, "SHA1");           
+            signGenericPDFWithHash(pdfOk, "SHA256", true, "SHA1");
         } finally {
             workerSession.removeWorkerProperty(WORKERID, PDFSigner.TSA_WORKER);
             workerSession.reloadConfiguration(WORKERID);
         }
     }
-    
+
     @Test
     public void test13VeryLongCertChain() throws Exception {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
@@ -557,63 +541,57 @@ public class PDFSignerTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID);
         }
     }
-    
+
     /**
      * Test signing PDF with SHA256 hash.
-     * @throws Exception
      */
     @Test
     public void test14WithSHA256Hash() throws Exception {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
-        
-        signGenericPDFWithHash(WORKERID, pdfOk, "SHA256", false, null);
+
+        signGenericPDFWithHash(pdfOk, "SHA256", false, null);
     }
-    
+
     /**
      * Test signing PDF with SHA384 hash.
-     * @throws Exception
      */
     @Test
     public void test15WithSHA384Hash() throws Exception {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
-        
-        signGenericPDFWithHash(WORKERID, pdfOk, "SHA384", false, null);
+
+        signGenericPDFWithHash(pdfOk, "SHA384", false, null);
     }
 
     /**
      * Test signing PDF with SHA512 hash.
-     * @throws Exception
      */
     @Test
     public void test16WithSHA512Hash() throws Exception {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
-        
-        signGenericPDFWithHash(WORKERID, pdfOk, "SHA512", false, null);
+
+        signGenericPDFWithHash(pdfOk, "SHA512", false, null);
     }
-    
+
     /**
      * Test signing PDF with RIPEMD160 hash.
-     * @throws Exception
      */
     @Test
     public void test17WithRIPEMD160Hash() throws Exception {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
-        
-        signGenericPDFWithHash(WORKERID, pdfOk, "RIPEMD160", false, null);
+
+        signGenericPDFWithHash(pdfOk, "RIPEMD160", false, null);
     }
-    
+
     /**
      * Test signing an already signed PDF using a hash
      * algorithm resulting in a higher PDF version. Should fail.
-     * 
-     * @throws Exception
      */
     @Test
     public void test18UpgradeSignedNotAllowed() throws Exception {
         final byte[] pdfSigned = getTestFile(TESTPDF_SIGNED);
-        
+
         try {
-            signGenericPDFWithHash(WORKERID, pdfSigned, "SHA512", false, null);
+            signGenericPDFWithHash(pdfSigned, "SHA512", false, null);
             fail("Should fail to upgrade an already signed document");
         } catch (IllegalRequestException ok) {
             // expected
@@ -621,18 +599,16 @@ public class PDFSignerTest extends ModulesTestCase {
             fail("Unexpected exception: " + e.getClass().getName());
         }
     }
-    
+
     /**
      * Test signing an already signed PDF using a hash algorithm
      * not requiring a version upgrade. Should work.
-     * 
-     * @throws Exception
      */
     @Test
     public void test19NonUpgradeSignedAllowed() throws Exception {
         final byte[] pdfSigned = getTestFile(TESTPDF_SIGNED);
-        
-        signGenericPDFWithHash(WORKERID, pdfSigned, "SHA1", false, null);
+
+        signGenericPDFWithHash(pdfSigned, "SHA1", false, null);
     }
 
     @Test
@@ -641,13 +617,10 @@ public class PDFSignerTest extends ModulesTestCase {
         removeWorker(TSAWORKERID);
     }
 
-    private GenericSignResponse signNoCheck(final int workerId,
-            final byte[] data) throws IllegalRequestException,
+    private GenericSignResponse signNoCheck(final byte[] data) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
-        final GenericSignRequest request = new GenericSignRequest(1234,
-                data);
-        final GenericSignResponse response = (GenericSignResponse) processSession.process(new WorkerIdentifier(workerId), request, new RemoteRequestContext());
-        return response;
+        final GenericSignRequest request = new GenericSignRequest(1234, data);
+        return (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKERID), request, new RemoteRequestContext());
     }
 
     private byte[] getTestFile(String name) throws Exception {
@@ -3716,10 +3689,10 @@ public class PDFSignerTest extends ModulesTestCase {
     CA:FALSE
     X509v3 Authority Key Identifier:
     keyid:90:FD:A7:F6:EC:98:47:56:4C:10:96:C2:AD:85:2F:50:EB:26:E9:34
-    
+
     X509v3 CRL Distribution Points:
     URI:http://vmserver1:8080/ejbca/publicweb/webdist/certdist?cmd=crl&issuer=CN=DemoSubCA11,O=Demo%20Organization%2010,C=SE
-    
+
     X509v3 Key Usage: critical
     Digital Signature
     Signature Algorithm: sha1WithRSAEncryption
@@ -3793,14 +3766,14 @@ public class PDFSignerTest extends ModulesTestCase {
     SSL CA, S/MIME CA, Object Signing CA
     X509v3 CRL Distribution Points:
     DirName:/C=US/O=Adobe Systems Incorporated/OU=Adobe Trust Services/CN=Adobe Root CA/CN=CRL1
-    
+
     X509v3 Private Key Usage Period:
     Not Before: Jan  8 23:37:23 2003 GMT, Not After: Jan  9 00:07:23 2023 GMT
     X509v3 Key Usage:
     Certificate Sign, CRL Sign
     X509v3 Authority Key Identifier:
     keyid:82:B7:38:4A:93:AA:9B:10:EF:80:BB:D9:54:E2:F1:0F:FB:80:9C:DE
-    
+
     X509v3 Subject Key Identifier:
     82:B7:38:4A:93:AA:9B:10:EF:80:BB:D9:54:E2:F1:0F:FB:80:9C:DE
     X509v3 Basic Constraints:

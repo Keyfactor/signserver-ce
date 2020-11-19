@@ -26,6 +26,11 @@ import org.junit.runners.MethodSorters;
 import org.junit.Test;
 import org.signserver.common.ArchiveMetadata;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Tests for archiving.
  *
@@ -38,12 +43,12 @@ public class ArchiveTest extends ArchiveTestCase {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ArchiveTest.class);
 
-    private static Random random = new Random();
-    	
+    private static final Random RANDOM = new Random();
+
     @Test
     public void test00SetupDatabase() throws Exception {
         addDummySigner(getSignerIdDummy1(), getSignerNameDummy1(), true);
-        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
+        getWorkerSession().setWorkerProperty(getSignerIdDummy1(),
                 "ARCHIVE", "true");
         getWorkerSession().reloadConfiguration(getSignerIdDummy1());
     }
@@ -55,12 +60,12 @@ public class ArchiveTest extends ArchiveTestCase {
     @Test
     public void test01archiveNewDocument() throws Exception {
         LOG.debug(">test01OneArchiverCalled");
-        
-        testArchive("<document id=\"" + random.nextLong() + "\"/>");
-        
+
+        testArchive("<document id=\"" + RANDOM.nextLong() + "\"/>");
+
         LOG.debug("<test01OneArchiverCalled");
     }
-    
+
     /**
      * Test signing with archiving disabled.
      * @throws Exception In case of error.
@@ -68,16 +73,16 @@ public class ArchiveTest extends ArchiveTestCase {
     @Test
     public void test02archivingDisabled() throws Exception {
         LOG.debug(">test02archivingDisabled");
-        
-        getWorkerSession().setWorkerProperty(getSignerIdDummy1(), 
+
+        getWorkerSession().setWorkerProperty(getSignerIdDummy1(),
                 "ARCHIVE", "false");
         getWorkerSession().reloadConfiguration(getSignerIdDummy1());
-        
-        testNoArchive("<document id=\"" + random.nextLong() + "\"/>");
-        
+
+        testNoArchive("<document id=\"" + RANDOM.nextLong() + "\"/>");
+
         LOG.debug("<test02archivingDisabled");
     }
-    
+
     /**
      * Test signing without archiving properties.
      * @throws Exception In case of error.
@@ -85,15 +90,15 @@ public class ArchiveTest extends ArchiveTestCase {
     @Test
     public void test03archivingNotSpecified() throws Exception {
         LOG.debug(">test03archivingNotSpecified");
-        
+
         getWorkerSession().removeWorkerProperty(getSignerIdDummy1(), "ARCHIVE");
         getWorkerSession().reloadConfiguration(getSignerIdDummy1());
-        
-        testNoArchive("<document id=\"" + random.nextLong() + "\"/>");
-        
+
+        testNoArchive("<document id=\"" + RANDOM.nextLong() + "\"/>");
+
         LOG.debug("<test03archivingNotSpecified");
     }
-    
+
     /**
      * Test signing with archiving enabled for the same document twice.
      * @throws Exception In case of error.
@@ -101,56 +106,54 @@ public class ArchiveTest extends ArchiveTestCase {
     @Test
     public void test04archiveSameDocumentTwice() throws Exception {
         LOG.debug(">test04archiveSameDocumentTwice");
-        
+
         getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "ARCHIVE", "TRUE");
         getWorkerSession().reloadConfiguration(getSignerIdDummy1());
-        
+
         testArchive("<document/>");
         testArchive("<document/>");
-        
+
         LOG.debug("<test04archiveSameDocumentTwice");
     }
-    
+
     /**
      * Test querying archive with search criterias and fetching
      * archive entries by uniqueIds.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test05archiveTestQuery() throws Exception {
         LOG.debug(">test05archiveTestQuery");
-        
+
         final String document = "<document/>";
-        
+
         // enable archiving
         getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "ARCHIVE", "TRUE");
         getWorkerSession().reloadConfiguration(getSignerIdDummy1());
-        
+
         // make sure timestamps don't "collide" with earlier tests
         Thread.sleep(10);
         // record timestamp before doing requests
         final long timestamp = System.currentTimeMillis();
-        
+
         testArchive(document);
-        
+
         // test querying archive
         final QueryCriteria qc = QueryCriteria.create();
-        
+
         qc.add(new Term(RelationalOperator.GE, ArchiveMetadata.TIME, timestamp));
-        
+
         Collection<ArchiveMetadata> metadatas =
                 getWorkerSession().searchArchive(0, 10, qc, false);
-        
+
         assertEquals("Number of archive entries", 1, metadatas.size());
         assertNull("Should not include archive data",
                 metadatas.iterator().next().getArchiveData());
-    
-        
+
+
         final ArchiveMetadata metadata = metadatas.iterator().next();
         final String uniqueId = metadata.getUniqueId();
-        final List<String> uniqueIds = Arrays.asList(uniqueId);
-        
+        final List<String> uniqueIds = Collections.singletonList(uniqueId);
+
         // test querying on a uniqueId from an earlier archiving
         Collection<ArchiveMetadata> fetchedMetadatas =
                 getWorkerSession().searchArchiveWithIds(uniqueIds, true);
@@ -159,7 +162,7 @@ public class ArchiveTest extends ArchiveTestCase {
                 fetchedMetadatas.iterator().next().getArchiveData());
         assertEquals("UniqueId matching", uniqueId,
                 fetchedMetadatas.iterator().next().getUniqueId());
-        
+
         // test that including an extra non-existing uniqueId to the list
         // still works as expected, returning the single existing entry
         fetchedMetadatas =
@@ -177,25 +180,25 @@ public class ArchiveTest extends ArchiveTestCase {
                 fetchedMetadatas.iterator().next().getArchiveData());
         assertEquals("UniqueId matching", uniqueId,
                 fetchedMetadatas.iterator().next().getUniqueId());
-        
+
         // test that trying to fetch an unexisting ID doesn't return any hits
         fetchedMetadatas =
-                getWorkerSession().searchArchiveWithIds(Arrays.asList("dummyUniqueId"),
+                getWorkerSession().searchArchiveWithIds(Collections.singletonList("dummyUniqueId"),
                                                         true);
         assertEquals("Should get empty result", 0, fetchedMetadatas.size());
 
         // test trying to fetch with an empty list of uniqueIds
         fetchedMetadatas =
-                getWorkerSession().searchArchiveWithIds(Collections.<String>emptyList(),
+                getWorkerSession().searchArchiveWithIds(Collections.emptyList(),
                                                         false);
         assertTrue("Should return empty list", fetchedMetadatas.isEmpty());
-        
+
         // do criteria-based query, including archive data
         metadatas = getWorkerSession().searchArchive(0, 10, qc, true);
         assertNotNull("Should include archive data",
                 metadatas.iterator().next().getArchiveData());
-    }   
-    
+    }
+
     /**
      * Remove the workers created etc.
      * @throws Exception in case of error

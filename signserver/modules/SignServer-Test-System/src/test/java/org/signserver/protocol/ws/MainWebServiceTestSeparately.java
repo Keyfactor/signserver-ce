@@ -14,18 +14,15 @@ package org.signserver.protocol.ws;
 
 import java.io.File;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-
 import org.bouncycastle.tsp.TSPAlgorithms;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
@@ -33,16 +30,21 @@ import org.bouncycastle.tsp.TimeStampResponse;
 import org.cesecore.keys.util.KeyTools;
 import org.cesecore.util.CertTools;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.CryptoTokenAuthenticationFailureException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
-import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.SignServerUtil;
+import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.util.PathUtil;
+import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.module.tsa.TimeStampSigner;
 import org.signserver.protocol.ws.client.ISignServerWSClient;
 import org.signserver.protocol.ws.client.SignServerWSClientFactory;
@@ -61,32 +63,32 @@ import org.signserver.validationservice.common.ValidateResponse;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.ValidationServiceConstants;
 import org.signserver.validationservice.server.ValidationTestUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.signserver.common.WorkerConfig;
-import org.signserver.common.WorkerIdentifier;
-import org.signserver.common.util.PathUtil;
-import org.signserver.ejb.interfaces.WorkerSession;
-import org.signserver.ejb.interfaces.GlobalConfigurationSession;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.signserver.protocol.ws.WorkerStatusWS.OVERALLSTATUS_ALLOK;
+import static org.signserver.protocol.ws.WorkerStatusWS.OVERALLSTATUS_ERROR;
 
 /**
  * TODO: Document me!
- * 
+ *
  * @version $Id$
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MainWebServiceTestSeparately extends ModulesTestCase {
 
     private static final Logger LOG = Logger.getLogger(MainWebServiceTestSeparately.class);
-    
+
     private static X509Certificate validCert1;
     private SignServerWS signServerWS;
-    
+
     private final WorkerSession workerSession = getWorkerSession();
-    private final GlobalConfigurationSession globalSession = getGlobalSession();
 
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
 
@@ -95,12 +97,8 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         signServerWS = signServerWSService.getSignServerWSPort();
     }
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#tearDown()
-     */
     @After
-    @Override
-    public void tearDown() throws Exception {
+    public void tearDown() {
         TestingSecurityManager.remove();
     }
 
@@ -155,35 +153,33 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
     }
 
     @Test
-    public void test01BasicWSStatuses() throws MalformedURLException, InvalidWorkerIdException_Exception, CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException, InvalidWorkerIdException {
+    public void test01BasicWSStatuses() throws InvalidWorkerIdException_Exception, CryptoTokenAuthenticationFailureException, CryptoTokenOfflineException, InvalidWorkerIdException {
         List<WorkerStatusWS> statuses = signServerWS.getStatus("9");
-        assertTrue(statuses.size() == 1);
-        assertTrue(statuses.get(0).getWorkerName().equals("9"));
-        assertTrue(statuses.get(0).getOverallStatus().equals(org.signserver.protocol.ws.WorkerStatusWS.OVERALLSTATUS_ERROR));
-        assertTrue(statuses.get(0).getErrormessage() != null);
+        assertEquals(1, statuses.size());
+        assertEquals("9", statuses.get(0).getWorkerName());
+        assertEquals(statuses.get(0).getOverallStatus(), OVERALLSTATUS_ERROR);
+        assertNotNull(statuses.get(0).getErrormessage());
         workerSession.activateSigner(new WorkerIdentifier(9), "foo123");
         statuses = signServerWS.getStatus("TestTimeStamp");
-        assertTrue(statuses.size() == 1);
-        assertTrue(statuses.get(0).getWorkerName().equals("TestTimeStamp"));
-        assertTrue(statuses.get(0).getOverallStatus().equals(org.signserver.protocol.ws.WorkerStatusWS.OVERALLSTATUS_ALLOK));
-        assertTrue(statuses.get(0).getErrormessage() == null);
+        assertEquals(1, statuses.size());
+        assertEquals("TestTimeStamp", statuses.get(0).getWorkerName());
+        assertEquals(statuses.get(0).getOverallStatus(), OVERALLSTATUS_ALLOK);
+        assertNull(statuses.get(0).getErrormessage());
 
         statuses = signServerWS.getStatus(ISignServerWS.ALLWORKERS);
         final StringBuilder sb = new StringBuilder();
-        for (WorkerStatusWS stat : statuses) {
+        for (org.signserver.protocol.ws.gen.WorkerStatusWS stat : statuses) {
             sb.append(stat.getWorkerName());
             sb.append(", ");
         }
         LOG.info("Got status for: " + sb.toString());
         assertTrue(statuses.size() >= 2);
-        assertTrue("workerStatusesContains 9",
-                workerStatusesContains(statuses, "9"));
-        assertTrue("workerStatusesContains 16",
-                workerStatusesContains(statuses, "16"));
+        assertTrue("workerStatusesContains 9", workerStatusesContains(statuses, "9"));
+        assertTrue("workerStatusesContains 16", workerStatusesContains(statuses, "16"));
 
         try {
             signServerWS.getStatus("1991817");
-            assertTrue(false);
+            fail();
         } catch (InvalidWorkerIdException_Exception e) {
         }
     }
@@ -207,7 +203,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
 
         try {
             signServerWS.process("9", WSClientUtil.convertProcessRequestWS(reqs));
-            assertTrue(false);
+            fail();
         } catch (IllegalRequestException_Exception e) {
         }
 
@@ -217,16 +213,16 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         workerSession.deactivateSigner(new WorkerIdentifier(9));
         try {
             signServerWS.process("9", WSClientUtil.convertProcessRequestWS(reqs));
-            assertTrue(false);
+            fail();
         } catch (CryptoTokenOfflineException_Exception e) {
         }
 
         workerSession.activateSigner(new WorkerIdentifier(9), "foo123");
 
         List<ProcessResponseWS> resps = signServerWS.process("TestTimeStamp", WSClientUtil.convertProcessRequestWS(reqs));
-        assertTrue(resps.size() == 2);
-        assertTrue(resps.get(0).getRequestID() == 12);
-        assertTrue(resps.get(1).getRequestID() == 13);
+        assertEquals(2, resps.size());
+        assertEquals(12, resps.get(0).getRequestID());
+        assertEquals(13, resps.get(1).getRequestID());
         assertNotNull(resps.get(0).getWorkerCertificate());
 
         GenericSignResponse resp = (GenericSignResponse) RequestAndResponseManager.parseProcessResponse(WSClientUtil.convertProcessResponseWS(resps).get(0).getResponseData());
@@ -236,7 +232,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
 
         try {
             signServerWS.process("1991817", WSClientUtil.convertProcessRequestWS(reqs));
-            assertTrue(false);
+            fail();
         } catch (InvalidWorkerIdException_Exception e) {
         }
 
@@ -249,17 +245,17 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         reqs.add(req1);
 
         resps = signServerWS.process("16", WSClientUtil.convertProcessRequestWS(reqs));
-        assertTrue(resps.size() == 1);
+        assertEquals(1, resps.size());
         ValidateResponse res = (ValidateResponse) RequestAndResponseManager.parseProcessResponse(WSClientUtil.convertProcessResponseWS(resps).get(0).getResponseData());
 
         Validation val = res.getValidation();
-        assertTrue(val != null);
-        assertTrue(val.getStatus().equals(Validation.Status.VALID));
-        assertTrue(val.getStatusMessage() != null);
+        assertNotNull(val);
+        assertEquals(val.getStatus(), Validation.Status.VALID);
+        assertNotNull(val.getStatusMessage());
         List<java.security.cert.Certificate> cAChain = val.getCAChain();
-        assertTrue(cAChain != null);
-        assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=ValidSubCA1"));
-        assertTrue(CertTools.getSubjectDN(cAChain.get(1)).equals("CN=ValidRootCA1"));
+        assertNotNull(cAChain);
+        assertEquals("CN=ValidSubCA1", CertTools.getSubjectDN(cAChain.get(0)));
+        assertEquals("CN=ValidRootCA1", CertTools.getSubjectDN(cAChain.get(1)));
     }
 
     @Test
@@ -280,9 +276,9 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         String[] hosts = {"localhost"};
         ISignServerWSClient client = f.generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK, hosts, false, callback);
         List<org.signserver.protocol.ws.ProcessResponseWS> resps = client.process("9", reqs);
-        assertTrue(resps != null);
-        assertTrue(resps.size() == 1);
-        assertTrue(!callback.isCallBackCalled());
+        assertNotNull(resps);
+        assertEquals(1, resps.size());
+        assertFalse(callback.isCallBackCalled());
 
         // Test with a host that is down
         /*
@@ -309,7 +305,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         for (int i = 0; i < 100; i++) {
             Thread.sleep(100);
             resps = client.process("9", reqs);
-            assertTrue(resps.size() == 1);
+            assertEquals(1, resps.size());
             assertTrue(callback.isCallBackCalled());
         }
 
@@ -317,7 +313,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         String[] hosts5 = {"128.0.0.1"};
         client = f.generateSignServerWSClient(SignServerWSClientFactory.CLIENTTYPE_CALLFIRSTNODEWITHSTATUSOK, hosts5, false, callback, 8080, 5);
         resps = client.process("9", reqs);
-        assertTrue(resps == null);
+        assertNull(resps);
         assertTrue(callback.isCallBackCalled());
     }
 
@@ -328,12 +324,11 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
     }
 
     /**
-     * @param statuses List of worker statuses
+     * @param statuses   List of worker statuses
      * @param workerName Name to search for
      * @return true if found in list
      */
-    private static boolean workerStatusesContains(final List<WorkerStatusWS> statuses,
-            final String workerName) {
+    private static boolean workerStatusesContains(final List<WorkerStatusWS> statuses, final String workerName) {
         boolean ret = false;
         for (WorkerStatusWS stat : statuses) {
             if (workerName.equals(stat.getWorkerName())) {

@@ -18,13 +18,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import javax.xml.namespace.QName;
+
 import org.apache.log4j.Logger;
+import org.junit.Before;
+import org.junit.Test;
 import org.signserver.testutils.ModulesTestCase;
+
+import static org.junit.Assert.fail;
 
 /**
  * Tests for the Admin WS interface. Currently only tests that each operation
@@ -33,8 +37,9 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Markus Kilås
  * @version $Id$
  */
-public class AdminWebServiceTest extends ModulesTestCase {
-    
+public class
+AdminWebServiceTest extends ModulesTestCase {
+
     /** Logger for this class. **/
     private static final Logger LOG = Logger.getLogger(AdminWebServiceTest.class);
 
@@ -49,7 +54,7 @@ public class AdminWebServiceTest extends ModulesTestCase {
         "signserver_deploy.properties",
         "conf/signserver_deploy.properties",
     };
-    
+
     static {
         ANY_AUTHORIZED_CLIENT.setIssuerDN(
                 "CN=AdminCA4711, O=SignServer Testing, C=SE");
@@ -67,7 +72,7 @@ public class AdminWebServiceTest extends ModulesTestCase {
     /** Setup keystores for SSL. **/
     private void setupKeystores() {
         Properties config = new Properties();
-        
+
         final File home;
         final File path1 = new File("../..");
         final File path2 = new File(".");
@@ -78,7 +83,7 @@ public class AdminWebServiceTest extends ModulesTestCase {
             } else {
             throw new RuntimeException("Unable to detect SignServer path");
             }
-        
+
         File confFile = null;
         for (String file : CONF_FILES) {
             final File f = new File(home, file);
@@ -90,7 +95,7 @@ public class AdminWebServiceTest extends ModulesTestCase {
         if (confFile == null) {
             throw new RuntimeException("No signserver_deploy.properties found");
         } else {
-        
+
             try {
                 config.load(new FileInputStream(confFile));
             } catch (FileNotFoundException ignored) {
@@ -108,9 +113,8 @@ public class AdminWebServiceTest extends ModulesTestCase {
         }
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         final AdminWSService service = new AdminWSService(
                 new URL("https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/AdminWSService/AdminWS?wsdl"),
                 new QName("http://adminws.signserver.org/",
@@ -118,12 +122,8 @@ public class AdminWebServiceTest extends ModulesTestCase {
         adminWS = service.getAdminWSPort();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-    
-    public void testReloadConfiguration() throws Exception {
+    @Test
+    public void testReloadConfiguration() {
         try {
             adminWS.reloadConfiguration(ANY_WORKERID);
             fail("Access should have been denied!");
@@ -131,8 +131,9 @@ public class AdminWebServiceTest extends ModulesTestCase {
             // OK
         }
     }
-    
-    public void testActivateSigner_auth() throws Exception {
+
+    @Test
+    public void testActivateSigner_auth() {
         try {
             adminWS.activateSigner(ANY_WORKERID, AUTH_CODE);
             fail("Access should have been denied!");
@@ -142,8 +143,9 @@ public class AdminWebServiceTest extends ModulesTestCase {
             // OK
         }
     }
-    
-    public void testSetWorkerProperty() throws Exception {
+
+    @Test
+    public void testSetWorkerProperty() {
         try {
             adminWS.setWorkerProperty(ANY_WORKERID, ANY_KEY, ANY_VALUE);
             fail("Access should have been denied!");
@@ -151,8 +153,9 @@ public class AdminWebServiceTest extends ModulesTestCase {
             // OK
         }
     }
-    
-    public void testAddAuthorizedClient() throws Exception {
+
+    @Test
+    public void testAddAuthorizedClient() {
         try {
             adminWS.addAuthorizedClient(ANY_WORKERID, ANY_AUTHORIZED_CLIENT);
             fail("Access should have been denied!");
@@ -160,7 +163,8 @@ public class AdminWebServiceTest extends ModulesTestCase {
             // OK
         }
     }
-    
+
+    @Test
     public void testUploadSignerCertificate() throws Exception {
         try {
             adminWS.uploadSignerCertificate(ANY_WORKERID, new byte[0], "GLOB");
@@ -169,18 +173,20 @@ public class AdminWebServiceTest extends ModulesTestCase {
             // OK
         }
     }
-    
+
+    @Test
     public void testUploadSignerCertificateChain() throws Exception {
         try {
             adminWS.uploadSignerCertificateChain(ANY_WORKERID,
-                    Arrays.asList(new byte[0]), "GLOB");
+                    Collections.singletonList(new byte[0]), "GLOB");
             fail("Access should have been denied!");
         } catch (AdminNotAuthorizedException_Exception ignored) {
             // OK
         }
     }
-    
-    public void testSetGlobalProperty() throws Exception {
+
+    @Test
+    public void testSetGlobalProperty() {
         try {
             adminWS.setGlobalProperty("GLOB", ANY_KEY, ANY_VALUE);
             fail("Access should have been denied!");
@@ -188,7 +194,8 @@ public class AdminWebServiceTest extends ModulesTestCase {
             // OK
         }
     }
-    
+
+    @Test
     public void testGlobalResync() throws Exception {
         try {
             adminWS.globalResync();
@@ -197,8 +204,9 @@ public class AdminWebServiceTest extends ModulesTestCase {
             // OK
         }
     }
-    
-    public void testGlobalReload() throws Exception {
+
+    @Test
+    public void testGlobalReload() {
         try {
             adminWS.globalReload();
             fail("Access should have been denied!");
@@ -207,6 +215,7 @@ public class AdminWebServiceTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void testGetKeyUsageCounterValue() throws Exception {
         try {
             adminWS.getKeyUsageCounterValue(ANY_WORKERID);
@@ -216,6 +225,7 @@ public class AdminWebServiceTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void testProcess() throws Exception {
         try {
             final List<byte[]> requests = Collections.emptyList();
@@ -225,33 +235,37 @@ public class AdminWebServiceTest extends ModulesTestCase {
             // OK
         }
     }
-    
+
+    @Test
     public void testQueryAuditLog() throws Exception {
         try {
-            adminWS.queryAuditLog(0, 10, Collections.<QueryCondition>emptyList(), Collections.<QueryOrdering>emptyList());
+            adminWS.queryAuditLog(0, 10, Collections.emptyList(), Collections.emptyList());
             fail("Access should have been denied!");
         } catch (AdminNotAuthorizedException_Exception ignored) {
             // OK
         }
     }
 
+    @Test
     public void testQueryArchive() throws Exception {
         try {
-            adminWS.queryArchive(0, 10, Collections.<QueryCondition>emptyList(),
-                    Collections.<QueryOrdering>emptyList(), false);
+            adminWS.queryArchive(0, 10, Collections.emptyList(),
+                    Collections.emptyList(), false);
         } catch (AdminNotAuthorizedException_Exception ignored) {
             // OK
         }
     }
-    
+
+    @Test
     public void testQueryArchiveWithIds() throws Exception {
         try {
-            adminWS.queryArchiveWithIds(Collections.<String>emptyList(), true);
+            adminWS.queryArchiveWithIds(Collections.emptyList(), true);
         } catch (AdminNotAuthorizedException_Exception ignored) {
             // OK
         }
     }
-    
+
+    @Test
     public void testGetPKCS10CertificateRequest() throws Exception {
         try {
             adminWS.getPKCS10CertificateRequest(10, null, false);
@@ -260,6 +274,7 @@ public class AdminWebServiceTest extends ModulesTestCase {
         }
     }
 
+    @Test
     public void testGetPKCS10CertificateRequestForAlias() throws Exception {
         try {
             adminWS.getPKCS10CertificateRequestForAlias(10, null, false, "user1");
@@ -267,7 +282,8 @@ public class AdminWebServiceTest extends ModulesTestCase {
             // OK
         }
     }
-    
+
+    @Test
     public void testGetPKCS10CertificateRequestForKey() throws Exception {
         try {
             adminWS.getPKCS10CertificateRequestForKey(10, null, false, true);
@@ -275,7 +291,8 @@ public class AdminWebServiceTest extends ModulesTestCase {
             // OK
         }
     }
-    
+
+    @Test
     public void testImportCertificateChain() throws Exception {
         try {
             adminWS.importCertificateChain(10, null, null, null);
@@ -283,7 +300,8 @@ public class AdminWebServiceTest extends ModulesTestCase {
             // OK
         }
     }
-    
+
+    @Test
     public void testQueryTokenEntries() throws Exception {
         try {
             adminWS.queryTokenEntries(10, 0, 1, null, null, false);
@@ -291,7 +309,7 @@ public class AdminWebServiceTest extends ModulesTestCase {
             // OK
         }
     }
-    
+
     // TODO add test methods here. The name must begin with 'test'. For example:
     // public void testHello() {}
 

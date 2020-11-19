@@ -12,21 +12,29 @@
  *************************************************************************/
 package org.signserver.module.signerstatusreport;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.SignServerUtil;
-import org.signserver.common.WorkerStatus;
-import org.signserver.testutils.ModulesTestCase;
-import org.junit.Before;
-import org.junit.Test;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.testutils.ModulesTestCase;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Tests for SignerStatusReportTimedService.
@@ -66,22 +74,21 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
      */
     private static final int WORKERID_SIGNER3 = 5676;
     private static final String WORKER_SIGNER3 = "TestXMLSigner";
-    
+
     private static final int[] WORKERS = new int[] {WORKERID_SERVICE, WORKERID_SIGNER1, WORKERID_SIGNER2, WORKERID_SIGNER3};
 
     private static final long serviceInterval = 10;
 
     private static File outputFile;
-    
-    private SignerStatusReportParser parser = new SignerStatusReportParser();
+
+    private final SignerStatusReportParser parser = new SignerStatusReportParser();
 
     private final WorkerSession workerSession = getWorkerSession();
 
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        
+
         outputFile = new File(getSignServerHome() + File.separator
                 + "~test-outputfile.dat");
         if (outputFile.exists()) {
@@ -89,11 +96,10 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
                 fail("Could not remove: " + outputFile.getAbsolutePath());
             }
         }
-    }	
+    }
 
     /**
      * Create test workers.
-     * @throws Exception
      */
     @Test
     public void test00SetupDatabase() throws Exception {
@@ -123,15 +129,14 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
     @Test
     public void test01Report() throws Exception {
         if (outputFile.exists()) {
-            outputFile.delete();
-            assertFalse("Removed outputfile", outputFile.exists());
+            assertTrue("Removed outputfile", outputFile.delete());
         }
 
         // Enable service
         workerSession.setWorkerProperty(WORKERID_SERVICE, "ACTIVE", "TRUE");
         workerSession.reloadConfiguration(WORKERID_SERVICE);
 
-        waitForServiceRun(30);
+        waitForServiceRun();
 
         Map<String, Map<String, String>> status;
 
@@ -141,7 +146,7 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
         assertNotNull("Worker 1 present", status.get(WORKER_SIGNER1));
         assertEquals("Worker 1 active", "ACTIVE", status.get(WORKER_SIGNER1).get("status"));
         assertNotNull("Worker 1 signings", status.get(WORKER_SIGNER1).get("signings"));
-        
+
         assertNotNull("Worker 2 present", status.get(WORKER_SIGNER2));
         assertEquals("Worker 2 active", "ACTIVE", status.get(WORKER_SIGNER2).get("status"));
         assertNotNull("Worker 2 signings", status.get(WORKER_SIGNER2).get("signings"));
@@ -154,10 +159,10 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
 //        workerSession.setWorkerProperty(WORKERID_SIGNER1, "DISABLED", "TRUE");
 //        workerSession.reloadConfiguration(WORKERID_SIGNER1);
         workerSession.deactivateSigner(new WorkerIdentifier(WORKERID_SIGNER1));
-        
+
         outputFile.delete();
 
-        waitForServiceRun(30);
+        waitForServiceRun();
 
         // Now WORKER1 should be OFFLINE and the other as before
         try {
@@ -166,9 +171,9 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
             fail("FileNotFound: " + ex.getMessage());
         } catch (IOException ex) {
             fail("IOException: " + ex.getMessage());
-        } 
+        }
 
-        
+
 
         assertNotNull("Worker 1 present", status.get(WORKER_SIGNER1));
         assertEquals("Worker 1 OFFLINE", "OFFLINE", status.get(WORKER_SIGNER1).get("status"));
@@ -180,22 +185,22 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
         assertNotNull("Worker 3 present", status.get(WORKER_SIGNER3));
         assertEquals("Worker 3 active", "ACTIVE", status.get(WORKER_SIGNER3).get("status"));
         assertNotNull("Worker 3 signings", status.get(WORKER_SIGNER3).get("signings"));
-        
+
         // test that there are no fatal errors before removing required properties
         WorkerStatus workerStatus = workerSession.getStatus(new WorkerIdentifier(WORKERID_SERVICE));
         List<String> errors = workerStatus.getFatalErrors();
         assertTrue("No fatal errors", errors.isEmpty());
-        
+
         // test that removing the WORKERS and OUTPUTFILE property results in a fatal error
         workerSession.removeWorkerProperty(WORKERID_SERVICE, "WORKERS");
         workerSession.removeWorkerProperty(WORKERID_SERVICE, "OUTPUTFILE");
         workerSession.reloadConfiguration(WORKERID_SERVICE);
-        
+
         workerStatus = workerSession.getStatus(new WorkerIdentifier(WORKERID_SERVICE));
         errors = workerStatus.getFatalErrors();
         assertTrue("Should mention missing WORKERS property", errors.contains("Property WORKERS missing"));
         assertTrue("Should mention missing OUTPUTFILE property", errors.contains("Property OUTPUTFILE missing"));
-        
+
         // restore
         workerSession.setWorkerProperty(WORKERID_SERVICE, "WORKERS",
                 WORKER_SIGNER1+","+WORKER_SIGNER2+","+WORKER_SIGNER3);
@@ -206,7 +211,6 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
 
     /**
      * Removes all test workers.
-     * @throws Exception
      */
     @Test
     public void test99TearDownDatabase() throws Exception {
@@ -216,11 +220,11 @@ public class SignerStatusReportTimedServiceTest extends ModulesTestCase {
         }
     }
 
-    
 
-    private static void waitForServiceRun(final int maxTries) {
+
+    private static void waitForServiceRun() {
         try {
-            for (int i = 0; i < maxTries; i++) {
+            for (int i = 0; i < 30; i++) {
                 if (outputFile.exists()) {
                     break;
                 }

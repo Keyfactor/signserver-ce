@@ -12,36 +12,49 @@
  *************************************************************************/
 package org.signserver.client.api;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.cert.Certificate;
 import java.util.List;
 import javax.naming.NamingException;
 import javax.net.ssl.SSLSocketFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GenericValidationResponse;
+import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerType;
+import org.signserver.common.util.PathUtil;
+import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.server.cryptotokens.P12CryptoToken;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.Validation;
 import org.w3c.dom.Document;
-import org.junit.Test;
-import org.signserver.common.util.PathUtil;
-import org.signserver.common.WorkerConfig;
-import org.signserver.common.WorkerIdentifier;
-import org.signserver.common.WorkerType;
-import org.signserver.ejb.interfaces.WorkerSession;
-import org.signserver.ejb.interfaces.GlobalConfigurationSession;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Tests for client API with a CRLValidator.
- * 
+ *
  * @author Markus Kilås
  * @version $Id$
  */
@@ -50,35 +63,33 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(SigningAndValidationWithCRLTest.class);
-    
+
     private static final int SIGNER1_WORKERID = 5676;
     private static final int CERTVALIDATION_WORKERID = 105;
     private static final int XMLVALIDATOR_WORKERID = 5677;
     private static final int[] WORKERS = new int[] {5676, 5679, 5681, 5682, 5683, 5802, 5803};
-    
+
     private static final String SIGNER1_WORKER = "TestXMLSigner";
     private static final String CERTVALIDATION_WORKER = "CRLValidationWorker2";
     private static final String XMLVALIDATOR_WORKER = "XMLValidatorWorker2";
     private static final String KEYSTORE8_PASSWORD = "foo123";
     private static final String KEYSTORE8_ALIAS = "signer00001";
-    
+
     private static File keystoreFileEndentity8;
     private static File crlWithCertOk;
     private static File crlWithCertRevoked;
     private static File crlToUse;
 
     private final WorkerSession workerSession = getWorkerSession();
-    private final GlobalConfigurationSession globalSession = getGlobalSession();
-    
+
     protected final SSLSocketFactory socketFactory;
-    
+
     public SigningAndValidationWithCRLTest() throws Exception {
         socketFactory = setupSSLKeystores();
     }
 
     @Before
-    @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
 
         keystoreFileEndentity8 = new File(PathUtil.getAppHome(), "res/test/dss10/dss10_keystore.p12");
         if (!keystoreFileEndentity8.exists()) {
@@ -109,9 +120,9 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     }
 
     /**
-     * Other test cases can override this method to run with a different 
+     * Other test cases can override this method to run with a different
      * client API implementation.
-     * 
+     *
      * @return The ISigningAndValidation implementation to use.
      */
     protected ISigningAndValidation getSigningAndValidationImpl() {
@@ -184,7 +195,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
         // Output for manual inspection
         File file = new File(getSignServerHome() + File.separator + "tmp" + File.separator + "signed_endentity8.xml");
         try (FileOutputStream fos = new FileOutputStream(file)) {
-            fos.write((byte[]) data);
+            fos.write(data);
         }
 
         // Check certificate
@@ -335,7 +346,6 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
 
     /**
      * Changes the CRL to a CRL with the certificate revoked.
-     * @throws Exception
      */
     @Test
     public void test09SigOkCertRevokedByUpdatingFile() throws Exception {
@@ -352,7 +362,6 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
 
     /**
      * Changes the URL to point to a CRL which is revoked.
-     * @throws Exception
      */
     @Test
     public void test10SigOkCertRevoked() throws Exception {
@@ -385,8 +394,7 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
 
         // Note: The best would be if we could get REVOKED as status from the CRLValidator and could then test with:
         //assertEquals(Validation.Status.REVOKED, res.getCertificateValidation().getStatus());
-        assertFalse(Validation.Status.VALID.equals(
-                res.getCertificateValidation().getStatus()));
+        assertNotEquals(Validation.Status.VALID, res.getCertificateValidation().getStatus());
         LOG.info("Revoked cert status: "
                 + res.getCertificateValidation().getStatusMessage());
 
@@ -433,20 +441,11 @@ public class SigningAndValidationWithCRLTest extends ModulesTestCase {
     }
 
     private void copyFile(final File in, final File out) throws Exception {
-        final FileInputStream fis = new FileInputStream(in);
-        final FileOutputStream fos = new FileOutputStream(out);
-        try {
+        try (FileInputStream fis = new FileInputStream(in); FileOutputStream fos = new FileOutputStream(out)) {
             final byte[] buf = new byte[1024];
-            int i = 0;
+            int i;
             while ((i = fis.read(buf)) != -1) {
                 fos.write(buf, 0, i);
-            }
-        } finally {
-            if (fis != null) {
-                fis.close();
-            }
-            if (fos != null) {
-                fos.close();
             }
         }
     }

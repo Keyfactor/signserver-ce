@@ -12,20 +12,51 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.exceptions.BadPasswordException;
-import com.lowagie.text.pdf.*;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
-import java.security.cert.*;
-import java.util.*;
-import org.apache.commons.io.FileUtils;
+import java.security.cert.CRL;
+import java.security.cert.CRLException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509CRL;
+import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.exceptions.BadPasswordException;
+import com.lowagie.text.pdf.PRIndirectReference;
+import com.lowagie.text.pdf.PdfDate;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfPKCS7;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfSignature;
+import com.lowagie.text.pdf.PdfSignatureAppearance;
+import com.lowagie.text.pdf.PdfStamper;
+import com.lowagie.text.pdf.TSAClient;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERBitString;
@@ -38,27 +69,39 @@ import org.bouncycastle.cert.jcajce.JcaX509CRLConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.signserver.common.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.signserver.common.IllegalRequestException;
+import org.signserver.common.RequestContext;
+import org.signserver.common.RequestMetadata;
+import org.signserver.common.SignServerException;
+import org.signserver.common.SignServerUtil;
+import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.data.ReadableData;
 import org.signserver.common.data.Response;
 import org.signserver.common.data.SignatureRequest;
 import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.util.PathUtil;
-import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
-import org.signserver.test.utils.builders.CertBuilder;
-import org.signserver.test.utils.builders.CertBuilderException;
-import org.signserver.test.utils.builders.CertExt;
-import org.signserver.test.utils.builders.CryptoUtils;
-import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
-import org.signserver.test.utils.mock.MockedCryptoToken;
-import org.signserver.test.utils.mock.WorkerSessionMock;
-import org.signserver.testutils.ModulesTestCase;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 import org.signserver.server.IServices;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
+import org.signserver.test.utils.builders.CertBuilder;
+import org.signserver.test.utils.builders.CertBuilderException;
+import org.signserver.test.utils.builders.CertExt;
+import org.signserver.test.utils.builders.CryptoUtils;
+import org.signserver.test.utils.mock.MockedCryptoToken;
+import org.signserver.test.utils.mock.WorkerSessionMock;
+import org.signserver.testutils.ModulesTestCase;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Unit tests for PDFSigner.
@@ -81,7 +124,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     private static final String NAME = "NAME";
     private static final String AUTHTYPE = "AUTHTYPE";
 
-    private static final String CRYPTOTOKEN_CLASSNAME = 
+    private static final String CRYPTOTOKEN_CLASSNAME =
             "org.signserver.server.cryptotokens.KeystoreCryptoToken";
     private final String SAMPLE_OWNER123_PASSWORD = "owner123";
     private final String SAMPLE_USER_AAA_PASSWORD = "user\u00e5\u00e4\u00f6";
@@ -89,7 +132,6 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
     private final String ILLEGAL_DIGEST_FOR_DSA_MESSAGE = "Only SHA1 is permitted as digest algorithm for DSA public/private keys";
 
-    private GlobalConfigurationSessionLocal globalConfig;
     private WorkerSessionRemote workerSession;
     private ProcessSessionLocal processSession;
 
@@ -112,7 +154,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     private File sampleSignedSHA256;
 //    private File sampleLowprintingOwner123;
 
-    private JcaX509CertificateConverter converter = new JcaX509CertificateConverter();
+    private final JcaX509CertificateConverter converter = new JcaX509CertificateConverter();
 
     public PDFSignerUnitTest() throws FileNotFoundException {
         SignServerUtil.installBCProvider();
@@ -136,16 +178,9 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 //        sampleLowprintingOwner123 = new File(home, "res/test/pdf/sample-lowprinting-owner123.pdf");
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
+    @Before
+    public void setUp() throws Exception {
         setupWorkers();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
     }
 
     /**
@@ -153,6 +188,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * signing works before doing other tests that are expected to fail.
      * @throws Exception in case of error
      */
+    @Test
     public void test01signOk() throws Exception {
         ReadableData requestData = createRequestDataKeepingFile(sampleOk);
         try (CloseableWritableData responseData = createResponseData(true)) {
@@ -177,10 +213,11 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * supplied it throws an IllegalRequestException.
      * @throws Exception in case of error
      */
+    @Test
     public void test02SignWithRestrictionsNoPasswordSupplied() throws Exception {
         try (
                 CloseableReadableData requestData = createRequestDataKeepingFile(sampleRestricted);
-                CloseableWritableData responseData = createResponseData(true);
+                CloseableWritableData responseData = createResponseData(true)
             ) {
             processSession.process(createAdminInfo(),
                     new WorkerIdentifier(WORKER1),
@@ -193,7 +230,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         try (
                 CloseableReadableData requestData = createRequestDataKeepingFile(sampleOpen123);
-                CloseableWritableData responseData = createResponseData(true);
+                CloseableWritableData responseData = createResponseData(true)
             ) {
             processSession.process(
                     createAdminInfo(),
@@ -207,7 +244,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         try (
                 CloseableReadableData requestData = createRequestDataKeepingFile(sampleOpen123Owner123);
-                CloseableWritableData responseData = createResponseData(true);
+                CloseableWritableData responseData = createResponseData(true)
             ) {
             processSession.process(
                     createAdminInfo(),
@@ -221,7 +258,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         try (
                 CloseableReadableData requestData = createRequestDataKeepingFile(sampleOwner123);
-                CloseableWritableData responseData = createResponseData(true);
+                CloseableWritableData responseData = createResponseData(true)
             ) {
             processSession.process(
                     createAdminInfo(),
@@ -237,7 +274,6 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tries to sign a PDF with document restrictions. As the correct passwords
      * are supplied it should succeed.
-     * @throws java.lang.Exception
      */
     public void test02SignWithRestrictionsPasswordSupplied() throws Exception {
         signProtectedPDF(sampleOpen123, "open123");
@@ -249,10 +285,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     }
 
     /**
-     * Tests the REJECT_PERMISSIONS with different values to see that the 
+     * Tests the REJECT_PERMISSIONS with different values to see that the
      * signer rejects documents with permissions not allowed.
-     *
-     * @throws java.lang.Exception
      */
     public void test03RejectingPermissions() throws Exception {
 
@@ -289,7 +323,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             LOG.debug("OK: " + ok.getMessage());
         }
 
-        // Test with document containing one not allowed permission and 
+        // Test with document containing one not allowed permission and
         // not the other disallowed permission
         workerSession.setWorkerProperty(WORKER1, "REJECT_PERMISSIONS", "ALLOW_COPY,ALLOW_MODIFY_CONTENTS");
         workerSession.reloadConfiguration(WORKER1);
@@ -300,7 +334,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             LOG.debug("OK: " + ok.getMessage());
         }
 
-        // Test with document not contianing any permissions and thus implicitly 
+        // Test with document not contianing any permissions and thus implicitly
         // allows everything
         workerSession.setWorkerProperty(WORKER1, "REJECT_PERMISSIONS", "ALLOW_PRINTING");
         workerSession.reloadConfiguration(WORKER1);
@@ -328,10 +362,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
     /**
      * Tests the property SET_PERMISSIONS by setting different values and make
-     * sure they end up in the signed PDF. Also tests that when not setting 
+     * sure they end up in the signed PDF. Also tests that when not setting
      * the property the original permissions remain.
-     *
-     * @throws java.lang.Exception
      */
     public void test04SetPermissions_SHA1() throws Exception {
         try {
@@ -339,15 +371,15 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA1");
             workerSession.reloadConfiguration(WORKER1);
 
-            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
-            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
-            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
-            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
-            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
-            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_COPY", "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
-            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
-            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_FILL_IN"));
-            doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, new LinkedList<String>());
+            doTestSetPermissions(sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+            doTestSetPermissions(sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+            doTestSetPermissions(sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+            doTestSetPermissions(sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+            doTestSetPermissions(sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
+            doTestSetPermissions(sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_COPY", "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
+            doTestSetPermissions(sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList( "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
+            doTestSetPermissions(sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Collections.singletonList("ALLOW_FILL_IN"));
+            doTestSetPermissions(sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, new LinkedList<>());
 
             // Without SET_PERMISSIONS the original permissions should remain
             // The sampleOwner123 originally has: ALLOW_FILL_IN,ALLOW_MODIFY_ANNOTATIONS,ALLOW_MODIFY_CONTENTS
@@ -355,7 +387,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKER1);
             Set<String> expected = new HashSet<>(Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"));
             Permissions actual = getPermissions(signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD),
-                    SAMPLE_OWNER123_PASSWORD.getBytes("ISO-8859-1"));
+                    SAMPLE_OWNER123_PASSWORD.getBytes(StandardCharsets.ISO_8859_1));
             assertEquals(expected, actual.asSet());
         } finally {
             workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA256");
@@ -366,12 +398,10 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tests the property SET_PERMISSIONS by setting different values and make
      * sure they end up in the signed PDF also when the PDF version is being
-     * upgraded. 
+     * upgraded.
      * Also tests that existing permissions/restrictions are remaining and in
      * the case no restrictions are given then the final PDF also has no
      * restrictions.
-     *
-     * @throws java.lang.Exception
      */
     public void test04SetPermissions_upgradedVersion() throws Exception {
         // Test requires a PDF with version less then 1.6
@@ -383,7 +413,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             throw new Exception("Test expects a PDF with version 1.4 but header was \"" + header + "\"");
         }
 
-        doTestSetPermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
 
         // Without SET_PERMISSIONS the original permissions should remain
         // The sampleOwner123 originally has: ALLOW_FILL_IN,ALLOW_MODIFY_ANNOTATIONS,ALLOW_MODIFY_CONTENTS
@@ -391,7 +421,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKER1);
         Set<String> expected = new HashSet<>(Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"));
         Permissions actual = getPermissions(signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD),
-                SAMPLE_OWNER123_PASSWORD.getBytes("ISO-8859-1"));
+                SAMPLE_OWNER123_PASSWORD.getBytes(StandardCharsets.ISO_8859_1));
         assertEquals(expected, actual.asSet());
 
         // Without SET_PERMISSIONS and without restrictions the final PDF
@@ -405,7 +435,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         }
 
         expected = getPermissions(sampleBytes, null).asSet();
-        byte[] signedPDF = signPDF(sample);
+        byte[] signedPDF = signPDF(sample, WORKER1);
         actual = getPermissions(signedPDF, null);
         assertEquals("permissions of PDF without restrictions", expected, actual.asSet());
         assertEquals("no security set", -1, getCryptoMode(signedPDF, null));
@@ -429,28 +459,27 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         assertEquals("security set", 1, getCryptoMode(signedPDF, "open456".getBytes()));
     }
 
-    /** Tests the property SET_PERMISSIONS by setting different values and make 
-     * sure they end up in the signed PDF. Also tests that when not setting 
+    /** Tests the property SET_PERMISSIONS by setting different values and make
+     * sure they end up in the signed PDF. Also tests that when not setting
      * the property the original permissions remain.
-     * This time for documents without owner password set or with both user 
+     * This time for documents without owner password set or with both user
      * and owner passwords.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test04SetPermissionsWithoutOwner() throws Exception {
-        doTestSetPermissions(WORKER1, sample, null, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
-        doTestSetPermissions(WORKER1, sampleOpen123, null, SAMPLE_OPEN123_PASSWORD, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
-        doTestSetPermissions(WORKER1, sampleOpen123Owner123, SAMPLE_OWNER123_PASSWORD, SAMPLE_OPEN123_PASSWORD, Arrays.asList( "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(sample, null, null, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_SCREENREADERS", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(sampleOpen123, null, SAMPLE_OPEN123_PASSWORD, Arrays.asList("ALLOW_PRINTING", "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(sampleOpen123Owner123, SAMPLE_OWNER123_PASSWORD, SAMPLE_OPEN123_PASSWORD, Arrays.asList( "ALLOW_MODIFY_CONTENTS", "ALLOW_COPY", "ALLOW_MODIFY_ANNOTATIONS", "ALLOW_FILL_IN", "ALLOW_ASSEMBLY", "ALLOW_DEGRADED_PRINTING"));
     }
 
-    private void doTestSetPermissions(int workerId, File pdf, String ownerPassword, String userPassword, Collection<String> permissions) throws Exception {
+    private void doTestSetPermissions(File pdf, String ownerPassword, String userPassword, Collection<String> permissions) throws Exception {
         Set<String> expected = new HashSet<>(permissions);
-        workerSession.setWorkerProperty(workerId, "SET_PERMISSIONS", toString(expected, ","));
-        workerSession.reloadConfiguration(workerId);
+        workerSession.setWorkerProperty(PDFSignerUnitTest.WORKER1, "SET_PERMISSIONS", toString(expected, ","));
+        workerSession.reloadConfiguration(PDFSignerUnitTest.WORKER1);
         String password = ownerPassword == null ? userPassword : ownerPassword;
         byte[] pdfbytes = signProtectedPDF(pdf, password);
         Permissions actual = getPermissions(pdfbytes,
-                userPassword == null ? (ownerPassword == null ? null : ownerPassword.getBytes("ISO-8859-1")) : userPassword.getBytes("ISO-8859-1"));
+                userPassword == null ? (ownerPassword == null ? null : ownerPassword.getBytes(StandardCharsets.ISO_8859_1)) : userPassword.getBytes(StandardCharsets.ISO_8859_1));
         assertEquals(expected, actual.asSet());
 
         // Check that user password hasn't become the owner password (unless it already were)
@@ -459,7 +488,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         }
 
         // Check that the document is protected by an permissions password
-        PdfReader reader = new PdfReader(pdfbytes, userPassword == null ? null : userPassword.getBytes("ISO-8859-1"));
+        PdfReader reader = new PdfReader(pdfbytes, userPassword == null ? null : userPassword.getBytes(StandardCharsets.ISO_8859_1));
         assertFalse("Should not be openned with full permissions",
                 reader.isOpenedWithFullPermissions());
     }
@@ -469,7 +498,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         workerSession.setWorkerProperty(workerId, "REMOVE_PERMISSIONS", toString(removePermissions, ","));
         workerSession.reloadConfiguration(workerId);
         byte[] pdfbytes = signProtectedPDF(pdf, ownerPassword == null ? userPassword : ownerPassword);
-        Permissions actual = getPermissions(pdfbytes, ownerPassword == null ? (userPassword == null ? null : userPassword.getBytes("ISO-8859-1")) : ownerPassword.getBytes("ISO-8859-1"));
+        Permissions actual = getPermissions(pdfbytes, ownerPassword == null ? (userPassword == null ? null : userPassword.getBytes(StandardCharsets.ISO_8859_1)) : ownerPassword.getBytes(StandardCharsets.ISO_8859_1));
         assertEquals(expectedSet, actual.asSet());
 
         // Check that user password hasn't become the owner password (unless it already were)
@@ -479,7 +508,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         // If some permissions are removed, check that the document is protected by an permissions password
         if (!removePermissions.isEmpty()) {
-            PdfReader reader = new PdfReader(pdfbytes, userPassword == null ? null : userPassword.getBytes("ISO-8859-1"));
+            PdfReader reader = new PdfReader(pdfbytes, userPassword == null ? null : userPassword.getBytes(StandardCharsets.ISO_8859_1));
             assertFalse("Should not be openned with full permissions",
                     reader.isOpenedWithFullPermissions());
         }
@@ -498,29 +527,29 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tests the REMOVE_PERMISSIONS property by setting different values for
      * what to remove and check that they were removed from the signed PDF.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test04RemovePermissions() throws Exception {
         // The sampleOwner123 originally has: ALLOW_FILL_IN,ALLOW_MODIFY_ANNOTATIONS,ALLOW_MODIFY_CONTENTS
-        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_FILL_IN"), Arrays.asList("ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"));
-        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_MODIFY_ANNOTATIONS"), Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_CONTENTS"));
-        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_MODIFY_CONTENTS"), Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS"));
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Collections.singletonList("ALLOW_FILL_IN"), Arrays.asList("ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"));
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Collections.singletonList("ALLOW_MODIFY_ANNOTATIONS"), Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_CONTENTS"));
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Collections.singletonList("ALLOW_MODIFY_CONTENTS"), Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS"));
 
-        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"), Arrays.asList("ALLOW_FILL_IN"));
-        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_CONTENTS"), Arrays.asList("ALLOW_MODIFY_ANNOTATIONS"));
-        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS"), Arrays.asList("ALLOW_MODIFY_CONTENTS"));
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_MODIFY_ANNOTATIONS", "ALLOW_MODIFY_CONTENTS"), Collections.singletonList("ALLOW_FILL_IN"));
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_CONTENTS"), Collections.singletonList("ALLOW_MODIFY_ANNOTATIONS"));
+        doTestRemovePermissions(WORKER1, sampleOwner123, SAMPLE_OWNER123_PASSWORD, null, Arrays.asList("ALLOW_FILL_IN", "ALLOW_MODIFY_ANNOTATIONS"), Collections.singletonList("ALLOW_MODIFY_CONTENTS"));
     }
 
+    @Test
     public void test04RemovePermissionsWithoutOwner() throws Exception {
 
-        // Removing any permissions should protected the document even 
+        // Removing any permissions should protected the document even
         // if it did not contain the permission before but was unprotected
         // (unprotected means all permissions)
-        Collection<String> anyPermissions = Arrays.asList("ALLOW_FILL_IN");
+        Collection<String> anyPermissions = Collections.singletonList("ALLOW_FILL_IN");
 
         // sample has Permissions(0)
-        byte[] pdfbytes = doTestRemovePermissions(WORKER1, sample, null, null, anyPermissions, new LinkedList<String>());
+        byte[] pdfbytes = doTestRemovePermissions(WORKER1, sample, null, null, anyPermissions, new LinkedList<>());
         assertUserNotOwnerPassword(pdfbytes, null);
 
         // sampleOpen123 has Permissions(-1028)[ALLOW_FILL_IN, ALLOW_MODIFY_ANNOTATIONS, ALLOW_DEGRADED_PRINTING, ALLOW_SCREENREADERS, ALLOW_COPY, ALLOW_PRINTING, ALLOW_MODIFY_CONTENTS]
@@ -532,6 +561,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tests illegal configuration: specifying mutually exclusive properties.
      */
+    @Test
     public void test04SetAndRemovePermissions() throws Exception {
         workerSession.setWorkerProperty(WORKER1, "SET_PERMISSIONS", "ALLOW_COPY");
         workerSession.setWorkerProperty(WORKER1, "REMOVE_PERMISSIONS", "ALLOW_FILL_IN");
@@ -547,9 +577,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tests that rejecting permissions still works even do we set permissions
      * explicitly.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test05SetAndRejectPermissions() throws Exception {
         // Setting a permission we then reject. Not so clever :)
         workerSession.setWorkerProperty(WORKER1, "SET_PERMISSIONS", "ALLOW_MODIFY_CONTENTS,ALLOW_COPY");
@@ -566,9 +595,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tests that even do we remove some permission we will still check for
      * permissions to reject. But if we remove all rejected the document is ok.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test06RemoveAndRejectPermissions() throws Exception {
         // Remove a permissions but still the document contains a permission we reject
         workerSession.setWorkerProperty(WORKER1, "REMOVE_PERMISSIONS", "ALLOW_MODIFY_CONTENTS");
@@ -590,19 +618,17 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tests that it is possible also to change the permissions on a document
      * not previously protected by any password.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test07ChangePermissionOfUnprotectedDocument() throws Exception {
-        doTestSetPermissions(WORKER1, sampleOk, null, null, Arrays.asList( "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
+        doTestSetPermissions(sampleOk, null, null, Arrays.asList( "ALLOW_FILL_IN", "ALLOW_DEGRADED_PRINTING"));
     }
 
     /**
      * Test helper method for asserting that a certain owner password is really
      * set.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test08assertOwnerPassword() throws Exception {
         try {
             assertOwnerPassword(readFile(sampleOpen123Owner123), "open123");
@@ -622,9 +648,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tests the worker property SET_OWNERPASSWORD with documents containing
      * different password types.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test09SetOwnerPassword() throws Exception {
         // Set owner password on a document that does not have any password
         String ownerPassword1 = "newownerpassword%%_1";
@@ -664,9 +689,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tests that it is possible to sign a certified document which allows
      * signing and not one the does not.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test10SignCertifiedDocument_SHA1() throws Exception {
         try {
             // Note: We can not upgrade a document that is already signed so as
@@ -674,9 +698,9 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA1");
             workerSession.reloadConfiguration(WORKER1);
 
-            signPDF(sampleCertifiedSigningAllowed);
+            signPDF(sampleCertifiedSigningAllowed, WORKER1);
             try {
-                signPDF(sampleCertifiedNoChangesAllowed);
+                signPDF(sampleCertifiedNoChangesAllowed, WORKER1);
                 fail("Should not be possible to sign a certified document with NO_CHANGES_ALLOWED");
             } catch (IllegalRequestException ok) {
                 LOG.debug("ok: " + ok.getMessage());
@@ -690,13 +714,12 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Tests that it is possible to sign a certified document which allows
      * signing and not one the does not.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test10SignCertifiedDocument() throws Exception {
-        signPDF(sampleCertifiedSigningAllowed256);
+        signPDF(sampleCertifiedSigningAllowed256, WORKER1);
         try {
-            signPDF(sampleCertifiedNoChangesAllowed256);
+            signPDF(sampleCertifiedNoChangesAllowed256, WORKER1);
             fail("Should not be possible to sign a certified document with NO_CHANGES_ALLOWED");
         } catch (IllegalRequestException ok) {
             LOG.debug("ok: " + ok.getMessage());
@@ -705,9 +728,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
     /**
      * Tests that it is possible to certify a document that already is signed.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test11CertifySignedDocument_SHA1() throws Exception {
         try {
             // Note: We can not upgrade a document that is already signed so as
@@ -717,15 +739,15 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
             workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "FORM_FILLING");
             workerSession.reloadConfiguration(WORKER1);
-            signPDF(sampleSigned);
+            signPDF(sampleSigned, WORKER1);
 
             workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "FORM_FILLING_AND_ANNOTATIONS");
             workerSession.reloadConfiguration(WORKER1);
-            signPDF(sampleSigned);
+            signPDF(sampleSigned, WORKER1);
 
             workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "NO_CHANGES_ALLOWED");
             workerSession.reloadConfiguration(WORKER1);
-            signPDF(sampleSigned);
+            signPDF(sampleSigned, WORKER1);
         } finally {
             workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA256");
             workerSession.reloadConfiguration(WORKER1);
@@ -734,28 +756,26 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
     /**
      * Tests that it is possible to certify a document that already is signed.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test11CertifySignedDocument_SHA256() throws Exception {
         workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "FORM_FILLING");
         workerSession.reloadConfiguration(WORKER1);
-        signPDF(sampleSignedSHA256);
+        signPDF(sampleSignedSHA256, WORKER1);
 
         workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "FORM_FILLING_AND_ANNOTATIONS");
         workerSession.reloadConfiguration(WORKER1);
-        signPDF(sampleSignedSHA256);
+        signPDF(sampleSignedSHA256, WORKER1);
 
         workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "NO_CHANGES_ALLOWED");
         workerSession.reloadConfiguration(WORKER1);
-        signPDF(sampleSignedSHA256);
+        signPDF(sampleSignedSHA256, WORKER1);
     }
 
     /**
      * Tests that it is possible to sign an already signed document.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test12SignSignedDocument_SHA1() throws Exception {
         try {
             // Note: We can not upgrade a document that is already signed so as
@@ -763,7 +783,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA1");
             workerSession.reloadConfiguration(WORKER1);
 
-            signPDF(sampleSigned);
+            signPDF(sampleSigned, WORKER1);
         } finally {
             workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "SHA256");
             workerSession.reloadConfiguration(WORKER1);
@@ -772,35 +792,33 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
     /**
      * Tests that it is possible to sign an already signed document.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test12SignSignedDocument_SHA256() throws Exception {
-        signPDF(sampleSignedSHA256);
+        signPDF(sampleSignedSHA256, WORKER1);
     }
 
     /**
      * Tests that it is not possible to certify an already certified document.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test13CertifyCertifiedDocument() throws Exception {
         workerSession.setWorkerProperty(WORKER1, "CERTIFICATION_LEVEL", "FORM_FILLING");
         workerSession.reloadConfiguration(WORKER1);
         try {
-            signPDF(sampleCertifiedNoChangesAllowed);
+            signPDF(sampleCertifiedNoChangesAllowed, WORKER1);
             fail("Should not be possible to certify a certified document");
         } catch (IllegalRequestException ok) {
             LOG.debug("ok: " + ok.getMessage());
         }
         try {
-            signPDF(sampleCertifiedFormFillingAllowed);
+            signPDF(sampleCertifiedFormFillingAllowed, WORKER1);
             fail("Should not be possible to sign a certified document");
         } catch (IllegalRequestException ok) {
             LOG.debug("ok: " + ok.getMessage());
         }
         try {
-            signPDF(sampleCertifiedSigningAllowed);
+            signPDF(sampleCertifiedSigningAllowed, WORKER1);
             fail("Should not be possible to sign a certified document");
         } catch (IllegalRequestException ok) {
             LOG.debug("ok: " + ok.getMessage());
@@ -813,9 +831,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      *
      * This should never fail unless we upgrade BouncyCastle and the behavior
      * changes.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test14EstimatedP7Size_increaseCertSize() throws Exception {
         final int somethingLargeEnough = 31000;
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(1024);
@@ -826,7 +843,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         int referenceSize;
         int actualP7Size;
 
-        
+
         // Create initial certificates
         Certificate issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
         referenceIssuerCertSize = issuerCert.getEncoded().length;
@@ -867,10 +884,10 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
         assertEquals("new size 37 bytes larger", referenceSize + 37, actualP7Size);
 
-        
+
         // Test 2: Increase the size of the certificate with at least 10000 bytes and test
         // that the final P7 does not increases more than the certificate
-        // (it turned out that increasing the certificate with 10000 bytes actually made it even larger, 
+        // (it turned out that increasing the certificate with 10000 bytes actually made it even larger,
         //  however that is not important in this case)
         extensionBytes = new byte[10000];
         issuerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(issuerKeyPair.getPublic()).setSubject("CN=Issuer1").setIssuer("CN=Issuer1").addExtension(new CertExt(new ASN1ObjectIdentifier("1.2.3.4"), false, new DERBitString(extensionBytes))).build());
@@ -897,18 +914,17 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
         // It turns out that the P7 might use less size than the increase in the certificate
         assertTrue("new larger size", referenceSize + certIncrease >= actualP7Size);
-        //referenceSize = actualP7Size;        
+        //referenceSize = actualP7Size;
     }
 
     /**
-     * Tests that our assumption that an increase of n bytes in a time-stamp response 
+     * Tests that our assumption that an increase of n bytes in a time-stamp response
      * does not lead to more than an increase of n bytes in the PKCS#7 structure.
      *
      * This should never fail unless we upgrade BouncyCastle and the behavior
      * changes.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test14EstimatedP7Size_increaseTSRSize() throws Exception {
         final int somethingLargeEnough = 31000;
         KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
@@ -944,10 +960,10 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
         assertEquals("new size 37 bytes larger", referenceSize + 37, actualP7Size);
 
-        
+
         // Test 2: Increase the size of the certificate with at least 10000 bytes and test
         // that the final P7 does not increases more than the certificate
-        // (it turned out that increasing the TSR with 10000 bytes actually made it even larger, 
+        // (it turned out that increasing the TSR with 10000 bytes actually made it even larger,
         //  however that is not important in this case)
         tsc = new MockedTSAClient(10000);
         actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
@@ -964,19 +980,18 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         tsrIncrease = tsc.getTokenSizeEstimate() - referenceTSRSize;
         // It turns out that the P7 might use less size than the increase in the TSR size
         assertTrue("new larger size", referenceSize + tsrIncrease >= actualP7Size);
-        //referenceSize = actualP7Size;        
+        //referenceSize = actualP7Size;
     }
 
     /**
      * Tests that our assumption that an increase of n bytes in a certificate
-     * does not lead to more than an increase of n+X bytes in the PKCS#7 structure 
+     * does not lead to more than an increase of n+X bytes in the PKCS#7 structure
      * where X seems to be 1 extra byte that could be needed.
      *
      * This should never fail unless we upgrade BouncyCastle and the behavior
      * changes.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test14EstimatedP7Size_increaseCRLSize() throws Exception {
         final int extraSpace = 1;
 
@@ -988,7 +1003,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         int referenceSize;
         int actualP7Size;
 
-        
+
         // Create initial certificates
         Certificate[] certChain = new Certificate[] {converter.getCertificate(new CertBuilder().build())};
 
@@ -1019,10 +1034,10 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
         assertTrue("new size 37 bytes larger", actualP7Size <= referenceSize + 37 + extraSpace);
 
-        
+
         // Test 2: Increase the size of the certificate with at least 10000 bytes and test
         // that the final P7 does not increases more than the certificate
-        // (it turned out that increasing the certificate with 10000 bytes actually made it even larger, 
+        // (it turned out that increasing the certificate with 10000 bytes actually made it even larger,
         //  however that is not important in this case)
         extensionBytes = new byte[10000];
         crlList = new CRL[]{createCRL(signerPrivKey, extensionBytes)};
@@ -1047,7 +1062,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         actualP7Size = getActualP7Size(signerPrivKey, somethingLargeEnough, certChain, crlList, ocsp, tsc);
         // It turns out that the P7 might use less size than the increase in the certificate
         assertTrue("new larger size", referenceSize + certIncrease >= actualP7Size);
-        //referenceSize = actualP7Size;        
+        //referenceSize = actualP7Size;
     }
 
     private X509CRL createCRL(PrivateKey caCrlPrivKey, byte[] data) throws Exception {
@@ -1088,9 +1103,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      *
      * This should never fail unless we upgrade BouncyCastle and the behavior
      * changes.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test14EstimatedP7Size_increaseNumCerts() throws Exception {
         final int somethingLargeEnough = 31000;
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(1024);
@@ -1101,7 +1115,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         int referenceSize;
         int actualP7Size;
 
-        
+
         // Create initial certificates
         Certificate signerCert = converter.getCertificate(new CertBuilder().setIssuerPrivateKey(issuerKeyPair.getPrivate()).setSubjectPublicKey(signerKeyPair.getPublic()).setSubject("CN=Signer").setIssuer("CN=Issuer1").build());
         Certificate[] allCerts = new Certificate[50];
@@ -1160,9 +1174,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      *
      * This should never fail unless we upgrade BouncyCastle and the behavior
      * changes.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test14EstimatedP7Size_increaseNumCRLs() throws Exception {
         final int somethingLargeEnough = 31000;
         KeyPair signerKeyPair = CryptoUtils.generateRSA(1024);
@@ -1233,13 +1246,12 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * The most important thing is that we don't estimate a too low value.
      *
      * Second thing is to not make a too large estimate. What quality of the
-     * estimate we require is defined by the maxDiff constant. We can't calculate 
-     * the size of the TS response (as it is performed after we construct the 
-     * signature structure) so in this test only values under 7168 (the 
+     * estimate we require is defined by the maxDiff constant. We can't calculate
+     * the size of the TS response (as it is performed after we construct the
+     * signature structure) so in this test only values under 7168 (the
      * default estimate) are considered.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test14calculateEstimatedSignatureSize() throws Exception {
 
         final int estimatedIntialTSResponseSize = 7168; // The value we assume for the TS response siz
@@ -1259,9 +1271,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         // Subject, 0 extra bytes TS, 0 bytes OCSP, 0 CRLs (0 extra bytes)
         certChain = new Certificate[] {signerCert};
         tsc = new MockedTSAClient(0);
-        ocsp = null;
         crlList = new CRL[0];
-        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, null, crlList, maxDiff);
 
         // Subject, Issuer(4123 extra bytes), 0 extra bytes TS, 0 bytes OCSP, 0 CRLs (0 extra bytes)
         extensionBytes = new byte[4123];
@@ -1269,8 +1280,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         certChain = new Certificate[] {signerCert, issuerCert};
         crlList = new CRL[0];
         tsc = new MockedTSAClient(0);
-        ocsp = null;
-        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, null, crlList, maxDiff);
 
         // Subject, Issuer(17173 extra bytes), Issuer2 (123 extra bytes), 0 extra bytes TS, 0 bytes OCSP, 0 CRLs (0 extra bytes)
         extensionBytes = new byte[17173];
@@ -1279,8 +1289,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         certChain = new Certificate[] {signerCert, issuerCert, issuerCert2};
         crlList = new CRL[0];
         tsc = new MockedTSAClient(0);
-        ocsp = null;
-        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, null, crlList, maxDiff);
 
         // Subject, Issuer(4123 extra bytes), 3178 extra bytes TS, 0 bytes OCSP, 0 CRLs (0 extra bytes)
         extensionBytes = new byte[4123];
@@ -1288,8 +1297,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         certChain = new Certificate[] {signerCert, issuerCert};
         crlList = new CRL[0];
         tsc = new MockedTSAClient(3178);
-        ocsp = null;
-        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, null, crlList, maxDiff);
 
         // Subject, Issuer(17173 extra bytes), Issuer2 (123 extra bytes), 3178 extra bytes TS, 0 bytes OCSP, 0 CRLs (0 extra bytes)
         extensionBytes = new byte[17173];
@@ -1298,8 +1306,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         certChain = new Certificate[] {signerCert, issuerCert, issuerCert2};
         crlList = new CRL[0];
         tsc = new MockedTSAClient(3178);
-        ocsp = null; //"OOOOOOOO".getBytes();
-        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, null, crlList, maxDiff);
 
         // Subject, Issuer(17173 extra bytes), Issuer2 (123 extra bytes), 3178 extra bytes TS, 1 bytes OCSP, 0 CRLs (0 extra bytes)
         //extensionBytes =
@@ -1314,18 +1321,18 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         // Subject, Issuer(17173 extra bytes), Issuer2 (123 extra bytes), 3178 extra bytes TS, 1304 bytes OCSP, 0 CRLs (0 extra bytes)
         //extensionBytes =
         //issuerCert =
-        //issuerCert2 = 
-        //certChain = 
+        //issuerCert2 =
+        //certChain =
         //crlList = new CRL[0];
         tsc = new MockedTSAClient(3178);
         ocsp = new byte[1304];
         assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
 
         // Subject, Issuer(17173 extra bytes), Issuer2 (123 extra bytes), 3178 extra bytes TS, 10102 bytes OCSP, 0 CRLs (0 extra bytes)
-        //extensionBytes = 
-        //issuerCert = 
-        //issuerCert2 = 
-        //certChain = 
+        //extensionBytes =
+        //issuerCert =
+        //issuerCert2 =
+        //certChain =
         //crlList =
         tsc = new MockedTSAClient(3178);
         ocsp = new byte[10102];
@@ -1337,8 +1344,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         certChain = new Certificate[] {signerCert, issuerCert};
         crlList = new CRL[] {createCRL(signerKeyPair.getPrivate(), new byte[0])};
         tsc = new MockedTSAClient(0);
-        ocsp = null;
-        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, null, crlList, maxDiff);
 
         // Subject, Issuer(17000 extra bytes), 0 extra bytes TS, 0 bytes OCSP, 1 CRLs (5432 extra bytes)
         extensionBytes = new byte[17000];
@@ -1346,8 +1352,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         certChain = new Certificate[] {signerCert, issuerCert};
         crlList = new CRL[] {createCRL(signerKeyPair.getPrivate(), new byte[5432])};
         tsc = new MockedTSAClient(0);
-        ocsp = null;
-        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, null, crlList, maxDiff);
 
         // Subject, Issuer(17000 extra bytes), 0 extra bytes TS, 0 bytes OCSP, 2 CRLs (5432 extra bytes, 5076 extra bytes)
         extensionBytes = new byte[17000];
@@ -1355,8 +1360,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         certChain = new Certificate[] {signerCert, issuerCert};
         crlList = new CRL[] {createCRL(signerKeyPair.getPrivate(), new byte[5432]), createCRL(signerKeyPair.getPrivate(), new byte[5076])};
         tsc = new MockedTSAClient(0);
-        ocsp = null;
-        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, ocsp, crlList, maxDiff);
+        assertEstimateCloseEnough(signerKeyPair.getPrivate(), certChain, tsc, null, crlList, maxDiff);
     }
 
     private void assertEstimateCloseEnough(PrivateKey signerPrivKey, Certificate[] certChain, MockedTSAClient tsc, byte[] ocsp, CRL[] crlList, int maxDiff) throws Exception {
@@ -1380,13 +1384,12 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * As we might not be in control of an external TSA the size they return might
      * be different from call to call that means that there is always a chance of
-     * us doing a wrong size estimate. 
+     * us doing a wrong size estimate.
      * This tests tests that if we got it wrong the first time the second time
-     * we make an estimate which is larger than the actual size returned from the 
+     * we make an estimate which is larger than the actual size returned from the
      * first try.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test14calculateEstimatedSignatureSize_resign() throws Exception {
 
         byte[] pdfbytes = readFile(sample);
@@ -1416,10 +1419,9 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
     /**
      * Test that setting both TSA_URL and TSA_WORKER results in a config error.
-     * 
-     * @throws Exception
      */
-    public void test15TSA_URLandTSA_WORKERbothNotAllowed() throws Exception {
+    @Test
+    public void test15TSA_URLandTSA_WORKERbothNotAllowed() {
         WorkerConfig workerConfig = new WorkerConfig();
 
         workerConfig.setProperty("NAME", "TestSigner100");
@@ -1428,7 +1430,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         final PDFSigner instance = new PDFSigner() {
             @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+            public ICryptoTokenV4 getCryptoToken(final IServices services) {
                 return null;
             }
         };
@@ -1439,14 +1441,13 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         assertTrue("Should contain error",
                 fatalErrors.contains("Can not specify " + PDFSigner.TSA_URL + " and " + PDFSigner.TSA_WORKER + " at the same time."));
     }
-    
+
     /**
      * Test that explicitly setting TSA_DIGESTALGORITHM to SHA-384 doesn't
      * give any error.
-     * 
-     * @throws Exception
      */
-    public void test15TSA_DIGESTALGORITHM_sha384() throws Exception {
+    @Test
+    public void test15TSA_DIGESTALGORITHM_sha384() {
         WorkerConfig workerConfig = new WorkerConfig();
 
         workerConfig.setProperty("NAME", "TestSigner100");
@@ -1455,7 +1456,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         final PDFSigner instance = new PDFSigner() {
             @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+            public ICryptoTokenV4 getCryptoToken(final IServices services) {
                 return null;
             }
         };
@@ -1466,14 +1467,13 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         assertFalse("Should not contain error",
                     fatalErrors.contains("Illegal timestamping digest algorithm specified"));
     }
-    
+
     /**
      * Test that explicitly setting TSA_DIGESTALGORITHM to SHA-384 doesn't
      * give any error.
-     * 
-     * @throws Exception
      */
-    public void test15IllegalTSA_DIGESTALGORITHM() throws Exception {
+    @Test
+    public void test15IllegalTSA_DIGESTALGORITHM() {
         WorkerConfig workerConfig = new WorkerConfig();
 
         workerConfig.setProperty("NAME", "TestSigner100");
@@ -1482,7 +1482,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         final PDFSigner instance = new PDFSigner() {
             @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+            public ICryptoTokenV4 getCryptoToken(final IServices services) {
                 return null;
             }
         };
@@ -1493,15 +1493,13 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         assertTrue("Should contain error: " + fatalErrors,
                    fatalErrors.contains("Illegal timestamping digest algorithm specified"));
     }
-    
+
     /**
      * Test that providing illegal PDFSignerParameter values result in
      * configuration errors.
-     *
-     *
-     * @throws Exception
      */
-    public void test23Illegal_Value_Gives_Configuration_Errors() throws Exception {
+    @Test
+    public void test23Illegal_Value_Gives_Configuration_Errors() {
         WorkerConfig workerConfig = new WorkerConfig();
 
         workerConfig.setProperty("NAME", "TestSigner100");
@@ -1513,7 +1511,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         final PDFSigner instance = new PDFSigner() {
             @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+            public ICryptoTokenV4 getCryptoToken(final IServices services) {
                 return null;
             }
         };
@@ -1533,9 +1531,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
     /**
      * Test that providing empty strings for both TSA_URL and TSA_WORKER files are treated as not specified.
-     *
-     * @throws Exception
      */
+    @Test
     public void test20EmptyStringInTSA_URLAndTSA_WORKER_TreatedAsNotSpecified() throws Exception {
 
         final MockedCryptoToken token = generateToken(false, null);
@@ -1549,7 +1546,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         final PDFSigner instance = new PDFSigner() {
             @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+            public ICryptoTokenV4 getCryptoToken(final IServices services) {
                 return token;
             }
         };
@@ -1561,12 +1558,11 @@ public class PDFSignerUnitTest extends ModulesTestCase {
                 fatalErrors.contains("Can not specify " + PDFSigner.TSA_URL + " and " + PDFSigner.TSA_WORKER + " at the same time."));
         assertTrue("There should not be any error so that we can assume that worker will be online", fatalErrors.isEmpty());
     }
-    
+
     /**
      * Tests that Empty value for AUTHTYPE property should be allowed.
-     *
-     * @throws Exception
      */
+    @Test
     public void test20EmptyAuthTypeAllowed() throws Exception {
 
         final MockedCryptoToken token = generateToken(false, null);
@@ -1581,7 +1577,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         final PDFSigner instance = new PDFSigner() {
             @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+            public ICryptoTokenV4 getCryptoToken(final IServices services) {
                 return token;
             }
         };
@@ -1594,9 +1590,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
     /**
      * Tests that it is possible to sign a document with parameters specified as empty values.
-     *
-     * @throws java.lang.Exception
      */
+    @Test
     public void test20SigningWithEmptyParams() throws Exception {
         workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "  ");
         workerSession.setWorkerProperty(WORKER1, "REASON", " ");
@@ -1616,26 +1611,24 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         workerSession.reloadConfiguration(WORKER1);
 
-        signPDF(sampleOk);
+        signPDF(sampleOk, WORKER1);
     }
-    
+
      /**
      * Tests that Signer refuses to sign if worker has configuration errors.
-     *
-     * @throws java.lang.Exception
      */
     public void test21NoSigningWhenWorkerMisconfigued() throws Exception {
         workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "IllegalHash");
         workerSession.reloadConfiguration(WORKER1);
 
         try {
-            signPDF(sampleOk);
+            signPDF(sampleOk, WORKER1);
             fail("Request should not have been accepted as worker must be offline now");
         } catch (SignServerException expected) {
             assertEquals("exception message", "Worker is misconfigured", expected.getMessage());
         }
     }
-    
+
     /**
      * Tests that signing fails with an expected exception when the signing
      * certificate has a CDP and the fetched CRL is an empty file.
@@ -1649,14 +1642,13 @@ public class PDFSignerUnitTest extends ModulesTestCase {
                          expected.getMessage());
         }
     }
-    
+
     /**
      * Test that specifying an unknown hash algorithm gives a configuration
      * error.
-     *
-     * @throws Exception
      */
-    public void test16IllegalDigestAlgorithm() throws Exception {
+    @Test
+    public void test16IllegalDigestAlgorithm() {
         WorkerConfig workerConfig = new WorkerConfig();
 
         workerConfig.setProperty("NAME", "TestSigner100");
@@ -1664,7 +1656,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         final PDFSigner instance = new PDFSigner() {
             @Override
-            public ICryptoTokenV4 getCryptoToken(final IServices services) throws SignServerException {
+            public ICryptoTokenV4 getCryptoToken(final IServices services) {
                 return null;
             }
         };
@@ -1679,9 +1671,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Test that setting a hash algorithm other than SHA1
      * gives an error when using DSA keys.
-     *
-     * @throws Exception
      */
+    @Test
     public void test17OnlySHA1AcceptedForDSA() throws Exception {
         final MockedCryptoToken token = generateToken(true, null);
         final MockedPDFSigner instance = new MockedPDFSigner(token);
@@ -1700,9 +1691,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
     /**
      * Test that explicitly setting SHA1 for DSA keys works.
-     *
-     * @throws Exception
      */
+    @Test
     public void test18SHA1acceptedForDSA() throws Exception {
         final MockedCryptoToken token = generateToken(true, null);
         final MockedPDFSigner instance = new MockedPDFSigner(token);
@@ -1722,9 +1712,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Test that setting the hash algorithm to SHA256
      * is accepted for RSA keys.
-     *
-     * @throws Exception
      */
+    @Test
     public void test19SHA256AcceptedForRSA() throws Exception {
         final MockedCryptoToken token = generateToken(false, null);
         final MockedPDFSigner instance = new MockedPDFSigner(token);
@@ -1740,9 +1729,10 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         assertFalse("Should not contain error", fatalErrors.contains(ILLEGAL_DIGEST_FOR_DSA_MESSAGE));
     }
-    
+
+    @Test
     public void test20MetadataProducerField() throws Exception {
-        byte[] result = signPDF(sample);
+        byte[] result = signPDF(sample, WORKER1);
 
         PdfReader reader = new PdfReader(result);
         PRIndirectReference iInfo = (PRIndirectReference)reader.getTrailer().get(PdfName.INFO);
@@ -1758,16 +1748,12 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * @param cdpUrl URL to use if a CDP URL should be included in the signing
      *               cert, if null, no CDP URL is added.
      * @return Mocked crypto token
-     * @throws NoSuchAlgorithmException
-     * @throws NoSuchProviderException
-     * @throws CertBuilderException
-     * @throws CertificateException
      */
     private MockedCryptoToken generateToken(final boolean useDSA, final String cdpUrl) throws NoSuchAlgorithmException, NoSuchProviderException,
             CertBuilderException, CertificateException {
         final KeyPair signerKeyPair = useDSA ? CryptoUtils.generateDSA(1024) : CryptoUtils.generateRSA(1024);
         CertBuilder certBuilder = new CertBuilder();
-        
+
         if (cdpUrl != null) {
             certBuilder = certBuilder.addCDPURI(cdpUrl);
         }
@@ -1776,14 +1762,13 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         final Certificate signerCertificate = certChain[0];
         final String provider = "BC";
 
-        final MockedCryptoToken token = new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), provider);
-        return token;
+        return new MockedCryptoToken(signerKeyPair.getPrivate(), signerKeyPair.getPublic(), signerCertificate, Arrays.asList(certChain), provider);
     }
 
     /**
      * Mocked PDF signer using a mocked crypto token.
      */
-    private class MockedPDFSigner extends PDFSigner {
+    private static class MockedPDFSigner extends PDFSigner {
         private final MockedCryptoToken mockedToken;
 
         public MockedPDFSigner(final MockedCryptoToken mockedToken) {
@@ -1796,11 +1781,11 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         }
     }
 
-    
+
     /**
      * Tests that we don't get an exception trying to sign a document with the
      * given parameters.
-     * The idea is that if the estimate is too small an retry is done so this 
+     * The idea is that if the estimate is too small an retry is done so this
      * should always succeed.
      */
     private void assertCanSign(final byte[] pdfbytes, final KeyPair signerKeyPair, final Certificate[] certChain, final Certificate signerCertificate, final int tsSize) throws Exception {
@@ -1836,8 +1821,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
                 new DefaultDigestAlgorithmIdentifierFinder();
                 final AlgorithmIdentifier ai = algFinder.find("SHA-256");
                 final ASN1ObjectIdentifier tsaDigestAlgorithm = ai.getAlgorithm();
-            
-            instance.addSignatureToPDFDocument(token.acquireCryptoInstance("any-alias", Collections.<String, Object>emptyMap(), null), params, pdfbytes, null, null, 0,
+
+            instance.addSignatureToPDFDocument(token.acquireCryptoInstance("any-alias", Collections.emptyMap(), null), params, pdfbytes, null, null, 0,
                     null, responseData, null, tsaDigestAlgorithm, "SHA-256");
             byte[] signedPdfbytes = responseData.toReadableData().getAsByteArray();
             assertNotNull(signedPdfbytes);
@@ -1874,10 +1859,6 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         return encodedSig.length;
     }
 
-    private byte[] signPDF(File file) throws Exception {
-        return signProtectedPDF(file, WORKER1, null);
-    }
-    
     private byte[] signPDF(final File file, final int workerId) throws Exception {
         return signProtectedPDF(file, workerId, null);
     }
@@ -1885,7 +1866,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     private byte[] signProtectedPDF(final File file, final String password) throws Exception {
         return signProtectedPDF(file, WORKER1, password);
     }
-    
+
     private byte[] signProtectedPDF(final File file, final int workerId,
             final String password) throws Exception {
         LOG.debug("Tests signing of " + file.getName() + " with password:");
@@ -1900,10 +1881,10 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         try (
                 CloseableReadableData requestData = createRequestDataKeepingFile(file);
-                CloseableWritableData responseData = createResponseData(true);
+                CloseableWritableData responseData = createResponseData(true)
             ) {
-            final Response response = 
-                    processSession.process(createAdminInfo(), new WorkerIdentifier(workerId), 
+            final Response response =
+                    processSession.process(createAdminInfo(), new WorkerIdentifier(workerId),
                             new SignatureRequest(200, requestData, responseData),
                             context);
             assertNotNull(response);
@@ -1913,13 +1894,9 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
     private void setupWorkers()
             throws NoSuchAlgorithmException, NoSuchProviderException,
-            CertBuilderException, CertificateException, FileNotFoundException,
-            IOException {
+            CertBuilderException, CertificateException, IOException {
 
-        final GlobalConfigurationSessionMock globalMock
-                = new GlobalConfigurationSessionMock();
         final WorkerSessionMock workerMock = new WorkerSessionMock();
-        globalConfig = globalMock;
         workerSession = workerMock;
         processSession = workerMock;
 
@@ -1949,7 +1926,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             });
             workerSession.reloadConfiguration(workerId);
         }
-        
+
         // WORKER2
         // signer with a signer certificate with a CDP URL pointing at an empty file
         final File empty = File.createTempFile("test", "crl");
@@ -2007,17 +1984,17 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     /**
      * Asserts that the password really can be used as user password.
      */
-    private static void assertUserPassword(byte[] pdfBytes, String password) throws IOException, DocumentException {
+    private static void assertUserPassword(byte[] pdfBytes, String password) throws IOException {
         // This will fail unless password is owner or user
         System.out.println("password: " + password);
-        PdfReader reader = new PdfReader(pdfBytes, password.getBytes("ISO-8859-1"));
+        PdfReader reader = new PdfReader(pdfBytes, password.getBytes(StandardCharsets.ISO_8859_1));
         reader.close();
 
         // Still if the document did not contain a password it would not have failed yet
         // Test that it really fails when specifying a wrong password
         boolean exceptionThrown = true;
         try {
-            PdfReader reader2 = new PdfReader(pdfBytes, "_ABSOLUTLEY_NOT_THE_RIGHT_PASSWORD_".getBytes("ISO-8859-1"));
+            PdfReader reader2 = new PdfReader(pdfBytes, "_ABSOLUTLEY_NOT_THE_RIGHT_PASSWORD_".getBytes(StandardCharsets.ISO_8859_1));
             reader2.close();
             exceptionThrown = false;
         } catch (IOException ok) {
@@ -2036,7 +2013,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         PdfReader reader;
         PdfStamper stp;
         try {
-            reader = new PdfReader(pdfBytes, password == null ? null : password.getBytes("ISO-8859-1"));
+            reader = new PdfReader(pdfBytes, password == null ? null : password.getBytes(StandardCharsets.ISO_8859_1));
         } catch (BadPasswordException ex) {
             fail("Not a valid password: " + ex.getMessage());
             return;
@@ -2046,7 +2023,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             // This should fail if password is not owner
             ByteArrayOutputStream fout = new ByteArrayOutputStream();
             stp = PdfStamper.createSignature(reader, fout, '\0', null, false);
-            stp.setEncryption(reader.computeUserPassword(), password == null ? null : password.getBytes("ISO-8859-1"), 0, 1);
+            stp.setEncryption(reader.computeUserPassword(), password == null ? null : password.getBytes(StandardCharsets.ISO_8859_1), 0, 1);
             fail("Password was an owner password");
         } catch (BadPasswordException ok) {
             LOG.debug("ok: " + ok.getMessage());
@@ -2058,18 +2035,18 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      */
     private static void assertOwnerPassword(byte[] pdfBytes, String password) throws IOException, DocumentException {
         // This will fail unless password is owner or user
-        PdfReader reader = new PdfReader(pdfBytes, password.getBytes("ISO-8859-1"));
+        PdfReader reader = new PdfReader(pdfBytes, password.getBytes(StandardCharsets.ISO_8859_1));
         ByteArrayOutputStream fout = new ByteArrayOutputStream();
         PdfStamper stp = PdfStamper.createSignature(reader, fout, '\0', null, false);
 
         // This will fail unless password is owner
-        stp.setEncryption(reader.computeUserPassword(), password.getBytes("ISO-8859-1"), 0, 1);
+        stp.setEncryption(reader.computeUserPassword(), password.getBytes(StandardCharsets.ISO_8859_1), 0, 1);
 
         // Still if the document did not contain a password it would not have failed yet
         // Test that it really fails when specifying a wrong password
         boolean exceptionThrown = true;
         try {
-            PdfReader reader2 = new PdfReader(pdfBytes, "_ABSOLUTLEY_NOT_THE_RIGHT_PASSWORD_".getBytes("ISO-8859-1"));
+            PdfReader reader2 = new PdfReader(pdfBytes, "_ABSOLUTLEY_NOT_THE_RIGHT_PASSWORD_".getBytes(StandardCharsets.ISO_8859_1));
             reader2.close();
             exceptionThrown = false;
         } catch (IOException ok) {

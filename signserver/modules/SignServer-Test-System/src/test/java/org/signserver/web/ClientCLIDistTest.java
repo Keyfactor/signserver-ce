@@ -25,15 +25,15 @@ import static org.junit.Assert.*;
  * @version $Id$
  */
 public class ClientCLIDistTest extends WebTestCase {
-    
+
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ClientCLIDistTest.class);
-    
+
     private String pageURL;
-    
+
     public ClientCLIDistTest() {
     }
-    
+
     @Override
     protected String getServletURL() {
         return pageURL;
@@ -55,10 +55,10 @@ public class ClientCLIDistTest extends WebTestCase {
         final String body = new String(sendAndReadyBody(NO_FIELDS));
         assertTrue("Contains <a href=\"signserver-clientcli.zip\">: " + body, body.contains("<a href=\"signserver-clientcli.zip\">"));
     }
-    
+
     /** Tests that the AdminGUI zip can be downloaded. */
     @Test
-    public void testClientCLIPageDownload() throws Exception {
+    public void testClientCLIPageDownload() {
         LOG.info("This test assumes web.clientcli.dist.enabled=true in signserver_deploy.properties");
         this.pageURL = getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/clientcli-dist/signserver-clientcli.zip";
         assertStatusReturned(NO_FIELDS, 200);

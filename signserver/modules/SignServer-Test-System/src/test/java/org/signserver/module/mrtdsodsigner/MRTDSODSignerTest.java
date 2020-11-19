@@ -42,6 +42,11 @@ import org.signserver.test.utils.TestCerts;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.test.utils.builders.CryptoUtils;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Tests the MRTDSODSigner.
  *
@@ -66,9 +71,9 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     private static final int WORKER1B = 7901;
 
     private static final int WORKER1C = 7902;
-    
+
     private static final int WORKER1D = 7903;
-    
+
     /** Worker7904: SHA256WithECDSA, DODATAGROUPHASHING=true */
     private static final int WORKER5 = 7904;
 
@@ -77,25 +82,20 @@ public class MRTDSODSignerTest extends ModulesTestCase {
 
     private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
-    
+
     @Before
-    @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#tearDown()
-     */
     @After
-    @Override
-    protected void tearDown() throws Exception {
+    public void tearDown() {
         TestingSecurityManager.remove();
     }
 
     @Test
     public void test00SetupDatabase() throws Exception {
-        assertEquals(CommandLineInterface.RETURN_SUCCESS, 
+        assertEquals(CommandLineInterface.RETURN_SUCCESS,
                 getAdminCLI().execute("setproperties", getSignServerHome().getAbsolutePath() + "/res/test/test-mrtdsodsigner-configuration.properties"));
 
         // WORKER1 uses a P12 keystore
@@ -166,7 +166,6 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     /**
      * Requests signing of some data group hashes, using two different signers
      * with different algorithms and verifies the result.
-     * @throws Exception
      */
     @Test
     public void test02SignData() throws Exception {
@@ -198,7 +197,6 @@ public class MRTDSODSignerTest extends ModulesTestCase {
      * Requests signing of some data groups, using two different signers
      * with different algorithms and verifies the result. The signer does the
      * hashing.
-     * @throws Exception
      */
     @Test
     public void test03SignUnhashedData() throws Exception {
@@ -241,7 +239,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         KeyPair issuerKeyPair = CryptoUtils.generateRSA(512);
         X509CertificateHolder cscaCert = new JcaX509v3CertificateBuilder(new X500Name("CN=Test validity CSCA"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), new X500Name("CN=Test validity CSCA"), issuerKeyPair.getPublic())
                 .build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
-        
+
         X509CertificateHolder cert = new X509v3CertificateBuilder(cscaCert.getSubject(), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo())
                 .build(new JcaContentSignerBuilder("SHA256WithRSA").setProvider("BC").build(issuerKeyPair.getPrivate()));
 
@@ -257,7 +255,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
             thrown = true;
         }
         assertTrue(thrown);
-        
+
         // Test that there is an error as the signer is not valid yet
         WorkerStatus status = workerSession.getStatus(new WorkerIdentifier(WORKER1));
         String errors = status.getFatalErrors().toString();
@@ -277,9 +275,9 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKER1B,
                 SignServerConstants.MINREMAININGCERTVALIDITY, "6300");
         workerSession.reloadConfiguration(WORKER1B);
-        
+
         System.out.println("remaining: " + workerSession.getSigningValidityNotAfter(new WorkerIdentifier(WORKER1B)));
-        
+
         // Signing operation should not work now
         boolean thrown = false;
         try {
@@ -289,7 +287,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
             thrown = true;
         }
         assertTrue(thrown);
-        
+
         // Test that there is an error as the signer is not valid yet
         WorkerStatus status = workerSession.getStatus(new WorkerIdentifier(WORKER1B));
         String errors = status.getFatalErrors().toString();
@@ -493,7 +491,7 @@ public class MRTDSODSignerTest extends ModulesTestCase {
         Map<Integer, byte[]> actualDataGroupHashes = sod.getDataGroupHashes();
         assertEquals(expectedHashes.size(), actualDataGroupHashes.size());
         for (Map.Entry<Integer, byte[]> entry : actualDataGroupHashes.entrySet()) {
-            assertTrue("DG" + entry.getKey(), Arrays.equals(expectedHashes.get(entry.getKey()), entry.getValue()));
+            assertArrayEquals("DG" + entry.getKey(), expectedHashes.get(entry.getKey()), entry.getValue());
         }
         assertEquals(digestAlg, sod.getDigestAlgorithm());
         assertEquals(sigAlg, sod.getDigestEncryptionAlgorithm());
@@ -510,28 +508,27 @@ public class MRTDSODSignerTest extends ModulesTestCase {
     @Test
     public void test05GetStatus() throws Exception {
         StaticWorkerStatus stat = (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(7897));
-        assertTrue(stat.getTokenStatus() == WorkerStatus.STATUS_ACTIVE);
+        assertEquals(stat.getTokenStatus(), WorkerStatus.STATUS_ACTIVE);
     }
 
     /**
      * Test that setting INCLUDE_CERTIFICATE_LEVELS is not supported.
-     * @throws Exception
      */
     @Test
     public void test06IncludeCertificateLevelsNotSupported() throws Exception {
         try {
             workerSession.setWorkerProperty(WORKER1, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS, "2");
             workerSession.reloadConfiguration(WORKER1);
-            
+
             final List<String> errors = workerSession.getStatus(new WorkerIdentifier(WORKER1)).getFatalErrors();
-            
+
             assertTrue("Should contain error", errors.contains(WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS + " is not supported."));
         } finally {
             workerSession.removeWorkerProperty(WORKER1, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
             workerSession.reloadConfiguration(WORKER1);
         }
     }
-    
+
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKER1);

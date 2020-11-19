@@ -24,7 +24,7 @@ import org.junit.Test;
 
 /**
  * Tests different HTTP methods to make sure only GET and POST are allowed
- * 
+ *
  * @author Marcus Lundblad
  * @version $Id$
  *
@@ -33,14 +33,13 @@ import org.junit.Test;
 public class HTTPMethodsTest extends WebTestCase {
 
 	private boolean useProcess = true;
-	
+
 	@Override
 	protected String getServletURL() {
 		return getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver" + (useProcess ? "/process" : "");
 	}
 
 	@Before
-        @Override
 	public void setUp() throws Exception {
 		// set up dummy signer
 		addDummySigner1(true);
@@ -48,8 +47,7 @@ public class HTTPMethodsTest extends WebTestCase {
 	}
 
 	@After
-        @Override
-	public void tearDown() throws Exception {
+	public void tearDown() {
 		// remove dummy signer
 		removeWorker(getSignerIdDummy1());
 	}
@@ -98,7 +96,7 @@ public class HTTPMethodsTest extends WebTestCase {
 	public void test04HttpTRACE() {
 		Map<String, String> fields = new HashMap<>();
 		useProcess = false;
-		
+
 		assertStatusReturnedNotEqual(fields, "TRACE", 200);
 	}
 

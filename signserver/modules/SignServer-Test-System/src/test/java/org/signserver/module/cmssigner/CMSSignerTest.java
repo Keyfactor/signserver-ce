@@ -16,20 +16,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
+import org.bouncycastle.cert.AttributeCertificateHolder;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.SignerId;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationVerifier;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.util.Store;
-import org.bouncycastle.cert.AttributeCertificateHolder;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cms.SignerId;
-import org.bouncycastle.jce.provider.X509CertificateObject;
 import org.bouncycastle.util.Selector;
+import org.bouncycastle.util.Store;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -42,9 +43,14 @@ import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.testutils.TestingSecurityManager;
-import org.signserver.ejb.interfaces.WorkerSession;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for CMSSigner.
@@ -57,7 +63,7 @@ public class CMSSignerTest  {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(CMSSignerTest.class);
-    
+
     private static final int WORKERID_ECDSA = 8000;
     private static final int WORKERID_DSA = 8001;
 
@@ -69,17 +75,17 @@ public class CMSSignerTest  {
         workerSession = mt.getWorkerSession();
         processSession = mt.getProcessSession();
     }
-     
-    
-    @Before    
+
+
+    @Before
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
-    @After    
-    public void tearDown() throws Exception {
+    @After
+    public void tearDown() {
         TestingSecurityManager.remove();
-    }	
+    }
 
     @Test
     public void test00SetupDatabase() throws Exception {
@@ -98,24 +104,21 @@ public class CMSSignerTest  {
         LOG.debug(">test01BasicCMSSignRSA");
 
         helperBasicCMSSign(mt.getSignerIdDummy1(), null, "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.11", null, 1);
-        
+
         LOG.debug("<test01BasicCMSSignRSA");
     }
-    
+
     /**
      * Test setting SIGNATUREALGORITHM to a non-default value.
-     * @throws Exception
      */
     @Test
     public void test02BasicCMSSignSHA256withRSA() throws Exception {
         helperBasicCMSSign(mt.getSignerIdDummy1(), "SHA256withRSA", "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.11",
                 null, 1);
     }
-    
+
     /**
      * Test with ECDSA encryption algorithm.
-     * 
-     * @throws Exception
      */
     @Test
     public void test03BasicCMSSignSHA1withECDSA() throws Exception {
@@ -127,16 +130,14 @@ public class CMSSignerTest  {
         mt.addP12DummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_ECDSA,
             "TestCMSSignerP12ECDSA", keystore, "foo123", "signerec");
         workerSession.reloadConfiguration(WORKERID_ECDSA);
-        
+
         helperBasicCMSSign(WORKERID_ECDSA, "SHA1withECDSA", "1.3.14.3.2.26", "1.2.840.10045.4.1", null, 1);
-        
+
         mt.removeWorker(WORKERID_ECDSA);
     }
 
     /**
      * Test with DSA encryption algorithm.
-     * 
-     * @throws Exception
      */
     @Test
     public void test04BasicCMSSignSHA1withDSA() throws Exception {
@@ -147,16 +148,14 @@ public class CMSSignerTest  {
         }
         mt.addJKSDummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_DSA, "TestCMSSignerJKSDSA", keystore, "foo123", "mykey");
         workerSession.reloadConfiguration(WORKERID_DSA);
-        
+
         helperBasicCMSSign(WORKERID_DSA, "SHA1withDSA", "1.3.14.3.2.26", "1.2.840.10040.4.3", null, 1);
-        
+
         mt.removeWorker(WORKERID_DSA);
     }
-    
+
     /**
      * Test with SHA256withDSA encryption algorithm.
-     * 
-     * @throws Exception
      */
     @Test
     public void test08BasicCMSSignSHA256withDSA() throws Exception {
@@ -172,11 +171,9 @@ public class CMSSignerTest  {
 
         mt.removeWorker(WORKERID_DSA);
     }
-    
+
     /**
      * Test with SHA256withECDSA encryption algorithm.
-     * 
-     * @throws Exception
      */
     @Test
     public void test09BasicCMSSignSHA256withECDSA() throws Exception {
@@ -188,36 +185,30 @@ public class CMSSignerTest  {
         mt.addP12DummySigner("org.signserver.module.cmssigner.CMSSigner", WORKERID_ECDSA,
             "TestCMSSignerP12ECDSA", keystore, "foo123", "signerec");
         workerSession.reloadConfiguration(WORKERID_ECDSA);
-        
+
         helperBasicCMSSign(WORKERID_ECDSA, "SHA256withECDSA", "2.16.840.1.101.3.4.2.1", "1.2.840.10045.4.3.2", null, 1);
-        
+
         mt.removeWorker(WORKERID_ECDSA);
     }
-    
+
     /**
      * Test with no included certificates.
-     * 
-     * @throws Exception
      */
     @Test
     public void test05IncludeNoCerts() throws Exception {
         helperBasicCMSSign(mt.getSignerIdDummy1(), null, "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.11", "0", 0);
     }
-    
+
     /**
      * Test explicitly specifying 1 certificate to be included.
-     * 
-     * @throws Exception
      */
     @Test
     public void test06ExplicitIncludedCerts() throws Exception {
         helperBasicCMSSign(mt.getSignerIdDummy1(), null, "2.16.840.1.101.3.4.2.1", "1.2.840.113549.1.1.11", "1", 1);
     }
-    
+
     /**
      * Test specifying more certificates than are available.
-     * 
-     * @throws Exception
      */
     @Test
     public void test07TruncatedIncludedCerts() throws Exception {
@@ -240,7 +231,7 @@ public class CMSSignerTest  {
         } else {
             workerSession.removeWorkerProperty(workerId, CMSSigner.SIGNATUREALGORITHM_PROPERTY);
         }
-        
+
         if (includedCertificateLevelsProperty != null) {
             workerSession.setWorkerProperty(workerId,
                     WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS,
@@ -248,68 +239,62 @@ public class CMSSignerTest  {
         } else {
             workerSession.removeWorkerProperty(workerId, WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
         }
-        
+
         workerSession.reloadConfiguration(workerId);
-        
+
         final GenericSignResponse res =
                 (GenericSignResponse) processSession.process(new WorkerIdentifier(workerId), signRequest, new RemoteRequestContext());
         final byte[] data = res.getProcessedData();
-   
+
         // Answer to right question
-        ModulesTestCase.assertSame("Request ID", reqid, res.getRequestID());
+        assertSame("Request ID", reqid, res.getRequestID());
 
         try ( // Output for manual inspection
                 FileOutputStream fos = new FileOutputStream(
                         new File(mt.getSignServerHome(),
                                 "tmp" + File.separator + "signedcms_" + sigAlg + ".p7s"))) {
-            fos.write((byte[]) data);
+            fos.write(data);
         }
 
         // Check certificate returned
         final Certificate signercert = res.getSignerCertificate();
-        ModulesTestCase.assertNotNull("Signer certificate", signercert);
+        assertNotNull("Signer certificate", signercert);
 
         // Check that the signed data contains the document (i.e. not detached)
         final CMSSignedData signedData = new CMSSignedData(data);
         final byte[] content = (byte[]) signedData.getSignedContent()
                 .getContent();
-        ModulesTestCase.assertEquals("Signed document", testDocument, new String(content));
+        assertEquals("Signed document", testDocument, new String(content));
 
         // Get signers
-        final Collection signers = signedData.getSignerInfos().getSigners();
-        final SignerInformation signer
-                = (SignerInformation) signers.iterator().next();
+        final Collection<SignerInformation> signers = signedData.getSignerInfos().getSigners();
+        final SignerInformation signer = signers.iterator().next();
 
         final SignerInformationVerifier sigVerifier =
                 new JcaSignerInfoVerifierBuilder(new JcaDigestCalculatorProviderBuilder().build()).setProvider("BC").build(signercert.getPublicKey());
 
         // Verify using the signer's certificate
-        ModulesTestCase.assertTrue("Verification using signer certificate",
-                signer.verify(sigVerifier));
+        assertTrue("Verification using signer certificate", signer.verify(sigVerifier));
 
         // Check that the signer's certificate is included
-        final Store certStore = signedData.getCertificates();
-       
+        final Store<X509CertificateHolder> certStore = signedData.getCertificates();
+
         final SignerId sid = signer.getSID();
         final Selector certSelector =
                 new AttributeCertificateHolder(sid.getIssuer(),
                                                sid.getSerialNumber());
-                
-        Collection<? extends X509CertificateHolder> signerCerts =
-                certStore.getMatches(certSelector);
-        
-        ModulesTestCase.assertEquals("Certificate included", expectedIncludedCertificateLevels, signerCerts.size());
+
+        Collection<? extends X509CertificateHolder> signerCerts = certStore.getMatches(certSelector);
+        assertEquals("Certificate included", expectedIncludedCertificateLevels, signerCerts.size());
         if (!signerCerts.isEmpty()) {
-            final X509CertificateHolder certHolder =
-                    signerCerts.iterator().next();
-            final X509CertificateObject cert =
-                    new X509CertificateObject(certHolder.toASN1Structure());
-            ModulesTestCase.assertEquals(signercert, cert);
+            final X509CertificateHolder certHolder = signerCerts.iterator().next();
+            final X509Certificate cert = new JcaX509CertificateConverter().getCertificate(certHolder);
+            assertEquals(signercert, cert);
         }
 
         // check the signature algorithm
-        ModulesTestCase.assertEquals("Digest algorithm", expectedDigAlgOID, signer.getDigestAlgorithmID().getAlgorithm().getId());
-        ModulesTestCase.assertEquals("Encryption algorithm", expectedEncAlgOID, signer.getEncryptionAlgOID());   
+        assertEquals("Digest algorithm", expectedDigAlgOID, signer.getDigestAlgorithmID().getAlgorithm().getId());
+        assertEquals("Encryption algorithm", expectedEncAlgOID, signer.getEncryptionAlgOID());
     }
 
     /**

@@ -30,6 +30,9 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 /**
  * Tests for the RemoteAddressAuthorizer.
  *
@@ -44,12 +47,11 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
             RemoteAddressAuthorizerTest.class);
 
     private String localIP;
-    
+
     private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
-    
+
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         localIP = getClientIP();
@@ -150,8 +152,8 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
     }
 
     @Test
-    public void test05RequestFromEJB() throws Exception {
-        // No address is provided with EJB unless the requestor fills it in
+    public void test05RequestFromEJB() {
+        // No address is provided with EJB unless the requester fills it in
         // manually so add null to be an accepted address
         workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM",
                 localIP + ", null, 127.0.1.1");
@@ -169,18 +171,16 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
             fail("Exception: " + ex.getMessage());
         }
     }
-    
+
     /**
      * Test with an additional IPv6 address added to the allow list.
-     * 
-     * @throws Exception
      */
     @Test
     public void test06RequestWithAdditionalIPv6Address() throws Exception {
         workerSession.setWorkerProperty(getSignerIdDummy1(), "ALLOW_FROM",
                 localIP + ", 3ffe:1900:4545:3:200:f8ff:fe21:67cf");
         workerSession.reloadConfiguration(getSignerIdDummy1());
-        
+
         int responseCode = process(
                 new URL(getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort()
                 + "/signserver/process?workerId="
@@ -188,11 +188,11 @@ public class RemoteAddressAuthorizerTest extends ModulesTestCase {
 
         assertEquals("HTTP response code", 200, responseCode);
     }
-    
+
     private int process(URL workerUrl) {
         int responseCode = -1;
 
-        HttpURLConnection conn = null;
+        HttpURLConnection conn;
         try {
             conn = (HttpURLConnection) workerUrl.openConnection();
             conn.setAllowUserInteraction(false);

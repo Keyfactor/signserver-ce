@@ -25,23 +25,22 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.signserver.statusrepo.common.StatusEntry;
 import org.signserver.statusrepo.common.StatusName;
-import org.signserver.web.*;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.signserver.common.WorkerConfig;
 
 /**
  * Tests that the right HTTP status codes are returned in different situations.
- * 
+ *
  * @author Markus Kilås
  * @version $Id$
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class StatusPropertiesWorkerTest extends WebTestCase {
-    
+
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(StatusPropertiesWorkerTest.class);
-    
+
     private static final String WORKERNAME = "TestStatusPropertiesWorker";
     private static final int WORKERID = 9310;
 
@@ -76,9 +75,9 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
     }
 
     /**
-     * Tests that passing in no arguments (in the data) results in all status 
+     * Tests that passing in no arguments (in the data) results in all status
      * properties being returned.
-     * Assumption: No other process is currently updating the status values 
+     * Assumption: No other process is currently updating the status values
      * while this test is running.
      */
     @Test
@@ -86,7 +85,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerName", WORKERNAME);
         fields.put("data", "");
-        
+
         Map<String, StatusEntry> allEntries = getStatusSession().getAllEntries();
         Set<String> allValidNames = new HashSet<>();
         for (String name : allEntries.keySet()) {
@@ -94,9 +93,9 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
                 allValidNames.add(name);
             }
         }
-        
+
         byte[] body = sendPostFormUrlencodedReadBody(getServletURL(), fields);
-        
+
         // The response should contain all valid status properties
         Properties properties = new Properties();
         properties.load(new ByteArrayInputStream(body));
@@ -108,7 +107,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
             assertEquals(String.valueOf(allEntries.get(name).getExpirationTime()), expiration);
         }
     }
-    
+
     /**
      * Tests querying one property only returns that property.
      */
@@ -117,11 +116,11 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerName", WORKERNAME);
         fields.put("data", "GET=SERVER_STARTED");
-        
+
         byte[] body = sendPostFormUrlencodedReadBody(getServletURL(), fields);
         Properties properties = new Properties();
         properties.load(new ByteArrayInputStream(body));
-        
+
         // Should only contain the SERVER_STARTED status property
         assertNotNull("contains SERVER_STARTED.VALUE", properties.getProperty("SERVER_STARTED.VALUE"));
         assertNotNull("contains SERVER_STARTED.EXPIRATION", properties.getProperty("SERVER_STARTED.EXPIRATION"));
@@ -136,7 +135,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
             }
         }
     }
-    
+
     /**
      * Tests that querying for 3 properties where one is expired only returns
      * the two valid ones.
@@ -146,15 +145,15 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
         Map<String, String> fields = new HashMap<>();
         fields.put("workerName", WORKERNAME);
         fields.put("data", "GET=TEST_PROPERTY1,TEST_PROPERTY2,TEST_PROPERTY3");
-        
+
         getStatusSession().update(StatusName.TEST_PROPERTY1.name(), null, 1);
         getStatusSession().update(StatusName.TEST_PROPERTY2.name(), "VALUE2");
         getStatusSession().update(StatusName.TEST_PROPERTY3.name(), "VALUE3");
-        
+
         byte[] body = sendPostFormUrlencodedReadBody(getServletURL(), fields);
         Properties properties = new Properties();
         properties.load(new ByteArrayInputStream(body));
-        
+
         // Should only contain TEST2 and TEST3 (TEST1 is expired)
         assertNotNull("contains TEST2.VALUE", properties.getProperty(StatusName.TEST_PROPERTY2.name() + ".VALUE"));
         assertNotNull("contains TEST2.EXPIRATION", properties.getProperty(StatusName.TEST_PROPERTY2.name() + ".EXPIRATION"));
@@ -173,32 +172,31 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
             }
         }
     }
-    
+
     /**
      * Test setting 3 status properties. Two with expiration and one without.
-     * @throws Exception 
      */
     @Test
     public void test05SetProperties() throws Exception {
         long expiration1 = System.currentTimeMillis() + 10 * 60 * 1000;
         long expiration2 = System.currentTimeMillis() + 20 * 60 * 1000;
         long expiration3 = 0;
-        
+
         Map<String, String> fields = new HashMap<>();
         fields.put("workerName", WORKERNAME);
-        fields.put("data", 
+        fields.put("data",
                   "TEST_PROPERTY1.VALUE=VALUE11\n"
                 + "TEST_PROPERTY1.EXPIRATION=" + expiration1 + "\n"
                 + "TEST_PROPERTY2.VALUE=VALUE22\n"
                 + "TEST_PROPERTY2.EXPIRATION=" + expiration2 + "\n"
                 + "TEST_PROPERTY3.VALUE=VALUE33");
-        
+
         byte[] body = sendPostFormUrlencodedReadBody(getServletURL(), fields);
         Properties properties = new Properties();
         properties.load(new ByteArrayInputStream(body));
-        
-        // Should have set value and expiration for TEST1 and TEST2 and only 
-        // value for TEST3 and the new values should be returned and set in 
+
+        // Should have set value and expiration for TEST1 and TEST2 and only
+        // value for TEST3 and the new values should be returned and set in
         // the repository
         assertEquals("VALUE11", properties.getProperty(StatusName.TEST_PROPERTY1.name() + ".VALUE"));
         assertEquals("VALUE22", properties.getProperty(StatusName.TEST_PROPERTY2.name() + ".VALUE"));
@@ -206,7 +204,7 @@ public class StatusPropertiesWorkerTest extends WebTestCase {
         assertEquals(String.valueOf(expiration1), properties.getProperty(StatusName.TEST_PROPERTY1.name() + ".EXPIRATION"));
         assertEquals(String.valueOf(expiration2), properties.getProperty(StatusName.TEST_PROPERTY2.name() + ".EXPIRATION"));
         assertEquals(String.valueOf(expiration3), properties.getProperty(StatusName.TEST_PROPERTY3.name() + ".EXPIRATION"));
-        
+
         // Check repository as well
         Map<String, StatusEntry> allEntries = getStatusSession().getAllEntries();
         StatusEntry entry1 = allEntries.get(StatusName.TEST_PROPERTY1.name());

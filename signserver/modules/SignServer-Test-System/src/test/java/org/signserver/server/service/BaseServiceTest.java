@@ -33,6 +33,9 @@ import org.signserver.common.util.PathUtil;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
  * TODO: Document me!
  * @version $Id$
@@ -40,15 +43,14 @@ import org.signserver.ejb.interfaces.WorkerSessionRemote;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BaseServiceTest extends ModulesTestCase {
     private static final Logger LOG = Logger.getLogger(BaseServiceTest.class);
-    
+
     private static WorkerSessionRemote sSSession = null;
     private static String tmpFile;
     private static final int INTERVAL = 8;
     private static final int INTERVALMS = INTERVAL * 1000;
     private static final int WORKER_ID = 17;
-    
+
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         sSSession = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
@@ -74,7 +76,6 @@ public class BaseServiceTest extends ModulesTestCase {
     /**
      * Test the counter is updated. The test checks the elapsed real time
      * to avoid random failures due to i.e. GC runs.
-     * @throws Exception
      */
     @Test
     public void test01BasicService() throws Exception {
@@ -97,12 +98,11 @@ public class BaseServiceTest extends ModulesTestCase {
         Date lastRun = new ServiceConfig(status.getActiveSignerConfig()).getLastRunTimestamp();
         assertTrue(lastRun.before(new Date()));
         assertTrue(lastRun.after(new Date(System.currentTimeMillis() - INTERVALMS * 2)));
-        assertTrue(status.getActiveSignerConfig().getProperties().get("INTERVAL").equals(String.valueOf(INTERVAL)));
+        assertEquals(status.getActiveSignerConfig().getProperties().get("INTERVAL"), String.valueOf(INTERVAL));
     }
 
     /**
      * Tests that the counter is not updated when setting ACTIVE=FALSE.
-     * @throws Exception
      */
     @Test
     public void test03TestInActive() throws Exception {
@@ -156,7 +156,6 @@ public class BaseServiceTest extends ModulesTestCase {
 
     /**
      * Test setting an update interval based on a millisecond value.
-     * @throws Exception
      */
     @Test
     public void test06intervalMs() throws Exception {
@@ -180,7 +179,7 @@ public class BaseServiceTest extends ModulesTestCase {
         assertTrue(readCount <= oldReadCount + (after - before) / INTERVALMS + 1);
     }
 
-    @Test    
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKER_ID);
     }
@@ -188,18 +187,16 @@ public class BaseServiceTest extends ModulesTestCase {
     private int readCount() throws IOException {
         FileInputStream fis = new FileInputStream(tmpFile);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int next = 0;
+        int next;
         try {
             while ((next = fis.read()) != -1) {
                 baos.write(next);
             }
         } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    // ignored
-                }
+            try {
+                fis.close();
+            } catch (IOException e) {
+                // ignored
             }
         }
         return Integer.parseInt(new String(baos.toByteArray()));

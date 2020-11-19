@@ -31,6 +31,10 @@ import org.junit.runners.MethodSorters;
 import org.signserver.cli.spi.UnexpectedCommandFailureException;
 import org.signserver.ejb.interfaces.WorkerSession;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 /**
  * Tests for the timestamp command of Client CLI.
  *
@@ -44,20 +48,19 @@ public class TimeStampCommandTest extends ModulesTestCase {
     private static final Logger LOG = Logger.getLogger(TimeStampCommandTest.class);
 
     private final CLITestHelper cli = getClientCLI();
-    
+
     private static final String SAMPLE_QUERY_FILE = "res/test/sample.tsq";
     private static final String SAMPLE_QUERY_CERTREQ_FILE = "res/test/sample-certreq.tsq";
     private static final String SAMPLE_RESPONSE_FILE = "res/test/sample.tsr";
     private static final String SAMPLE_RESPONSE_CERTREQ_FILE = "res/test/sample-certreq.tsr";
 
     private final WorkerSession workerSession = getWorkerSession();
-    
+
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
-	
+
     @Test
     public void test00SetupDatabase() throws Exception {
         addTimeStampSigner(getSignerIdTimeStampSigner1(), getSignerNameTimeStampSigner1(), true);
@@ -69,112 +72,89 @@ public class TimeStampCommandTest extends ModulesTestCase {
 
     @Test
     public void test01missingArguments() throws Exception {
-        assertEquals("No arguments", CommandLineInterface.RETURN_INVALID_ARGUMENTS, 
+        assertEquals("No arguments", CommandLineInterface.RETURN_INVALID_ARGUMENTS,
                 cli.execute("timestamp"));
     }
 
     /**
      * Tests getting a timestamp.
-     * @throws Exception
      */
     @Test
     public void test02requestATimestamp() throws Exception {
         File responseFile = File.createTempFile("signserver-" + this.getClass().getName() + "-response1-", null);
         responseFile.deleteOnExit();
         assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-instr", "Any text we want to have a timestamp for...123", "-outrep", responseFile.getAbsolutePath(), "-url", "http://localhost:8080/signserver/tsa?workerId=" + getSignerIdTimeStampSigner1()));
-        InputStream in = null;
-        try {
-            in = new FileInputStream(responseFile);
+        try (InputStream in = new FileInputStream(responseFile)) {
             TimeStampResponse res = new TimeStampResponse(in);
             assertEquals("token granted", PKIStatus.GRANTED, res.getStatus());
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ignored) {} // NOPMD
-            }
         }
     }
 
     /**
      * Tests getting a timestamp over HTTPS (port 8442).
-     * @throws Exception
      */
     @Test
     public void test02requestATimestampOverHTTPS() throws Exception {
         File responseFile = File.createTempFile("signserver-" + this.getClass().getName() + "-response2-", null);
         responseFile.deleteOnExit();
-        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-instr", "Any text we want to have a timestamp for...123", "-outrep", responseFile.getAbsolutePath(), 
-                "-url", "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/tsa?workerId=" + getSignerIdTimeStampSigner1(), 
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-instr", "Any text we want to have a timestamp for...123", "-outrep", responseFile.getAbsolutePath(),
+                "-url", "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/tsa?workerId=" + getSignerIdTimeStampSigner1(),
                 "-truststore", getTestUtils().getTruststoreFile().getAbsolutePath(), "-truststorepwd", getTestUtils().getTrustStorePassword()));
-        InputStream in = null;
-        try {
-            in = new FileInputStream(responseFile);
+        try (InputStream in = new FileInputStream(responseFile)) {
             TimeStampResponse res = new TimeStampResponse(in);
             assertEquals("token granted", PKIStatus.GRANTED, res.getStatus());
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ignored) {} // NOPMD
-            }
         }
     }
-    
+
     /**
-     * Tests the CLI without having the BC provider installed as the CLI 
+     * Tests the CLI without having the BC provider installed as the CLI
      * should install it itself.
-     * @throws Exception 
      */
     @Test
     public void test03withoutBCalreadyInstalled() throws Exception {
         Security.removeProvider("BC");
         test02requestATimestamp();
     }
-    
+
     /**
      * Tests printing requests.
-     * @throws Exception
      */
     @Test
     public void test04printRequest() throws Exception {
         LOG.info("test04printRequest");
         final File requestFile = new File(getSignServerHome(), SAMPLE_QUERY_FILE);
         final File requestCertFile = new File(getSignServerHome(), SAMPLE_QUERY_CERTREQ_FILE);
-        
-        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-print", "-inreq", requestFile.getAbsolutePath()));   
+
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-print", "-inreq", requestFile.getAbsolutePath()));
         String out = new String(cli.getOut().toByteArray());
         assertTrue("No request in: " + out, out.contains("Time-stamp request") && out.contains("}"));
-        
-        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-print", "-inreq", requestCertFile.getAbsolutePath()));   
+
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-print", "-inreq", requestCertFile.getAbsolutePath()));
         out = new String(cli.getOut().toByteArray());
         assertTrue("No request in: " + out, out.contains("Time-stamp request") && out.contains("}"));
     }
-    
+
     /**
      * Tests printing responses.
-     * @throws Exception
      */
     @Test
     public void test05printResponses() throws Exception {
         LOG.info("test05printResponses");
         final File requestFile = new File(getSignServerHome(), SAMPLE_RESPONSE_FILE);
         final File requestCertFile = new File(getSignServerHome(), SAMPLE_RESPONSE_CERTREQ_FILE);
-        
-        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-print", "-inrep", requestFile.getAbsolutePath()));   
+
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-print", "-inrep", requestFile.getAbsolutePath()));
         String out = new String(cli.getOut().toByteArray());
         assertTrue("No response in: " + out, out.contains("Time-stamp response") && out.contains("}"));
-        
-        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-print", "-inrep", requestCertFile.getAbsolutePath()));   
+
+        assertEquals(CommandLineInterface.RETURN_SUCCESS, cli.execute("timestamp", "-print", "-inrep", requestCertFile.getAbsolutePath()));
         out = new String(cli.getOut().toByteArray());
         assertTrue("No response in: " + out, out.contains("Time-stamp response") && out.contains("}"));
     }
-    
+
     /**
      * Test that trying to use a URL pointing to a non-existing worker will
      * print out the HTTP error code and message on the error stream.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test06unknownWorker() throws Exception {
@@ -188,11 +168,9 @@ public class TimeStampCommandTest extends ModulesTestCase {
                 err.contains("Failure: HTTP error: 404: Not Found") ||
                 err.contains("Failure: HTTP error: 404: Worker Not Found"));
     }
-    
+
     /**
      * Tests that command fails when invalid digest algorithm is provided.
-     *
-     * @throws Exception
      */
     @Test
     public void test07InvalidDigestAlgorithm() throws Exception {
@@ -205,11 +183,9 @@ public class TimeStampCommandTest extends ModulesTestCase {
             assertTrue("Should throw exception: " + e.getMessage(), e.getMessage().contains("Invalid digest algorithm"));
         }
     }
-    
+
     /**
      * Tests that command works when valid digest algorithm is provided.
-     *
-     * @throws Exception
      */
     @Test
     public void test08ValidDigestAlgorithm() throws Exception {
@@ -217,11 +193,9 @@ public class TimeStampCommandTest extends ModulesTestCase {
                 "Any text we want to have a timestamp for...123",
                 "-url", "http://localhost:8080/signserver/tsa?workerId=" + getSignerIdTimeStampSigner1(), "-digestalgorithm", "SHA-256"));
     }
-    
+
     /**
      * Tests that command works when digest algorithm is not provided as default digest algorithm (SHA-256) is used.
-     *
-     * @throws Exception
      */
     @Test
     public void test09DigestAlgorithmNotSpecified() throws Exception {
@@ -229,11 +203,9 @@ public class TimeStampCommandTest extends ModulesTestCase {
                 "Any text we want to have a timestamp for...123",
                 "-url", "http://localhost:8080/signserver/tsa?workerId=" + getSignerIdTimeStampSigner1()));
     }
-    
+
     /**
      * Tests that command fails when digest algorithm option name is invalid.
-     *
-     * @throws Exception
      */
     @Test
     public void test10InvalidDigestAlgorithmOptionName() throws Exception {

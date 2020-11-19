@@ -17,23 +17,40 @@ import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import javax.crypto.Cipher;
-import org.signserver.common.*;
-import org.signserver.testutils.ModulesTestCase;
+
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.signserver.admin.common.config.RekeyUtil;
+import org.signserver.common.AuthorizedClient;
+import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GenericSignRequest;
+import org.signserver.common.MRTDSignRequest;
+import org.signserver.common.MRTDSignResponse;
+import org.signserver.common.RemoteRequestContext;
+import org.signserver.common.SignServerUtil;
+import org.signserver.common.StaticWorkerStatus;
+import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerStatus;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.testutils.ModulesTestCase;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * TODO: Document me!
- * 
+ *
  * @version $Id$
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -41,13 +58,12 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
 
     private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
-    
+
     /**
      * Set up the test case
      */
     @Before
-    @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
@@ -68,7 +84,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         workerSession.setWorkerProperty(3, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(3, "NAME", "testWorker");
         workerSession.reloadConfiguration(3);
-                
+
         addDummySigner1(true);
     }
 
@@ -89,26 +105,19 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         MRTDSignRequest req = new MRTDSignRequest(reqid, signrequests);
         MRTDSignResponse res = (MRTDSignResponse) processSession.process(new WorkerIdentifier(3), req, new RemoteRequestContext());
 
-        assertTrue(reqid == res.getRequestID());
+        assertEquals(reqid, res.getRequestID());
 
         Certificate signercert = res.getSignerCertificate();
         ArrayList<?> signatures = (ArrayList<?>) res.getProcessedData();
-        assertTrue(signatures.size() == 2);
+        assertEquals(2, signatures.size());
 
         Cipher c = Cipher.getInstance("RSA", "BC");
         c.init(Cipher.DECRYPT_MODE, signercert);
 
         byte[] signres1 = c.doFinal((byte[]) ((ArrayList<?>) res.getProcessedData()).get(0));
-
-        if (!arrayEquals(signreq1, signres1)) {
-            assertTrue("First MRTD doesn't match with request, " + new String(signreq1) + " = " + new String(signres1), false);
-        }
-
+        assertArrayEquals("First MRTD doesn't match with request, " + new String(signreq1) + " = " + new String(signres1), signreq1, signres1);
         byte[] signres2 = c.doFinal((byte[]) ((ArrayList<?>) res.getProcessedData()).get(1));
-
-        if (!arrayEquals(signreq2, signres2)) {
-            assertTrue("Second MRTD doesn't match with request", false);
-        }
+        assertArrayEquals("Second MRTD doesn't match with request", signreq2, signres2);
     }
 
     /*
@@ -126,7 +135,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         assertEquals("getStatus: ", 0, actual.getFatalErrors().size());
         assertEquals(getSignerIdDummy1(), actual.getWorkerId());
     }
-    
+
     @Test
     public void test02GetStatus_cryptoTokenOffline() throws Exception {
         // First check that there isn't any other problem
@@ -134,21 +143,21 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         if (!before.getFatalErrors().isEmpty()) {
             throw new Exception("Test case expected the worker status to be OK before it will run");
         }
-        
+
         // Now change so the crypto token is offline
         final String keyDataBefore = before.getActiveSignerConfig().getProperty("KEYSTOREPATH");
         workerSession.removeWorkerProperty(getSignerIdDummy1(), "KEYSTOREPATH");
         workerSession.reloadConfiguration(getSignerIdDummy1());
-        
+
         final WorkerStatus actual = workerSession.getStatus(new WorkerIdentifier(getSignerIdDummy1()));
-        
+
         // Restore
         workerSession.setWorkerProperty(getSignerIdDummy1(), "KEYSTOREPATH", keyDataBefore);
         workerSession.reloadConfiguration(getSignerIdDummy1());
-        
+
         assertFalse("getFatalErrors should not be empty", actual.getFatalErrors().isEmpty());
     }
-    
+
     /**
      * Tests the isTokenActive method. Checking that the token status is independent of the worker status.
      * @throws Exception in case of error
@@ -160,9 +169,9 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         if (!before.getFatalErrors().isEmpty()) {
             throw new Exception("Test case expected the worker status to be OK before it will run");
         }
-        
+
         assertTrue("token active", workerSession.isTokenActive(new WorkerIdentifier(getSignerIdDummy1())));
-        
+
         // Make a configuration error making the _worker_ offline but the _token_ still active
         workerSession.setWorkerProperty(getSignerIdDummy1(), WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS, "_not_a_level_");
         workerSession.reloadConfiguration(getSignerIdDummy1());
@@ -170,57 +179,57 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         if (workerSession.getStatus(new WorkerIdentifier(getSignerIdDummy1())).getFatalErrors().isEmpty()) {
             throw new Exception("Test case expected the worker status to be OFFLINE because of incorrect value for INCLUDE_CERTIFICATE_LEVEL but it was not");
         }
-        
+
         // Remove the configuration error
         workerSession.removeWorkerProperty(getSignerIdDummy1(), WorkerConfig.PROPERTY_INCLUDE_CERTIFICATE_LEVELS);
         workerSession.reloadConfiguration(getSignerIdDummy1());
         if (!workerSession.getStatus(new WorkerIdentifier(getSignerIdDummy1())).getFatalErrors().isEmpty()) {
             throw new Exception("Test case expected the worker status to be ok now");
         }
-        
+
         // Now change so the crypto token is offline
         final String keyDataBefore = before.getActiveSignerConfig().getProperty("KEYSTOREPATH");
         workerSession.removeWorkerProperty(getSignerIdDummy1(), "KEYSTOREPATH");
         workerSession.reloadConfiguration(getSignerIdDummy1());
-        
+
         assertFalse("token offline", workerSession.isTokenActive(new WorkerIdentifier(getSignerIdDummy1())));
-        
+
         // Restore
         workerSession.setWorkerProperty(getSignerIdDummy1(), "KEYSTOREPATH", keyDataBefore);
         workerSession.reloadConfiguration(getSignerIdDummy1());
     }
 
     /*
-     * 
+     *
      * Test method for 'org.signserver.ejb.SignSessionBean.reloadConfiguration()'
      */
     @Test
-    public void test03ReloadConfiguration() throws Exception {
+    public void test03ReloadConfiguration() {
         workerSession.reloadConfiguration(0);
     }
 
     @Test
     public void test04NameMapping() throws Exception {
         int id = workerSession.getWorkerId("testWorker");
-        assertTrue("" + id, id == 3);
+        assertEquals("" + id, 3, id);
     }
 
     /*
      * Test method for 'org.signserver.ejb.SignSessionBean.SetProperty(int, String, String)'
      */
     @Test
-    public void test05SetProperty() throws Exception {
+    public void test05SetProperty() {
         workerSession.setWorkerProperty(3, "test", "Hello World");
 
         Properties props = workerSession.getCurrentWorkerConfig(3).getProperties();
-        assertTrue(props.getProperty("TEST").equals("Hello World"));
+        assertEquals("Hello World", props.getProperty("TEST"));
     }
 
     /*
      * Test method for 'org.signserver.ejb.SignSessionBean.RemoveProperty(int, String)'
      */
     @Test
-    public void test06RemoveProperty() throws Exception {
+    public void test06RemoveProperty() {
         workerSession.removeWorkerProperty(3, "test");
 
         Properties props = workerSession.getCurrentWorkerConfig(3).getProperties();
@@ -231,16 +240,15 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
      * Test method for 'org.signserver.ejb.SignSessionBean.AddAuthorizedClient(int, AuthorizedClient)'
      */
     @Test
-    public void test07AddAuthorizedClient() throws Exception {
+    public void test07AddAuthorizedClient() {
         AuthorizedClient authClient = new AuthorizedClient("123456", "CN=testca");
         workerSession.addAuthorizedClient(3, authClient);
 
         Collection<?> result = workerSession.getAuthorizedClients(3);
         boolean exists = false;
-        Iterator<?> iter = result.iterator();
-        while (iter.hasNext()) {
-            AuthorizedClient next = (AuthorizedClient) iter.next();
-            exists = exists || (next.getCertSN().equals("123456") && next.getIssuerDN().toString().equals("CN=testca"));
+        for (Object o : result) {
+            AuthorizedClient next = (AuthorizedClient) o;
+            exists = exists || (next.getCertSN().equals("123456") && next.getIssuerDN().equals("CN=testca"));
         }
 
         assertTrue(exists);
@@ -250,19 +258,18 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
      * Test method for 'org.signserver.ejb.SignSessionBean.RemoveAuthorizedClient(int, AuthorizedClient)'
      */
     @Test
-    public void test08RemoveAuthorizedClient() throws Exception {
+    public void test08RemoveAuthorizedClient() {
         int initialsize = workerSession.getAuthorizedClients(3).size();
         AuthorizedClient authClient = new AuthorizedClient("123456", "CN=testca");
         assertTrue(workerSession.removeAuthorizedClient(3, authClient));
 
         Collection<?> result = workerSession.getAuthorizedClients(3);
-        assertTrue(result.size() == initialsize - 1);
+        assertEquals(result.size(), initialsize - 1);
 
         boolean exists = false;
-        Iterator<?> iter = result.iterator();
-        while (iter.hasNext()) {
-            AuthorizedClient next = (AuthorizedClient) iter.next();
-            exists = exists || (next.getCertSN().equals("123456") && next.getIssuerDN().toString().equals("CN=testca"));
+        for (Object o : result) {
+            AuthorizedClient next = (AuthorizedClient) o;
+            exists = exists || (next.getCertSN().equals("123456") && next.getIssuerDN().equals("CN=testca"));
         }
 
         assertFalse(exists);
@@ -270,10 +277,9 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
 
     /**
      * Test for nextAliasInSequence.
-     * @throws Exception in case of exception
      */
     @Test
-    public void test09nextAliasInSequence() throws Exception {
+    public void test09nextAliasInSequence() {
 
         assertEquals("KeyAlias2",
                 RekeyUtil.nextAliasInSequence("KeyAlias1"));
@@ -286,7 +292,7 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         assertEquals("MyKeys1_0038",
                 RekeyUtil.nextAliasInSequence("MyKeys1_0037"));
     }
-    
+
     /**
      * Tests that a request to a disabled worker fails.
      */
@@ -295,15 +301,15 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
         // Restore
         workerSession.removeWorkerProperty(getSignerIdDummy1(), "DISABLED");
         workerSession.reloadConfiguration(getSignerIdDummy1());
-        
+
         // First test that there isn't anything wrong with the worker before
         GenericSignRequest request = new GenericSignRequest(123, "<test/>".getBytes(StandardCharsets.UTF_8));
         processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, new RemoteRequestContext());
-        
+
         try {
             workerSession.setWorkerProperty(getSignerIdDummy1(), "DISABLED", "TRUE");
             workerSession.reloadConfiguration(getSignerIdDummy1());
-            
+
             // Test signing
             request = new GenericSignRequest(124, "<test/>".getBytes(StandardCharsets.UTF_8));
             processSession.process(new WorkerIdentifier(getSignerIdDummy1()), request, new RemoteRequestContext());
@@ -321,18 +327,16 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     /**
      * Test that getCurrentWorkerConfig doesn't include the internal authclients
      * mapping.
-     * 
-     * @throws Exception 
      */
     @Test
-    public void test12noAuthClientsInGetCurrentWorkerConfig() throws Exception {
+    public void test12noAuthClientsInGetCurrentWorkerConfig() {
         try {
             workerSession.addAuthorizedClient(getSignerIdDummy1(),
                new AuthorizedClient("123456789", "CN=SomeUser"));
-            
+
             final WorkerConfig config =
                     workerSession.getCurrentWorkerConfig(getSignerIdDummy1());
-            
+
             assertTrue("Should not contain authclients",
                     config.getAuthorizedClients().isEmpty());
         } finally {
@@ -344,11 +348,10 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     /**
      * Try setting a class property (such as WORKERLOGGER, AUTHORIZER to
      * a nonexisting class and check for an expected error.
-     * 
+     *
      * @param property Property to try with
      * @param expectedErrorString Error string to expect as part of a fatal
      *                            error component
-     * @throws Exception 
      */
     private void testWithInvalidClass(final String property,
                                       final String expectedErrorString)
@@ -357,13 +360,13 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
             workerSession.setWorkerProperty(getSignerIdDummy1(),
                 property, "nonexistant");
             workerSession.reloadConfiguration(getSignerIdDummy1());
-            
+
             final List<String> fatalErrors =
                     workerSession.getStatus(new WorkerIdentifier(getSignerIdDummy1())).getFatalErrors();
             boolean foundError = false;
             for (final String fatalError : fatalErrors) {
                 // check for an error message mentioning WORKERLOGGER
-                if (fatalError.indexOf(expectedErrorString) != -1) {
+                if (fatalError.contains(expectedErrorString)) {
                     foundError = true;
                     break;
                 }
@@ -374,27 +377,25 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
             workerSession.reloadConfiguration(getSignerIdDummy1());
         }
     }
-    
+
     /**
      * Test that setting a non-existing WORKERLOGGER results in a fatal error.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test13invalidWorkerLogger() throws Exception {
         testWithInvalidClass("WORKERLOGGER", "WORKERLOGGER");
     }
-    
+
     @Test
     public void test14invalidAuthorizer() throws Exception {
         testWithInvalidClass("AUTHTYPE", "AUTHTYPE");
     }
-    
+
     @Test
     public void test15invalidAccounter() throws Exception {
         testWithInvalidClass("ACCOUNTER", "ACCOUNTER");
     }
-    
+
     @Test
     public void test16invalidArchiver() throws Exception {
         testWithInvalidClass("ARCHIVERS", "ARCHIVERS");
@@ -404,20 +405,5 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     public void test99TearDownDatabase() throws Exception {
         removeWorker(3);
         removeWorker(getSignerIdDummy1());
-    }
-
-    private boolean arrayEquals(byte[] signreq2, byte[] signres2) {
-        boolean retval = true;
-
-        if (signreq2.length != signres2.length) {
-            return false;
-        }
-
-        for (int i = 0; i < signreq2.length; i++) {
-            if (signreq2[i] != signres2[i]) {
-                return false;
-            }
-        }
-        return retval;
     }
 }

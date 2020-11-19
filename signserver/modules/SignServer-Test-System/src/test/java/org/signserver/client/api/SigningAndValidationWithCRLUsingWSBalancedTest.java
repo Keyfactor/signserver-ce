@@ -13,9 +13,9 @@
 package org.signserver.client.api;
 
 /**
- * Tests for client API with a CRLValidator and uses the web services interface 
+ * Tests for client API with a CRLValidator and uses the web services interface
  * with load balancing capabilities etc.
- * 
+ *
  * @author Markus Kilås
  * @version $Id$
  */
@@ -24,8 +24,6 @@ public class SigningAndValidationWithCRLUsingWSBalancedTest extends SigningAndVa
     public SigningAndValidationWithCRLUsingWSBalancedTest() throws Exception {
     }
 
-    
-    
     @Override
     protected ISigningAndValidation getSigningAndValidationImpl() {
         return new SigningAndValidationWSBalanced(getHTTPHost(),

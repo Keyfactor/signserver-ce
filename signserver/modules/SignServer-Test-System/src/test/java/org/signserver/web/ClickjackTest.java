@@ -20,6 +20,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.signserver.testutils.WebTestCase;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * Tests that the ClickJackFilter is enabled for the various web modules.
  *
@@ -39,74 +41,68 @@ public class ClickjackTest extends WebTestCase {
     }
 
     @Before
-    @Override
     public void setUp() {
         baseURL = getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver";
     }
 
     /**
      * Tests some of the different public web resources.
-     * @throws Exception 
      */
     @Test
     public void testXFrameOptionsHeaderOnPublicWeb() throws Exception {
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/", "GET");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/", "POST");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/process", "GET");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/process", "POST");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/worker/_non_existing_", "GET");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/worker/_non_existing_", "POST");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/process", "POST");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/_non_existing_", "GET");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/_non_existing_", "POST");
+        assertHeaderEquals(baseURL + "/", "GET");
+        assertHeaderEquals(baseURL + "/", "POST");
+        assertHeaderEquals(baseURL + "/process", "GET");
+        assertHeaderEquals(baseURL + "/process", "POST");
+        assertHeaderEquals(baseURL + "/worker/_non_existing_", "GET");
+        assertHeaderEquals(baseURL + "/worker/_non_existing_", "POST");
+        assertHeaderEquals(baseURL + "/process", "POST");
+        assertHeaderEquals(baseURL + "/_non_existing_", "GET");
+        assertHeaderEquals(baseURL + "/_non_existing_", "POST");
 
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/demo", "GET");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/demo", "POST");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/demo/_non_existing_", "GET");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/demo/_non_existing_", "POST");
+        assertHeaderEquals(baseURL + "/demo", "GET");
+        assertHeaderEquals(baseURL + "/demo", "POST");
+        assertHeaderEquals(baseURL + "/demo/_non_existing_", "GET");
+        assertHeaderEquals(baseURL + "/demo/_non_existing_", "POST");
     }
 
     /**
      * Tests some of the different documentation resources.
-     * @throws Exception 
      */
     @Test
     public void testXFrameOptionsHeaderInDoc() throws Exception {
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/doc", "GET");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/doc", "POST");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/doc/_non_existing_", "GET");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/doc/_non_existing_", "POST");
+        assertHeaderEquals(baseURL + "/doc", "GET");
+        assertHeaderEquals(baseURL + "/doc", "POST");
+        assertHeaderEquals(baseURL + "/doc/_non_existing_", "GET");
+        assertHeaderEquals(baseURL + "/doc/_non_existing_", "POST");
     }
 
     /**
      * Tests some of the different health check resources.
-     * @throws Exception 
      */
     @Test
     public void testXFrameOptionsHeaderInHealthCheck() throws Exception {
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/healthcheck", "GET");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/healthcheck", "POST");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/healthcheck/signserverhealth", "GET");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/healthcheck/signserverhealth", "POST");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/healthcheck/_non_existing_", "GET");
-        assertHeaderEquals("X-FRAME-OPTIONS", "DENY", baseURL + "/healthcheck/_non_existing_", "POST");
+        assertHeaderEquals(baseURL + "/healthcheck", "GET");
+        assertHeaderEquals(baseURL + "/healthcheck", "POST");
+        assertHeaderEquals(baseURL + "/healthcheck/signserverhealth", "GET");
+        assertHeaderEquals(baseURL + "/healthcheck/signserverhealth", "POST");
+        assertHeaderEquals(baseURL + "/healthcheck/_non_existing_", "GET");
+        assertHeaderEquals(baseURL + "/healthcheck/_non_existing_", "POST");
     }
 
     /**
      * Sends a request and asserts that the specified HTTP header equals the expected value.
-     * @param header to check
-     * @param expected value
      * @param url to send request to
      * @param method to use
-     * @throws IOException 
+     * @throws IOException IO Exception
      */
-    private void assertHeaderEquals(String header, String expected, String url, String method) throws IOException {
+    private void assertHeaderEquals(String url, String method) throws IOException {
         HttpURLConnection conn = null;
         try {
             String message = method + " " + url;
             LOG.info("Testing " + message);
-            conn = WebTestCase.send(url, Collections.<String, String>emptyMap(), method);
-            assertEquals(message, expected, conn.getHeaderField(header));
+            conn = WebTestCase.send(url, Collections.emptyMap(), method);
+            assertEquals(message, "DENY", conn.getHeaderField("X-FRAME-OPTIONS"));
         } finally {
             if (conn != null) {
                 conn.disconnect();

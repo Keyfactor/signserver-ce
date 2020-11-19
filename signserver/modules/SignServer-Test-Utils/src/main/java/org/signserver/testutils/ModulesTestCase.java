@@ -27,11 +27,14 @@ import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.Random;
 import javax.naming.NamingException;
 import javax.net.ssl.SSLSocketFactory;
-import junit.framework.TestCase;
-import org.apache.commons.fileupload.FileUploadException;
+
 import org.apache.log4j.Logger;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
@@ -63,35 +66,39 @@ import org.signserver.server.data.impl.UploadConfig;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.statusrepo.StatusRepositorySessionRemote;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 /**
  * Base class for test cases.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-public class ModulesTestCase extends TestCase {
+public class ModulesTestCase {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ModulesTestCase.class);
 
     private static final int DUMMY1_SIGNER_ID = 5676;
     private static final String DUMMY1_SIGNER_NAME = "TestXMLSigner";
-    
+
     private static final int CMSSIGNER1_ID = 5677;
     private static final String CMSSIGNER1_NAME = "TestCMSSigner";
-    
+
     private static final int PDFSIGNER1_ID = 5678;
     private static final String PDFSIGNER1_NAME = "TestPDFSigner";
-    
+
     private static final int TIMESTAMPSIGNER1_SIGNER_ID = 5879;
     private static final String TIMESTAMPSIGNER1_SIGNER_NAME = "TestTimeStampSigner";
-    
+
     private static final int SODSIGNER1_SIGNER_ID = 5880;
     private static final String SODSIGNER1_SIGNER_NAME = "TestSODSigner";
-    
+
     private static final int VALIDATION_SERVICE_WORKER_ID = 5881;
     private static final String VALIDATION_SERVICE_WORKER_NAME = "TestValidationWorker";
-    
+
     private static final int XML_VALIDATOR_WORKER_ID = 5882;
     private static final String XML_VALIDATOR_WORKER_NAME = "TestXMLValidator";
 
@@ -175,7 +182,7 @@ public class ModulesTestCase extends TestCase {
        +"AQH/MB8GA1UdIwQYMBaAFEnfFS7KXpmugPeUWbefD8CEI94lMA4GA1UdDwEB/wQE"
        +"AwIBhjAJBgcqhkjOOAQDAzAAMC0CFQCEGSmvJf6rxy6u7ZqY25qE7Hy21gIUPW4q"
        +"++YIS2fHyu+H4Pjgnodx5zI=";
-   
+
     private WorkerSessionRemote workerSession;
     private ProcessSessionRemote processSession;
     private GlobalConfigurationSessionRemote globalSession;
@@ -184,11 +191,11 @@ public class ModulesTestCase extends TestCase {
     private static File signServerHome;
 
     private Properties config;
-    private Properties deployConfig = new Properties();
-    
+    private final Properties deployConfig = new Properties();
+
     private CLITestHelper adminCLI;
     private CLITestHelper clientCLI;
-    private TestUtils testUtils = new TestUtils();
+    private final TestUtils testUtils = new TestUtils();
     protected static Random random = new Random(1234);
 
     public ModulesTestCase() {
@@ -254,7 +261,7 @@ public class ModulesTestCase extends TestCase {
         }
         return workerSession;
     }
-    
+
     public ProcessSessionRemote getProcessSession() {
         if (processSession == null) {
             try {
@@ -293,7 +300,7 @@ public class ModulesTestCase extends TestCase {
         return statusSession;
     }
 
-    public void addDummySigner1(boolean autoActivation) throws CertificateException, FileNotFoundException {
+    public void addDummySigner1(boolean autoActivation) throws FileNotFoundException {
         addP12DummySigner(getSignerIdDummy1(), getSignerNameDummy1(), new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivation ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
     }
 
@@ -304,7 +311,7 @@ public class ModulesTestCase extends TestCase {
     public String getSignerNameDummy1() {
         return DUMMY1_SIGNER_NAME;
     }
-    
+
     public int getSignerIdTimeStampSigner1() {
         return TIMESTAMPSIGNER1_SIGNER_ID;
     }
@@ -312,7 +319,7 @@ public class ModulesTestCase extends TestCase {
     public String getSignerNameTimeStampSigner1() {
         return TIMESTAMPSIGNER1_SIGNER_NAME;
     }
-    
+
     public int getSignerIdSODSigner1() {
         return SODSIGNER1_SIGNER_ID;
     }
@@ -320,70 +327,70 @@ public class ModulesTestCase extends TestCase {
     public String getSignerNameSODSigner1() {
         return SODSIGNER1_SIGNER_NAME;
     }
-    
-    public void addCMSSigner1() throws CertificateException, FileNotFoundException {
+
+    public void addCMSSigner1() throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.cmssigner.CMSSigner",
                 getSignerIdCMSSigner1(), getSignerNameCMSSigner1(), new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), KEYSTORE_PASSWORD, KEYSTORE_SIGNER1_ALIAS);
     }
-    
-    public void addPDFSigner1() throws CertificateException, FileNotFoundException {
+
+    public void addPDFSigner1() throws FileNotFoundException {
     	addP12DummySigner("org.signserver.module.pdfsigner.PDFSigner",
                 getSignerIdPDFSigner1(), getSignerNamePDFSigner1(), new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), KEYSTORE_PASSWORD, KEYSTORE_SIGNER1_ALIAS);
     }
-    
+
     public void addPDFSigner(final int workerId, final String workerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.pdfsigner.PDFSigner",
                 workerId, workerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
     }
-    
+
     public int getSignerIdCMSSigner1() {
         return CMSSIGNER1_ID;
     }
-    
+
     public String getSignerNameCMSSigner1() {
         return CMSSIGNER1_NAME;
     }
-    
+
     public int getSignerIdPDFSigner1() {
     	return PDFSIGNER1_ID;
     }
-    
+
     public String getSignerNamePDFSigner1() {
     	return PDFSIGNER1_NAME;
     }
 
-    public void addSigner(final String className, boolean autoActivate) 
-            throws CertificateException, FileNotFoundException {
+    public void addSigner(final String className, boolean autoActivate)
+            throws FileNotFoundException {
         addSigner(className, DUMMY1_SIGNER_ID, DUMMY1_SIGNER_NAME, autoActivate);
     }
-    
-    public void addSigner(final String className) throws CertificateException, FileNotFoundException {
+
+    public void addSigner(final String className) throws FileNotFoundException {
         addSigner(className, true);
     }
-    
-    public void addDummySigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+
+    public void addDummySigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
         addSigner("org.signserver.module.xmlsigner.XMLSigner", signerId, signerName, autoActivate);
     }
-    
+
     public void addSigner(final String className,
             final int signerId, final String signerName, final boolean autoActivate)
-        throws CertificateException, FileNotFoundException {
+        throws FileNotFoundException {
         addP12DummySigner(className, signerId, signerName,
                 new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
     }
-    
+
     public String getSigner1KeyAlias() {
         return KEYSTORE_SIGNER1_ALIAS;
     }
 
     /**
-     * Load worker/global properties from file. This is not a complete 
-     * implementation as the one used by the "setproperties" CLI command but 
-     * enough to load the junittest-part-config.properties files used by the 
+     * Load worker/global properties from file. This is not a complete
+     * implementation as the one used by the "setproperties" CLI command but
+     * enough to load the junittest-part-config.properties files used by the
      * tests.
      * @param file The properties file to load
-     * @throws IOException
-     * @throws CertificateException in case a certificate could not be decoded 
+     * @throws IOException IO Exception
+     * @throws CertificateException in case a certificate could not be decoded
      */
     public void setProperties(final File file) throws IOException, CertificateException {
         try (InputStream in = new FileInputStream(file)) {
@@ -392,15 +399,15 @@ public class ModulesTestCase extends TestCase {
             setProperties(properties);
         }
     }
-    
+
     /**
-     * Load worker/global properties from file. This is not a complete 
-     * implementation as the one used by the "setproperties" CLI command but 
-     * enough to load the junittest-part-config.properties files used by the 
+     * Load worker/global properties from file. This is not a complete
+     * implementation as the one used by the "setproperties" CLI command but
+     * enough to load the junittest-part-config.properties files used by the
      * tests.
      * @param in The inputstream to read properties from
-     * @throws IOException
-     * @throws CertificateException in case a certificate could not be decoded 
+     * @throws IOException IO Exception
+     * @throws CertificateException in case a certificate could not be decoded
      */
     public void setProperties(final InputStream in) throws IOException, CertificateException {
         try {
@@ -413,13 +420,13 @@ public class ModulesTestCase extends TestCase {
             }
         }
     }
-    
+
     /**
-     * Load worker/global properties. This is not a complete 
-     * implementation as the one used by the "setproperties" CLI command but 
-     * enough to load the junittest-part-config.properties files used by the 
+     * Load worker/global properties. This is not a complete
+     * implementation as the one used by the "setproperties" CLI command but
+     * enough to load the junittest-part-config.properties files used by the
      * tests.
-     * @param file The properties file to load
+     * @param properties The properties file to load
      * @throws CertificateException in case a certificate could not be decoded
      */
     public void setProperties(final Properties properties) throws CertificateException {
@@ -435,7 +442,7 @@ public class ModulesTestCase extends TestCase {
                     key = key.substring(key.indexOf(".") + 1);
 
                     if (key.startsWith("SIGNERCERTCHAIN")) {
-                        String certs[] = value.split(";");
+                        String[] certs = value.split(";");
                         ArrayList<byte[]> chain = new ArrayList<>();
                         for (String base64cert : certs) {
                             byte[] cert = Base64.decode(base64cert.getBytes());
@@ -452,7 +459,7 @@ public class ModulesTestCase extends TestCase {
             }
         }
     }
-    
+
     public void addP12DummySigner(final int signerId, final String signerName, final File keystore, final String password, final String alias) {
         addP12DummySigner("org.signserver.module.xmlsigner.XMLSigner",
                 signerId, signerName, keystore, password, alias);
@@ -461,11 +468,11 @@ public class ModulesTestCase extends TestCase {
     public void addP12DummySigner(final String className, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
         addDummySigner(className, "org.signserver.server.cryptotokens.P12CryptoToken", signerId, signerName, keystore, password, alias);
     }
-    
+
     public void addJKSDummySigner(final String className, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
         addDummySigner(className, "org.signserver.server.cryptotokens.JKSCryptoToken", signerId, signerName, keystore, password, alias);
     }
-    
+
     public void addDummySigner(final String className, final String cryptoTokenClassName, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
         getWorkerSession().setWorkerProperty(signerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         getWorkerSession().setWorkerProperty(signerId, "IMPLEMENTATION_CLASS", className);
@@ -494,88 +501,88 @@ public class ModulesTestCase extends TestCase {
         } catch (InvalidWorkerIdException ex) {
             fail("Worker was not added succefully: " + ex.getMessage());
         }
-    }    
-    
+    }
+
     public void addTimeStampSigner(final int signerId, final String signerName,
                                    final String alias, final boolean autoActivate)
-            throws CertificateException, FileNotFoundException {
+            throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.tsa.TimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, alias);
         getWorkerSession().setWorkerProperty(signerId, "DEFAULTTSAPOLICYOID", "1.2.3");
         getWorkerSession().setWorkerProperty(signerId, "ACCEPTANYPOLICY", "true");
         getWorkerSession().reloadConfiguration(signerId);
     }
-    
-    public void addTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+
+    public void addTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
         addTimeStampSigner(signerId, signerName, KEYSTORE_TSSIGNER1_ALIAS, autoActivate);
     }
-    
-    public void addMSTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+
+    public void addMSTimeStampSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.tsa.MSAuthCodeTimeStampSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_TSSIGNER1_ALIAS);
     }
-    
-    public void addMSAuthCodeSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+
+    public void addMSAuthCodeSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.msauthcode.signer.MSAuthCodeSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
-    
-    public void addMSAuthCodeCMSSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+
+    public void addMSAuthCodeCMSSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.msauthcode.signer.MSAuthCodeCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
-    
-    public void addAppxSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+
+    public void addAppxSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.msauthcode.signer.AppxSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
-    
-    public void addAppxCMSSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+
+    public void addAppxCMSSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.msauthcode.signer.AppxCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
-    
-    public void addJArchiveSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+
+    public void addJArchiveSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
-    
-    public void addJArchiveSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+
+    public void addJArchiveSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_CODE00002_ECDSA_ALIAS);
     }
-    
-    public void addJArchiveCMSSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+
+    public void addJArchiveCMSSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_AUTHCODESIGNER1_ALIAS);
     }
-    
-    public void addJArchiveCMSSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+
+    public void addJArchiveCMSSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.jarchive.signer.JArchiveCMSSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_CODE00002_ECDSA_ALIAS);
     }
 
-    public void addApkSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+    public void addApkSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.apk.signer.ApkSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_APK00001_ALIAS);
     }
-    
-    public void addApkSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+
+    public void addApkSignerECDSA(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.apk.signer.ApkSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_APK00002_ECDSA_ALIAS);
     }
 
-    public void addApkRotateSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+    public void addApkRotateSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.apk.signer.ApkRotateSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_APK00001_ALIAS);
     }
-    
-    public void addApkLineageSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+
+    public void addApkLineageSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.apk.signer.ApkLineageSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_APK00001_ALIAS);
     }
 
-    public void addApkHashSigner(final int signerId, final String signerName, final boolean autoActivate) throws CertificateException, FileNotFoundException {
+    public void addApkHashSigner(final int signerId, final String signerName, final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.apk.signer.ApkHashSigner", signerId, signerName, new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_APK00001_ALIAS);
     }
 
 
     public void addExtendedCMSSigner(final int signerId, final String signerName,
                                      final boolean autoActivate)
-            throws CertificateException, FileNotFoundException {
+            throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.extendedcmssigner.ExtendedCMSSigner",
                           signerId, signerName,
                           new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE),
                                    autoActivate ? KEYSTORE_PASSWORD : null,
                                    KEYSTORE_SIGNER1_ALIAS);
     }
-    
+
     public void addZoneZipFileServerSideSigner(final int signerId, final String signerName,
             final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner("org.signserver.module.dnssec.signer.ZoneZipFileServerSideSigner",
@@ -593,7 +600,7 @@ public class ModulesTestCase extends TestCase {
                 autoActivate ? KEYSTORE_PASSWORD : null,
                 KEYSTORE_SIGNER1_ALIAS);
     }
-    
+
     public void addSignerWithDummyKeystore(final String implementationClass, final int signerId, final String signerName,
             final boolean autoActivate) throws FileNotFoundException {
         addP12DummySigner(implementationClass,
@@ -602,8 +609,8 @@ public class ModulesTestCase extends TestCase {
                 autoActivate ? KEYSTORE_PASSWORD : null,
                 KEYSTORE_SIGNER1_ALIAS);
     }
-    
-    
+
+
     public void addXMLValidator() throws Exception {
         // VALIDATION SERVICE
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
@@ -637,15 +644,15 @@ public class ModulesTestCase extends TestCase {
         getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, "VALIDATIONSERVICEWORKER", VALIDATION_SERVICE_WORKER_NAME);
         getWorkerSession().reloadConfiguration(XML_VALIDATOR_WORKER_ID);
     }
-    
+
     public int getWorkerIdXmlValidator() {
         return XML_VALIDATOR_WORKER_ID;
     }
-    
+
     public String getWorkerNameXmlValidator() {
         return XML_VALIDATOR_WORKER_NAME;
     }
-    
+
     public int getWorkerIdValidationService() {
         return VALIDATION_SERVICE_WORKER_ID;
     }
@@ -663,16 +670,15 @@ public class ModulesTestCase extends TestCase {
         }
     }
 
-    public void removeWorker(final int workerId) throws Exception {
+    public void removeWorker(final int workerId) {
         removeGlobalProperties(workerId);
         WorkerConfig wc = getWorkerSession().getCurrentWorkerConfig(workerId);
         LOG.info("Got current config: " + wc.getProperties());
-        final Iterator<Object> iter = wc.getProperties().keySet().iterator();
-        while (iter.hasNext()) {
-            final String key = (String) iter.next();
+        for (Object o : wc.getProperties().keySet()) {
+            final String key = (String) o;
             getWorkerSession().removeWorkerProperty(workerId, key);
         }
-        getWorkerSession().reloadConfiguration(workerId);  
+        getWorkerSession().reloadConfiguration(workerId);
         wc = getWorkerSession().getCurrentWorkerConfig(workerId);
         LOG.info("Got current config after: " + wc.getProperties());
     }
@@ -703,29 +709,29 @@ public class ModulesTestCase extends TestCase {
     public int getPrivateHTTPSPort() {
         return Integer.parseInt(config.getProperty("httpserver.privhttps"));
     }
-    
+
     public String getHTTPHost() {
         return config.getProperty("httpserver.hostname", "localhost");
     }
-    
+
     public String getPreferredHTTPProtocol() {
         return config.getProperty("httpserver.prefproto", "http://");
     }
-    
+
     public int getPreferredHTTPPort() {
         return Integer.parseInt(config.getProperty("httpserver.prefport", config.getProperty("httpserver.pubhttp")));
     }
-    
+
     /** @return IP used by JUnit tests to access SignServer through the HTTPHost. */
     public String getClientIP() {
         return config.getProperty("httpclient.ipaddress", "127.0.0.1");
     }
 
     /** Setup keystores for SSL. **/
-    public SSLSocketFactory setupSSLKeystores() throws KeyStoreException, IOException, FileNotFoundException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
+    public SSLSocketFactory setupSSLKeystores() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
         return testUtils.setupSSLTruststore();
     }
-    
+
     public TestUtils getTestUtils() {
         return testUtils;
     }
@@ -749,41 +755,39 @@ public class ModulesTestCase extends TestCase {
                 new JcaPKCS10CertificationRequest(req);
         return jcaPKCS10CertificationRequest.getPublicKey();
     }
-    
-    public static CloseableReadableData createRequestData(byte[] data) throws FileUploadException {
+
+    public static CloseableReadableData createRequestData(byte[] data) {
         return new ByteArrayReadableData(data, new UploadConfig().getRepository());
     }
-    
-    public static CloseableReadableData createRequestData(Properties properties) throws FileUploadException, IOException {
+
+    public static CloseableReadableData createRequestData(Properties properties) throws IOException {
         try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
             properties.store(bout, null);
             return new ByteArrayReadableData(bout.toByteArray(), new UploadConfig().getRepository());
         }
     }
-    
-    public static CloseableReadableData createRequestDataKeepingFile(File file) throws FileUploadException {
+
+    public static CloseableReadableData createRequestDataKeepingFile(File file) {
         return new FileReadableData(file);
     }
-    
+
     public static CloseableWritableData createResponseData(final boolean defaultToDisk) {
         return new TemporarlyWritableData(defaultToDisk, new UploadConfig().getRepository());
     }
-    
+
     public static AdminInfo createAdminInfo() {
         return new AdminInfo("CN=Unit Tester", "CN=Testing CA", new BigInteger("4242"));
     }
-    
+
     public static double getJavaVersion() {
         String version = System.getProperty("java.version");
         int pos = version.indexOf('.');
         pos = version.indexOf('.', pos + 1);
         return Double.parseDouble(version.substring(0, pos));
     }
-    
+
     /**
      * Is OS running this test-Windows?.
-     *
-     * @return
      */
     public static boolean isWindows() {
         String OS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);

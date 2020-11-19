@@ -30,9 +30,12 @@ import org.junit.Test;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.testutils.ModulesTestCase;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 /**
  * Tests that the right HTTP status codes are returned in different situations.
- * 
+ *
  * @author Markus Kilås
  * @version $Id$
  */
@@ -159,7 +162,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
 
             assertStatusReturned(fields, 503, SKIP_MULTIPART);
         } finally {
-            // Activat crypto token
+            // Activate crypto token
             try {
                 getWorkerSession().activateSigner(new WorkerIdentifier(getSignerIdDummy1()), "foo123");
             } catch (CryptoTokenAuthenticationFailureException | CryptoTokenOfflineException | InvalidWorkerIdException ex) {
@@ -183,7 +186,7 @@ public class SODProcessServletResponseTest extends WebTestCase {
         // Set any bad properties that will make the signer fail with an exception
         final String originalSignatureAlgorithm = getWorkerSession().getCurrentWorkerConfig(
                 getSignerIdDummy1()).getProperty("SIGNATUREALGORITHM");
-        
+
         final String badKeyData = "_any-non-existing-alg_";
         getWorkerSession().setWorkerProperty(getSignerIdDummy1(), "SIGNATUREALGORITHM",
                 badKeyData);
@@ -203,21 +206,19 @@ public class SODProcessServletResponseTest extends WebTestCase {
             getWorkerSession().reloadConfiguration(getSignerIdDummy1());
         }
     }
-    
+
     private Properties parseMetadataResponse(final byte[] resp)
             throws IOException {
         final String propsString = new String(resp);
         final Properties props = new Properties();
-        
+
         props.load(new StringReader(propsString));
-        
+
         return props;
 }
-    
+
     /**
      * Test setting a single metadata param using REQUEST_METADATA.x.
-     * 
-     * @throws Exception
      */
     @Test
     public void test06RequestMetadataSingleParam() throws Exception {
@@ -228,19 +229,17 @@ public class SODProcessServletResponseTest extends WebTestCase {
         fields.put("dataGroup3", "idxq5/Bqn0a1Za8D6rDs4L9gJNNlm346HQNXPP6wtZ0=");
         fields.put("encoding", "base64");
         fields.put("REQUEST_METADATA.FOO", "BAR");
-        
+
         assertStatusReturned(fields, 200, SKIP_MULTIPART);
- 
+
         final byte[] resp = sendAndReadyBody(fields);
         final Properties props = parseMetadataResponse(resp);
-        
+
         assertEquals("Contains property", "BAR", props.getProperty("FOO"));
     }
-    
+
     /**
      * Test setting metadata using properties file syntax.
-     * 
-     * @throws Exception
      */
     @Test
     public void test07RequestMetadataPropertiesFile() throws Exception {
@@ -251,21 +250,19 @@ public class SODProcessServletResponseTest extends WebTestCase {
         fields.put("dataGroup3", "idxq5/Bqn0a1Za8D6rDs4L9gJNNlm346HQNXPP6wtZ0=");
         fields.put("encoding", "base64");
         fields.put("REQUEST_METADATA", "FOO=BAR\nFOO2=BAR2");
-        
+
         assertStatusReturned(fields, 200, SKIP_MULTIPART);
-        
+
         final byte[] resp = sendAndReadyBody(fields);
         final Properties props = parseMetadataResponse(resp);
-        
+
         assertEquals("Contains property", "BAR", props.getProperty("FOO"));
         assertEquals("Contains property", "BAR2", props.getProperty("FOO2"));
     }
-    
+
     /**
      * Test setting request metadata using properties file syntax
      * with a single parameter overriding.
-     * 
-     * @throws Exception
      */
     @Test
     public void test08RequestMetadataOverride() throws Exception {
@@ -277,9 +274,9 @@ public class SODProcessServletResponseTest extends WebTestCase {
         fields.put("encoding", "base64");
         fields.put("REQUEST_METADATA", "FOO=BAR\nFOO2=BAR2");
         fields.put("REQUEST_METADATA.FOO", "OVERRIDE");
-        
+
         assertStatusReturned(fields, 200, SKIP_MULTIPART);
-        
+
         final byte[] resp = sendAndReadyBody(fields);
         final Properties props = parseMetadataResponse(resp);
 

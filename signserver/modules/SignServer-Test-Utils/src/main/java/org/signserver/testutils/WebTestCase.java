@@ -26,10 +26,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
 /**
- * Abstract test case that can be used by test cases that wants to the HTTP 
+ * Abstract test case that can be used by test cases that wants to the HTTP
  * interface.
- * 
+ *
  * @author Markus Kilås
  * @version $Id$
  */
@@ -37,9 +41,9 @@ public abstract class WebTestCase extends ModulesTestCase {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(WebTestCase.class);
-    
+
     protected static final Map<String, String> NO_FIELDS = Collections.emptyMap();
-    
+
     private static final String CRLF = "\r\n";
 
     protected abstract String getServletURL();
@@ -50,8 +54,8 @@ public abstract class WebTestCase extends ModulesTestCase {
         assertStatusReturned(fields, expected, false);
     }
 
-    /** 
-     * Tests that the returned HTTP status code is the expected. 
+    /**
+     * Tests that the returned HTTP status code is the expected.
      * Optionally ignoring to test using multipart/form-data "upload".
      */
     protected void assertStatusReturned(Map<String, String> fields,
@@ -62,12 +66,12 @@ public abstract class WebTestCase extends ModulesTestCase {
             int response = con.getResponseCode();
             String message = con.getResponseMessage();
             LOG.info("Returned " + response + " " + message);
-            
+
             byte[] body = readBody(con);
             if (expected != response) {
                 LOG.info("Returned body: " + new String(body));
             }
-            
+
             assertEquals("GET: status response: " + message, expected, response);
 
             con.disconnect();
@@ -110,7 +114,7 @@ public abstract class WebTestCase extends ModulesTestCase {
             }
         }
     }
-    
+
     /**
      * Tests that the returned HTTP status code is expected, use the specified HTTP method
      * @see HttpURLConnection#setRequestMethod
@@ -119,19 +123,19 @@ public abstract class WebTestCase extends ModulesTestCase {
     		int expected) {
     	try {
     		HttpURLConnection con = WebTestCase.send(getServletURL(), fields, method);
-    		
+
     		int response = con.getResponseCode();
     		String message = con.getResponseMessage();
     		LOG.info("Returned " + response + " " + message);
     		assertEquals("status response: " + message, expected, response);
-    		
+
     		con.disconnect();
     	} catch (IOException ex) {
     		LOG.error("IOException", ex);
     		fail(ex.getMessage());
     	}
     }
-    
+
     /**
      * Query using the specified fields and HTTP method and returns the status
      * code.
@@ -144,7 +148,7 @@ public abstract class WebTestCase extends ModulesTestCase {
             final int response = con.getResponseCode();
             final String message = con.getResponseMessage();
             LOG.info("Returned " + response + " " + message);
-            return response;  
+            return response;
         } finally {
             if (con != null) {
                 con.disconnect();
@@ -161,19 +165,19 @@ public abstract class WebTestCase extends ModulesTestCase {
     		int notExpected) {
     	try {
     		HttpURLConnection con = WebTestCase.send(getServletURL(), fields, method);
-    		
+
     		int response = con.getResponseCode();
     		String message = con.getResponseMessage();
     		LOG.info("Returned " + response + " " + message);
     		assertFalse("status response: " + message, notExpected == response);
-    		
+
     		con.disconnect();
     	} catch (IOException ex) {
     		LOG.error("IOException", ex);
     		fail(ex.getMessage());
     	}
     }
-    
+
     protected static HttpURLConnection openConnection(String baseURL, String queryString)
             throws MalformedURLException, IOException {
         final StringBuilder buff = new StringBuilder();
@@ -185,7 +189,7 @@ public abstract class WebTestCase extends ModulesTestCase {
         final URL url = new URL(buff.toString());
         return (HttpURLConnection) url.openConnection();
     }
-    
+
     protected static HttpURLConnection getConnectionWithMethod(String baseURL,
     		final Map<String, String> fields, String method) throws IOException {
     	final StringBuilder buff = new StringBuilder();
@@ -194,9 +198,9 @@ public abstract class WebTestCase extends ModulesTestCase {
         }
         final String body = buff.toString();
         HttpURLConnection con = openConnection(baseURL, body);
-        
+
         con.setRequestMethod(method);
-        
+
         return con;
     }
 
@@ -205,36 +209,36 @@ public abstract class WebTestCase extends ModulesTestCase {
             throws IOException {
         return getConnectionWithMethod(baseURL, fields, "GET");
     }
-    
+
     protected static HttpURLConnection send(String baseURL,
     		final Map<String, String> fields, String method) throws IOException {
     	return getConnectionWithMethod(baseURL, fields, method);
     }
-    
+
     protected static byte[] sendAndReadyBody(String baseURL,
     		final Map<String, String> fields) throws IOException {
         return sendAndReadyBody(baseURL, fields, "GET");
     }
-    
+
     protected byte[] sendAndReadyBody(final Map<String, String> fields) throws IOException {
         return sendAndReadyBody(getServletURL(), fields, "GET");
     }
-    
+
     protected static byte[] sendAndReadyBody(String baseURL,
     		final Map<String, String> fields, String method) throws IOException {
         HttpURLConnection conn = null;
         try {
             conn = getConnectionWithMethod(baseURL, fields, method);
-            
+
             LOG.info("Response (" + conn.getResponseCode() + "): " + conn.getResponseMessage());
             return readBody(conn);
         } finally {
             if (conn != null) {
                 conn.disconnect();
             }
-        } 
+        }
     }
-    
+
     /**
      * Read the body of a response from the connection.
      * @param conn Connection where a response is ready to be read
@@ -299,17 +303,17 @@ public abstract class WebTestCase extends ModulesTestCase {
         InputStream in = null;
         try {
             conn = sendPostFormUrlencoded(baseURL, fields);
-            
+
             LOG.info("Response (" + conn.getResponseCode() + "): " + conn.getResponseMessage());
             conn.getResponseCode();
-            
+
             in = conn.getInputStream();
-            
+
             int b;
             while ((b = in.read()) != -1) {
                 bout.write(b);
             }
-            
+
             return bout.toByteArray();
         } finally {
             if (in != null) {
@@ -325,7 +329,7 @@ public abstract class WebTestCase extends ModulesTestCase {
             final Map<String, String> fields) throws MalformedURLException, IOException {
         return sendPostMultipartFormData(baseURL, fields, "data");
     }
-    
+
     protected static HttpURLConnection sendPostMultipartFormData(final String baseURL,
             final Map<String, String> fields, String fileName) throws MalformedURLException, IOException {
 

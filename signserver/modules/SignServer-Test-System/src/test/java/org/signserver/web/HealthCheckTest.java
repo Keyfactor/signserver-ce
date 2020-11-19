@@ -28,38 +28,38 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.statusrepo.StatusRepositorySessionRemote;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Tests the Health check.
- * 
+ *
  * @author Markus Kilås
  * @version $Id$
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class HealthCheckTest extends WebTestCase {
-    
+
     /** Logger for this class. */
     private final static Logger LOG = Logger.getLogger(HealthCheckTest.class);
-    
+
     /** Worker ID for test TSA worker. */
     private static final int TSA_WORKER = 8904;
-    
+
     /** The status repository session. */
     private static StatusRepositorySessionRemote repository;
-    
+
     private final WorkerSession workerSession = getWorkerSession();
-  
+
     @Override
     protected String getServletURL() {
         return getPreferredHTTPProtocol() + getHTTPHost() + ":" + getPreferredHTTPPort() + "/signserver/healthcheck/signserverhealth";
     }
 
     @Before
-    @Override
     public void setUp() throws Exception {
         repository = ServiceLocator.getInstance().lookupRemote(StatusRepositorySessionRemote.class);
     }
-
-
 
 	/**
      * Sets up a dummy signer.
@@ -73,7 +73,6 @@ public class HealthCheckTest extends WebTestCase {
 
     /**
      * Test that Health check returns ALLOK.
-     * @throws java.lang.Exception
      */
     @Test
     public void test01AllOk() throws Exception {
@@ -82,10 +81,9 @@ public class HealthCheckTest extends WebTestCase {
         String body = new String(sendAndReadyBody(NO_FIELDS));
         assertTrue("Contains ALLOK: " + body, body.contains("ALLOK"));
     }
-    
+
     /**
      * Tests that an error message is returned when the crypto token is offline.
-     * @throws java.lang.Exception
      */
     @Test
     public void test02CryptoTokenOffline() throws Exception {
@@ -106,10 +104,9 @@ public class HealthCheckTest extends WebTestCase {
             removeWorker(getSignerIdDummy1());
         }
     }
-    
+
     /**
      * Tests that a time stamp signer with a timesource not insync results in a healthcheck error
-     * @throws java.lang.Exception
      */
     @Test
     public void test03TimeSourceNotInsync() throws Exception {
@@ -130,17 +127,16 @@ public class HealthCheckTest extends WebTestCase {
             removeWorker(TSA_WORKER);
         }
     }
-    
+
     private FileOutputStream openMaintenanceProperties() throws Exception {
     	File maintenanceFile = new File(getSignServerHome() + File.separator +
     			getConfig().getProperty("healthcheck.maintenancefile"));
 
     	return new FileOutputStream(maintenanceFile);
     }
-    
+
     /**
      * Test the down-for-maintenance functionality
-     * @throws java.lang.Exception
      */
     @Test
     public void test04DownForMaintenance() throws Exception {
@@ -155,12 +151,12 @@ public class HealthCheckTest extends WebTestCase {
     	}
     	properties.setProperty(maintProp, "true");
     	properties.store(fos, null);
-    	
+
     	assertStatusReturned(NO_FIELDS, 500);
     	String body = new String(sendAndReadyBody(NO_FIELDS));
     	String maintString = "MAINT: " + maintProp;
     	assertTrue("Mainenance mode should be on: " + body, body.contains(maintString));
-    	
+
     	// set down for maintenance off, needs to "flush" the property file to
     	// ensure it gets emptied...
     	properties.remove(maintProp);
@@ -172,7 +168,7 @@ public class HealthCheckTest extends WebTestCase {
 
     	assertStatusReturned(NO_FIELDS, 200);
         body = new String(sendAndReadyBody(NO_FIELDS));
-        assertTrue("Contains ALLOK: " + body, body.contains("ALLOK")); 
+        assertTrue("Contains ALLOK: " + body, body.contains("ALLOK"));
     }
 
     /**

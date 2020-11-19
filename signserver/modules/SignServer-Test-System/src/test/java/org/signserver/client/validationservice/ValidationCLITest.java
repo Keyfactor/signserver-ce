@@ -18,27 +18,30 @@ import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
+
 import org.bouncycastle.jce.X509KeyUsage;
 import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.keys.util.KeyTools;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.signserver.cli.CommandLineInterface;
 import org.signserver.client.cli.ClientCLI;
 import org.signserver.client.cli.validationservice.ValidateCertificateCommand;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
-import org.signserver.testutils.CLITestHelper;
-import static org.signserver.testutils.CLITestHelper.assertPrinted;
-import org.signserver.testutils.TestingSecurityManager;
-import org.signserver.validationservice.server.ValidationTestUtils;
-import org.junit.Before;
-import org.junit.Test;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.util.PathUtil;
-import org.signserver.testutils.ModulesTestCase;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
-import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
+import org.signserver.testutils.CLITestHelper;
+import org.signserver.testutils.ModulesTestCase;
+import org.signserver.testutils.TestingSecurityManager;
+import org.signserver.validationservice.server.ValidationTestUtils;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.signserver.testutils.CLITestHelper.assertPrinted;
 
 /**
  * Tests for the ValidateCertificateCommand.
@@ -49,10 +52,9 @@ import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 public class ValidationCLITest extends ModulesTestCase {
 
     private static String signserverhome;
-    
-    private static GlobalConfigurationSessionRemote gCSession;
+
     private static WorkerSessionRemote sSSession;
-    
+
     private static String validCert1;
     private static String revokedCert1;
     private static String validcert1derpath;
@@ -60,12 +62,10 @@ public class ValidationCLITest extends ModulesTestCase {
     private static String revokedcertpath;
 
     private CLITestHelper clientCLI = new CLITestHelper(ClientCLI.class);
-    
+
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
-        gCSession = ServiceLocator.getInstance().lookupRemote(GlobalConfigurationSessionRemote.class);
         sSSession = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
         signserverhome = PathUtil.getAppHome().getAbsolutePath();
     }
@@ -157,7 +157,7 @@ public class ValidationCLITest extends ModulesTestCase {
         assertEquals(CommandLineInterface.RETURN_SUCCESS, clientCLI.execute("validatecertificate", "-hosts", getHTTPHost(), "-service", "16", "-der", "-port", String.valueOf(getPublicHTTPSPort()), "-certpurposes", "IDENTIFICATION,ELECTROINIC_SIGNATURE", "-cert", validcert1derpath, "-truststore", jksFile, "-truststorepwd", "changeit"));
         result = clientCLI.execute("validatecertificate", "-hosts", getHTTPHost(), "-service", "16", "-der", "-port", String.valueOf(getPublicHTTPSPort()), "-certpurposes", "ELECTROINIC_SIGNATURE", "-cert", revokedcertpath, "-truststore", jksFile, "-truststorepwd", "changeit");
         assertEquals(ValidateCertificateCommand.RETURN_BADCERTPURPOSE, result);
-        
+
         // test using the HTTP protocol
         assertEquals(CommandLineInterface.RETURN_SUCCESS,
                 clientCLI.execute("validatecertificate", "-hosts", getHTTPHost(), "-service", "16", "-cert", validcert1path, "-truststore", jksFile,
@@ -169,7 +169,7 @@ public class ValidationCLITest extends ModulesTestCase {
     }
 
     @Test
-    public void test99RemoveDatabase() throws Exception {
+    public void test99RemoveDatabase() {
         removeWorker(16);
 
         TestingSecurityManager.remove();

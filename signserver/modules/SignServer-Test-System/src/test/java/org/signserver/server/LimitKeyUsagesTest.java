@@ -13,16 +13,26 @@
 package org.signserver.server;
 
 import java.io.File;
-import java.security.cert.Certificate;
+
 import org.apache.log4j.Logger;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-import org.signserver.common.*;
-import org.signserver.testutils.ModulesTestCase;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
+import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GenericSignRequest;
+import org.signserver.common.GenericSignResponse;
+import org.signserver.common.RemoteRequestContext;
+import org.signserver.common.SignServerException;
+import org.signserver.common.SignServerUtil;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.testutils.ModulesTestCase;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * Tests limits for the key usages.
@@ -36,20 +46,19 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
             LimitKeyUsagesTest.class);
-    
+
     /** WORKERID used in this test case. */
     private static final WorkerIdentifier WORKERID_1 = new WorkerIdentifier(5802);
-    
+
     /**
      * Test with this number of signings.
      */
     private static final int LIMIT = 10;
-    
+
     private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
 
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
@@ -77,7 +86,7 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
                 String.valueOf(oldValue + LIMIT));
         workerSession.reloadConfiguration(WORKERID_1.getId());
         workerSession.activateSigner(WORKERID_1, "foo123");
-        
+
         // Do a number of signings LIMIT
         try {
             for (int i = 0; i < LIMIT; i++) {
@@ -118,9 +127,9 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
         workerSession.activateSigner(WORKERID_1, "foo123");
         doSign();
     }
-    
+
     /**
-     * Tests that when the key usage counter is not disabled it will increase 
+     * Tests that when the key usage counter is not disabled it will increase
      * after a signing.
      */
     @Test
@@ -131,21 +140,21 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID_1.getId(), "DISABLEKEYUSAGECOUNTER", "FaLsE");
         workerSession.reloadConfiguration(WORKERID_1.getId());
         workerSession.activateSigner(WORKERID_1, "foo123");
-        
+
         final long oldValue = workerSession.getKeyUsageCounterValue(WORKERID_1);
         if (oldValue < 0) {
             throw new Exception("Test case assumes non negative counter value");
         }
-        
+
         doSign();
-        
+
         // Counter should have increased
         final long actual = workerSession.getKeyUsageCounterValue(WORKERID_1);
         assertEquals("counter should have increased", oldValue + 1, actual);
     }
-    
+
     /**
-     * Tests that when the key usage counter is disabled and there is no 
+     * Tests that when the key usage counter is disabled and there is no
      * key usage limit a signing will not increase the counter.
      */
     @Test
@@ -156,19 +165,19 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID_1.getId(), "DISABLEKEYUSAGECOUNTER", "TrUe");
         workerSession.reloadConfiguration(WORKERID_1.getId());
         workerSession.activateSigner(WORKERID_1, "foo123");
-        
+
         final long oldValue = workerSession.getKeyUsageCounterValue(WORKERID_1);
         if (oldValue < 0) {
             throw new Exception("Test case assumes non negative counter value");
         }
-        
+
         doSign();
-        
+
         // Counter should not have increased
         final long actual = workerSession.getKeyUsageCounterValue(WORKERID_1);
         assertEquals("counter should not have increased", oldValue, actual);
     }
-    
+
     /**
      * Tests that when a KEYUSAGELIMIT is specified but also
      * DISABLEKEYUSAGECOUNTER=TRUE, the request fails.
@@ -181,12 +190,12 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
         workerSession.setWorkerProperty(WORKERID_1.getId(), "DISABLEKEYUSAGECOUNTER", "TRUE");
         workerSession.reloadConfiguration(WORKERID_1.getId());
         workerSession.activateSigner(WORKERID_1, "foo123");
-        
+
         final long oldValue = workerSession.getKeyUsageCounterValue(WORKERID_1);
         if (oldValue < 0) {
             throw new Exception("Test case assumes non negative counter value");
         }
-        
+
         try {
             doSign();
 
@@ -198,21 +207,21 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
 
     @Test
     public void test06() throws Exception {
-        
+
         final long oldValue = workerSession.getKeyUsageCounterValue(WORKERID_1);
         if (oldValue < 0) {
             throw new Exception("Test case assumes non negative counter value");
         }
-        
+
         // Set a limit so we can only do one signing
         workerSession.setWorkerProperty(WORKERID_1.getId(), "KEYUSAGELIMIT", String.valueOf(oldValue + 1));
         workerSession.setWorkerProperty(WORKERID_1.getId(), "DISABLEKEYUSAGECOUNTER", "FALSE");
         workerSession.reloadConfiguration(WORKERID_1.getId());
         workerSession.activateSigner(WORKERID_1, "foo123");
-        
+
         // One signing is ok
         doSign();
-        
+
         // Next the signer should be offline
         doSignOffline();
     }
@@ -225,15 +234,12 @@ public class LimitKeyUsagesTest extends ModulesTestCase {
         // Send request to dispatcher
         res = (GenericSignResponse) processSession.process(WORKERID_1,
                 request, new RemoteRequestContext());
-        Certificate cert = res.getSignerCertificate();
-        assertNotNull(cert);
+        assertNotNull(res.getSignerCertificate());
     }
 
     /** Do a dummy sign and expect failure. */
-    private void doSignOffline() throws Exception {
-
+    private void doSignOffline() {
         try {
-            final RequestContext context = new RequestContext();
             final GenericSignRequest request = new GenericSignRequest(1,
                     "<root/>".getBytes());
             // Send request to dispatcher

@@ -24,33 +24,39 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.jce.X509KeyUsage;
 import org.cesecore.certificates.crl.RevokedCertInfo;
 import org.cesecore.keys.util.KeyTools;
 import org.cesecore.util.CertTools;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.ServiceLocator;
 import org.signserver.common.SignServerUtil;
-import org.signserver.validationservice.common.ValidateRequest;
-import org.signserver.validationservice.common.ValidateResponse;
-import org.signserver.validationservice.common.Validation;
-import org.signserver.validationservice.common.ValidationServiceConstants;
-import org.junit.Before;
-import org.junit.Test;
-import org.signserver.common.RemoteRequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerType;
 import org.signserver.common.util.PathUtil;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
-import org.signserver.testutils.ModulesTestCase;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import org.signserver.testutils.ModulesTestCase;
+import org.signserver.validationservice.common.ValidateRequest;
+import org.signserver.validationservice.common.ValidateResponse;
+import org.signserver.validationservice.common.Validation;
+import org.signserver.validationservice.common.ValidationServiceConstants;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for the CRL Validator.
- * 
+ *
  * @author Markus Kilås
  * @version $Id$
  */
@@ -87,7 +93,6 @@ public class CRLValidatorTest extends ModulesTestCase {
     private static X509CRL crlRootCA2;
 
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         sSSession = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
@@ -216,12 +221,12 @@ public class CRLValidatorTest extends ModulesTestCase {
         ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RemoteRequestContext());
 
         Validation val = res.getValidation();
-        assertTrue(val != null);
-        assertTrue(val.getStatus().equals(Validation.Status.VALID));
-        assertTrue(val.getStatusMessage() != null);
+        assertNotNull(val);
+        assertEquals(val.getStatus(), Validation.Status.VALID);
+        assertNotNull(val.getStatusMessage());
         List<Certificate> cAChain = val.getCAChain();
-        assertTrue(cAChain != null);
-        assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=RootCA1"));
+        assertNotNull(cAChain);
+        assertEquals("CN=RootCA1", CertTools.getSubjectDN(cAChain.get(0)));
         assertEquals("CN=EndEntity1", CertTools.getSubjectDN(val.getCertificate()));
     }
 
@@ -236,16 +241,16 @@ public class CRLValidatorTest extends ModulesTestCase {
         ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RemoteRequestContext());
 
         Validation val = res.getValidation();
-        assertTrue(val != null);
+        assertNotNull(val);
 
         // Note: The best would be if we could get REVOKED as status from the CRLValidator and could then test with:
         //assertEquals(Validation.Status.REVOKED, val.getStatus());
-        assertFalse(Validation.Status.VALID.equals(val.getStatus()));
+        assertNotEquals(Validation.Status.VALID, val.getStatus());
 
-        assertTrue(val.getStatusMessage() != null);
+        assertNotNull(val.getStatusMessage());
         List<Certificate> cAChain = val.getCAChain();
-        assertTrue(cAChain != null);
-        assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=RootCA1"));
+        assertNotNull(cAChain);
+        assertEquals("CN=RootCA1", CertTools.getSubjectDN(cAChain.get(0)));
         assertEquals("CN=EndEntity2", CertTools.getSubjectDN(val.getCertificate()));
     }
 
@@ -260,12 +265,12 @@ public class CRLValidatorTest extends ModulesTestCase {
         ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RemoteRequestContext());
 
         Validation val = res.getValidation();
-        assertTrue(val != null);
-        assertTrue(val.getStatus().equals(Validation.Status.VALID));
-        assertTrue(val.getStatusMessage() != null);
+        assertNotNull(val);
+        assertEquals(val.getStatus(), Validation.Status.VALID);
+        assertNotNull(val.getStatusMessage());
         List<Certificate> cAChain = val.getCAChain();
-        assertTrue(cAChain != null);
-        assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=RootCA2"));
+        assertNotNull(cAChain);
+        assertEquals("CN=RootCA2", CertTools.getSubjectDN(cAChain.get(0)));
         assertEquals("CN=EndEntity3", CertTools.getSubjectDN(val.getCertificate()));
     }
 
@@ -280,16 +285,16 @@ public class CRLValidatorTest extends ModulesTestCase {
         ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RemoteRequestContext());
 
         Validation val = res.getValidation();
-        assertTrue(val != null);
+        assertNotNull(val);
 
         // Note: The best would be if we could get REVOKED as status from the CRLValidator and could then test with:
         //assertEquals(Validation.Status.REVOKED, val.getStatus());
-        assertFalse(Validation.Status.VALID.equals(val.getStatus()));
+        assertNotEquals(Validation.Status.VALID, val.getStatus());
 
-        assertTrue(val.getStatusMessage() != null);
+        assertNotNull(val.getStatusMessage());
         List<Certificate> cAChain = val.getCAChain();
-        assertTrue(cAChain != null);
-        assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=RootCA2"));
+        assertNotNull(cAChain);
+        assertEquals("CN=RootCA2", CertTools.getSubjectDN(cAChain.get(0)));
         assertEquals("CN=EndEntity4", CertTools.getSubjectDN(val.getCertificate()));
     }
 
@@ -303,12 +308,12 @@ public class CRLValidatorTest extends ModulesTestCase {
         ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RemoteRequestContext());
 
         Validation val = res.getValidation();
-        assertTrue(val != null);
-        assertFalse("certificate should be expired", val.getStatus().equals(Validation.Status.VALID));
-        assertTrue(val.getStatusMessage() != null);
+        assertNotNull(val);
+        assertNotEquals("certificate should be expired", val.getStatus(), Validation.Status.VALID);
+        assertNotNull(val.getStatusMessage());
         List<Certificate> cAChain = val.getCAChain();
-        assertTrue(cAChain != null);
-        assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=RootCA1"));
+        assertNotNull(cAChain);
+        assertEquals("CN=RootCA1", CertTools.getSubjectDN(cAChain.get(0)));
         assertEquals("CN=EndEntity5", CertTools.getSubjectDN(val.getCertificate()));
     }
 
@@ -322,12 +327,12 @@ public class CRLValidatorTest extends ModulesTestCase {
         ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RemoteRequestContext());
 
         Validation val = res.getValidation();
-        assertTrue(val != null);
-        assertFalse("certificate should not be valid yet", val.getStatus().equals(Validation.Status.VALID));
-        assertTrue(val.getStatusMessage() != null);
+        assertNotNull(val);
+        assertNotEquals("certificate should not be valid yet", val.getStatus(), Validation.Status.VALID);
+        assertNotNull(val.getStatusMessage());
         List<Certificate> cAChain = val.getCAChain();
-        assertTrue(cAChain != null);
-        assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=RootCA1"));
+        assertNotNull(cAChain);
+        assertEquals("CN=RootCA1", CertTools.getSubjectDN(cAChain.get(0)));
         assertEquals("CN=EndEntity6", CertTools.getSubjectDN(val.getCertificate()));
     }
 
@@ -341,12 +346,12 @@ public class CRLValidatorTest extends ModulesTestCase {
         ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RemoteRequestContext());
 
         Validation val = res.getValidation();
-        assertTrue(val != null);
-        assertFalse("certificate should not be valid", val.getStatus().equals(Validation.Status.VALID));
-        assertTrue(val.getStatusMessage() != null);
+        assertNotNull(val);
+        assertNotEquals("certificate should not be valid", val.getStatus(), Validation.Status.VALID);
+        assertNotNull(val.getStatusMessage());
         List<Certificate> cAChain = val.getCAChain();
-        assertTrue(cAChain != null);
-        assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=RootCA1"));
+        assertNotNull(cAChain);
+        assertEquals("CN=RootCA1", CertTools.getSubjectDN(cAChain.get(0)));
         assertEquals("CN=EndEntity7", CertTools.getSubjectDN(val.getCertificate()));
     }
 
@@ -362,12 +367,12 @@ public class CRLValidatorTest extends ModulesTestCase {
             ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RemoteRequestContext());
 
             Validation val = res.getValidation();
-            assertTrue(val != null);
-            assertTrue("certificate should be valid for electronic signature", val.getStatus().equals(Validation.Status.VALID));
-            assertTrue(val.getStatusMessage() != null);
+            assertNotNull(val);
+            assertEquals("certificate should be valid for electronic signature", val.getStatus(), Validation.Status.VALID);
+            assertNotNull(val.getStatusMessage());
             List<Certificate> cAChain = val.getCAChain();
-            assertTrue(cAChain != null);
-            assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=RootCA1"));
+            assertNotNull(cAChain);
+            assertEquals("CN=RootCA1", CertTools.getSubjectDN(cAChain.get(0)));
             assertEquals("CN=EndEntity8", CertTools.getSubjectDN(val.getCertificate()));
         }
 
@@ -377,12 +382,12 @@ public class CRLValidatorTest extends ModulesTestCase {
             ValidateResponse res = (ValidateResponse) processSession.process(new WorkerIdentifier(15), req, new RemoteRequestContext());
 
             Validation val = res.getValidation();
-            assertTrue(val != null);
-            assertFalse("certificate should fail is it does not have keyusage sig", val.getStatus().equals(Validation.Status.VALID));
-            assertTrue(val.getStatusMessage() != null);
+            assertNotNull(val);
+            assertNotEquals("certificate should fail is it does not have keyusage sig", val.getStatus(), Validation.Status.VALID);
+            assertNotNull(val.getStatusMessage());
             List<Certificate> cAChain = val.getCAChain();
-            assertTrue(cAChain != null);
-            assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=RootCA1"));
+            assertNotNull(cAChain);
+            assertEquals("CN=RootCA1", CertTools.getSubjectDN(cAChain.get(0)));
             assertEquals("CN=EndEntity1", CertTools.getSubjectDN(val.getCertificate()));
         }
     }
@@ -405,11 +410,11 @@ public class CRLValidatorTest extends ModulesTestCase {
 
         Validation val = res.getValidation();
         assertNotNull(val);
-        assertFalse("Not valid as no CRL should be found", Validation.Status.VALID.equals(val.getStatus()));
+        assertNotEquals("Not valid as no CRL should be found", Validation.Status.VALID, val.getStatus());
         assertNotNull(val.getStatusMessage());
         List<Certificate> cAChain = val.getCAChain();
         assertNotNull(cAChain);
-        assertTrue(CertTools.getSubjectDN(cAChain.get(0)).equals("CN=RootCA2"));
+        assertEquals("CN=RootCA2", CertTools.getSubjectDN(cAChain.get(0)));
         assertEquals("CN=EndEntity3", CertTools.getSubjectDN(val.getCertificate()));
 
         sSSession.setWorkerProperty(15, "VAL1.ISSUER2.CRLPATHS", crlPaths);
@@ -418,7 +423,7 @@ public class CRLValidatorTest extends ModulesTestCase {
 
     // TODO: Add more tests for the CRLValidator here
     @Test
-    public void test99RemoveDatabase() throws Exception {
+    public void test99RemoveDatabase() {
         removeWorker(15);
     }
 }

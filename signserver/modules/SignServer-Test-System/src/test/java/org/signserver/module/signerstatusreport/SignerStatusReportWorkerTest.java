@@ -12,23 +12,27 @@
  *************************************************************************/
 package org.signserver.module.signerstatusreport;
 
-import java.io.*;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
+
+import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.signserver.common.SignServerUtil;
-import org.signserver.common.WorkerStatus;
-import org.signserver.testutils.WebTestCase;
-import org.junit.Before;
-import org.junit.Test;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerType;
 import org.signserver.ejb.interfaces.WorkerSession;
+import org.signserver.testutils.WebTestCase;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for SignerStatusReportTimedService.
@@ -38,10 +42,6 @@ import org.signserver.ejb.interfaces.WorkerSession;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SignerStatusReportWorkerTest extends WebTestCase {
-
-    /** Logger for this class. */
-    private static final Logger LOG
-            = Logger.getLogger(SignerStatusReportWorkerTest.class);
 
     /**
      * Worker id for the service.
@@ -68,27 +68,25 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
      */
     private static final int WORKERID_SIGNER3 = 5676;
     private static final String WORKER_SIGNER3 = "TestXMLSigner";
-    
+
     private static final int[] WORKERS = new int[] {WORKERID_WORKER, WORKERID_SIGNER1, WORKERID_SIGNER2, WORKERID_SIGNER3};
 
-    private SignerStatusReportParser parser = new SignerStatusReportParser();
-    
+    private final SignerStatusReportParser parser = new SignerStatusReportParser();
+
     private final WorkerSession workerSession = getWorkerSession();
 
     @Override
     protected String getServletURL() {
         return "http://localhost:8080/signserver/process";
     }
-    
+
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
     /**
      * Create test workers.
-     * @throws Exception
      */
     @Test
     public void test00SetupDatabase() throws Exception {
@@ -100,7 +98,7 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
         workerSession.setWorkerProperty(WORKERID_WORKER, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         workerSession.setWorkerProperty(WORKERID_WORKER, WorkerConfig.IMPLEMENTATION_CLASS,
             "org.signserver.module.signerstatusreport.SignerStatusReportWorker");
-        
+
         workerSession.setWorkerProperty(WORKERID_WORKER, "AUTHTYPE", "NOAUTH");
         workerSession.setWorkerProperty(WORKERID_WORKER, "WORKERS",
                 WORKER_SIGNER1+","+WORKER_SIGNER2+","+WORKER_SIGNER3);
@@ -118,7 +116,7 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
         fields.put("workerId", String.valueOf(WORKERID_WORKER));
         fields.put("data", "");
         HttpURLConnection conn = sendGet(getServletURL(), fields);
-        
+
 
         Map<String, Map<String, String>> status;
 
@@ -136,7 +134,7 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
         assertNotNull("Worker 1 present", status.get(WORKER_SIGNER1));
         assertEquals("Worker 1 active", "ACTIVE", status.get(WORKER_SIGNER1).get("status"));
         assertNotNull("Worker 1 signings", status.get(WORKER_SIGNER1).get("signings"));
-        
+
         assertNotNull("Worker 2 present", status.get(WORKER_SIGNER2));
         assertEquals("Worker 2 active", "ACTIVE", status.get(WORKER_SIGNER2).get("status"));
         assertNotNull("Worker 2 signings", status.get(WORKER_SIGNER2).get("signings"));
@@ -149,8 +147,8 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
 //        workerSession.setWorkerProperty(WORKERID_SIGNER1, "DISABLED", "TRUE");
 //        workerSession.reloadConfiguration(WORKERID_SIGNER1);
         workerSession.deactivateSigner(new WorkerIdentifier(WORKERID_SIGNER1));
-        
-        
+
+
         // Now WORKER1 should be OFFLINE and the other as before
         conn = sendGet(getServletURL(), fields);
         try {
@@ -160,7 +158,7 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
             if (in != null) {
                 in.close();
             }
-        } 
+        }
 
         assertNotNull("Worker 1 present", status.get(WORKER_SIGNER1));
         assertEquals("Worker 1 OFFLINE", "OFFLINE", status.get(WORKER_SIGNER1).get("status"));
@@ -170,12 +168,12 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
 
         assertNotNull("Worker 3 present", status.get(WORKER_SIGNER3));
         assertEquals("Worker 3 active", "ACTIVE", status.get(WORKER_SIGNER3).get("status"));
-        
+
         // test that there is no fatal errors before removing the WORKERS property
         WorkerStatus workerStatus = workerSession.getStatus(new WorkerIdentifier(WORKERID_WORKER));
         List<String> errors = workerStatus.getFatalErrors();
         assertTrue("No fatal errors: " + errors, errors.isEmpty());
-        
+
         // test that removing the WORKERS property results in a fatal error
         workerSession.removeWorkerProperty(WORKERID_WORKER, "WORKERS");
         workerSession.reloadConfiguration(WORKERID_WORKER);
@@ -191,7 +189,6 @@ public class SignerStatusReportWorkerTest extends WebTestCase {
 
     /**
      * Removes all test workers.
-     * @throws Exception
      */
     @Test
     public void test99TearDownDatabase() throws Exception {

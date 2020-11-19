@@ -26,6 +26,8 @@ import org.signserver.common.WorkerIdentifier;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSession;
 
+import static org.junit.Assert.fail;
+
 /**
  * Tests for the UsernameAuthorizer.
  *
@@ -38,12 +40,11 @@ public class UsernameAuthorizerTest extends ModulesTestCase {
 
     private static final Logger LOG = Logger.getLogger(
             UsernameAuthorizerTest.class);
-    
+
     private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
 
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
@@ -62,10 +63,9 @@ public class UsernameAuthorizerTest extends ModulesTestCase {
     /**
      * Tests that the worker throws an AuthorizationRequiredException if no
      * username is supplied.
-     * @throws Exception in case of exception
      */
     @Test
-    public void test01AuthorizationRequired() throws Exception {
+    public void test01AuthorizationRequired() {
         final RemoteRequestContext context = new RemoteRequestContext();
 
         final GenericSignRequest request =
@@ -98,10 +98,9 @@ public class UsernameAuthorizerTest extends ModulesTestCase {
 
     /**
      * Tests that the worker accepts a correct user/password.
-     * @throws Exception in case of exception
      */
     @Test
-    public void test02AcceptUsernames() throws Exception {
+    public void test02AcceptUsernames() {
         // Add users
         workerSession.setWorkerProperty(getSignerIdDummy1(), "ACCEPT_USERNAMES", "user1;user2;user3");
         workerSession.reloadConfiguration(getSignerIdDummy1());
@@ -184,7 +183,7 @@ public class UsernameAuthorizerTest extends ModulesTestCase {
             LOG.error("Wrong type of exception", ex);
             fail("Exception: " + ex.getMessage());
         }
-        
+
         // With wrong username
         context.setUsername(null);
         context.setPassword(null);
@@ -201,10 +200,9 @@ public class UsernameAuthorizerTest extends ModulesTestCase {
 
     /**
      * Tests that the worker accepts any username.
-     * @throws Exception in case of exception
      */
     @Test
-    public void test03AcceptAll() throws Exception {
+    public void test03AcceptAll() {
         // Add users
         workerSession.setWorkerProperty(getSignerIdDummy1(), "ACCEPT_ALL_USERNAMES", "true");
         workerSession.removeWorkerProperty(getSignerIdDummy1(), "ACCEPT_USERNAMES");

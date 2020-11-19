@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import java.security.KeyPair;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -40,12 +41,12 @@ import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 /**
  * Abstract base class containing utility methods for the keystore crypto token
  * tests.
- * 
+ *
  * @author Marcus Lundblad
  * @version $Id$
  */
 public abstract class KeystoreCryptoTokenTestBase extends ModulesTestCase {
-    
+
     protected final WorkerSession workerSession = getWorkerSession();
     protected final GlobalConfigurationSession globalSession = getGlobalSession();
     protected static final String pin = "foo123";
@@ -53,7 +54,7 @@ public abstract class KeystoreCryptoTokenTestBase extends ModulesTestCase {
     protected void cmsSigner(final int workerId) throws Exception {
         cmsSigner(workerId, true);
     }
-    
+
     protected void cmsSigner(final int workerId, final boolean expectActive) throws Exception {
         // Generate CSR
         PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA1WithRSA", "CN=Worker" + workerId, null);
@@ -66,7 +67,7 @@ public abstract class KeystoreCryptoTokenTestBase extends ModulesTestCase {
 
         // Install certificate and chain
         workerSession.uploadSignerCertificate(workerId, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
-        workerSession.uploadSignerCertificateChain(workerId, Arrays.asList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+        workerSession.uploadSignerCertificateChain(workerId, Collections.singletonList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
         workerSession.reloadConfiguration(workerId);
 
         if (expectActive) {
@@ -74,11 +75,11 @@ public abstract class KeystoreCryptoTokenTestBase extends ModulesTestCase {
             List<String> errors = workerSession.getStatus(new WorkerIdentifier(workerId)).getFatalErrors();
             assertEquals("errors: " + errors, 0, errors.size());
         }
-            
+
         // Test signing
         signGenericDocument(workerId, "Sample data".getBytes());
     }
-    
+
     protected Set<String> getKeyAliases(final int workerId) throws Exception {
         Collection<KeyTestResult> testResults = workerSession.testKey(new WorkerIdentifier(workerId), "all", pin.toCharArray());
         final HashSet<String> results = new HashSet<>();

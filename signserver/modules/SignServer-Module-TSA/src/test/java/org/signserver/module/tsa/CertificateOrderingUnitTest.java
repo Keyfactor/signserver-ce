@@ -22,8 +22,9 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import org.apache.log4j.Logger;
+
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
@@ -40,6 +41,7 @@ import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
 import org.cesecore.util.CertTools;
 import org.junit.Before;
+import org.junit.Test;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.data.SignatureRequest;
@@ -56,8 +58,8 @@ import org.signserver.test.utils.mock.MockedRequestContext;
 import org.signserver.test.utils.mock.MockedServicesImpl;
 import org.signserver.test.utils.mock.WorkerSessionMock;
 import org.signserver.testutils.ModulesTestCase;
-import static org.signserver.testutils.ModulesTestCase.createRequestData;
-import static org.signserver.testutils.ModulesTestCase.createResponseData;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Unit tests for the encoding of the time-stamp tokens and specifically related to the ordering of the certificates in the output.
@@ -66,8 +68,6 @@ import static org.signserver.testutils.ModulesTestCase.createResponseData;
  * @version $Id$
  */
 public class CertificateOrderingUnitTest extends ModulesTestCase {
-    /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(TimeStampSignerUnitTest.class);
 
     private static final int WORKER1 = 8890;
     private static final String NAME = "NAME";
@@ -76,22 +76,21 @@ public class CertificateOrderingUnitTest extends ModulesTestCase {
             "org.signserver.server.cryptotokens.KeystoreCryptoToken";
 
     private static final String KEY_ALIAS = "TS Signer 1";
-    
+
     private WorkerSessionLocal workerSession;
     private WorkerSessionMock processSession;
     private IServices services;
     private WorkerSessionMock workerMock;
-    
+
     private X509Certificate cert100;
     private X509Certificate cert101;
     private X509Certificate cert102;
     private X509Certificate cert103;
 
     @Before
-    @Override
     public void setUp() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
-        
+
         final GlobalConfigurationSessionMock globalMock
                 = new GlobalConfigurationSessionMock();
         workerMock = new WorkerSessionMock();
@@ -104,7 +103,7 @@ public class CertificateOrderingUnitTest extends ModulesTestCase {
         cert102 = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSerialNumber(new BigInteger("102")).setSubject("CN=Cert 102").build());
         cert103 = new JcaX509CertificateConverter().getCertificate(new CertBuilder().setSerialNumber(new BigInteger("103")).setSubject("CN=Cert 103").build());
     }
-    
+
     private String createPem(List<? extends Certificate> certs) throws CertificateEncodingException {
         return new String(CertTools.getPemFromCertificateChain((List<Certificate>)certs), StandardCharsets.US_ASCII);
     }
@@ -116,16 +115,15 @@ public class CertificateOrderingUnitTest extends ModulesTestCase {
                 CloseableWritableData responseData = createResponseData(false);
             ) {
             SignatureRequest signRequest = new SignatureRequest(100, requestData, responseData);
-        
+
             processSession.process(new AdminInfo("Client user", null, null), new WorkerIdentifier(workerId), signRequest, new MockedRequestContext(services));
 
             return responseData.toReadableData().getAsByteArray();
         }
     }
-    
+
     private TimeStampResponse getTimeStampResponse(byte[] data) throws TSPException, IOException {
-        final TimeStampResponse timeStampResponse = new TimeStampResponse(data);
-        return timeStampResponse;
+        return new TimeStampResponse(data);
     }
 
     private List<X509CertificateHolder> timestampWithCerts(X509Certificate cert, List<X509Certificate> certs, boolean normalMode) throws Exception {
@@ -144,7 +142,7 @@ public class CertificateOrderingUnitTest extends ModulesTestCase {
         config.setProperty("KEYSTOREPASSWORD", "foo123");
         config.setProperty("ACCEPTANYPOLICY", "true");
 
-        config.setProperty("SIGNERCERT", createPem(Arrays.asList(cert)));
+        config.setProperty("SIGNERCERT", createPem(Collections.singletonList(cert)));
         config.setProperty("SIGNERCERTCHAIN", createPem(certs));
         config.setProperty("LEGACYENCODING", Boolean.toString(!normalMode));
         // Don't verify timestamp token signature in this test as it uses certificate in configuration which is not associated with the signing key
@@ -159,16 +157,16 @@ public class CertificateOrderingUnitTest extends ModulesTestCase {
         TimeStampRequest timeStampRequest = timeStampRequestGenerator.generate(TSPAlgorithms.SHA1, new byte[20], BigInteger.valueOf(100));
         final TimeStampResponse timeStampResponse = getTimeStampResponse(timestamp(timeStampRequest, WORKER1));
         timeStampResponse.validate(timeStampRequest);
-        
+
         System.out.println(timeStampResponse.getStatusString());
         TimeStampToken token = timeStampResponse.getTimeStampToken();
         Store store = token.getCertificates();
         System.out.println("certs: " + store);
         System.out.println("time: " + token.getTimeStampInfo().getGenTime());
-        
+
         return (List<X509CertificateHolder>) token.getCertificates().getMatches(new AllSelector());
     }
-    
+
     private String toStringJce(List<X509Certificate> certs) {
         ArrayList<String> certSerials = new ArrayList<>();
         for (X509Certificate c : certs) {
@@ -176,7 +174,7 @@ public class CertificateOrderingUnitTest extends ModulesTestCase {
         }
         return certSerials.toString();
     }
-    
+
     private String toStringBc(List<X509CertificateHolder> certs) {
         ArrayList<String> actualCertSerials = new ArrayList<>();
         for (X509CertificateHolder c : certs) {
@@ -188,21 +186,20 @@ public class CertificateOrderingUnitTest extends ModulesTestCase {
     /**
      * Tests time-stamping in normal mode (i.e. not using "legacy mode") and checks that the order is not the same in the output as it were in
      * the input.
-     *
-     * @throws Exception 
      */
+    @Test
     public void testNormalMode() throws Exception {
         X509Certificate cert = cert100;
         List<X509Certificate> certs = Arrays.asList(cert100, cert101, cert102, cert103);
         final List<X509Certificate> expected = Arrays.asList(cert101, cert102, cert103, cert100); // We expect this different order
-        
+
         List<X509CertificateHolder> actualCerts = timestampWithCerts(cert, certs, true);
         assertEquals(toStringJce(expected), toStringBc(actualCerts));
-        
+
         certs = Arrays.asList(cert103, cert100, cert102, cert101); // With a different order we still expect the same
         actualCerts = timestampWithCerts(cert, certs, true);
         assertEquals(toStringJce(expected), toStringBc(actualCerts));
-        
+
         certs = Arrays.asList(cert102, cert103, cert101, cert100); // With a different order we still expect the same
         actualCerts = timestampWithCerts(cert, certs, true);
         assertEquals(toStringJce(expected), toStringBc(actualCerts));
@@ -211,28 +208,27 @@ public class CertificateOrderingUnitTest extends ModulesTestCase {
     /**
      * Tests time-stamping in "legacy mode" and checks that the order is the same in the output as it were in
      * the input.
-     *
-     * @throws Exception 
      */
+    @Test
     public void testLegacyMode() throws Exception {
         X509Certificate cert = cert100;
         List<X509Certificate> certs = Arrays.asList(cert100, cert101, cert102, cert103);
         List<X509Certificate> expected = certs; // Same order
-        
+
         List<X509CertificateHolder> actualCerts = timestampWithCerts(cert, certs, false);
         assertEquals(toStringJce(expected), toStringBc(actualCerts));
-        
+
         certs = Arrays.asList(cert103, cert100, cert102, cert101);
         expected = certs; // Same order
         actualCerts = timestampWithCerts(cert, certs, false);
         assertEquals(toStringJce(expected), toStringBc(actualCerts));
-        
+
         certs = Arrays.asList(cert102, cert103, cert101, cert100);
         expected = certs; // Same order
         actualCerts = timestampWithCerts(cert, certs, false);
         assertEquals(toStringJce(expected), toStringBc(actualCerts));
     }
-        
+
     /**
      * Simply matches true on all objects found.
      */
@@ -248,5 +244,5 @@ public class CertificateOrderingUnitTest extends ModulesTestCase {
             return new AllSelector();
         }
     }
-    
+
 }

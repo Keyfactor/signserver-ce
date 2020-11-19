@@ -17,6 +17,9 @@ import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
 import org.junit.Test;
 import org.signserver.testutils.CLITestHelper;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.signserver.testutils.CLITestHelper.assertNotPrinted;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
 import static org.signserver.testutils.CLITestHelper.assertPrintedLitterally;
@@ -37,10 +40,9 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
 
     private final ModulesTestCase test = new ModulesTestCase();
     private final CLITestHelper cli = test.getAdminCLI();
-    
-    /** 
+
+    /**
      * Tests that providing a non-existing worker name to the add operation gives an error message.
-     * @throws Exception 
      */
     @Test
     public void testAddWithUnknownWorkerName() throws Exception {
@@ -50,9 +52,8 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
         assertPrinted("error message", cli.getOut(), "No worker with the given name could be found");
     }
 
-    /** 
+    /**
      * Tests that providing a non-existing worker name to the remove operation gives an error message.
-     * @throws Exception 
      */
     @Test
     public void testRemoveWithUnknownWorkerName() throws Exception {
@@ -61,10 +62,9 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
         assertEquals("return code", -1, code);
         assertPrinted("error message", cli.getOut(), "No worker with the given name could be found");
     }
-    
-    /** 
+
+    /**
      * Tests that providing a non-existing worker name to the list operation gives an error message.
-     * @throws Exception 
      */
     @Test
     public void testListWithUnknownWorkerName() throws Exception {
@@ -74,10 +74,9 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
         assertPrinted("error message", cli.getOut(), "No worker with the given name could be found");
     }
 
-    /** 
+    /**
      * Tests that providing a non-existing worker Id to the add operation gives an error message.
      * Note: this tests assumes there is no worker with Id 112244.
-     * @throws Exception 
      */
     @Test
     public void testAddWithUnknownWorkerId() throws Exception {
@@ -87,10 +86,9 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
         assertPrinted("error message", cli.getOut(), "Error: No worker with the given Id could be found");
     }
 
-    /** 
+    /**
      * Tests that providing a non-existing worker Id to the remove operation gives an error message.
      * Note: this tests assumes there is no worker with Id 112244.
-     * @throws Exception 
      */
     @Test
     public void testRemoveWithUnknownWorkerId() throws Exception {
@@ -99,11 +97,10 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
         assertEquals("return code", -1, code);
         assertPrinted("error message", cli.getOut(), "Error: No worker with the given Id could be found");
     }
-    
-    /** 
+
+    /**
      * Tests that providing a non-existing worker Id to the list operation gives an error message.
      * Note: this tests assumes there is no worker with Id 112244.
-     * @throws Exception 
      */
     @Test
     public void testListWithUnknownWorkerId() throws Exception {
@@ -112,21 +109,20 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
         assertEquals("return code", -1, code);
         assertPrinted("error message", cli.getOut(), "Error: No worker with the given Id could be found");
     }
-    
+
     /**
-     * Tests adding, listing, adding one more entry, listing again, removing 
+     * Tests adding, listing, adding one more entry, listing again, removing
      * entry and then listing again.
-     * @throws Exception 
      */
     @Test
     public void testAddListAndRemove() throws Exception {
         LOG.info("testAddListAndRemove");
         try {
             test.addCMSSigner1();
-            
+
             // Add
             assertEquals("execute add", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
-                    "-add", 
+                    "-add",
                     "-matchSubjectWithType", "SUBJECT_RDN_CN",
                     "-matchSubjectWithValue", "Client Two",
                     "-matchIssuerWithValue", "CN=ManagementCA1,C=SE",
@@ -134,7 +130,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             assertPrinted("prints new rule with SUBJECT_RDN_CN", cli.getOut(), "SUBJECT_RDN_CN");
             assertPrinted("prints new rule with Client Two", cli.getOut(), "Client Two");
             assertPrinted("prints new rule with CN=ManagementCA1,C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
-            
+
             // List
             assertEquals("execute list", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
@@ -142,10 +138,10 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             assertPrinted("prints rule with Client Two", cli.getOut(), "Client Two");
             assertPrinted("prints rule with CN=ManagementCA1,C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
             assertPrinted("prints rule with My description", cli.getOut(), "My description");
-            
+
             // Add one more + also explicitly specify matchIssuerWithType
             assertEquals("execute add 2", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
-                    "-add", 
+                    "-add",
                     "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
                     "-matchSubjectWithValue", "123456",
                     "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
@@ -155,7 +151,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             assertPrinted("prints new rule with 123456", cli.getOut(), "123456");
             assertPrinted("prints new rule with CN=ManagementCA2, OU=Testing, C=SE", cli.getOut(), "CN=ManagementCA2,OU=Testing,C=SE");
             assertPrinted("prints new rule with Other description", cli.getOut(), "Other description");
-            
+
             // List both entries
             assertEquals("execute list 2", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
@@ -163,15 +159,15 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             assertPrinted("prints rule 1 with Client Two", cli.getOut(), "Client Two");
             assertPrinted("prints rule 1 with CN=ManagementCA1,C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
             assertPrinted("prints rule 1 with My description", cli.getOut(), "My description");
-            
+
             assertPrinted("prints rule 2 with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
             assertPrinted("prints rule 2 with 123456", cli.getOut(), "123456");
             assertPrinted("prints rule 2 with CN=ManagementCA2, OU=Testing, C=SE", cli.getOut(), "CN=ManagementCA2,OU=Testing,C=SE");
             assertPrinted("prints rule 2 with Other description", cli.getOut(), "Other description");
-            
+
             // Remove first entry
             assertEquals("execute remove", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
-                    "-remove", 
+                    "-remove",
                     "-matchSubjectWithType", "SUBJECT_RDN_CN",
                     "-matchSubjectWithValue", "Client Two",
                     "-matchIssuerWithValue", "CN=ManagementCA1, C=SE",
@@ -179,7 +175,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             assertPrinted("prints new rule with SUBJECT_RDN_CN", cli.getOut(), "SUBJECT_RDN_CN");
             assertPrinted("prints new rule with Client Two", cli.getOut(), "Client Two");
             assertPrinted("prints new rule with CN=ManagementCA1,C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
-            
+
             // List second entry only now
             assertEquals("execute list 2", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
@@ -187,7 +183,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             assertNotPrinted("prints rule 1 with Client Two", cli.getOut(), "Client Two");
             assertNotPrinted("prints rule 1 with CN=ManagementCA1,C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
             assertNotPrinted("prints rule 1 with My description", cli.getOut(), "My description");
-            
+
             assertPrinted("prints rule 2 with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
             assertPrinted("prints rule 2 with 123456", cli.getOut(), "123456");
             assertPrinted("prints rule 2 with CN=ManagementCA2, OU=Testing, C=SE", cli.getOut(), "CN=ManagementCA2,OU=Testing,C=SE");
@@ -199,37 +195,36 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
 
     /**
      * Tests the format for the output.
-     * @throws Exception 
      */
     @Test
     public void testListFormat() throws Exception {
         LOG.info("testListFormat");
         try {
             test.addCMSSigner1();
-            
+
             // Add
             assertEquals("execute add", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
-                    "-add", 
+                    "-add",
                     "-matchSubjectWithType", "SUBJECT_RDN_CN",
                     "-matchSubjectWithValue", "Client Two",
                     "-matchIssuerWithValue", "CN=ManagementCA1, C=SE",
                     "-description", "My description"));
             assertPrinted("prints new rule", cli.getOut(), "  SUBJECT_RDN_CN: Client Two | ISSUER_DN_BCSTYLE: CN=ManagementCA1,C=SE | Description: My description");
-            
+
             // List
             assertEquals("execute list", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
             assertPrinted("prints rule 1", cli.getOut(), "  SUBJECT_RDN_CN: Client Two | ISSUER_DN_BCSTYLE: CN=ManagementCA1,C=SE | Description: My description");
-            
+
             // Add one more
             assertEquals("execute add 2", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
-                    "-add", 
+                    "-add",
                     "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
                     "-matchSubjectWithValue", "123456",
                     "-matchIssuerWithValue", "CN=ManagementCA2, OU=Testing, C=SE",
                     "-description", "Other description"));
             assertPrinted("prints new rule with CERTIFICATE_SERIALNO", cli.getOut(), "  CERTIFICATE_SERIALNO: 123456 | ISSUER_DN_BCSTYLE: CN=ManagementCA2, OU=Testing, C=SE | Description: Other description");
-            
+
             // List both entries
             assertEquals("execute list 2", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
@@ -239,27 +234,26 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             test.removeWorker(test.getSignerIdCMSSigner1());
         }
     }
-    
-    
+
+
     /**
      * Tests upgrading of rules from the legacy rules by first adding some old
      * rules, then testing listing and removing.
-     * @throws Exception 
      */
     @Test
     public void testUpgradeListAndRemove() throws Exception {
         LOG.info("testUpgradeListAndRemove");
         try {
             test.addCMSSigner1();
-            
+
             // Add legacy rule 1
             assertEquals("execute legacy add 1", 0, cli.execute("addauthorizedclient", String.valueOf(test.getSignerIdCMSSigner1()),
                     "00123Ab", "CN=ManagementCA1, C=SE"));
-            
+
             // Add legacy rule 2
             assertEquals("execute legacy add 2", 0, cli.execute("addauthorizedclient", String.valueOf(test.getSignerIdCMSSigner1()),
                     "789abcdef", "CN=foo2,O=Organization 2\\, inc.,C=SE"));
-            
+
             // List
             assertEquals("execute list", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
@@ -268,10 +262,10 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             assertPrinted("prints rule with 123ab", cli.getOut(), "123ab");
             assertPrinted("prints rule with CN=ManagementCA1, C=SE", cli.getOut(), CertTools.stringToBCDNString("CN=ManagementCA1, C=SE"));
             assertTrue("prints rule with CN=foo2,O=Organization 2\\, inc.,C=SE", cli.getOut().toString().contains("CN=foo2,O=Organization 2\\, inc.,C=SE"));
-            
+
             // Add one more but of new type
             assertEquals("execute new add 1", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
-                    "-add", 
+                    "-add",
                     "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
                     "-matchSubjectWithValue", "123456",
                     "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
@@ -281,7 +275,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             assertPrinted("prints new rule with 123456", cli.getOut(), "123456");
             assertPrinted("prints new rule with CN=ManagementCA2,OU=Testing,C=SE", cli.getOut(), "CN=ManagementCA2,OU=Testing,C=SE");
             assertPrinted("prints new rule with Other description", cli.getOut(), "Other description");
-            
+
             // List all entries
             assertEquals("execute list 2", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
@@ -290,15 +284,15 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             assertPrinted("prints rule with 123ab", cli.getOut(), "123ab");
             assertPrinted("prints rule with CN=ManagementCA1,C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
             assertTrue("prints rule with CN=foo2,O=Organization 2\\, inc.,C=SE", cli.getOut().toString().contains("CN=foo2,O=Organization 2\\, inc.,C=SE"));
-            
+
             assertPrinted("prints new rule 1 with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
             assertPrinted("prints new rule 1 with 123456", cli.getOut(), "123456");
             assertPrinted("prints new rule 1 with CN=ManagementCA2,OU=Testing,C=SE", cli.getOut(), "CN=ManagementCA2,OU=Testing,C=SE");
             assertPrinted("prints new rule 1 with Other description", cli.getOut(), "Other description");
-            
+
             // Remove first legacy entry
             assertEquals("execute remove", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
-                    "-remove", 
+                    "-remove",
                     "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
                     "-matchSubjectWithValue", "123ab",
                     "-matchIssuerWithValue", "CN=ManagementCA1,C=SE",
@@ -306,7 +300,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             assertPrinted("prints removed rule with SUBJECT_RDN_CN", cli.getOut(), "CERTIFICATE_SERIALNO");
             assertPrinted("prints removed rule with Client Two", cli.getOut(), "123ab");
             assertPrinted("prints removed rule with CN=ManagementCA1,C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
-            
+
             // List second entry only now
             assertEquals("execute list 3", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
@@ -315,7 +309,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             assertNotPrinted("prints rule with 123ab", cli.getOut(), "123ab");
             assertNotPrinted("prints rule with CN=ManagementCA1,C=SE", cli.getOut(), "CN=ManagementCA1,C=SE");
             assertTrue("prints rule with CN=foo2,O=Organization 2\\, inc.,C=SE", cli.getOut().toString().contains("CN=foo2,O=Organization 2\\, inc.,C=SE"));
-            
+
             assertPrinted("prints new rule 1 with CERTIFICATE_SERIALNO", cli.getOut(), "CERTIFICATE_SERIALNO");
             assertPrinted("prints new rule 1 with 123456", cli.getOut(), "123456");
             assertPrinted("prints new rule 1 with CN=ManagementCA2,OU=Testing,C=SE", cli.getOut(), "CN=ManagementCA2,OU=Testing,C=SE");
@@ -324,15 +318,14 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             test.removeWorker(test.getSignerIdCMSSigner1());
         }
     }
-    
+
     /**
      * Test adding and listing an auth rule.
-     * 
+     *
      * @param matchSubjectWithType The subject match type to use
      * @param expected The expected printout when adding and listing the role
      * @param expectDuplicate True if it is expected to show a warning of multiple
      *                        fields found in the cert
-     * @throws Exception 
      */
     private void testAddFromCertWithMatchType(final String matchSubjectWithType,
                                               final String expected,
@@ -346,7 +339,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
 
             test.addCMSSigner1();
             assertEquals("execute add", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
-                    "-add", 
+                    "-add",
                     "-matchSubjectWithType", matchSubjectWithType,
                     "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
                     "-cert", certPath,
@@ -360,7 +353,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
                                  "More than one component matching " +
                                  matchSubjectWithType + ", picking the first one");
             }
-            
+
             assertPrintedLitterally("prints new rule", cli.getOut(), expected);
 
             assertEquals("execute list", 0, cli.execute("authorizedclients",
@@ -375,8 +368,6 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     /**
      * Test adding an authorization rule matching on subject serial number
      * by specifying a certificate.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testAddFromCertWithSubjectTypeCERTIFICATE_SERIALNO() throws Exception {
@@ -389,8 +380,6 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     /**
      * Test adding an authorization rule matching on subject DN CN field
      * by specifying a certificate.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_CN() throws Exception {
@@ -399,12 +388,10 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
                 "SUBJECT_RDN_CN: Client 1 | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description",
                 false);
     }
-    
+
     /**
      * Test adding an authorization rule matching on subject DN DC field
      * by specifying a certificate.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_DC() throws Exception {
@@ -417,8 +404,6 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     /**
      * Test adding an authorization rule matching on subject DN ST field
      * by specifying a certificate.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_ST() throws Exception {
@@ -431,8 +416,6 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     /**
      * Test adding an authorization rule matching on subject DN L field
      * by specifying a certificate.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_L() throws Exception {
@@ -441,12 +424,10 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
                 "SUBJECT_RDN_L: Solna | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description",
                 false);
     }
-    
+
     /**
      * Test adding an authorization rule matching on subject DN O field
      * by specifying a certificate.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_O() throws Exception {
@@ -454,13 +435,11 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
         testAddFromCertWithMatchType("SUBJECT_RDN_O",
                 "SUBJECT_RDN_O: PrimeKey | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description",
                 false);
-    }    
-    
+    }
+
     /**
      * Test adding an authorization rule matching on subject DN OU field
      * by specifying a certificate.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_OU() throws Exception {
@@ -473,8 +452,6 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     /**
      * Test adding an authorization rule matching on subject DN TITLE field
      * by specifying a certificate.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_TITLE() throws Exception {
@@ -487,8 +464,6 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     /**
      * Test adding an authorization rule matching on subject DN UID field
      * by specifying a certificate.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_UID() throws Exception {
@@ -501,8 +476,6 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     /**
      * Test adding an authorization rule matching on subject SAN SUBJECT_ALTNAME_RFC822NAME field
      * by specifying a certificate.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testAddFromCertWithSubjectTypeSUBJECT_ALTNAME_RFC822NAME() throws Exception {
@@ -511,12 +484,10 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
                 "SUBJECT_ALTNAME_RFC822NAME: noreply@primekey.com | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description",
                 false);
     }
-    
+
     /**
      * Test adding an authorization rule matching on subject SAN SUBJECT_ALTNAME_MSUPN field
      * by specifying a certificate.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testAddFromCertWithSubjectTypeSUBJECT_ALTNAME_MSUPN() throws Exception {
@@ -525,12 +496,10 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
                 "SUBJECT_ALTNAME_MSUPN: myupn@example.org | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description",
                 false);
     }
-    
+
     /**
      * Test adding an authorization rule matching on subject SAN SUBJECT_ALTNAME_MSUPN field
      * by specifying a certificate.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testAddFromCertWithSubjectTypeSUBJECT_RDN_SERIALNO() throws Exception {
@@ -538,13 +507,11 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
         testAddFromCertWithMatchType("SUBJECT_RDN_SERIALNO",
                 "SUBJECT_RDN_SERIALNO: 123-4567abc | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description",
                 true);
-    }    
-    
+    }
+
     /**
      * Test adding an authorization rule matching on subject DN field not present
      * in the certificate
-     * 
-     * @throws Exception 
      */
     @Test
     public void testAddFromCertWithNonExistingDNField() throws Exception {
@@ -557,7 +524,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
 
             test.addCMSSigner1();
             assertEquals("execute add", -2, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
-                    "-add", 
+                    "-add",
                     "-matchSubjectWithType", "SUBJECT_RDN_SERIALNO",
                     "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
                     "-cert", certPath,
@@ -572,12 +539,10 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
             test.removeWorker(test.getSignerIdCMSSigner1());
         }
     }
-    
+
     /**
      * Test adding an authorization rule matching on subject serial number
-     * by specifying a certificate and then remove the same role. 
-     * 
-     * @throws Exception 
+     * by specifying a certificate and then remove the same role.
      */
     @Test
     public void testAddFromCertAndRemove() throws Exception {
@@ -590,7 +555,7 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
 
             test.addCMSSigner1();
             assertEquals("execute add", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
-                    "-add", 
+                    "-add",
                     "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
                     "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
                     "-cert", certPath,
@@ -601,16 +566,16 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
                     "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
             assertPrinted("prints new rule", cli.getOut(), "CERTIFICATE_SERIALNO: 3519c898bfef0d7e | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: Description");
-        
+
             assertEquals("execute remove", 0, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
-                    "-remove", 
+                    "-remove",
                     "-matchSubjectWithType", "CERTIFICATE_SERIALNO",
                     "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
                     "-cert", certPath,
                     "-description", "Description"));
             assertPrinted("prints rule", cli.getOut(), "SUBJECT_RDN_CN: DSS Sub CA 11 | ISSUER_DN_BCSTYLE: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE | Description: my rule");
             assertPrinted("prints removed", cli.getOut(), "Rule removed");
-            
+
             assertEquals("execute list", 0, cli.execute("authorizedclients",
                     "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
                     "-list"));
@@ -623,8 +588,6 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
     /**
      * Test adding a rule from a certificate specifying a field that is not
      * existing in the subject DN.
-     * 
-     * @throws Exception 
      */
     @Test
     public void testAddFromCertWithNonExistingField() throws Exception {
@@ -636,12 +599,12 @@ public class ClientsAuthorizationCommandTest extends ModulesTestCase {
 
             test.addCMSSigner1();
             assertEquals("execute add", -2, cli.execute("authorizedclients", "-worker", String.valueOf(test.getSignerIdCMSSigner1()),
-                    "-add", 
+                    "-add",
                     "-matchSubjectWithType", "SUBJECT_RDN_TITLE",
                     "-matchIssuerWithType", "ISSUER_DN_BCSTYLE",
                     "-cert", certPath,
                     "-description", "Description"));
-            
+
             assertPrintedLitterally("prints not found", cli.getOut(),
                     "DN field SUBJECT_RDN_TITLE not found in subject DN of certificate");
 

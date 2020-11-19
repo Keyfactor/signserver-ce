@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.junit.After;
+import org.junit.Test;
 import org.signserver.cli.spi.CommandFailureException;
 import org.signserver.cli.spi.IllegalCommandArgumentsException;
 import org.signserver.client.cli.defaultimpl.ValidateDocumentCommand;
@@ -41,6 +42,9 @@ import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.JwtUtils;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 /**
  * Tests for the validatedocument command of Client CLI.
  *
@@ -53,7 +57,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(DocumentValidatorTest.class);
 
-    /** WORKERID used in this test case as defined in 
+    /** WORKERID used in this test case as defined in
      * junittest-part-config.properties for XMLSigner. */
     private static final int WORKERID = 5677;
 
@@ -69,10 +73,9 @@ public class DocumentValidatorTest extends ModulesTestCase {
 
     // key pair used to generate test JWT token
     private static KeyPair keyPair;
-    
+
     @Before
-    @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         TestingSecurityManager.install();
         signserverhome = PathUtil.getAppHome();
@@ -80,8 +83,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
     }
 
     @After
-    @Override
-    protected void tearDown() throws Exception {
+    public void tearDown() {
         TestingSecurityManager.remove();
     }
 
@@ -102,7 +104,8 @@ public class DocumentValidatorTest extends ModulesTestCase {
         }
         return config.getProperty("java.trustpassword", "changeit");
     }
-	
+
+    @Test
     public void test00SetupDatabase() throws Exception {
 
         // VALIDATION SERVICE
@@ -123,14 +126,15 @@ public class DocumentValidatorTest extends ModulesTestCase {
         workerSession.reloadConfiguration(WORKERID);
     }
 
+    @Test
     public void test01missingArguments() throws Exception {
         try {
             execute("validatedocument");
             fail("Should have thrown exception about missing arguments");
         } catch (IllegalCommandArgumentsException expected) {}
     }
-    
-    
+
+
     private void testValidateDocumentFromParameter(final String protocol) throws Exception {
         try {
             String res =
@@ -148,9 +152,9 @@ public class DocumentValidatorTest extends ModulesTestCase {
                                     "-truststore", new File(signserverhome, "p12/truststore.jks").getAbsolutePath(),
                                     "-truststorepwd", getTruststorePassword(),
                                     "-protocol", protocol));
-                    
-                        
-            
+
+
+
             assertTrue("contains Valid: true: "
                     + res, res.contains("Valid: true"));
         } catch (IllegalCommandArgumentsException ex) {
@@ -164,7 +168,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
             throws Exception {
         testValidateDocumentFromFile(protocol, metadatas, null);
     }
-    
+
     private void testValidateDocumentFromFile(final String protocol,
                                               final String[] metadatas,
                                               final String accessToken)
@@ -173,20 +177,19 @@ public class DocumentValidatorTest extends ModulesTestCase {
             final File doc = File.createTempFile("test2.xml", null);
             try (FileOutputStream out = new FileOutputStream(doc)) {
                 out.write(XMLValidatorTestData.TESTXML1.getBytes());
-                out.close();
             }
-           
+
             final List<String> argList = new LinkedList<>(Arrays.asList("validatedocument", "-workername",
                                             "TestXMLValidator", "-infile", doc.getAbsolutePath(),
                                             "-host", getHTTPHost(), "-port", String.valueOf(getPublicHTTPSPort()),
                                             "-truststore", new File(signserverhome, "p12/truststore.jks").getAbsolutePath(),
                                             "-truststorepwd", getTruststorePassword()));
-            
+
             if (protocol != null) {
                 argList.add("-protocol");
                 argList.add(protocol);
             }
-            
+
             if (metadatas != null) {
                 for (final String metadataParam : metadatas) {
                     argList.add("-metadata");
@@ -198,7 +201,7 @@ public class DocumentValidatorTest extends ModulesTestCase {
                 argList.add("-accesstoken");
                 argList.add(accessToken);
             }
-            
+
             String res =
                     new String(execute(argList.toArray(new String[0])));
             assertTrue("contains Valid: true: "
@@ -208,32 +211,30 @@ public class DocumentValidatorTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
-    
+
     /**
      * Tests the sample use case a from the documentation.
      * <pre>
      * a) validatedocument -workername XMLSigner -data "&lt;root/&gt;" -truststore $SIGNSERVER_HOME/p12/truststore.jks -truststorepwd foo123
      * </pre>
-     * @throws Exception
      */
+    @Test
     public void test02ValidateDocumentFromParameterDefaultProtocol() throws Exception {
         testValidateDocumentFromParameter(null);
     }
-    
+
     /**
      * Test with explicitly setting -protocol WEBSERVICES (the default).
-     * 
-     * @throws Exception
      */
+    @Test
     public void test03ValidateDocumentFromParameterWebservices() throws Exception {
         testValidateDocumentFromParameter("WEBSERVICES");
     }
-    
+
     /**
      * Test with -protocol HTTP.
-     * 
-     * @throws Exception
      */
+    @Test
     public void test04ValidateDocumentFromParameterHTTP() throws Exception {
         testValidateDocumentFromParameter("HTTP");
     }
@@ -243,26 +244,24 @@ public class DocumentValidatorTest extends ModulesTestCase {
      * <pre>
      * b) signdocument -workername XMLSigner -infile /tmp/document.xml
      * </pre>
-     * @throws Exception
      */
+    @Test
     public void test05ValidateDocumentFromFileDefaultProtocol() throws Exception {
         testValidateDocumentFromFile(null, null);
     }
 
     /**
      * Test with -protcol WEBSERVICES and -infile.
-     * 
-     * @throws Exception
      */
+    @Test
     public void test06ValidateDocumentFromFileWebservices() throws Exception {
-       testValidateDocumentFromFile("WEBSERVICES", null); 
+       testValidateDocumentFromFile("WEBSERVICES", null);
     }
-    
+
     /**
      * Test with -protocol HTTP and -infile.
-     * 
-     * @throws Exception
      */
+    @Test
     public void test07ValidateDocumentFromFileHTTP() throws Exception {
         testValidateDocumentFromFile("HTTP", null);
     }
@@ -270,9 +269,8 @@ public class DocumentValidatorTest extends ModulesTestCase {
     /**
      * Test with -protocol HTTP and -infile. Using a JWT authentication
      * and the -acesstoken argument.
-     * 
-     * @throws Exception
      */
+    @Test
     public void test08ValidateDocumentFromFileHTTPJwt() throws Exception {
         try {
             workerSession.setWorkerProperty(WORKERID, "AUTHTYPE",
@@ -308,13 +306,12 @@ public class DocumentValidatorTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID);
         }
     }
-    
+
     /**
      * Test validating with additional metadata.
      * Only tests that the command works.
-     * 
-     * @throws Exception
      */
+    @Test
     public void test09ValidateDocumentWithMetadataParam() throws Exception {
         testValidateDocumentFromFile("HTTP", new String[]{"foo=bar"});
     }
@@ -322,9 +319,8 @@ public class DocumentValidatorTest extends ModulesTestCase {
     /**
      * Test validating with several additional metadata params.
      * Only tests that the command works.
-     * 
-     * @throws Exception
      */
+    @Test
     public void test10ValidateDocumentWithMultipleMetadataParam() throws Exception {
         testValidateDocumentFromFile("HTTP", new String[]{"foo=bar", "foo2=bar2"});
     }
@@ -332,13 +328,13 @@ public class DocumentValidatorTest extends ModulesTestCase {
     /**
      * Test validating over webservices with several additional metadata params.
      * Only tests that the command works.
-     * 
-     * @throws Exception
      */
+    @Test
     public void test11ValidateDocumentWithMultipleMetadataParamsOverWS() throws Exception {
         testValidateDocumentFromFile("WEBSERVICES", new String[]{"foo=bar", "foo2=bar2"});
     }
- 
+
+    @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID);
         removeWorker(17);

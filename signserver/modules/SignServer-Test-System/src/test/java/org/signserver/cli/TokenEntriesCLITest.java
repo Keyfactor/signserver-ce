@@ -22,12 +22,15 @@ import static junit.framework.TestCase.assertEquals;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.SignServerUtil;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.server.cryptotokens.P12CryptoToken;
 import org.signserver.testutils.CLITestHelper;
+
+import static org.junit.Assert.assertTrue;
 import static org.signserver.testutils.CLITestHelper.assertPrinted;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.ejb.interfaces.WorkerSession;
@@ -40,24 +43,22 @@ import org.signserver.ejb.interfaces.GlobalConfigurationSession;
  * @version $Id$
  */
 public class TokenEntriesCLITest extends ModulesTestCase {
-    
+
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(TokenEntriesCLITest.class);
-    
+
     private final CLITestHelper cli = getAdminCLI();
-    
+
     protected final WorkerSession workerSession = getWorkerSession();
     protected final GlobalConfigurationSession globalSession = getGlobalSession();
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
 
     /**
      * Tests that there is an error if the token argument is missing.
-     * @throws Exception 
      */
     @Test
     public void testNoArguments() throws Exception {
@@ -69,7 +70,6 @@ public class TokenEntriesCLITest extends ModulesTestCase {
 
     /**
      * Tests querying one entry.
-     * @throws Exception 
      */
     @Test
     public void testQueryOneKey() throws Exception {
@@ -86,11 +86,11 @@ public class TokenEntriesCLITest extends ModulesTestCase {
             workerSession.reloadConfiguration(tokenId);
             workerSession.activateSigner(new WorkerIdentifier(tokenId), "foo123");
             workerSession.generateSignerKey(new WorkerIdentifier(tokenId), "RSA", "512", testKeyAlias1, "foo123".toCharArray());
-            
+
             assertEquals(CommandLineInterface.RETURN_SUCCESS,
                      cli.execute("querytokenentries", "-token", String.valueOf(tokenId), "-from", "0", "-limit", "1", "-criteria", "alias LIKE %KeyAlias%"));
             assertPrinted("Should contain entries", cli.getOut(), "0: testKeyAlias1");
-            
+
         } finally {
             FileUtils.deleteQuietly(ks);
             removeWorker(tokenId);
@@ -101,7 +101,6 @@ public class TokenEntriesCLITest extends ModulesTestCase {
      * Tests that it is possible to query all entries in a token with 13
      * entries, knowing that the CLI command makes the query in batches of 10
      * entries.
-     * @throws Exception 
      */
     @Test
     public void testQueryMoreThan10Keys() throws Exception {
@@ -120,7 +119,7 @@ public class TokenEntriesCLITest extends ModulesTestCase {
             workerSession.setWorkerProperty(tokenId, "KEYSTOREPASSWORD", "foo123");
             workerSession.reloadConfiguration(tokenId);
             workerSession.activateSigner(new WorkerIdentifier(tokenId), "foo123");
-            
+
             for (String alias : aliases) {
                 workerSession.generateSignerKey(new WorkerIdentifier(tokenId), "RSA", "512", alias, "foo123".toCharArray());
             }
@@ -136,7 +135,7 @@ public class TokenEntriesCLITest extends ModulesTestCase {
             removeWorker(tokenId);
         }
     }
-    
+
     private File createEmptyKeystore() throws Exception {
         SignServerUtil.installBCProvider();
         File result = File.createTempFile("TokenEntriesCLITest", ".p12");

@@ -42,6 +42,13 @@ import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.test.utils.builders.CryptoUtils;
 import org.signserver.testutils.JwtUtils;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 /**
  * Tests for the signdocument command of Client CLI.
  *
@@ -54,11 +61,11 @@ public class DocumentSignerTest extends ModulesTestCase {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(DocumentSignerTest.class);
 
-    /** WORKERID used in this test case as defined in 
+    /** WORKERID used in this test case as defined in
      * junittest-part-config.properties for XMLSigner. */
     private static final int WORKERID = 5676;
 
-    /** WORKERID used in this test case as defined in 
+    /** WORKERID used in this test case as defined in
      * junittest-part-config.properties for PDFSigner. */
     private static final int WORKERID2 = 5675;
 
@@ -72,14 +79,13 @@ public class DocumentSignerTest extends ModulesTestCase {
     // issuer and subject for JWT auth test
     private static final String TEST_ISSUER1 = "issuer1";
     private static final String TEST_SUBJECT1 = "subject1";
-    
+
     private final WorkerSession workerSession = getWorkerSession();
 
     // key pair used to generate test JWT token
     private static KeyPair keyPair;
-    
+
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
         TestingSecurityManager.install();
@@ -89,20 +95,19 @@ public class DocumentSignerTest extends ModulesTestCase {
     }
 
     @After
-    @Override
     public void tearDown() throws Exception {
         TestingSecurityManager.remove();
-    }	
-	
+    }
+
     @Test
     public void test00SetupDatabase() throws Exception {
         LOG.info("test00SetupDatabase");
         // Worker 1
         addDummySigner(WORKERID, "TestXMLSigner", true);
-        
+
         // Worker 2
         addPDFSigner(WORKERID2, "TestPDFSigner", true);
-        
+
         // Worker 3 (dummy signer echoing request metadata)
         addSigner("org.signserver.server.signers.EchoRequestMetadataSigner", WORKERID3, "EchoRequestMetadataSigner", true);
     }
@@ -115,11 +120,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail("Should have thrown exception about missing arguments");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
-    
+
     /**
      * Test that setting both -host and -hosts is not allowed.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test01hostAndHostsNotAllowed() throws Exception {
@@ -130,11 +133,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail("Should have thrown exception about illegal combination of arguments");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
-    
+
     /**
      * Test that setting -hosts options is not allowed for -protocol CLIENTWS.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test01hostsWithProtocolClientWSNotAllowed() throws Exception {
@@ -148,8 +149,6 @@ public class DocumentSignerTest extends ModulesTestCase {
 
     /**
      * Test that setting -hosts options is not allowed for -protocol WEBSERVICES.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test01hostsWithProtocolWebservicesNotAllowed() throws Exception {
@@ -160,12 +159,10 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail("Should have thrown exception about illegal combination of arguments");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
-    
+
     /**
      * Test that setting -timeout options is not allowed for -protocol
      * WEBSERVICES.
-     *
-     * @throws Exception
      */
     @Test
     public void test01timeoutsWithProtocolWebservicesNotAllowed() throws Exception {
@@ -181,8 +178,6 @@ public class DocumentSignerTest extends ModulesTestCase {
     /**
      * Test that setting -timeout options is not allowed for -protocol
      * CLIENTWS.
-     *
-     * @throws Exception
      */
     @Test
     public void test01timeoutsWithProtocolClientWSNotAllowed() throws Exception {
@@ -194,12 +189,10 @@ public class DocumentSignerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException expected) {
         } // NOPMD
     }
-    
+
     /**
      * Test that setting -loadbalancing options is not allowed for -protocol
      * CLIENTWS.
-     *
-     * @throws Exception
      */
     @Test
     public void test01loadbalancingWithProtocolClientWSNotAllowed() throws Exception {
@@ -211,12 +204,10 @@ public class DocumentSignerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException expected) {
         } // NOPMD
     }
-    
+
     /**
      * Test that setting -loadbalancing options is not allowed for -protocol
      * WEBSERVICES.
-     *
-     * @throws Exception
      */
     @Test
     public void test01loadbalancingWithProtocolWebservicesNotAllowed() throws Exception {
@@ -228,11 +219,9 @@ public class DocumentSignerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException expected) {
         } // NOPMD
     }
-    
+
     /**
      * Test that setting -hosts option with no argument is not allowed.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test01hostsNoArg() throws Exception {
@@ -242,11 +231,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail("Should have thrown exception about no argument");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
-    
+
     /**
      * Test that setting -hosts option with empty argument is not allowed.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test01hostsEmpty() throws Exception {
@@ -256,11 +243,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail("Should have thrown exception about no argument");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
-    
+
     /**
      * Test that setting -hosts option with empty argument is not allowed.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test01hostEmpty() throws Exception {
@@ -270,11 +255,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail("Should have thrown exception about empty argument");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
-    
+
     /**
      * Test that setting -loadbalancing option with empty argument is not allowed.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test01loadbalancingEmptyNotAllowed() throws Exception {
@@ -284,11 +267,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail("Should have thrown exception about empty argument");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
-    
+
     /**
      * Tests that it is not allowed to specify both -infile and -outdir.
-     *
-     * @throws Exception
      */
     @Test
     public void test25Both_infile_And_outdir_NotAllowed() throws Exception {
@@ -299,11 +280,9 @@ public class DocumentSignerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException expected) {
         } // NOPMD
     }
-    
+
     /**
      * Test that illegal -loadbalancing value is not allowed.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test01IllegalLoadbalancingNotAllowed() throws Exception {
@@ -314,11 +293,9 @@ public class DocumentSignerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException expected) {
         } // NOPMD
     }
-    
+
     /**
      * Test that illegal timeout (non-numeric) value is not allowed.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test01IllegalTimeOutNotAllowed() throws Exception {
@@ -329,11 +306,9 @@ public class DocumentSignerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException expected) {
         } // NOPMD
     }
-    
+
     /**
      * Test that negative timeout value is not allowed.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test01NegativeTimeOutNotAllowed() throws Exception {
@@ -345,13 +320,12 @@ public class DocumentSignerTest extends ModulesTestCase {
         } catch (IllegalCommandArgumentsException expected) {
         } // NOPMD
     }
-    
+
     /**
      * Tests the sample use case a from the documentation.
      * <pre>
      * a) signdocument -workername XMLSigner -data "&lt;root/&gt;"
      * </pre>
-     * @throws Exception
      */
     @Test
     public void test02signDocumentFromParameter() throws Exception {
@@ -372,7 +346,6 @@ public class DocumentSignerTest extends ModulesTestCase {
      * <pre>
      * b) signdocument -workername XMLSigner -infile /tmp/document.xml
      * </pre>
-     * @throws Exception
      */
     @Test
     public void test02signDocumentFromFile() throws Exception {
@@ -385,7 +358,7 @@ public class DocumentSignerTest extends ModulesTestCase {
             }
 
             String res =
-                    new String(execute("signdocument", "-workername", 
+                    new String(execute("signdocument", "-workername",
                     "TestXMLSigner", "-infile", doc.getAbsolutePath()));
             assertTrue("contains signature tag: "
                     + res, res.contains("<tag><Signature"));
@@ -399,8 +372,6 @@ public class DocumentSignerTest extends ModulesTestCase {
 
     /**
      * Test with JWT authentication using the -accesstoken option.
-     *
-     * @throws Exception 
      */
     @Test
     public void test02signDocumentFromFileJwtAuth() throws Exception {
@@ -434,9 +405,9 @@ public class DocumentSignerTest extends ModulesTestCase {
                                            SignatureAlgorithm.RS256, TEST_ISSUER1,
                                            System.currentTimeMillis(),
                                            TEST_SUBJECT1, claims);
-            
+
             String res =
-                    new String(execute("signdocument", "-workername", 
+                    new String(execute("signdocument", "-workername",
                     "TestXMLSigner", "-infile", doc.getAbsolutePath(),
                     "-accesstoken", token));
             assertTrue("contains signature tag: "
@@ -455,12 +426,10 @@ public class DocumentSignerTest extends ModulesTestCase {
             workerSession.reloadConfiguration(WORKERID);
         }
     }
-    
+
     /**
      * Test signing a file with multiple hosts set with -hosts with the first
      * host failing.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test02signDocumentFromFileWithFallbackHost() throws Exception {
@@ -485,12 +454,10 @@ public class DocumentSignerTest extends ModulesTestCase {
             FileUtils.deleteQuietly(doc);
         }
     }
-    
+
     /**
      * Test signing a file with multiple hosts set with -hosts with the first
      * host succeeding.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test02signDocumentFromFileFallingHostFirstSuccess() throws Exception {
@@ -519,11 +486,10 @@ public class DocumentSignerTest extends ModulesTestCase {
     /**
      * Tests signing from a file and output the results to a file.
      * <pre>
-     * signdocument -workername XMLSigner 
-     *     -infile /tmp/document.xml 
+     * signdocument -workername XMLSigner
+     *     -infile /tmp/document.xml
      *     -outfile /tmp/document-signed.xml
      * </pre>
-     * @throws Exception
      */
     @Test
     public void test02signDocumentFromFileToFile() throws Exception {
@@ -536,18 +502,18 @@ public class DocumentSignerTest extends ModulesTestCase {
             outFile = new File(inFile.getParentFile(), inFile.getName() + "-signed");
 
             String res =
-                    new String(execute("signdocument", 
-                            "-workername", "TestXMLSigner", 
+                    new String(execute("signdocument",
+                            "-workername", "TestXMLSigner",
                             "-infile", inFile.getAbsolutePath(),
                             "-outfile", outFile.getAbsolutePath()));
             assertFalse("not containing signature tag: "
                     + res, res.contains("<tag><Signature"));
-            
+
             String file1Content = FileUtils.readFileToString(outFile);
-            
+
             assertTrue("contains signature tag: "
                     + file1Content, file1Content.contains("<tag><Signature"));
-            
+
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
@@ -560,14 +526,13 @@ public class DocumentSignerTest extends ModulesTestCase {
     /**
      * Test for the "-pdfpassword" argument.
      * signdocument -workername TestPDFSigner -infile $SIGNSERVER_HOME/res/test/pdf/sample-open123.pdf
-     * @throws Exception
      */
     @Test
     public void test03signPDFwithPasswordOverHTTP() throws Exception {
         LOG.info("test03signPDFwithPasswordOverHTTP");
         try {
 
-            byte[] res = execute("signdocument", "-workername", 
+            byte[] res = execute("signdocument", "-workername",
                     "TestPDFSigner", "-infile", signserverhome + "/res/test/pdf/sample-open123.pdf",
                     "-pdfpassword", "open123");
             assertNotNull("No result", res);
@@ -577,18 +542,17 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
-    
+
     /**
      * Test for the "-pdfpassword" argument.
      * signdocument -workername TestPDFSigner -infile $SIGNSERVER_HOME/res/test/pdf/sample-open123.pdf -protocol WEBSERVICES
-     * @throws Exception
      */
     @Test
     public void test04signPDFwithPasswordOverWebservices() throws Exception {
         LOG.info("test04signPDFwithPasswordOverWebservices");
         try {
-            
-            byte[] res = execute("signdocument", "-workername", 
+
+            byte[] res = execute("signdocument", "-workername",
                     "TestPDFSigner", "-infile", signserverhome + "/res/test/pdf/sample-open123.pdf",
                     "-pdfpassword", "open123", "-protocol", "WEBSERVICES",
                     "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit",
@@ -600,18 +564,17 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
-    
+
     /**
      * Test for the "-pdfpassword" argument.
      * signdocument -workername TestPDFSigner -infile $SIGNSERVER_HOME/res/test/pdf/sample-open123.pdf -protocol CLIENTWS
-     * @throws Exception
      */
     @Test
     public void test04signPDFwithPasswordOverClientWS() throws Exception {
         LOG.info("test04signPDFwithPasswordOverClientWS");
         try {
-            
-            byte[] res = execute("signdocument", "-workername", 
+
+            byte[] res = execute("signdocument", "-workername",
                     "TestPDFSigner", "-infile", signserverhome + "/res/test/pdf/sample-open123.pdf",
                     "-pdfpassword", "open123", "-protocol", "CLIENTWS",
                     "-truststore", signserverhome + "/p12/truststore.jks", "-truststorepwd", "changeit",
@@ -626,7 +589,6 @@ public class DocumentSignerTest extends ModulesTestCase {
 
     /**
      * Test signing over webservices with the -servlet argument set as SignServerWSService/SignServerWS
-     * @throws Exception
      */
     @Test
     public void test05signPDFOverWebservicesServletArg() throws Exception {
@@ -644,10 +606,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
-    
+
     /**
      * Test signing over webservices with the -servlet argument set as ClientWSService/ClientWS
-     * @throws Exception
      */
     @Test
     public void test05signPDFOverClientWSServletArg() throws Exception {
@@ -665,10 +626,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
-    
+
     /**
      * Test signing over webservices with the -servlet argument set as signserverws/signserverws
-     * @throws Exception
      */
     @Test
     public void test06signPDFOverWebservicesServletArg2() throws Exception {
@@ -686,10 +646,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
-    
+
     /**
      * Test signing over webservices with the -servlet argument set as an invalid WS servlet URL
-     * @throws Exception
      */
     @Test
     public void test07signPDFOverWebservicesServletArgInvalid() throws Exception {
@@ -708,10 +667,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             // this is expected for the invalid URL
         }
     }
-    
+
     /**
      * Test signing over webservices with the -servlet argument set as an invalid WS servlet URL
-     * @throws Exception
      */
     @Test
     public void test07signPDFOverClientWSServletArgInvalid() throws Exception {
@@ -733,8 +691,6 @@ public class DocumentSignerTest extends ModulesTestCase {
 
     /**
      * Test signing a document supplying an additional metadata parameter.
-     * 
-     * @throws Exception
      */
     @Test
     public void test08signDocumentWithMetadata() throws Exception {
@@ -750,11 +706,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
-    
+
     /**
      * Test signing a document supplying additional metadata parameters (more than one occurance).
-     * 
-     * @throws Exception
      */
     @Test
     public void test09signDocumentWithMetadataMultipleParams() throws Exception {
@@ -772,11 +726,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
-    
+
     /**
      * Test signing a document using webservices supplying additional metadata.
-     * 
-     * @throws Exception
      */
     @Test
     public void test10signDocumentWithMetadataWebservices() throws Exception {
@@ -796,11 +748,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
-    
+
     /**
      * Test signing a document using client-authenticated webservices supplying additional metadata.
-     * 
-     * @throws Exception
      */
     @Test
     public void test11signDocumentWithMetadataClientWS() throws Exception {
@@ -820,11 +770,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
-    
+
     /**
      * Test that passing a malformed metadata argument is rejected.
-     * 
-     * @throws Exception
      */
     @Test
     public void test12signDocumentInvalidMetadata() throws Exception {
@@ -839,11 +787,10 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail("Unexpected exception: " + e.getClass().getName() + ": " + e.getMessage());
         }
     }
-    
+
     /**
      * Tests that when not specifying any truststore password on the command
      * line the code for prompting for the password is called once.
-     * @throws Exception 
      */
     @Test
     public void test13promptForTruststorePassword() throws Exception {
@@ -862,7 +809,7 @@ public class DocumentSignerTest extends ModulesTestCase {
                 };
             }
         };
-        
+
         // Sign anything and check that the readPassword was called once
         try {
             String res =
@@ -876,11 +823,10 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
-    
+
     /**
      * Tests that when providing a username but not a password the code for
      * prompting for password is called once.
-     * @throws Exception 
      */
     @Test
     public void test13promptForUserPassword() throws Exception {
@@ -899,7 +845,7 @@ public class DocumentSignerTest extends ModulesTestCase {
                 };
             }
         };
-        
+
         // Sign anything and check that the readPassword was called once
         try {
             String res =
@@ -913,11 +859,10 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
-    
+
     /**
      * Tests that when not specifying any keystore password on the command
      * line the code for prompting for the password is called once.
-     * @throws Exception 
      */
     @Test
     public void test13promptForKeystorePassword() throws Exception {
@@ -936,7 +881,7 @@ public class DocumentSignerTest extends ModulesTestCase {
                 };
             }
         };
-        
+
         // The test might not have been setup to work with client cert auth
         // so we will not be checking that signing works, just that the prompt
         // gets called.
@@ -947,12 +892,11 @@ public class DocumentSignerTest extends ModulesTestCase {
         } catch (CommandFailureException ignored) {} // NOPMD
         assertEquals("calls to readPassword", 1, called.size());
     }
-    
+
     /**
      * Tests that when not specifying any keystore password on the command
      * line the code for prompting for the password is called and if the wrong
      * password is typed the question is asked again.
-     * @throws Exception 
      */
     @Test
     public void test13promptForKeystorePasswordAgain() throws Exception {
@@ -973,7 +917,7 @@ public class DocumentSignerTest extends ModulesTestCase {
                 };
             }
         };
-        
+
         // The test might not have been setup to work with client cert auth
         // so we will not be checking that signing works, just that the prompt
         // gets called.
@@ -985,12 +929,11 @@ public class DocumentSignerTest extends ModulesTestCase {
 
         assertEquals("calls to readPassword", 2, calls.size());
     }
-    
+
     /**
      * Tests that when not specifying any keystore password on the command
      * line the code for prompting for the password is called and if the wrong
      * password is typed the question is asked again.
-     * @throws Exception 
      */
     @Test
     public void test13promptForKeystorePassword3Times() throws Exception {
@@ -1011,7 +954,7 @@ public class DocumentSignerTest extends ModulesTestCase {
                 };
             }
         };
-        
+
         // The test might not have been setup to work with client cert auth
         // so we will not be checking that signing works, just that the prompt
         // gets called.
@@ -1024,11 +967,10 @@ public class DocumentSignerTest extends ModulesTestCase {
             assertEquals("calls to readPassword", 3, calls.size());
         }
     }
-    
+
     /**
      * Tests that when not specifying any of user and truststore password they
      * are both prompted for.
-     * @throws Exception 
      */
     @Test
     public void test13promptForUserAndTruststore() throws Exception {
@@ -1047,7 +989,7 @@ public class DocumentSignerTest extends ModulesTestCase {
                 };
             }
         };
-        
+
         // Sign anything and check that the readPassword was called twice
         try {
             String res =
@@ -1062,7 +1004,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         }
         assertEquals("calls to readPassword", 2, called.size());
     }
-    
+
     @Test
     public void test20handleError() throws Exception {
         LOG.info("test20handleError");
@@ -1073,11 +1015,11 @@ public class DocumentSignerTest extends ModulesTestCase {
                 out.write("<tag/>".getBytes());
             }
 
-            execute("signdocument", "-workername", 
+            execute("signdocument", "-workername",
                     "TestXMLSignerNotExisting_", "-infile", doc.getAbsolutePath());
             fail("Should have thrown exception because of the missing worker");
         } catch (CommandFailureException expected) { // NOPMD
-            
+
         } catch (IllegalCommandArgumentsException ex) {
             LOG.error("Execution failed", ex);
             fail(ex.getMessage());
@@ -1085,11 +1027,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             FileUtils.deleteQuietly(doc);
         }
     }
-    
+
     /**
      * Test that using -clientside with -data is not allowed.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test21clientSideWithData() throws Exception {
@@ -1100,11 +1040,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail("Should have thrown exception about missing arguments");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
-    
+
     /**
      * Test that using -clientside without -digestalgorithm is not allowed.
-     * 
-     * @throws Exception 
      */
     @Test
     public void test22clientSideNoDigestalgo() throws Exception {
@@ -1115,10 +1053,9 @@ public class DocumentSignerTest extends ModulesTestCase {
             fail("Should have thrown exception about missing arguments");
         } catch (IllegalCommandArgumentsException expected) {} // NOPMD
     }
-    
+
     /**
      * Tests that output file is removed but input file is not touched when command is specified with 'infile' flag and fails.
-     * @throws Exception
      */
     @Test
     public void test23cleanUpWhenFailure() throws Exception {
@@ -1148,12 +1085,10 @@ public class DocumentSignerTest extends ModulesTestCase {
             FileUtils.deleteQuietly(renamedFile);
         }
     }
-    
+
     /**
-     * Test that command failure occurs within 15 seconds if connection is not established with specified host 
+     * Test that command failure occurs within 15 seconds if connection is not established with specified host
      * within time specified by timeout flag (10 seconds).
-     * 
-     * @throws Exception 
      */
     @Test
     public void test24TimeOut_10Seconds() throws Exception {
@@ -1162,7 +1097,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         String timeoutString = "10000"; //milliseconds
         long timeout = Long.parseLong(timeoutString);
         long timediffBetweenProcessingAndTimeout;
-        long assumedTimeDiffBetweenProcessingAndTimeout = 5000; // Let's assume that there would not be more than 5 seconds of time difference between timeout and processing time 
+        long assumedTimeDiffBetweenProcessingAndTimeout = 5000; // Let's assume that there would not be more than 5 seconds of time difference between timeout and processing time
         try {
             startTime = System.currentTimeMillis();
             execute("signdocument", "-workername", "TestXMLSigner", "-hosts", "primekey.com", "-timeout", timeoutString, "-data", "<root/>");
@@ -1174,13 +1109,11 @@ public class DocumentSignerTest extends ModulesTestCase {
             assertTrue("processing time should be less than timeout limit, diff (ms): " + timediffBetweenProcessingAndTimeout, timediffBetweenProcessingAndTimeout < assumedTimeDiffBetweenProcessingAndTimeout);
         } // NOPMD
     }
-    
+
     /**
-     * Test that command failure occurs within 25 seconds if connection is not established with specified host 
+     * Test that command failure occurs within 25 seconds if connection is not established with specified host
      * within time specified by timeout flag (20 seconds).
-     * 
-     * @throws Exception 
-     */    
+     */
     @Test
     public void test24TimeOut_20Seconds() throws Exception {
         LOG.info("test24TimeOut_20Seconds");
@@ -1188,7 +1121,7 @@ public class DocumentSignerTest extends ModulesTestCase {
         String timeoutString = "20000"; //milliseconds
         long timeout = Long.parseLong(timeoutString);
         long timediffBetweenProcessingAndTimeout;
-        long assumedTimeDiffBetweenProcessingAndTimeout = 5000; // Let's assume that there would not be more than 5 seconds of time difference between timeout and processing time 
+        long assumedTimeDiffBetweenProcessingAndTimeout = 5000; // Let's assume that there would not be more than 5 seconds of time difference between timeout and processing time
         try {
             startTime = System.currentTimeMillis();
             execute("signdocument", "-workername", "TestXMLSigner", "-hosts", "primekey.com", "-timeout", timeoutString, "-data", "<root/>");
@@ -1199,8 +1132,8 @@ public class DocumentSignerTest extends ModulesTestCase {
             timediffBetweenProcessingAndTimeout = processingTime - timeout;
             assertTrue("processing time should be less than timeout limit, diff (ms): " + timediffBetweenProcessingAndTimeout, timediffBetweenProcessingAndTimeout < assumedTimeDiffBetweenProcessingAndTimeout);
         } // NOPMD
-    }   
-        
+    }
+
     @Test
     public void test99TearDownDatabase() throws Exception {
         LOG.info("test99TearDownDatabase");
@@ -1213,20 +1146,20 @@ public class DocumentSignerTest extends ModulesTestCase {
     private byte[] execute(String... args) throws IOException, IllegalCommandArgumentsException, CommandFailureException {
         return execute(new SignDocumentCommand(), args);
     }
-    
+
     private byte[] execute(SignDocumentCommand instance, String... args) throws IOException, IllegalCommandArgumentsException, CommandFailureException {
         byte[] result;
         final PrintStream origOut = System.out;
         final PrintStream origErr = System.err;
-        
+
         final ByteArrayOutputStream bStdOut = new ByteArrayOutputStream();
         final PrintStream stdOut = new PrintStream(bStdOut);
         System.setOut(stdOut);
-        
+
         final ByteArrayOutputStream bErrOut = new ByteArrayOutputStream();
         final PrintStream errOut = new PrintStream(bErrOut);
         System.setErr(errOut);
-        
+
         instance.init(new CommandContext("group1", "signdocument", new CommandFactoryContext(new Properties(), stdOut, errOut)));
         try {
             instance.execute(args);
@@ -1235,7 +1168,7 @@ public class DocumentSignerTest extends ModulesTestCase {
             System.setOut(origOut);
             System.setErr(origErr);
             System.out.write(result);
-            
+
             byte[] error = bErrOut.toByteArray();
             System.err.write(error);
         }

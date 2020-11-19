@@ -19,37 +19,53 @@ import java.security.cert.Certificate;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.log4j.Logger;
 import org.cesecore.util.CertTools;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.signserver.common.*;
+import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.GenericValidationRequest;
+import org.signserver.common.GenericValidationResponse;
+import org.signserver.common.IllegalRequestException;
+import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.common.RemoteRequestContext;
+import org.signserver.common.SignServerException;
+import org.signserver.common.SignServerUtil;
+import org.signserver.common.WorkerConfig;
+import org.signserver.common.WorkerIdentifier;
+import org.signserver.common.WorkerStatus;
+import org.signserver.ejb.interfaces.ProcessSessionRemote;
+import org.signserver.ejb.interfaces.WorkerSession;
 import org.signserver.testutils.ModulesTestCase;
 import org.signserver.validationservice.common.Validation;
 import org.signserver.validationservice.common.Validation.Status;
 import org.w3c.dom.Document;
-import org.junit.Before;
-import org.junit.Test;
-import org.signserver.ejb.interfaces.ProcessSessionRemote;
-import org.signserver.ejb.interfaces.WorkerSession;
-import org.signserver.ejb.interfaces.GlobalConfigurationSession;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * TODO: Document me!
- * 
+ *
  * @version $Id$
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class XMLValidatorTest extends ModulesTestCase {
 
-    private static Logger log = Logger.getLogger(XMLValidatorTest.class);
-	
+    private static final Logger log = Logger.getLogger(XMLValidatorTest.class);
+
     /**
      * WORKERID used in this test case as defined in
      * junittest-part-config.properties
      */
     private static final WorkerIdentifier WORKERID = new WorkerIdentifier(5677);
-	
+
     private static final String VALIDATION_WORKER = "TestValidationWorker";
     private static final String SIGNER2_ISSUERDN = "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE";
     private static final String SIGNER2_SUBJECTDN = "CN=Signer 2,OU=Testing,O=SignServer,C=SE";
@@ -58,10 +74,8 @@ public class XMLValidatorTest extends ModulesTestCase {
 
     private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
-    private final GlobalConfigurationSession globalSession = getGlobalSession();
-    
+
     @Before
-    @Override
     public void setUp() throws Exception {
         SignServerUtil.installBCProvider();
     }
@@ -105,19 +119,18 @@ public class XMLValidatorTest extends ModulesTestCase {
             fail(ex.getMessage());
         }
     }
-    
+
     /**
      * Test validating with a correct signature and certificate.
-     * 
+     *
      * @param reqid Request ID to use
      * @param wi Worker ID
      * @param xml Document to validate
      * @param expectedSubjectDN Expected subject DN
      * @param expectedIssuerDN Expected issuer DN
-     * @throws Exception
      */
     private void testSigOkCertOk(final int reqid, final WorkerIdentifier wi, final String xml,
-            final String expectedSubjectDN, final String expectedIssuerDN) throws Exception {
+            final String expectedSubjectDN, final String expectedIssuerDN) {
         // OK signature, OK cert
 
         byte[] data = xml.getBytes();
@@ -129,7 +142,7 @@ public class XMLValidatorTest extends ModulesTestCase {
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
             GenericValidationResponse res = (GenericValidationResponse) processSession.process(wi, signRequest, new RemoteRequestContext());
 
-            assertTrue("answer to right question", reqid == res.getRequestID());
+            assertEquals("answer to right question", reqid, res.getRequestID());
 
             assertTrue("valid document", res.isValid());
 
@@ -155,7 +168,7 @@ public class XMLValidatorTest extends ModulesTestCase {
     }
 
     @Test
-    public void test02SigOkCertOk() throws Exception {
+    public void test02SigOkCertOk() {
         testSigOkCertOk(13, WORKERID, XMLValidatorTestData.TESTXML1, SIGNER2_SUBJECTDN, SIGNER2_ISSUERDN);
     }
 
@@ -176,7 +189,7 @@ public class XMLValidatorTest extends ModulesTestCase {
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
             GenericValidationResponse res = (GenericValidationResponse) processSession.process(WORKERID, signRequest, new RemoteRequestContext());
 
-            assertTrue("answer to right question", reqid == res.getRequestID());
+            assertEquals("answer to right question", reqid, res.getRequestID());
 
             assertFalse("invalid document", res.isValid());
 
@@ -200,7 +213,7 @@ public class XMLValidatorTest extends ModulesTestCase {
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
             GenericValidationResponse res = (GenericValidationResponse) processSession.process(WORKERID, signRequest, new RemoteRequestContext());
 
-            assertTrue("answer to right question", reqid == res.getRequestID());
+            assertEquals("answer to right question", reqid, res.getRequestID());
 
             assertFalse("invalid document", res.isValid());
             assertEquals("no ca chain", 0, res.getCAChain().size());
@@ -220,7 +233,7 @@ public class XMLValidatorTest extends ModulesTestCase {
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
             GenericValidationResponse res = (GenericValidationResponse) processSession.process(WORKERID, signRequest, new RemoteRequestContext());
 
-            assertTrue("answer to right question", reqid == res.getRequestID());
+            assertEquals("answer to right question", reqid, res.getRequestID());
 
             // Check certificate
             // Certificate signercert = res.getSignerCertificate();
@@ -244,7 +257,7 @@ public class XMLValidatorTest extends ModulesTestCase {
             GenericValidationResponse res = (GenericValidationResponse) processSession.process(
                     WORKERID, signRequest, new RemoteRequestContext());
 
-            assertTrue("answer to right question", reqid == res.getRequestID());
+            assertEquals("answer to right question", reqid, res.getRequestID());
 
             // Check certificate
             // Certificate signercert = res.getSignerCertificate();
@@ -268,7 +281,7 @@ public class XMLValidatorTest extends ModulesTestCase {
             GenericValidationResponse res = (GenericValidationResponse) processSession.process(
                     WORKERID, signRequest, new RemoteRequestContext());
 
-            assertTrue("answer to right question", reqid == res.getRequestID());
+            assertEquals("answer to right question", reqid, res.getRequestID());
 
             // Check certificate
             // Certificate signercert = res.getSignerCertificate();
@@ -292,7 +305,7 @@ public class XMLValidatorTest extends ModulesTestCase {
             GenericValidationResponse res = (GenericValidationResponse) processSession.process(
                     WORKERID, signRequest, new RemoteRequestContext());
 
-            assertTrue("answer to right question", reqid == res.getRequestID());
+            assertEquals("answer to right question", reqid, res.getRequestID());
 
             assertTrue("valid document", res.isValid());
 
@@ -321,7 +334,7 @@ public class XMLValidatorTest extends ModulesTestCase {
             GenericValidationResponse res = (GenericValidationResponse) processSession.process(
                     WORKERID, signRequest, new RemoteRequestContext());
 
-            assertTrue("answer to right question", reqid == res.getRequestID());
+            assertEquals("answer to right question", reqid, res.getRequestID());
 
             assertTrue("valid document", res.isValid());
 
@@ -356,7 +369,7 @@ public class XMLValidatorTest extends ModulesTestCase {
             GenericValidationRequest signRequest = new GenericValidationRequest(reqid, data);
             GenericValidationResponse res = (GenericValidationResponse) processSession.process(WORKERID, signRequest, new RemoteRequestContext());
 
-            assertTrue("answer to right question", reqid == res.getRequestID());
+            assertEquals("answer to right question", reqid, res.getRequestID());
 
             assertFalse("invalid document", res.isValid());
 
@@ -368,54 +381,54 @@ public class XMLValidatorTest extends ModulesTestCase {
             Certificate cert = res.getSignerCertificate();
             assertNotNull(cert);
         }
-        
-        // reset revokation
+
+        // reset revocation
         workerSession.removeWorkerProperty(17, "VAL1.REVOKED");
         workerSession.reloadConfiguration(17);
     }
-    
+
     // tests using SHA-2 RSA variants for the signature algorithm.
 
     @Test
-    public void test12SigOkCertOkDSA() throws Exception {
+    public void test12SigOkCertOkDSA() {
         testSigOkCertOk(23, WORKERID, XMLValidatorTestData.TESTXML1_DSA, "CN=xmlsigner4", "CN=DemoRootCA2,OU=EJBCA,O=SignServer Sample,C=SE");
     }
 
     @Test
-    public void test13SigOkCertOkSHA256withRSA() throws Exception {
+    public void test13SigOkCertOkSHA256withRSA() {
         testSigOkCertOk(24, WORKERID, XMLValidatorTestData.TESTXML_SHA256withRSA, SIGNER2_SUBJECTDN, SIGNER2_ISSUERDN);
     }
-    
+
     @Test
-    public void test14SigOkCertOkSHA384withRSA() throws Exception {
+    public void test14SigOkCertOkSHA384withRSA() {
         testSigOkCertOk(25, WORKERID, XMLValidatorTestData.TESTXML_SHA384withRSA, SIGNER2_SUBJECTDN, SIGNER2_ISSUERDN);
     }
-    
+
     @Test
-    public void test15SigOkCertOkSHA512withRSA() throws Exception {
+    public void test15SigOkCertOkSHA512withRSA() {
         testSigOkCertOk(26, WORKERID, XMLValidatorTestData.TESTXML_SHA512withRSA, SIGNER2_SUBJECTDN, SIGNER2_ISSUERDN);
     }
-    
+
     @Test
-    public void test16SigOkCertOkSHA1withECDSA() throws Exception {
+    public void test16SigOkCertOkSHA1withECDSA() {
         testSigOkCertOk(27, WORKERID, XMLValidatorTestData.TESTXML_SHA1withECDSA, SIGNEREC_SUBJECTDN, SIGNEREC_ISSUERDN);
     }
-    
+
     @Test
-    public void test17SigOkCertOkSHA256withECDSA() throws Exception {
+    public void test17SigOkCertOkSHA256withECDSA() {
         testSigOkCertOk(28, WORKERID, XMLValidatorTestData.TESTXML_SHA256withECDSA, SIGNEREC_SUBJECTDN, SIGNEREC_ISSUERDN);
     }
-    
+
     @Test
-    public void test18SigOkCertOkSHA384withECDSA() throws Exception {
+    public void test18SigOkCertOkSHA384withECDSA() {
         testSigOkCertOk(29, WORKERID, XMLValidatorTestData.TESTXML_SHA384withECDSA, SIGNEREC_SUBJECTDN, SIGNEREC_ISSUERDN);
     }
-    
+
     @Test
-    public void test19SigOkCertOkSHA512withECDSA() throws Exception {
+    public void test19SigOkCertOkSHA512withECDSA() {
         testSigOkCertOk(30, WORKERID, XMLValidatorTestData.TESTXML_SHA512withECDSA, SIGNEREC_SUBJECTDN, SIGNEREC_ISSUERDN);
     }
-    
+
     @Test
     public void test99TearDownDatabase() throws Exception {
         removeWorker(WORKERID.getId());

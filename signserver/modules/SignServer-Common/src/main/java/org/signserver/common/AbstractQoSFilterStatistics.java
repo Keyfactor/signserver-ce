@@ -53,7 +53,7 @@ public abstract class AbstractQoSFilterStatistics {
      * Get the maximum number of requests handled concurrently by filter
      * before placing request in priority queues.
      *
-     * @return maxium number of requests
+     * @return maximum number of requests
      */
     public abstract int getMaxRequests();
 

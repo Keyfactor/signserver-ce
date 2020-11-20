@@ -52,9 +52,10 @@ public class QoSStatusWorker extends BaseProcessable {
     private static final String RESPONSE_CONTENT_TYPE = "text/plain";
 
     @Override
-    public Response processData(Request signRequest,
-            RequestContext requestContext) throws IllegalRequestException,
-                CryptoTokenOfflineException, SignServerException {
+    public Response processData(final Request signRequest,
+                                final RequestContext requestContext)
+            throws IllegalRequestException, CryptoTokenOfflineException,
+                   SignServerException {
         if (!(signRequest instanceof SignatureRequest)) {
             throw new IllegalRequestException("Unexpected request type");
         }

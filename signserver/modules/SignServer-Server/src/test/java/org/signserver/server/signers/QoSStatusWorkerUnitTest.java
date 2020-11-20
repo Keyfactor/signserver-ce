@@ -139,15 +139,15 @@ public class QoSStatusWorkerUnitTest {
         assertEquals("Lines in the output: " + output, expectedEntries,
                      lines.length);
         assertEquals("Enabled",
-                     "FILTER_ENABLED=" + Boolean.toString(expectedEnabled),
+                     "FILTER_ENABLED=" + expectedEnabled,
                      lines[0]);
 
         if (expectedEnabled) {
             assertEquals("Max requests",
-                         "MAX_REQUESTS=" + Integer.toString(expectedMaxRequests),
+                         "MAX_REQUESTS=" + expectedMaxRequests,
                          lines[1]);
             assertEquals("Max prio", 
-                         "MAX_PRIORITY_LEVEL=" + Integer.toString(expectedMaxPrio),
+                         "MAX_PRIORITY_LEVEL=" + expectedMaxPrio,
                          lines[2]);
 
             for (int i = 0; i <= expectedMaxPrio; i++) {

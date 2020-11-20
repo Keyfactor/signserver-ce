@@ -246,7 +246,6 @@ public class QoSFilter implements Filter
         final Map<Integer, Integer> workerPriorities = new HashMap<>();
         
         for (final String part : property.split(",")) {
-            final String trimmedPart = part.trim();
             final String[] splitPart = part.split(":");
 
             if (splitPart.length != 2) {

@@ -281,7 +281,7 @@ public class QoSFilter implements Filter
      */
     private void createQueuesAndListeners(final int maxPriority) {
         _queues = new ArrayList<>(maxPriority + 1);
-        _listeners = new ArrayList<AsyncListener>(maxPriority + 1);
+        _listeners = new ArrayList<>(maxPriority + 1);
         maxPriorityLevel = maxPriority;
         for (int p = 0; p <= maxPriority; ++p)
         {

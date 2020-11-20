@@ -478,7 +478,6 @@ public class QoSFilter implements Filter
                     catch (IllegalStateException x)
                     {
                         LOG.warn(x);
-                        continue;
                     }
                 }
             }

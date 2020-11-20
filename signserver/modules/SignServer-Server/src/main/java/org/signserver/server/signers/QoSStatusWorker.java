@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
 import org.signserver.common.AbstractQoSFilterStatistics;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
@@ -163,8 +162,7 @@ public class QoSStatusWorker extends BaseProcessable {
                     getFilterStatistics().getMaxPriorityLevel();
 
             sb.append("MAX_REQUESTS=").append(maxRequests).append("\n");
-            sb.append("MAX_PRIORITY_LEVEL=").append(maxPriorityLevel);
-            sb.append("\n");
+            sb.append("MAX_PRIORITY_LEVEL=").append(maxPriorityLevel).append("\n");
 
             for (int i = 0; i <= maxPriorityLevel; i++) {
                 sb.append("QUEUE_SIZE(").append(i).append(")=");

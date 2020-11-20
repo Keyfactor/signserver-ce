@@ -13,7 +13,8 @@
 package org.signserver.common.qos;
 
 /**
- * Statistics collector for the QoS web filter.
+ * Abstract statistics collector implementation for monitoring queue statistics
+ * of QoS priority queues.
  * 
  * @author Marcus Lundblad
  * @version $Id$

@@ -14,8 +14,8 @@ package org.signserver.server.signers;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import junit.framework.TestCase;
 import static junit.framework.TestCase.assertEquals;
+import org.junit.Test;
 import org.signserver.common.AbstractQoSFilterStatistics;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
@@ -33,9 +33,10 @@ import org.signserver.server.data.impl.UploadConfig;
  * @author Marcus Lundblad
  * @version $Id$
  */
-public class QoSStatusWorkerUnitTest extends TestCase {
+public class QoSStatusWorkerUnitTest {
 
-    public void test01Disabled() throws Exception {
+    @Test
+    public void testDisabled() throws Exception {
         final QoSStatusWorker instance = new QoSStatusWorker() {
             @Override
             AbstractQoSFilterStatistics getFilterStatistics() {
@@ -64,7 +65,8 @@ public class QoSStatusWorkerUnitTest extends TestCase {
                            1, 0, 0, null);
     }
 
-    public void test02Enabled() throws Exception {
+    @Test
+    public void testEnabled() throws Exception {
         final int[] queueSizes = new int[]{42, 3, 4, 5, 0, 0};
         final QoSStatusWorker instance = new QoSStatusWorker() {
             @Override
@@ -99,8 +101,7 @@ public class QoSStatusWorkerUnitTest extends TestCase {
                                        final int expectedEntries,
                                        final int expectedMaxRequests,
                                        final int expectedMaxPrio,
-                                       final int[] expectedQueueSizes)
-            throws Exception {
+                                       final int[] expectedQueueSizes) {
         final List<WorkerStatusInfo.Entry> briefEntries = status.getBriefEntries();
 
         assertEquals("Entries", expectedEntries, briefEntries.size());
@@ -131,8 +132,7 @@ public class QoSStatusWorkerUnitTest extends TestCase {
                                     final int expectedEntries,
                                     final int expectedMaxRequests,
                                     final int expectedMaxPrio,
-                                    final int[] expectedQueueSizes)
-            throws Exception {
+                                    final int[] expectedQueueSizes) {
         final String output = new String(data, StandardCharsets.UTF_8);
         final String[] lines = output.split("\n");
 

@@ -12,19 +12,20 @@
  *************************************************************************/
 package org.signserver.web.filters;
 
-import org.signserver.common.AbstractQoSFilterStatistics;
+import org.signserver.common.qos.AbstractStatistics;
 
 /**
- * Statistics collector for the QoSFilter web filter.
+ * Implementation of the abstract QoS statistics collector interfacing
+ * with the instance of the QoS web filter.
  *
  * @author Marcus Lundblad
  * @version $Id$
  */
-public class QoSFilterStatistics extends AbstractQoSFilterStatistics {
+public class QoSStatistics extends AbstractStatistics {
 
     private final QoSFilter filter;
 
-    public QoSFilterStatistics(final QoSFilter filter) {
+    public QoSStatistics(final QoSFilter filter) {
         this.filter = filter;
     }
 

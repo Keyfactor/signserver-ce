@@ -43,7 +43,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.signserver.common.AbstractQoSFilterStatistics;
+import org.signserver.common.qos.AbstractStatistics;
 import static org.signserver.common.GlobalConfiguration.SCOPE_GLOBAL;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
@@ -154,7 +154,7 @@ public class QoSFilter implements Filter
 
         createQueuesAndListeners(getMaxPriorityLevelFromConfig().orElse(__DEFAULT_MAX_PRIORITY));
 
-        AbstractQoSFilterStatistics.setDefaultInstance(new QoSFilterStatistics(this));
+        AbstractStatistics.setDefaultInstance(new QoSStatistics(this));
     }
 
     public int getMaxPriorityLevel() {

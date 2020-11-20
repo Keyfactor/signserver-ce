@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import org.signserver.common.AbstractQoSFilterStatistics;
+import org.signserver.common.qos.AbstractStatistics;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
@@ -174,7 +174,7 @@ public class QoSStatusWorker extends BaseProcessable {
         return sb.toString();
     }
 
-    AbstractQoSFilterStatistics getFilterStatistics() {
-        return AbstractQoSFilterStatistics.getDefaultInstance();
+    AbstractStatistics getFilterStatistics() {
+        return AbstractStatistics.getDefaultInstance();
     }
 }

@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import static junit.framework.TestCase.assertEquals;
 import org.junit.Test;
-import org.signserver.common.AbstractQoSFilterStatistics;
+import org.signserver.common.qos.AbstractStatistics;
 import org.signserver.common.RequestContext;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerStatusInfo;
@@ -39,8 +39,8 @@ public class QoSStatusWorkerUnitTest {
     public void testDisabled() throws Exception {
         final QoSStatusWorker instance = new QoSStatusWorker() {
             @Override
-            AbstractQoSFilterStatistics getFilterStatistics() {
-                return new MockQoSFilterStatistics(false, new int[0], 0);
+            AbstractStatistics getFilterStatistics() {
+                return new MockedStatistics(false, new int[0], 0);
             }  
         };
 
@@ -70,8 +70,8 @@ public class QoSStatusWorkerUnitTest {
         final int[] queueSizes = new int[]{42, 3, 4, 5, 0, 0};
         final QoSStatusWorker instance = new QoSStatusWorker() {
             @Override
-            AbstractQoSFilterStatistics getFilterStatistics() {
-                return new MockQoSFilterStatistics(true, queueSizes, 10);
+            AbstractStatistics getFilterStatistics() {
+                return new MockedStatistics(true, queueSizes, 10);
             }  
         };
 
@@ -158,13 +158,13 @@ public class QoSStatusWorkerUnitTest {
         }
     }
     
-    private static class MockQoSFilterStatistics extends AbstractQoSFilterStatistics {
+    private static class MockedStatistics extends AbstractStatistics {
 
         private final boolean enabled;
         private final int[] queueLengths;
         private final int maxRequests;
 
-        public MockQoSFilterStatistics(final boolean enabled,
+        public MockedStatistics(final boolean enabled,
                                        final int[] queueLengths,
                                        final int maxRequests) {
             this.enabled = enabled;

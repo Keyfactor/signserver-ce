@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.common;
+package org.signserver.common.qos;
 
 /**
  * Statistics collector for the QoS web filter.
@@ -18,9 +18,9 @@ package org.signserver.common;
  * @author Marcus Lundblad
  * @version $Id$
  */
-public abstract class AbstractQoSFilterStatistics {
+public abstract class AbstractStatistics {
 
-    protected static AbstractQoSFilterStatistics instance;
+    protected static AbstractStatistics instance;
 
     /**
      * Gets an instance of a concrete implementation of a
@@ -28,7 +28,7 @@ public abstract class AbstractQoSFilterStatistics {
      *
      * @return concrete instance of AbstractQoSFilterStatistics, if set, otherwise null
      */
-    public static AbstractQoSFilterStatistics getDefaultInstance() {
+    public static AbstractStatistics getDefaultInstance() {
         return instance;
     }
 
@@ -38,8 +38,8 @@ public abstract class AbstractQoSFilterStatistics {
      *
      * @param instance 
      */
-    public static void setDefaultInstance(final AbstractQoSFilterStatistics instance) {
-        AbstractQoSFilterStatistics.instance = instance;
+    public static void setDefaultInstance(final AbstractStatistics instance) {
+        AbstractStatistics.instance = instance;
     }
 
     /**

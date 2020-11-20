@@ -619,7 +619,7 @@ public class QoSFilter implements Filter
      * TODO: later cache the values for some time to avoid doing excessive
      *       EJB lookups.
      *
-     * @param param
+     * @param param global param to get the value for
      * @return global config parameter value
      */
     private String getGlobalParam(final String param) {

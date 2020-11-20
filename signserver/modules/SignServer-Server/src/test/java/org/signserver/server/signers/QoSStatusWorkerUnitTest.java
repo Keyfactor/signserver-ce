@@ -40,7 +40,7 @@ public class QoSStatusWorkerUnitTest {
         final QoSStatusWorker instance = new QoSStatusWorker() {
             @Override
             AbstractQoSFilterStatistics getFilterStatistics() {
-                return new MockQoSFilterStatistics();
+                return new MockQoSFilterStatistics(false, new int[0], 0);
             }  
         };
 
@@ -71,7 +71,7 @@ public class QoSStatusWorkerUnitTest {
         final QoSStatusWorker instance = new QoSStatusWorker() {
             @Override
             AbstractQoSFilterStatistics getFilterStatistics() {
-                return new MockQoSFilterStatistics(queueSizes, 10);
+                return new MockQoSFilterStatistics(true, queueSizes, 10);
             }  
         };
 
@@ -164,17 +164,12 @@ public class QoSStatusWorkerUnitTest {
         private final int[] queueLengths;
         private final int maxRequests;
 
-        public MockQoSFilterStatistics() {
-            queueLengths = null;
-            maxRequests = 10;
-            enabled = false;
-        }
-        
-        public MockQoSFilterStatistics(final int[] queueLengths,
+        public MockQoSFilterStatistics(final boolean enabled,
+                                       final int[] queueLengths,
                                        final int maxRequests) {
+            this.enabled = enabled;
             this.queueLengths = queueLengths;
             this.maxRequests = maxRequests;
-            enabled = true;
         }
         
         @Override

@@ -54,7 +54,7 @@ public enum AuditLogColumn implements QueryColumn {
     private final String description;
     private final Type type;
     
-    private AuditLogColumn(final String name, final String description,
+    AuditLogColumn(final String name, final String description,
             final Type type) {
         this.name = name;
         this.description = description;

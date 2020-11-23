@@ -47,8 +47,9 @@ public enum AuditLogColumn implements QueryColumn {
     SEARCHABLE_DETAIL2(AuditRecordData.FIELD_SEARCHABLE_DETAIL2, "Worker ID", Type.TEXT),
     SERVICE(AuditRecordData.FIELD_SERVICE, "Service", Type.TEXT),
     SEQUENCENUMBER(AuditRecordData.FIELD_SEQUENCENUMBER, "Sequence Number", Type.NUMBER),
-    TIMESTAMP(AuditRecordData.FIELD_TIMESTAMP, "Time", Type.TIME);
-    
+    TIMESTAMP(AuditRecordData.FIELD_TIMESTAMP, "Time", Type.TIME),
+    MODULE(AuditRecordData.FIELD_MODULE, "Module",Type.TEXT);
+
     private final String name;
     private final String description;
     private final Type type;

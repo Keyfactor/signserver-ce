@@ -35,21 +35,43 @@ import org.signserver.server.data.impl.UploadConfig;
  */
 public class QoSStatusWorkerUnitTest {
 
+    private static final int WORKER_ID = 42;
+    private static final int REQUEST_ID = 43;
+    private static final String TRANSACTION_ID = "0000-100-1";
+
+    /**
+     * Test expected status and process output when QoS is disabled.
+     *
+     * @throws Exception 
+     */
     @Test
-    public void testDisabled() throws Exception {
+    public void disabled() throws Exception {
+        // given
+        final boolean expectedEnabled = false;
+        final int expectedMaxRequests = 0;
+        final int expectedEntries = 1;
+        final int expectedMaxPrio = 0;
+        final int[] expectedQueueSizes = new int[0];
+
         final QoSStatusWorker instance = new QoSStatusWorker() {
             @Override
             AbstractStatistics getFilterStatistics() {
-                return new MockedStatistics(false, new int[0], 0);
+                return new MockedStatistics(expectedEnabled, expectedQueueSizes,
+                                            expectedMaxRequests);
             }  
         };
 
-        instance.init(42, new WorkerConfig(), null, null);
+        instance.init(WORKER_ID, new WorkerConfig(), null, null);
 
+        // when
         final WorkerStatusInfo status = instance.getStatus(null, null);
 
-        checkWorkerStatusInfo(status, false, 1, 0, 0, null);
+        // then
+        assertWorkerStatusInfo(status, expectedEnabled, expectedEntries, 
+                               expectedMaxRequests, expectedMaxPrio,
+                               expectedQueueSizes);
 
+        // when
         final ReadableData readable =
                 new ByteArrayReadableData("".getBytes(),
                                           new UploadConfig().getRepository());
@@ -58,29 +80,50 @@ public class QoSStatusWorkerUnitTest {
                                            new UploadConfig().getRepository());
         final RequestContext requestContext = new RequestContext();
 
-        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
-        instance.processData(new SignatureRequest(42, readable, writable),
+        requestContext.put(RequestContext.TRANSACTION_ID, TRANSACTION_ID);
+        instance.processData(new SignatureRequest(REQUEST_ID, readable, writable),
                              requestContext);
-        checkProcessOutput(writable.toReadableData().getAsByteArray(), false,
-                           1, 0, 0, null);
+
+        // then
+        assertProcessOutput(writable.toReadableData().getAsByteArray(),
+                            expectedEnabled, expectedEntries,
+                            expectedMaxRequests, expectedMaxPrio,
+                            expectedQueueSizes);
     }
 
+    /**
+     * Test expected status and process output with enabled QoS.
+     *
+     * @throws Exception 
+     */
     @Test
-    public void testEnabled() throws Exception {
-        final int[] queueSizes = new int[]{42, 3, 4, 5, 0, 0};
+    public void enabled() throws Exception {
+        // given
+        final boolean expectedEnabled = true;
+        final int expectedMaxRequests = 10;
+        final int expectedEntries = 9;
+        final int expectedMaxPrio = 5;
+        final int[] expectedQueueSizes = new int[] {42, 3, 4, 5, 0, 0};
+
         final QoSStatusWorker instance = new QoSStatusWorker() {
             @Override
             AbstractStatistics getFilterStatistics() {
-                return new MockedStatistics(true, queueSizes, 10);
+                return new MockedStatistics(expectedEnabled, expectedQueueSizes,
+                                            expectedMaxRequests);
             }  
         };
 
-        instance.init(42, new WorkerConfig(), null, null);
+        instance.init(WORKER_ID, new WorkerConfig(), null, null);
 
+        // when
         final WorkerStatusInfo status = instance.getStatus(null, null);
 
-        checkWorkerStatusInfo(status, true, 9, 10, 5, queueSizes);
+        // then
+        assertWorkerStatusInfo(status, expectedEnabled, expectedEntries,
+                               expectedMaxRequests, expectedMaxPrio,
+                               expectedQueueSizes);
 
+        // when
         final ReadableData readable =
                 new ByteArrayReadableData("".getBytes(),
                                           new UploadConfig().getRepository());
@@ -89,14 +132,29 @@ public class QoSStatusWorkerUnitTest {
                                            new UploadConfig().getRepository());
         final RequestContext requestContext = new RequestContext();
 
-        requestContext.put(RequestContext.TRANSACTION_ID, "0000-100-1");
-        instance.processData(new SignatureRequest(42, readable, writable),
+        requestContext.put(RequestContext.TRANSACTION_ID, TRANSACTION_ID);
+        instance.processData(new SignatureRequest(REQUEST_ID, readable, writable),
                              requestContext);
-        checkProcessOutput(writable.toReadableData().getAsByteArray(),
-                           true, 9, 10, 5, queueSizes);
+
+        // then
+        assertProcessOutput(writable.toReadableData().getAsByteArray(),
+                            expectedEnabled, expectedEntries,
+                            expectedMaxRequests, expectedMaxPrio,
+                            expectedQueueSizes);
     }
 
-    private void checkWorkerStatusInfo(final WorkerStatusInfo status,
+    /**
+     * Assert worker status info matches expected values.
+     *
+     * @param status Worker status info given
+     * @param expectedEnabled True if QoS status is expected to be enabled
+     * @param expectedEntries Number of expected status entries
+     * @param expectedMaxRequests Expected value for maximum requests status
+     * @param expectedMaxPrio Expected value for maxium priority level status
+     * @param expectedQueueSizes Array of expected queue sizes for subsequent
+     *                           priority levels 0..max prio
+     */
+    private void assertWorkerStatusInfo(final WorkerStatusInfo status,
                                        final boolean expectedEnabled,
                                        final int expectedEntries,
                                        final int expectedMaxRequests,
@@ -106,7 +164,9 @@ public class QoSStatusWorkerUnitTest {
 
         assertEquals("Entries", expectedEntries, briefEntries.size());
         assertEquals("Enabled" ,
-                     new WorkerStatusInfo.Entry("Filter enabled", expectedEnabled ? "true" : "false"),
+                     new WorkerStatusInfo.Entry("Filter enabled",
+                                                expectedEnabled ?
+                                                "true" : "false"),
                      briefEntries.get(0));
 
         if (expectedEnabled) {
@@ -122,12 +182,27 @@ public class QoSStatusWorkerUnitTest {
             for (int i = 0; i <= expectedMaxPrio; i++) {
                 final WorkerStatusInfo.Entry entry = briefEntries.get(i + 3);
                 assertEquals("Title", "Queue size(" + i + ")", entry.getTitle());
-                assertEquals("Value", Integer.toString(expectedQueueSizes[i]), entry.getValue());
+                assertEquals("Value", Integer.toString(expectedQueueSizes[i]),
+                             entry.getValue());
             }
         }
     }
 
-    private void checkProcessOutput(final byte[] data,
+    /**
+     * Assert process output conforms to expected values.
+     *
+     * @param data Output from processData() called on a QoSStatusWorker instance
+     * @param expectedEnabled True if QoS status is expected to be indicated
+     *                        as enabled in the output
+     * @param expectedEntries Expected number of entries (lines) in the output
+     * @param expectedMaxRequests Expected maximum number of requests to be
+     *                            specified in the output
+     * @param expectedMaxPrio Expected maxiumum priority to be expected in
+     *                        the output
+     * @param expectedQueueSizes Array of expected queue sizes for subsequent
+     *                           priority levels 0..max prio
+     */
+    private void assertProcessOutput(final byte[] data,
                                     final boolean expectedEnabled,
                                     final int expectedEntries,
                                     final int expectedMaxRequests,

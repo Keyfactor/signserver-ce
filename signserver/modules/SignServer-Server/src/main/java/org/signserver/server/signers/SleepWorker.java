@@ -15,8 +15,6 @@ package org.signserver.server.signers;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -29,13 +27,10 @@ import org.signserver.common.WorkerConfig;
 import org.signserver.server.BaseProcessable;
 import org.signserver.server.IServices;
 import org.signserver.server.WorkerContext;
-import org.signserver.server.archive.Archivable;
-import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.common.data.ReadableData;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.Response;
 import org.signserver.common.data.SignatureRequest;
-import org.signserver.common.data.SignatureResponse;
 import org.signserver.common.data.WritableData;
 import org.signserver.server.log.LogMap;
 
@@ -152,15 +147,6 @@ public class SleepWorker extends BaseProcessable {
             throw new SignServerException("Unable to sleep", ex);
         }
 
-        // Create the archivables (request and response)
-        final String archiveId = createArchiveId(new byte[0], 
-                (String) requestContext.get(RequestContext.TRANSACTION_ID));
-        final Collection<? extends Archivable> archivables = Arrays.asList(
-                new DefaultArchivable(Archivable.TYPE_REQUEST, 
-                        REQUEST_CONTENT_TYPE, requestData, archiveId), 
-                new DefaultArchivable(Archivable.TYPE_RESPONSE, 
-                        RESPONSE_CONTENT_TYPE, responseData.toReadableData(), archiveId));
-
         // Suggest new file name
         final Object fileNameOriginal
                 = requestContext.get(RequestContext.FILENAME);
@@ -173,9 +159,9 @@ public class SleepWorker extends BaseProcessable {
         requestContext.setRequestFulfilledByWorker(true);
 
         // Return the response
-        return new SignatureResponse(
-                request.getRequestID(), responseData, null, archiveId,
-                archivables, RESPONSE_CONTENT_TYPE);
+        return createBasicSignatureResponse(requestContext, request,
+                                            REQUEST_CONTENT_TYPE,
+                                            RESPONSE_CONTENT_TYPE);
     }
 
     @Override

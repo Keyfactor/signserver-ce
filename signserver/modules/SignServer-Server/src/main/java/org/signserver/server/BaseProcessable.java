@@ -50,6 +50,10 @@ import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.server.cryptotokens.ICryptoTokenV4;
 import org.signserver.common.data.Request;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
+import org.signserver.server.archive.Archivable;
+import org.signserver.server.archive.DefaultArchivable;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
@@ -730,6 +734,42 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
         } catch (NoSuchAlgorithmException ex) {
             throw new SignServerException("Unable to compute archive ID", ex);
         }
+    }
+
+    /**
+     * Creates a basic response given a request, context, and content types
+     * using an archive ID based on the hash of a fixed empty data (byte[0]),
+     * to avoid rehashing the input data.
+     * If a more specific computation of the archive ID is desired, this
+     * needs to be done by the implementation.
+     *
+     * @param requestContext Request context
+     * @param request Signing request
+     * @param requestContentType Type of request data (typically a mime type)
+     * @param responseContentType Type of response data (typically a mime type)
+     * @return The signature response
+     * @throws SignServerException 
+     */
+    protected SignatureResponse createBasicSignatureResponse(
+            final RequestContext requestContext, final SignatureRequest request,
+            final String requestContentType, final String responseContentType)
+            throws SignServerException {
+        // Create the archivables (request and response)
+        final String archiveId = createArchiveId(new byte[0], 
+                (String) requestContext.get(RequestContext.TRANSACTION_ID));
+        final Collection<? extends Archivable> archivables = Arrays.asList(
+                new DefaultArchivable(Archivable.TYPE_REQUEST, 
+                                      requestContentType,
+                                      request.getRequestData(), archiveId), 
+                new DefaultArchivable(Archivable.TYPE_RESPONSE,
+                                      responseContentType,
+                                      request.getResponseData().toReadableData(),
+                                      archiveId));
+
+        // Return the response
+        return new SignatureResponse(request.getRequestID(),
+                                     request.getResponseData(), null, archiveId,
+                                     archivables, responseContentType);
     }
 
     /**

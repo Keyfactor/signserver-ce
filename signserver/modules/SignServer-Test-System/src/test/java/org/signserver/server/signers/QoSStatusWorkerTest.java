@@ -54,7 +54,7 @@ public class QoSStatusWorkerTest {
             modulesTestCase.getProcessSession();
 
     @BeforeClass
-    public static void setupClass() throws Exception {
+    public static void setupClass() {
         modulesTestCase.addDummySigner("org.signserver.server.signers.QoSStatusWorker",
                                        null, WORKERID, WORKERNAME, null, null,
                                        null);
@@ -73,7 +73,7 @@ public class QoSStatusWorkerTest {
      * @throws Exception 
      */
     @Test
-    public void testDefaultEnabledFalse() throws Exception {
+    public void testDefaultEnabledFalse() {
         // check the getStatus() output
         final StaticWorkerStatus status =
                 (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(WORKERID));
@@ -156,7 +156,7 @@ public class QoSStatusWorkerTest {
     }
     
     @AfterClass
-    public static void afterClass() throws Exception {
+    public static void afterClass() {
         modulesTestCase.removeWorker(WORKERID);
         globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                      "QOS_FILTER_ENABLED");

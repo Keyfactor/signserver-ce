@@ -773,6 +773,24 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     }
 
     /**
+     * Suggests a new filename for the response.
+     * Sets the suggested response file name in the request context to the same
+     * value as the request file name, if it was set and was of type string.
+     * Otherwise no suggested file name is set.
+     *
+     * @param requestContext Request context to set the suggested response
+     *                       file name on
+     */
+    protected void suggestNewFileName(final RequestContext requestContext) {
+        final Object fileNameOriginal
+                = requestContext.get(RequestContext.FILENAME);
+        if (fileNameOriginal instanceof String) {
+            requestContext.put(RequestContext.RESPONSE_FILENAME,
+                    fileNameOriginal + "");
+        }
+    }
+
+    /**
      * Returns fatal errors found while initializing the crypto token.
      *
      * @param services Services to use

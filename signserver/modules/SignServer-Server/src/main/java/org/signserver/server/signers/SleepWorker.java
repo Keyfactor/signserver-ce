@@ -148,12 +148,7 @@ public class SleepWorker extends BaseProcessable {
         }
 
         // Suggest new file name
-        final Object fileNameOriginal
-                = requestContext.get(RequestContext.FILENAME);
-        if (fileNameOriginal instanceof String) {
-            requestContext.put(RequestContext.RESPONSE_FILENAME,
-                    fileNameOriginal + "");
-        }
+        suggestNewFileName(requestContext);
 
         // As everyting went well, the client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);

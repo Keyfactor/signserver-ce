@@ -340,7 +340,10 @@ public class QoSFilter implements Filter
             throws IOException, ServletException {
         boolean accepted = false;
 
-        // TODO: should cache the value instead of looking up through global config each time
+        /* TODO: DSS-2228:
+         * should cache the value instead of looking up through global config
+         * each time
+         */
 
         final Optional<Integer> maxRequestsConfig = getMaxRequestsFromConfig();
         final int maxRequests = maxRequestsConfig.orElse(__DEFAULT_PASSES);
@@ -615,8 +618,8 @@ public class QoSFilter implements Filter
     /**
      * Get the value of a global configuration value.
      * 
-     * TODO: later cache the values for some time to avoid doing excessive
-     *       EJB lookups.
+     * TODO: DSS-2228 later cache the values for some time to avoid doing
+     * excessive EJB lookups.
      *
      * @param param global param to get the value for
      * @return global config parameter value

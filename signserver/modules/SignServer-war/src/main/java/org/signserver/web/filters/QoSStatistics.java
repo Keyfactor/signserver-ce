@@ -45,7 +45,7 @@ public class QoSStatistics extends AbstractStatistics {
     }
 
     @Override
-    public boolean getFilterEnabled() {
+    public boolean isEnabled() {
         return filter.getFilterEnabled();
     }
 }

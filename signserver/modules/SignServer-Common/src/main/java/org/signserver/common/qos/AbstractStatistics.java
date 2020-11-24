@@ -61,15 +61,17 @@ public abstract class AbstractStatistics {
     /**
      * Get current number of queued requests at a given priority level.
      *
-     * @param priorityLevel
+     * @param priorityLevel Priority level to get queue size for
+     *                      (should be a value between 0 and getMaxPriorityLevel()
+     *                       inclusive)
      * @return number of requests in the queue for the given priority level
      */
     public abstract int getQueueSizeForPriorityLevel(final int priorityLevel);
 
     /**
-     * Get enabled status of the QoS web filter.
+     * Get enabled status for QoS functionallity.
      *
      * @return enabled status
      */
-    public abstract boolean getFilterEnabled();
+    public abstract boolean isEnabled();
 }

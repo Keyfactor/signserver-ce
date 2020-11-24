@@ -263,7 +263,7 @@ public class QoSStatusWorkerUnitTest {
         }
 
         @Override
-        public boolean getFilterEnabled() {
+        public boolean isEnabled() {
             return enabled;
         }
     }

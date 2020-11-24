@@ -102,7 +102,7 @@ public class QoSStatusWorker extends BaseProcessable {
      */
     private List<Entry> generateBriefEntries() {
         final List<Entry> results = new LinkedList<>();
-        final boolean enabled = getFilterStatistics().getFilterEnabled();
+        final boolean enabled = getFilterStatistics().isEnabled();
 
         results.add(new Entry("Filter enabled", Boolean.toString(enabled)));
 
@@ -138,7 +138,7 @@ public class QoSStatusWorker extends BaseProcessable {
      */
     private String generateResponseMessage() {
         final StringBuilder sb = new StringBuilder();
-        final boolean enabled = getFilterStatistics().getFilterEnabled();
+        final boolean enabled = getFilterStatistics().isEnabled();
 
         sb.append("FILTER_ENABLED=").append(enabled).append("\n");
 

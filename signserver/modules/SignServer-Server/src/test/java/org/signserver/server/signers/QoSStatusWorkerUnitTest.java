@@ -236,20 +236,20 @@ public class QoSStatusWorkerUnitTest {
     private static class MockedStatistics extends AbstractStatistics {
 
         private final boolean enabled;
-        private final int[] queueLengths;
+        private final int[] queueSizes;
         private final int maxRequests;
 
         public MockedStatistics(final boolean enabled,
                                        final int[] queueLengths,
                                        final int maxRequests) {
             this.enabled = enabled;
-            this.queueLengths = queueLengths;
+            this.queueSizes = queueLengths;
             this.maxRequests = maxRequests;
         }
         
         @Override
         public int getMaxPriorityLevel() {
-            return queueLengths.length - 1;
+            return queueSizes.length - 1;
         }
 
         @Override
@@ -259,7 +259,7 @@ public class QoSStatusWorkerUnitTest {
 
         @Override
         public int getQueueSizeForPriorityLevel(int priorityLevel) {
-            return queueLengths[priorityLevel];
+            return queueSizes[priorityLevel];
         }
 
         @Override

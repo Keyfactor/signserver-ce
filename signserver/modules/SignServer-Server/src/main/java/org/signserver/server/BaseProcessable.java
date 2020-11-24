@@ -739,20 +739,21 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
     /**
      * Creates a basic response given a request, context, and content types
      * using an archive ID based on the hash of a fixed empty data (byte[0]),
-     * to avoid rehashing the input data.
-     * If a more specific computation of the archive ID is desired, this
-     * needs to be done by the implementation.
+     * to avoid rehashing the input data.If a more specific computation of the
+     * archive ID is desired, this needs to be done by the implementation.
      *
      * @param requestContext Request context
      * @param request Signing request
      * @param requestContentType Type of request data (typically a mime type)
      * @param responseContentType Type of response data (typically a mime type)
+     * @param signerCert Signer certificate
      * @return The signature response
      * @throws SignServerException 
      */
     protected SignatureResponse createBasicSignatureResponse(
             final RequestContext requestContext, final SignatureRequest request,
-            final String requestContentType, final String responseContentType)
+            final String requestContentType, final String responseContentType,
+            final Certificate signerCert)
             throws SignServerException {
         // Create the archivables (request and response)
         final String archiveId = createArchiveId(new byte[0], 
@@ -768,8 +769,9 @@ public abstract class BaseProcessable extends BaseWorker implements IProcessable
 
         // Return the response
         return new SignatureResponse(request.getRequestID(),
-                                     request.getResponseData(), null, archiveId,
-                                     archivables, responseContentType);
+                                     request.getResponseData(), signerCert,
+                                     archiveId, archivables,
+                                     responseContentType);
     }
 
     /**

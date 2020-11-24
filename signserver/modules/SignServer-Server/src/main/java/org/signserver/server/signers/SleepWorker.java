@@ -156,7 +156,7 @@ public class SleepWorker extends BaseProcessable {
         // Return the response
         return createBasicSignatureResponse(requestContext, request,
                                             REQUEST_CONTENT_TYPE,
-                                            RESPONSE_CONTENT_TYPE);
+                                            RESPONSE_CONTENT_TYPE, null);
     }
 
     @Override

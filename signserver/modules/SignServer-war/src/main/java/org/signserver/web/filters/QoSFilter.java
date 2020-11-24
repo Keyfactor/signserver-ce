@@ -157,10 +157,25 @@ public class QoSFilter implements Filter
         AbstractStatistics.setDefaultInstance(new QoSStatistics(this));
     }
 
+    /**
+     * Get maximum priority level.
+     *
+     * @return The maximum priority level used by the filter. Priority levels
+     *         can range from 0 to maxPriority (inclusive)
+     */
     public int getMaxPriorityLevel() {
         return maxPriorityLevel;
     }
 
+    /**
+     * Get the current queue size (number of requests put on queue) for a given
+     * priority level.
+     *
+     * @param priorityLevel Priority level to get queue size for (should be
+     *                      a value between 0 and getMaxPriorityLevel(),
+     *                      inclusive)
+     * @return The number of requests in queue with the given priority level
+     */
     public int getQueueSizeForPriorityLevel(final int priorityLevel) {
         return _queues.get(priorityLevel).size();
     }
@@ -240,7 +255,17 @@ public class QoSFilter implements Filter
             return Optional.empty();
         }
     }
-    
+
+    /**
+     * Helper method to populate the priority mapping.
+     *
+     * @param property String value of the priorty configuration value,
+     *                 should be of the form ID1:prio1,ID2:prio2,...
+     * @return a newly created priority map, mapping defined worker IDs to
+     *         priority level. Note: this does not include the fallback
+     *         to default level (0) for unassigned workers
+     * @throws IllegalArgumentException 
+     */
     private Map<Integer, Integer> createPriorityMap(final String property)
         throws IllegalArgumentException {
         final Map<Integer, Integer> workerPriorities = new HashMap<>();

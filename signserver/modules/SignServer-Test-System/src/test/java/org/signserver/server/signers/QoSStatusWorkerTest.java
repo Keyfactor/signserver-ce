@@ -76,7 +76,7 @@ public class QoSStatusWorkerTest {
      *                   sending requests to the app server
      */
     @Test
-    public void testDefaultEnabledFalse() throws Exception {
+    public void defaultEnabledFalse() throws Exception {
         // given
         final boolean expectedEnabled = false;
         final int expectedEntries = 1;
@@ -116,7 +116,7 @@ public class QoSStatusWorkerTest {
      *                   sending requests to the app server
      */
     @Test
-    public void testFilterEnabledDefaultMax() throws Exception {
+    public void filterEnabledDefaultMax() throws Exception {
         try {
             // given
             final boolean expectedEnabled = true;

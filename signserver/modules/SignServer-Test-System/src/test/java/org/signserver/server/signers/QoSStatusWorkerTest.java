@@ -71,7 +71,9 @@ public class QoSStatusWorkerTest {
     /**
      * Test that default behavior is shown that the filter is not enabled.
      *
-     * @throws Exception 
+     * @throws Exception if an unexpected error occurs, such as failing to
+     *                   set up dummy signer, or issues with EJB communication
+     *                   sending requests to the app server
      */
     @Test
     public void testDefaultEnabledFalse() throws Exception {
@@ -105,6 +107,14 @@ public class QoSStatusWorkerTest {
                             expectedQueueSizes);
     }
 
+    /**
+     * Test that enabling the filter gives expected status and process output
+     * listing max requests, max priority level, and queue sizes.
+     *
+     * @throws Exception if an unexpected error occurs, such as failing to
+     *                   set up dummy signer, or issues with EJB communication
+     *                   sending requests to the app server
+     */
     @Test
     public void testFilterEnabledDefaultMax() throws Exception {
         try {

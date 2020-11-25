@@ -333,6 +333,23 @@ public class QoSFilter implements Filter
         maxPriorityLevel = newMaxPriority;
     }
 
+    /**
+     * Implementation of doFilter from the Filter interface.
+     * When this web filter is enabled, requests will be handled by the
+     * internal implementation allowing a configureable maximum number
+     * of concurrent ongoing requests directly, and putting additional
+     * requests in priority queues based on the worker->priority mapping.
+     * In case it is disabled, the request will be passed on to the rest
+     * of filter chain.
+     *
+     * @param request Servlet request
+     * @param response Servlet response
+     * @param chain Filter chain defined by the application server, which
+     *              this fiilter is part of
+     * @throws IOException if an I/O error occurs during this filter's
+     *                     processing of the request
+     * @throws ServletException if the processing fails for any other reason
+     */
     @Override
     public void doFilter(final ServletRequest request,
                          final ServletResponse response,
@@ -356,8 +373,9 @@ public class QoSFilter implements Filter
      * @param request servlet request
      * @param response servlet response
      * @param chain filter chain
-     * @throws IOException
-     * @throws ServletException 
+     * @throws IOException if an I/O error occurs during this filter's
+     *                     processing of the request
+     * @throws ServletException if the processing fails for any other reason
      */
     private void doFilterWithPriorities(final ServletRequest request,
                                         final ServletResponse response,

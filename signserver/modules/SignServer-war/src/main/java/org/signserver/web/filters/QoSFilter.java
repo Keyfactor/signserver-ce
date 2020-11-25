@@ -583,17 +583,6 @@ public class QoSFilter implements Filter
     }
 
     /**
-     * Set the (short) amount of time (in milliseconds) that the filter would wait
-     * for the semaphore to become available before suspending a request.
-     *
-     * @param value wait time (in milliseconds)
-     */
-    public void setWaitMs(long value)
-    {
-        _waitMs = value;
-    }
-
-    /**
      * Get the amount of time (in milliseconds) that the filter would suspend
      * a request for while waiting for the semaphore to become available.
      *
@@ -606,17 +595,6 @@ public class QoSFilter implements Filter
     }
 
     /**
-     * Set the amount of time (in milliseconds) that the filter would suspend
-     * a request for while waiting for the semaphore to become available.
-     *
-     * @param value suspend time (in milliseconds)
-     */
-    public void setSuspendMs(long value)
-    {
-        _suspendMs = value;
-    }
-
-    /**
      * Get the maximum number of requests allowed to be processed
      * at the same time.
      *
@@ -626,18 +604,6 @@ public class QoSFilter implements Filter
     public int getMaxRequests()
     {
         return _maxRequests;
-    }
-
-    /**
-     * Set the maximum number of requests allowed to be processed
-     * at the same time.
-     *
-     * @param value the number of requests
-     */
-    public void setMaxRequests(int value)
-    {
-        _passes = new Semaphore((value - getMaxRequests() + _passes.availablePermits()), true);
-        _maxRequests = value;
     }
 
     /**

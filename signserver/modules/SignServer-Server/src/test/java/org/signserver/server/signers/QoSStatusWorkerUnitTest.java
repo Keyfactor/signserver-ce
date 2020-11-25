@@ -144,6 +144,14 @@ public class QoSStatusWorkerUnitTest {
     }
 
     /**
+     * TODO: DSS-2247
+     * For now keep these as helper methods duplicates in the system and unit
+     * tests, as for now SignServer-Test-Utils already has a depency back to
+     * this module, so moving it there to share them would introduce a
+     * dependency loop.
+     */
+
+    /**
      * Assert worker status info matches expected values.
      *
      * @param status Worker status info given

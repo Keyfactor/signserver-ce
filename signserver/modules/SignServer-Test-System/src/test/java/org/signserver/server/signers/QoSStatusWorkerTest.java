@@ -13,20 +13,18 @@
 package org.signserver.server.signers;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;import static junit.framework.TestCase.assertEquals;
+import java.util.List;
+import static junit.framework.TestCase.assertEquals;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GlobalConfiguration;
-import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RemoteRequestContext;
-import org.signserver.common.SignServerException;
 import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerIdentifier;
-import org.signserver.common.WorkerStatusInfo.Entry;
+import org.signserver.common.WorkerStatusInfo;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 import org.signserver.ejb.interfaces.ProcessSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
@@ -77,81 +75,73 @@ public class QoSStatusWorkerTest {
      */
     @Test
     public void testDefaultEnabledFalse() throws Exception {
-        // check the getStatus() output
+        // given
+        final boolean expectedEnabled = false;
+        final int expectedEntries = 1;
+        final int expectedMaxRequests = 0;
+        final int expectedMaxPrio = 0;
+        final int[] expectedQueueSizes = new int[0];
+
+        // when
         final StaticWorkerStatus status =
                 (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(WORKERID));
-        final List<Entry> briefEntries = status.getInfo().getBriefEntries();
+        final WorkerStatusInfo statusInfo = status.getInfo();
 
-        // there should only be one entry indicating the filter is not enabled
-        assertEquals("One status entry", 1, briefEntries.size());
-        assertEquals("Status entry" , new Entry("Filter enabled", "false"),
-                     briefEntries.get(0));
+        // then
+        assertWorkerStatusInfo(statusInfo, expectedEnabled, expectedEntries,
+                               expectedMaxRequests, expectedMaxPrio,
+                               expectedQueueSizes);
 
-        // check the parsable process output
-        GenericSignRequest request = new GenericSignRequest(200, new byte[0]);
+        // when
+        final GenericSignRequest request = new GenericSignRequest(200, new byte[0]);
         final RemoteRequestContext context = new RemoteRequestContext();
-
-        GenericSignResponse response =
+        final GenericSignResponse response =
                     (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKERID), request, context);
         final byte[] data = response.getProcessedData();
 
-        final String output = new String(data, StandardCharsets.UTF_8);
-        final String[] lines = output.split("\n");
-        
-        assertEquals("One line in the response: " + output, 1, lines.length);
-        assertEquals("Disabled", "FILTER_ENABLED=false", lines[0]);
+        // then
+        assertProcessOutput(data, expectedEnabled, expectedEntries,
+                            expectedMaxRequests, expectedMaxPrio,
+                            expectedQueueSizes);
     }
 
     @Test
     public void testFilterEnabledDefaultMax() throws Exception {
         try {
+            // given
+            final boolean expectedEnabled = true;
+            final int expectedEntries = 9;
+            final int expectedMaxRequests = 10;
+            final int expectedMaxPrio = 5;
+            /* expect the queues should be empty, since we only send a single
+             * request, but they should still be reported in the output
+             */
+            final int[] expectedQueueSizes = new int[] {0, 0, 0, 0, 0, 0};
+
+            // when
             globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                       "QOS_FILTER_ENABLED", "true");
-            // check the getStatus() output
             final StaticWorkerStatus status =
                     (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(WORKERID));
-            final List<Entry> briefEntries = status.getInfo().getBriefEntries();
+            final WorkerStatusInfo statusInfo = status.getInfo();
 
-            /* there should be 9 entries:
-             * one for the enabled status
-             * one for maximum requests before queueing
-             * one for maximum priority level
-             * one for each priority level (0 - 5 by default, total six entries)
-             */
-            assertEquals("9 entries", 9, briefEntries.size());
-            assertEquals("Enabled" , new Entry("Filter enabled", "true"),
-                         briefEntries.get(0));
-            assertEquals("Max requests", new Entry("Maximum requests", "10"),
-                         briefEntries.get(1));
-            assertEquals("Max prio", new Entry("Maximum priority level", "5"),
-                         briefEntries.get(2));
-
-            for (int i = 0; i <= 5; i++) {
-                final Entry entry = briefEntries.get(i + 3);
-                assertEquals("Title", "Queue size(" + i + ")", entry.getTitle());
-                assertEquals("Value", "0", entry.getValue());
-            }
+            // then
+            assertWorkerStatusInfo(statusInfo, expectedEnabled,
+                                   expectedEntries, expectedMaxRequests,
+                                   expectedMaxPrio, expectedQueueSizes);
             
-            // check the parsable process output
-            GenericSignRequest request = new GenericSignRequest(200, new byte[0]);
+            // when
+            final GenericSignRequest request = new GenericSignRequest(200, new byte[0]);
             final RemoteRequestContext context = new RemoteRequestContext();
 
-            GenericSignResponse response =
+            final GenericSignResponse response =
                         (GenericSignResponse) processSession.process(new WorkerIdentifier(WORKERID), request, context);
             final byte[] data = response.getProcessedData();
 
-            final String output = new String(data, StandardCharsets.UTF_8);
-            final String[] lines = output.split("\n");
-
-            assertEquals("9 lines in the output: " + output, 9, lines.length);
-            assertEquals("Enabled", "FILTER_ENABLED=true", lines[0]);
-            assertEquals("Max requests", "MAX_REQUESTS=10", lines[1]);
-            assertEquals("Max prio", "MAX_PRIORITY_LEVEL=5", lines[2]);
-
-            for (int i = 0; i <= 5; i++) {
-                assertEquals("Queue size", "QUEUE_SIZE(" + i + ")=0",
-                             lines[i + 3]);
-            }
+            // then
+            assertProcessOutput(data, expectedEnabled, expectedEntries,
+                                expectedMaxRequests, expectedMaxPrio,
+                                expectedQueueSizes);
         } finally {
             globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                         "QOS_FILTER_ENABLED");
@@ -167,5 +157,103 @@ public class QoSStatusWorkerTest {
                                      "QOS_MAX_REQUESTS");
         globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                      "QOS_MAX_PRIORITY");
+    }
+
+    /**
+     * TODO: DSS-2247
+     * For now keep these as helper methods duplicates in the system and unit
+     * tests, as for now SignServer-Test-Utils already has a depency back to
+     * this module, so moving it there to share them would introduce a
+     * dependency loop.
+     */
+
+    /**
+     * Assert worker status info matches expected values.
+     *
+     * @param status Worker status info given
+     * @param expectedEnabled True if QoS status is expected to be enabled
+     * @param expectedEntries Number of expected status entries
+     * @param expectedMaxRequests Expected value for maximum requests status
+     * @param expectedMaxPrio Expected value for maxium priority level status
+     * @param expectedQueueSizes Array of expected queue sizes for subsequent
+     *                           priority levels 0..max prio
+     */
+    private void assertWorkerStatusInfo(final WorkerStatusInfo status,
+                                       final boolean expectedEnabled,
+                                       final int expectedEntries,
+                                       final int expectedMaxRequests,
+                                       final int expectedMaxPrio,
+                                       final int[] expectedQueueSizes) {
+        final List<WorkerStatusInfo.Entry> briefEntries = status.getBriefEntries();
+
+        assertEquals("Entries", expectedEntries, briefEntries.size());
+        assertEquals("Enabled" ,
+                     new WorkerStatusInfo.Entry("Filter enabled",
+                                                expectedEnabled ?
+                                                "true" : "false"),
+                     briefEntries.get(0));
+
+        if (expectedEnabled) {
+            assertEquals("Max requests",
+                         new WorkerStatusInfo.Entry("Maximum requests",
+                                   Integer.toString(expectedMaxRequests)),
+                         briefEntries.get(1));
+            assertEquals("Max prio",
+                         new WorkerStatusInfo.Entry("Maximum priority level",
+                                   Integer.toString(expectedMaxPrio)),
+                         briefEntries.get(2));
+
+            for (int i = 0; i <= expectedMaxPrio; i++) {
+                final WorkerStatusInfo.Entry entry = briefEntries.get(i + 3);
+                assertEquals("Title", "Queue size(" + i + ")", entry.getTitle());
+                assertEquals("Value", Integer.toString(expectedQueueSizes[i]),
+                             entry.getValue());
+            }
+        }
+    }
+
+    /**
+     * Assert process output conforms to expected values.
+     *
+     * @param data Output from processData() called on a QoSStatusWorker instance
+     * @param expectedEnabled True if QoS status is expected to be indicated
+     *                        as enabled in the output
+     * @param expectedEntries Expected number of entries (lines) in the output
+     * @param expectedMaxRequests Expected maximum number of requests to be
+     *                            specified in the output
+     * @param expectedMaxPrio Expected maxiumum priority to be expected in
+     *                        the output
+     * @param expectedQueueSizes Array of expected queue sizes for subsequent
+     *                           priority levels 0..max prio
+     */
+    private void assertProcessOutput(final byte[] data,
+                                    final boolean expectedEnabled,
+                                    final int expectedEntries,
+                                    final int expectedMaxRequests,
+                                    final int expectedMaxPrio,
+                                    final int[] expectedQueueSizes) {
+        final String output = new String(data, StandardCharsets.UTF_8);
+        final String[] lines = output.split("\n");
+
+        assertEquals("Lines in the output: " + output, expectedEntries,
+                     lines.length);
+        assertEquals("Enabled",
+                     "FILTER_ENABLED=" + expectedEnabled,
+                     lines[0]);
+
+        if (expectedEnabled) {
+            assertEquals("Max requests",
+                         "MAX_REQUESTS=" + expectedMaxRequests,
+                         lines[1]);
+            assertEquals("Max prio", 
+                         "MAX_PRIORITY_LEVEL=" + expectedMaxPrio,
+                         lines[2]);
+
+            for (int i = 0; i <= expectedMaxPrio; i++) {
+                assertEquals("Queue size",
+                             "QUEUE_SIZE(" + i + ")=" + expectedQueueSizes[i],
+                             lines[i + 3]);
+            }
+        }
     }
 }

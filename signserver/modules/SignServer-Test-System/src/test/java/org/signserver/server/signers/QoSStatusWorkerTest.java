@@ -17,10 +17,13 @@ import java.util.List;import static junit.framework.TestCase.assertEquals;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RemoteRequestContext;
+import org.signserver.common.SignServerException;
 import org.signserver.common.StaticWorkerStatus;
 import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.WorkerStatusInfo.Entry;
@@ -73,7 +76,7 @@ public class QoSStatusWorkerTest {
      * @throws Exception 
      */
     @Test
-    public void testDefaultEnabledFalse() {
+    public void testDefaultEnabledFalse() throws Exception {
         // check the getStatus() output
         final StaticWorkerStatus status =
                 (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(WORKERID));

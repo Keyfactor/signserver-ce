@@ -94,7 +94,6 @@ public class QoSFilter implements Filter
     static final long __DEFAULT_TIMEOUT_MS = -1;
 
     static final String MANAGED_ATTR_INIT_PARAM = "managedAttr";
-    static final String MAX_REQUESTS_INIT_PARAM = "maxRequests";
     static final String MAX_WAIT_INIT_PARAM = "waitMs";
     static final String SUSPEND_INIT_PARAM = "suspendMs";
 

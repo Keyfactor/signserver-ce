@@ -119,6 +119,8 @@ public class QoSFilter implements Filter
     // cache for global property values
     private Map<String, String> globalPropertyCache;
     private long globalPropertyCacheLastUpdated;
+
+    private Map<Integer, Integer> workerPriorities;
     
     // request attributes
     public static String QOS_PRIORITY_ATTRIBUTE = "QOS_PRIORITY";
@@ -182,6 +184,20 @@ public class QoSFilter implements Filter
                                             getProperty(SCOPE_GLOBAL, key));
         }
 
+        final String priorityMappingString =
+                globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
+                                                                   "QOS_PRIORITIES");
+
+        workerPriorities = new HashMap<>();
+
+        if (priorityMappingString != null) {
+            try {
+                workerPriorities = createPriorityMap(priorityMappingString);
+            } catch (IllegalArgumentException e) {
+                LOG.error("Failed to create priorities: " + e.getMessage());
+            }
+        }
+        
         globalPropertyCacheLastUpdated = System.currentTimeMillis();
     }
 
@@ -410,12 +426,6 @@ public class QoSFilter implements Filter
                                         final FilterChain chain)
             throws IOException, ServletException {
         boolean accepted = false;
-
-        /* TODO: DSS-2228:
-         * should cache the value instead of looking up through global config
-         * each time
-         */
-
         final Optional<Integer> maxRequestsConfig = getMaxRequestsFromConfig();
         final int maxRequests = maxRequestsConfig.orElse(__DEFAULT_PASSES);
 
@@ -435,19 +445,6 @@ public class QoSFilter implements Filter
             resizeQueuesAndListenersIfNeeded(maxPrio);
         }
 
-        final String priorityMappingString =
-                globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
-                                                                   "QOS_PRIORITIES");
-        Map<Integer, Integer> workerPriorities = new HashMap<>();
-        
-        if (priorityMappingString != null) {
-            try {
-                workerPriorities = createPriorityMap(priorityMappingString);
-            } catch (IllegalArgumentException e) {
-                LOG.error("Failed to create priorities: " + e.getMessage());
-            }
-        }
-        
         try
         {
             Boolean suspended = (Boolean)request.getAttribute(_suspended);

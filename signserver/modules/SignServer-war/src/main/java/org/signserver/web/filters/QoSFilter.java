@@ -93,9 +93,19 @@ public class QoSFilter implements Filter
     static final int __DEFAULT_WAIT_MS = 50;
     static final long __DEFAULT_TIMEOUT_MS = -1;
 
+    static private final int CONFIG_CACHE_TIMEOUT = 60;
+
     static final String MANAGED_ATTR_INIT_PARAM = "managedAttr";
     static final String MAX_WAIT_INIT_PARAM = "waitMs";
     static final String SUSPEND_INIT_PARAM = "suspendMs";
+
+    // global config params
+    private enum GlobalProperty {
+        QOS_FILTER_ENABLED,
+        QOS_FILTER_MAX_REQUESTS,
+        QOS_FILTER_MAX_PRIORITY,
+        QOS_PRIORITIES
+    };
 
     private final String _suspended = "QoSFilter@" + Integer.toHexString(hashCode()) + ".SUSPENDED";
     private final String _resumed = "QoSFilter@" + Integer.toHexString(hashCode()) + ".RESUMED";
@@ -105,6 +115,10 @@ public class QoSFilter implements Filter
     private Semaphore _passes;
     private ArrayList<Queue<AsyncContext>> _queues;
     private int maxPriorityLevel;
+
+    // cache for global property values
+    private Map<String, String> globalPropertyCache;
+    private long globalPropertyCacheLastUpdated;
     
     // request attributes
     public static String QOS_PRIORITY_ATTRIBUTE = "QOS_PRIORITY";
@@ -132,6 +146,8 @@ public class QoSFilter implements Filter
     @Override
     public void init(final FilterConfig filterConfig)
     {
+        recreateGlobalPropertyCache();
+
         int maxRequests = getMaxRequestsFromConfig().orElse(__DEFAULT_PASSES);
 
         _passes = new Semaphore(maxRequests, true);
@@ -154,6 +170,19 @@ public class QoSFilter implements Filter
         createQueuesAndListeners(getMaxPriorityLevelFromConfig().orElse(__DEFAULT_MAX_PRIORITY));
 
         AbstractStatistics.setDefaultInstance(new QoSStatistics(this));
+    }
+
+    private void recreateGlobalPropertyCache() {
+        globalPropertyCache = new HashMap<>();
+
+        for (final GlobalProperty property : GlobalProperty.values()) {
+            final String key = property.name();
+            globalPropertyCache.put(key,
+                                    globalSession.getGlobalConfiguration().
+                                            getProperty(SCOPE_GLOBAL, key));
+        }
+
+        globalPropertyCacheLastUpdated = System.currentTimeMillis();
     }
 
     /**
@@ -625,15 +654,18 @@ public class QoSFilter implements Filter
 
     /**
      * Get the value of a global configuration value.
-     * 
-     * TODO: DSS-2228 later cache the values for some time to avoid doing
-     * excessive EJB lookups.
      *
      * @param param global param to get the value for
      * @return global config parameter value
      */
     private String getGlobalParam(final String param) {
-        return globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
-                                                                  param);
+        if (globalPropertyCacheLastUpdated + CONFIG_CACHE_TIMEOUT * 1000 <
+            System.currentTimeMillis()) {
+            synchronized (globalPropertyCache) {
+                recreateGlobalPropertyCache();
+            }
+        }
+        
+        return globalPropertyCache.get(param);
     }
 }

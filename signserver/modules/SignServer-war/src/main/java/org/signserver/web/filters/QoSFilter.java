@@ -93,7 +93,7 @@ public class QoSFilter implements Filter
     static final int __DEFAULT_WAIT_MS = 50;
     static final long __DEFAULT_TIMEOUT_MS = -1;
 
-    static private final int CONFIG_CACHE_TIMEOUT = 60;
+    static private final int CONFIG_CACHE_TIMEOUT = 10;
 
     static final String MANAGED_ATTR_INIT_PARAM = "managedAttr";
     static final String MAX_WAIT_INIT_PARAM = "waitMs";

@@ -72,6 +72,8 @@ public class QoSFilterTest {
             modulesTestCase.getGlobalSession();
     private SecurityEventsAuditorSessionRemote auditorSession = null;
 
+    static private final int CONFIG_CACHE_TIMEOUT = 10;
+
     @Rule
     public final TemporaryFolder inDir = new TemporaryFolder();
     
@@ -117,6 +119,9 @@ public class QoSFilterTest {
     public void test01SingleRequest() throws Exception {
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                   "QOS_FILTER_ENABLED", "true");
+        // wait until old cached filter config has expired (with some margin)
+        Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
+
         try {
             clientCLI.execute("signdocument", "-servlet",
                               "/signserver/worker/" + WORKERNAME1,
@@ -144,6 +149,9 @@ public class QoSFilterTest {
         createTestFiles(20);
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                   "QOS_FILTER_ENABLED", "true");
+        // wait until old cached filter config has expired (with some margin)
+        Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
+
         try {
             clientCLI.execute("signdocument", "-servlet",
                               "/signserver/worker/" + WORKERNAME1,
@@ -184,6 +192,9 @@ public class QoSFilterTest {
         createTestFiles(20);
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                   "QOS_FILTER_ENABLED", "true");
+        // wait until old cached filter config has expired (with some margin)
+        Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
+
         try {
             clientCLI.execute("signdocument", "-servlet",
                               "/signserver/worker/" + WORKERNAME2,
@@ -223,6 +234,9 @@ public class QoSFilterTest {
                                       "QOS_MAX_REQUESTS", "50");
             globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                       "QOS_FILTER_ENABLED", "true");
+            // wait until old cached filter config has expired (with some margin)
+            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
+
             createTestFiles(20);
             clientCLI.execute("signdocument", "-servlet",
                               "/signserver/worker/" + WORKERNAME1,
@@ -265,6 +279,10 @@ public class QoSFilterTest {
                                   "QOS_PRIORITIES", "1:1,1000:50,1002:2");
             globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                       "QOS_FILTER_ENABLED", "true");
+
+            // wait until old cached filter config has expired (with some margin)
+            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
+
             createTestFiles(20);
             clientCLI.execute("signdocument", "-servlet",
                               "/signserver/worker/" + WORKERNAME1,
@@ -337,6 +355,9 @@ public class QoSFilterTest {
         createTestFiles(20);
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                       "QOS_FILTER_ENABLED", "false");
+        // wait until old cached filter config has expired (with some margin)
+        Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
+
         try {
             clientCLI.execute("signdocument", "-servlet",
                               "/signserver/worker/" + WORKERNAME1,
@@ -373,6 +394,9 @@ public class QoSFilterTest {
         createTestFiles(20);
         globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                       "QOS_FILTER_ENABLED", "_invalid_");
+        // wait until old cached filter config has expired (with some margin)
+        Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
+
         try {
             clientCLI.execute("signdocument", "-servlet",
                               "/signserver/worker/" + WORKERNAME1,

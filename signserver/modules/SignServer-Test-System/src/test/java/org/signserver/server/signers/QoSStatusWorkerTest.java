@@ -54,6 +54,8 @@ public class QoSStatusWorkerTest {
     private static final ProcessSessionRemote processSession =
             modulesTestCase.getProcessSession();
 
+    static private final int CONFIG_CACHE_TIMEOUT = 10;
+    
     @BeforeClass
     public static void setupClass() {
         modulesTestCase.addDummySigner("org.signserver.server.signers.QoSStatusWorker",
@@ -131,6 +133,9 @@ public class QoSStatusWorkerTest {
             // when
             globalSession.setProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                       "QOS_FILTER_ENABLED", "true");
+            // wait until old cached filter config has expired (with some margin)
+            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
+
             final StaticWorkerStatus status =
                     (StaticWorkerStatus) workerSession.getStatus(new WorkerIdentifier(WORKERID));
             final WorkerStatusInfo statusInfo = status.getInfo();
@@ -155,6 +160,8 @@ public class QoSStatusWorkerTest {
         } finally {
             globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                         "QOS_FILTER_ENABLED");
+            // wait until old cached filter config has expired (with some margin)
+            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
         }
     }
     

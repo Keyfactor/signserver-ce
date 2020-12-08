@@ -133,6 +133,8 @@ public class QoSFilterTest {
         } finally {
             globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                          "QOS_FILTER_ENABLED");
+            // wait until old cached filter config has expired (with some margin)
+            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
         }
     }
 
@@ -175,6 +177,8 @@ public class QoSFilterTest {
         } finally {
             globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                          "QOS_FILTER_ENABLED");
+            // wait until old cached filter config has expired (with some margin)
+            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
         }
     }
 
@@ -218,6 +222,8 @@ public class QoSFilterTest {
         } finally {
             globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                          "QOS_FILTER_ENABLED");
+            // wait until old cached filter config has expired (with some margin)
+            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
         }
     }
 
@@ -261,6 +267,8 @@ public class QoSFilterTest {
                                          "QOS_MAX_REQUESTS");
             globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                          "QOS_FILTER_ENABLED");
+            // wait until old cached filter config has expired (with some margin)
+            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
         }
     }
 
@@ -312,6 +320,8 @@ public class QoSFilterTest {
 
             globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                          "QOS_FILTER_ENABLED");
+            // wait until old cached filter config has expired (with some margin)
+            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
         }
     }
 
@@ -380,6 +390,8 @@ public class QoSFilterTest {
         } finally {
             globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                          "QOS_FILTER_ENABLED");
+            // wait until old cached filter config has expired (with some margin)
+            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
         }
     }
 
@@ -419,6 +431,8 @@ public class QoSFilterTest {
         } finally {
             globalSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
                                          "QOS_FILTER_ENABLED");
+            // wait until old cached filter config has expired (with some margin)
+            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
         }
     }
     

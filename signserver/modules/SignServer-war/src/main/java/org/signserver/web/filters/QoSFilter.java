@@ -46,6 +46,7 @@ import org.apache.log4j.Logger;
 import org.signserver.common.qos.AbstractStatistics;
 import static org.signserver.common.GlobalConfiguration.SCOPE_GLOBAL;
 import org.signserver.common.InvalidWorkerIdException;
+import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.web.ServletUtils;
@@ -174,19 +175,15 @@ public class QoSFilter implements Filter
         AbstractStatistics.setDefaultInstance(new QoSStatistics(this));
     }
 
-    private void recreateGlobalPropertyCache() {
+    void recreateGlobalPropertyCache() {
         globalPropertyCache = new HashMap<>();
 
         for (final GlobalProperty property : GlobalProperty.values()) {
             final String key = property.name();
-            globalPropertyCache.put(key,
-                                    globalSession.getGlobalConfiguration().
-                                            getProperty(SCOPE_GLOBAL, key));
+            globalPropertyCache.put(key, getGlobalProperty(key));
         }
 
-        final String priorityMappingString =
-                globalSession.getGlobalConfiguration().getProperty(SCOPE_GLOBAL,
-                                                                   "QOS_PRIORITIES");
+        final String priorityMappingString = getGlobalProperty("QOS_PRIORITIES");
 
         workerPriorities = new HashMap<>();
 
@@ -201,6 +198,15 @@ public class QoSFilter implements Filter
         globalPropertyCacheLastUpdated = System.currentTimeMillis();
     }
 
+    private String getGlobalProperty(final String property) {
+        return getGlobalConfigurationSession().getGlobalConfiguration().
+                getProperty(SCOPE_GLOBAL, property);
+    }
+
+    GlobalConfigurationSession getGlobalConfigurationSession() {
+        return globalSession;
+    }
+    
     /**
      * Get maximum priority level.
      *
@@ -655,7 +661,7 @@ public class QoSFilter implements Filter
      * @param param global param to get the value for
      * @return global config parameter value
      */
-    private String getGlobalParam(final String param) {
+    String getGlobalParam(final String param) {
         if (globalPropertyCacheLastUpdated + CONFIG_CACHE_TIMEOUT * 1000 <
             System.currentTimeMillis()) {
             synchronized (globalPropertyCache) {

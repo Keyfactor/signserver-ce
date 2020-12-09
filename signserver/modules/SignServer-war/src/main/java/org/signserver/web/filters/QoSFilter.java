@@ -103,8 +103,8 @@ public class QoSFilter implements Filter
     // global config params
     private enum GlobalProperty {
         QOS_FILTER_ENABLED,
-        QOS_FILTER_MAX_REQUESTS,
-        QOS_FILTER_MAX_PRIORITY,
+        QOS_MAX_REQUESTS,
+        QOS_MAX_PRIORITY,
         QOS_PRIORITIES
     };
 
@@ -142,6 +142,7 @@ public class QoSFilter implements Filter
     // GLOB.QOS_FILTER_ENABLED=true (to enable filter), default false (not enabled)
     // GLOB.QOS_MAX_REQUESTS=<maximum number of concurrent requests to be
     //                        accepted before queueing requests based on priority>
+    // GLOB.QOS_MAX_PRIORITY=<maximum priority level to use>
     // GLOB.QOS_PRIORITIES=<comma-separated list of workerID:priority pairs>
     //
     // Example: GLOB.QOS_PRIORITIES=1:1,2:2,3:5
@@ -318,8 +319,12 @@ public class QoSFilter implements Filter
      */
     private Map<Integer, Integer> createPriorityMap(final String property)
         throws IllegalArgumentException {
-        final Map<Integer, Integer> workerPriorities = new HashMap<>();
-        
+        final Map<Integer, Integer> newWorkerPriorities = new HashMap<>();
+        final String maxPrioString = globalPropertyCache.get("QOS_MAX_PRIORITY");
+        final int maxPrio =
+                maxPrioString != null ? Integer.parseInt(maxPrioString) :
+                                        __DEFAULT_MAX_PRIORITY;
+
         for (final String part : property.split(",")) {
             final String[] splitPart = part.split(":");
 
@@ -334,10 +339,10 @@ public class QoSFilter implements Filter
 
                 if (priority < 0) {
                     throw new IllegalArgumentException("A priority can not be negative");
-                } else if (priority > maxPriorityLevel) {
+                } else if (priority > maxPrio) {
                     throw new IllegalArgumentException("A priority can not be higher than the maximum value");
                 } else {
-                    workerPriorities.put(workerId, priority);
+                    newWorkerPriorities.put(workerId, priority);
                 }
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("Malformed QOS_PRIORITIES property: " +
@@ -345,7 +350,7 @@ public class QoSFilter implements Filter
             }
         }
 
-        return workerPriorities;
+        return newWorkerPriorities;
     }
 
     /**

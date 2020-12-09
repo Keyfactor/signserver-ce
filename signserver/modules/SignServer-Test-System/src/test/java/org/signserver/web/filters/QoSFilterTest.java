@@ -303,7 +303,7 @@ public class QoSFilterTest {
 
             for (final Map<String, Object> details : lastLogFields) {
                 final String prio = (String) details.get("QOS_PRIORITY");
-
+                
                 if ("50".equals(prio)) {
                     queuedRequests++;
                 }
@@ -435,7 +435,7 @@ public class QoSFilterTest {
             Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
         }
     }
-    
+
     @AfterClass
     public static void tearDownClass() throws Exception {
         modulesTestCase.removeWorker(WORKERID1);

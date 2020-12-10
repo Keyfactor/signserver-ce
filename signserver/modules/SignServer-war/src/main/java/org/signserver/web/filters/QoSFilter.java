@@ -176,6 +176,9 @@ public class QoSFilter implements Filter
         AbstractStatistics.setDefaultInstance(new QoSStatistics(this));
     }
 
+    /**
+     * Re-create the global property cache and the worker-priority mapping.
+     */
     void recreateGlobalPropertyCache() {
         globalPropertyCache = new HashMap<>();
 
@@ -199,11 +202,23 @@ public class QoSFilter implements Filter
         globalPropertyCacheLastUpdated = System.currentTimeMillis();
     }
 
+    /**
+     * Get a global property (with scope GLOB) from the global configuration
+     * session.
+     *
+     * @param property name of property to set (not including the GLOB prefix)
+     * @return property value, or null if not set
+     */
     private String getGlobalProperty(final String property) {
         return getGlobalConfigurationSession().getGlobalConfiguration().
                 getProperty(SCOPE_GLOBAL, property);
     }
 
+    /**
+     * Get global session (can be overridden by tests to use a mocked session).
+     *
+     * @return the global configuration session
+     */
     GlobalConfigurationSession getGlobalConfigurationSession() {
         return globalSession;
     }

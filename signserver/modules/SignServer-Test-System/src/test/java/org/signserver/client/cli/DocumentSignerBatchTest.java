@@ -116,19 +116,6 @@ public class DocumentSignerBatchTest extends ModulesTestCase {
         TestingSecurityManager.remove();
     }
 
-    @Test
-    public void s0test00SetupDatabase() throws Exception {
-        LOG.info("test00SetupDatabase");
-        // Worker 1
-        addDummySigner(WORKER_ID, "TestXMLSigner", true);
-
-        // Worker with password auth
-        addDummySigner(WORKER_ID_AUTH, "TestXMLSignerAuth", true);
-        getWorkerSession().setWorkerProperty(WORKER_ID_AUTH, "AUTHTYPE", "org.signserver.server.UsernamePasswordAuthorizer");
-        getWorkerSession().setWorkerProperty(WORKER_ID_AUTH, "USER.USER1", "foo123");
-        getWorkerSession().reloadConfiguration(WORKER_ID_AUTH);
-    }
-
     // Tests that values for threads must be larger than 0.
     @Test
     public void failOnIncorrectOptionsThreadsZero() throws Exception {

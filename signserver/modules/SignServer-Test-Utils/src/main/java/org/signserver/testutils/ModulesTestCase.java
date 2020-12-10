@@ -65,6 +65,8 @@ import org.signserver.server.data.impl.TemporarlyWritableData;
 import org.signserver.server.data.impl.UploadConfig;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.statusrepo.StatusRepositorySessionRemote;
+import org.signserver.test.conf.SignerConfigurationBuilder;
+import org.signserver.test.conf.WorkerPropertiesBuilder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -183,9 +185,23 @@ public class ModulesTestCase {
        +"AwIBhjAJBgcqhkjOOAQDAzAAMC0CFQCEGSmvJf6rxy6u7ZqY25qE7Hy21gIUPW4q"
        +"++YIS2fHyu+H4Pjgnodx5zI=";
 
+    public static final String KEY_IMPL_CLASS = "IMPLEMENTATION_CLASS";
+    public static final String KEY_CRYPTO_TOKEN_IMPL_CLASS = "CRYPTOTOKEN_IMPLEMENTATION_CLASS";
+    public static final String KEY_KEYSTORE_PATH = "KEYSTOREPATH";
+    public static final String KEY_KEYSTORE_PASSWORD = "KEYSTOREPASSWORD";
+    public static final String KEY_NAME = "NAME";
+    public static final String KEY_DEFAULT_KEY = "DEFAULTKEY";
+    public static final String KEY_AUTH_TYPE = "AUTHTYPE";
+    public static final String VALUE_NO_AUTH = "NOAUTH";
+    public static final String WORKER_KEY_AUTH_TYPE = "AUTHTYPE";
+    public static final String WORKER_KEY_USER_1 = "USER.USER1";
+    public static final String WORKER_KEY_DISABLE_KEY_USAGE_COUNTER = "DISABLEKEYUSAGECOUNTER";
+
     private WorkerSessionRemote workerSession;
+    private static WorkerSessionRemote cWorkerSession;
     private ProcessSessionRemote processSession;
     private GlobalConfigurationSessionRemote globalSession;
+    private static GlobalConfigurationSessionRemote cGlobalSession;
     private StatusRepositorySessionRemote statusSession;
 
     private static File signServerHome;
@@ -253,13 +269,23 @@ public class ModulesTestCase {
     public WorkerSessionRemote getWorkerSession() {
         if (workerSession == null) {
             try {
-                workerSession = ServiceLocator.getInstance().lookupRemote(
-                    WorkerSessionRemote.class);
+                workerSession = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
             } catch (NamingException ex) {
                 fail("Could not lookup WorkerSession: " + ex.getMessage());
             }
         }
         return workerSession;
+    }
+
+    public static WorkerSessionRemote getCurrentWorkerSession() {
+        if(cWorkerSession == null) {
+            try {
+                cWorkerSession = ServiceLocator.getInstance().lookupRemote(WorkerSessionRemote.class);
+            } catch (NamingException ex) {
+                fail("Could not find WorkerSession: " + ex.getMessage());
+            }
+        }
+        return cWorkerSession;
     }
 
     public ProcessSessionRemote getProcessSession() {
@@ -274,11 +300,22 @@ public class ModulesTestCase {
         return processSession;
     }
 
+    public static GlobalConfigurationSessionRemote getCurrentGlobalSession() {
+        if (cGlobalSession == null) {
+            try {
+                cGlobalSession = ServiceLocator.getInstance().lookupRemote(GlobalConfigurationSessionRemote.class);
+            } catch (NamingException ex) {
+                fail("Could not lookup IGlobalConfigurationSession: " + ex.getMessage());
+            }
+        }
+        return cGlobalSession;
+    }
+
     public GlobalConfigurationSessionRemote getGlobalSession() {
         if (globalSession == null) {
             try {
                 globalSession = ServiceLocator.getInstance().lookupRemote(
-                    GlobalConfigurationSessionRemote.class);
+                        GlobalConfigurationSessionRemote.class);
             } catch (NamingException ex) {
                 fail("Could not lookup IGlobalConfigurationSession: "
                         + ex.getMessage());
@@ -372,11 +409,47 @@ public class ModulesTestCase {
         addSigner("org.signserver.module.xmlsigner.XMLSigner", signerId, signerName, autoActivate);
     }
 
+    /**
+     * Adds a test XMLSigner using configuration of SignerConfigurationBuilder.
+     * @param signerConfigurationBuilder A builder instance containing configuration for the Signer.
+     * @throws FileNotFoundException If keystore file was not found at SIGNSERVER_HOME.
+     */
+    public static void addTestXMLSigner(
+            final SignerConfigurationBuilder signerConfigurationBuilder
+    ) throws FileNotFoundException {
+        addTestSignerWithDefaultP12Keystore(
+                signerConfigurationBuilder.withClassName("org.signserver.module.xmlsigner.XMLSigner")
+        );
+    }
+
     public void addSigner(final String className,
             final int signerId, final String signerName, final boolean autoActivate)
         throws FileNotFoundException {
         addP12DummySigner(className, signerId, signerName,
                 new File(getSignServerHome(), KEYSTORE_KEYSTORE_FILE), autoActivate ? KEYSTORE_PASSWORD : null, KEYSTORE_SIGNER1_ALIAS);
+    }
+
+    /**
+     * Adds a test Signer with default p12 keystore using configuration of SignerConfigurationBuilder. Defaults are:
+     * <ul>
+     *     <li>Crypto token class name: "org.signserver.server.cryptotokens.P12CryptoToken";</li>
+     *     <li>Keystore file: SIGNSERVER_HOME / KEYSTORE_KEYSTORE_FILE = "res/test/dss10/dss10_keystore.p12";</li>
+     *     <li>Keystore alias: KEYSTORE_SIGNER1_ALIAS = "signer00003".</li>
+     * </ul>
+     * @param signerConfigurationBuilder A builder instance containing configuration for the Signer.
+     * @see #KEYSTORE_KEYSTORE_FILE
+     * @see #KEYSTORE_SIGNER1_ALIAS
+     * @throws FileNotFoundException If keystore file was not found at SIGNSERVER_HOME.
+     */
+    public static void addTestSignerWithDefaultP12Keystore(
+            final SignerConfigurationBuilder signerConfigurationBuilder
+    ) throws FileNotFoundException {
+        addTestSigner(
+                signerConfigurationBuilder
+                        .withCryptoTokenClassName("org.signserver.server.cryptotokens.P12CryptoToken")
+                        .withKeystore(new File(PathUtil.getAppHome(), KEYSTORE_KEYSTORE_FILE))
+                        .withAlias(KEYSTORE_SIGNER1_ALIAS)
+        );
     }
 
     public String getSigner1KeyAlias() {
@@ -460,38 +533,50 @@ public class ModulesTestCase {
         }
     }
 
-    public void addP12DummySigner(final int signerId, final String signerName, final File keystore, final String password, final String alias) {
-        addP12DummySigner("org.signserver.module.xmlsigner.XMLSigner",
-                signerId, signerName, keystore, password, alias);
+    public void addP12DummySigner(
+            final int signerId, final String signerName,
+            final File keystore, final String password, final String alias
+    ) {
+        addP12DummySigner("org.signserver.module.xmlsigner.XMLSigner", signerId, signerName, keystore, password, alias);
     }
 
-    public void addP12DummySigner(final String className, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
-        addDummySigner(className, "org.signserver.server.cryptotokens.P12CryptoToken", signerId, signerName, keystore, password, alias);
+    public void addP12DummySigner(
+            final String className,
+            final int signerId, final String signerName,
+            final File keystore, final String password, final String alias
+    ) {
+        addDummySigner(
+                className, "org.signserver.server.cryptotokens.P12CryptoToken",
+                signerId, signerName, keystore, password, alias
+        );
     }
 
     public void addJKSDummySigner(final String className, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
         addDummySigner(className, "org.signserver.server.cryptotokens.JKSCryptoToken", signerId, signerName, keystore, password, alias);
     }
 
-    public void addDummySigner(final String className, final String cryptoTokenClassName, final int signerId, final String signerName, final File keystore, final String password, final String alias) {
+    public void addDummySigner(
+            final String className, final String cryptoTokenClassName,
+            final int signerId, final String signerName,
+            final File keystore, final String password, final String alias
+    ) {
         getWorkerSession().setWorkerProperty(signerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
-        getWorkerSession().setWorkerProperty(signerId, "IMPLEMENTATION_CLASS", className);
+        getWorkerSession().setWorkerProperty(signerId, KEY_IMPL_CLASS, className);
         if (cryptoTokenClassName != null) {
             getWorkerSession().setWorkerProperty(signerId,
-                                                 "CRYPTOTOKEN_IMPLEMENTATION_CLASS",
+                    KEY_CRYPTO_TOKEN_IMPL_CLASS,
                                                  cryptoTokenClassName);
         }
-        getWorkerSession().setWorkerProperty(signerId, "NAME", signerName);
-        getWorkerSession().setWorkerProperty(signerId, "AUTHTYPE", "NOAUTH");
+        getWorkerSession().setWorkerProperty(signerId, KEY_NAME, signerName);
+        getWorkerSession().setWorkerProperty(signerId, KEY_AUTH_TYPE, VALUE_NO_AUTH);
         if (keystore != null) {
-            getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPATH",
-                                                 keystore.getAbsolutePath());
+            getWorkerSession().setWorkerProperty(signerId, KEY_KEYSTORE_PATH, keystore.getAbsolutePath());
         }
         if (alias != null) {
-            getWorkerSession().setWorkerProperty(signerId, "DEFAULTKEY", alias);
+            getWorkerSession().setWorkerProperty(signerId, KEY_DEFAULT_KEY, alias);
         }
         if (password != null) {
-            getWorkerSession().setWorkerProperty(signerId, "KEYSTOREPASSWORD", password);
+            getWorkerSession().setWorkerProperty(signerId, KEY_KEYSTORE_PASSWORD, password);
         }
 
         getWorkerSession().reloadConfiguration(signerId);
@@ -499,7 +584,44 @@ public class ModulesTestCase {
             assertNotNull("Check signer available",
                     getWorkerSession().getStatus(new WorkerIdentifier(signerId)));
         } catch (InvalidWorkerIdException ex) {
-            fail("Worker was not added succefully: " + ex.getMessage());
+            fail("Worker was not added successfully: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Adds a test signer using configuration of SignerConfigurationBuilder.
+     * @param signerConf A builder instance containing configuration for the Signer.
+     */
+    public static void addTestSigner(final SignerConfigurationBuilder signerConf) {
+        final int signerId = signerConf.getSignerId();
+        final WorkerSessionRemote workerSession = getCurrentWorkerSession();
+        // Set properties if any
+        workerSession.setWorkerProperty(signerId, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+        workerSession.setWorkerProperty(signerId, KEY_IMPL_CLASS, signerConf.getClassName());
+        //
+        if (signerConf.getCryptoTokenClassName() != null) {
+            workerSession.setWorkerProperty(signerId, KEY_CRYPTO_TOKEN_IMPL_CLASS, signerConf.getCryptoTokenClassName());
+        }
+        workerSession.setWorkerProperty(signerId, KEY_NAME, signerConf.getSignerName());
+        workerSession.setWorkerProperty(signerId, KEY_AUTH_TYPE, VALUE_NO_AUTH);
+        if (signerConf.getKeystore() != null) {
+            workerSession.setWorkerProperty(signerId, KEY_KEYSTORE_PATH, signerConf.getKeystore().getAbsolutePath());
+        }
+        if (signerConf.getAlias() != null) {
+            workerSession.setWorkerProperty(signerId, KEY_DEFAULT_KEY, signerConf.getAlias());
+        }
+        if(signerConf.isAutoActivate()) {
+            workerSession.setWorkerProperty(signerId, KEY_KEYSTORE_PASSWORD, KEYSTORE_PASSWORD);
+        }
+        if (signerConf.getKeystorePassword() != null) {
+            workerSession.setWorkerProperty(signerId, KEY_KEYSTORE_PASSWORD, signerConf.getKeystorePassword());
+        }
+        // Reload
+        workerSession.reloadConfiguration(signerId);
+        try {
+            assertNotNull("Check signer available", workerSession.getStatus(new WorkerIdentifier(signerId)));
+        } catch (InvalidWorkerIdException ex) {
+            fail("Worker was not added successfully: " + ex.getMessage());
         }
     }
 
@@ -617,18 +739,18 @@ public class ModulesTestCase {
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.validationservice.server.ValidationServiceWorker");
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, WorkerConfig.CRYPTOTOKEN_IMPLEMENTATION_CLASS, "org.signserver.server.cryptotokens.KeystoreCryptoToken");
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID,
-                "KEYSTOREPATH",
+                KEY_KEYSTORE_PATH,
                 getSignServerHome() + File.separator + "res" + File.separator +
                         "test" + File.separator + "dss10" + File.separator +
                         "dss10_signer1.p12");
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID,
                 "KEYSTORETYPE", "PKCS12");
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID,
-                "KEYSTOREPASSWORD", "foo123");
+                KEY_KEYSTORE_PASSWORD, "foo123");
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID,
-                "DEFAULTKEY", "Signer 1");
-        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "AUTHTYPE", "NOAUTH");
-        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "NAME", VALIDATION_SERVICE_WORKER_NAME);
+                KEY_DEFAULT_KEY, "Signer 1");
+        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, KEY_AUTH_TYPE, VALUE_NO_AUTH);
+        getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, KEY_NAME, VALIDATION_SERVICE_WORKER_NAME);
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.CLASSPATH", "org.signserver.validationservice.server.DummyValidator");
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.ISSUER1.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + VALIDATOR_CERT_ISSUER + "\n-----END CERTIFICATE-----\n");
         getWorkerSession().setWorkerProperty(VALIDATION_SERVICE_WORKER_ID, "VAL1.ISSUER2.CERTCHAIN", "\n-----BEGIN CERTIFICATE-----\n" + VALIDATOR_CERT_ISSUER4 + "\n-----END CERTIFICATE-----\n");
@@ -639,8 +761,8 @@ public class ModulesTestCase {
         // XMLVALIDATOR
         getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
         getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, WorkerConfig.IMPLEMENTATION_CLASS, "org.signserver.module.xmlvalidator.XMLValidator");
-        getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, "NAME", XML_VALIDATOR_WORKER_NAME);
-        getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, "AUTHTYPE", "NOAUTH");
+        getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, KEY_NAME, XML_VALIDATOR_WORKER_NAME);
+        getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, KEY_AUTH_TYPE, VALUE_NO_AUTH);
         getWorkerSession().setWorkerProperty(XML_VALIDATOR_WORKER_ID, "VALIDATIONSERVICEWORKER", VALIDATION_SERVICE_WORKER_NAME);
         getWorkerSession().reloadConfiguration(XML_VALIDATOR_WORKER_ID);
     }
@@ -727,9 +849,29 @@ public class ModulesTestCase {
         return config.getProperty("httpclient.ipaddress", "127.0.0.1");
     }
 
-    /** Setup keystores for SSL. **/
+    /**
+     * Setup keystore for SSL.
+     * @deprecated Use static method initSSLKeystore() instead.
+     **/
     public SSLSocketFactory setupSSLKeystores() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, KeyManagementException, UnrecoverableKeyException {
         return testUtils.setupSSLTruststore();
+    }
+
+    /**
+     * Initializes the SSLSocketFactory containing the default truststore.jks for testing.
+     * @return SSLSocketFactory.
+     * @throws KeyStoreException KeyStore Exception.
+     * @throws IOException IO exception.
+     * @throws NoSuchAlgorithmException In case of invalid algorithm.
+     * @throws CertificateException Certificate exception.
+     * @throws KeyManagementException In case of key exception.
+     * @throws UnrecoverableKeyException In case of key exception.
+     */
+    public static SSLSocketFactory initSSLKeystore()
+            throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException,
+            KeyManagementException, UnrecoverableKeyException
+    {
+        return TestUtils.initSSLTruststore();
     }
 
     public TestUtils getTestUtils() {
@@ -793,4 +935,56 @@ public class ModulesTestCase {
         String OS = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
         return (OS.contains("win"));
     }
+
+    /**
+     * Updates properties of the worker using properties of WorkerPropertiesBuilder.
+     * @param workerProps A builder instance containing properties for the Worker.
+     */
+    public static void applyWorkerPropertiesAndReload(final WorkerPropertiesBuilder workerProps) {
+        final int workerId = workerProps.getWorkerId();
+        final WorkerSessionRemote workerSession = getCurrentWorkerSession();
+        // Apply properties if any
+        if(workerProps.getAuthType() != null) {
+            workerSession.setWorkerProperty(workerId, WORKER_KEY_AUTH_TYPE, workerProps.getAuthType());
+        }
+        if(workerProps.getUser1() != null) {
+            workerSession.setWorkerProperty(workerId, WORKER_KEY_USER_1, workerProps.getUser1());
+        }
+        if(workerProps.isDisableKeyUsageCounter()) {
+            workerSession.setWorkerProperty(workerId, WORKER_KEY_DISABLE_KEY_USAGE_COUNTER, "TRUE");
+        }
+        // Reload
+        getCurrentWorkerSession().reloadConfiguration(workerId);
+    }
+
+    private static void resetGlobalProperties(final int workerId) {
+        final GlobalConfigurationSessionRemote globalConfigSession = getCurrentGlobalSession();
+        final GlobalConfiguration gc = globalConfigSession.getGlobalConfiguration();
+        final Enumeration<String> en = gc.getKeyEnumeration();
+        while (en.hasMoreElements()) {
+            String key = en.nextElement();
+            if (key.toUpperCase(Locale.ENGLISH).startsWith("GLOB.WORKER" + workerId)) {
+                key = key.substring("GLOB.".length());
+                globalConfigSession.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, key);
+            }
+        }
+    }
+
+    /**
+     * Removes the worker by resetting all of its properties.
+     * @param workerId worker's identifier.
+     */
+    public static void removeWorkerById(final int workerId) {
+        resetGlobalProperties(workerId);
+        final WorkerSessionRemote workerSession = getCurrentWorkerSession();
+        final WorkerConfig wc = workerSession.getCurrentWorkerConfig(workerId);
+        LOG.info("Got current config before: " + wc.getProperties());
+        for (Object o : wc.getProperties().keySet()) {
+            final String key = (String) o;
+            workerSession.removeWorkerProperty(workerId, key);
+        }
+        workerSession.reloadConfiguration(workerId);
+        LOG.info("Got current config after: " + workerSession.getCurrentWorkerConfig(workerId).getProperties());
+    }
+
 }

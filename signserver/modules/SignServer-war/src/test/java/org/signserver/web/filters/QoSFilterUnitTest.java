@@ -39,10 +39,6 @@ public class QoSFilterUnitTest {
         // given
         // initially cache should be created
         final int expectedInitalCacheRecreations = 1;
-        /* after (immediatly) getting a property value, cache should not have
-         * been recreated
-         */
-        final int expectedCacheRecreationsAfterOneRequest = 1;
 
         // when
         final MockedQoSFilter filter = new MockedQoSFilter();

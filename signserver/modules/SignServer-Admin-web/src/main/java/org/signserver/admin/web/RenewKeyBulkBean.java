@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.HashSet;
+import java.util.HashMap;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import org.apache.commons.lang.StringUtils;
@@ -83,40 +85,41 @@ public class RenewKeyBulkBean extends BulkBean {
         //errorMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
         //FacesContext.getCurrentInstance().addMessage(null, errorMessage);
 
-        for (RenewKeyWorker worker : getSelectedRenewKeyWorkers()) {
+        if(isValidMultiKeyGeneration())
+            for (RenewKeyWorker worker : getSelectedRenewKeyWorkers()) {
 
-            String newAlias = null;
-            try {
-                // Generate key
-                newAlias = getWorkerSessionBean().generateSignerKey(getAuthBean().getAdminCertificate(), new WorkerIdentifier(worker.getId()),
-                        worker.getKeyAlgorithm(), worker.getKeySpecification(), worker.getNewKeyAlias(), "");
+                String newAlias = null;
+                try {
+                    // Generate key
+                    newAlias = getWorkerSessionBean().generateSignerKey(getAuthBean().getAdminCertificate(), new WorkerIdentifier(worker.getId()),
+                            worker.getKeyAlgorithm(), worker.getKeySpecification(), worker.getNewKeyAlias(), "");
 
-                if (newAlias == null) {
-                    worker.setError("Could not generate key");
+                    if (newAlias == null) {
+                        worker.setError("Could not generate key");
+                        worker.setSuccess(null);
+                    } else {
+                        worker.setError(null);
+                        worker.setSuccess("Generated " + newAlias);
+                    }
+                } catch (CryptoTokenOfflineException | InvalidWorkerIdException e) {
+                    worker.setError("Failed: " + e.getMessage());
                     worker.setSuccess(null);
-                } else {
-                    worker.setError(null);
-                    worker.setSuccess("Generated " + newAlias);
                 }
-            } catch (CryptoTokenOfflineException | InvalidWorkerIdException e) {
-                worker.setError("Failed: " + e.getMessage());
-                worker.setSuccess(null);
+
+                if (newAlias != null) {
+                    //LOG.debug("Created key " + newAlias + " for signer " + signerId);
+
+                    // Update key label
+                    getWorkerSessionBean().setWorkerProperty(getAuthBean().getAdminCertificate(), worker.getId(),
+                            "NEXTCERTSIGNKEY", newAlias);
+
+                    // Reload configuration
+                    getWorkerSessionBean().reloadConfiguration(getAuthBean().getAdminCertificate(), worker.getId());
+
+                    //LOG.debug("Configured new key " + newAlias + " for signer " + signerId);
+                    getSelectedIds().remove(worker.getId());
+                }
             }
-
-            if (newAlias != null) {
-                //LOG.debug("Created key " + newAlias + " for signer " + signerId);
-
-                // Update key label
-                getWorkerSessionBean().setWorkerProperty(getAuthBean().getAdminCertificate(), worker.getId(),
-                        "NEXTCERTSIGNKEY", newAlias);
-
-                // Reload configuration
-                getWorkerSessionBean().reloadConfiguration(getAuthBean().getAdminCertificate(), worker.getId());
-
-                //LOG.debug("Configured new key " + newAlias + " for signer " + signerId);
-                getSelectedIds().remove(worker.getId());
-            }
-        }
 
         if (getSelectedIds().isEmpty()) {
             return "workers?faces-redirect=true&amp;includeViewParams=true&amp;" + "selected=" + StringUtils.join(getWorkerIdsList(), ",");
@@ -219,8 +222,37 @@ public class RenewKeyBulkBean extends BulkBean {
             return keySpecMenuValues;
         }
     }
-    
+
     public boolean isKeyGenerationDisabled() throws AdminNotAuthorizedException {
         return getWorkerSessionBean().isKeyGenerationDisabled();
+    }
+
+    public boolean isValidMultiKeyGeneration() throws AdminNotAuthorizedException {
+        HashSet<String> aliasSet;
+        HashMap<String,HashSet<String>> hashMap = new HashMap<>();
+        String cryptoToken;
+        String newKeyAlias;
+
+        for (RenewKeyWorker worker : getSelectedRenewKeyWorkers()) {
+            cryptoToken = worker.getConfig().getProperty("CRYPTOTOKEN");
+            newKeyAlias = worker.newKeyAlias;
+            if(cryptoToken == null) {
+                worker.setError("CryptoToken is not set");
+                return false;
+            }
+            if(hashMap.isEmpty() || !hashMap.containsKey(cryptoToken)) {
+                aliasSet = new HashSet<>();
+                aliasSet.add(newKeyAlias);
+                hashMap.put(cryptoToken, aliasSet);
+            }else{
+                if(hashMap.get(cryptoToken).contains(newKeyAlias)){
+                    worker.setError("Duplicate Key Alias can not be set for a CryptoToken");
+                    return false;
+                }else {
+                    hashMap.get(cryptoToken).add(newKeyAlias);
+                }
+            }
+        }
+        return true;
     }
 }

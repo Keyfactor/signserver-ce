@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.5.1</p>
+                    <p>Version: 5.6.0</p>
                 </div>
             </header>
 
@@ -629,6 +629,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="ZoneZipFileServerSideSigner.html">ZoneZipFileServerSideSigner</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="QoS_Status_Worker.html">QoS Status Worker</a>
 
             </li>
                             </ul>
@@ -1496,6 +1500,13 @@
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Usage" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">stresstest &lt;options&gt;</code></div>
 <div class="line"><code class="plain">Performance testing tool</code></div>
+<div class="line"><code class="plain"> -continueonfailure     When </code><code class="keyword">this</code><code class="plain"> option is specified the test will</code></div>
+<div class="line"><code class="plain">                        </code><code class="keyword">continue</code><code class="plain"> running </code><code class="keyword">if</code><code class="plain"> a request fails. Failed</code></div>
+<div class="line"><code class="plain">                        requests will not be considered </code><code class="keyword">for</code><code class="plain"> the</code></div>
+<div class="line"><code class="plain">                        calculation of the total number of requests and</code></div>
+<div class="line"><code class="plain">                        response times. The total number of failed</code></div>
+<div class="line"><code class="plain">                        requests will presented in the statistics.</code></div>
+<div class="line"> </div>
 <div class="line"><code class="plain"> -data &lt;arg&gt;            Input data to be used with the</code></div>
 <div class="line"><code class="plain">                        DocumentSigner/Validator1 testsuites using an</code></div>
 <div class="line"><code class="plain">                        XMLSigner.</code></div>

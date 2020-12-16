@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.5.1</p>
+                    <p>Version: 5.6.0</p>
                 </div>
             </header>
 
@@ -629,6 +629,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="ZoneZipFileServerSideSigner.html">ZoneZipFileServerSideSigner</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="QoS_Status_Worker.html">QoS Status Worker</a>
 
             </li>
                             </ul>
@@ -1484,17 +1488,17 @@
 
     <p  >The following describes various options for performing the hashing on the client-side instead of making all the steps in the signing on the server-side. Client-side hashing is also sometimes referred to as &quot;hash signing&quot; and the main advantage is that the original file does not need to be sent to the server.    </p>
     <p  >    </p>
-<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-CMSDetachedSignatures">CMS Detached Signatures</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-PlainSignatures">Plain Signatures</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-EmbeddedSignatureFormats">Embedded Signature Formats</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-AuthenticodeSigning">Authenticode Signing</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-JARSigning">JAR Signing</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-OpenPGPSigning">OpenPGP Signing</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-DebianDpkg-sigSigning">Debian Dpkg-sig Signing</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-DNSSECSigning">DNSSEC Signing</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-APPXSigning">APPX Signing</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-93592689_id-.Client-SideHashingv5.5.0-APKSigning">APK Signing</a>    </p>
-</li></ul>    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-CMSDetachedSignatures">
+<ul class="toc-indentation "><li class=" ">    <p  ><a   href="#src-93592689_id-.ClientSideHashingv5.5.0-CMSDetachedSignatures">CMS Detached Signatures</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.ClientSideHashingv5.5.0-PlainSignatures">Plain Signatures</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.ClientSideHashingv5.5.0-EmbeddedSignatureFormats">Embedded Signature Formats</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.ClientSideHashingv5.5.0-AuthenticodeSigning">Authenticode Signing</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.ClientSideHashingv5.5.0-JARSigning">JAR Signing</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.ClientSideHashingv5.5.0-OpenPGPSigning">OpenPGP Signing</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.ClientSideHashingv5.5.0-DebianDpkg-sigSigning">Debian Dpkg-sig Signing</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.ClientSideHashingv5.5.0-DNSSECSigning">DNSSEC Signing</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.ClientSideHashingv5.5.0-APPXSigning">APPX Signing</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-93592689_id-.ClientSideHashingv5.5.0-APKSigning">APK Signing</a>    </p>
+</li></ul>    <div class="section section-1" id="src-93592689_id-.ClientSideHashingv5.5.0-CMSDetachedSignatures">
         <h1 class="heading "><span>CMS Detached Signatures</span></h1>
     <p  >Detached signatures allow the signature to be placed in a separate file next to the original file, and thus the original file does not have to be updated. With CMS signatures, what is covered by the signature is a set of attributes (unless it is a direct signature) where one of the attributes is called messageDigest, which is the hash of the original file. This means that in order to create a CMS detached signature, it is sufficient to get the hash of the original file as input.    </p>
     <p  >The <a   href="CMS_Signer.html">CMS Signer</a> is for instance configured to accept a hash as input by setting CLIENTSIDEHASHING=TRUE, or by allowing the client to specify if the input is the original file or a hash of it, by configuring ALLOW_CLIENTSIDEHASHING_OVERRIDE=TRUE.    </p>
@@ -1510,11 +1514,11 @@
 </div>
     </div>
     </div>
-    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-PlainSignatures">
+    <div class="section section-1" id="src-93592689_id-.ClientSideHashingv5.5.0-PlainSignatures">
         <h1 class="heading "><span>Plain Signatures</span></h1>
     <p  >For plain signatures (as produced by the <a   href="Plain_Signer.html">Plain Signer</a>), generally the whole file is sent to the signer and returned is the small signature. However, as the plain signature schemes involve a hash operation, it is possible to perform that on the client-side.    </p>
     <p  >For the Plain Signer, this can be achieved by configuring the signer with a signature algorithm with the word NONE instead of the name of the hash. For example: &quot;NONEwithRSA&quot; or &quot;NONEwithECDSA&quot;. Note that the input to the signer has to be in a particular format when using the &quot;NONEwithRSA&quot; algorithm for the final signature to be correct. See RFC#3447 for details.    </p>
-    <div class="section section-2" id="src-93592689_safe-id-aWQtLkNsaWVudC1TaWRlSGFzaGluZ3Y1LjUuMC1TYW1wbGVVc2FnZSh3aXRoTk9ORXdpdGhFQ0RTQWFsZ29yaXRobSk">
+    <div class="section section-2" id="src-93592689_safe-id-aWQtLkNsaWVudFNpZGVIYXNoaW5ndjUuNS4wLVNhbXBsZVVzYWdlKHdpdGhOT05Fd2l0aEVDRFNBYWxnb3JpdGhtKQ">
         <h2 class="heading "><span>Sample Usage (with NONEwithECDSA algorithm)</span></h2>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1527,7 +1531,7 @@
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-EmbeddedSignatureFormats">
+    <div class="section section-1" id="src-93592689_id-.ClientSideHashingv5.5.0-EmbeddedSignatureFormats">
         <h1 class="heading "><span>Embedded Signature Formats</span></h1>
     <p  >For signature formats where the signature is to be placed within the original document, additional logic has to be implemented on the client-side in order to, typically, first prepare the document for signing, compute the digest and send it to the server, and then finally embed the signature within the file.    </p>
     <p  >On the client-side, support has been implemented for &quot;client-side hashing and construction&quot; for various signature formats (see below) for instance for Java Archives (.JAR, .APK,...) and for Authenticode signing of Portable Executable (PE) files (i.e. EXE, .DLL,..), Windows Installer files (.MSI) etc. Support for other file types such as PDF may also be implemented.    </p>
@@ -1581,7 +1585,7 @@
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-AuthenticodeSigning">
+    <div class="section section-1" id="src-93592689_id-.ClientSideHashingv5.5.0-AuthenticodeSigning">
         <h1 class="heading "><span>Authenticode Signing</span></h1>
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
@@ -1632,7 +1636,7 @@
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-SampleUsage">
+    <div class="section section-2" id="src-93592689_id-.ClientSideHashingv5.5.0-SampleUsage">
         <h2 class="heading "><span>Sample Usage</span></h2>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1648,7 +1652,7 @@
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-JARSigning">
+    <div class="section section-1" id="src-93592689_id-.ClientSideHashingv5.5.0-JARSigning">
         <h1 class="heading "><span>JAR Signing</span></h1>
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
@@ -1725,7 +1729,7 @@
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-SampleUsage.1">
+    <div class="section section-2" id="src-93592689_id-.ClientSideHashingv5.5.0-SampleUsage.1">
         <h2 class="heading "><span>Sample Usage</span></h2>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1738,7 +1742,7 @@
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-OpenPGPSigning">
+    <div class="section section-1" id="src-93592689_id-.ClientSideHashingv5.5.0-OpenPGPSigning">
         <h1 class="heading "><span>OpenPGP Signing</span></h1>
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
@@ -1800,7 +1804,7 @@
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-SampleUsage.2">
+    <div class="section section-2" id="src-93592689_id-.ClientSideHashingv5.5.0-SampleUsage.2">
         <h2 class="heading "><span>Sample Usage</span></h2>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1815,7 +1819,7 @@
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-DebianDpkg-sigSigning">
+    <div class="section section-1" id="src-93592689_id-.ClientSideHashingv5.5.0-DebianDpkg-sigSigning">
         <h1 class="heading "><span>Debian Dpkg-sig Signing</span></h1>
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
@@ -1874,11 +1878,11 @@
     <p  >You can run without the required KEY_ options and the server will give an error message that includes the values that can be used.    </p>
         </div>
     </div>
-    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-AlgorithmSupport">
+    <div class="section section-2" id="src-93592689_id-.ClientSideHashingv5.5.0-AlgorithmSupport">
         <h2 class="heading "><span>Algorithm Support</span></h2>
     <p  >Note that specifically for DSA signatures in client-side mode, other algorithms than SHA1 may not be supported due to the underlying implementation.    </p>
     </div>
-    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-SampleUsages">
+    <div class="section section-2" id="src-93592689_id-.ClientSideHashingv5.5.0-SampleUsages">
         <h2 class="heading "><span>Sample Usages</span></h2>
     <p  >The key ID is the hex-encoded representation, and the key algorithm can be specified as either a name (RSA, DSA, or ECDSA) or using one of the PGP constant values (for example 19 for ECDSA).    </p>
     <div  class="confbox programlisting">
@@ -1894,7 +1898,7 @@
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-DNSSECSigning">
+    <div class="section section-1" id="src-93592689_id-.ClientSideHashingv5.5.0-DNSSECSigning">
         <h1 class="heading "><span>DNSSEC Signing</span></h1>
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
@@ -1977,7 +1981,7 @@ Minimum remaining time in seconds required to be able to re-use a previously sig
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-SampleUsages.1">
+    <div class="section section-2" id="src-93592689_id-.ClientSideHashingv5.5.0-SampleUsages.1">
         <h2 class="heading "><span>Sample Usages</span></h2>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -1987,7 +1991,7 @@ Minimum remaining time in seconds required to be able to re-use a previously sig
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-APPXSigning">
+    <div class="section section-1" id="src-93592689_id-.ClientSideHashingv5.5.0-APPXSigning">
         <h1 class="heading "><span>APPX Signing</span></h1>
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
@@ -2032,7 +2036,7 @@ Minimum remaining time in seconds required to be able to re-use a previously sig
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-SampleUsages.2">
+    <div class="section section-2" id="src-93592689_id-.ClientSideHashingv5.5.0-SampleUsages.2">
         <h2 class="heading "><span>Sample Usages</span></h2>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
@@ -2041,7 +2045,7 @@ Minimum remaining time in seconds required to be able to re-use a previously sig
     </div>
     </div>
     </div>
-    <div class="section section-1" id="src-93592689_id-.Client-SideHashingv5.5.0-APKSigning">
+    <div class="section section-1" id="src-93592689_id-.ClientSideHashingv5.5.0-APKSigning">
         <h1 class="heading "><span>APK Signing</span></h1>
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
@@ -2160,11 +2164,11 @@ True if debuggable APK should be allowed to be signed. Valid values: true, or fa
         </tr>
 </tbody>        </table>
             </div>
-    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-AlgorithmSupport.1">
+    <div class="section section-2" id="src-93592689_id-.ClientSideHashingv5.5.0-AlgorithmSupport.1">
         <h2 class="heading "><span>Algorithm Support</span></h2>
     <p  >SignClient assumes the server-side signer is configured with either NONEwithECDSA, or NONEwithRSA as signature algorithm. SignClient currently supports SHA1, SHA-256, SHA-384, and SHA-512 with RSA and SHA1, SHA-224, SHA-256, SHA-384, and SHA-512 with ECDSA. DSA is not supported.    </p>
     </div>
-    <div class="section section-2" id="src-93592689_id-.Client-SideHashingv5.5.0-SampleUsages.3">
+    <div class="section section-2" id="src-93592689_id-.ClientSideHashingv5.5.0-SampleUsages.3">
         <h2 class="heading "><span>Sample Usages</span></h2>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">

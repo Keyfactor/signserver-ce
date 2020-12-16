@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.5.1</p>
+                    <p>Version: 5.6.0</p>
                 </div>
             </header>
 
@@ -629,6 +629,10 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="ZoneZipFileServerSideSigner.html">ZoneZipFileServerSideSigner</a>
+
+            </li>
+                                        <li class="leaf">
+        <a class="ht-nav-page-link" href="QoS_Status_Worker.html">QoS Status Worker</a>
 
             </li>
                             </ul>
@@ -1573,12 +1577,12 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >If we want the visible signature to contain custom image, specify image as base64 encoded byte array. Alternatively, the custom image can be specified by giving a path to image on file system.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  If specifying a path to an image, &quot;\&quot; should be escaped (thus C:\photo.jpg =&gt; &quot;C:\\photo.jpg&quot;).    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  If specifying image as base64 encoded byte array, &quot;=&quot; should be escaped (thus &quot;BBCXMI==&quot; =&gt; &quot;BBCXMI\=\=&quot;).    </p>
     <p  >If both of properties are set, VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 will take priority. To disable the feature, do not set the properties.<br/>Default: not set (no custom image).<br/>These properties are ignored if ADD_VISIBLE_SIGNATURE is set to False.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  Note that in a clustered environment, it is advised to specify image as base64 string, since image data will be stored in a central database. Otherwise, each node should contain copy of the image, and each image managed separately (e.g. on image updates, or insertion of new image for different worker).    </p>
             </td>
         </tr>
@@ -1604,9 +1608,9 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >If we want to timestamp document signature, specify timestamp authority URL.<br/>This will cause time stamp requests to be issued via HTTP requests. Under high load, this can lead to thread deadlocks in the application server if using a localhost URL (using a time stamp signer running in the same server). In this case, use the internal mechanism described below). To not timestamp document signature, do not set the property.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  iI path contains characters &quot;\&quot; or &quot;=&quot; , these characters should be escaped (thus &quot;\&quot; = &quot;\\&quot;, &quot;=&quot; =&gt;&quot;\=&quot;).    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  Cannot be set at the same time as <a   href="#src-96862482_id-.PDFSignerv5.5.0-TSA_WORKER">TSA_WORKER</a>.    </p>
     <p  >Default: not set (no timestamping).    </p>
             </td>
@@ -1617,9 +1621,9 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >Specify a worker ID or worker name for a time stamp signer<br/>This will use internal calls and can only be used for a time stamp authority running in the same SignServer instance.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  Use instead of TSA_URL when using a time stamp signer running in the same SignServer instance to avoid thread deadlocks under high load.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  Cannot be set at the same time as <a   href="#src-96862482_id-.PDFSignerv5.5.0-TSA_URL">TSA_URL</a>.    </p>
     <p  >Default: Not set (no timestamping).    </p>
             </td>
@@ -1646,8 +1650,8 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >To embed the OCSP response for the signer certificate inside the signature package, set to <strong class=" ">True,</strong> otherwise set to <strong class=" ">False</strong>.    </p>
-    <p  ><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
-</strong> Issuer certificate (of signing certificate) should be in certificate chain.<br/>    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
+    <p  ><strong class=" ">    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+</strong> Issuer certificate (of signing certificate) should be in certificate chain.<br/>    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  OCSP responses must contain a nextUpdate field in order for off-line validation to work with Adobe Reader. For EJBCA OCSP Responder, see configuration of ocsp.untilNextUpdate in ocsp.properties.    </p>
     <p  >Default: <strong class=" ">False</strong>.    </p>
             </td>
@@ -1722,9 +1726,9 @@
         <p  >SET_PERMISSIONS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Replace the current permissions (if any) with the permissions specified in this comma separated list of permissions. Available permissions: The same permission names as for the property REJECT_PERMISSIONS.<br/>    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
- This property cannot be specified if REMOVE_PERMISSIONS is used.<br/>    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
- This property and the REMOVE_PERMISSIONS property only sets the permissions setting in the document. All permissions might not be enforced by the PDF reader, and some permissions specified to be allowed by this property, might not be allowed when opening the final document (i.e. if that would invalidate the signature and/or certification).<br/>    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
+        <p  >Replace the current permissions (if any) with the permissions specified in this comma separated list of permissions. Available permissions: The same permission names as for the property REJECT_PERMISSIONS.<br/>    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+ This property cannot be specified if REMOVE_PERMISSIONS is used.<br/>    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+ This property and the REMOVE_PERMISSIONS property only sets the permissions setting in the document. All permissions might not be enforced by the PDF reader, and some permissions specified to be allowed by this property, might not be allowed when opening the final document (i.e. if that would invalidate the signature and/or certification).<br/>    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  If the document is not already protected by an owner password and the SET_OWNERPASSWORD is not specified, a random password will be used as owner password.<br/>Default: Unset (permissions are not set by this property)    </p>
             </td>
         </tr>
@@ -1733,8 +1737,8 @@
         <p  >REMOVE_PERMISSIONS    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Remove all permissions specified in this comma separated list from the document. Available permissions: The same permission names as for the property REJECT_PERMISSIONS.<br/>This property can not be specified if SET_PERMISSIONS is used.<br/>    <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
- This property only removes the permissions listed even if some permissions (i.e. ALLOW_PRINTING) by the standard gives more permissions (i.e. also ALLOW_DEGRADED_PRINTING). To remove all permissions to print remove both ALLOW_PRINTING and ALLOW_DEGRADED_PRINTING. To still have ALLOW_DEGRADED_PRINTING it is possible to specify to only remove ALLOW_PRINTING.<br/>See     <img  class="emoticon emoticon-warning" src="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg" alt="images/s/sv_SE/8100/b0984b7297905b7c7bd946458f753ce0130bfc8c/_/images/icons/emoticons/warning.svg"   />
+        <p  >Remove all permissions specified in this comma separated list from the document. Available permissions: The same permission names as for the property REJECT_PERMISSIONS.<br/>This property can not be specified if SET_PERMISSIONS is used.<br/>    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+ This property only removes the permissions listed even if some permissions (i.e. ALLOW_PRINTING) by the standard gives more permissions (i.e. also ALLOW_DEGRADED_PRINTING). To remove all permissions to print remove both ALLOW_PRINTING and ALLOW_DEGRADED_PRINTING. To still have ALLOW_DEGRADED_PRINTING it is possible to specify to only remove ALLOW_PRINTING.<br/>See     <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  notes for REMOVE_PERMISSIONS which also applies to this setting.<br/>Removing only ALLOW_DEGRADED_PRINTING has no effect, as degraded printing is implicitly allowed if printing is allowed.<br/>Default: Unset/empty (no permissions are removed)    </p>
             </td>
         </tr>

@@ -85,7 +85,7 @@ public class RenewKeyBulkBean extends BulkBean {
         //errorMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
         //FacesContext.getCurrentInstance().addMessage(null, errorMessage);
 
-        if(isValidMultiKeyGeneration())
+        if (validateMultiKeyGeneration())
             for (RenewKeyWorker worker : getSelectedRenewKeyWorkers()) {
 
                 String newAlias = null;
@@ -227,32 +227,41 @@ public class RenewKeyBulkBean extends BulkBean {
         return getWorkerSessionBean().isKeyGenerationDisabled();
     }
 
-    public boolean isValidMultiKeyGeneration() throws AdminNotAuthorizedException {
+    /**
+     * Set the error message on the workers where the duplicate key alias tried to use within the same crypto token.
+     * Set the error message on the workers where CryptoToken is not set.
+     *
+     * Note: Finding any error and returning false causes to skip all the renew keys processes.
+     *
+     * @return False if any error found and return true otherwise
+     */
+    private boolean validateMultiKeyGeneration() throws AdminNotAuthorizedException {
         HashSet<String> aliasSet;
-        HashMap<String,HashSet<String>> hashMap = new HashMap<>();
+        HashMap<String, HashSet<String>> hashMap = new HashMap<>();
         String cryptoToken;
         String newKeyAlias;
+        boolean result = true;
 
         for (RenewKeyWorker worker : getSelectedRenewKeyWorkers()) {
             cryptoToken = worker.getConfig().getProperty("CRYPTOTOKEN");
             newKeyAlias = worker.newKeyAlias;
-            if(cryptoToken == null) {
+            if (cryptoToken == null) {
                 worker.setError("CryptoToken is not set");
-                return false;
+                result = false;
             }
-            if(hashMap.isEmpty() || !hashMap.containsKey(cryptoToken)) {
+            if (hashMap.isEmpty() || !hashMap.containsKey(cryptoToken)) {
                 aliasSet = new HashSet<>();
                 aliasSet.add(newKeyAlias);
                 hashMap.put(cryptoToken, aliasSet);
-            }else{
-                if(hashMap.get(cryptoToken).contains(newKeyAlias)){
-                    worker.setError("Duplicate Key Alias can not be set for a CryptoToken");
-                    return false;
-                }else {
+            } else {
+                if (hashMap.get(cryptoToken).contains(newKeyAlias)) {
+                    worker.setError("Duplicate Key Alias can not be set in a CryptoToken");
+                    result = false;
+                } else {
                     hashMap.get(cryptoToken).add(newKeyAlias);
                 }
             }
         }
-        return true;
+        return result;
     }
 }

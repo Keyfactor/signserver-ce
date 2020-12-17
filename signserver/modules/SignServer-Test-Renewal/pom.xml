@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.5.1.Beta2-prio-wp2-1-SNAPSHOT</version>
+        <version>5.5.1.CR1-prio-wp2-1</version>
     </parent>
     <artifactId>SignServer-Test-Renewal</artifactId>
     <name>SignServer-Test-Renewal</name>

@@ -30,15 +30,14 @@ import org.signserver.admin.common.auth.AdminNotAuthorizedException;
 import org.signserver.admin.web.ejb.AdminWebSessionBean;
 
 /**
+ *
  * @author Markus Kilås
  * @version $Id$
  */
 @ManagedBean
 @ViewScoped
 public class GlobalConfigurationBean {
-    /**
-     * Logger for this class.
-     */
+    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(GlobalConfigurationBean.class);
 
     @EJB
@@ -203,14 +202,5 @@ public class GlobalConfigurationBean {
             }
         }
         return sb.toString();
-    }
-
-    /**
-     * Reload global configuration from database.
-     */
-    public String reloadFromDatabase() throws AdminNotAuthorizedException {
-        config = null;
-        config = getConfig();
-        return "global-configuration?faces-redirect=true;";
     }
 }

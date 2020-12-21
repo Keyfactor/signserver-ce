@@ -77,6 +77,7 @@
 
                     <h:link class="linkPositive" value="#{text['Add...']}" outcome="global-configuration-add"/>
                     <h:commandButton class="buttonNegative" value="#{text['Remove_Selected...']}" action="#{globalConfigurationBean.bulkAction('global-configuration-remove')}"/>
+                    <h:commandButton class="buttonNeutral" value="#{text['Reload_from_database']}" action="#{globalConfigurationBean.bulkAction('global-configuration-reload')}"/>
                 </h:form>
 
             </ui:define>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bindings
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns="http://java.sun.com/xml/ns/jaxws">
+    <bindings node="wsdl:definitions/wsdl:portType[@name='SignServerWS']/wsdl:operation[@name='processQoS']">
+        <enableAsyncMapping>true</enableAsyncMapping>
+    </bindings>
+</bindings>

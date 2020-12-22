@@ -17,17 +17,9 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jaxb-annotations</artifactId>
+            <version>2.11.0</version>
         </dependency>
         <dependency>
             <groupId>org.ejbca.cesecore</groupId>
@@ -43,11 +35,6 @@
             <artifactId>SignServer-Client-SignServerWS</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.tomee</groupId>
-            <artifactId>javaee-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -56,6 +43,8 @@
                 <artifactId>jaxws-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>wsimport-generate-SignServerWS</id>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>wsimport</goal>
                         </goals>
@@ -67,8 +56,21 @@
                             <wsdlLocation>http://localhost:8080/signserver/SignServerWSService/SignServerWS?wsdl" uri="SignServerWS/wsdl/localhost_8080/signserver/SignServerWSService/SignServerWS.wsdl</wsdlLocation>
                             <staleFile>${project.build.directory}/jaxws/stale/SignServerWS.stale</staleFile>
                         </configuration>
-                        <id>wsimport-generate-SignServerWS</id>
+                    </execution>
+                    <execution>
+                        <id>wsimport-generate-SignServerWSv33</id>
                         <phase>generate-sources</phase>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFiles>
+                                <wsdlFile>${basedir}/xml-resources/web-service-references/SignServerWSService/wsdl.v33/SignServerWSService.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <packageName>org.signserver.test.signserverws.signserverws.v33</packageName>
+                            <wsdlLocation>http://localhost:8080/signserver/SignServerWSService/SignServerWS?wsdl" uri="SignServerWS/wsdl/localhost_8080/signserver/SignServerWSService/SignServerWS.wsdl</wsdlLocation>
+                            <staleFile>${project.build.directory}/jaxws/stale/SignServerWSv33.stale</staleFile>
+                        </configuration>
                     </execution>
                 </executions>
                 <dependencies>

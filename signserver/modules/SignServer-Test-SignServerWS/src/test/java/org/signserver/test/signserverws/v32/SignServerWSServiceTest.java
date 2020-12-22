@@ -16,8 +16,7 @@ package org.signserver.test.signserverws.v32;
  * Test calling SignServerWSService using SignServer 3.2 WSDL.
  * (The WS end-point URL changed between 3.1 and 3.2.)
  *
- * This tests assumes that test-configuration.properties as been applied to
- * SignServer.
+ * This tests assumes that test-configuration.properties as been applied to SignServer.
  *
  * @version $Id$
  */
@@ -25,7 +24,6 @@ public class SignServerWSServiceTest extends org.signserver.test.signserverws.v3
 
     /** Endpoint URL. */
     private final String ENDPOINT = "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/SignServerWSService/SignServerWS?wsdl";
-
 
     @Override
     protected String getWsEndPointUrl() {

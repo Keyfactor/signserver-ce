@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+<ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id: global-configuration-reload.xhtml 9425 2018-07-02 06:26:20Z oskareriksson $
+    -->
+</ui:remove>
+
+<f:metadata>
+    <f:viewParam name="property" value="#{globalConfigurationBean.property}"/>
+</f:metadata>
+
+<body>
+
+<ui:composition template="WEB-INF/templates/template.xhtml">
+    <ui:param name="activeMenu" value="global-configuration"/>
+
+    <ui:define name="title">
+        <h:outputText value="#{text['Reload_Property_-_Global_Configuration']}"/>
+    </ui:define>
+
+    <ui:define name="top">
+
+    </ui:define>
+
+    <ui:define name="content">
+        <h1><h:outputText value="#{text['Reload_Properties']}"/></h1>
+        <p>
+            <b><h:outputText value="#{text['Note_COLON']}"/></b><br/>
+            <h:outputText
+                    value="#{text['Reloading_from_database_is_normally_only_needed_if_the_configuration_in_the_database_has_been_changed_from_an_other_node_in_a_set_up_with_a_shared_database.']}"/>
+        </p>
+        <h2><h:outputText value="#{text['Are_you_sure_you_want_to_reload_the_global_configuration_properties']}"/></h2>
+
+        <h:form id="form">
+
+            <h:panelGrid columns="2">
+                <f:facet name="footer">
+                    <h:commandButton class="buttonFeatured" value="#{text['Reload']}"
+                                     action="#{globalConfigurationBean.reloadFromDatabase}"/> <h:link
+                        value="#{text['Cancel']}" outcome="global-configuration"/>
+                </f:facet>
+            </h:panelGrid>
+
+
+        </h:form>
+
+    </ui:define>
+
+    <ui:define name="bottom">
+    </ui:define>
+
+</ui:composition>
+
+</body>
+</html>

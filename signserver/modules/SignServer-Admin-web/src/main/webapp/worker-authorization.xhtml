@@ -51,83 +51,86 @@
                     <ui:param name="workerActiveMenu" value="worker-authorization"/>
                 </ui:include>
 
-                <h:panelGroup rendered="#{workerAuthBean.worker.existing}">
-                    <div id="worker_content">
+                <h:form>
+                    <h:panelGroup rendered="#{workerAuthBean.worker.existing}">
+                        <div id="worker_content">
 
-                        <h2><h:outputText value="#{text['Clients']}"/></h2>
+                            <h2><h:outputText value="#{text['Clients']}"/></h2>
 
-                        <p>
-                            <h:outputText value="#{text['Clients_authorized_when_certificate_authentication_is_used_COLON']}"/>
-                        </p>
+                            <p>
+                                <h:outputText value="#{text['Clients_authorized_when_certificate_authentication_is_used_COLON']}"/>
+                            </p>
 
-                        <h:dataTable id="table1" value="#{workerAuthBean.authorizedClientsGen2}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="viewAuthRuleType,viewAuthRuleValue,viewAuthRuleType,viewAuthRuleValue,dss1,dss1" rowClasses="dss1,dss1_odd">
-                            <h:column>
-                                <f:facet name="header">
-                                    <div align="left">   
-                                        <h:outputText value="#{text['Subject']}"/> 
-                                    </div>
+                            <h:dataTable id="table1" value="#{workerAuthBean.authorizedClientsGen2}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="viewAuthRuleType,viewAuthRuleValue,viewAuthRuleType,viewAuthRuleValue,dss1,dss1" rowClasses="dss1,dss1_odd">
+                                <h:column>
+                                    <f:facet name="header">
+                                        <div align="left">   
+                                            <h:outputText value="#{text['Subject']}"/> 
+                                        </div>
+                                    </f:facet>
+                                    <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
+                                        <h:outputText value="#{text[item.matchSubjectWithType]}" />
+                                    </h:panelGroup>
+                                </h:column>
+                                <h:column>                               
+                                    <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
+                                        <h:outputText value="#{item.matchSubjectWithValue}" />
+                                    </h:panelGroup>
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        <div align="left">
+                                            <h:outputText value="#{text['Issuer']}" />
+                                        </div>
+                                    </f:facet>
+                                    <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
+                                        <h:outputText value="#{text[item.matchIssuerWithType]}" />
+                                    </h:panelGroup>
+                                </h:column>
+                                <h:column>
+                                    <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
+                                        <h:outputText value="#{item.matchIssuerWithValue}" />
+                                    </h:panelGroup>
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        <div align="left">
+                                            <h:outputText value="#{text['Description']}" />
+                                        </div>
+                                    </f:facet>
+                                    <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
+                                        <h:outputText value="#{item.description}" />
+                                    </h:panelGroup>
+                                </h:column>
+                                <h:column>
+                                    <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
+                                        <h:link value="Edit" outcome="worker-authorization-edit">
+                                            <f:param name="id" value="#{workerAuthBean.worker.id}"/>
+                                            <f:param name="matchSubjectWithValue" value="#{item.matchSubjectWithValue}"/>
+                                            <f:param name="matchIssuerWithValue" value="#{item.matchIssuerWithValue}"/>
+                                            <f:param name="matchSubjectWithType" value="#{item.matchSubjectWithType}"/>
+                                            <f:param name="matchIssuerWithType" value="#{item.matchIssuerWithType}"/>
+                                            <f:param name="description" value="#{item.description}"/>
+                                        </h:link> |
+                                        <h:link class="linkNegative" value="#{text['Remove']}" outcome="worker-authorization-remove">
+                                            <f:param name="id" value="#{workerAuthBean.worker.id}"/>
+                                            <f:param name="matchSubjectWithValue" value="#{item.matchSubjectWithValue}"/>
+                                            <f:param name="matchIssuerWithValue" value="#{item.matchIssuerWithValue}"/>
+                                            <f:param name="matchSubjectWithType" value="#{item.matchSubjectWithType}"/>
+                                            <f:param name="matchIssuerWithType" value="#{item.matchIssuerWithType}"/>
+                                            <f:param name="description" value="#{item.description}"/>
+                                        </h:link>
+                                    </h:panelGroup>
+                                </h:column>
+                                <f:facet name="footer">
                                 </f:facet>
-                                <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
-                                    <h:outputText value="#{text[item.matchSubjectWithType]}" />
-                                </h:panelGroup>
-                            </h:column>
-                            <h:column>                               
-                                <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
-                                    <h:outputText value="#{item.matchSubjectWithValue}" />
-                                </h:panelGroup>
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">
-                                    <div align="left">
-                                        <h:outputText value="#{text['Issuer']}" />
-                                    </div>
-                                </f:facet>
-                                <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
-                                    <h:outputText value="#{text[item.matchIssuerWithType]}" />
-                                </h:panelGroup>
-                            </h:column>
-                            <h:column>
-                                <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
-                                    <h:outputText value="#{item.matchIssuerWithValue}" />
-                                </h:panelGroup>
-                            </h:column>
-                            <h:column>
-                                <f:facet name="header">
-                                    <div align="left">
-                                        <h:outputText value="#{text['Description']}" />
-                                    </div>
-                                </f:facet>
-                                <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
-                                    <h:outputText value="#{item.description}" />
-                                </h:panelGroup>
-                            </h:column>
-                            <h:column>
-                                <h:panelGroup styleClass="viewAuthRuleCell" layout="block">
-                                    <h:link value="Edit" outcome="worker-authorization-edit">
-                                        <f:param name="id" value="#{workerAuthBean.worker.id}"/>
-                                        <f:param name="matchSubjectWithValue" value="#{item.matchSubjectWithValue}"/>
-                                        <f:param name="matchIssuerWithValue" value="#{item.matchIssuerWithValue}"/>
-                                        <f:param name="matchSubjectWithType" value="#{item.matchSubjectWithType}"/>
-                                        <f:param name="matchIssuerWithType" value="#{item.matchIssuerWithType}"/>
-                                        <f:param name="description" value="#{item.description}"/>
-                                    </h:link> |
-                                    <h:link class="linkNegative" value="#{text['Remove']}" outcome="worker-authorization-remove">
-                                        <f:param name="id" value="#{workerAuthBean.worker.id}"/>
-                                        <f:param name="matchSubjectWithValue" value="#{item.matchSubjectWithValue}"/>
-                                        <f:param name="matchIssuerWithValue" value="#{item.matchIssuerWithValue}"/>
-                                        <f:param name="matchSubjectWithType" value="#{item.matchSubjectWithType}"/>
-                                        <f:param name="matchIssuerWithType" value="#{item.matchIssuerWithType}"/>
-                                        <f:param name="description" value="#{item.description}"/>
-                                    </h:link>
-                                </h:panelGroup>
-                            </h:column>
-                            <f:facet name="footer">
-                            </f:facet>
-                        </h:dataTable>
+                            </h:dataTable>
 
-                        <h:link class="linkPositive" value="#{text['Add...']}" outcome="worker-authorization-add"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
-                    </div>
-                </h:panelGroup>
+                            <h:link class="linkPositive" value="#{text['Add...']}" outcome="worker-authorization-add"><f:param name="id" value="#{workerAuthBean.worker.id}"/></h:link>
+                            <h:commandButton class="buttonNeutral" value="#{text['Reload_from_database']}" action="#{workerAuthBean.bulkAction('worker-authorization-reload')}"/>
+                        </div>
+                    </h:panelGroup>
+                </h:form>
                 <h:panelGroup rendered="#{!workerAuthBean.worker.existing}">
                     <h2><h:outputText value="#{text['Worker_Not_Found']}"/></h2>
                     <p>

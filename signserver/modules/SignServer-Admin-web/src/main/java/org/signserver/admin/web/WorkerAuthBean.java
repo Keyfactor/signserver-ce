@@ -197,7 +197,7 @@ public class WorkerAuthBean {
     public String bulkAction(String page) {
         StringBuilder sb = new StringBuilder();
         sb.append(StringUtils.trim(page));
-        sb.append("?faces-redirect=true&amp;workers=").append(getId()); // TODO: +Going back page / viewing navigation path
+        sb.append("?faces-redirect=true&amp;id=").append(getId()); // TODO: +Going back page / viewing navigation path
         return sb.toString();
     }
 
@@ -758,6 +758,20 @@ public class WorkerAuthBean {
         certMatchingRule.setMatchSubjectWithType(MatchSubjectWithType.valueOf(getOldMatchSubjectWithType()));
         certMatchingRule.setMatchIssuerWithType(MatchIssuerWithType.valueOf(getOldMatchIssuerWithType()));
         return getAuthorizedClientsGen2().contains(certMatchingRule);
+    }
+
+    /**
+     * Reload authorizations from database. 
+     *
+     * @throws org.signserver.admin.common.auth.AdminNotAuthorizedException
+     */
+    public String reloadFromDatabase() throws AdminNotAuthorizedException {
+        // invalidate old cached config
+        config = null;
+
+        config = getConfig();
+        
+        return "worker-authorization?faces-redirect=true&amp;includeViewParams=true&amp;id=" + getId();
     }
 
     /**

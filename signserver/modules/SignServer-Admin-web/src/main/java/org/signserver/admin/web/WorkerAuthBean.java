@@ -762,8 +762,6 @@ public class WorkerAuthBean {
 
     /**
      * Reload authorizations from database. 
-     *
-     * @throws org.signserver.admin.common.auth.AdminNotAuthorizedException
      */
     public String reloadFromDatabase() throws AdminNotAuthorizedException {
         // invalidate old cached config

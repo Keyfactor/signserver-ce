@@ -207,8 +207,10 @@ public class GlobalConfigurationBean {
 
     /**
      * Reload global configuration from database.
+     * config must be null to force the getConfig() reload from database.
      */
     public String reloadFromDatabase() throws AdminNotAuthorizedException {
+        // invalidate old cached config
         config = null;
         config = getConfig();
         return "global-configuration?faces-redirect=true;";

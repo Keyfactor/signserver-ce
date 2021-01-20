@@ -13,10 +13,19 @@
         <!-- BouncyCastle artifacts name, so we can easily switch to the debug ones -->
         <bouncycastle.bcpkix.artifact>bcpkix-jdk15on</bouncycastle.bcpkix.artifact>
         <bouncycastle.bcprov.artifact>bcprov-jdk15on</bouncycastle.bcprov.artifact>
-        
+
         <!-- Platform independent build -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- Versions  -->
+        <!-- com.fasterxml.jackson.core -->
+        <jackson-core.version>2.11.3</jackson-core.version>
+        <jackson-databind.version>2.11.3</jackson-databind.version>
+        <!-- com.fasterxml.jackson.module -->
+        <jackson-module-jaxb-annotations.version>2.11.0</jackson-module-jaxb-annotations.version>
+        <!-- Plugins -->
+        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
     </properties>
 
     <profiles>
@@ -30,7 +39,7 @@
                 <module>modules</module>
             </modules>
         </profile>
-        
+
         <!-- Empty profile without modules. This profile should be used together with the antrun:run goal in order to run the ant deploy target -->
         <profile>
             <id>profile-empty</id>
@@ -129,7 +138,7 @@
                 <version>4.12</version>
                 <scope>test</scope>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.apache.santuario</groupId>
                 <artifactId>xmlsec</artifactId>
@@ -158,7 +167,7 @@
                 <version>2.4.0-b180830.0359</version>
                 <scope>provided</scope>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.ejbca.cesecore</groupId>
                 <artifactId>cesecore-entity</artifactId>
@@ -186,7 +195,7 @@
                 <type>jar</type>
                 <version>1.4.6</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.signserver.jsign</groupId>
                 <artifactId>jsign-core</artifactId>
@@ -198,7 +207,7 @@
                 <artifactId>xades4j</artifactId>
                 <version>1.3.2-signserver4</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.signserver.jacknji11</groupId>
                 <artifactId>jacknji11</artifactId>
@@ -283,7 +292,7 @@
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
                 <version>4.4.11</version>
-                <scope>provided</scope> 
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
@@ -363,7 +372,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    
+
     <build>
         <pluginManagement>
             <plugins>
@@ -404,7 +413,7 @@
                     <version>2.10.4</version>
                     <configuration>
                         <additionalparam>-Xdoclint:none</additionalparam>
-                    </configuration>                                        
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -421,7 +430,7 @@
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>2.10</version>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
@@ -456,5 +465,5 @@
             </plugin>
         </plugins>
     </build>
-    
+
 </project>

@@ -1,4 +1,5 @@
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -6,22 +7,16 @@
         <artifactId>SignServer-Modules</artifactId>
         <version>5.5.1.CR2-prio-wp2-2-SNAPSHOT</version>
     </parent>
-    <artifactId>SignServer-Test-SignServerWS</artifactId>
-    <name>SignServer-Test-SignServerWS</name>
+    <artifactId>SignServer-Test-ClientWS</artifactId>
+    <name>SignServer-Test-ClientWS</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dist.jar>${project.build.finalName}-tests.jar</dist.jar>
         <skipTests>true</skipTests>
         <appserver.conf.folder>jboss7</appserver.conf.folder>
         <appserver.home>/opt/wildfly-14.0.1.Final-signserver</appserver.home>
-        <!-- WSDL v.3.1 -->
-        <wsdl_resource>${basedir}/src/main/resources/org/signserver/test/signserverws/v31/signserverws.wsdl</wsdl_resource>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>org.ejbca.cesecore</groupId>
-            <artifactId>cesecore-common</artifactId>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SignServer-Test-Utils</artifactId>
@@ -29,47 +24,12 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>SignServer-Client-SignServerWS</artifactId>
+            <artifactId>SignServer-Client-ClientWS</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
     <build>
         <plugins>
-            <plugin>
-                <groupId>com.helger.maven</groupId>
-                <artifactId>jaxws-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>wsimport-generate-SignServerWS</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>wsimport</goal>
-                        </goals>
-                        <configuration>
-                            <wsdlFiles>
-                                <wsdlFile>${wsdl_resource}</wsdlFile>
-                            </wsdlFiles>
-                            <packageName>org.signserver.test.signserverws.signserverws.v31</packageName>
-                            <staleFile>${project.build.directory}/jaxws/stale/SignServerWS.stale</staleFile>
-                        </configuration>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>javax.xml</groupId>
-                        <artifactId>webservices-api</artifactId>
-                        <version>2.0</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <sourceDestDir>${project.build.directory}/generated-test-sources/jaxws-wsimport</sourceDestDir>
-                    <xnocompile>true</xnocompile>
-                    <verbose>true</verbose>
-                    <extension>true</extension>
-                    <catalog>${basedir}/catalog.xml</catalog>
-                    <target>2.0</target>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>

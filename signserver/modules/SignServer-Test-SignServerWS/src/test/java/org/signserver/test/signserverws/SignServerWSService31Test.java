@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.test.signserverws.v31;
+package org.signserver.test.signserverws;
 
 import java.io.IOException;
 import java.net.URL;
@@ -18,6 +18,7 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.net.ssl.SSLSocketFactory;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
@@ -36,7 +37,7 @@ import org.junit.rules.ExpectedException;
 import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GenericSignResponse;
 import org.signserver.common.RequestAndResponseManager;
-import org.signserver.test.signserverws.SignServerWSServiceTestBase;
+import org.signserver.test.conf.SignerConfigurationBuilder;
 import org.signserver.test.signserverws.signserverws.v31.IllegalRequestException_Exception;
 import org.signserver.test.signserverws.signserverws.v31.InvalidWorkerIdException_Exception;
 import org.signserver.test.signserverws.signserverws.v31.ProcessRequestWS;
@@ -44,6 +45,8 @@ import org.signserver.test.signserverws.signserverws.v31.ProcessResponseWS;
 import org.signserver.test.signserverws.signserverws.v31.SignServerWS;
 import org.signserver.test.signserverws.signserverws.v31.SignServerWSService;
 import org.signserver.test.signserverws.signserverws.v31.WorkerStatusWS;
+import org.signserver.test.util.WSTestUtil;
+import org.signserver.testutils.ModulesTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -51,21 +54,31 @@ import static org.junit.Assert.assertNull;
 
 /**
  * Test calling SignServerWSService using SignServer 3.1 WSDL.
- *
- * This tests assumes that test-configuration.properties as been applied to SignServer.
+ * <br/>
+ * The WS end-point URL changed between 3.1 and the latest.
+ * <br/>
+ * This tests assumes that test-configuration.properties has been applied to SignServer.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-public class SignServerWSServiceTest extends SignServerWSServiceTestBase {
+public class SignServerWSService31Test extends ModulesTestCase {
 
-    /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(SignServerWSServiceTest.class);
-
-    // Endpoint URL
-    private final String ENDPOINT =
-            "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/signserverws/signserverws?wsdl";
-
+    // Logger for this class
+    private static final Logger LOG = Logger.getLogger(SignServerWSService31Test.class);
+    // Endpoints configuration
+    private final String ENDPOINT_NAME = "signserverws";
+    private final String ENDPOINT_NAMESPACE = "gen.ws.protocol.signserver.org";
+    private final String ENDPOINT_URL = "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/" +
+            ENDPOINT_NAME + "/signserverws?wsdl";
+    // Worker ID as defined in test-configuration.properties.
+    private static final int WORKER_ID_INT = 7003;
+    private static final String WORKER_ID = "" + WORKER_ID_INT;
+    private static final int REQUEST_ID = 4711;
+    // Non-existing worker ID
+    private static final String NON_EXISTING_WORKER_ID = "1231231";
+    //
+    private static SSLSocketFactory sslSocketFactory;
     // Class under test
     private SignServerWS ws;
 
@@ -79,40 +92,40 @@ public class SignServerWSServiceTest extends SignServerWSServiceTestBase {
 
     @Before
     public void setUp() throws Exception {
-        LOG.info("Initializing test using WS URL: " + getWsEndPointUrl());
-        final QName qname = new QName("gen.ws.protocol.signserver.org", "SignServerWSService");
+        LOG.info("Initializing test using WS URL: " + ENDPOINT_URL);
+        final QName qname = new QName(ENDPOINT_NAMESPACE, ENDPOINT_NAME);
         final URL resource =
-                getClass().getResource("/org/signserver/test/signserverws/v31/SignServerWS.wsdl");
-        SignServerWSService signServerWSService = new SignServerWSService(resource, qname);
+                getClass().getResource("/org/signserver/test/signserverws/v31/signserverws.wsdl");
+        final SignServerWSService signServerWSService = new SignServerWSService(resource, qname);
+        // Create an instance of WS
         ws =  signServerWSService.getSignServerWSPort();
-
+        // Define binding
         final BindingProvider bp = (BindingProvider) ws;
         final Map<String, Object> requestContext = bp.getRequestContext();
-
-        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT);
-
+        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, ENDPOINT_URL);
+        // Set the secure connection
         if (sslSocketFactory != null) {
             final Client client = ClientProxy.getClient(bp);
             final HTTPConduit http = (HTTPConduit) client.getConduit();
             final TLSClientParameters params = new TLSClientParameters();
-
             params.setSSLSocketFactory(sslSocketFactory);
             http.setTlsClientParameters(params);
-
             final HTTPClientPolicy policy = http.getClient();
             policy.setAutoRedirect(true);
         }
-        addDummySigner(WORKER_ID_INT, "SignServerWSServiceTest_XMLSigner1", true);
+        addDummySigner(WORKER_ID_INT, "SignServerWSServiceTest_XMLSigner", true);
+        // Add a Signer Worker
+        addTestXMLSigner(
+                SignerConfigurationBuilder.builder()
+                        .withSignerId(WORKER_ID_INT)
+                        .withSignerName("signserverwsTest_XMLSigner")
+                        .withAutoActivate(true)
+        );
     }
 
     @After
     public void tearDown() {
         removeWorker(WORKER_ID_INT);
-    }
-
-    /** Overridden by org.signserver.test.signserverws.v32.SignServerWSServiceTest */
-    protected String getWsEndPointUrl() {
-    	return ENDPOINT;
     }
 
     @Test
@@ -124,7 +137,7 @@ public class SignServerWSServiceTest extends SignServerWSServiceTestBase {
         assertEquals("Number of results", 1, statuses.size());
         final WorkerStatusWS status = statuses.get(0);
         // then
-        LOG.info("Status: " + toJsonString(status));
+        LOG.info("Status: " + WSTestUtil.toJsonString(status));
         assertEquals("workerName", WORKER_ID, status.getWorkerName());
         assertNull("errormessage", status.getErrormessage());
         assertEquals("overallStatus", "ALLOK", status.getOverallStatus());
@@ -150,7 +163,7 @@ public class SignServerWSServiceTest extends SignServerWSServiceTestBase {
         // then
         assertEquals("Number of results", 1, responses.size());
         final GenericSignResponse response = (GenericSignResponse) RequestAndResponseManager.parseProcessResponse(Base64.decode(responses.get(0).getResponseDataBase64()));
-        LOG.info("Response: " + toJsonString(responses.get(0)));
+        LOG.info("Response: " + WSTestUtil.toJsonString(responses.get(0)));
         assertEquals("requestID", REQUEST_ID, response.getRequestID());
         final Certificate certificate = response.getSignerCertificate();
         assertNotNull("Certificate", certificate);
@@ -191,5 +204,4 @@ public class SignServerWSServiceTest extends SignServerWSServiceTestBase {
         requests.add(request);
         return requests;
     }
-
 }

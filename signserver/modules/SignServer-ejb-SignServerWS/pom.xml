@@ -14,7 +14,7 @@
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        
+
         <dist.jar>${project.build.finalName}.jar</dist.jar>
         <module.name>signserverws</module.name>
         <module.priority>20</module.priority>
@@ -25,10 +25,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <artifactId>commons-lang</artifactId>
-            <groupId>commons-lang</groupId>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>SignServer-Common</artifactId>
@@ -51,11 +47,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>SignServer-Server</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomee</groupId>
-            <artifactId>javaee-api</artifactId>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 

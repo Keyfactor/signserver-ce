@@ -10,23 +10,27 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.test.signserverws.v32;
+package org.signserver.web;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
- * Test calling SignServerWSService using SignServer 3.2 WSDL.
- * (The WS end-point URL changed between 3.1 and 3.2.)
+ * A Dummy Endpoint to handle WS queue management.
  *
- * This tests assumes that test-configuration.properties as been applied to SignServer.
- *
- * @version $Id$
+ * @author Andrey Sergeev 19-jan-2021
+ * @version $Id: GenericProcessServlet.java 12307 2020-09-25 13:44:12Z malu9369 $
  */
-public class SignServerWSServiceTest extends org.signserver.test.signserverws.v31.SignServerWSServiceTest {
-
-    /** Endpoint URL. */
-    private final String ENDPOINT = "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/SignServerWSService/SignServerWS?wsdl";
+public class SoapQueueServlet extends HttpServlet {
 
     @Override
-    protected String getWsEndPointUrl() {
-    	return ENDPOINT;
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // Set response content type
+        response.setContentType("text/html");
+        final PrintWriter out = response.getWriter();
+        out.println("<html/>");
     }
 }

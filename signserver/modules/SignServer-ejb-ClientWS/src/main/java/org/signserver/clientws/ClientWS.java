@@ -21,6 +21,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.jws.HandlerChain;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -52,47 +54,45 @@ import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
 
 /**
- * Client web services implementation containing operations for requesting 
- * signing etc.
+ * Client web services implementation containing operations for requesting signing etc.
  *
  * @author Markus Kilås
  * @version $Id$
  */
+@HandlerChain(file = "/META-INF/handler-chains.xml")
+@Stateless
 @WebService(serviceName = "ClientWSService")
-@Stateless()
 public class ClientWS {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ClientWS.class);
-    
-    private static final String HTTP_AUTH_BASIC_AUTHORIZATION = "Authorization";
-    
+
     @Resource
     private WebServiceContext wsContext;
-    
+
     @EJB
     private ProcessSessionLocal processSession;
-    
+
     @EJB
     private GlobalConfigurationSessionLocal globalSession;
 
     private DataFactory dataFactory;
-    
+
     @PostConstruct
     protected void init() {
         dataFactory = DataUtils.createDataFactory();
     }
-    
+
     private ProcessSessionLocal getProcessSession() {
         return processSession;
     }
-    
+
     /**
      * Generic operation for request signing of a byte array.
      *
      * @param workerIdOrName Name or ID of worker to send the request to
      * @param requestMetadata Additional request meta data
-     * @param data The byte[] array with data in some format understood by the 
+     * @param data The byte[] array with data in some format understood by the
      * worker
      * @return The response data
      * @throws RequestFailedException In case the request could not be processed typically because some error in the request data.
@@ -100,25 +100,25 @@ public class ClientWS {
      */
     @WebMethod(operationName="processData")
     public DataResponse processData(
-            @WebParam(name = "worker") final String workerIdOrName, 
-            @WebParam(name = "metadata") List<Metadata> requestMetadata, 
+            @WebParam(name = "worker") final String workerIdOrName,
+            @WebParam(name = "metadata") List<Metadata> requestMetadata,
             @WebParam(name = "data") byte[] data) throws RequestFailedException, InternalServerException {
         final DataResponse result;
-        
+
         final UploadConfig uploadConfig = UploadConfig.create(globalSession);
         try (
                 CloseableReadableData requestData = dataFactory.createReadableData(data, uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
-                CloseableWritableData responseData = dataFactory.createWritableData(requestData, uploadConfig.getRepository());
+                CloseableWritableData responseData = dataFactory.createWritableData(requestData, uploadConfig.getRepository())
             ) {
             final RequestContext requestContext = handleRequestContext(requestMetadata);
             final int requestId = ThreadLocalRandom.current().nextInt();
-            
+
             // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
-            
+
             final Request req = new SignatureRequest(requestId, requestData, responseData);
 
             final Response resp = getProcessSession().process(new AdminInfo("CLI user", null, null), WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
-            
+
             if (resp instanceof SignatureResponse) {
                 final SignatureResponse signResponse = (SignatureResponse) resp;
                 if (signResponse.getRequestID() != requestId) {
@@ -133,44 +133,33 @@ public class ClientWS {
         } catch (CertificateEncodingException ex) {
             LOG.error("Signer certificate could not be encoded", ex);
             throw new InternalServerException("Signer certificate could not be encoded");
-        } catch (IllegalRequestException ex) {
+        } catch (IllegalRequestException | AuthorizationRequiredException | AccessDeniedException ex) {
             LOG.info("Request failed: " + ex.getMessage());
             if (LOG.isDebugEnabled()) {
-                LOG.info("Request failed: " + ex.getMessage(), ex);
+                LOG.debug("Request failed: " + ex.getMessage(), ex);
             }
             throw new RequestFailedException(ex.getMessage());
         } catch (CryptoTokenOfflineException ex) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Service unvailable", ex);
-            }
+            LOG.debug("Service unavailable", ex);
             throw new InternalServerException("Service unavailable: " + ex.getMessage());
-        } catch (AuthorizationRequiredException | AccessDeniedException ex) {
-            LOG.info("Request failed: " + ex.getMessage());
-            throw new RequestFailedException(ex.getMessage());
         } catch (SignServerException ex) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Internal server error", ex);
-            }
+            LOG.debug("Internal server error", ex);
             throw new InternalServerException("Internal server error: " + ex.getMessage());
         } catch (FileUploadBase.SizeLimitExceededException ex) {
             LOG.error("Maximum content length exceeded: " + ex.getLocalizedMessage());
             throw new RequestFailedException("Maximum content length exceeded");
         } catch (FileUploadException ex) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Upload failed", ex);
-            }
+            LOG.debug("Upload failed", ex);
             throw new RequestFailedException("Upload failed: " + ex.getLocalizedMessage());
         } catch (IOException ex) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Internal IO error", ex);
-            }
+            LOG.debug("Internal IO error", ex);
             throw new InternalServerException("Internal IO error: " + ex.getMessage());
         }
         return result;
     }
-    
+
     /**
-     * Operation for requesting signing and production of an MRTD SOd based on 
+     * Operation for requesting signing and production of an MRTD SOd based on
      * the supplied data groups / data group hashes.
      * @param workerIdOrName Name or ID of worker to send the request to
      * @param requestMetadata Additional request meta data
@@ -181,14 +170,14 @@ public class ClientWS {
      */
     @WebMethod(operationName = "processSOD")
     public org.signserver.clientws.SODResponse processSOD(
-            @WebParam(name = "worker") final String workerIdOrName, 
+            @WebParam(name = "worker") final String workerIdOrName,
             @WebParam(name = "metadata") final List<Metadata> requestMetadata,
             @WebParam(name = "sodData") final org.signserver.clientws.SODRequest data) throws RequestFailedException, InternalServerException {
         final org.signserver.clientws.SODResponse result;
         try (CloseableWritableData responseData = new TemporarlyWritableData(false, new UploadConfig().getRepository())) {
             final RequestContext requestContext = handleRequestContext(requestMetadata);
             final int requestId = ThreadLocalRandom.current().nextInt();
-        
+
             // Collect all [dataGroup1, dataGroup2, ..., dataGroupN]
             final List<DataGroup> dataGroups = data.getDataGroups();
             final HashMap<Integer,byte[]> dataGroupsMap = new HashMap<>();
@@ -198,7 +187,7 @@ public class ClientWS {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Adding data group " + dataGroupId);
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("with value " + dataGroup.getValue());
+                                LOG.trace("with value " + Arrays.toString(dataGroup.getValue()));
                             }
                         }
                         dataGroupsMap.put(dataGroup.getId(), dataGroup.getValue());
@@ -214,7 +203,7 @@ public class ClientWS {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Received number of dataGroups: " + dataGroups.size());
             }
-            
+
             // LDS versioning
             String ldsVersion = data.getLdsVersion();
             String unicodeVersion = data.getUnicodeVersion();
@@ -232,9 +221,9 @@ public class ClientWS {
             // Use special SOD sign request type
             final SODRequest req = new SODRequest(requestId, dataGroupsMap, ldsVersion, unicodeVersion, responseData);
             final Response resp = getProcessSession().process(new AdminInfo("CLI user", null, null), WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
-            
+
             if (resp instanceof SODResponse) {
-                SODResponse signResponse = (SODResponse) resp; 
+                SODResponse signResponse = (SODResponse) resp;
                 if (signResponse.getRequestID() != requestId) {
                     LOG.error("Response ID " + signResponse.getRequestID() + " not matching request ID " + requestId);
                     throw new SignServerException("Error in process operation, response id didn't match request id");
@@ -266,7 +255,7 @@ public class ClientWS {
                 LOG.debug("Internal server error", ex);
             }
             throw new InternalServerException("Internal server error: " + ex.getMessage());
-        } catch (IOException ex) { 
+        } catch (IOException ex) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Internal IO error", ex);
             }
@@ -274,15 +263,15 @@ public class ClientWS {
         }
         return result;
     }
-    
-    
+
+
     private String getRequestIP() {
         MessageContext msgContext = wsContext.getMessageContext();
         HttpServletRequest request = (HttpServletRequest) msgContext.get(MessageContext.SERVLET_REQUEST);
 
         return request.getRemoteAddr();
     }
-    
+
     private X509Certificate getClientCertificate() {
         MessageContext msgContext = wsContext.getMessageContext();
         HttpServletRequest request = (HttpServletRequest) msgContext.get(MessageContext.SERVLET_REQUEST);
@@ -316,7 +305,7 @@ public class ClientWS {
                         .append(servletRequest.getQueryString()).toString();
             }
         });
-                
+
         logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH, new Loggable() {
             @Override
             public String toString() {
@@ -338,7 +327,7 @@ public class ClientWS {
         // Add and log the X-SignServer-Custom-1 header if available
         final String xCustom1 = servletRequest.getHeader(RequestContext.X_SIGNSERVER_CUSTOM_1);
         if (xCustom1 != null && !xCustom1.isEmpty()) {
-            requestContext.put(RequestContext.X_SIGNSERVER_CUSTOM_1, xCustom1);            
+            requestContext.put(RequestContext.X_SIGNSERVER_CUSTOM_1, xCustom1);
         }
         logMap.put(IWorkerLogger.LOG_XCUSTOM1, xCustom1);
 
@@ -349,7 +338,7 @@ public class ClientWS {
             for (Metadata rmd : requestMetadata) {
                 metadata.put(rmd.getName(), rmd.getValue());
             }
-            
+
             // Special handling of FILENAME
             final String fileName = metadata.get(RequestContext.FILENAME);
             if (fileName != null) {
@@ -362,7 +351,7 @@ public class ClientWS {
                 });
             }
         }
-        
+
         return requestContext;
     }
 

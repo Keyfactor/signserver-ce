@@ -166,7 +166,7 @@ public class MainWebServiceTestSeparately extends ModulesTestCase {
         assertEquals(statuses.get(0).getOverallStatus(), OVERALLSTATUS_ALLOK);
         assertNull(statuses.get(0).getErrormessage());
 
-        statuses = signServerWS.getStatus(ISignServerWS.ALLWORKERS);
+        statuses = signServerWS.getStatus(ISignServerWS.ALL_WORKERS);
         final StringBuilder sb = new StringBuilder();
         for (org.signserver.protocol.ws.gen.WorkerStatusWS stat : statuses) {
             sb.append(stat.getWorkerName());

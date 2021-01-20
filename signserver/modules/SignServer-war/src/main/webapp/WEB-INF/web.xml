@@ -18,6 +18,20 @@
         <filter-name>QoSFilter</filter-name>
         <filter-class>org.signserver.web.filters.QoSFilter</filter-class>
         <async-supported>true</async-supported>
+        <!-- The amount of milliseconds to wait attempting to acquire the semaphore. -->
+        <!-- Uncomment this block to override the default value.
+        <init-param>
+            <param-name>waitMs</param-name>
+            <param-value>50</param-value>
+        </init-param>
+        -->
+        <!--  -->
+        <!-- Uncomment this block to override the default value:
+        <init-param>
+            <param-name>suspendMs</param-name>
+            <param-value>-1</param-value>
+        </init-param>
+        -->
     </filter>
     <filter-mapping>
         <filter-name>ClickjackFilterDeny</filter-name>
@@ -75,6 +89,10 @@
         <servlet-name>ClientCLIDistServlet</servlet-name>
         <servlet-class>org.signserver.web.ClientCLIDistServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SoapQueueServlet</servlet-name>
+        <servlet-class>org.signserver.web.SoapQueueServlet</servlet-class>
+    </servlet>
      <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
@@ -110,6 +128,10 @@
     <servlet-mapping>
         <servlet-name>SODProcessWorkerServlet</servlet-name>
         <url-pattern>/sodworker/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SoapQueueServlet</servlet-name>
+        <url-pattern>/soap-queue</url-pattern>
     </servlet-mapping>
     <!-- block HTTP methods other than GET and POST -->
     <security-constraint>

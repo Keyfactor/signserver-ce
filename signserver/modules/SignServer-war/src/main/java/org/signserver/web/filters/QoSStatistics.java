@@ -15,8 +15,7 @@ package org.signserver.web.filters;
 import org.signserver.common.qos.AbstractStatistics;
 
 /**
- * Implementation of the abstract QoS statistics collector interfacing
- * with the instance of the QoS web filter.
+ * Implementation of the abstract QoS statistics collector interfacing with the instance of the QoS web filter.
  *
  * @author Marcus Lundblad
  * @version $Id$
@@ -46,6 +45,6 @@ public class QoSStatistics extends AbstractStatistics {
 
     @Override
     public boolean isEnabled() {
-        return filter.getFilterEnabled();
+        return filter.isFilterEnabled();
     }
 }

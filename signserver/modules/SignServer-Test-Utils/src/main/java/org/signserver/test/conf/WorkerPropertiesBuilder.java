@@ -25,6 +25,8 @@ public class WorkerPropertiesBuilder {
     private String authType;
     private String user1;
     private boolean disableKeyUsageCounter;
+    private Long sleepTime;
+    private String workerLogger;
 
     public static WorkerPropertiesBuilder builder() {
         return new WorkerPropertiesBuilder();
@@ -79,6 +81,32 @@ public class WorkerPropertiesBuilder {
 
     public WorkerPropertiesBuilder withDisableKeyUsageCounter(final boolean disableKeyUsageCounter) {
         this.disableKeyUsageCounter = disableKeyUsageCounter;
+        return this;
+    }
+
+    public Long getSleepTime() {
+        return sleepTime;
+    }
+
+    public void setSleepTime(final long sleepTime) {
+        this.sleepTime = sleepTime;
+    }
+
+    public WorkerPropertiesBuilder withSleepTime(final long sleepTime) {
+        this.sleepTime = sleepTime;
+        return this;
+    }
+
+    public String getWorkerLogger() {
+        return workerLogger;
+    }
+
+    public void setWorkerLogger(final String workerLogger) {
+        this.workerLogger = workerLogger;
+    }
+
+    public WorkerPropertiesBuilder withWorkerLogger(final String workerLogger) {
+        this.workerLogger = workerLogger;
         return this;
     }
 }

@@ -6,7 +6,6 @@
         <artifactId>SignServer</artifactId>
         <version>5.5.1.CR2-prio-wp2-2-SNAPSHOT</version>
     </parent>
-    <groupId>org.signserver</groupId>
     <artifactId>SignServer-Modules</artifactId>
     <version>5.5.1.CR2-prio-wp2-2-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -42,20 +41,20 @@
         <module>CESeCore-jars</module>
         <module>SignServer-Compile</module>
         <module>SignServer-OpenPGP-Common</module>
-        
+
         <!-- Interfaces -->
         <module>SignServer-Admin-Common</module>
         <module>SignServer-Web-Common</module>
         <module>SignServer-war</module>
         <module>SignServer-war-Healthcheck</module>
-        <module>SignServer-AdminCLI</module>        
+        <module>SignServer-AdminCLI</module>
 	<module>SignServer-Admin-web</module>
-        
+
         <module>SignServer-ejb-AdminWS</module>
         <module>SignServer-ejb-SignServerWS</module>
         <module>SignServer-ejb-ValidationWS</module>
         <module>SignServer-ejb-ClientWS</module>
-        
+
         <module>SignServer-CLI-Common</module>
         <module>SignServer-Client-CLI</module>
         <module>SignServer-Client-ClientWS</module>
@@ -67,7 +66,7 @@
         <module>SignServer-Lib-iText</module>
         <module>SignServer-Lib-OpenXML4J</module>
         <module>SignServer-Lib-ODFDOM</module>
-        
+
         <!-- Modules -->
         <module>SignServer-Module-Log4j</module>
         <module>SignServer-Module-CMSSigner</module>
@@ -85,8 +84,8 @@
         <module>SignServer-Module-XMLValidator</module>
         <module>SignServer-Module-XMLSigner</module>
         <module>SignServer-Module-XAdES</module>
-        
-        <!-- System test and test tools -->        
+
+        <!-- System test and test tools -->
         <module>SignServer-Test-Utils</module>
         <module>SignServer-Test-P11</module>
         <module>SignServer-Test-Renewal</module>
@@ -96,7 +95,8 @@
         <module>SignServer-Test-System</module>
         <module>SignServer-Test-Random</module>
         <module>SignServer-Test-Performance</module>
-        
+        <module>SignServer-Test-ClientWS</module>
+
         <!-- Documentation -->
         <module>SignServer-Doc-web</module>
     </modules>
@@ -162,12 +162,12 @@
                 <artifactId>DeployTools-Maven</artifactId>
                 <executions>
                     <execution>
-                        <id>module-desc</id>                       
+                        <id>module-desc</id>
                         <goals>
                             <goal>create-module-descriptor</goal>
                         </goals>
                         <configuration/>
-                    </execution>                    
+                    </execution>
                     <execution>
                         <id>dist-module</id>
                         <goals>

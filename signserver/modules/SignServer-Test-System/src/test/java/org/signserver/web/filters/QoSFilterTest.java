@@ -14,17 +14,31 @@ package org.signserver.web.filters;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.naming.NamingException;
+import javax.net.ssl.SSLSocketFactory;
+import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
+
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assume.assumeFalse;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.log4j.Logger;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.audit.audit.SecurityEventsAuditorSessionRemote;
@@ -32,8 +46,8 @@ import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
 import org.cesecore.util.query.Criteria;
 import org.cesecore.util.query.QueryCriteria;
 import org.cesecore.util.query.elems.Term;
+import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -41,13 +55,21 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.signserver.admin.common.query.AuditLogFields;
 import org.signserver.admin.common.query.QueryUtil;
+import org.signserver.client.clientws.ClientWS;
+import org.signserver.client.clientws.ClientWSService;
+import org.signserver.client.clientws.DataResponse;
 import org.signserver.common.CESeCoreModules;
 import org.signserver.common.GlobalConfiguration;
 import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import org.signserver.test.conf.QoSFilterPropertiesBuilder;
+import org.signserver.test.conf.SignerConfigurationBuilder;
+import org.signserver.test.conf.WorkerPropertiesBuilder;
+import org.signserver.test.util.WSTestUtil;
 import org.signserver.testutils.CLITestHelper;
 import org.signserver.testutils.ModulesTestCase;
+import org.signserver.web.common.filters.QoSFilterProperties;
 
 /**
  * System tests for the QoSFilter.
@@ -55,75 +77,127 @@ import org.signserver.testutils.ModulesTestCase;
  * @author Marcus Lundblad
  * @version $Id$
  */
-public class QoSFilterTest {
-    /** Logger for this class */
+public class QoSFilterTest extends ModulesTestCase {
+    // Logger for this class
     private static final Logger LOG = Logger.getLogger(QoSFilterTest.class);
-
+    //
+    private static final String SIGNSERVER_HOME = System.getenv("SIGNSERVER_HOME");
+    // Workers
     private static final int WORKER1_ID = 1000;
     private static final String WORKER1_NAME = "SleepWorkerTest";
     private static final int WORKER2_ID = 1001;
     private static final String WORKER2_NAME = "SleepWorkerTest2";
-
-    private static final ModulesTestCase MODULES_TC = new ModulesTestCase();
-    private static final CLITestHelper CLIENT_CLI = MODULES_TC.getClientCLI();
-    private static final WorkerSessionRemote WORKER_SESSION = MODULES_TC.getWorkerSession();
-    private static final GlobalConfigurationSessionRemote GLOBAL_SESSION = MODULES_TC.getGlobalSession();
+    // Session instances
+    private static final CLITestHelper CLIENT_CLI = getCurrentClientCLI();
+    private static final WorkerSessionRemote WORKER_SESSION = getCurrentWorkerSession();
+    private static final GlobalConfigurationSessionRemote GLOBAL_SESSION = getCurrentGlobalSession();
     private SecurityEventsAuditorSessionRemote auditorSession = null;
-
-    static private final int CONFIG_CACHE_TIMEOUT = 10;
+    // Contains QoSFilter Global Property names to flush the configuration
+    private final List<String> QOS_FILTER_PROPS_LIST = Arrays.asList(
+            QoSFilterProperties.QOS_FILTER_ENABLED,
+            QoSFilterProperties.QOS_PRIORITIES,
+            QoSFilterProperties.QOS_MAX_REQUESTS,
+            QoSFilterProperties.QOS_MAX_PRIORITY
+//            QoSFilterProperties.QOS_CACHE_TTL_S
+    );
+    private static long qoSFilterCacheTtlS = 3;
+    // A reset flag for QOS Properties to minimize possible delays if not needed for reload of cache
+    private boolean shouldResetQosProps = false;
+    //
+    private static SSLSocketFactory sslSocketFactory;
 
     @Rule
     public final TemporaryFolder inDir = new TemporaryFolder();
-
     @Rule
     public final TemporaryFolder outDir = new TemporaryFolder();
 
     @BeforeClass
-    public static void setupClass() {
-        MODULES_TC.addDummySigner("org.signserver.server.signers.SleepWorker", null,
-                WORKER1_ID, WORKER1_NAME, null, null, null);
-        WORKER_SESSION.setWorkerProperty(WORKER1_ID, "SLEEP_TIME", "1000");
-        WORKER_SESSION.setWorkerProperty(WORKER1_ID, "WORKERLOGGER",
-                                        "org.signserver.server.log.SecurityEventsWorkerLogger");
-        WORKER_SESSION.reloadConfiguration(WORKER1_ID);
-        MODULES_TC.addDummySigner("org.signserver.server.signers.SleepWorker", null,
-                WORKER2_ID, WORKER2_NAME, null, null, null);
-        WORKER_SESSION.setWorkerProperty(WORKER2_ID, "SLEEP_TIME", "1000");
-        WORKER_SESSION.setWorkerProperty(WORKER2_ID, "WORKERLOGGER",
-                                        "org.signserver.server.log.SecurityEventsWorkerLogger");
-        WORKER_SESSION.reloadConfiguration(WORKER2_ID);
+    public static void setupClass() throws Exception {
+        assertNotNull("Please set SIGNSERVER_HOME environment variable", SIGNSERVER_HOME);
+        addTestSleepWorker(
+                SignerConfigurationBuilder.builder()
+                        .withSignerId(WORKER1_ID)
+                        .withSignerName(WORKER1_NAME)
+                        .withAutoActivate(true)
+        );
+        applyWorkerPropertiesAndReload(
+                WorkerPropertiesBuilder.builder()
+                        .withWorkerId(WORKER1_ID)
+                        .withSleepTime(1000L)
+                        .withWorkerLogger("org.signserver.server.log.SecurityEventsWorkerLogger")
+        );
+        addTestSleepWorker(
+                SignerConfigurationBuilder.builder()
+                        .withSignerId(WORKER2_ID)
+                        .withSignerName(WORKER2_NAME)
+                        .withAutoActivate(true)
+        );
+        applyWorkerPropertiesAndReload(
+                WorkerPropertiesBuilder.builder()
+                        .withWorkerId(WORKER2_ID)
+                        .withSleepTime(1000L)
+                        .withWorkerLogger("org.signserver.server.log.SecurityEventsWorkerLogger")
+        );
+
         // set priority mapping, include some unused signers to test that parsing the set works as expected
-        GLOBAL_SESSION.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "QOS_PRIORITIES", "1:1,1000:5,1002:2");
+        GLOBAL_SESSION.setProperty(
+                GlobalConfiguration.SCOPE_GLOBAL, QoSFilterProperties.QOS_PRIORITIES, "1:1,1000:5,1002:2");
+        // set cache reload to 3 seconds
+        GLOBAL_SESSION.setProperty(
+                GlobalConfiguration.SCOPE_GLOBAL, QoSFilterProperties.QOS_CACHE_TTL_S, "" + qoSFilterCacheTtlS);
         // unset enabled parameter to get default behaviour
-        GLOBAL_SESSION.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "QOS_FILTER_ENABLED");
+        GLOBAL_SESSION.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, QoSFilterProperties.QOS_FILTER_ENABLED);
+        // wait until old cached filter config has expired (DEFAULT (10s) + with some margin)
+        Thread.sleep((10 + 1) * 1000);
+        //
+        sslSocketFactory = initSSLKeystore();
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+        removeWorkerById(WORKER1_ID);
+        removeWorkerById(WORKER2_ID);
+        // TODO Reset QoSFilter
+
     }
 
     @Before
     public void setUp() throws Exception {
-        Assume.assumeFalse("Test does not run in NODB mode",
-                           "nodb".equalsIgnoreCase(MODULES_TC.getDeployConfig().getProperty("database.name")));
+        assumeFalse("Test does not run in NODB mode",
+                "nodb".equalsIgnoreCase(getDeployConfig().getProperty("database.name")));
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        if(shouldResetQosProps) {
+            // Reset Global Configuration by removing all properties
+            for (String property : QOS_FILTER_PROPS_LIST) {
+                GLOBAL_SESSION.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, property);
+            }
+            // Reset priorities
+            GLOBAL_SESSION.setProperty(
+                    GlobalConfiguration.SCOPE_GLOBAL,
+                    QoSFilterProperties.QOS_PRIORITIES, "1:1,1000:5,1002:2"
+            );
+            // wait until old cached filter config has expired (with some margin)
+            Thread.sleep((qoSFilterCacheTtlS + 1) * 1000);
+            // Reset flag
+            shouldResetQosProps = false;
+        }
     }
 
     // Test that a single request will not be queued by the QoSFilter.
     @Test
-    public void test01SingleRequest() throws Exception {
-        GLOBAL_SESSION.setProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_FILTER_ENABLED", "true");
-        // wait until old cached filter config has expired (with some margin)
-        Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
-
-        try {
-            CLIENT_CLI.execute("signdocument", "-servlet",
-                              "/signserver/worker/" + WORKER1_NAME,
-                              "-data", "foo");
-            final List<Map<String, Object>> lastLogFields = queryLastLogFields(1);
-
-            assertEquals("Priority not set by filter", "not set", lastLogFields.get(0).get("QOS_PRIORITY"));
-        } finally {
-            GLOBAL_SESSION.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,
-                                         "QOS_FILTER_ENABLED");
-            // wait until old cached filter config has expired (with some margin)
-            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
-        }
+    public void singleRequest() throws Exception {
+        // given
+        applyQoSFilterProperties(QoSFilterPropertiesBuilder.builder().withFilterEnabled("true"));
+        // when
+        CLIENT_CLI.execute("signdocument", "-servlet",
+                          "/signserver/worker/" + WORKER1_NAME,
+                          "-data", "foo");
+        // then
+        final int priorityHits = countPriorityHits(1, "not set");
+        assertEquals("Priority not set by filter", 1, priorityHits);
     }
 
     /**
@@ -131,35 +205,19 @@ public class QoSFilterTest {
      * in some requests getting queued by the filter (and thus having the worker log field set accordingly).
      */
     @Test
-    public void test02SomeRequestsQueuedAndPrioritized() throws Exception {
+    public void someRequestsQueuedAndPrioritized() throws Exception {
+        // given
         createTestFiles(20);
-        GLOBAL_SESSION.setProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_FILTER_ENABLED", "true");
-        // wait until old cached filter config has expired (with some margin)
-        Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
-
-        try {
-            CLIENT_CLI.execute("signdocument", "-servlet",
-                              "/signserver/worker/" + WORKER1_NAME,
-                              "-threads", "20",
-                              "-indir", inDir.getRoot().getAbsolutePath(),
-                              "-outdir", outDir.getRoot().getAbsolutePath());
-            final List<Map<String, Object>> lastLogFields = queryLastLogFields(20);
-            int queuedRequests = 0;
-
-            for (final Map<String, Object> details : lastLogFields) {
-                final String prio = (String) details.get("QOS_PRIORITY");
-
-                if ("5".equals(prio)) {
-                    queuedRequests++;
-                }
-            }
-
-            assertTrue("Some requests should have been queued at prio 5", queuedRequests > 0);
-        } finally {
-            GLOBAL_SESSION.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_FILTER_ENABLED");
-            // wait until old cached filter config has expired (with some margin)
-            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
-        }
+        applyQoSFilterProperties(QoSFilterPropertiesBuilder.builder().withFilterEnabled("true"));
+        // when
+        CLIENT_CLI.execute("signdocument", "-servlet",
+                          "/signserver/worker/" + WORKER1_NAME,
+                          "-threads", "20",
+                          "-indir", inDir.getRoot().getAbsolutePath(),
+                          "-outdir", outDir.getRoot().getAbsolutePath());
+        // then
+        final int priorityHits = countPriorityHits(20, "5");
+        assertTrue("Some requests should have been queued at priority 5", priorityHits > 0);
     }
 
     /**
@@ -168,35 +226,19 @@ public class QoSFilterTest {
      * signer with explicit priority mapping, should get default (0) priority.
      */
     @Test
-    public void test03SomeRequestsQueuedAndPrioritizedDefaultPriority() throws Exception {
+    public void someRequestsQueuedAndPrioritizedWithDefaultPriority() throws Exception {
+        // given
         createTestFiles(20);
-        GLOBAL_SESSION.setProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_FILTER_ENABLED", "true");
-        // wait until old cached filter config has expired (with some margin)
-        Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
-
-        try {
-            CLIENT_CLI.execute("signdocument", "-servlet",
-                              "/signserver/worker/" + WORKER2_NAME,
-                              "-threads", "20",
-                              "-indir", inDir.getRoot().getAbsolutePath(),
-                              "-outdir", outDir.getRoot().getAbsolutePath());
-            final List<Map<String, Object>> lastLogFields = queryLastLogFields(20);
-            int queuedRequests = 0;
-
-            for (final Map<String, Object> details : lastLogFields) {
-                final String prio = (String) details.get("QOS_PRIORITY");
-
-                if ("0".equals(prio)) {
-                    queuedRequests++;
-                }
-            }
-
-            assertTrue("Some requests should have been queued at prio 0", queuedRequests > 0);
-        } finally {
-            GLOBAL_SESSION.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, "QOS_FILTER_ENABLED");
-            // wait until old cached filter config has expired (with some margin)
-            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
-        }
+        applyQoSFilterProperties(QoSFilterPropertiesBuilder.builder().withFilterEnabled("true"));
+        // when
+        CLIENT_CLI.execute("signdocument", "-servlet",
+                          "/signserver/worker/" + WORKER2_NAME,
+                          "-threads", "20",
+                          "-indir", inDir.getRoot().getAbsolutePath(),
+                          "-outdir", outDir.getRoot().getAbsolutePath());
+        // then
+        final int priorityHits = countPriorityHits(20, "0");
+        assertTrue("Some requests should have been queued at priority 0", priorityHits > 0);
     }
 
     /**
@@ -204,171 +246,140 @@ public class QoSFilterTest {
      * the number of concurrent threads run will not result in queueing requests.
      */
     @Test
-    public void test04HigherMaxRequests() throws Exception {
-        try {
-            GLOBAL_SESSION.setProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_MAX_REQUESTS", "50");
-            GLOBAL_SESSION.setProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_FILTER_ENABLED", "true");
-            // wait until old cached filter config has expired (with some margin)
-            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
-
-            createTestFiles(20);
-            CLIENT_CLI.execute("signdocument", "-servlet",
-                              "/signserver/worker/" + WORKER1_NAME,
-                              "-threads", "20",
-                              "-indir", inDir.getRoot().getAbsolutePath(),
-                              "-outdir", outDir.getRoot().getAbsolutePath());
-            final List<Map<String, Object>> lastLogFields = queryLastLogFields(20);
-            int nonQueuedRequests = 0;
-
-            for (final Map<String, Object> details : lastLogFields) {
-                final String prio = (String) details.get("QOS_PRIORITY");
-
-                if ("not set".equals(prio)) {
-                    nonQueuedRequests++;
-                }
-            }
-
-            assertEquals("No requests should be queued", 20, nonQueuedRequests);
-        } finally {
-            GLOBAL_SESSION.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_MAX_REQUESTS");
-            GLOBAL_SESSION.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_FILTER_ENABLED");
-            // wait until old cached filter config has expired (with some margin)
-            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
-        }
-    }
-
-    // Test that setting a higher max priority level correctly works with a worker configured to that level.
-    @Test
-    public void test05HigherMaxPriorityLevel() throws Exception {
-        try {
-            GLOBAL_SESSION.setProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_MAX_PRIORITY", "50");
-            GLOBAL_SESSION.setProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_PRIORITIES", "1:1,1000:50,1002:2");
-            GLOBAL_SESSION.setProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_FILTER_ENABLED", "true");
-
-            // wait until old cached filter config has expired (with some margin)
-            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
-
-            createTestFiles(20);
-            CLIENT_CLI.execute("signdocument", "-servlet",
-                              "/signserver/worker/" + WORKER1_NAME,
-                              "-threads", "20",
-                              "-indir", inDir.getRoot().getAbsolutePath(),
-                              "-outdir", outDir.getRoot().getAbsolutePath());
-            final List<Map<String, Object>> lastLogFields = queryLastLogFields(20);
-            int queuedRequests = 0;
-
-            for (final Map<String, Object> details : lastLogFields) {
-                final String prio = (String) details.get("QOS_PRIORITY");
-
-                if ("50".equals(prio)) {
-                    queuedRequests++;
-                }
-            }
-
-            assertTrue("Some requests were queued at priority 50", queuedRequests > 0);
-        } finally {
-            GLOBAL_SESSION.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_MAX_PRIORITY");
-            // reset priority level mapping
-            GLOBAL_SESSION.setProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_PRIORITIES", "1:1,1000:5,1002:2");
-            GLOBAL_SESSION.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_FILTER_ENABLED");
-            // wait until old cached filter config has expired (with some margin)
-            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
-        }
-    }
-
-    // Test that when not setting GLOB.QOS_FILTER_ENABLED it default to inactive, not prioritizing any requests.
-    @Test
-    public void test06NoRequestsPrioritizedDefault() throws Exception {
+    public void higherMaxRequests() throws Exception {
+        // given
         createTestFiles(20);
+        applyQoSFilterProperties(QoSFilterPropertiesBuilder.builder().withFilterEnabled("true").withMaxRequests("50"));
+        // when
         CLIENT_CLI.execute("signdocument", "-servlet",
                           "/signserver/worker/" + WORKER1_NAME,
                           "-threads", "20",
                           "-indir", inDir.getRoot().getAbsolutePath(),
                           "-outdir", outDir.getRoot().getAbsolutePath());
-        final List<Map<String, Object>> lastLogFields = queryLastLogFields(20);
-        int noPrioritySet = 0;
+        // then
+        final int priorityHits = countPriorityHits(20, "not set");
+        assertEquals("No requests should be queued", 20, priorityHits);
+    }
 
-        for (final Map<String, Object> details : lastLogFields) {
-            final String prio = (String) details.get("QOS_PRIORITY");
+    // Test that setting a higher max priority level correctly works with a worker configured to that level.
+    @Test
+    public void higherMaxPriorityLevel() throws Exception {
+        // given
+        createTestFiles(20);
+        applyQoSFilterProperties(
+                QoSFilterPropertiesBuilder.builder()
+                        .withFilterEnabled("true")
+                        .withPriorities("1:1,1000:50,1002:2")
+                        .withMaxPriority("50")
+        );
+        // when
+        CLIENT_CLI.execute("signdocument", "-servlet",
+                          "/signserver/worker/" + WORKER1_NAME,
+                          "-threads", "20",
+                          "-indir", inDir.getRoot().getAbsolutePath(),
+                          "-outdir", outDir.getRoot().getAbsolutePath());
+        // then
+        final int priorityHits = countPriorityHits(20, "50");
+        assertTrue("Some requests were queued at priority 50", priorityHits > 0);
+    }
 
-            if ("not set".equals(prio)) {
-                noPrioritySet++;
-            }
-        }
-
-        assertEquals("No requests prioritized", 20, noPrioritySet);
+    // Test that when not setting GLOB.QOS_FILTER_ENABLED it default to inactive, not prioritizing any requests.
+    @Test
+    public void noRequestsPrioritizedByDefault() throws Exception {
+        // given
+        createTestFiles(20);
+        // when
+        CLIENT_CLI.execute("signdocument", "-servlet",
+                          "/signserver/worker/" + WORKER1_NAME,
+                          "-threads", "20",
+                          "-indir", inDir.getRoot().getAbsolutePath(),
+                          "-outdir", outDir.getRoot().getAbsolutePath());
+        // then
+        final int priorityHits = countPriorityHits(20, "not set");
+        assertEquals("No requests prioritized (unset)", 20, priorityHits);
     }
 
     // Test that setting GLOB.QOS_FILTER_ENABLED to explicitly false results in inactive, not prioritizing any requests.
     @Test
-    public void test07NoRequestsPrioritizedExplicitFalse() throws Exception {
+    public void noRequestsPrioritizedExplicitFalse() throws Exception {
+        // given
         createTestFiles(20);
-        GLOBAL_SESSION.setProperty(GlobalConfiguration.SCOPE_GLOBAL, "QOS_FILTER_ENABLED", "false");
-        // wait until old cached filter config has expired (with some margin)
-        Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
-
-        try {
-            CLIENT_CLI.execute("signdocument", "-servlet",
-                              "/signserver/worker/" + WORKER1_NAME,
-                              "-threads", "20",
-                              "-indir", inDir.getRoot().getAbsolutePath(),
-                              "-outdir", outDir.getRoot().getAbsolutePath());
-            final List<Map<String, Object>> lastLogFields = queryLastLogFields(20);
-            int noPrioritySet = 0;
-
-            for (final Map<String, Object> details : lastLogFields) {
-                final String prio = (String) details.get("QOS_PRIORITY");
-
-                if ("not set".equals(prio)) {
-                    noPrioritySet++;
-                }
-            }
-
-            assertEquals("No requests prioritized", 20, noPrioritySet);
-        } finally {
-            GLOBAL_SESSION.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_FILTER_ENABLED");
-            // wait until old cached filter config has expired (with some margin)
-            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
-        }
+        applyQoSFilterProperties(QoSFilterPropertiesBuilder.builder().withFilterEnabled("false"));
+        // when
+        CLIENT_CLI.execute("signdocument", "-servlet",
+                          "/signserver/worker/" + WORKER1_NAME,
+                          "-threads", "20",
+                          "-indir", inDir.getRoot().getAbsolutePath(),
+                          "-outdir", outDir.getRoot().getAbsolutePath());
+        // then
+        final int priorityHits = countPriorityHits(20, "not set");
+        assertEquals("No requests prioritized (false)", 20, priorityHits);
     }
 
     // Test that setting GLOB.QOS_FILTER_ENABLED to an invalid value results in inactive, not prioritizing any requests.
     @Test
-    public void test08NoRequestsPrioritizedInvalidEnabled() throws Exception {
+    public void noRequestsPrioritizedInvalidEnabled() throws Exception {
+        // given
         createTestFiles(20);
-        GLOBAL_SESSION.setProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_FILTER_ENABLED", "_invalid_");
-        // wait until old cached filter config has expired (with some margin)
-        Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
-
-        try {
-            CLIENT_CLI.execute("signdocument", "-servlet",
-                              "/signserver/worker/" + WORKER1_NAME,
-                              "-threads", "20",
-                              "-indir", inDir.getRoot().getAbsolutePath(),
-                              "-outdir", outDir.getRoot().getAbsolutePath());
-            final List<Map<String, Object>> lastLogFields = queryLastLogFields(20);
-            int noPrioritySet = 0;
-
-            for (final Map<String, Object> details : lastLogFields) {
-                final String prio = (String) details.get("QOS_PRIORITY");
-
-                if ("not set".equals(prio)) {
-                    noPrioritySet++;
-                }
-            }
-
-            assertEquals("No requests prioritized", 20, noPrioritySet);
-        } finally {
-            GLOBAL_SESSION.removeProperty(GlobalConfiguration.SCOPE_GLOBAL,"QOS_FILTER_ENABLED");
-            // wait until old cached filter config has expired (with some margin)
-            Thread.sleep(CONFIG_CACHE_TIMEOUT * 1000 + 1000);
-        }
+        applyQoSFilterProperties(QoSFilterPropertiesBuilder.builder().withFilterEnabled("_invalid_"));
+        // when
+        CLIENT_CLI.execute("signdocument", "-servlet",
+                          "/signserver/worker/" + WORKER1_NAME,
+                          "-threads", "20",
+                          "-indir", inDir.getRoot().getAbsolutePath(),
+                          "-outdir", outDir.getRoot().getAbsolutePath());
+        // then
+        final int priorityHits = countPriorityHits(20, "not set");
+        assertEquals("No requests prioritized (_invalid_)", 20, priorityHits);
     }
 
-    @AfterClass
-    public static void tearDownClass() {
-        MODULES_TC.removeWorker(WORKER1_ID);
-        MODULES_TC.removeWorker(WORKER2_ID);
+    @Test
+    public void singleClientWSRequest() throws Exception {
+        // given
+        applyQoSFilterProperties(QoSFilterPropertiesBuilder.builder().withFilterEnabled("true"));
+        final byte[] requestData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root/>".getBytes(StandardCharsets.UTF_8);
+        final ClientWS ws = createClientWSService();
+        // when
+        final DataResponse response = ws.processData("" + WORKER1_ID, null, requestData);
+        // then
+        LOG.info("Response: " + WSTestUtil.toJsonString(response));
+        assertNotNull("Response", response);
+        final int priorityHits = countPriorityHits(1, "not set");
+        assertEquals("Priority not set by filter", 1, priorityHits);
+    }
+
+    private void applyQoSFilterProperties(final QoSFilterPropertiesBuilder qoSFilterProps) throws Exception {
+        if(qoSFilterProps.getFilterEnabled() != null) {
+            GLOBAL_SESSION.setProperty(
+                    GlobalConfiguration.SCOPE_GLOBAL,
+                    QoSFilterProperties.QOS_FILTER_ENABLED,
+                    qoSFilterProps.getFilterEnabled()
+            );
+        }
+        if(qoSFilterProps.getPriorities() != null) {
+            GLOBAL_SESSION.setProperty(
+                    GlobalConfiguration.SCOPE_GLOBAL,
+                    QoSFilterProperties.QOS_PRIORITIES,
+                    qoSFilterProps.getPriorities()
+            );
+        }
+        if(qoSFilterProps.getMaxRequests() != null) {
+            GLOBAL_SESSION.setProperty(
+                    GlobalConfiguration.SCOPE_GLOBAL,
+                    QoSFilterProperties.QOS_MAX_REQUESTS,
+                    qoSFilterProps.getMaxRequests()
+            );
+        }
+        if(qoSFilterProps.getMaxPriority() != null) {
+            GLOBAL_SESSION.setProperty(
+                    GlobalConfiguration.SCOPE_GLOBAL,
+                    QoSFilterProperties.QOS_MAX_PRIORITY,
+                    qoSFilterProps.getMaxPriority()
+            );
+        }
+        // wait until old cached filter config has expired (with some margin)
+        Thread.sleep((qoSFilterCacheTtlS + 1) * 1000);
+        shouldResetQosProps = true;
     }
 
     private void createTestFiles(final int numFiles) throws IOException {
@@ -386,19 +397,26 @@ public class QoSFilterTest {
      */
     private List<Map<String, Object>> queryLastLogFields(final int numRows) throws Exception {
         final List<Map<String, Object>> result = new LinkedList<>();
-        Term t = QueryUtil.parseCriteria("eventType EQ PROCESS", AuditLogFields.ALLOWED_FIELDS, AuditLogFields.NO_ARG_OPS, Collections.emptySet(), AuditLogFields.LONG_FIELDS, AuditLogFields.DATE_FIELDS);
-        QueryCriteria qc = QueryCriteria.create().add(t).add(Criteria.orderDesc(AuditRecordData.FIELD_TIMESTAMP));
+        final Term term = QueryUtil.parseCriteria(
+                "eventType EQ PROCESS",
+                AuditLogFields.ALLOWED_FIELDS,
+                AuditLogFields.NO_ARG_OPS,
+                Collections.emptySet(),
+                AuditLogFields.LONG_FIELDS,
+                AuditLogFields.DATE_FIELDS
+        );
+        final QueryCriteria qc = QueryCriteria
+                .create()
+                .add(term)
+                .add(Criteria.orderDesc(AuditRecordData.FIELD_TIMESTAMP));
 
-        Set<String> devices = getAuditorSession().getQuerySupportingLogDevices();
+        final Set<String> devices = getAuditorSession().getQuerySupportingLogDevices();
         if (devices.isEmpty()) {
             throw new Exception("No log devices available for querying");
         }
-        final String device = devices.iterator().next();
-
-        List<? extends AuditLogEntry> logs =
-                WORKER_SESSION.selectAuditLogs(0, numRows, qc, device);
+        final String device = devices.stream().findFirst().get();
+        List<? extends AuditLogEntry> logs = WORKER_SESSION.selectAuditLogs(0, numRows, qc, device);
         assertEquals("new log rows", numRows, logs.size());
-
         logs.forEach(row -> result.add(row.getMapAdditionalDetails()));
 
         return result;
@@ -415,5 +433,48 @@ public class QoSFilterTest {
             }
         }
         return auditorSession;
+    }
+
+    private int countPriorityHits(final int numRows, final String priorityToMatch) throws Exception {
+        final List<Map<String, Object>> lastLogFields = queryLastLogFields(numRows);
+        int count = 0;
+        for (final Map<String, Object> details : lastLogFields) {
+            final String priority = (String) details.get(QoSFilterProperties.QOS_PRIORITY);
+            if (priorityToMatch.equals(priority)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+
+
+    private ClientWS createClientWSService() {
+        // Configure Endpoint
+        final String endpointName = "ClientWSService";
+        final String endpointUrl = "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/" +
+                endpointName + "/ClientWS?wsdl";
+        final String endpointWsdl = "META-INF/wsdl/localhost_8080/signserver/" + endpointName + "/ClientWS.wsdl";
+        //
+        final QName qname = new QName("http://clientws.signserver.org/", endpointName);
+        final URL resource = ClientWS.class.getResource(endpointWsdl);
+        final ClientWSService clientWSService = new ClientWSService(resource, qname);
+        // Create an instance of WS
+        final ClientWS ws = clientWSService.getClientWSPort();
+        // Define binding
+        final BindingProvider bp = (BindingProvider) ws;
+        final Map<String, Object> requestContext = bp.getRequestContext();
+        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointUrl);
+        // Set the secure connection
+        if (sslSocketFactory != null) {
+            final Client client = ClientProxy.getClient(bp);
+            final HTTPConduit http = (HTTPConduit) client.getConduit();
+            final TLSClientParameters params = new TLSClientParameters();
+            params.setSSLSocketFactory(sslSocketFactory);
+            http.setTlsClientParameters(params);
+            final HTTPClientPolicy policy = http.getClient();
+            policy.setAutoRedirect(true);
+        }
+        return ws;
     }
 }

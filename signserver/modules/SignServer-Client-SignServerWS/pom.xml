@@ -11,6 +11,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dist.jar>${project.build.finalName}.jar</dist.jar>
+        <!-- WSDL -->
+        <wsdl_file>SignServerWSService.wsdl</wsdl_file>
+        <wsdl_meta-inf_path>wsdl/</wsdl_meta-inf_path>
+        <wsdl_localhost_uri>SignServerWSService/${wsdl_meta-inf_path}</wsdl_localhost_uri>
+        <wsdl_resource>${basedir}/xml-resources/web-service-references/${wsdl_localhost_uri}</wsdl_resource>
     </properties>
     <dependencies>
         <dependency>
@@ -50,14 +55,10 @@
                         </goals>
                         <configuration>
                             <wsdlFiles>
-                                <wsdlFile>${basedir}/xml-resources/web-service-references/SignServerWSService/wsdl/SignServerWSService.wsdl</wsdlFile>
+                                <wsdlFile>${wsdl_resource}${wsdl_file}</wsdlFile>
                             </wsdlFiles>
                             <packageName>org.signserver.protocol.ws.gen</packageName>
-                            <wsdlLocation>http://localhost:8080/signserver/SignServerWSService/SignServerWS?wsdl" uri="SignServerWS/wsdl/SignServerWSService.wsdl</wsdlLocation>
                             <staleFile>${project.build.directory}/jaxws/stale/SignServerWS.stale</staleFile>
-                            <bindingFiles>
-                                <bindingFile>${basedir}/src/main/resources/META-INF/jax-ws-binding.xml</bindingFile>
-                            </bindingFiles>
                         </configuration>
                         <id>wsimport-generate-SignServerWS</id>
                         <phase>generate-sources</phase>
@@ -78,6 +79,28 @@
                     <catalog>${basedir}/catalog.xml</catalog>
                     <target>2.0</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/classes/META-INF/${wsdl_meta-inf_path}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${wsdl_resource}</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

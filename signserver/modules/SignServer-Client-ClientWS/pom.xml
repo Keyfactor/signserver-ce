@@ -1,4 +1,5 @@
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -11,16 +12,16 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dist.jar>${project.build.finalName}.jar</dist.jar>
+        <!-- WSDL -->
+        <wsdl_file>ClientWS.wsdl</wsdl_file>
+        <wsdl_meta-inf_path>wsdl/localhost_8080/signserver/ClientWSService/</wsdl_meta-inf_path>
+        <wsdl_localhost_uri>ClientWS/${wsdl_meta-inf_path}</wsdl_localhost_uri>
+        <wsdl_resource>${basedir}/xml-resources/web-service-references/${wsdl_localhost_uri}</wsdl_resource>
     </properties>
     <dependencies>
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
@@ -35,10 +36,9 @@
                         </goals>
                         <configuration>
                             <wsdlFiles>
-                                <wsdlFile>${basedir}/xml-resources/web-service-references/ClientWS/wsdl/localhost_8080/signserver/ClientWSService/ClientWS.wsdl</wsdlFile>
+                                <wsdlFile>${wsdl_resource}${wsdl_file}</wsdlFile>
                             </wsdlFiles>
                             <packageName>org.signserver.client.clientws</packageName>
-                            <wsdlLocation>http://localhost:8080/signserver/ClientWSService/ClientWS?wsdl" uri="ClientWS/wsdl/localhost_8080/signserver/ClientWSService/ClientWS.wsdl</wsdlLocation>
                             <staleFile>${project.build.directory}/jaxws/stale/ClientWS.stale</staleFile>
                         </configuration>
                         <id>wsimport-generate-ClientWS</id>
@@ -67,6 +67,28 @@
                 <configuration>
                     <skipTests>true</skipTests>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/classes/META-INF/${wsdl_meta-inf_path}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${wsdl_resource}</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

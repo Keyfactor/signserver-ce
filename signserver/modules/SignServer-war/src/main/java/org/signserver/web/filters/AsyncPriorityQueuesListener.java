@@ -26,74 +26,71 @@ import org.apache.log4j.Logger;
 
 /**
  * Refactored-out from QoSFilter.
- *
- * To be able to deploy the filter on JBoss/WildFly we had to move the listener
- * to an outer-level class with a public constructor (and make adjustments to
- * the filter class to access its priority queues).
- *
+ * <p>
+ * To be able to deploy the filter on JBoss/WildFly we had to move the listener to an outer-level class with a
+ * public constructor (and make adjustments to the filter class to access its priority queues).
+ * </p><p>
  * Error message: WFLYEE0048: Could not find default contructor for class
  * org.signserver.web.filter.QoSFilter$QoSAsyncListener
- * 
+ * </p>
+ *
  * @author Marcus Lundblad
  * @version $Id$
  */
-class QoSAsyncListener implements AsyncListener {
+class AsyncPriorityQueuesListener implements AsyncListener {
+
     // Logger for this class
-    private static final Logger LOG = Logger.getLogger(QoSAsyncListener.class);
-    
+    private static final Logger LOG = Logger.getLogger(AsyncPriorityQueuesListener.class);
+
     private final int priority;
-    private final QoSFilter outer;
+    private final QoSFilter qoSFilter;
 
-    public QoSAsyncListener() {
-        this.outer = null;
-        this.priority = -1;
-    }
-    
-    public QoSAsyncListener(final QoSFilter outer) {
-        this.outer = outer;
+    public AsyncPriorityQueuesListener() {
+        this.qoSFilter = null;
         this.priority = -1;
     }
 
-    public QoSAsyncListener(int priority, final QoSFilter outer) {
-        this.outer = outer;
+    public AsyncPriorityQueuesListener(final QoSFilter qoSFilter) {
+        this.qoSFilter = qoSFilter;
+        this.priority = -1;
+    }
+
+    public AsyncPriorityQueuesListener(int priority, final QoSFilter qoSFilter) {
+        this.qoSFilter = qoSFilter;
         this.priority = priority;
     }
 
     @Override
-    public void onStartAsync(AsyncEvent event) throws IOException {
+    public void onStartAsync(AsyncEvent event) {
     }
 
     @Override
-    public void onComplete(AsyncEvent event) throws IOException {
+    public void onComplete(AsyncEvent event) {
         // Note: This is different from the original QoSFilter.
-        // As it turned out the original filter (when running on WildFly at 
-        // least) did not call the filter again after asyncContext.dispatch()
-        // and thus the queues are only processed when there is a new request
-        // coming in and which is accepted. This means that it could happen that
-        // requests gets stuck in the queue if no more requests are coming in.
-        // Instead poll the first entry from the first queue now.
-        // Note that this does not require a pass so it needs to be investigated
-        // if this could lead to too many requests being served at the same
-        // time (?).
-        outer.processQueues();
+        // As it turned out the original filter (when running on WildFly at least) did not call the filter again after
+        // asyncContext.dispatch() and thus the queues are only processed when there is a new request coming in and
+        // which is accepted. This means that it could happen that requests gets stuck in the queue if no more requests
+        // are coming in. Instead poll the first entry from the first queue now.
+        // Note that this does not require a pass so it needs to be investigated if this could lead to too many requests
+        // being served at the same time (?).
+        qoSFilter.processQueues();
     }
 
     @Override
     public void onTimeout(AsyncEvent event) throws IOException {
-        // Remove before it's redispatched, so it won't be
-        // redispatched again at the end of the filtering.
-        AsyncContext asyncContext = event.getAsyncContext();
-        if (outer == null) {
+        // Remove before it's redispatched, so it won't be redispatched again at the end of the filtering.
+        final AsyncContext asyncContext = event.getAsyncContext();
+        if (qoSFilter == null) {
             LOG.error("Filter unavailable");
         } else {
-            outer.getQueues().get(priority).remove(asyncContext);
+            qoSFilter.getQueues().get(priority).remove(asyncContext);
         }
         ((HttpServletResponse) event.getSuppliedResponse()).sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         asyncContext.complete();
     }
 
     @Override
-    public void onError(AsyncEvent event) throws IOException {
+    public void onError(AsyncEvent event) {
     }
-    
+
 }

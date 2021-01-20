@@ -59,12 +59,14 @@ import org.signserver.validationservice.common.Validation;
 import javax.servlet.http.Cookie;
 import org.signserver.common.RequestContext;
 import static org.signserver.common.SignServerConstants.X_SIGNSERVER_ERROR_MESSAGE;
+
+import org.signserver.web.common.filters.QoSFilterProperties;
 import org.signserver.web.filters.QoSFilter;
 
 /**
  * GenericProcessServlet is a general Servlet passing on it's request info to the worker configured by either
  * workerId or workerName parameters.
- * 
+ *
  * It will create a GenericServletRequest that is sent to the worker and expects a GenericServletResponse
  * sent back to the client.
  *
@@ -77,10 +79,10 @@ public class GenericProcessServlet extends AbstractProcessServlet {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
             GenericProcessServlet.class);
-    
+
     private static final long serialVersionUID = 1L;
     private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
-    private static final String METHOD_GET = "GET";    
+    private static final String METHOD_GET = "GET";
     private static final String WORKERID_PROPERTY_NAME = "workerId";
     private static final String WORKERNAME_PROPERTY_NAME = "workerName";
     private static final String DATA_PROPERTY_NAME = "data";
@@ -91,7 +93,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
     private static final String PROCESS_TYPE_PROPERTY_NAME = "processType";
     private static final String CERT_PURPOSES_PROPERTY_NAME = "certPurposes";
     private static final String HTTP_MAX_UPLOAD_SIZE = "HTTP_MAX_UPLOAD_SIZE";
-    
+
     private enum ProcessType {
         signDocument,
         validateDocument,
@@ -100,7 +102,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
 
     @EJB
     private ProcessSessionLocal processSession;
-    
+
     @EJB
     private GlobalConfigurationSessionLocal globalSession;
 
@@ -152,10 +154,10 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         final DiskFileItemFactory factory = new DiskFileItemFactory();
         factory.setSizeThreshold(uploadConfig.getSizeThreshold());
         factory.setRepository(uploadConfig.getRepository());
-        
+
         List<FileItem> itemsToDelete = null;
         try {
-        
+
             if (ServletFileUpload.isMultipartContent(req)) {
                 final ServletFileUpload upload = new ServletFileUpload(factory);
                 upload.setSizeMax(uploadConfig.getMaxUploadSize());
@@ -258,7 +260,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                                 data.close();
                             }
                         }
-                        
+
                         // Now put the decoded data
                         try {
                             data = dataFactory.createReadableData(bytes, uploadConfig.getMaxUploadSize(), uploadConfig.getRepository());
@@ -388,7 +390,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
 
                     final BinaryFileUpload upload = new BinaryFileUpload(req.getInputStream(), req.getContentType(), factory);
                     upload.setSizeMax(uploadConfig.getMaxUploadSize());
-                    
+
                     try {
                         data = dataFactory.createReadableData(upload.parseTheRequest(), uploadConfig.getRepository());
                     } catch (FileUploadBase.SizeLimitExceededException ex) {
@@ -443,7 +445,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
 
         LOG.debug("<doPost()");
     } //doPost
-    
+
     /**
      * Handles http get.
      *
@@ -460,7 +462,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         LOG.debug("<doGet()");
     } // doGet
 
-        
+
     @Override
     public void init() throws ServletException {
         dataFactory = DataUtils.createDataFactory();
@@ -472,7 +474,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         final String remoteAddr = req.getRemoteAddr();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received HTTP process request for worker " + wi + ", from IP " + remoteAddr);
-        }        
+        }
 
         // Client certificate
         Certificate clientCertificate = null;
@@ -485,7 +487,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         final RequestContext context = new RequestContext(clientCertificate,
                 remoteAddr);
         RequestMetadata metadata = RequestMetadata.getInstance(context);
-        
+
         //extract ALL cookies from client request
         //so that other DSS components could work with them!
         Cookie[] cookies = req.getCookies();
@@ -498,7 +500,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         LogMap logMap = LogMap.getInstance(context);
 
         final String xForwardedFor = req.getHeader(RequestContext.X_FORWARDED_FOR);
-        
+
         // Add HTTP specific log entries
         logMap.put(IWorkerLogger.LOG_REQUEST_FULLURL, new Loggable() {
             @Override
@@ -513,11 +515,11 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         if (xForwardedFor != null) {
             context.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
         }
-        
+
         // Add and log the X-SignServer-Custom-1 header if available
         final String xCustom1 = req.getHeader(RequestContext.X_SIGNSERVER_CUSTOM_1);
         if (xCustom1 != null && !xCustom1.isEmpty()) {
-            context.put(RequestContext.X_SIGNSERVER_CUSTOM_1, xCustom1);            
+            context.put(RequestContext.X_SIGNSERVER_CUSTOM_1, xCustom1);
         }
         logMap.put(IWorkerLogger.LOG_XCUSTOM1, xCustom1);
 
@@ -533,25 +535,23 @@ public class GenericProcessServlet extends AbstractProcessServlet {
         if (pdfPassword != null) {
             metadata.put(RequestContext.METADATA_PDFPASSWORD, pdfPassword);
         }
-        
+
         addRequestMetaData(metadataHolder, metadata);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Received bytes of length: " + data.getLength());
         }
 
-        final Integer qosPrio =
-                (Integer) req.getAttribute(QoSFilter.QOS_PRIORITY_ATTRIBUTE);
-
-        if (qosPrio != null) {
-            context.put(QoSFilter.QOS_PRIORITY_ATTRIBUTE, qosPrio);
+        final Integer qosPriority = (Integer) req.getAttribute(QoSFilterProperties.QOS_PRIORITY);
+        if (qosPriority != null) {
+            context.put(QoSFilterProperties.QOS_PRIORITY, qosPriority);
         }
-        
+
         final int requestId = ThreadLocalRandom.current().nextInt();
 
         try (CloseableWritableData responseData = dataFactory.createWritableData(data, uploadConfig.getRepository())) {
             String responseText;
-            
+
             switch (processType) {
                 case signDocument: {
                     final Response response = processSession.process(new AdminInfo("Client user", null, null), wi,
@@ -585,7 +585,7 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                     break;
                 }
                 case validateDocument: {
-                    final DocumentValidationResponse validationResponse = (DocumentValidationResponse) processSession.process(new AdminInfo("Client user", null, null), wi, 
+                    final DocumentValidationResponse validationResponse = (DocumentValidationResponse) processSession.process(new AdminInfo("Client user", null, null), wi,
                                 new DocumentValidationRequest(requestId, data), context);
 
                     responseText = validationResponse.isValid() ? "VALID" : "INVALID";
@@ -612,9 +612,9 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                         final String certPurposes = req.getParameter(CERT_PURPOSES_PROPERTY_NAME);
                         final CertificateValidationResponse certValidationResponse = (CertificateValidationResponse) processSession.process(new AdminInfo("Client user", null, null), wi,
                                         new CertificateValidationRequest(cert, certPurposes), context);
-                        
+
                         final Validation validation = certValidationResponse.getValidation();
-                        
+
                         final StringBuilder sb = new StringBuilder(validation.getStatus().name());
 
                         sb.append(";");
@@ -649,9 +649,9 @@ public class GenericProcessServlet extends AbstractProcessServlet {
                     break;
                 }
             }
-            
+
             res.getOutputStream().close();
-            
+
         } catch (AuthorizationRequiredException e) {
             LOG.debug("Sending back HTTP 401: " + e.getLocalizedMessage());
 

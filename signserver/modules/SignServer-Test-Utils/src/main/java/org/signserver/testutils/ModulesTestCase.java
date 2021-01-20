@@ -196,6 +196,8 @@ public class ModulesTestCase {
     public static final String WORKER_KEY_AUTH_TYPE = "AUTHTYPE";
     public static final String WORKER_KEY_USER_1 = "USER.USER1";
     public static final String WORKER_KEY_DISABLE_KEY_USAGE_COUNTER = "DISABLEKEYUSAGECOUNTER";
+    public static final String WORKER_KEY_SLEEP_TIME = "SLEEP_TIME";
+    public static final String WORKER_KEY_WORKER_LOGGER = "WORKERLOGGER";
 
     private WorkerSessionRemote workerSession;
     private static WorkerSessionRemote cWorkerSession;
@@ -211,6 +213,7 @@ public class ModulesTestCase {
 
     private CLITestHelper adminCLI;
     private CLITestHelper clientCLI;
+    private static CLITestHelper cClientCLI;
     private final TestUtils testUtils = new TestUtils();
     protected static Random random = new Random(1234);
 
@@ -264,6 +267,13 @@ public class ModulesTestCase {
             clientCLI = new CLITestHelper(ClientCLI.class);
         }
         return clientCLI;
+    }
+
+    public static CLITestHelper getCurrentClientCLI() {
+        if (cClientCLI == null) {
+            cClientCLI = new CLITestHelper(ClientCLI.class);
+        }
+        return cClientCLI;
     }
 
     public WorkerSessionRemote getWorkerSession() {
@@ -419,6 +429,19 @@ public class ModulesTestCase {
     ) throws FileNotFoundException {
         addTestSignerWithDefaultP12Keystore(
                 signerConfigurationBuilder.withClassName("org.signserver.module.xmlsigner.XMLSigner")
+        );
+    }
+
+    /**
+     * Adds a test SleepWorker using configuration of SignerConfigurationBuilder.
+     * @param signerConfigurationBuilder A builder instance containing configuration for the Worker.
+     * @throws FileNotFoundException If keystore file was not found at SIGNSERVER_HOME.
+     */
+    public static void addTestSleepWorker(
+            final SignerConfigurationBuilder signerConfigurationBuilder
+    ) throws FileNotFoundException {
+        addTestSignerWithDefaultP12Keystore(
+                signerConfigurationBuilder.withClassName("org.signserver.server.signers.SleepWorker")
         );
     }
 
@@ -952,6 +975,12 @@ public class ModulesTestCase {
         }
         if(workerProps.isDisableKeyUsageCounter()) {
             workerSession.setWorkerProperty(workerId, WORKER_KEY_DISABLE_KEY_USAGE_COUNTER, "TRUE");
+        }
+        if(workerProps.getSleepTime() != null) {
+            workerSession.setWorkerProperty(workerId, WORKER_KEY_SLEEP_TIME, workerProps.getSleepTime().toString());
+        }
+        if(workerProps.getWorkerLogger() != null) {
+            workerSession.setWorkerProperty(workerId, WORKER_KEY_WORKER_LOGGER, workerProps.getWorkerLogger());
         }
         // Reload
         getCurrentWorkerSession().reloadConfiguration(workerId);

@@ -35,7 +35,7 @@ import javax.inject.Named;
 @ApplicationScoped
 @ManagedBean
 public class PublicWebBean {
-    
+
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(PublicWebBean.class);
 
@@ -48,8 +48,8 @@ public class PublicWebBean {
     private static final String WEB_CLIENTCLI_DIST_FILE = "web.clientcli.dist.file";
     private static final String HTTPSERVER_EXTERNAL_PRIVHTTPS = "httpserver.external.privhttps";
 
-    private final CompileTimeSettings settings = CompileTimeSettings.getInstance();   
-    
+    private final CompileTimeSettings settings = CompileTimeSettings.getInstance();
+
     public PublicWebBean() {
     }
 
@@ -58,7 +58,7 @@ public class PublicWebBean {
      */
     public boolean isAdminWebEnabledAndAvailable() {
         final String enabled = settings.getProperty(ADMINWEB_ENABLED_AND_AVAILABLE);
-        return enabled != null && Boolean.parseBoolean(enabled);
+        return Boolean.parseBoolean(enabled);
     }
 
     /**
@@ -66,17 +66,17 @@ public class PublicWebBean {
      */
     public boolean isWebDocEnabled() {
         final String enabled = settings.getProperty(WEBDOC_ENABLED);
-        return enabled != null && Boolean.parseBoolean(enabled);
+        return Boolean.parseBoolean(enabled);
     }
 
     public boolean isWebAdminGUIDistEnabled() {
         final String enabled = settings.getProperty(WEB_ADMINGUI_DIST_ENABLED);
-        return enabled != null && Boolean.parseBoolean(enabled);
+        return Boolean.parseBoolean(enabled);
     }
 
     public boolean isWebClientCLIDistEnabled() {
         final String enabled = settings.getProperty(WEB_CLIENTCLI_DIST_ENABLED);
-        return enabled != null && Boolean.parseBoolean(enabled);
+        return Boolean.parseBoolean(enabled);
     }
 
     public File getAdminGUIDistFile() {
@@ -146,9 +146,9 @@ public class PublicWebBean {
         }
         return value;
     }
-    
+
     public String getAdminWebPrivateHttpsLink() {
-        
+
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
         String contextPath = externalContext.getRequestContextPath();
         String adminWebContextPath = contextPath.concat("/adminweb/");
@@ -164,7 +164,7 @@ public class PublicWebBean {
             throw new RuntimeException(ex);
         }
     }
-    
+
     /**
      * Get the most relevant documentation link for the current page or use the
      * main page if no mapping exists.
@@ -176,11 +176,11 @@ public class PublicWebBean {
     public String getDocumentationLink() {
         return "../doc/";
     }
-    
+
     public String getCopyright() {
-        return "Copyright © 2006–2020 PrimeKey Solutions AB";
+        return "Copyright © 2006–2021 PrimeKey Solutions AB";
     }
-    
+
     public String getNode() {
         return CesecoreConfiguration.getNodeIdentifier();
     }

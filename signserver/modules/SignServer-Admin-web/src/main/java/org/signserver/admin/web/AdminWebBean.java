@@ -36,7 +36,7 @@ public class AdminWebBean {
     private static final FastDateFormat FDF = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ssZ");
 
     private final Properties docLinks = new Properties();
-    
+
     @PostConstruct
     protected void init() {
         // Load the documentation links map
@@ -50,19 +50,19 @@ public class AdminWebBean {
             throw new IllegalStateException("Unable to load /doc-links.properties: " + ex.getMessage(), ex);
         }
     }
-    
+
     public String getVersion() {
         return CompileTimeSettings.getInstance().getProperty(CompileTimeSettings.SIGNSERVER_VERSION);
     }
 
     public String getCopyright() {
-        return "Copyright © 2006–2020 PrimeKey Solutions AB";
+        return "Copyright © 2006–2021 PrimeKey Solutions AB";
     }
 
     public String getCurrentTime() {
         return FDF.format(System.currentTimeMillis());
     }
-    
+
     public String getNode() {
         return CesecoreConfiguration.getNodeIdentifier();
     }

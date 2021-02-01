@@ -35,7 +35,7 @@ import org.signserver.common.data.WritableData;
 import org.signserver.server.log.LogMap;
 
 /**
- * Debug worker inposing a sleep pause (using Thread.sleep()).
+ * Debug worker imposing a sleep pause (using Thread.sleep()).
  * <p>
  * The worker has two worker properties:
  * </p>
@@ -63,16 +63,13 @@ public class SleepWorker extends BaseProcessable {
     // Log fields
     public static final String LOG_NAME = "HELLO_NAME";
 
-    // Default values
-    private static final String DEFAULT_SUFFIX = "!";
-
     // Content types
     private static final String REQUEST_CONTENT_TYPE = "text/plain";
     private static final String RESPONSE_CONTENT_TYPE = "text/plain";
 
     // Priority log field
     private static final String QOS_PRIORITY = "QOS_PRIORITY";
-    
+
     // Configuration errors
     private final LinkedList<String> configErrors = new LinkedList<>();
 
@@ -80,13 +77,11 @@ public class SleepWorker extends BaseProcessable {
     private int sleepTime;
 
     @Override
-    public void init(int workerId, WorkerConfig config,
-            WorkerContext workerContext, EntityManager workerEM) {
+    public void init(int workerId, WorkerConfig config, WorkerContext workerContext, EntityManager workerEM) {
         super.init(workerId, config, workerContext, workerEM);
 
         // Sleep time
         final String sleepTimeString = config.getProperty(PROPERTY_SLEEP_TIME);
-
         if (sleepTimeString != null) {
             sleepTime = Integer.parseInt(sleepTimeString);
         } else {
@@ -95,9 +90,9 @@ public class SleepWorker extends BaseProcessable {
     }
 
     @Override
-    public Response processData(Request signRequest,
-            RequestContext requestContext) throws IllegalRequestException,
-                CryptoTokenOfflineException, SignServerException {
+    public Response processData(
+            Request signRequest, RequestContext requestContext
+    ) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         if (!configErrors.isEmpty()) {
             throw new SignServerException("Worker is misconfigured");
         }
@@ -116,28 +111,25 @@ public class SleepWorker extends BaseProcessable {
             final String name = new String(data, StandardCharsets.UTF_8);
             if (name.isEmpty()) {
                 // This is a client error
-                throw new IllegalRequestException(
-                        "Supplying a name as input is required.");
+                throw new IllegalRequestException("Supplying a name as input is required.");
             }
 
             // Log anything interesting from the request to the worker logger
             LogMap.getInstance(requestContext).put(LOG_NAME, name);
 
             // Log priority level if available
-            final Integer qosPrio = (Integer) requestContext.get(QOS_PRIORITY);
+            final Integer qosPriority = (Integer) requestContext.get(QOS_PRIORITY);
 
-            LogMap.getInstance(requestContext).put(QOS_PRIORITY,
-                                                   qosPrio != null ?
-                                                   qosPrio.toString() :
-                                                   "not set");
-            
+            LogMap.getInstance(requestContext).put(
+                    QOS_PRIORITY, qosPriority != null ? qosPriority.toString() : "not set");
+
             // Additional debug logging using Log4j
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Will produce a greeting for: " + name);
             }
 
             Thread.sleep(sleepTime);
-            
+
             // Produce the result, ie doing the work
             final String result = "Hi " + name + ", I've slept for " + sleepTime + " milliseconds!";
             out.write(result.getBytes(StandardCharsets.UTF_8));
@@ -150,7 +142,7 @@ public class SleepWorker extends BaseProcessable {
         // Suggest new file name
         suggestNewFileName(requestContext);
 
-        // As everyting went well, the client can be charged for the request
+        // As everything went well, the client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);
 
         // Return the response
@@ -162,8 +154,7 @@ public class SleepWorker extends BaseProcessable {
     @Override
     protected List<String> getFatalErrors(final IServices services) {
         // Add our errors to the list of errors
-        final LinkedList<String> errors = new LinkedList<>(
-                super.getFatalErrors(services));
+        final LinkedList<String> errors = new LinkedList<>(super.getFatalErrors(services));
         errors.addAll(configErrors);
         return errors;
     }

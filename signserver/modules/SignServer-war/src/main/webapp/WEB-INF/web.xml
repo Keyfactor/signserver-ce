@@ -89,10 +89,6 @@
         <servlet-name>ClientCLIDistServlet</servlet-name>
         <servlet-class>org.signserver.web.ClientCLIDistServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>SoapQueueServlet</servlet-name>
-        <servlet-class>org.signserver.web.SoapQueueServlet</servlet-class>
-    </servlet>
      <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
@@ -128,10 +124,6 @@
     <servlet-mapping>
         <servlet-name>SODProcessWorkerServlet</servlet-name>
         <url-pattern>/sodworker/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SoapQueueServlet</servlet-name>
-        <url-pattern>/soap-queue</url-pattern>
     </servlet-mapping>
     <!-- block HTTP methods other than GET and POST -->
     <security-constraint>

@@ -78,6 +78,7 @@ import org.signserver.web.common.filters.QoSFilterProperties;
  * @version $Id$
  */
 public class QoSFilterTest extends ModulesTestCase {
+
     // Logger for this class
     private static final Logger LOG = Logger.getLogger(QoSFilterTest.class);
     //
@@ -93,12 +94,11 @@ public class QoSFilterTest extends ModulesTestCase {
     private static final GlobalConfigurationSessionRemote GLOBAL_SESSION = getCurrentGlobalSession();
     private SecurityEventsAuditorSessionRemote auditorSession = null;
     // Contains QoSFilter Global Property names to flush the configuration
-    private final List<String> QOS_FILTER_PROPS_LIST = Arrays.asList(
+    private final static List<String> QOS_FILTER_PROPS_LIST = Arrays.asList(
             QoSFilterProperties.QOS_FILTER_ENABLED,
             QoSFilterProperties.QOS_PRIORITIES,
             QoSFilterProperties.QOS_MAX_REQUESTS,
             QoSFilterProperties.QOS_MAX_PRIORITY
-//            QoSFilterProperties.QOS_CACHE_TTL_S
     );
     private static long qoSFilterCacheTtlS = 3;
     // A reset flag for QOS Properties to minimize possible delays if not needed for reload of cache
@@ -138,15 +138,15 @@ public class QoSFilterTest extends ModulesTestCase {
                         .withSleepTime(1000L)
                         .withWorkerLogger("org.signserver.server.log.SecurityEventsWorkerLogger")
         );
-
         // set priority mapping, include some unused signers to test that parsing the set works as expected
         GLOBAL_SESSION.setProperty(
                 GlobalConfiguration.SCOPE_GLOBAL, QoSFilterProperties.QOS_PRIORITIES, "1:1,1000:5,1002:2");
         // set cache reload to 3 seconds
         GLOBAL_SESSION.setProperty(
                 GlobalConfiguration.SCOPE_GLOBAL, QoSFilterProperties.QOS_CACHE_TTL_S, "" + qoSFilterCacheTtlS);
-        // unset enabled parameter to get default behaviour
-        GLOBAL_SESSION.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, QoSFilterProperties.QOS_FILTER_ENABLED);
+        // Enabled parameter to get default behaviour
+        GLOBAL_SESSION.setProperty(
+                GlobalConfiguration.SCOPE_GLOBAL, QoSFilterProperties.QOS_FILTER_ENABLED, "true");
         // wait until old cached filter config has expired (DEFAULT (10s) + with some margin)
         Thread.sleep((10 + 1) * 1000);
         //
@@ -154,11 +154,18 @@ public class QoSFilterTest extends ModulesTestCase {
     }
 
     @AfterClass
-    public static void tearDownClass() {
+    public static void tearDownClass() throws Exception {
         removeWorkerById(WORKER1_ID);
         removeWorkerById(WORKER2_ID);
-        // TODO Reset QoSFilter
-
+        // Reset QoSFilter
+        // Reset Global Configuration by removing all properties
+        for (String property : QOS_FILTER_PROPS_LIST) {
+            GLOBAL_SESSION.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, property);
+        }
+        GLOBAL_SESSION.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, QoSFilterProperties.QOS_CACHE_TTL_S);
+        GLOBAL_SESSION.removeProperty(GlobalConfiguration.SCOPE_GLOBAL, QoSFilterProperties.QOS_FILTER_ENABLED);
+        // wait until old cached filter config has expired (with some margin)
+        Thread.sleep((qoSFilterCacheTtlS + 1) * 1000);
     }
 
     @Before
@@ -438,7 +445,7 @@ public class QoSFilterTest extends ModulesTestCase {
     private int countPriorityHits(final int numRows, final String priorityToMatch) throws Exception {
         final List<Map<String, Object>> lastLogFields = queryLastLogFields(numRows);
         int count = 0;
-        for (final Map<String, Object> details : lastLogFields) {
+        for (Map<String, Object> details : lastLogFields) {
             final String priority = (String) details.get(QoSFilterProperties.QOS_PRIORITY);
             if (priorityToMatch.equals(priority)) {
                 count++;
@@ -446,8 +453,6 @@ public class QoSFilterTest extends ModulesTestCase {
         }
         return count;
     }
-
-
 
     private ClientWS createClientWSService() {
         // Configure Endpoint

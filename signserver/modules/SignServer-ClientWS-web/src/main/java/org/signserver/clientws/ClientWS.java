@@ -15,38 +15,47 @@ package org.signserver.clientws;
 import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.enterprise.context.RequestScoped;
-import javax.jws.HandlerChain;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
-import org.signserver.common.*;
+import org.signserver.common.AccessDeniedException;
+import org.signserver.common.AuthorizationRequiredException;
+import org.signserver.common.CryptoTokenOfflineException;
+import org.signserver.common.IllegalRequestException;
+import org.signserver.common.NoSuchWorkerException;
+import org.signserver.common.RequestContext;
+import org.signserver.common.RequestMetadata;
+import org.signserver.common.SignServerException;
+import org.signserver.common.WorkerIdentifier;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.Response;
 import org.signserver.common.data.SODRequest;
 import org.signserver.common.data.SODResponse;
+import org.signserver.common.data.SignatureRequest;
+import org.signserver.common.data.SignatureResponse;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.server.CredentialUtils;
-import org.signserver.server.data.impl.TemporarlyWritableData;
-import org.signserver.common.data.SignatureRequest;
-import org.signserver.common.data.SignatureResponse;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
 import org.signserver.server.data.impl.DataFactory;
 import org.signserver.server.data.impl.DataUtils;
+import org.signserver.server.data.impl.TemporarlyWritableData;
 import org.signserver.server.data.impl.UploadConfig;
 import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
@@ -54,17 +63,20 @@ import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
 
 /**
- * Client web services implementation containing operations for requesting signing etc.
+ * Client Web Services implementation containing operations:
+ * <ul>
+ *     <li>requesting signing;</li>
+ *
+ * </ul>
+ * for  etc.
  *
  * @author Markus Kilås
  * @version $Id$
  */
-@HandlerChain(file = "/META-INF/handler-chains.xml")
-@Stateless
 @WebService(serviceName = "ClientWSService")
 public class ClientWS {
 
-    /** Logger for this class. */
+    // Logger for this class
     private static final Logger LOG = Logger.getLogger(ClientWS.class);
 
     @Resource
@@ -102,7 +114,9 @@ public class ClientWS {
     public DataResponse processData(
             @WebParam(name = "worker") final String workerIdOrName,
             @WebParam(name = "metadata") List<Metadata> requestMetadata,
-            @WebParam(name = "data") byte[] data) throws RequestFailedException, InternalServerException {
+            @WebParam(name = "data") byte[] data
+    ) throws RequestFailedException, InternalServerException {
+
         final DataResponse result;
 
         final UploadConfig uploadConfig = UploadConfig.create(globalSession);
@@ -125,7 +139,13 @@ public class ClientWS {
                     LOG.error("Response ID " + signResponse.getRequestID() + " not matching request ID " + requestId);
                     throw new InternalServerException("Error in process operation, response id didn't match request id");
                 }
-                result = new DataResponse(requestId, signResponse.getResponseData().toReadableData().getAsByteArray(), signResponse.getArchiveId(), signResponse.getSignerCertificate() == null ? null : signResponse.getSignerCertificate().getEncoded(), getResponseMetadata(requestContext));
+                result = new DataResponse(
+                        requestId,
+                        signResponse.getResponseData().toReadableData().getAsByteArray(),
+                        signResponse.getArchiveId(),
+                        signResponse.getSignerCertificate() == null ? null : signResponse.getSignerCertificate().getEncoded(),
+                        getResponseMetadata(requestContext)
+                );
             } else {
                 LOG.error("Unexpected return type: " + resp.getClass().getName());
                 throw new InternalServerException("Unexpected return type");
@@ -159,11 +179,11 @@ public class ClientWS {
     }
 
     /**
-     * Operation for requesting signing and production of an MRTD SOd based on
-     * the supplied data groups / data group hashes.
+     * Operation for requesting signing and production of an MRTD SOD based on the supplied data groups / data group
+     * hashes.
      * @param workerIdOrName Name or ID of worker to send the request to
      * @param requestMetadata Additional request meta data
-     * @param data A SODRequest containing the datagroups/datagroups hashes
+     * @param data A SODRequest containing the data-groups/data-groups hashes
      * @return The response data
      * @throws RequestFailedException In case the request could not be processed typically because some error in the request data.
      * @throws InternalServerException In case the request could not be processed by some error at the server side.
@@ -172,7 +192,8 @@ public class ClientWS {
     public org.signserver.clientws.SODResponse processSOD(
             @WebParam(name = "worker") final String workerIdOrName,
             @WebParam(name = "metadata") final List<Metadata> requestMetadata,
-            @WebParam(name = "sodData") final org.signserver.clientws.SODRequest data) throws RequestFailedException, InternalServerException {
+            @WebParam(name = "sodData") final org.signserver.clientws.SODRequest data
+    ) throws RequestFailedException, InternalServerException {
         final org.signserver.clientws.SODResponse result;
         try (CloseableWritableData responseData = new TemporarlyWritableData(false, new UploadConfig().getRepository())) {
             final RequestContext requestContext = handleRequestContext(requestMetadata);
@@ -220,7 +241,10 @@ public class ClientWS {
 
             // Use special SOD sign request type
             final SODRequest req = new SODRequest(requestId, dataGroupsMap, ldsVersion, unicodeVersion, responseData);
-            final Response resp = getProcessSession().process(new AdminInfo("CLI user", null, null), WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
+            final Response resp = getProcessSession().process(
+                    new AdminInfo("CLI user", null, null),
+                    WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext
+            );
 
             if (resp instanceof SODResponse) {
                 SODResponse signResponse = (SODResponse) resp;
@@ -229,7 +253,13 @@ public class ClientWS {
                     throw new SignServerException("Error in process operation, response id didn't match request id");
                 }
 
-                result = new org.signserver.clientws.SODResponse(requestId, responseData.toReadableData().getAsByteArray(), signResponse.getArchiveId(), signResponse.getSignerCertificate() == null ? null : signResponse.getSignerCertificate().getEncoded(), getResponseMetadata(requestContext));
+                result = new org.signserver.clientws.SODResponse(
+                        requestId,
+                        responseData.toReadableData().getAsByteArray(),
+                        signResponse.getArchiveId(),
+                        signResponse.getSignerCertificate() == null ? null : signResponse.getSignerCertificate().getEncoded(),
+                        getResponseMetadata(requestContext)
+                );
             } else {
                 LOG.error("Unexpected return type: " + resp.getClass().getName());
                 throw new SignServerException("Unexpected return type");
@@ -244,7 +274,7 @@ public class ClientWS {
             throw new RequestFailedException("Worker Not Found");
         } catch (CryptoTokenOfflineException ex) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Service unvailable", ex);
+                LOG.debug("Service unavailable", ex);
             }
             throw new InternalServerException("Service unavailable: " + ex.getMessage());
         } catch (IllegalRequestException | AuthorizationRequiredException | AccessDeniedException ex) {
@@ -263,7 +293,6 @@ public class ClientWS {
         }
         return result;
     }
-
 
     private String getRequestIP() {
         MessageContext msgContext = wsContext.getMessageContext();
@@ -305,14 +334,12 @@ public class ClientWS {
                         .append(servletRequest.getQueryString()).toString();
             }
         });
-
         logMap.put(IWorkerLogger.LOG_REQUEST_LENGTH, new Loggable() {
             @Override
             public String toString() {
                 return servletRequest.getHeader("Content-Length");
             }
         });
-
         logMap.put(IWorkerLogger.LOG_XFORWARDEDFOR, new Loggable() {
             @Override
             public String toString() {
@@ -356,7 +383,6 @@ public class ClientWS {
     }
 
     private List<Metadata> getResponseMetadata(final RequestContext requestContext) {
-        final LinkedList<Metadata> result = new LinkedList<>();
         // TODO: DSS-x: Implement support for "Response Metadata":
         //Object o = requestContext.get(RequestContext.REQUEST_METADATA);
         //if (o instanceof Map) {
@@ -365,6 +391,6 @@ public class ClientWS {
         //        result.add(new Metadata(entry.getKey(), entry.getValue()));
         //    }
         //}
-        return result;
+        return new LinkedList<>();
     }
 }

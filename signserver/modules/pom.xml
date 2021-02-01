@@ -48,12 +48,12 @@
         <module>SignServer-war</module>
         <module>SignServer-war-Healthcheck</module>
         <module>SignServer-AdminCLI</module>
-	<module>SignServer-Admin-web</module>
+	    <module>SignServer-Admin-web</module>
 
         <module>SignServer-ejb-AdminWS</module>
         <module>SignServer-ejb-SignServerWS</module>
         <module>SignServer-ejb-ValidationWS</module>
-        <module>SignServer-ejb-ClientWS</module>
+        <module>SignServer-ClientWS-web</module>
 
         <module>SignServer-CLI-Common</module>
         <module>SignServer-Client-CLI</module>

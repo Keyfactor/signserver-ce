@@ -502,18 +502,9 @@ public class QoSFilter implements Filter {
         } else if ("/adminweb".equals(servletPath)) {
             // always prioritize requests to the admin web interfaces at highest priority
             return maxPriorityLevel;
-        } else if ("/soap-queue".equals(servletPath)) {
-            final String workerIdString = request.getParameter("wid");
-            if(workerIdString != null) {
-                try {
-                    workerId = Integer.parseInt(workerIdString);
-                } catch (NumberFormatException ex) {
-                    LOG.error("Trying to get priority for a non-existing worker");
-                    return 0;
-                }
-                return getPriorityFromPriorities(workerId, workerPriorities);
-            }
-            return 0;
+        } else if("/PriorityClientWS".equals(servletPath)) {
+            // always prioritize requests to the High Priority ClientWS
+            return maxPriorityLevel;
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Not a /worker or /adminweb request, using default priority (0)");

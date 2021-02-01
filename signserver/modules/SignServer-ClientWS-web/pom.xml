@@ -17,15 +17,11 @@
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
         <dist.jar>${project.build.finalName}.war</dist.jar>
         <module.name>clientws</module.name>
         <module.priority>20</module.priority>
         <module.web.web-uri>${dist.jar}</module.web.web-uri>
         <module.web.context>/ClientWSService</module.web.context>
-        <!-- WSDL -->
-<!--        <wsdl_file>ClientWS.wsdl</wsdl_file>-->
-<!--        <wsdl_web-inf_path>wsdl/localhost_8080/signserver/ClientWSService/</wsdl_web-inf_path>-->
     </properties>
 
     <dependencies>
@@ -74,9 +70,7 @@
                             <sei>org.signserver.clientws.ClientWS</sei>
                             <genWsdl>true</genWsdl>
                             <inlineSchemas>true</inlineSchemas>
-                            <keep>false</keep><keep>false</keep>
-<!--                            <resourceDestDir>${build.directory}/WEB-INF/${wsdl_web-inf_path}</resourceDestDir>-->
-<!--                            <sourceDestDir>${build.directory}/generated-sources/jaxws-wsgen</sourceDestDir>-->
+                            <keep>false</keep>
                         </configuration>
                     </execution>
                 </executions>
@@ -90,28 +84,28 @@
                     </compilerArguments>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>${maven-resources-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${build.directory}/WEB-INF/${wsdl_web-inf_path}</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${build.directory}/WEB-INF/${wsdl_web-inf_path}</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <artifactId>maven-resources-plugin</artifactId>-->
+<!--                <version>${maven-resources-plugin.version}</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>copy-resources</id>-->
+<!--                        <phase>process-resources</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>copy-resources</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <outputDirectory>${build.directory}/WEB-INF/${wsdl_web-inf_path}</outputDirectory>-->
+<!--                            <resources>-->
+<!--                                <resource>-->
+<!--                                    <directory>${build.directory}/WEB-INF/${wsdl_web-inf_path}</directory>-->
+<!--                                    <filtering>false</filtering>-->
+<!--                                </resource>-->
+<!--                            </resources>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>

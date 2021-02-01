@@ -5,7 +5,7 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
 
     <display-name>ClientWS</display-name>
-    
+
     <filter>
         <filter-name>QoSFilter</filter-name>
         <filter-class>org.signserver.web.common.filters.QoSFilter</filter-class>
@@ -35,11 +35,22 @@
         <servlet-class>org.signserver.clientws.ClientWS</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    <servlet>
+        <servlet-name>PriorityClientWS</servlet-name>
+        <servlet-class>org.signserver.clientws.ClientWS</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
 
     <servlet-mapping>
         <servlet-name>ClientWS</servlet-name>
         <url-pattern>/ClientWS</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PriorityClientWS</servlet-name>
+        <url-pattern>/PriorityClientWS</url-pattern>
+    </servlet-mapping>
+
 
     <security-constraint>
         <web-resource-collection>

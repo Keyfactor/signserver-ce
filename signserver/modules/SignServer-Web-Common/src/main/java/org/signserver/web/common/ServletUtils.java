@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.web;
+package org.signserver.web.common;
 
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
@@ -29,7 +29,7 @@ public class ServletUtils {
      * Property used to indicate an overriding worker name property in
      * a forwarded servlet request (used by the worker-specifyable servlets).
      */
-    static final String WORKERNAME_PROPERTY_OVERRIDE = "workerNameOverride";
+    public static final String WORKERNAME_PROPERTY_OVERRIDE = "workerNameOverride";
 
     /**
      * Parse out the worker name from a servlet request.

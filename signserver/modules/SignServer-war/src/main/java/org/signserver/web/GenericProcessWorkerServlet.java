@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.web;
 
+import org.signserver.web.common.ServletUtils;
 import java.io.IOException;
 
 import javax.servlet.RequestDispatcher;

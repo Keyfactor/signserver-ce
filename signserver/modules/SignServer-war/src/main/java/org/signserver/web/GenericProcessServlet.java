@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.web;
 
+import org.signserver.web.common.ServletUtils;
 import org.signserver.server.data.impl.BinaryFileUpload;
 import java.io.IOException;
 import java.security.cert.Certificate;
@@ -61,7 +62,7 @@ import org.signserver.common.RequestContext;
 import static org.signserver.common.SignServerConstants.X_SIGNSERVER_ERROR_MESSAGE;
 
 import org.signserver.web.common.filters.QoSFilterProperties;
-import org.signserver.web.filters.QoSFilter;
+import org.signserver.web.common.filters.QoSFilter;
 
 /**
  * GenericProcessServlet is a general Servlet passing on it's request info to the worker configured by either

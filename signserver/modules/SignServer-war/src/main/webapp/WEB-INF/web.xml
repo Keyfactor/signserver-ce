@@ -16,7 +16,7 @@
     </filter>
     <filter>
         <filter-name>QoSFilter</filter-name>
-        <filter-class>org.signserver.web.filters.QoSFilter</filter-class>
+        <filter-class>org.signserver.web.common.filters.QoSFilter</filter-class>
         <async-supported>true</async-supported>
         <!-- The amount of milliseconds to wait attempting to acquire the semaphore. -->
         <!-- Uncomment this block to override the default value.

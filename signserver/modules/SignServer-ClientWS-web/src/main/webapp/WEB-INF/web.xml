@@ -5,6 +5,30 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
 
     <display-name>ClientWS</display-name>
+    
+    <filter>
+        <filter-name>QoSFilter</filter-name>
+        <filter-class>org.signserver.web.common.filters.QoSFilter</filter-class>
+        <async-supported>true</async-supported>
+        <!-- The amount of milliseconds to wait attempting to acquire the semaphore. -->
+        <!-- Uncomment this block to override the default value.
+        <init-param>
+            <param-name>waitMs</param-name>
+            <param-value>50</param-value>
+        </init-param>
+        -->
+        <!--  -->
+        <!-- Uncomment this block to override the default value:
+        <init-param>
+            <param-name>suspendMs</param-name>
+            <param-value>-1</param-value>
+        </init-param>
+        -->
+    </filter>
+    <filter-mapping>
+        <filter-name>QoSFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
     <servlet>
         <servlet-name>ClientWS</servlet-name>

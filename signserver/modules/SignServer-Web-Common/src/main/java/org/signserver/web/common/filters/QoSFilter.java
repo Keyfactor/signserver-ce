@@ -15,7 +15,6 @@
 // SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
 // ========================================================================
 //
-
 package org.signserver.web.common.filters;
 
 import java.io.IOException;
@@ -42,6 +41,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.qos.AbstractStatistics;
@@ -96,6 +96,7 @@ import static org.signserver.web.common.filters.QoSFilterProperties.QOS_PRIORITY
  *     An example: GLOB.QOS_PRIORITIES=1:1,2:2,3:5</li>
  * </ul>
  * </p>
+ * @version $Id$
  */
 @WebFilter(asyncSupported = true)
 public class QoSFilter implements Filter {
@@ -145,8 +146,8 @@ public class QoSFilter implements Filter {
     // cache for global property values
 
     private List<String> globalPropertyCacheKeys;
-    private final Map<String, String> globalPropertyCache = new HashMap<>();
-    private long globalPropertyCacheLastUpdated;
+    private Map<String, String> globalPropertyCache = new HashMap<>();
+    private long globalPropertyCacheLastUpdated = Long.MAX_VALUE;
     // A map containing linked values: workerId -> priority
     private Map<Integer, Integer> workerPriorities;
     // Operational vars
@@ -226,32 +227,19 @@ public class QoSFilter implements Filter {
     /**
      * Returns a flag for filter enablement. By default it is disabled (false), unless the global configuration has
      * "true" value for QOS_FILTER_ENABLED property.
-     * <p>
-     * This property is always read from the global configuration session.
-     * </p>
      *
      * @return true if filter is enabled.
      */
     public boolean isFilterEnabled() {
-        final String enabledString = getGlobalProperty(QOS_FILTER_ENABLED);
-        if (enabledString != null) {
-            switch(enabledString.toLowerCase(Locale.ENGLISH)) {
-                case "true":
-                    return true;
-                case "false":
-                    return false;
-                default:
-                    LOG.error("Illegal value (" + enabledString + ") for " + QOS_FILTER_ENABLED + ", disabling.");
-                    return false;
-            }
-        }
-        return false;
+        return getFilterEnabledBooleanFromString(getGlobalPropertyFromCache(QOS_FILTER_ENABLED));
     }
 
     @Override
     public void init(final FilterConfig filterConfig) {
-        // Define cache keys except 'filter enabled' keys as it is read directly from global configuration session.
-        globalPropertyCacheKeys = Arrays.asList(QOS_MAX_REQUESTS, QOS_MAX_PRIORITY, QOS_PRIORITIES);
+        // Define cache keys
+        globalPropertyCacheKeys = Arrays.asList(
+                QOS_FILTER_ENABLED, QOS_MAX_REQUESTS, QOS_MAX_PRIORITY, QOS_PRIORITIES, QOS_CACHE_TTL_S
+        );
         // Load cache
         recreateGlobalPropertyCache();
         //
@@ -298,25 +286,37 @@ public class QoSFilter implements Filter {
      * Re-create the global property cache and the worker-priority mapping.
      */
     protected void recreateGlobalPropertyCache() {
-        // Early detection of enabled/disabled
-        if(isFilterEnabled()) {
-            globalPropertyCache.clear();
-            // Load cache
-            for (String key : globalPropertyCacheKeys) {
-                globalPropertyCache.put(key, getGlobalProperty(key));
+        globalPropertyCache = new HashMap<>();
+        if(isCacheOutdated()) {
+            // Early detection of enabled/disabled do not load the rest cache values if disabled
+            final boolean isDisabled = !getFilterEnabledBooleanFromString(getGlobalProperty(QOS_FILTER_ENABLED));
+            if(isDisabled) {
+                // update cache TS and return
+                globalPropertyCache.put(QOS_FILTER_ENABLED, "false");
+                globalPropertyCacheLastUpdated = System.currentTimeMillis();
+                return;
             }
-            // Load cache TTL
-            cacheTtlS = getReasonableCacheTtlInSeconds();
-            //
-            globalPropertyCacheLastUpdated = System.currentTimeMillis();
-            final String priorityMappingString = getGlobalPropertyFromCache(QOS_PRIORITIES);
-            workerPriorities = new HashMap<>();
-            if (priorityMappingString != null) {
-                try {
-                    workerPriorities = createPriorityMap(priorityMappingString);
-                } catch (IllegalArgumentException e) {
-                    LOG.error("Failed to create priorities: " + e.getMessage());
-                }
+        }
+        // Load cache
+        for (String key : globalPropertyCacheKeys) {
+            final String value = getGlobalProperty(key);
+            // Don't use NULL values
+            if(StringUtils.isNotBlank(value)) {
+                globalPropertyCache.put(key, value);
+            }
+        }
+        // update cache TS
+        globalPropertyCacheLastUpdated = System.currentTimeMillis();
+        // Load cache TTL
+        cacheTtlS = getCacheTtlInSeconds(getGlobalPropertyFromCache(QOS_CACHE_TTL_S));
+        // Load priorities
+        final String priorityMappingString = getGlobalPropertyFromCache(QOS_PRIORITIES);
+        workerPriorities = new HashMap<>();
+        if (priorityMappingString != null) {
+            try {
+                workerPriorities = createPriorityMap(priorityMappingString);
+            } catch (IllegalArgumentException e) {
+                LOG.error("Failed to create priorities: " + e.getMessage());
             }
         }
     }
@@ -469,12 +469,21 @@ public class QoSFilter implements Filter {
      * @return global config property value from cache.
      */
     protected String getGlobalPropertyFromCache(final String property) {
-        if (globalPropertyCacheLastUpdated + getCacheTtlS() * 1000 < System.currentTimeMillis()) {
+        if (isCacheOutdated()) {
             synchronized (globalPropertyCache) {
                 recreateGlobalPropertyCache();
             }
         }
         return globalPropertyCache.get(property);
+    }
+
+    /**
+     * Returns the cache map, simplify for testing.
+     *
+     * @return the cache map.
+     */
+    protected Map<String, String> getCacheMap() {
+        return globalPropertyCache;
     }
 
     /**
@@ -577,9 +586,8 @@ public class QoSFilter implements Filter {
     }
 
     // Returns the value of a global configuration parameter, if defined, or falls back to default value
-    // DEFAULT_CACHE_TTL_S, if a value cannot be read or than 1.
-    private long getReasonableCacheTtlInSeconds() {
-        final String valueString = getGlobalProperty(QOS_CACHE_TTL_S);
+    // DEFAULT_CACHE_TTL_S, if a value cannot be read or less than 1.
+    private long getCacheTtlInSeconds(final String valueString) {
         if(valueString != null) {
             try {
                 final long value = Long.parseLong(valueString);
@@ -594,6 +602,26 @@ public class QoSFilter implements Filter {
             }
         }
         return DEFAULT_CACHE_TTL_S;
+    }
+
+    // Returns a boolean from string, assumes the source of value is property
+    private boolean getFilterEnabledBooleanFromString(final String valueString) {
+        if (valueString != null) {
+            switch(valueString.toLowerCase(Locale.ENGLISH)) {
+                case "true":
+                    return true;
+                case "false":
+                    return false;
+                default:
+                    LOG.error("Illegal value (" + valueString + ") for " + QOS_FILTER_ENABLED + ".");
+                    return false;
+            }
+        }
+        return false;
+    }
+
+    private boolean isCacheOutdated() {
+        return globalPropertyCacheLastUpdated + getCacheTtlS() * 1000 < System.currentTimeMillis();
     }
 
     /**

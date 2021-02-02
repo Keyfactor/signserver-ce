@@ -21,8 +21,12 @@ import org.junit.Test;
 import static org.signserver.common.GlobalConfiguration.SCOPE_GLOBAL;
 import org.signserver.ejb.interfaces.GlobalConfigurationSession;
 import org.signserver.test.utils.mock.GlobalConfigurationSessionMock;
-import org.signserver.web.common.filters.QoSFilter;
-import org.signserver.web.common.filters.QoSFilterProperties;
+
+import static org.signserver.web.common.filters.QoSFilterProperties.QOS_CACHE_TTL_S;
+import static org.signserver.web.common.filters.QoSFilterProperties.QOS_FILTER_ENABLED;
+import static org.signserver.web.common.filters.QoSFilterProperties.QOS_MAX_PRIORITY;
+import static org.signserver.web.common.filters.QoSFilterProperties.QOS_MAX_REQUESTS;
+import static org.signserver.web.common.filters.QoSFilterProperties.QOS_PRIORITIES;
 
 /**
  * Unit tests for the QoSFilter.
@@ -32,14 +36,19 @@ import org.signserver.web.common.filters.QoSFilterProperties;
  */
 public class QoSFilterUnitTest {
 
-    // Test that global configuration cache is created once at filter init.
+    // Test that global configuration cache is created once at filter init and values are cached.
     @Test
     public void globalPropertiesCachedAtInit() {
         // given
         // on init cache should be created
         final int expectedInitialCacheRecreations = 1;
+        final int expectedCacheSize = 5;
         final MockedQoSFilter filter = new MockedQoSFilter();
-        filter.setGlobalProperty(QoSFilterProperties.QOS_FILTER_ENABLED, "true");
+        filter.setGlobalProperty(QOS_FILTER_ENABLED, "true");
+        filter.setGlobalProperty(QOS_MAX_REQUESTS, "1");
+        filter.setGlobalProperty(QOS_MAX_PRIORITY, "1");
+        filter.setGlobalProperty(QOS_PRIORITIES, "1:1");
+        filter.setGlobalProperty(QOS_CACHE_TTL_S, "1");
         // when
         filter.init(new MockedFilterConfig());
         // then
@@ -48,6 +57,7 @@ public class QoSFilterUnitTest {
                 expectedInitialCacheRecreations,
                 filter.getNumberOfCacheRecreations()
         );
+        assertEquals("Expected proper cache size", expectedCacheSize, filter.getCacheMap().size());
     }
 
     // Test that global properties cache is not recreated when accessing a global property directly after init.
@@ -56,16 +66,18 @@ public class QoSFilterUnitTest {
         // given
         // after (immediately) getting a property value, cache should not have been recreated
         final int expectedCacheRecreationsAfterOneRequest = 1;
+        final int expectedCacheSize = 1;
         final MockedQoSFilter filter = new MockedQoSFilter();
-        filter.setGlobalProperty(QoSFilterProperties.QOS_FILTER_ENABLED, "true");
+        filter.setGlobalProperty(QOS_FILTER_ENABLED, "true");
         // when
         filter.init(new MockedFilterConfig());
-        final String maxPriority = filter.getGlobalPropertyFromCache(QoSFilterProperties.QOS_MAX_PRIORITY);
+        final String maxPriority = filter.getGlobalPropertyFromCache(QOS_MAX_PRIORITY);
         // then
-        assertNull("Max priority is not set", maxPriority);
         assertEquals("Number of cache recreations",
                      expectedCacheRecreationsAfterOneRequest,
                      filter.getNumberOfCacheRecreations());
+        assertNull("Max priority is not set", maxPriority);
+        assertEquals("Expected proper cache size", expectedCacheSize, filter.getCacheMap().size());
     }
 
     // Test that setting a global property will not immediately use the new value (i.e. still using cache).
@@ -74,16 +86,18 @@ public class QoSFilterUnitTest {
         // given
         // after (immediately) setting a property value, cache should not have been recreated
         final int expectedCacheRecreationsAfterOneRequest = 1;
+        final int expectedCacheSize = 1;
         final MockedQoSFilter filter = new MockedQoSFilter();
-        filter.setGlobalProperty(QoSFilterProperties.QOS_FILTER_ENABLED, "true");
+        filter.setGlobalProperty(QOS_FILTER_ENABLED, "true");
         // when
         filter.init(new MockedFilterConfig());
-        final String maxPriority = filter.getGlobalPropertyFromCache(QoSFilterProperties.QOS_MAX_PRIORITY);
+        final String maxPriority = filter.getGlobalPropertyFromCache(QOS_MAX_PRIORITY);
         // then
-        assertNull("Max priority is not set", maxPriority);
         assertEquals("Number of cache recreations",
                      expectedCacheRecreationsAfterOneRequest,
                      filter.getNumberOfCacheRecreations());
+        assertNull("Max priority is not set", maxPriority);
+        assertEquals("Expected proper cache size", expectedCacheSize, filter.getCacheMap().size());
     }
 
     // Test that setting a global property will not immediately use the new value (i.e. still using cache).
@@ -91,29 +105,66 @@ public class QoSFilterUnitTest {
     public void globalPropertyCacheRecreated() throws InterruptedException {
         // given
         // after (immediately) setting a property value, cache should not have been recreated
-        final int expectedCacheRecreationsAfterOneRequest = 1;
+        final int expectedCacheRecreationsBeforeTimeout = 1;
+        final int expectedCacheSizeBeforeTimeout = 2;
         final int expectedCacheRecreationsAfterTimeout = 2;
-        final String expectedMaxPriority2 = "111";
+        final int expectedCacheSizeAfterTimeout = 4;
+        final String expectedMaxPriorityAfterTimeout = "111";
+        final String expectedMaxRequestsAfterTimeout = "11";
         final MockedQoSFilter filter = new MockedQoSFilter();
-        filter.setGlobalProperty(QoSFilterProperties.QOS_FILTER_ENABLED, "true");
+        filter.setGlobalProperty(QOS_FILTER_ENABLED, "true");
+        filter.setGlobalProperty(QOS_CACHE_TTL_S, "1");
         // when
         filter.init(new MockedFilterConfig());
-        final String maxPriority = filter.getGlobalPropertyFromCache(QoSFilterProperties.QOS_MAX_PRIORITY);
+        final String maxPriorityBeforeTimeout = filter.getGlobalPropertyFromCache(QOS_MAX_PRIORITY);
+        final String maxRequestsBeforeTimeout = filter.getGlobalPropertyFromCache(QOS_MAX_REQUESTS);
         // then
-        assertNull("Max priority is not set", maxPriority);
+        assertNull("Max priority is not set", maxPriorityBeforeTimeout);
+        assertNull("Max requests is not set", maxRequestsBeforeTimeout);
         assertEquals("Number of cache recreations",
-                expectedCacheRecreationsAfterOneRequest,
+                expectedCacheRecreationsBeforeTimeout,
                 filter.getNumberOfCacheRecreations());
+        assertEquals("Expected proper cache size", expectedCacheSizeBeforeTimeout, filter.getCacheMap().size());
         // when
-        filter.setGlobalProperty(QoSFilterProperties.QOS_MAX_PRIORITY, expectedMaxPriority2);
+        filter.setGlobalProperty(QOS_MAX_PRIORITY, expectedMaxPriorityAfterTimeout);
+        filter.setGlobalProperty(QOS_MAX_REQUESTS, expectedMaxRequestsAfterTimeout);
         Thread.sleep((filter.getCacheTtlS() + 1) * 1000);
-        final String maxPriority2 = filter.getGlobalPropertyFromCache(QoSFilterProperties.QOS_MAX_PRIORITY);
+        final String maxPriorityAfterTimeout = filter.getGlobalPropertyFromCache(QOS_MAX_PRIORITY);
+        final String maxRequestsAfterTimeout = filter.getGlobalPropertyFromCache(QOS_MAX_REQUESTS);
         // then
-        assertEquals("Max priority", expectedMaxPriority2, maxPriority2);
         assertEquals("Number of cache recreations 2",
                 expectedCacheRecreationsAfterTimeout,
                 filter.getNumberOfCacheRecreations());
+        assertEquals("Max priority", expectedMaxPriorityAfterTimeout, maxPriorityAfterTimeout);
+        assertEquals("Max requests", maxRequestsAfterTimeout, maxRequestsAfterTimeout);
+        assertEquals("Expected proper cache size", expectedCacheSizeAfterTimeout, filter.getCacheMap().size());
+    }
 
+    @Test
+    public void shouldNotLoadCacheIfDisabled() throws Exception {
+        // given
+        final int expectedCacheSize = 1;
+        final int expectedCacheRecreationsBeforeTimeout = 1;
+        final int expectedCacheRecreationsAfterTimeout = 2;
+        final MockedQoSFilter filter = new MockedQoSFilter();
+        filter.setGlobalProperty(QOS_FILTER_ENABLED, "false");
+        // when
+        filter.init(new MockedFilterConfig());
+        // then
+        assertEquals("Number of cache recreations",
+                expectedCacheRecreationsBeforeTimeout,
+                filter.getNumberOfCacheRecreations());
+        assertEquals("Expected proper cache size", expectedCacheSize, filter.getCacheMap().size());
+        // when
+        filter.setGlobalProperty(QOS_MAX_PRIORITY, "1");
+        Thread.sleep((filter.getCacheTtlS() + 1) * 1000);
+        final String maxPriorityAfterTimeout = filter.getGlobalPropertyFromCache(QOS_MAX_PRIORITY);
+        // then
+        assertEquals("Number of cache recreations 2",
+                expectedCacheRecreationsAfterTimeout,
+                filter.getNumberOfCacheRecreations());
+        assertNull("Max priority is not set", maxPriorityAfterTimeout);
+        assertEquals("Expected proper cache size", expectedCacheSize, filter.getCacheMap().size());
     }
 
     /**

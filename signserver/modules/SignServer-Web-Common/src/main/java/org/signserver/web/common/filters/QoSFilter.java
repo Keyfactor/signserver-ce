@@ -146,7 +146,7 @@ public class QoSFilter implements Filter {
     // cache for global property values
 
     private List<String> globalPropertyCacheKeys;
-    private Map<String, String> globalPropertyCache = new HashMap<>();
+    private final Map<String, String> globalPropertyCache = new HashMap<>();
     private long globalPropertyCacheLastUpdated = Long.MAX_VALUE;
     // A map containing linked values: workerId -> priority
     private Map<Integer, Integer> workerPriorities;
@@ -286,7 +286,8 @@ public class QoSFilter implements Filter {
      * Re-create the global property cache and the worker-priority mapping.
      */
     protected void recreateGlobalPropertyCache() {
-        globalPropertyCache = new HashMap<>();
+        // Clear cache
+        globalPropertyCache.clear();
         if(isCacheOutdated()) {
             // Early detection of enabled/disabled do not load the rest cache values if disabled
             final boolean isDisabled = !getFilterEnabledBooleanFromString(getGlobalProperty(QOS_FILTER_ENABLED));

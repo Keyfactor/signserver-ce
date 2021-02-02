@@ -151,18 +151,20 @@ public class QoSFilter implements Filter {
     // A map containing linked values: workerId -> priority
     private Map<Integer, Integer> workerPriorities;
     // Operational vars
-    private int maxRequests = 0;
+    private volatile int maxRequests;
     private int maxPriorityLevel = 0;
     private long waitMs;
     private long suspendMs;
     private long cacheTtlS = DEFAULT_CACHE_TTL_S;
+
     // Queues
-    private Semaphore passesSemaphore;
+    private volatile Semaphore passesSemaphore; // Volatile so each thread will see the same instance
     private ArrayList<AsyncListener> listeners = new ArrayList<>(0);
     private ArrayList<Queue<AsyncContext>> queues = new ArrayList<>(0);
 
     private final String SUSPENDED_ID = "QoSFilter@" + Integer.toHexString(hashCode()) + ".SUSPENDED";
     private final String RESUMED_ID = "QoSFilter@" + Integer.toHexString(hashCode()) + ".RESUMED";
+    private final Object updateSemaphoreLock = new Object(); // Lock for updating the semaphore
 
     /**
      * Returns the maximum priority level. Priority levels can range from 0 to maxPriority (inclusive).
@@ -181,6 +183,10 @@ public class QoSFilter implements Filter {
      */
     public int getQueueSizeForPriorityLevel(final int priorityLevel) {
         return queues.get(priorityLevel).size();
+    }
+    
+    public int getSemaphoreQueue() {
+        return passesSemaphore.getQueueLength();
     }
 
     /**
@@ -334,16 +340,33 @@ public class QoSFilter implements Filter {
     protected void doFilterWithPriorities(
             final ServletRequest request, final ServletResponse response, final FilterChain chain
     ) throws IOException, ServletException {
-
+        
         boolean accepted = false;
+
         final int maxRequests = getMaxRequestsFromConfig();
         if (maxRequests != this.maxRequests) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Got new value for max requests: " + maxRequests);
             }
-            passesSemaphore = new Semaphore(maxRequests, true);
-            this.maxRequests = maxRequests;
+            
+            synchronized (updateSemaphoreLock) {
+                if (maxRequests != this.maxRequests) {
+                    // Adjust permits in Semaphore
+                    if (maxRequests > this.maxRequests) { // Release more permits
+                        passesSemaphore.release(maxRequests - this.maxRequests);
+                        this.maxRequests = maxRequests;
+                    } else { // We need to remove permits
+                        this.maxRequests--;
+                        try {
+                            passesSemaphore.acquire();
+                        } catch (InterruptedException ex) {
+                            ((HttpServletResponse)response).sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+                        }
+                    }
+                }
+            }
         }
+
         final int maxPriorityLevel = getMaxPriorityLevelFromConfig();
         if (maxPriorityLevel != this.maxPriorityLevel) {
             resizeQueuesAndListenersIfNeeded(maxPriorityLevel);

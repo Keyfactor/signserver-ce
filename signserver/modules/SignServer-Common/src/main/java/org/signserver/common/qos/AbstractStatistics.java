@@ -74,4 +74,8 @@ public abstract class AbstractStatistics {
      * @return enabled status
      */
     public abstract boolean isEnabled();
+
+    public abstract int getSemaphoreQueueLength();
+    
+    public abstract int getSemaphoreAvailablePermits();
 }

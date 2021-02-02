@@ -274,6 +274,16 @@ public class QoSStatusWorkerUnitTest {
         public boolean isEnabled() {
             return enabled;
         }
+
+        @Override
+        public int getSemaphoreQueueLength() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public int getSemaphoreAvailablePermits() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
     }
 }
 

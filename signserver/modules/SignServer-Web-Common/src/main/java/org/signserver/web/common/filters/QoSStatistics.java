@@ -47,4 +47,14 @@ public class QoSStatistics extends AbstractStatistics {
     public boolean isEnabled() {
         return filter.isFilterEnabled();
     }
+
+    @Override
+    public int getSemaphoreQueueLength() {
+        return filter.getSemaphoreQueueLength();
+    }
+
+    @Override
+    public int getSemaphoreAvailablePermits() {
+        return filter.getSemaphoreAvailablePermits();
+    }
 }

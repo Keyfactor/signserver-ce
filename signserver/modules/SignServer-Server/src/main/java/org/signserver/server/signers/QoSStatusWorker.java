@@ -97,29 +97,43 @@ public class QoSStatusWorker extends BaseProcessable {
      */
     private List<Entry> generateBriefEntries() {
         final List<Entry> results = new LinkedList<>();
-        final boolean enabled = getFilterStatistics().isEnabled();
+        final AbstractStatistics statistics = getFilterStatistics();
+        if (statistics != null) {
+            final boolean enabled = statistics.isEnabled();
 
-        results.add(new Entry("Filter enabled", Boolean.toString(enabled)));
+            results.add(new Entry("Filter enabled", Boolean.toString(enabled)));
 
-        if (enabled) {
-            final int maxRequests = getFilterStatistics().getMaxRequests();
-            final int maxPriorityLevel = getFilterStatistics().getMaxPriorityLevel();
-            final Entry maxRequestsEntry =
-                    new Entry("Maximum requests",
-                              Integer.toString(maxRequests));
-            final Entry maxPriorityEntry =
-                    new Entry("Maximum priority level",
-                              Integer.toString(maxPriorityLevel));
+            if (enabled) {
+                final int maxRequests = statistics.getMaxRequests();
+                final int maxPriorityLevel = statistics.getMaxPriorityLevel();
+                final int semaphoreQueueLength = statistics.getSemaphoreQueueLength();
+                final int semaphoreAvailablePermits = statistics.getSemaphoreAvailablePermits();
+                final Entry maxRequestsEntry =
+                        new Entry("Maximum requests",
+                                  Integer.toString(maxRequests));
+                final Entry maxPriorityEntry =
+                        new Entry("Maximum priority level",
+                                  Integer.toString(maxPriorityLevel));
 
-            results.add(maxRequestsEntry);
-            results.add(maxPriorityEntry);
+                final Entry semaphoreQueueLengthEntry =
+                        new Entry("Semaphore Queue Size",
+                                  Integer.toString(semaphoreQueueLength));
+                final Entry semaphoreAvailablePermitsEntry =
+                        new Entry("Semaphore Available Permits",
+                                  Integer.toString(semaphoreAvailablePermits));
 
-            for (int i = 0; i <= maxPriorityLevel; i++) {
-                final Entry queueSizeEntry =
-                        new Entry("Queue size(" + i + ")",
-                                  Integer.toString(getFilterStatistics().getQueueSizeForPriorityLevel(i)));
+                results.add(maxRequestsEntry);
+                results.add(maxPriorityEntry);
+                results.add(semaphoreQueueLengthEntry);
+                results.add(semaphoreAvailablePermitsEntry);
 
-                results.add(queueSizeEntry);
+                for (int i = 0; i <= maxPriorityLevel; i++) {
+                    final Entry queueSizeEntry =
+                            new Entry("Queue size(" + i + ")",
+                                      Integer.toString(statistics.getQueueSizeForPriorityLevel(i)));
+
+                    results.add(queueSizeEntry);
+                }
             }
         }
 
@@ -133,22 +147,30 @@ public class QoSStatusWorker extends BaseProcessable {
      */
     private String generateResponseMessage() {
         final StringBuilder sb = new StringBuilder();
-        final boolean enabled = getFilterStatistics().isEnabled();
+        final AbstractStatistics statistics = getFilterStatistics();
+        if (statistics != null) {
+            final boolean enabled = statistics.isEnabled();
 
-        sb.append("FILTER_ENABLED=").append(enabled).append("\n");
+            sb.append("FILTER_ENABLED=").append(enabled).append("\n");
 
-        if (enabled) {
-            final int maxRequests = getFilterStatistics().getMaxRequests();
-            final int maxPriorityLevel =
-                    getFilterStatistics().getMaxPriorityLevel();
+            if (enabled) {
+                final int maxRequests = statistics.getMaxRequests();
+                final int maxPriorityLevel =
+                        statistics.getMaxPriorityLevel();
+                final int semaphoreQueueLength = statistics.getSemaphoreQueueLength();
+                final int semaphoreAvailablePermits = statistics.getSemaphoreAvailablePermits();
 
-            sb.append("MAX_REQUESTS=").append(maxRequests).append("\n");
-            sb.append("MAX_PRIORITY_LEVEL=").append(maxPriorityLevel).append("\n");
+                sb.append("MAX_REQUESTS=").append(maxRequests).append("\n");
+                sb.append("MAX_PRIORITY_LEVEL=").append(maxPriorityLevel).append("\n");
 
-            for (int i = 0; i <= maxPriorityLevel; i++) {
-                sb.append("QUEUE_SIZE(").append(i).append(")=");
-                sb.append(getFilterStatistics().getQueueSizeForPriorityLevel(i));
-                sb.append("\n");
+                for (int i = 0; i <= maxPriorityLevel; i++) {
+                    sb.append("QUEUE_SIZE(").append(i).append(")=");
+                    sb.append(statistics.getQueueSizeForPriorityLevel(i));
+                    sb.append("\n");
+                }
+
+                sb.append("SEMAPHORE_QUEUE_SIZE=").append(semaphoreQueueLength).append("\n");
+                sb.append("SEMAPHORE_AVAILABLE_PERMITS=").append(semaphoreAvailablePermits).append("\n");
             }
         }
 

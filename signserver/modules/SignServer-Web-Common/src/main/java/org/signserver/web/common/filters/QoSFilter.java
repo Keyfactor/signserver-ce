@@ -185,8 +185,12 @@ public class QoSFilter implements Filter {
         return queues.get(priorityLevel).size();
     }
     
-    public int getSemaphoreQueue() {
+    public int getSemaphoreQueueLength() {
         return passesSemaphore.getQueueLength();
+    }
+    
+    public int getSemaphoreAvailablePermits() {
+        return passesSemaphore.availablePermits();
     }
 
     /**
@@ -360,6 +364,10 @@ public class QoSFilter implements Filter {
                         try {
                             passesSemaphore.acquire();
                         } catch (InterruptedException ex) {
+                            LOG.error("Interrupted when removing permits from semaphore: " + ex.getMessage());
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Interrupted when removing permits from semaphore", ex);
+                            }
                             ((HttpServletResponse)response).sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
                         }
                     }
@@ -438,7 +446,11 @@ public class QoSFilter implements Filter {
                 ((HttpServletResponse)response).sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             }
         }
-        catch (InterruptedException e) {
+        catch (InterruptedException ex) {
+            LOG.error("Interrupted: " + ex.getMessage());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Interrupted", ex);
+            }
             ((HttpServletResponse)response).sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         }
         finally {

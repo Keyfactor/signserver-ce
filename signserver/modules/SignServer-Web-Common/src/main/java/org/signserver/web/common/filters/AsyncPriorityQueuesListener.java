@@ -83,7 +83,7 @@ class AsyncPriorityQueuesListener implements AsyncListener {
         if (qoSFilter == null) {
             LOG.error("Filter unavailable");
         } else {
-            qoSFilter.getQueues().get(priority).remove(asyncContext);
+            qoSFilter.removeFromQueue(asyncContext, priority);
         }
         ((HttpServletResponse) event.getSuppliedResponse()).sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         asyncContext.complete();

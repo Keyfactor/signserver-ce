@@ -29,7 +29,7 @@ public abstract class AbstractStatistics {
      *
      * @return concrete instance of AbstractQoSFilterStatistics, if set, otherwise null
      */
-    public static AbstractStatistics getDefaultInstance() {
+    public synchronized static AbstractStatistics getDefaultInstance() {
         return instance;
     }
 
@@ -39,8 +39,14 @@ public abstract class AbstractStatistics {
      *
      * @param instance 
      */
-    public static void setDefaultInstance(final AbstractStatistics instance) {
+    public synchronized static void setDefaultInstance(final AbstractStatistics instance) {
         AbstractStatistics.instance = instance;
+    }
+    
+    public synchronized static void setDefaultInstanceIfUnset(final AbstractStatistics instance) {
+        if (AbstractStatistics.instance == null) {
+            AbstractStatistics.instance = instance;
+        }
     }
 
     /**

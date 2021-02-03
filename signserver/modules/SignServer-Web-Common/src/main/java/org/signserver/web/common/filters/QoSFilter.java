@@ -215,10 +215,21 @@ public class QoSFilter implements Filter {
         }
     }
     
+    /**
+     * Get current number (estimate) of the number of threads waiting to
+     * acquire the passes semaphore.
+     *
+     * @return Estimated number of waiting threads
+     */
     public int getSemaphoreQueueLength() {
         return state.passesSemaphore.getQueueLength();
     }
     
+    /**
+     * Get the current number of permits available in the passes semaphore.
+     *
+     * @return Number of permits available at this moment
+     */
     public int getSemaphoreAvailablePermits() {
         return state.passesSemaphore.availablePermits();
     }

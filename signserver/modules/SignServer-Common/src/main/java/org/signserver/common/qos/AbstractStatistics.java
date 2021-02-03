@@ -37,12 +37,16 @@ public abstract class AbstractStatistics {
      * Sets a default singleton instance of AbstractQoSFilterStatistics.
      * This would be set by the web filter using its concrete implementation.
      *
-     * @param instance 
+     * @param instance to set
      */
     public synchronized static void setDefaultInstance(final AbstractStatistics instance) {
         AbstractStatistics.instance = instance;
     }
     
+    /**
+     * Sets a default instance if one has not already been set.
+     * @param instance to set
+     */
     public synchronized static void setDefaultInstanceIfUnset(final AbstractStatistics instance) {
         if (AbstractStatistics.instance == null) {
             AbstractStatistics.instance = instance;
@@ -81,7 +85,18 @@ public abstract class AbstractStatistics {
      */
     public abstract boolean isEnabled();
 
+    /**
+     * Get current number (estimate) of the number of threads waiting to
+     * acquire the passes semaphore.
+     *
+     * @return Estimated number of waiting threads
+     */
     public abstract int getSemaphoreQueueLength();
     
+    /**
+     * Get the current number of permits available in the passes semaphore.
+     *
+     * @return Number of permits available at this moment
+     */
     public abstract int getSemaphoreAvailablePermits();
 }

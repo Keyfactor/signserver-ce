@@ -33,12 +33,10 @@
     <servlet>
         <servlet-name>ClientWS</servlet-name>
         <servlet-class>org.signserver.clientws.ClientWS</servlet-class>
-        <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
         <servlet-name>PriorityClientWS</servlet-name>
         <servlet-class>org.signserver.clientws.ClientWS</servlet-class>
-        <load-on-startup>1</load-on-startup>
     </servlet>
 
 

@@ -526,15 +526,14 @@ public class QoSFilter implements Filter {
     }
 
     /**
-     * Returns the cache map, simplify for testing.
-     * 
-     * NOTE: This call is only for testing purposes. The map is not thread-safe, 
-     * synchronization might be required.
+     * Get the cache map size (simplify for testing).
      *
-     * @return the cache map.
+     * @return the cache map size.
      */
-    protected Map<String, String> getCacheMap() {
-        return GLOBAL_PROPERTY_CACHE;
+    protected int getCacheMapSize() {
+        synchronized (GLOBAL_PROPERTY_CACHE) {
+            return GLOBAL_PROPERTY_CACHE.size();
+        }
     }
 
     /**

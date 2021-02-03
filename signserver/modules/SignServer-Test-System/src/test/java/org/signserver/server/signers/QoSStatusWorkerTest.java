@@ -122,7 +122,7 @@ public class QoSStatusWorkerTest {
         try {
             // given
             final boolean expectedEnabled = true;
-            final int expectedEntries = 9;
+            final int expectedEntries = 11;
             final int expectedMaxRequests = 10;
             final int expectedMaxPrio = 5;
             /* expect the queues should be empty, since we only send a single
@@ -211,17 +211,24 @@ public class QoSStatusWorkerTest {
                      briefEntries.get(0));
 
         if (expectedEnabled) {
+            int position = 1;
             assertEquals("Max requests",
                          new WorkerStatusInfo.Entry("Maximum requests",
                                    Integer.toString(expectedMaxRequests)),
-                         briefEntries.get(1));
+                         briefEntries.get(position));
+            position++;
             assertEquals("Max prio",
                          new WorkerStatusInfo.Entry("Maximum priority level",
                                    Integer.toString(expectedMaxPrio)),
-                         briefEntries.get(2));
+                         briefEntries.get(position));
+            position++;
+            
+            // TODO: Check new entries
+            position++;
+            position++;
 
             for (int i = 0; i <= expectedMaxPrio; i++) {
-                final WorkerStatusInfo.Entry entry = briefEntries.get(i + 3);
+                final WorkerStatusInfo.Entry entry = briefEntries.get(position + i);
                 assertEquals("Title", "Queue size(" + i + ")", entry.getTitle());
                 assertEquals("Value", Integer.toString(expectedQueueSizes[i]),
                              entry.getValue());

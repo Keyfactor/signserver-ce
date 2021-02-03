@@ -178,6 +178,7 @@ public class QoSFilterUnitTest {
         private final GlobalConfigurationSessionMock globalSession = new GlobalConfigurationSessionMock();
 
         public MockedQoSFilter() {
+            super(false);
             numberOfCacheRecreations = 0;
         }
 

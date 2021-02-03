@@ -143,29 +143,54 @@ public class QoSFilter implements Filter {
     @EJB
     private WorkerSessionLocal workerSession;
 
-    // cache for global property values
     private static final List<String> GLOBAL_PROPERTY_CACHE_KEYS = Arrays.asList(QOS_FILTER_ENABLED, QOS_MAX_REQUESTS, QOS_MAX_PRIORITY, QOS_PRIORITIES, QOS_CACHE_TTL_S);
-    private static final Map<String, String> GLOBAL_PROPERTY_CACHE = new HashMap<>();
-    private static long globalPropertyCacheLastUpdated;
     
-    // A map containing linked values: workerId -> priority
-    private static Map<Integer, Integer> workerPriorities;
-    
-    // Operational vars
-    private static volatile int maxRequests;
-    private static int maxPriorityLevel;
-    private static long waitMs;
-    private static long suspendMs;
-    private static long cacheTtlS = DEFAULT_CACHE_TTL_S;
-
-    // Queues
-    private static volatile Semaphore passesSemaphore; // Volatile so each thread will see the same instance
-    private static final ArrayList<AsyncListener> listeners = new ArrayList<>(0);
-    private static final ArrayList<Queue<AsyncContext>> queues = new ArrayList<>(0);
-
     private static final String SUSPENDED_ID = "QoSFilter@" + Integer.toHexString(QoSFilter.class.hashCode()) + ".SUSPENDED";
     private static final String RESUMED_ID = "QoSFilter@" + Integer.toHexString(QoSFilter.class.hashCode()) + ".RESUMED";
-    private static final Object UPDATE_SEMAPHORE_LOCK = new Object(); // Lock for updating the semaphore
+    
+    private final State state;
+    
+    private static class State {
+        
+        private static final State INSTANCE = new State();
+        
+        public static State getInstance() {
+            return INSTANCE;
+        }
+        
+        // cache for global property values
+        
+        private final Map<String, String> GLOBAL_PROPERTY_CACHE = new HashMap<>();
+        private long globalPropertyCacheLastUpdated;
+
+        // A map containing linked values: workerId -> priority
+        private Map<Integer, Integer> workerPriorities;
+
+        // Operational vars
+        private volatile int maxRequests;
+        private int maxPriorityLevel;
+        private long waitMs;
+        private long suspendMs;
+        private long cacheTtlS = DEFAULT_CACHE_TTL_S;
+
+        // Queues
+        private volatile Semaphore passesSemaphore; // Volatile so each thread will see the same instance
+        private final ArrayList<AsyncListener> listeners = new ArrayList<>(0);
+        private final ArrayList<Queue<AsyncContext>> queues = new ArrayList<>(0);
+
+        
+        private final Object UPDATE_SEMAPHORE_LOCK = new Object(); // Lock for updating the semaphore
+    }
+    
+    public QoSFilter() {
+        this(true);
+    }
+    
+    protected QoSFilter(boolean globalState) {
+        this.state = globalState ? State.getInstance() : new State();
+    }
+    
+    
 
     /**
      * Returns the maximum priority level. Priority levels can range from 0 to maxPriority (inclusive).
@@ -173,8 +198,8 @@ public class QoSFilter implements Filter {
      * @return The maximum priority level used by the filter.
      */
     public int getMaxPriorityLevel() {
-        synchronized (GLOBAL_PROPERTY_CACHE) {
-            return maxPriorityLevel;
+        synchronized (state.GLOBAL_PROPERTY_CACHE) {
+            return state.maxPriorityLevel;
         }
     }
 
@@ -185,17 +210,17 @@ public class QoSFilter implements Filter {
      * @return The number of requests in queue with the given priority level
      */
     public int getQueueSizeForPriorityLevel(final int priorityLevel) {
-        synchronized (queues) {
-            return queues.get(priorityLevel).size();
+        synchronized (state.queues) {
+            return state.queues.get(priorityLevel).size();
         }
     }
     
     public int getSemaphoreQueueLength() {
-        return passesSemaphore.getQueueLength();
+        return state.passesSemaphore.getQueueLength();
     }
     
     public int getSemaphoreAvailablePermits() {
-        return passesSemaphore.availablePermits();
+        return state.passesSemaphore.availablePermits();
     }
 
     /**
@@ -206,8 +231,8 @@ public class QoSFilter implements Filter {
      */
     //J @ManagedAttribute("(short) amount of time filter will wait before suspending request (in ms)")
     public long getWaitMs() {
-        synchronized (GLOBAL_PROPERTY_CACHE) {
-            return waitMs;
+        synchronized (state.GLOBAL_PROPERTY_CACHE) {
+            return state.waitMs;
         }
     }
 
@@ -219,8 +244,8 @@ public class QoSFilter implements Filter {
      */
     //J @ManagedAttribute("amount of time filter will suspend a request for while waiting for the semaphore to become available (in ms)")
     public long getSuspendMs() {
-        synchronized (GLOBAL_PROPERTY_CACHE) {
-            return suspendMs;
+        synchronized (state.GLOBAL_PROPERTY_CACHE) {
+            return state.suspendMs;
         }
     }
 
@@ -231,7 +256,7 @@ public class QoSFilter implements Filter {
      */
     //J @ManagedAttribute("maximum number of requests to allow processing of at the same time")
     public int getMaxRequests() {
-        return maxRequests;
+        return state.maxRequests;
     }
 
     /**
@@ -240,8 +265,8 @@ public class QoSFilter implements Filter {
      * @return the amount of seconds to keep cache.
      */
     public long getCacheTtlS() {
-        synchronized (GLOBAL_PROPERTY_CACHE) {
-            return cacheTtlS;
+        synchronized (state.GLOBAL_PROPERTY_CACHE) {
+            return state.cacheTtlS;
         }
     }
 
@@ -258,16 +283,16 @@ public class QoSFilter implements Filter {
     @Override
     public void init(final FilterConfig filterConfig) {
         // Load cache
-        synchronized (GLOBAL_PROPERTY_CACHE) {
-            if (passesSemaphore == null) {
+        synchronized (state.GLOBAL_PROPERTY_CACHE) {
+            if (state.passesSemaphore == null) {
                 //recreateGlobalPropertyCache();
                 //
                 int maxRequests = getMaxRequestsFromConfig();
-                passesSemaphore = new Semaphore(maxRequests, true);
-                this.maxRequests = maxRequests;
+                state.passesSemaphore = new Semaphore(maxRequests, true);
+                state.maxRequests = maxRequests;
                 //
-                waitMs = getLongFromInitParameter(filterConfig, INIT_PARAM_WAIT_MS, DEFAULT_WAIT_MS);
-                suspendMs = getLongFromInitParameter(filterConfig, INIT_PARAM_SUSPEND_MS, DEFAULT_SUSPEND_MS);
+                state.waitMs = getLongFromInitParameter(filterConfig, INIT_PARAM_WAIT_MS, DEFAULT_WAIT_MS);
+                state.suspendMs = getLongFromInitParameter(filterConfig, INIT_PARAM_SUSPEND_MS, DEFAULT_SUSPEND_MS);
                 // Create queues and listeners
                 resizeQueuesAndListenersIfNeeded(getMaxPriorityLevelFromConfig());
             }
@@ -309,14 +334,14 @@ public class QoSFilter implements Filter {
      */
     protected void recreateGlobalPropertyCache() {
         // Clear cache
-        GLOBAL_PROPERTY_CACHE.clear();
+        state.GLOBAL_PROPERTY_CACHE.clear();
         if(isCacheOutdated()) {
             // Early detection of enabled/disabled do not load the rest cache values if disabled
             final boolean isDisabled = !getFilterEnabledBooleanFromString(getGlobalProperty(QOS_FILTER_ENABLED));
             if(isDisabled) {
                 // update cache TS and return
-                GLOBAL_PROPERTY_CACHE.put(QOS_FILTER_ENABLED, "false");
-                globalPropertyCacheLastUpdated = System.currentTimeMillis();
+                state.GLOBAL_PROPERTY_CACHE.put(QOS_FILTER_ENABLED, "false");
+                state.globalPropertyCacheLastUpdated = System.currentTimeMillis();
                 return;
             }
         }
@@ -325,19 +350,19 @@ public class QoSFilter implements Filter {
             final String value = getGlobalProperty(key);
             // Don't use NULL values
             if(StringUtils.isNotBlank(value)) {
-                GLOBAL_PROPERTY_CACHE.put(key, value);
+                state.GLOBAL_PROPERTY_CACHE.put(key, value);
             }
         }
         // update cache TS
-        globalPropertyCacheLastUpdated = System.currentTimeMillis();
+        state.globalPropertyCacheLastUpdated = System.currentTimeMillis();
         // Load cache TTL
-        cacheTtlS = getCacheTtlInSeconds(getGlobalPropertyFromCache(QOS_CACHE_TTL_S));
+        state.cacheTtlS = getCacheTtlInSeconds(getGlobalPropertyFromCache(QOS_CACHE_TTL_S));
         // Load priorities
         final String priorityMappingString = getGlobalPropertyFromCache(QOS_PRIORITIES);
-        workerPriorities = new HashMap<>();
+        state.workerPriorities = new HashMap<>();
         if (priorityMappingString != null) {
             try {
-                workerPriorities = createPriorityMap(priorityMappingString);
+                state.workerPriorities = createPriorityMap(priorityMappingString);
             } catch (IllegalArgumentException e) {
                 LOG.error("Failed to create priorities: " + e.getMessage());
             }
@@ -360,21 +385,21 @@ public class QoSFilter implements Filter {
         boolean accepted = false;
 
         final int maxRequests = getMaxRequestsFromConfig();
-        if (maxRequests != this.maxRequests) {
+        if (maxRequests != state.maxRequests) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Got new value for max requests: " + maxRequests);
             }
             
-            synchronized (UPDATE_SEMAPHORE_LOCK) {
-                if (maxRequests != this.maxRequests) {
+            synchronized (state.UPDATE_SEMAPHORE_LOCK) {
+                if (maxRequests != state.maxRequests) {
                     // Adjust permits in Semaphore
-                    if (maxRequests > this.maxRequests) { // Release more permits
-                        passesSemaphore.release(maxRequests - this.maxRequests);
-                        this.maxRequests = maxRequests;
+                    if (maxRequests > state.maxRequests) { // Release more permits
+                        state.passesSemaphore.release(maxRequests - state.maxRequests);
+                        state.maxRequests = maxRequests;
                     } else { // We need to remove permits
-                        this.maxRequests--;
+                        state.maxRequests--;
                         try {
-                            passesSemaphore.acquire();
+                            state.passesSemaphore.acquire();
                         } catch (InterruptedException ex) {
                             LOG.error("Interrupted when removing permits from semaphore: " + ex.getMessage());
                             if (LOG.isDebugEnabled()) {
@@ -387,9 +412,9 @@ public class QoSFilter implements Filter {
             }
         }
 
-        synchronized (GLOBAL_PROPERTY_CACHE) {
+        synchronized (state.GLOBAL_PROPERTY_CACHE) {
             final int maxPriorityLevel = getMaxPriorityLevelFromConfig();
-            if (maxPriorityLevel != this.maxPriorityLevel) {
+            if (maxPriorityLevel != state.maxPriorityLevel) {
                 resizeQueuesAndListenersIfNeeded(maxPriorityLevel);
             }
         }
@@ -397,7 +422,7 @@ public class QoSFilter implements Filter {
         try {
             final Boolean suspended = (Boolean)request.getAttribute(SUSPENDED_ID);
             if (suspended == null) {
-                accepted = passesSemaphore.tryAcquire(getWaitMs(), TimeUnit.MILLISECONDS);
+                accepted = state.passesSemaphore.tryAcquire(getWaitMs(), TimeUnit.MILLISECONDS);
                 if (accepted) {
                     request.setAttribute(SUSPENDED_ID, Boolean.FALSE);
                     if (LOG.isDebugEnabled()) {
@@ -406,17 +431,17 @@ public class QoSFilter implements Filter {
                 }
                 else {
                     request.setAttribute(SUSPENDED_ID, Boolean.TRUE);
-                    int priority = getPriorityFromPriorities(request, workerPriorities);
+                    int priority = getPriorityFromPriorities(request, state.workerPriorities);
                     AsyncContext asyncContext = request.startAsync();
                     long suspendMs = getSuspendMs();
                     if (suspendMs > 0) {
                         asyncContext.setTimeout(suspendMs);
                     }
-                    synchronized (listeners) {
-                        asyncContext.addListener(listeners.get(priority));
+                    synchronized (state.listeners) {
+                        asyncContext.addListener(state.listeners.get(priority));
                     }
-                    synchronized (queues) {
-                        queues.get(priority).add(asyncContext);
+                    synchronized (state.queues) {
+                        state.queues.get(priority).add(asyncContext);
                     }
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Suspended " + request);
@@ -430,7 +455,7 @@ public class QoSFilter implements Filter {
                     request.setAttribute(SUSPENDED_ID, Boolean.FALSE);
                     Boolean resumed = (Boolean)request.getAttribute(RESUMED_ID);
                     if (Boolean.TRUE.equals(resumed)) {
-                        passesSemaphore.acquire();
+                        state.passesSemaphore.acquire();
                         accepted = true;
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Resumed " + request);
@@ -438,7 +463,7 @@ public class QoSFilter implements Filter {
                     }
                     else {
                         // Timeout! try 1 more time.
-                        accepted = passesSemaphore.tryAcquire(getWaitMs(), TimeUnit.MILLISECONDS);
+                        accepted = state.passesSemaphore.tryAcquire(getWaitMs(), TimeUnit.MILLISECONDS);
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Timeout " + request);
                         }
@@ -446,7 +471,7 @@ public class QoSFilter implements Filter {
                 }
                 else {
                     // Pass through resume of previously accepted request.
-                    passesSemaphore.acquire();
+                    state.passesSemaphore.acquire();
                     accepted = true;
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Passthroughs " + request);
@@ -473,7 +498,7 @@ public class QoSFilter implements Filter {
         }
         finally {
             if (accepted) {
-                passesSemaphore.release();
+                state.passesSemaphore.release();
                 processQueues();
             }
         }
@@ -481,9 +506,9 @@ public class QoSFilter implements Filter {
 
     // Processes the queue in reverse order.
     protected final void processQueues() {
-        synchronized (queues) {
-            for (int p = queues.size() - 1; p >= 0; --p) {
-                final AsyncContext asyncContext = queues.get(p).poll();
+        synchronized (state.queues) {
+            for (int p = state.queues.size() - 1; p >= 0; --p) {
+                final AsyncContext asyncContext = state.queues.get(p).poll();
                 if (asyncContext != null) {
                     final ServletRequest candidate = asyncContext.getRequest();
                     if ((Boolean)candidate.getAttribute(SUSPENDED_ID)) {
@@ -517,11 +542,11 @@ public class QoSFilter implements Filter {
      * @return global config property value from cache.
      */
     protected String getGlobalPropertyFromCache(final String property) {
-        synchronized (GLOBAL_PROPERTY_CACHE) {
+        synchronized (state.GLOBAL_PROPERTY_CACHE) {
             if (isCacheOutdated()) {    
                 recreateGlobalPropertyCache();
             }
-            return GLOBAL_PROPERTY_CACHE.get(property);
+            return state.GLOBAL_PROPERTY_CACHE.get(property);
         }
     }
 
@@ -531,8 +556,8 @@ public class QoSFilter implements Filter {
      * @return the cache map size.
      */
     protected int getCacheMapSize() {
-        synchronized (GLOBAL_PROPERTY_CACHE) {
-            return GLOBAL_PROPERTY_CACHE.size();
+        synchronized (state.GLOBAL_PROPERTY_CACHE) {
+            return state.GLOBAL_PROPERTY_CACHE.size();
         }
     }
 
@@ -560,13 +585,13 @@ public class QoSFilter implements Filter {
             return getPriorityFromPriorities(workerId, workerPriorities);
         } else if ("/adminweb".equals(servletPath)) {
             // always prioritize requests to the admin web interfaces at highest priority
-            synchronized (GLOBAL_PROPERTY_CACHE) {
-                return maxPriorityLevel;
+            synchronized (state.GLOBAL_PROPERTY_CACHE) {
+                return state.maxPriorityLevel;
             }
         } else if("/PriorityClientWS".equals(servletPath)) {
             // always prioritize requests to the High Priority ClientWS
-            synchronized (GLOBAL_PROPERTY_CACHE) {
-                return maxPriorityLevel;
+            synchronized (state.GLOBAL_PROPERTY_CACHE) {
+                return state.maxPriorityLevel;
             }
         } else {
             if (LOG.isDebugEnabled()) {
@@ -584,15 +609,15 @@ public class QoSFilter implements Filter {
      * @param newMaxPriority New maximum level to use
      */
     private void resizeQueuesAndListenersIfNeeded(final int newMaxPriority) {
-        synchronized (queues) {
-            synchronized (listeners) {
-                queues.ensureCapacity(newMaxPriority);
-                listeners.ensureCapacity(newMaxPriority);
-                for (int p = maxPriorityLevel; p <= newMaxPriority; p++) {
-                    queues.add(p, new ConcurrentLinkedQueue<>());
-                    listeners.add(p, new AsyncPriorityQueuesListener(p, this));
+        synchronized (state.queues) {
+            synchronized (state.listeners) {
+                state.queues.ensureCapacity(newMaxPriority);
+                state.listeners.ensureCapacity(newMaxPriority);
+                for (int p = state.maxPriorityLevel; p <= newMaxPriority; p++) {
+                    state.queues.add(p, new ConcurrentLinkedQueue<>());
+                    state.listeners.add(p, new AsyncPriorityQueuesListener(p, this));
                 }
-                maxPriorityLevel = newMaxPriority;
+                state.maxPriorityLevel = newMaxPriority;
             }
         }
     }
@@ -668,7 +693,7 @@ public class QoSFilter implements Filter {
     }
 
     private boolean isCacheOutdated() {
-        return globalPropertyCacheLastUpdated + getCacheTtlS() * 1000 < System.currentTimeMillis();
+        return state.globalPropertyCacheLastUpdated + getCacheTtlS() * 1000 < System.currentTimeMillis();
     }
 
     /**
@@ -725,7 +750,7 @@ public class QoSFilter implements Filter {
     }
 
     private int getPriorityFromPriorities(final int workerId, final Map<Integer, Integer> workerPriorities) {
-        synchronized (GLOBAL_PROPERTY_CACHE) {
+        synchronized (state.GLOBAL_PROPERTY_CACHE) {
             final Integer configuredPriority = workerPriorities.get(workerId);
             if (configuredPriority != null) {
                 if (LOG.isDebugEnabled()) {
@@ -742,8 +767,8 @@ public class QoSFilter implements Filter {
     }
 
     public void removeFromQueue(AsyncContext asyncContext, int priority) {
-        synchronized (queues) {
-            queues.get(priority).remove(asyncContext);
+        synchronized (state.queues) {
+            state.queues.get(priority).remove(asyncContext);
         }
     }
 }

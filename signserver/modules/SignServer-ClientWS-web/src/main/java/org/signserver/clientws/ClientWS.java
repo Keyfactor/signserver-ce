@@ -61,6 +61,7 @@ import org.signserver.server.log.AdminInfo;
 import org.signserver.server.log.IWorkerLogger;
 import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
+import org.signserver.web.common.filters.QoSFilterProperties;
 
 /**
  * Client Web Services implementation containing operations:
@@ -377,6 +378,11 @@ public class ClientWS {
                     }
                 });
             }
+        }
+
+        final Integer qosPriority = (Integer) servletRequest.getAttribute(QoSFilterProperties.QOS_PRIORITY);
+        if (qosPriority != null) {
+            requestContext.put(QoSFilterProperties.QOS_PRIORITY, qosPriority);
         }
 
         return requestContext;

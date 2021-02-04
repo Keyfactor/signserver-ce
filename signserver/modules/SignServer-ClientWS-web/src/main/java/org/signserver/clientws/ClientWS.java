@@ -76,7 +76,7 @@ import org.signserver.server.log.Loggable;
 @WebService(serviceName = "ClientWSService")
 public class ClientWS {
 
-    // Logger for this class
+    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ClientWS.class);
 
     @Resource

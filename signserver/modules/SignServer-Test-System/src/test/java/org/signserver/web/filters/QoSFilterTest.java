@@ -327,6 +327,7 @@ public class QoSFilterTest extends ModulesTestCase {
     @Test
     public void noRequestsPrioritizedInvalidEnabled() throws Exception {
         // given
+        applyQoSFilterProperties(QoSFilterPropertiesBuilder.builder().withFilterEnabled("false"));
         createTestFiles(20);
         applyQoSFilterProperties(QoSFilterPropertiesBuilder.builder().withFilterEnabled("_invalid_"));
         // when

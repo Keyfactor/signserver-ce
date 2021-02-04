@@ -101,7 +101,7 @@ import static org.signserver.web.common.filters.QoSFilterProperties.QOS_PRIORITY
 @WebFilter(asyncSupported = true)
 public class QoSFilter implements Filter {
 
-    // Logger for this class
+    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(QoSFilter.class);
 
     /**
@@ -144,20 +144,20 @@ public class QoSFilter implements Filter {
     private WorkerSessionLocal workerSession;
 
     private static final List<String> GLOBAL_PROPERTY_CACHE_KEYS = Arrays.asList(QOS_FILTER_ENABLED, QOS_MAX_REQUESTS, QOS_MAX_PRIORITY, QOS_PRIORITIES, QOS_CACHE_TTL_S);
-    
+
     private static final String SUSPENDED_ID = "QoSFilter@" + Integer.toHexString(QoSFilter.class.hashCode()) + ".SUSPENDED";
     private static final String RESUMED_ID = "QoSFilter@" + Integer.toHexString(QoSFilter.class.hashCode()) + ".RESUMED";
-    
+
     /** Holder for the filter state that is being shared between multiple threads and other instances of the QoSFilter. */
     private final State state;
-    
+
     /**
      * Class for holding the filter state that is being shared between multiple threads and other instances of the QoSFilter.
      */
     private static class State {
-        
+
         private static final State INSTANCE = new State();
-        
+
         public static State getInstance() {
             return INSTANCE;
         }
@@ -165,12 +165,12 @@ public class QoSFilter implements Filter {
         /**
          * Constructs a new instancee of State.
          *
-         * Normally the getInstance() method should be used but for testing 
-         * purposes this constructor can be used (by the QoSFilter) to create 
+         * Normally the getInstance() method should be used but for testing
+         * purposes this constructor can be used (by the QoSFilter) to create
          * an instance that is not static.
          */
         private State() {}
-                
+
         // Global configuration cache
         private final Map<String, String> globalPropertyCache = new HashMap<>();
         private long globalPropertyCacheLastUpdated;
@@ -184,22 +184,22 @@ public class QoSFilter implements Filter {
         private volatile int maxRequests;
         private final Object updateSemaphoreLock = new Object(); // Lock for updating the semaphore
         private volatile Semaphore passesSemaphore; // Volatile so each thread will see the same instance
-        
+
         // Queues and priorities
         private int maxPriorityLevel;
         private final ArrayList<AsyncListener> listeners = new ArrayList<>(0);
         private final ArrayList<Queue<AsyncContext>> queues = new ArrayList<>(0);
         private Map<Integer, Integer> workerPriorities; // A map containing linked values: workerId -> priority
-        
+
     }
-    
-    /** 
+
+    /**
      * Default constructor, creates an instance of the QoSFilter backed by a static/shared state.
      */
     public QoSFilter() {
         this(true);
     }
-    
+
     /**
      * creates an instance of the QoSFilter backed either by a static/shared state (normal case) or
      * using a new state (i.e. for testing purposes).
@@ -208,8 +208,8 @@ public class QoSFilter implements Filter {
     protected QoSFilter(boolean globalState) {
         this.state = globalState ? State.getInstance() : new State();
     }
-    
-    
+
+
     /**
      * Returns the maximum priority level. Priority levels can range from 0 to maxPriority (inclusive).
      *
@@ -232,7 +232,7 @@ public class QoSFilter implements Filter {
             return state.queues.get(priorityLevel).size();
         }
     }
-    
+
     /**
      * Get current number (estimate) of the number of threads waiting to
      * acquire the passes semaphore.
@@ -242,7 +242,7 @@ public class QoSFilter implements Filter {
     public int getSemaphoreQueueLength() {
         return state.passesSemaphore.getQueueLength();
     }
-    
+
     /**
      * Get the current number of permits available in the passes semaphore.
      *
@@ -324,7 +324,7 @@ public class QoSFilter implements Filter {
                 // Create queues and listeners
                 resizeQueuesAndListenersIfNeeded(getMaxPriorityLevelFromConfig());
             }
-            
+
             // Set the statistics implementation if one is not already there
             AbstractStatistics.setDefaultInstanceIfUnset(new QoSStatistics(this));
         }
@@ -409,7 +409,7 @@ public class QoSFilter implements Filter {
     protected void doFilterWithPriorities(
             final ServletRequest request, final ServletResponse response, final FilterChain chain
     ) throws IOException, ServletException {
-        
+
         boolean accepted = false;
 
         final int maxRequests = getMaxRequestsFromConfig();
@@ -417,7 +417,7 @@ public class QoSFilter implements Filter {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Got new value for max requests: " + maxRequests);
             }
-            
+
             synchronized (state.updateSemaphoreLock) {
                 if (maxRequests != state.maxRequests) {
                     // Adjust permits in Semaphore
@@ -571,7 +571,7 @@ public class QoSFilter implements Filter {
      */
     protected String getGlobalPropertyFromCache(final String property) {
         synchronized (state.globalPropertyCache) {
-            if (isCacheOutdated()) {    
+            if (isCacheOutdated()) {
                 recreateGlobalPropertyCache();
             }
             return state.globalPropertyCache.get(property);

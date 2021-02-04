@@ -1,4 +1,3 @@
-<!-- NOTE: In case of changes please synchronize your modification(s) with QoSHandler. -->
 <definitions name='ClientWSService'
              targetNamespace='http://clientws.signserver.org/'
              xmlns='http://schemas.xmlsoap.org/wsdl/'

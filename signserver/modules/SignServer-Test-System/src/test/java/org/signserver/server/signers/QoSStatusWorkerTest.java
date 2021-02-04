@@ -93,8 +93,8 @@ public class QoSStatusWorkerTest {
 
         // then
         assertWorkerStatusInfo(statusInfo, expectedEnabled, expectedEntries,
-                               expectedMaxRequests, expectedMaxPrio,
-                               expectedQueueSizes);
+                expectedMaxRequests, expectedMaxPrio,
+                expectedQueueSizes);
 
         // when
         final GenericSignRequest request = new GenericSignRequest(200, new byte[0]);
@@ -142,8 +142,8 @@ public class QoSStatusWorkerTest {
 
             // then
             assertWorkerStatusInfo(statusInfo, expectedEnabled,
-                                   expectedEntries, expectedMaxRequests,
-                                   expectedMaxPrio, expectedQueueSizes);
+                    expectedEntries, expectedMaxRequests,
+                    expectedMaxPrio, expectedQueueSizes);
             
             // when
             final GenericSignRequest request = new GenericSignRequest(200, new byte[0]);
@@ -223,8 +223,12 @@ public class QoSStatusWorkerTest {
                          briefEntries.get(position));
             position++;
             
-            // TODO: Check new entries
+            assertEquals("Semaphore Queue Size Title", "Semaphore Queue Size", 
+                    briefEntries.get(position).getTitle());
             position++;
+            
+            assertEquals("Semaphore Available Permits Title", 
+                    "Semaphore Available Permits", briefEntries.get(position).getTitle());
             position++;
 
             for (int i = 0; i <= expectedMaxPrio; i++) {

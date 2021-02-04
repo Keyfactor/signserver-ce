@@ -52,12 +52,17 @@ public class QoSStatusWorkerUnitTest {
         final int expectedEntries = 1;
         final int expectedMaxPrio = 0;
         final int[] expectedQueueSizes = new int[0];
+        final int expectedSemaphoreQueueLength = 6;
+        final int expectedSemaphoreAvailablePermits = 2;
 
         final QoSStatusWorker instance = new QoSStatusWorker() {
             @Override
             AbstractStatistics getFilterStatistics() {
-                return new MockedStatistics(expectedEnabled, expectedQueueSizes,
-                                            expectedMaxRequests);
+                return new MockedStatistics(expectedEnabled, 
+                        expectedQueueSizes,
+                        expectedMaxRequests,
+                        expectedSemaphoreQueueLength,
+                        expectedSemaphoreAvailablePermits);
             }  
         };
 
@@ -68,8 +73,10 @@ public class QoSStatusWorkerUnitTest {
 
         // then
         assertWorkerStatusInfo(status, expectedEnabled, expectedEntries, 
-                               expectedMaxRequests, expectedMaxPrio,
-                               expectedQueueSizes);
+                expectedMaxRequests, expectedMaxPrio,
+                expectedQueueSizes,
+                expectedSemaphoreQueueLength,
+                expectedSemaphoreAvailablePermits);
 
         // when
         final ReadableData readable =
@@ -104,12 +111,17 @@ public class QoSStatusWorkerUnitTest {
         final int expectedEntries = 11;
         final int expectedMaxPrio = 5;
         final int[] expectedQueueSizes = new int[] {42, 3, 4, 5, 0, 0};
+        final int expectedSemaphoreQueueLength = 7;
+        final int expectedSemaphoreAvailablePermits = 1;
 
         final QoSStatusWorker instance = new QoSStatusWorker() {
             @Override
             AbstractStatistics getFilterStatistics() {
-                return new MockedStatistics(expectedEnabled, expectedQueueSizes,
-                                            expectedMaxRequests);
+                return new MockedStatistics(expectedEnabled, 
+                        expectedQueueSizes,
+                        expectedMaxRequests,
+                        expectedSemaphoreQueueLength,
+                        expectedSemaphoreAvailablePermits);
             }  
         };
 
@@ -120,8 +132,10 @@ public class QoSStatusWorkerUnitTest {
 
         // then
         assertWorkerStatusInfo(status, expectedEnabled, expectedEntries,
-                               expectedMaxRequests, expectedMaxPrio,
-                               expectedQueueSizes);
+                expectedMaxRequests, expectedMaxPrio,
+                expectedQueueSizes,
+                expectedSemaphoreQueueLength,
+                expectedSemaphoreAvailablePermits);
 
         // when
         final ReadableData readable =
@@ -161,13 +175,17 @@ public class QoSStatusWorkerUnitTest {
      * @param expectedMaxPrio Expected value for maxium priority level status
      * @param expectedQueueSizes Array of expected queue sizes for subsequent
      *                           priority levels 0..max prio
+     * @param expectedSemaphoreQueueLength Queue length of semaphore
+     * @param expectedSemaphoreAvailablePermits Available permits of semaphore
      */
     private void assertWorkerStatusInfo(final WorkerStatusInfo status,
                                        final boolean expectedEnabled,
                                        final int expectedEntries,
                                        final int expectedMaxRequests,
                                        final int expectedMaxPrio,
-                                       final int[] expectedQueueSizes) {
+                                       final int[] expectedQueueSizes,
+                                       final int expectedSemaphoreQueueLength,
+                                       final int expectedSemaphoreAvailablePermits) {
         final List<WorkerStatusInfo.Entry> briefEntries = status.getBriefEntries();
 
         assertEquals("Entries", expectedEntries, briefEntries.size());
@@ -190,8 +208,16 @@ public class QoSStatusWorkerUnitTest {
                          briefEntries.get(position));
             position++;
             
-            // TODO: Check semaphore entries here
+            assertEquals("Semaphore Queue Size", 
+                    new WorkerStatusInfo.Entry("Semaphore Queue Size", 
+                            Integer.toString(expectedSemaphoreQueueLength)),
+                    briefEntries.get(position));
             position++;
+            
+            assertEquals("Semaphore Available Permits", 
+                    new WorkerStatusInfo.Entry("Semaphore Available Permits", 
+                            Integer.toString(expectedSemaphoreAvailablePermits)),
+                    briefEntries.get(position));
             position++;
             
 
@@ -254,13 +280,19 @@ public class QoSStatusWorkerUnitTest {
         private final boolean enabled;
         private final int[] queueSizes;
         private final int maxRequests;
+        private final int semaphoreQueueLength;
+        private final int semaphoreAvailablePermits;
 
         public MockedStatistics(final boolean enabled,
                                        final int[] queueLengths,
-                                       final int maxRequests) {
+                                       final int maxRequests,
+                                       final int semaphoreQueueLength,
+                                       final int semaphoreAvailablePermits) {
             this.enabled = enabled;
             this.queueSizes = queueLengths;
             this.maxRequests = maxRequests;
+            this.semaphoreQueueLength = semaphoreQueueLength;
+            this.semaphoreAvailablePermits = semaphoreAvailablePermits;
         }
         
         @Override
@@ -285,12 +317,12 @@ public class QoSStatusWorkerUnitTest {
 
         @Override
         public int getSemaphoreQueueLength() {
-            return -1; // TODO
+            return semaphoreQueueLength;
         }
 
         @Override
         public int getSemaphoreAvailablePermits() {
-            return -1; // TODO
+            return semaphoreAvailablePermits;
         }
     }
 }

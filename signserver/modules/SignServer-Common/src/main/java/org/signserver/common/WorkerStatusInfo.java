@@ -210,5 +210,11 @@ public class WorkerStatusInfo implements Serializable {
             }
             return true;
         }
+
+        @Override
+        public String toString() {
+            return "Entry{" + "title=" + title + ", value=" + value + '}';
+        }
+        
     }
 }

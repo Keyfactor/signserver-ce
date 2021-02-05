@@ -1,4 +1,0 @@
-Release notes, change log and upgrade instructions can be found in the
-SignServer Manual.
-
-See: doc/htdocs/SignServer_Release_Information.html

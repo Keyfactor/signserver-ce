@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <body>
+
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            <ui:param name="activeMenu" value="workers"/>
+
+            <ui:define name="title">
+                #{text['Worker_Not_Found']}
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <h1>#{text['Not_Found']} <h:outputText value="#{param.id}"/></h1>
+                
+                <p>
+                    #{text['The_specified_worker_can_not_be_found.']}
+                </p>
+                
+                <p>&nbsp;</p>
+                
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

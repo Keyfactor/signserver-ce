@@ -1,0 +1,254 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <f:metadata>
+        <f:viewParam name="worker" value="#{workerBean.id}"/>
+        <f:viewParam name="worker" value="#{certificateDetailsBean.id}"/>
+        <f:viewParam name="chain" value="#{certificateDetailsBean.withChain}"/>
+        <f:viewParam name="keyInToken" value="#{certificateDetailsBean.keyInToken}"/>
+        <f:viewParam name="pane" value="#{certificateDetailsBean.pane}"/>
+    </f:metadata>
+
+    <body>
+
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            <ui:param name="activeMenu" value="workers"/>
+
+            <ui:define name="title">
+                <h:panelGroup rendered="#{!certificateDetailsBean.forKeyInToken}">
+                    <h:outputFormat value="#{text['Worker_X']}">
+                        <f:param value="#{certificateDetailsBean.worker.name}"/>
+                    </h:outputFormat>
+                    <h:outputText value="- #{text['Status_Properties_-_Certificate_Details']}"/>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{certificateDetailsBean.forKeyInToken and certificateDetailsBean.certificateAvailable}">
+                    <h:outputFormat value="#{text['Worker_X']}">
+                        <f:param value="#{workerBean.worker.name}"/>
+                    </h:outputFormat>
+                    <h:outputText value=" - "/>
+                    <h:outputFormat value="#{text['Crypto_Token_-_Token_Entry_X_-_Certificate_Details']}">
+                        <f:param value="#{certificateDetailsBean.keyInToken}"/>
+                    </h:outputFormat>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{certificateDetailsBean.forKeyInToken and !certificateDetailsBean.certificateAvailable}">
+                    <h:outputFormat value="#{text['Worker_X']}">
+                        <f:param value="#{workerBean.worker.name}"/>
+                    </h:outputFormat>
+                    <h:outputText value=" - "/>
+                    <h:outputText value="#{text['Certificate_Details']}"/>
+                </h:panelGroup>
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <ui:include src="/worker-menu.xhtml">
+                    <ui:param name="worker" value="#{certificateDetailsBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="#{certificateDetailsBean.forKeyInToken ? 'worker-cryptotoken' : 'worker-status-properties'}"/>
+                </ui:include>
+                
+                <h:panelGroup rendered="#{certificateDetailsBean.worker.existing}">
+
+                    <div id="worker_content">
+                        <h:panelGroup rendered="#{!certificateDetailsBean.forKeyInToken or !certificateDetailsBean.certificateAvailable}">
+                            <h2><h:outputText value="#{text['Certificate_Details']}"/></h2>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{certificateDetailsBean.forKeyInToken and certificateDetailsBean.certificateAvailable}">
+                            <h2>
+                                <h:link outcome="worker-cryptotoken-entry" value="#{text['Token_Entry']}: #{certificateDetailsBean.keyInToken}">
+                                    <f:param name="id" value="#{workerBean.worker.id}"/>
+                                    <f:param name="key" value="#{certificateDetailsBean.keyInToken}"/>
+                                </h:link>
+                                <h:outputText value="&gt; #{text['Certificate_Details']}"/>
+                            </h2>
+                        </h:panelGroup>
+
+                        <h:form>
+                            <h:panelGroup rendered="#{!certificateDetailsBean.certificateAvailable}">
+                                <p>
+                                    <h:outputText value="#{text['(Certificate_not_available)']}"/>
+                                </p>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{certificateDetailsBean.certificateAvailable}">
+                                <div id="cert-menu">
+                                    <ul>
+                                        <li>
+                                            <h:link outcome="certificate-details?worker=#{certificateDetailsBean.id}&amp;chain=#{certificateDetailsBean.withChain}&amp;keyInToken=#{certificateDetailsBean.keyInToken}&amp;pane=#{certificateDetailsBean.PANE_GENERAL}" class="#{certificateDetailsBean.generalPanel ? 'active' : ''}"><f:param name="id" value="#{workerBean.id}"/><h:outputText value="#{text['General']}"/></h:link>
+                                        </li>
+                                        <li>
+                                            <h:link outcome="certificate-details?worker=#{certificateDetailsBean.id}&amp;chain=#{certificateDetailsBean.withChain}&amp;keyInToken=#{certificateDetailsBean.keyInToken}&amp;pane=#{certificateDetailsBean.PANE_DETAILS}" class="#{!certificateDetailsBean.generalPanel  ? 'active' : ''}"><f:param name="id" value="#{workerBean.id}"/><h:outputText value="#{text['Details']}"/></h:link>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </h:panelGroup>
+                            <h:panelGroup id="generalPanel" rendered="#{certificateDetailsBean.certificateAvailable and certificateDetailsBean.generalPanel}">
+
+                                <p><h:outputText value="#{text['Certificate_Usages_COLON']}"/></p>
+                                <h:dataTable id="usagesTable" value="#{certificateDetailsBean.general.usages}" var="usage">
+                                    <h:column>
+                                        <h:outputText value="#{usage}"/>
+                                    </h:column>
+                                </h:dataTable>
+
+                                <p><h:outputText value="#{text['Issued_to_COLON']}"/></p>
+                                <h:panelGrid columns="1">
+                                    <h:outputText value="#{certificateDetailsBean.general.subject}"/>
+                                </h:panelGrid>
+
+                                <p><h:outputText value="#{text['Serial_Number_COLON']}"/></p>
+                                <h:panelGrid columns="1">
+                                    <h:outputText value="#{certificateDetailsBean.general.serialNumber}"/>
+                                </h:panelGrid>
+
+                                <p><h:outputText value="#{text['Issued_by_COLON']}"/></p>
+                                <h:panelGrid columns="1">
+                                    <h:outputText value="#{certificateDetailsBean.general.issuer}"/>
+                                </h:panelGrid>
+
+                                <p><h:outputText value="#{text['Validity_COLON']}"/></p>
+                                <h:panelGrid columns="2">
+                                    <h:outputText value="#{text['Not_Before']}"/>
+                                    <h:outputText value="#{certificateDetailsBean.general.notBefore}"/>
+
+                                    <h:outputText value="#{text['Not_After']}"/>
+                                    <h:outputText value="#{certificateDetailsBean.general.notAfter}"/>
+                                </h:panelGrid>
+
+                                <p><h:outputText value="#{text['Fingerprints_COLON']}"/></p>
+                                <h:dataTable id="fingerprintsTable" value="#{certificateDetailsBean.general.fingerprints}" var="finger">
+                                    <h:column>
+                                        <h:outputText value="#{finger.key}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <h:outputText value="#{finger.value}"/>
+                                    </h:column>
+                                </h:dataTable>
+
+                            </h:panelGroup>
+
+                            <h:panelGroup id="detailsPanel" rendered="#{certificateDetailsBean.certificateAvailable and !certificateDetailsBean.generalPanel}">
+
+                                <h:panelGroup rendered="#{certificateDetailsBean.detailedList.size() gt 1}">
+                                    <h:selectOneListbox value="#{certificateDetailsBean.detailedListSelection}">
+                                        <f:selectItems value="#{certificateDetailsBean.detailedList}" var="item" itemLabel="#{item.friendlyName}" itemValue="#{item.friendlyName}"/>
+                                        <f:ajax listener="#{certificateDetailsBean.viewSelectedAction}" render="certificateInfo"/>
+                                    </h:selectOneListbox>
+                                    <noscript><h:commandButton class="buttonFeatured" value="#{text['View']}" action="#{certificateDetailsBean.viewSelectedAction(null)}"/></noscript>
+                                </h:panelGroup>
+
+                                <h:panelGrid id="certificateInfo" columns="2">
+                                    <h:outputText value="#{text['Version']}"/>
+                                    <h:outputText value="#{certificateDetailsBean.detailed.version}"/>
+
+                                    <h:outputText value="#{text['Serial_Number']}"/>
+                                    <h:outputText value="#{certificateDetailsBean.detailed.serialNumber}"/>
+
+                                    <h:outputText value="#{text['Issuer']}"/>
+                                    <h:outputText value="#{certificateDetailsBean.detailed.issuer}"/>
+
+                                    <h:outputText value="#{text['Validity_Not_Before']}"/>
+                                    <h:outputText value="#{certificateDetailsBean.detailed.notBefore}"/>
+
+                                    <h:outputText value="#{text['Validity_Not_After']}"/>
+                                    <h:outputText value="#{certificateDetailsBean.detailed.notAfter}"/>
+
+                                    <h:outputText value="#{text['Subject']}"/>
+                                    <h:outputText value="#{certificateDetailsBean.detailed.subject}"/>
+
+                                    <h:outputText value="#{text['Subject_Public_Key_Algorithm']}"/>
+                                    <h:outputText value="#{certificateDetailsBean.detailed.keyAlgorithm}"/>
+
+                                    <h:outputText value="#{text['Subjects_Public_Key']}"/>
+                                    <h:panelGroup>
+                                        <pre><h:outputText value="#{certificateDetailsBean.detailed.publicKey}"/></pre>
+                                    </h:panelGroup>
+
+                                    <h:outputText value="#{text['Critical_Extensions']}"/>
+                                    <h:dataTable id="criticalExtensionsTable" value="#{certificateDetailsBean.detailed.criticalExtensions}" var="ext">
+                                        <h:column>
+                                            <h:outputText value="#{ext.key}"/>
+                                        </h:column>
+                                        <h:column>
+                                            <h:outputText value="#{ext.value}"/>
+                                        </h:column>
+                                    </h:dataTable>
+
+                                    <h:outputText value="#{text['Non_Critical_Extensions']}"/>
+                                    <h:dataTable id="nonCriticalExtensionsTable" value="#{certificateDetailsBean.detailed.nonCriticalExtensions}" var="ext">
+                                        <h:column>
+                                            <h:outputText value="#{ext.key}"/>
+                                        </h:column>
+                                        <h:column>
+                                            <h:outputText value="#{ext.value}"/>
+                                        </h:column>
+                                    </h:dataTable>
+
+                                    <h:outputText value="#{text['Certificate_Signature_Algorithm']}"/>
+                                    <h:outputText value="#{certificateDetailsBean.detailed.signatureAlgorithm}"/>
+
+                                    <h:outputText value="#{text['Certificate_Signature_Value']}"/>
+                                    <h:panelGroup>
+                                        <pre><h:outputText value="#{certificateDetailsBean.detailed.signatureValue}"/></pre>
+                                    </h:panelGroup>
+
+
+                                    <h:outputText value="#{text['Fingerprints']}"/>
+                                    <h:dataTable value="#{certificateDetailsBean.detailed.fingerprints}" var="finger">
+                                        <h:column>
+                                            <h:outputText value="#{finger.key}"/>
+                                        </h:column>
+                                        <h:column>
+                                            <h:outputText value="#{finger.value}"/>
+                                        </h:column>
+                                    </h:dataTable>
+                                </h:panelGrid>
+
+                                <h:commandButton class="buttonNeutral" value="#{text['Export_certificate']}" action="#{certificateDetailsBean.exportSelectedAction(false)}"/>
+                                <h:commandButton class="buttonNeutral" value="#{text['Export_certificate_chain']}" action="#{certificateDetailsBean.exportSelectedAction(true)}"/>
+
+                            </h:panelGroup>
+                        </h:form>
+                    </div>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{!certificateDetailsBean.worker.existing}">
+                    <h2><h:outputText value="#{text['Worker_Not_Found']}"/></h2>
+                    <p>
+                        <h:outputText value="#{text['The_specified_worker_can_not_be_found.']}"/>
+                    </p>
+                </h:panelGroup>
+
+            </ui:define>
+            
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

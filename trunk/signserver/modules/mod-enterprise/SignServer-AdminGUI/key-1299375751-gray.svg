@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:svg="http://www.w3.org/2000/svg" id="svg4230" viewBox="0 0 169.49 82.015" version="1.1">
+  <title id="title4294">Cl&#xE9;</title>
+  <g id="layer1" transform="translate(-269.21 -460.26)">
+    <g id="g4211" stroke-linejoin="round" transform="translate(-379.42 99.131)" stroke-dashoffset="3.003" stroke="#000" stroke-linecap="round" fill="#949096">
+      <path id="path4196" stroke-width="4" d="m687.21 362.13c-9.7257 0.0685-19.447 4.2067-26.286 11.375-12.251 12.275-14.681 32.888-6.5791 48.188 6.9142 13.842 22.598 22.249 37.617 20.125 13.315-1.5991 24.544-11.487 29.697-23.938l9.5336 5.4688c2.7914 1.7417 4.3561-0.44379 4.3556-3l-0.18276-10.219 10.843 0.25 7.371 6.9375 9.5945-9.715 8.7721 8.3712h6.4877l8.9854-9 6.505 5.4986 8.2782-0.34752 7.1817-6.9025 7.7325-7.1236c-1.3116-4.3685-5.0487-7.0697-11.909-10.086l-70.36 0.55495-0.42642-7.7812c-0.0335-2.7765-3.3696-3.9446-5.5435-2.5l-7.9193 6.4688c-4.169-9.0407-11.571-16.515-20.742-20.125-4.1536-1.7429-8.5851-2.5311-13.006-2.5z"/>
+      <path id="path4192" stroke-width="2" d="m678.74 400.93c0.10517 4.0988-3.2098 8.0808-7.4505 8.5635-3.4203 0.45829-6.9957-1.3599-8.5704-4.3472-1.8452-3.3018-1.2898-7.7503 1.5004-10.399 2.2656-2.2502 5.9189-3.1129 8.946-1.9092 3.1727 1.1834 5.4303 4.2873 5.5602 7.5844 0.01 0.16918 0.0145 0.33863 0.0143 0.50807z"/>
+      <path id="path4201" d="m718 401.1 97.107-1.1968-4.5477 3.3509-81.859 1.1968z"/>
+    </g>
+  </g>
+  <metadata>
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <cc:license rdf:resource="http://creativecommons.org/licenses/publicdomain/"/>
+        <dc:publisher>
+          <cc:Agent rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title>Cl&#xE9; / Key</dc:title>
+        <dc:date>2011-03-06T01:42:31</dc:date>
+        <dc:description>clip art, clipart, key, line art, </dc:description>
+        <dc:source>http://openclipart.org/detail/125647/cl&#xE9;--key-by-lmproulx</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>lmproulx</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>clip art</rdf:li>
+            <rdf:li>clipart</rdf:li>
+            <rdf:li>key</rdf:li>
+            <rdf:li>line art</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

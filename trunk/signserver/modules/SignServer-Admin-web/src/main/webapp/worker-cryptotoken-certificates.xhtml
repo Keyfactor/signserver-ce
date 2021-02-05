@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <f:metadata>
+        <f:viewParam name="id" value="#{workerBean.id}"/>
+        <f:viewParam name="id" value="#{importCertificatesBean.id}"/>
+        <f:viewParam name="keys" value="#{importCertificatesBean.keys}"/>
+        <f:viewParam name="id" value="#{importCertificatesBean.workerIds}"/> <!-- Only 1 workerId supported -->
+    </f:metadata>
+    
+    <body>
+
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            <ui:param name="activeMenu" value="workers"/>
+
+            <ui:define name="title">
+                <h:outputFormat value="#{text['Worker_X']}">
+                    <f:param value="#{workerBean.worker.name}"/>
+                </h:outputFormat>
+                <h:outputText value="- #{text['Crypto_Token_-_Import_Certificates']}"/>
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <ui:include src="/worker-menu.xhtml">
+                    <ui:param name="worker" value="#{workerBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="worker-cryptotoken"/>
+                </ui:include>
+
+                <div id="worker_content">
+                    <h:panelGroup rendered="#{workerBean.worker.existing}">
+                        <h2><h:outputText value="#{text['Import_Certificates']}"/></h2>
+
+                        <h:form id="csrForm">
+
+                            <script>
+                                var index = 0;
+                            </script>
+                            <h:dataTable id="table1" value="#{importCertificatesBean.items}" var="item" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1,dss1,dss1,dss1,dss1,dss1,dss1" rowClasses="dss1,dss1_odd">
+                                <f:facet name="header">
+                                </f:facet>
+                                <h:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{text['Key']}" />
+                                    </f:facet>
+                                    <b><h:outputText value="#{item.alias}"/></b> 
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{text['Upload']}"/>
+                                    </f:facet>
+
+                                    <ui:remove>
+                                        <!-- Pure JavaScript file upload, since non-JS fallback of pasting upload exists -->
+                                    </ui:remove>
+
+                                    <h:inputTextarea id="certChainFile" class="fileInputTextarea"
+                                                     value="#{item.certificateChain}" cols="50" rows="5" />
+                                    <h:message for="certChainFile" id="certChainfileMessage" /><br/>
+
+                                    <h:panelGroup>
+                                        <p id="certChainFileInputContainer#{item.rowIndex}" class="fileInputContainer"></p>
+                                        <h:commandButton class="buttonNeutral" value="#{text['Add']}" action="#{item.uploadAction()}"/>
+                                        <script>
+                                            var thisIndex = index++;
+                                            ejbca.ra.createFileUploadInput("certChainNewFileInput#{item.rowIndex}", "certChainFileInputContainer#{item.rowIndex}", function(uploadedText) {
+                                                document.getElementById("csrForm:table1:#{item.rowIndex}:certChainFile").value = uploadedText;
+                                                //document.getElementById("keyPairForm:uploadCsrButton").click();
+                                            });
+                                        </script>
+
+                                    </h:panelGroup>
+                                </h:column>
+                                <h:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{text['Certificate_Chain']}" />
+                                    </f:facet>
+
+                                    <h:dataTable value="#{item.friendlyCertificates}" var="cert" >
+                                        <h:column>
+                                            <h:outputText value="#{cert.name}"/>
+                                        </h:column>
+                                        <h:column>
+                                            <h:commandButton class="buttonNeutral" value="×" action="#{item.removeCertificateAction(cert)}"/>
+                                        </h:column>
+                                    </h:dataTable>
+                                </h:column>
+
+                                <h:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{text['Install_in_Token']}" />
+                                    </f:facet>
+                                    <h:selectBooleanCheckbox id="inToken" value="#{true}" disabled="true"/> 
+                                </h:column>
+
+                                <h:column>
+                                    <f:facet name="header">
+                                        <!-- Error -->
+                                    </f:facet>
+                                    <span class="errorMessage"><h:outputText value="#{item.errorMessage}"/></span> 
+                                </h:column>
+                                <f:facet name="footer">
+
+                                </f:facet>
+                            </h:dataTable>
+
+                            <h:commandButton class="buttonFeatured" value="#{text['Import']}" action="#{importCertificatesBean.submitAction()}"/> <h:link value="#{text['Cancel']}" outcome="${importCertificatesBean.getBackToCryptoTokenLink(importCertificatesBean.keysList)}"><f:param name="id" value="#{workerBean.worker.id}"/></h:link>
+                        </h:form>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{!workerBean.worker.existing}">
+                        <h2><h:outputText value="#{text['Worker_Not_Found']}"/></h2>
+                        <p>
+                            <h:outputText value="#{text['The_specified_worker_can_not_be_found.']}"/>
+                        </p>
+                    </h:panelGroup>
+                </div>
+                
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

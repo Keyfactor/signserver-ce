@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+        ${ejbjarheader}
+-->
+ <ejb-jar
+     xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/ejb-jar_3_2.xsd"
+     version="3.2">
+     <enterprise-beans>
+         <session>
+             <ejb-name>ValidationWS</ejb-name>
+                <env-entry>
+                    <env-entry-name>DataSource</env-entry-name>
+                    <env-entry-type>java.lang.String</env-entry-type>
+                    <env-entry-value>${datasource.jndi-name-prefix}${datasource.jndi-name}</env-entry-value>
+                </env-entry>
+         </session>
+     </enterprise-beans>
+</ejb-jar>

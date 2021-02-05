@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+
+    <f:metadata>
+        <f:viewParam name="id" value="#{workerBean.id}"/>
+        <f:viewParam name="id" value="#{cryptoTokenBean.id}"/>
+        <f:event type="preRenderView" listener="#{cryptoTokenBean.init()}"/>
+    </f:metadata>
+    
+    <body>
+
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            <ui:param name="activeMenu" value="workers"/>
+
+            <ui:define name="title">
+                #{text['Worker']} <h:outputText value="#{workerBean.worker.name}"/> - #{text['Crypto_Token']}
+            </ui:define>
+
+            <ui:define name="top">
+                
+            </ui:define>
+
+            <ui:define name="content">
+                <!--<h1><h:graphicImage library="default" name="images/#{workerBean.worker.imageName}" title="#{workerBean.worker.imageAlt}" class="workerImage1"/> <h:outputText value="#{workerBean.worker.name}"/></h1>-->
+                <ui:include src="/worker-menu.xhtml">
+                    <ui:param name="worker" value="#{workerBean.worker}"/>
+                    <ui:param name="workerActiveMenu" value="worker-cryptotoken"/>
+                </ui:include>
+                
+                <h:form id="workerMenu">
+                    <p>
+                        <h:commandButton class="buttonFeatured" value="#{text['Activate...']}" action="#{workerBean.bulkAction('workers-activation', 'cryptotoken')}"/> <h:commandButton class="buttonNeutral" value="Deactivate..." action="#{workerBean.bulkAction('workers-deactivation', 'cryptotoken')}"/> &nbsp; 
+                    </p>
+                </h:form>
+
+                <div id="worker_content">
+                    <h:form>
+                        <h2>
+                            #{text['Entries']}
+                        </h2>
+
+                        <p class="errorMessage">
+                            <h:outputText value="#{cryptoTokenBean.queryError}"/>
+                        </p>
+
+                        <p>
+                            <h:commandButton class="buttonNeutral" value="#{text['First']}" action="#{cryptoTokenBean.firstAction()}" disabled="#{!cryptoTokenBean.enableFirst}"/> 
+                            <h:commandButton class="buttonNeutral" value="#{text['Previous']}" action="#{cryptoTokenBean.previousAction()}" disabled="#{!cryptoTokenBean.enablePrevious}"/> 
+                            <h:commandButton class="buttonNeutral" value="#{text['Reload']}" action="#{cryptoTokenBean.reloadAction()}"/> 
+                            <h:commandButton class="buttonNeutral" value="#{text['Next']}" action="#{cryptoTokenBean.nextAction()}" disabled="#{!cryptoTokenBean.enableNext}"/> 
+                            <h:inputText value="#{cryptoTokenBean.fromIndex}" size="3"/><h:outputText value=" #{text['to']} "/><h:outputText value="#{cryptoTokenBean.queryingToIndex}"/>
+                            <h:outputText value=" #{text['Per_Page_COLON']}"/><h:inputText value="#{cryptoTokenBean.maxEntries}" size="3"/>
+                        </p>
+                        <h:dataTable id="dsstable1" value="#{cryptoTokenBean.entries}" var="entry" class="dss1" headerClass="dss1" footerClass="dss1" columnClasses="dss1 centered,dss1,dss1" rowClasses="dss1,dss1_odd">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:selectBooleanCheckbox class="jsHidden" onclick="toggleCheckboxes(this, document.getElementsByClassName('allSelectable'))"/>
+                                </f:facet>
+                                <h:selectBooleanCheckbox value="#{entry.selected}" class="allSelectable"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Alias']}" />
+                                </f:facet>
+                                <h:link value="#{entry.alias}" outcome="worker-cryptotoken-entry">
+                                    <f:param name="id" value="#{workerBean.worker.id}"/>
+                                    <f:param name="key" value="#{entry.alias}"/>
+                                </h:link>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Type']}" />
+                                </f:facet>
+                                <h:outputText value="#{entry.type}" />
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{text['Certificates']}" />
+                                </f:facet>
+                                <h:outputText value="#{entry.chainLength}" />
+                            </h:column>
+                            
+                            <f:facet name="footer">
+                            </f:facet>
+                        </h:dataTable>
+                        <p>
+                            <h:link class="linkPositive" value="#{text['Generate_Key...']}" outcome="worker-cryptotoken-generatekey"><f:param name="id" value="#{workerBean.worker.id}"/></h:link> 
+                            <h:commandButton class="buttonFeatured" value="#{text['Test...']}" action="#{cryptoTokenBean.testKeysAction()}"/> 
+                            <h:commandButton class="buttonFeatured" value="#{text['Generate_CSR...']}" action="#{cryptoTokenBean.generateCSRAction()}"/> 
+                            <h:commandButton class="buttonFeatured" value="#{text['Import_Certificates...']}" action="#{cryptoTokenBean.certificatesAction()}"/> 
+                            <h:commandButton class="buttonNegative" value="#{text['Remove...']}" action="#{cryptoTokenBean.removeKeysAction()}"/>
+                        </p>
+                    </h:form>
+                </div>
+
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

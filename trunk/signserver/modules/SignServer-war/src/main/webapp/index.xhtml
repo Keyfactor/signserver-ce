@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+    
+    <body>
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            <ui:param name="startPage" value="true"/>
+
+            <ui:define name="title">
+                <h:outputText value="#{text['Public_Web']}"/>
+            </ui:define>
+            
+            <ui:define name="top">
+
+            </ui:define>
+            
+            <ui:define name="content">
+                <div id="container1">
+                    <h2>Local Resources</h2>
+                    <ul class="resourcesList">
+                        <li>
+                            <h:outputLink value ="clientweb/">Client Web</h:outputLink>
+                        </li>
+                        <li>
+                            <h:outputLink value = "healthcheck/signserverhealth">Health Check</h:outputLink> 
+                        </li>                        
+                        <h:panelGroup rendered="#{publicWebBean.webClientCLIDistEnabled}">
+                            <li>                                
+                                <h:outputLink value="clientcli-dist/">Client CLI Download</h:outputLink>
+                            </li>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{publicWebBean.webAdminGUIDistEnabled}">
+                            <li>
+                                <h:outputLink value="admingui-dist/">Administration GUI Download</h:outputLink>    
+                            </li>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{publicWebBean.adminWebEnabledAndAvailable}">
+                            <li>
+                                <h:outputLink value="#{publicWebBean.getAdminWebPrivateHttpsLink()}">Administration Web</h:outputLink>                           
+                            </li>
+                        </h:panelGroup>                        
+                    </ul>
+                    <h2>Online Resources</h2>
+                    <ul class="resourcesList">
+                        <li>
+                            <h:outputLink value="https://www.signserver.org">SignServer Web Site</h:outputLink>                           
+                        </li>
+                        <li>                            
+                            <h:outputLink value="https://doc.primekey.com">PrimeKey Documentation</h:outputLink>
+                        </li>
+                    </ul>
+                </div>
+            </ui:define>
+            
+            <ui:define name="bottom">
+                
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>
+

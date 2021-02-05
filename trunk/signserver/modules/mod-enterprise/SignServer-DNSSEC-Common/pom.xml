@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.signserver</groupId>
+        <artifactId>SignServer-Enterprise-Modules</artifactId>
+        <version>5.6.0.CR1</version>
+    </parent>
+    <artifactId>SignServer-DNSSEC-Common</artifactId>
+    <name>SignServer-DNSSEC-Common</name>
+    <packaging>jar</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <dist.jar>${project.build.finalName}.jar</dist.jar>
+        <module.name>dnssec.common</module.name>
+        <module.priority>38</module.priority>
+    </properties>    
+    <dependencies>
+        <dependency>
+            <groupId>org.jitsi</groupId>
+            <artifactId>dnssecjava</artifactId>            
+        </dependency>
+        <dependency>
+            <groupId>dnsjava</groupId>
+            <artifactId>dnsjava</artifactId>            
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SignServer-Common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+    </dependencies>
+</project>

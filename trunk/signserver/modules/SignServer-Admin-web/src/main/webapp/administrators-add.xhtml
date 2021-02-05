@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:remove>
+    <!--
+    /*************************************************************************
+    *                                                                       *
+    *  SignServer: The OpenSource Automated Signing Server                  *
+    *                                                                       *
+    *  This software is free software; you can redistribute it and/or       *
+    *  modify it under the terms of the GNU Lesser General Public           *
+    *  License as published by the Free Software Foundation; either         *
+    *  version 2.1 of the License, or any later version.                    *
+    *                                                                       *
+    *  See terms of license at gnu.org.                                     *
+    *                                                                       *
+    *************************************************************************/
+
+    Version: $Id$
+    -->
+    </ui:remove>
+    
+    <f:metadata>
+        <f:viewParam name="certSN" value="#{administratorsBean.certSN}"/>
+        <f:viewParam name="issuerDN" value="#{administratorsBean.issuerDN}"/>
+        <f:viewParam name="roleAdmin" value="#{administratorsBean.roleAdmin}"/>
+        <f:viewParam name="rolePeerSystem" value="#{administratorsBean.rolePeerSystem}"/>
+    </f:metadata>
+
+    <body>
+
+        <ui:composition template="WEB-INF/templates/template.xhtml">
+            <ui:param name="activeMenu" value="administrators"/>
+
+            <ui:define name="title">
+                <h:outputText value="#{text['Add_-_Administrators']}"/>
+            </ui:define>
+
+            <ui:define name="top">
+
+            </ui:define>
+
+            <ui:define name="content">
+                <h1><h:outputText value="#{text['Add']}"/></h1>
+
+                <h:form id="form">
+                    <h:panelGroup id="main" rendered="#{!administratorsBean.fromCertificate}">
+
+                        <h:panelGrid columns="4">
+                            <h:outputLabel for="certSN"><h:outputText value="#{text['Certificate_Serial_Number_COLON']}"/></h:outputLabel>
+                            <h:inputText id="certSN" value="#{administratorsBean.certSN}" size="16" requiredMessage="*">
+                                <f:validator validatorId="optionallyRequiredValidator"/>
+                                <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
+                            </h:inputText>
+                            <h:message for="certSN" class="errorMessage"/>
+                            <h:commandButton class="buttonNeutral" value="…" action="#{administratorsBean.browseAction()}"/>
+
+                            <h:outputLabel for="issuerDN"><h:outputText value="#{text['Issuer_DN_COLON']}"/></h:outputLabel>
+                            <h:inputText id="issuerDN" value="#{administratorsBean.issuerDN}" size="40" requiredMessage="*">
+                                <f:validator validatorId="optionallyRequiredValidator"/>
+                                <f:attribute name="requiredIfSubmittedWith" value="#{components.buttonSubmit.clientId}"/>
+                            </h:inputText>
+                            <h:message for="issuerDN" class="errorMessage"/>
+                            <h:commandButton class="buttonNeutral" value="#{text['Load_Current']}" action="#{administratorsBean.loadCurrentAction()}" rendered="#{!administratorsBean.rolePeerSystem}"/>
+                            <h:outputLabel value="" rendered="#{administratorsBean.rolePeerSystem}"/>
+
+                            <h:outputText value="#{text['Roles_COLON']}"/>
+                            <h:panelGroup>
+                                <h:selectBooleanCheckbox id="roleAdmin" value="#{administratorsBean.roleAdmin}"/> <h:outputLabel for="roleAdmin" value="#{text['Admin']}" />
+                                <h:selectBooleanCheckbox id="roleAuditor" value="#{administratorsBean.roleAuditor}"/> <h:outputLabel for="roleAuditor" value="#{text['Auditor']}" />
+                                <h:selectBooleanCheckbox id="roleArchiveAuditor" value="#{administratorsBean.roleArchiveAuditor}"/> <h:outputLabel for="roleArchiveAuditor" value="#{text['Archive_Auditor']}" />
+                                <h:selectBooleanCheckbox id="rolePeerSystem" value="#{administratorsBean.rolePeerSystem}" disabled="#{!administratorsBean.peersAvailable}"/> <h:outputLabel rendered="#{administratorsBean.peersAvailable}" for="rolePeerSystem" value="#{text['Peer_System']}" /> <h:outputLabel rendered="#{!administratorsBean.peersAvailable}" for="rolePeerSystem" value="#{text['Peer_System']}" class="dimmedLabel"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                        <h:commandButton class="buttonPositive" value="#{text['Add']}" action="#{administratorsBean.addSubmitAction()}" binding="#{components.buttonSubmit}"/>
+                        <h:link value="#{text['Cancel']}" outcome="administrators"/>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="fromCert"  rendered="#{administratorsBean.fromCertificate}">
+                        <ui:remove>
+                            <!-- Pure JavaScript file upload, since non-JS fallback of pasting upload exists -->
+                        </ui:remove>
+                        <h:outputLabel for="cert"><h:outputText value="#{text['Load_From_Certificate_File_COLON']}"/></h:outputLabel><br/>
+                        <h:inputTextarea id="cert" value="#{administratorsBean.cert}" cols="50" rows="10"/>
+                        <p id="certFileInputContainer" class="fileInputContainer"></p>
+                        <script>
+                            ejbca.ra.createFileUploadInput("certNewFileInput", "certFileInputContainer", function(uploadedText) {
+                                document.getElementById("form:cert").value = uploadedText;
+                                //document.getElementById("keyPairForm:uploadCsrButton").click();
+                            });
+                        </script>
+                        <br/>
+
+                        <p>
+                            <h:outputText value="#{administratorsBean.loadErrorMessage}" class="errorMessage"/>
+                        </p>
+
+                        <h:commandButton class="buttonFeatured" value="#{text['Load']}" action="#{administratorsBean.loadAction()}"/> <h:commandButton class="buttonNeutral" value="#{text['Cancel']}" action="#{administratorsBean.cancelBrowseAction()}"/>
+                    </h:panelGroup>
+                </h:form>
+
+            </ui:define>
+
+            <ui:define name="bottom">
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

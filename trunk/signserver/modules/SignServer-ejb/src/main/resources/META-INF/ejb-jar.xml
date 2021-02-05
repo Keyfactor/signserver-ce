@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/ejb-jar_3_2.xsd"
+	version="3.2">
+
+	<!-- DO NOT REMOVE THE FOLLOWING LINE, IT IS USED FOR POSTPROCESSING DURING BUILD -->
+    <!--COMMENT-REPLACEMENT(ejbjarheader)-->
+
+	<enterprise-beans>
+		<session>
+			<ejb-name>WorkerSessionBean</ejb-name>  
+			<persistence-context-ref>  
+				<persistence-context-ref-name>persistence/em</persistence-context-ref-name>  
+				<persistence-unit-name>SignServerJPA</persistence-unit-name>  
+				<persistence-context-type>Transaction</persistence-context-type>  
+				<injection-target>   
+					<injection-target-class>org.signserver.ejb.WorkerSessionBean</injection-target-class>
+					<injection-target-name>em</injection-target-name>  
+				</injection-target>  
+			</persistence-context-ref>
+		</session>
+                <session>
+			<ejb-name>ProcessSessionBean</ejb-name>  
+			<persistence-context-ref>  
+				<persistence-context-ref-name>persistence/em</persistence-context-ref-name>  
+				<persistence-unit-name>SignServerJPA</persistence-unit-name>  
+				<persistence-context-type>Transaction</persistence-context-type>  
+				<injection-target>   
+					<injection-target-class>org.signserver.ejb.ProcessSessionBean</injection-target-class>
+					<injection-target-name>em</injection-target-name>  
+				</injection-target>  
+			</persistence-context-ref>
+		</session>
+
+                <session>
+                    <ejb-name>InternalProcessSessionBean</ejb-name>
+                    <persistence-context-ref>
+                            <persistence-context-ref-name>persistence/em</persistence-context-ref-name>
+                            <persistence-unit-name>SignServerJPA</persistence-unit-name>
+                            <persistence-context-type>Transaction</persistence-context-type>
+                            <injection-target>
+                                <injection-target-class>org.signserver.ejb.InternalProcessSessionBean</injection-target-class>
+                                <injection-target-name>em</injection-target-name>
+                            </injection-target>
+                    </persistence-context-ref>
+		</session>
+
+                <session>
+                    <ejb-name>DispatcherProcessSessionBean</ejb-name>
+                    <persistence-context-ref>
+                            <persistence-context-ref-name>persistence/em</persistence-context-ref-name>
+                            <persistence-unit-name>SignServerJPA</persistence-unit-name>
+                            <persistence-context-type>Transaction</persistence-context-type>
+                            <injection-target>
+                                <injection-target-class>org.signserver.ejb.DispatcherProcessSessionBean</injection-target-class>
+                                <injection-target-name>em</injection-target-name>
+                            </injection-target>
+                    </persistence-context-ref>
+		</session>
+                
+                <session>
+                    <ejb-name>ProcessTransactionSessionBean</ejb-name>
+                    <persistence-context-ref>
+                            <persistence-context-ref-name>persistence/em</persistence-context-ref-name>
+                            <persistence-unit-name>SignServerJPA</persistence-unit-name>
+                            <persistence-context-type>Transaction</persistence-context-type>
+                            <injection-target>
+                                <injection-target-class>org.signserver.ejb.ProcessTransactionSessionBean</injection-target-class>
+                                <injection-target-name>em</injection-target-name>
+                            </injection-target>
+                    </persistence-context-ref>
+		</session>
+                
+                <session>
+                    <ejb-name>DispatcherProcessTransactionSessionBean</ejb-name>
+                    <persistence-context-ref>
+                            <persistence-context-ref-name>persistence/em</persistence-context-ref-name>
+                            <persistence-unit-name>SignServerJPA</persistence-unit-name>
+                            <persistence-context-type>Transaction</persistence-context-type>
+                            <injection-target>
+                                <injection-target-class>org.signserver.ejb.DispatcherProcessTransactionSessionBean</injection-target-class>
+                                <injection-target-name>em</injection-target-name>
+                            </injection-target>
+                    </persistence-context-ref>
+		</session>
+                
+                <session>
+                    <ejb-name>InternalProcessTransactionSessionBean</ejb-name>
+                    <persistence-context-ref>
+                            <persistence-context-ref-name>persistence/em</persistence-context-ref-name>
+                            <persistence-unit-name>SignServerJPA</persistence-unit-name>
+                            <persistence-context-type>Transaction</persistence-context-type>
+                            <injection-target>
+                                <injection-target-class>org.signserver.ejb.InternalProcessTransactionSessionBean</injection-target-class>
+                                <injection-target-name>em</injection-target-name>
+                            </injection-target>
+                    </persistence-context-ref>
+		</session>
+
+		<session>
+			<ejb-name>WorkerManagerSingletonBean</ejb-name>  
+			<persistence-context-ref>  
+				<persistence-context-ref-name>persistence/em</persistence-context-ref-name>  
+				<persistence-unit-name>SignServerJPA</persistence-unit-name>  
+				<persistence-context-type>Transaction</persistence-context-type>  
+				<injection-target>   
+					<injection-target-class>org.signserver.ejb.worker.impl.WorkerManagerSingletonBean</injection-target-class>   
+					<injection-target-name>em</injection-target-name>  
+				</injection-target>  
+			</persistence-context-ref>
+		</session>
+		
+		<session>
+			<ejb-name>GlobalConfigurationSessionBean</ejb-name>  
+			<persistence-context-ref>  
+				<persistence-context-ref-name>persistence/em</persistence-context-ref-name>  
+				<persistence-unit-name>SignServerJPA</persistence-unit-name>  
+				<persistence-context-type>Transaction</persistence-context-type>  
+				<injection-target>   
+					<injection-target-class>org.signserver.ejb.GlobalConfigurationSessionBean</injection-target-class>   
+					<injection-target-name>em</injection-target-name>  
+				</injection-target>  
+			</persistence-context-ref>
+		</session>
+
+                <session>
+			<ejb-name>ServiceTimerSessionBean</ejb-name>  
+			<persistence-context-ref>  
+				<persistence-context-ref-name>persistence/em</persistence-context-ref-name>  
+				<persistence-unit-name>SignServerJPA</persistence-unit-name>  
+				<persistence-context-type>Transaction</persistence-context-type>  
+				<injection-target>   
+					<injection-target-class>org.signserver.ejb.ServiceTimerSessionBean</injection-target-class>   
+					<injection-target-name>em</injection-target-name>  
+				</injection-target>  
+			</persistence-context-ref>
+		</session>
+	</enterprise-beans>		     
+
+	
+	<!--COMMENT-REPLACEMENT(ejbjarfooter)-->
+	<!-- DO NOT REMOVE THE LINE ABOVE, IT IS USE FOR POSTPROCESSING DURING BUILD -->
+
+</ejb-jar>
+
+		

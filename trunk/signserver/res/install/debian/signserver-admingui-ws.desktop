@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Categories=GTK;Network
+Name=SignServer Admin GUI (remote)
+Icon=signserver-admingui
+Exec=/usr/bin/signserver-gui -ws

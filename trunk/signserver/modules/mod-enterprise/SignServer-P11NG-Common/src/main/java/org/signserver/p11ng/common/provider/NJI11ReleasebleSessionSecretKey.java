@@ -1,0 +1,51 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer Enterprise - Proprietary Modules.                         *
+ *                                                                       *
+ *  Copyright (c), PrimeKey Solutions AB. All rights reserved.           *
+ *  The use of the Proprietary Modules are subject to specific           *
+ *  commercial license terms.                                            *
+ *                                                                       *
+ *************************************************************************/
+package org.signserver.p11ng.common.provider;
+
+import java.security.Key;
+import javax.crypto.SecretKey;
+
+/**
+ * A SecretKey without a session.
+ *
+ * @author Markus Kilås
+ * @version $Id$
+ */
+public class NJI11ReleasebleSessionSecretKey extends NJI11Object implements Key, SecretKey {
+    
+    private final String algorithm;
+    private final String keySpec;
+    
+    public NJI11ReleasebleSessionSecretKey(long object, String algorithm, String keySpec, CryptokiDevice.Slot slot) {
+        super(object, slot);
+        this.algorithm = algorithm;
+        this.keySpec = keySpec;
+    }
+    
+    @Override
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
+    @Override
+    public String getFormat() {
+        return null;
+    }
+
+    @Override
+    public byte[] getEncoded() {
+        return null;
+    }
+    
+    public String getKeySpec() {
+        return keySpec;
+    }
+
+}

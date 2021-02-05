@@ -1,0 +1,27 @@
+Instructions to build the test Debian package
+---------------------------------------------
+
+$ mkdir HelloDeb
+$ cd HelloDeb
+$ mkdir DEBIAN
+
+Edit DEBIAN/control with the following contents:
+
+Package: HelloDeb
+Version: 1.0
+Section: custom
+Priority: optional
+Architecture: all
+Essential: no
+Installed-Size: 1024
+Maintainer: SignServer     
+Description: Test package             
+
+
+$ mkdir -p usr/share/testpackage
+$ echo "Test package" > usr/share/testpackage/testpackage.txt
+$ cd ..
+$ dpkg-deb --build HelloDeb
+
+
+

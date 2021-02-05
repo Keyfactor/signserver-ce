@@ -17,15 +17,6 @@
         <!-- Platform independent build -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <!-- Versions  -->
-        <!-- com.fasterxml.jackson.core -->
-        <jackson-core.version>2.11.3</jackson-core.version>
-        <jackson-databind.version>2.11.3</jackson-databind.version>
-        <!-- com.fasterxml.jackson.module -->
-        <jackson-module-jaxb-annotations.version>2.11.0</jackson-module-jaxb-annotations.version>
-        <!-- Plugins -->
-        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
     </properties>
 
     <profiles>
@@ -370,6 +361,11 @@
                 <artifactId>SparseBitSet</artifactId>
                 <version>1.2</version>
             </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-jaxb-annotations</artifactId>
+                <version>2.11.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -448,6 +444,12 @@
                     <artifactId>versions-maven-plugin</artifactId>
                     <version>2.7</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+
             </plugins>
         </pluginManagement>
         <plugins>

@@ -51,7 +51,7 @@
 	    <module>SignServer-Admin-web</module>
 
         <module>SignServer-ejb-AdminWS</module>
-        <module>SignServer-ejb-SignServerWS</module>
+        <module>SignServer-SignServerWS-web</module>
         <module>SignServer-ejb-ValidationWS</module>
         <module>SignServer-ClientWS-web</module>
 

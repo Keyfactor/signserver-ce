@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -40,6 +41,7 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Base64;
 import org.cesecore.audit.AuditLogEntry;
 import org.cesecore.audit.audit.SecurityEventsAuditorSessionRemote;
 import org.cesecore.audit.impl.integrityprotected.AuditRecordData;
@@ -59,10 +61,16 @@ import org.signserver.client.clientws.ClientWS;
 import org.signserver.client.clientws.ClientWSService;
 import org.signserver.client.clientws.DataResponse;
 import org.signserver.common.CESeCoreModules;
+import org.signserver.common.GenericSignRequest;
 import org.signserver.common.GlobalConfiguration;
+import org.signserver.common.RequestAndResponseManager;
 import org.signserver.common.ServiceLocator;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionRemote;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
+import org.signserver.protocol.ws.gen.ProcessRequestWS;
+import org.signserver.protocol.ws.gen.ProcessResponseWS;
+import org.signserver.protocol.ws.gen.SignServerWS;
+import org.signserver.protocol.ws.gen.SignServerWSService;
 import org.signserver.test.conf.QoSFilterPropertiesBuilder;
 import org.signserver.test.conf.SignerConfigurationBuilder;
 import org.signserver.test.conf.WorkerPropertiesBuilder;
@@ -79,7 +87,7 @@ import org.signserver.web.common.filters.QoSFilterProperties;
  */
 public class QoSFilterTest extends ModulesTestCase {
 
-    // Logger for this class
+    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(QoSFilterTest.class);
     //
     private static final String SIGNSERVER_HOME = System.getenv("SIGNSERVER_HOME");
@@ -193,7 +201,9 @@ public class QoSFilterTest extends ModulesTestCase {
         }
     }
 
-    // Test that a single request will not be queued by the QoSFilter.
+    /**
+     * Test that a single request will not be queued by the QoSFilter.
+     */
     @Test
     public void singleRequest() throws Exception {
         // given
@@ -268,7 +278,9 @@ public class QoSFilterTest extends ModulesTestCase {
         assertEquals("No requests should be queued", 20, priorityHits);
     }
 
-    // Test that setting a higher max priority level correctly works with a worker configured to that level.
+    /**
+     * Test that setting a higher max priority level correctly works with a worker configured to that level.
+     */
     @Test
     public void higherMaxPriorityLevel() throws Exception {
         // given
@@ -290,23 +302,9 @@ public class QoSFilterTest extends ModulesTestCase {
         assertTrue("Some requests were queued at priority 50", priorityHits > 0);
     }
 
-    // Test that when not setting GLOB.QOS_FILTER_ENABLED it default to inactive, not prioritizing any requests.
-    @Test
-    public void noRequestsPrioritizedByDefault() throws Exception {
-        // given
-        createTestFiles(20);
-        // when
-        CLIENT_CLI.execute("signdocument", "-servlet",
-                          "/signserver/worker/" + WORKER1_NAME,
-                          "-threads", "20",
-                          "-indir", inDir.getRoot().getAbsolutePath(),
-                          "-outdir", outDir.getRoot().getAbsolutePath());
-        // then
-        final int priorityHits = countPriorityHits(20, "not set");
-        assertEquals("No requests prioritized (unset)", 20, priorityHits);
-    }
-
-    // Test that setting GLOB.QOS_FILTER_ENABLED to explicitly false results in inactive, not prioritizing any requests.
+    /**
+     * Test that setting GLOB.QOS_FILTER_ENABLED to explicitly false results in inactive, not prioritizing any requests.
+     */
     @Test
     public void noRequestsPrioritizedExplicitFalse() throws Exception {
         // given
@@ -323,7 +321,9 @@ public class QoSFilterTest extends ModulesTestCase {
         assertEquals("No requests prioritized (false)", 20, priorityHits);
     }
 
-    // Test that setting GLOB.QOS_FILTER_ENABLED to an invalid value results in inactive, not prioritizing any requests.
+    /**
+     * Test that setting GLOB.QOS_FILTER_ENABLED to an invalid value results in inactive, not prioritizing any requests.
+     */
     @Test
     public void noRequestsPrioritizedInvalidEnabled() throws Exception {
         // given
@@ -341,6 +341,9 @@ public class QoSFilterTest extends ModulesTestCase {
         assertEquals("No requests prioritized (_invalid_)", 20, priorityHits);
     }
 
+    /**
+     * Test single ClientWS.processData request.
+     */
     @Test
     public void singleClientWSRequest() throws Exception {
         // given
@@ -349,6 +352,24 @@ public class QoSFilterTest extends ModulesTestCase {
         final ClientWS ws = createClientWSService();
         // when
         final DataResponse response = ws.processData("" + WORKER1_ID, null, requestData);
+        // then
+        LOG.info("Response: " + WSTestUtil.toJsonString(response));
+        assertNotNull("Response", response);
+        final int priorityHits = countPriorityHits(1, "not set");
+        assertEquals("Priority not set by filter", 1, priorityHits);
+    }
+
+    /**
+     * Test single SignServerWS.process request.
+     */
+    @Test
+    public void singleSignServerWSRequest() throws Exception {
+        // given
+        applyQoSFilterProperties(QoSFilterPropertiesBuilder.builder().withFilterEnabled("true"));
+        final SignServerWS ws = createSignServerWS();
+        final List<ProcessRequestWS> requests = populateRequestWSs("<?xml version=\"1.0\" encoding=\"UTF-8\"?><root/>");
+        // when
+        final List<ProcessResponseWS> response = ws.process(WORKER1_NAME, requests);
         // then
         LOG.info("Response: " + WSTestUtil.toJsonString(response));
         assertNotNull("Response", response);
@@ -482,5 +503,48 @@ public class QoSFilterTest extends ModulesTestCase {
             policy.setAutoRedirect(true);
         }
         return ws;
+    }
+
+    private SignServerWS createSignServerWS() {
+        // Configure Endpoint
+        final String endpointName = "SignServerWSService";
+        final String endpointUrl = "https://" + getHTTPHost() + ":" + getPublicHTTPSPort() + "/signserver/" +
+                endpointName + "/SignServerWS?wsdl";
+        final String endpointWsdl = "META-INF/wsdl/localhost_8080/signserver/" + endpointName + "/ClientWS.wsdl";
+        //
+        final QName qname = new QName("gen.ws.protocol.signserver.org", endpointName);
+        final URL resource = ClientWS.class.getResource(endpointWsdl);
+        final SignServerWSService signServerWSService = new SignServerWSService(resource, qname);
+        // Create an instance of WS
+        final SignServerWS ws = signServerWSService.getSignServerWSPort();
+        // Define binding
+        final BindingProvider bp = (BindingProvider) ws;
+        final Map<String, Object> requestContext = bp.getRequestContext();
+        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointUrl);
+        // Set the secure connection
+        if (sslSocketFactory != null) {
+            final Client client = ClientProxy.getClient(bp);
+            final HTTPConduit http = (HTTPConduit) client.getConduit();
+            final TLSClientParameters params = new TLSClientParameters();
+            params.setSSLSocketFactory(sslSocketFactory);
+            http.setTlsClientParameters(params);
+            final HTTPClientPolicy policy = http.getClient();
+            policy.setAutoRedirect(true);
+        }
+        return ws;
+    }
+
+    private List<ProcessRequestWS> populateRequestWSs(final String content) throws IOException {
+        final List<ProcessRequestWS> requests = new ArrayList<>();
+        final ProcessRequestWS request = new ProcessRequestWS();
+        request.setRequestDataBase64(
+                new String(
+                        Base64.encode(RequestAndResponseManager.serializeProcessRequest(
+                                new GenericSignRequest(4711, content.getBytes()))
+                        )
+                )
+        );
+        requests.add(request);
+        return requests;
     }
 }

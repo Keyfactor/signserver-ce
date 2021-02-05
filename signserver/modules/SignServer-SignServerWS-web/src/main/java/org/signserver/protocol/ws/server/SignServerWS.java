@@ -24,6 +24,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -67,7 +69,6 @@ import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.healthcheck.HealthCheckUtils;
 import org.signserver.protocol.ws.Certificate;
-import org.signserver.protocol.ws.ISignServerWS;
 import org.signserver.protocol.ws.ProcessRequestWS;
 import org.signserver.protocol.ws.ProcessResponseWS;
 import org.signserver.protocol.ws.WorkerStatusWS;
@@ -86,17 +87,21 @@ import org.signserver.validationservice.common.ValidateRequest;
 import org.signserver.validationservice.common.ValidateResponse;
 
 /**
- * Implementor of the ISignServerWS interface.
+ * Legacy SignServerWS interface.
  *
  * @author Philip Vendil
  * @version $Id$
  */
-@Stateless
 @WebService(serviceName = "SignServerWSService", targetNamespace = "gen.ws.protocol.signserver.org")
-public class SignServerWS implements ISignServerWS {
+public class SignServerWS {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(SignServerWS.class);
+
+    /**
+     * Defines all workers.
+     */
+    public static final String ALL_WORKERS = "ALLWORKERS";
 
     @Resource
     private WebServiceContext wsContext;
@@ -110,7 +115,7 @@ public class SignServerWS implements ISignServerWS {
     @EJB
     private ProcessSessionLocal processSession;
 
-    /** EntityManager is conditionally injected from ejb-jar.xml. */
+    /** EntityManager is conditionally injected from web.xml. */
     private EntityManager em;
 
     private String checkDBString = "Select count(*) from signerconfigdata";
@@ -124,8 +129,19 @@ public class SignServerWS implements ISignServerWS {
         dataFactory = DataUtils.createDataFactory();
     }
 
-    @Override
-    public Collection<WorkerStatusWS> getStatus(String workerIdOrName) throws InvalidWorkerIdException {
+    /**
+     * Method used to return the status of a worker at the sign server.
+     *
+     * @param workerIdOrName id or name of the worker that should report it's status or 0 for all workers.
+     * @return returns the status of the given workerID or name, "ALLWORKERS" will return all workers.
+     * available workers will report.
+     * @throws InvalidWorkerIdException if the given worker id  doesn't exist.
+     */
+    @WebMethod(operationName="getStatus")
+    public Collection<WorkerStatusWS> getStatus(
+            @WebParam(name = "arg0") final String workerIdOrName
+    ) throws InvalidWorkerIdException {
+        LOG.debug("WS getStatus called");
         final ArrayList<WorkerStatusWS> returnValues = new ArrayList<>();
         final LinkedList<String> errors = new LinkedList<>();
         //
@@ -138,7 +154,7 @@ public class SignServerWS implements ISignServerWS {
             errors.addAll(HealthCheckUtils.checkMemory(getMinimumFreeMemory()));
         }
         //
-        if (!workerIdOrName.equalsIgnoreCase(ISignServerWS.ALL_WORKERS)) {
+        if (!workerIdOrName.equalsIgnoreCase(ALL_WORKERS)) {
             // Specified WorkerId
             if (errors.isEmpty()) {
                 errors.addAll(checkSigner(WorkerIdentifier.createFromIdOrName(workerIdOrName)));
@@ -173,12 +189,21 @@ public class SignServerWS implements ISignServerWS {
     }
 
     /**
-     * @see  org.signserver.protocol.ws.ISignServerWS#process(String, Collection)
+     *
+     * @param workerIdOrName id or name of the worker that should report it's status or 0 for all workers.
+     * @param requests collection of sign requests to process
+     * @return a collection of corresponding responses.
+     * @throws InvalidWorkerIdException if the name of id couldn't be found.
+     * @throws IllegalRequestException if the request isn't correct.
+     * @throws CryptoTokenOfflineException if the signing token isn't online.
+     * @throws SignServerException if some other error occurred server side during process.
      */
-    @Override
+    @WebMethod(operationName="process")
     public Collection<ProcessResponseWS> process(
-            final String workerIdOrName, final Collection<ProcessRequestWS> requests
+            @WebParam(name = "arg0") final String workerIdOrName,
+            @WebParam(name = "arg1") final Collection<ProcessRequestWS> requests
     ) throws InvalidWorkerIdException, IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        LOG.debug("WS process called");
         final ArrayList<ProcessResponseWS> returnValues = new ArrayList<>();
         final HttpServletRequest servletRequest = getHttpServletRequest();
         final String requestIP = getRequestIP();

@@ -58,6 +58,7 @@
                                 <wsdlFile>${wsdl_resource}${wsdl_file}</wsdlFile>
                             </wsdlFiles>
                             <packageName>org.signserver.protocol.ws.gen</packageName>
+                            <wsdlLocation>http://localhost:8080/signserver/SignServerWSService/SignServerWS?wsdl" uri="SignServerWS/wsdl/SignServerWSService.wsdl</wsdlLocation>
                             <staleFile>${project.build.directory}/jaxws/stale/SignServerWS.stale</staleFile>
                         </configuration>
                         <id>wsimport-generate-SignServerWS</id>

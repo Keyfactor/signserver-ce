@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
         <version>5.5.1.CR2-prio-wp2-2-SNAPSHOT</version>
     </parent>
-    <artifactId>SignServer-ejb-SignServerWS</artifactId>
-    <packaging>ejb</packaging>
 
-    <name>SignServer-ejb-SignServerWS</name>
+    <artifactId>SignServer-SignServerWS-web</artifactId>
+    <packaging>war</packaging>
+    <name>SignServer-SignServerWS-web</name>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <dist.jar>${project.build.finalName}.jar</dist.jar>
+        <dist.jar>${project.build.finalName}.war</dist.jar>
         <module.name>signserverws</module.name>
         <module.priority>20</module.priority>
-        <postprocess.files>postprocess.file1</postprocess.files>
-        <postprocess.file1.src>${project.build.finalName}.jar</postprocess.file1.src>
-        <postprocess.file1.includes>META-INF/ejb-jar.xml,META-INF/jboss-webservices.xml,META-INF/sun-ejb-jar.xml</postprocess.file1.includes>
-        <postprocess.file1.dest></postprocess.file1.dest>
+        <module.web.web-uri>${dist.jar}</module.web.web-uri>
+        <module.web.context>/SignServerWSService</module.web.context>
     </properties>
 
     <dependencies>
@@ -48,10 +47,38 @@
             <artifactId>SignServer-Server</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SignServer-Web-Common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.helger.maven</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>wsgen-generate-SignServerWS-wsdl</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>wsgen</goal>
+                        </goals>
+                        <configuration>
+                            <sei>org.signserver.protocol.ws.server.SignServerWS</sei>
+                            <genWsdl>true</genWsdl>
+                            <inlineSchemas>true</inlineSchemas>
+                            <keep>false</keep>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -63,9 +90,10 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-ejb-plugin</artifactId>
+                <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <ejbVersion>3.1</ejbVersion>
+                    <failOnMissingWebXml>true</failOnMissingWebXml>
+                    <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
                 </configuration>
             </plugin>
         </plugins>

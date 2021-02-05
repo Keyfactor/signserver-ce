@@ -43,7 +43,7 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * System test calling ClientWSService.
- * <br/>
+ * <br>
  * This tests assumes that test-configuration.properties has been applied to SignServer.
  *
  * @author Andrey Sergeev 15-jan-2021
@@ -116,6 +116,7 @@ public class ClientWSServiceTest extends ModulesTestCase {
         removeWorker(WORKER_ID_INT);
     }
 
+    /** Tests that a request can be successfully sent and the values that comes back are not null. */
     @Test
     public void successOnProcessData() throws Exception {
         LOG.info("successOnProcessData");

@@ -71,17 +71,7 @@
             <injection-target-name>em</injection-target-name>
         </injection-target>
     </persistence-context-ref>
-    
-    <persistence-context-ref>
-        <persistence-context-ref-name>persistence/em</persistence-context-ref-name>
-        <persistence-unit-name>SignServerJPA</persistence-unit-name>
-        <persistence-context-type>Transaction</persistence-context-type>
-        <injection-target>
-            <injection-target-class>org.signserver.web.pub.HealthCheckServlet</injection-target-class>
-            <injection-target-name>em</injection-target-name>
-        </injection-target>
-    </persistence-context-ref>
-    
+
     <!--COMMENT-REPLACEMENT(ejbjarfooter)-->
     <!-- DO NOT REMOVE THE LINE ABOVE, IT IS USE FOR POSTPROCESSING DURING BUILD -->
     

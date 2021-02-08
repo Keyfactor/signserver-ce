@@ -21,6 +21,10 @@
         <module.priority>20</module.priority>
         <module.web.web-uri>${dist.jar}</module.web.web-uri>
         <module.web.context>/SignServerWSService</module.web.context>
+        <postprocess.files>postprocess.file1</postprocess.files>
+        <postprocess.file1.src>${project.build.finalName}.war</postprocess.file1.src>
+        <postprocess.file1.includes>WEB-INF/web.xml</postprocess.file1.includes>
+        <postprocess.file1.dest></postprocess.file1.dest>
     </properties>
 
     <dependencies>

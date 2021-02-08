@@ -48,6 +48,17 @@
         <url-pattern>/PrioritySignServerWS</url-pattern>
     </servlet-mapping>
 
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>restricted methods</web-resource-name>
+            <url-pattern>/*</url-pattern>
+            <http-method-omission>GET</http-method-omission>
+            <http-method-omission>POST</http-method-omission>
+            <http-method-omission>HEAD</http-method-omission>
+        </web-resource-collection>
+        <auth-constraint />
+    </security-constraint>
+
     <!-- DO NOT REMOVE THE FOLLOWING LINE, IT IS USED FOR POSTPROCESSING DURING BUILD -->
     <!--COMMENT-REPLACEMENT(ejbjarheader)-->
 
@@ -60,26 +71,18 @@
             <injection-target-name>em</injection-target-name>
         </injection-target>
     </persistence-context-ref>
-
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>restricted methods</web-resource-name>
-            <url-pattern>/*</url-pattern>
-            <http-method-omission>GET</http-method-omission>
-            <http-method-omission>POST</http-method-omission>
-            <http-method-omission>HEAD</http-method-omission>
-        </web-resource-collection>
-        <auth-constraint />
-    </security-constraint>
+    
+    <persistence-context-ref>
+        <persistence-context-ref-name>persistence/em</persistence-context-ref-name>
+        <persistence-unit-name>SignServerJPA</persistence-unit-name>
+        <persistence-context-type>Transaction</persistence-context-type>
+        <injection-target>
+            <injection-target-class>org.signserver.web.pub.HealthCheckServlet</injection-target-class>
+            <injection-target-name>em</injection-target-name>
+        </injection-target>
+    </persistence-context-ref>
+    
+    <!--COMMENT-REPLACEMENT(ejbjarfooter)-->
+    <!-- DO NOT REMOVE THE LINE ABOVE, IT IS USE FOR POSTPROCESSING DURING BUILD -->
+    
 </web-app>
-
-
-<persistence-context-ref>
-    <persistence-context-ref-name>persistence/em</persistence-context-ref-name>
-    <persistence-unit-name>SignServerJPA</persistence-unit-name>
-    <persistence-context-type>Transaction</persistence-context-type>
-    <injection-target>
-        <injection-target-class>org.signserver.web.pub.HealthCheckServlet</injection-target-class>
-        <injection-target-name>em</injection-target-name>
-    </injection-target>
-</persistence-context-ref>

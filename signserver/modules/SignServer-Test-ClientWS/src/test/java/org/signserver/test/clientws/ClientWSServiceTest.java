@@ -51,7 +51,6 @@ import static org.junit.Assert.assertNotNull;
  */
 public class ClientWSServiceTest extends ModulesTestCase {
 
-    // Logger for this class.
     private static final Logger LOG = Logger.getLogger(ClientWSServiceTest.class);
     // Endpoints configuration
     private final String ENDPOINT_NAME = "ClientWSService";

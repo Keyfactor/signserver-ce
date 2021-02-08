@@ -54,7 +54,6 @@ import org.signserver.server.log.LogMap;
  */
 public class SleepWorker extends BaseProcessable {
 
-    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(SleepWorker.class);
 
     // Worker properties

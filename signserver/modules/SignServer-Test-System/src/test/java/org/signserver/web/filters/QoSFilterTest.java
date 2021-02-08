@@ -87,7 +87,6 @@ import org.signserver.web.common.filters.QoSFilterProperties;
  */
 public class QoSFilterTest extends ModulesTestCase {
 
-    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(QoSFilterTest.class);
     //
     private static final String SIGNSERVER_HOME = System.getenv("SIGNSERVER_HOME");

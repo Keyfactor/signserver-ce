@@ -77,9 +77,7 @@ import org.signserver.web.common.filters.QoSFilter;
  */
 public class GenericProcessServlet extends AbstractProcessServlet {
 
-    /** Logger for this class. */
-    private static final Logger LOG = Logger.getLogger(
-            GenericProcessServlet.class);
+    private static final Logger LOG = Logger.getLogger(GenericProcessServlet.class);
 
     private static final long serialVersionUID = 1L;
     private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";

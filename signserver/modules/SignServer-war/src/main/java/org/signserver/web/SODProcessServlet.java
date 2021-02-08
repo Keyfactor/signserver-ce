@@ -59,55 +59,54 @@ import org.signserver.server.data.impl.UploadConfig;
 /**
  * SODProcessServlet is a Servlet that takes data group hashes from a htto post and puts them in a Map for passing
  * to the MRTD SOD Signer. It uses the worker configured by either workerId or workerName parameters from the request, defaulting to workerId 1.
- * 
+ *
  * It will create a SODSignRequest that is sent to the worker and expects a SODSignResponse back from the signer.
  * This is not located in the mrtdsod module package because it has to be available at startup to map urls.
- * 
+ *
  * @author Markus Kilås
  * @version $Id$
  */
 public class SODProcessServlet extends AbstractProcessServlet {
 
     private static final long serialVersionUID = 1L;
-    
-    /** Logger for this class. */
+
     private static final Logger LOG = Logger.getLogger(SODProcessServlet.class);
-    
+
     private static final String CONTENT_TYPE_BINARY = "application/octet-stream";
     private static final String CONTENT_TYPE_TEXT = "text/plain";
-    
+
     private static final String DISPLAYCERT_PROPERTY_NAME = "displayCert";
     private static final String DOWNLOADCERT_PROPERTY_NAME = "downloadCert";
     private static final String WORKERID_PROPERTY_NAME = "workerId";
     private static final String WORKERNAME_PROPERTY_NAME = "workerName";
     private static final String DATAGROUP_PROPERTY_NAME = "dataGroup";
-    
+
     /** Specifies if the fields are encoded in any way */
     private static final String ENCODING_PROPERTY_NAME = "encoding";
-    
+
     /** Default, values will be base64 decoded before use */
     /** if encoding = binary values will not be base64 decoded before use */
     private static final String ENCODING_BINARY = "binary";
-    
+
     /** Request to use a specific LDS version in the SOd. **/
     private static final String LDSVERSION_PROPERTY_NAME = "ldsVersion";
-    
+
     /** Request to put a specific unicode version in the SOd. **/
     private static final String UNICODE_PROPERTY_NAME = "unicodeVersion";
-    
+
     @EJB
     private ProcessSessionLocal processSession;
-    
+
     @EJB
     private WorkerSessionLocal workerSession;
 
     private DataFactory dataFactory;
     private final File fileRepository = new UploadConfig().getRepository();
-    
+
     private ProcessSessionLocal getProcessSession() {
         return processSession;
     }
-    
+
     private WorkerSessionLocal getWorkerSession() {
         return workerSession;
     }
@@ -153,7 +152,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
                 wi = new WorkerIdentifier(Integer.parseInt(id));
             }
         }
-        
+
         if (wi == null) {
             res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing worker name or ID");
             return;
@@ -207,7 +206,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
                                             LOG.trace("with value " + dataStr);
                                         }
                                     }
-                                    
+
                                     if (base64Encoded && data.length > 0) {
                                         try {
                                             data = Base64.decode(data);
@@ -277,16 +276,16 @@ public class SODProcessServlet extends AbstractProcessServlet {
                 final String xForwardedFor = req.getHeader(RequestContext.X_FORWARDED_FOR);
                 final LogMap logMap = LogMap.getInstance(context);
                 final RequestMetadata metadata = RequestMetadata.getInstance(context);
-                
+
                 if (xForwardedFor != null) {
                     context.put(RequestContext.X_FORWARDED_FOR, xForwardedFor);
                 }
-                
+
                 // Add credentials to the context
                 CredentialUtils.addToRequestContext(context, req, clientCertificate);
-                
+
                 addRequestMetaData(metadataHolder, metadata);
-                
+
                 final SODRequest signRequest = new SODRequest(requestId,
                     dataGroups, ldsVersion, unicodeVersion, responseData);
 
@@ -303,7 +302,7 @@ public class SODProcessServlet extends AbstractProcessServlet {
 
                 ReadableData readable = responseData.toReadableData();
                 res.setContentType(CONTENT_TYPE_BINARY);
-                
+
                 //EE7:res.setContentLengthLong()
                 res.addHeader("Content-Length", String.valueOf(readable.getLength()));
                 try (

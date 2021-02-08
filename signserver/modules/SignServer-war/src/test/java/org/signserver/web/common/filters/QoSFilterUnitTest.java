@@ -36,7 +36,9 @@ import static org.signserver.web.common.filters.QoSFilterProperties.QOS_PRIORITI
  */
 public class QoSFilterUnitTest {
 
-    // Test that global configuration cache is created once at filter init and values are cached.
+    /**
+     * Test that global configuration cache is created once at filter init and values are cached.
+     */
     @Test
     public void globalPropertiesCachedAtInit() {
         // given
@@ -60,7 +62,9 @@ public class QoSFilterUnitTest {
         assertEquals("Expected proper cache size", expectedCacheSize, filter.getCacheMapSize());
     }
 
-    // Test that global properties cache is not recreated when accessing a global property directly after init.
+    /**
+     * Test that global properties cache is not recreated when accessing a global property directly after init.
+     */
     @Test
     public void globalPropertiesNotRecreated() {
         // given
@@ -80,7 +84,9 @@ public class QoSFilterUnitTest {
         assertEquals("Expected proper cache size", expectedCacheSize, filter.getCacheMapSize());
     }
 
-    // Test that setting a global property will not immediately use the new value (i.e. still using cache).
+    /**
+     * Test that setting a global property will not immediately use the new value (i.e. still using cache).
+     */
     @Test
     public void globalPropertyCached() {
         // given
@@ -100,7 +106,9 @@ public class QoSFilterUnitTest {
         assertEquals("Expected proper cache size", expectedCacheSize, filter.getCacheMapSize());
     }
 
-    // Test that setting a global property will not immediately use the new value (i.e. still using cache).
+    /**
+     * Test that setting a global property will not immediately use the new value (i.e. still using cache).
+     */
     @Test
     public void globalPropertyCacheRecreated() throws InterruptedException {
         // given

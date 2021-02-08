@@ -39,7 +39,6 @@ import org.apache.log4j.Logger;
  */
 class AsyncPriorityQueuesListener implements AsyncListener {
 
-    // Logger for this class
     private static final Logger LOG = Logger.getLogger(AsyncPriorityQueuesListener.class);
 
     private final int priority;

@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
  * @version $Id$
  */
 public class SODProcessWorkerServlet extends HttpServlet {
-        /** Logger for this class. */
+
     private static final Logger LOG = Logger.getLogger(SODProcessWorkerServlet.class);
 
     private static final String SOD_SERVLET_URL = "/sod";
@@ -59,7 +59,7 @@ public class SODProcessWorkerServlet extends HttpServlet {
             }
 
             dispatcher.forward(req, resp);
-        }	
+        }
     }
 
     @Override
@@ -67,5 +67,5 @@ public class SODProcessWorkerServlet extends HttpServlet {
                     throws ServletException, IOException {
         doGet(req, resp);
     }
-    
+
 }

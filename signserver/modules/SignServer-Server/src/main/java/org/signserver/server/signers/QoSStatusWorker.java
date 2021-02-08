@@ -70,7 +70,7 @@ public class QoSStatusWorker extends BaseProcessable {
         // Suggest new file name
         suggestNewFileName(requestContext);
 
-        // As everyting went well, the client can be charged for the request
+        // As everything went well, the client can be charged for the request
         requestContext.setRequestFulfilledByWorker(true);
 
         // Return the response

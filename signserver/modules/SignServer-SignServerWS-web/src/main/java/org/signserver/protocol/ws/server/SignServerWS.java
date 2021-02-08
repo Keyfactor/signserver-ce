@@ -95,7 +95,6 @@ import org.signserver.validationservice.common.ValidateResponse;
 @WebService(serviceName = "SignServerWSService", targetNamespace = "gen.ws.protocol.signserver.org")
 public class SignServerWS {
 
-    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(SignServerWS.class);
 
     /**

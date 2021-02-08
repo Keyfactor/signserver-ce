@@ -77,7 +77,6 @@ import org.signserver.web.common.filters.QoSFilterProperties;
 @WebService(serviceName = "ClientWSService")
 public class ClientWS {
 
-    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(ClientWS.class);
 
     @Resource

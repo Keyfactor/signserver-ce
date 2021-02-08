@@ -41,8 +41,6 @@ public class QoSStatusWorkerUnitTest {
 
     /**
      * Test expected status and process output when QoS is disabled.
-     *
-     * @throws Exception 
      */
     @Test
     public void disabled() throws Exception {
@@ -58,12 +56,12 @@ public class QoSStatusWorkerUnitTest {
         final QoSStatusWorker instance = new QoSStatusWorker() {
             @Override
             AbstractStatistics getFilterStatistics() {
-                return new MockedStatistics(expectedEnabled, 
+                return new MockedStatistics(expectedEnabled,
                         expectedQueueSizes,
                         expectedMaxRequests,
                         expectedSemaphoreQueueLength,
                         expectedSemaphoreAvailablePermits);
-            }  
+            }
         };
 
         instance.init(WORKER_ID, new WorkerConfig(), null, null);
@@ -72,7 +70,7 @@ public class QoSStatusWorkerUnitTest {
         final WorkerStatusInfo status = instance.getStatus(null, null);
 
         // then
-        assertWorkerStatusInfo(status, expectedEnabled, expectedEntries, 
+        assertWorkerStatusInfo(status, expectedEnabled, expectedEntries,
                 expectedMaxRequests, expectedMaxPrio,
                 expectedQueueSizes,
                 expectedSemaphoreQueueLength,
@@ -100,8 +98,6 @@ public class QoSStatusWorkerUnitTest {
 
     /**
      * Test expected status and process output with enabled QoS.
-     *
-     * @throws Exception 
      */
     @Test
     public void enabled() throws Exception {
@@ -117,12 +113,12 @@ public class QoSStatusWorkerUnitTest {
         final QoSStatusWorker instance = new QoSStatusWorker() {
             @Override
             AbstractStatistics getFilterStatistics() {
-                return new MockedStatistics(expectedEnabled, 
+                return new MockedStatistics(expectedEnabled,
                         expectedQueueSizes,
                         expectedMaxRequests,
                         expectedSemaphoreQueueLength,
                         expectedSemaphoreAvailablePermits);
-            }  
+            }
         };
 
         instance.init(WORKER_ID, new WorkerConfig(), null, null);
@@ -160,7 +156,7 @@ public class QoSStatusWorkerUnitTest {
     /**
      * TODO: DSS-2247
      * For now keep these as helper methods duplicates in the system and unit
-     * tests, as for now SignServer-Test-Utils already has a depency back to
+     * tests, as for now SignServer-Test-Utils already has a dependency back to
      * this module, so moving it there to share them would introduce a
      * dependency loop.
      */
@@ -207,19 +203,19 @@ public class QoSStatusWorkerUnitTest {
                                    Integer.toString(expectedMaxPrio)),
                          briefEntries.get(position));
             position++;
-            
-            assertEquals("Semaphore Queue Size", 
-                    new WorkerStatusInfo.Entry("Semaphore Queue Size", 
+
+            assertEquals("Semaphore Queue Size",
+                    new WorkerStatusInfo.Entry("Semaphore Queue Size",
                             Integer.toString(expectedSemaphoreQueueLength)),
                     briefEntries.get(position));
             position++;
-            
-            assertEquals("Semaphore Available Permits", 
-                    new WorkerStatusInfo.Entry("Semaphore Available Permits", 
+
+            assertEquals("Semaphore Available Permits",
+                    new WorkerStatusInfo.Entry("Semaphore Available Permits",
                             Integer.toString(expectedSemaphoreAvailablePermits)),
                     briefEntries.get(position));
             position++;
-            
+
 
             for (int i = 0; i <= expectedMaxPrio; i++) {
                 final WorkerStatusInfo.Entry entry = briefEntries.get(position + i);
@@ -263,7 +259,7 @@ public class QoSStatusWorkerUnitTest {
             assertEquals("Max requests",
                          "MAX_REQUESTS=" + expectedMaxRequests,
                          lines[1]);
-            assertEquals("Max prio", 
+            assertEquals("Max prio",
                          "MAX_PRIORITY_LEVEL=" + expectedMaxPrio,
                          lines[2]);
 
@@ -274,7 +270,7 @@ public class QoSStatusWorkerUnitTest {
             }
         }
     }
-    
+
     private static class MockedStatistics extends AbstractStatistics {
 
         private final boolean enabled;
@@ -294,7 +290,7 @@ public class QoSStatusWorkerUnitTest {
             this.semaphoreQueueLength = semaphoreQueueLength;
             this.semaphoreAvailablePermits = semaphoreAvailablePermits;
         }
-        
+
         @Override
         public int getMaxPriorityLevel() {
             return queueSizes.length - 1;

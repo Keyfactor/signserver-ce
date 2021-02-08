@@ -27,13 +27,13 @@ import org.apache.log4j.Logger;
 /**
  * Servlet handling requests addressed to a specific worker using a
  * URL of the form /signserver/worker/<worker name>
- * 
+ *
  * @author Marcus Lundblad
  * @version $Id$
  *
  */
 public class GenericProcessWorkerServlet extends HttpServlet {
-    /** Logger for this class. */
+
     private static final Logger LOG = Logger.getLogger(GenericProcessWorkerServlet.class);
 
     private static final String PROCESS_SERVLET_URL = "/process";
@@ -63,7 +63,7 @@ public class GenericProcessWorkerServlet extends HttpServlet {
             }
 
             dispatcher.forward(req, resp);
-        }	
+        }
     }
 
     @Override

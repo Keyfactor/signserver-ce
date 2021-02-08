@@ -101,7 +101,6 @@ import static org.signserver.web.common.filters.QoSFilterProperties.QOS_PRIORITY
 @WebFilter(asyncSupported = true)
 public class QoSFilter implements Filter {
 
-    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(QoSFilter.class);
 
     /**

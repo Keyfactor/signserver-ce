@@ -132,6 +132,9 @@ public class ClientWSServiceTest extends ModulesTestCase {
         assertNotNull("Signer Certificate", response.getSignerCertificate());
     }
 
+    /**
+     * Tests for failure on request to non-existing worker.
+     */
     @Test
     public void failOnProcessOfNonExisting() throws Exception {
         LOG.info("failOnProcessDataOfNonExisting");
@@ -143,6 +146,9 @@ public class ClientWSServiceTest extends ModulesTestCase {
         ws.processData(NON_EXISTING_WORKER_ID, null, requestData);
     }
 
+    /**
+     * Tests for failure on request with invalid xml.
+     */
     @Test
     public void failOnProcessOfBrokenXml() throws Exception {
         LOG.info("failOnProcessOfBrokenXml");

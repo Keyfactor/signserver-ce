@@ -55,7 +55,6 @@ import static org.junit.Assert.assertNull;
 
 /**
  * Test calling the latest SignServerWSService using SignServer WSDL.
- * <br/>
  * This tests assumes that test-configuration.properties as been applied to SignServer.
  *
  * @author Markus Kilås

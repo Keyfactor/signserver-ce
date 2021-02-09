@@ -54,9 +54,7 @@ import static org.junit.Assert.assertNull;
 
 /**
  * Test calling SignServerWSService using SignServer 3.1 WSDL.
- * <br/>
  * The WS end-point URL changed between 3.1 and the latest.
- * <br/>
  * This tests assumes that test-configuration.properties has been applied to SignServer.
  *
  * @author Markus Kilås

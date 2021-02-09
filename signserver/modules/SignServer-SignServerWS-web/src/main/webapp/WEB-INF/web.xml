@@ -20,17 +20,13 @@
         <servlet-name>SignServerWS</servlet-name>
         <servlet-class>org.signserver.protocol.ws.server.SignServerWS</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>PrioritySignServerWS</servlet-name>
-        <servlet-class>org.signserver.protocol.ws.server.SignServerWS</servlet-class>
-    </servlet>
 
     <servlet-mapping>
         <servlet-name>SignServerWS</servlet-name>
         <url-pattern>/SignServerWS</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>PrioritySignServerWS</servlet-name>
+        <servlet-name>SignServerWS</servlet-name>
         <url-pattern>/PrioritySignServerWS</url-pattern>
     </servlet-mapping>
 

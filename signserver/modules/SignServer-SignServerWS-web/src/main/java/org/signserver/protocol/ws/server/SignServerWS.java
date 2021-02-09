@@ -129,7 +129,7 @@ public class SignServerWS {
     }
 
     /**
-     * Method used to return the status of a worker at the sign server.
+     * Method used to return the status of a worker at SignServer.
      *
      * @param workerIdOrName id or name of the worker that should report it's status or 0 for all workers.
      * @return returns the status of the given workerID or name, "ALLWORKERS" will return all workers.

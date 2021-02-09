@@ -51,6 +51,7 @@ import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.jce.ECKeyUtil;
+import org.bouncycastle.operator.BufferingContentSigner;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -582,7 +583,7 @@ public class CryptoTokenHelper {
 
         final ContentSigner contentSigner = contentSignerBuilder.build(keyPair.getPrivate());
 
-        return new JcaX509CertificateConverter().getCertificate(cg.build(contentSigner));
+        return new JcaX509CertificateConverter().getCertificate(cg.build(new BufferingContentSigner(contentSigner)));
     }
 
     public static TokenSearchResults searchTokenEntries(final KeyStoreDelegator keyStore, final int startIndex, final int max, final QueryCriteria qc, final boolean includeData, IServices services, char[] authCode) throws CryptoTokenOfflineException, QueryException {

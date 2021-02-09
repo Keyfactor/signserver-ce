@@ -10,20 +10,6 @@
         <filter-name>QoSFilter</filter-name>
         <filter-class>org.signserver.web.common.filters.QoSFilter</filter-class>
         <async-supported>true</async-supported>
-        <!-- The amount of milliseconds to wait attempting to acquire the semaphore. -->
-        <!-- Uncomment this block to override the default value.
-        <init-param>
-            <param-name>waitMs</param-name>
-            <param-value>50</param-value>
-        </init-param>
-        -->
-        <!--  -->
-        <!-- Uncomment this block to override the default value:
-        <init-param>
-            <param-name>suspendMs</param-name>
-            <param-value>-1</param-value>
-        </init-param>
-        -->
     </filter>
     <filter-mapping>
         <filter-name>QoSFilter</filter-name>
@@ -74,5 +60,5 @@
 
     <!--COMMENT-REPLACEMENT(ejbjarfooter)-->
     <!-- DO NOT REMOVE THE LINE ABOVE, IT IS USE FOR POSTPROCESSING DURING BUILD -->
-    
+
 </web-app>

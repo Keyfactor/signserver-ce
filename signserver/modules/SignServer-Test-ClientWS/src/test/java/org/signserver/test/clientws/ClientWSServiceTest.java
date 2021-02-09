@@ -43,7 +43,7 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * System test calling ClientWSService.
- * <br>
+ *
  * This tests assumes that test-configuration.properties has been applied to SignServer.
  *
  * @author Andrey Sergeev 15-jan-2021

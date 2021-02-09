@@ -88,8 +88,6 @@ import org.signserver.web.common.filters.QoSFilterProperties;
 public class QoSFilterTest extends ModulesTestCase {
 
     private static final Logger LOG = Logger.getLogger(QoSFilterTest.class);
-    //
-    private static final String SIGNSERVER_HOME = System.getenv("SIGNSERVER_HOME");
     // Workers
     private static final int WORKER1_ID = 1000;
     private static final String WORKER1_NAME = "SleepWorkerTest";
@@ -120,7 +118,6 @@ public class QoSFilterTest extends ModulesTestCase {
 
     @BeforeClass
     public static void setupClass() throws Exception {
-        assertNotNull("Please set SIGNSERVER_HOME environment variable", SIGNSERVER_HOME);
         addTestSleepWorker(
                 SignerConfigurationBuilder.builder()
                         .withSignerId(WORKER1_ID)

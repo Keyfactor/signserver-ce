@@ -79,11 +79,9 @@ import static org.signserver.web.common.filters.QoSFilterProperties.QOS_PRIORITY
  * allocated to admin users. Thus, regardless of load, admin users would always be able to access the web application.
  * </p><p>
  * The maxRequest limit is policed by a {@link Semaphore} and the filter will wait a short while attempting to acquire
- * the semaphore. This wait is controlled by the "waitMs" {@link #INIT_PARAM_WAIT_MS} init parameter
- * (or default {@link #DEFAULT_WAIT_MS}) and allows the expense of a suspend to be avoided if the semaphore is shortly
- * available. If the semaphore cannot be obtained, the request will be suspended for the default suspend period of the
- * container or the valued set as the "suspendMs" {@link #INIT_PARAM_SUSPEND_MS} init parameter (or default
- * {@link #DEFAULT_SUSPEND_MS}).
+ * the semaphore. This wait is controlled by the default {@link #DEFAULT_WAIT_MS} and allows the expense of a suspend to
+ * be avoided if the semaphore is shortly available. If the semaphore cannot be obtained, the request will be suspended
+ * for the default suspend period of the container or the valued set as the  default {@link #DEFAULT_SUSPEND_MS}.
  * </p><p>
  * The configuration is defined as Global Parameters:
  * <ul>
@@ -117,25 +115,12 @@ public class QoSFilter implements Filter {
     public static final long DEFAULT_WAIT_MS = 50;
     /**
      * Describes the default amount of milliseconds to suspend the acquire of semaphore.
-     * @see #INIT_PARAM_SUSPEND_MS
      */
     public static final long DEFAULT_SUSPEND_MS = -1;
     /**
      * Describes the default amount of seconds to keep cache of Global Configuration.
      */
     public static final int DEFAULT_CACHE_TTL_S = 10;
-    /**
-     * Describes the amount of milliseconds to wait attempting to acquire the semaphore. Represents the reference to
-     * <init-param/> of an implementation Filter in the web.xml. If undefined the default value is used.
-     * @see #DEFAULT_WAIT_MS
-     */
-    public static final String INIT_PARAM_WAIT_MS = "waitMs";
-    /**
-     * Describes the amount of milliseconds to suspend the acquire of semaphore. Represents the reference to
-     * <init-param/> of an implementation Filter in the web.xml. If undefined the default value is used.
-     * @see #DEFAULT_SUSPEND_MS
-     */
-    public static final String INIT_PARAM_SUSPEND_MS = "suspendMs";
 
     @EJB
     private GlobalConfigurationSessionLocal globalSession;
@@ -162,7 +147,7 @@ public class QoSFilter implements Filter {
         }
 
         /**
-         * Constructs a new instancee of State.
+         * Constructs a new instance of State.
          *
          * Normally the getInstance() method should be used but for testing
          * purposes this constructor can be used (by the QoSFilter) to create
@@ -175,8 +160,6 @@ public class QoSFilter implements Filter {
         private long globalPropertyCacheLastUpdated;
 
         // Timings
-        private long waitMs;
-        private long suspendMs;
         private long cacheTtlS = DEFAULT_CACHE_TTL_S;
 
         // Passes semaphore
@@ -253,28 +236,24 @@ public class QoSFilter implements Filter {
 
     /**
      * Returns the amount of time (in milliseconds) that the filter would wait for the semaphore to become available
-     * before suspending a request.
+     * before suspending a request. See {@link #DEFAULT_WAIT_MS}.
      *
      * @return the wait time (in milliseconds).
      */
     //J @ManagedAttribute("(short) amount of time filter will wait before suspending request (in ms)")
     public long getWaitMs() {
-        synchronized (state.globalPropertyCache) {
-            return state.waitMs;
-        }
+        return DEFAULT_WAIT_MS;
     }
 
     /**
      * Returns the amount of time (in milliseconds) that the filter would suspend a request for while waiting for the
-     * semaphore to become available.
+     * semaphore to become available. See {@link #DEFAULT_SUSPEND_MS}.
      *
      * @return the suspend time (in milliseconds).
      */
     //J @ManagedAttribute("amount of time filter will suspend a request for while waiting for the semaphore to become available (in ms)")
     public long getSuspendMs() {
-        synchronized (state.globalPropertyCache) {
-            return state.suspendMs;
-        }
+        return DEFAULT_SUSPEND_MS;
     }
 
     /**
@@ -317,9 +296,6 @@ public class QoSFilter implements Filter {
                 int maxRequests = getMaxRequestsFromConfig();
                 state.passesSemaphore = new Semaphore(maxRequests, true);
                 state.maxRequests = maxRequests;
-                //
-                state.waitMs = getLongFromInitParameter(filterConfig, INIT_PARAM_WAIT_MS, DEFAULT_WAIT_MS);
-                state.suspendMs = getLongFromInitParameter(filterConfig, INIT_PARAM_SUSPEND_MS, DEFAULT_SUSPEND_MS);
                 // Create queues and listeners
                 resizeQueuesAndListenersIfNeeded(getMaxPriorityLevelFromConfig());
             }
@@ -755,25 +731,6 @@ public class QoSFilter implements Filter {
             }
         }
         return newWorkerPriorities;
-    }
-
-    // Returns a long value of corresponding <init-param/> block or falls back to default value.
-    private long getLongFromInitParameter(
-            final FilterConfig filterConfig, final String initParamKey, final long defaultValue
-    ) {
-        final String initParamValue = filterConfig.getInitParameter(initParamKey);
-        if (initParamValue != null) {
-            try {
-                return Long.parseLong(initParamValue);
-            }
-            catch (NumberFormatException ex) {
-                LOG.error(
-                        "Illegal value (" + initParamValue + ") for init parameter " + initParamKey +
-                                ", using default value."
-                );
-            }
-        }
-        return defaultValue;
     }
 
     private int getPriorityFromPriorities(final int workerId, final Map<Integer, Integer> workerPriorities) {

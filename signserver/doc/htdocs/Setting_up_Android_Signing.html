@@ -308,6 +308,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Request_Prioritization.html">Setting up Request Prioritization</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -608,6 +612,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="QoS_Status_Worker.html">QoS Status Worker</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Time_Stamp_Signer.html">Time Stamp Signer</a>
 
             </li>
@@ -629,10 +637,6 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="ZoneZipFileServerSideSigner.html">ZoneZipFileServerSideSigner</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="QoS_Status_Worker.html">QoS Status Worker</a>
 
             </li>
                             </ul>
@@ -1402,6 +1406,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.6_Release_Notes.html">SignServer 5.6 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.5_Release_Notes.html">SignServer 5.5 Release Notes</a>
 
             </li>
@@ -1481,7 +1489,7 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Operations.html">SignServer Operations</a></li>
                                                             </ul>
-</div>            <h1 id="src-99156940"> <span>Setting up Android Signing</span></h1>
+</div>            <h1 id="src-111021306"> <span>Setting up Android Signing</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1493,7 +1501,7 @@
     <p  >    <span style="color: #000000;">
 The    </span>
  <a   href="APK_Signer.html">APK Signer</a>     <span style="color: #000000;">
-signs Android applications in the Android Package Kit (APK) format and supports all three Android application signing schemes:    </span>
+signs Android applications in the Android Package Kit (APK) format and supports the following Android application signing schemes:    </span>
     </p>
 <ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
 v1 scheme: based on JAR signing    </span>
@@ -1526,13 +1534,13 @@ The following sections describe how to set up the APK Signer. For information on
     <span style="color: #000000;">
 utilize     </span>
     <span style="color: #0e101a;">
-key rollover, see <a   href="#src-99156940_id-.SettingupAndroidSigningv5.5.0-RollingOvertoaNewKey">Rolling Over to a New Key</a>.    </span>
+key rollover, see <a   href="#src-111021306_id-.SettingupAndroidSigningv5.6.0-RollingOvertoaNewKey">Rolling Over to a New Key</a>.    </span>
     </p>
     <p  >    <span style="color: #0e101a;">
-For <a   href="Client-Side_Hashing.html">Client-Side Hashing</a>, instead the <a   href="APK_Hash_Signer.html">APK Hash Signer</a> should be used (Step 1) and requests should be sent using SignClient with the <i class=" ">-clientside</i> flag (Step 3), otherwise the below instructions also applies for that case.    </span>
+For <a  class="external-link" href="http://doc.primekey.com/display/SIGNDS/Client-Side+Hashing">Client-Side Hashing</a>, follow the instructions below but use the <a   href="APK_Hash_Signer.html">APK Hash Signer</a> (in <a   href="#src-111021306_id-.SettingupAndroidSigningv5.6.0-AddAPKSigner">Step 1</a>) and send requests using SignClient with the <tt class=" ">-clientside</tt> flag (in <a   href="#src-111021306_id-.SettingupAndroidSigningv5.6.0-TestSigning">Step 3</a>).    </span>
     </p>
     <p  >    </p>
-<ul class="toc-indentation "></ul>    <div class="section section-1" id="src-99156940_safe-id-aWQtLlNldHRpbmd1cEFuZHJvaWRTaWduaW5ndjUuNS4wLVByZXJlcXVpc2l0ZTpDb25maWd1cmVkQ3J5cHRvV29ya2Vy">
+<ul class="toc-indentation "></ul>    <div class="section section-1" id="src-111021306_safe-id-aWQtLlNldHRpbmd1cEFuZHJvaWRTaWduaW5ndjUuNi4wLVByZXJlcXVpc2l0ZTpDb25maWd1cmVkQ3J5cHRvV29ya2Vy">
         <h1 class="heading "><span>Prerequisite: Configured Crypto Worker</span></h1>
     <p  >    <span style="color: #000000;">
 As with all signers, a crypto worker, for instance using a software keystore or PKCS#11, should be available before setting up the APK signers.    </span>
@@ -1548,7 +1556,7 @@ APK signing allows rollover from a previous key to a new one. In the case that t
     <p  >    <span style="color: #000000;">
 If you do not already have a crypto worker configured, follow the steps below to set one up using a software keystore for testing.    </span>
     </p>
-    <div class="section section-2" id="src-99156940_id-.SettingupAndroidSigningv5.5.0-AddCryptoWorker">
+    <div class="section section-2" id="src-111021306_id-.SettingupAndroidSigningv5.6.0-AddCryptoWorker">
         <h2 class="heading "><span>Add Crypto Worker</span></h2>
     <p  >    <span style="color: #000000;">
 Do the following to set up a crypto worker using the sample keystore:    </span>
@@ -1556,7 +1564,7 @@ Do the following to set up a crypto worker using the sample keystore:    </span>
 <ol class=" "><li class=" ">    <p  >    <span style="color: #000000;">
 Select the AdminWeb <strong class="western ">Workers</strong> tab, and click <strong class="western ">Add</strong>.    </span>
 <br/>    <span style="color: #000000;">
-    <img  class="confluence-embedded-image" src="images/download/attachments/99156940/SettingUpSigner.png" alt="images/download/attachments/99156940/SettingUpSigner.png" width="500"  />
+    <img  class="confluence-embedded-image" src="images/download/attachments/111021306/SettingUpSigner.png" alt="images/download/attachments/111021306/SettingUpSigner.png" width="500"  />
     </span>
     </p>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
@@ -1573,7 +1581,7 @@ Remember the name of the crypto worker (for example, <strong class=" ">CryptoTok
     </p>
     </div>
     </div>
-    <div class="section section-1" id="src-99156940_safe-id-aWQtLlNldHRpbmd1cEFuZHJvaWRTaWduaW5ndjUuNS4wLVN0ZXAxOkFkZEFQS1NpZ25lckFkZEFQS1NpZ25lcg">
+    <div class="section section-1" id="src-111021306_safe-id-aWQtLlNldHRpbmd1cEFuZHJvaWRTaWduaW5ndjUuNi4wLVN0ZXAxOkFkZEFQS1NpZ25lckFkZEFQS1NpZ25lcg">
         <h1 class="heading "><span>Step 1: Add APK Signer </span></h1>
     <p  >    <span style="color: #000000;">
 Follow the steps below to add the APK Signer using the sample configuration file apk_signer.properties as a template.    </span>
@@ -1594,7 +1602,7 @@ Change the sample configuration properties as needed, for example:    </span>
 Update the <strong class=" ">NAME</strong> property.    </span>
     </p>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
-Update the <strong class=" ">CRYPTOTOKEN</strong> property to the name of your crypto worker, in the previous instructions <a   href="#src-99156940_id-.SettingupAndroidSigningv5.5.0-AddCryptoWorker">Add Crypto Worker</a> named <strong class=" ">CryptoTokenP12</strong>.    </span>
+Update the <strong class=" ">CRYPTOTOKEN</strong> property to the name of your crypto worker, in the previous instructions <a   href="#src-111021306_id-.SettingupAndroidSigningv5.6.0-AddCryptoWorker">Add Crypto Worker</a> named <strong class=" ">CryptoTokenP12</strong>.    </span>
     </p>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
 Update the <strong class=" ">AUTHTYPE</strong> so that the worker cannot be accessed without authentication (if using a live system).    </span>
@@ -1609,16 +1617,16 @@ Click <strong class=" ">Apply</strong> to load the configuration and list the wo
 Select the added worker in the list to open the <strong class=" ">Worker</strong> page.    </span>
     </p>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
-Check if the <strong class=" ">Worker status</strong> is Offline and if there are any errors listed. The &quot;No key with alias&quot; message means that the DEFAULTKEY property does not point to an existing key in the crypto token. This will be addressed in the next step <a   href="#src-99156940_id-.SettingupAndroidSigningv5.5.0-ChooseKeyandCertificate">Step 2: Choose Key and Certificate</a>.    </span>
+Check if the <strong class=" ">Worker status</strong> is Offline and if there are any errors listed. The &quot;No key with alias&quot; message means that the DEFAULTKEY property does not point to an existing key in the crypto token. This will be addressed in the next step <a   href="#src-111021306_id-.SettingupAndroidSigningv5.6.0-ChooseKeyandCertificate">Step 2: Choose Key and Certificate</a>.    </span>
     </p>
 </li></ol>    <p  >    <span style="color: #000000;">
 For a list of all APK Signer specific properties, see    </span>
  <a   href="APK_Signer.html">APK Signer</a>.    </p>
     </div>
-    <div class="section section-1" id="src-99156940_safe-id-aWQtLlNldHRpbmd1cEFuZHJvaWRTaWduaW5ndjUuNS4wLVN0ZXAyOkNob29zZUtleWFuZENlcnRpZmljYXRlQ2hvb3NlS2V5YW5kQ2VydGlmaWNhdGU">
+    <div class="section section-1" id="src-111021306_safe-id-aWQtLlNldHRpbmd1cEFuZHJvaWRTaWduaW5ndjUuNi4wLVN0ZXAyOkNob29zZUtleWFuZENlcnRpZmljYXRlQ2hvb3NlS2V5YW5kQ2VydGlmaWNhdGU">
         <h1 class="heading "><span>Step 2: Choose Key and Certificate </span></h1>
     <p  >    <span style="color: #000000;">
-You can skip this step if the <strong class=" ">Worker status</strong> is Active and the worker is set to use the desired existing key and certificate. Pay attention to the recommendations on the certificate validity to ensure that the certificate does not expire earlier than expected. Next, continue to <a   href="#src-99156940_id-.SettingupAndroidSigningv5.5.0-TestSigning">Step 3: Test Signing</a>.    </span>
+You can skip this step if the <strong class=" ">Worker status</strong> is Active and the worker is set to use the desired existing key and certificate. Pay attention to the recommendations on the certificate validity to ensure that the certificate does not expire earlier than expected. Next, continue to <a   href="#src-111021306_id-.SettingupAndroidSigningv5.6.0-TestSigning">Step 3: Test Signing</a>.    </span>
     </p>
     <p  >    <span style="color: #000000;">
 If the Worker status is Offline, you need to generate a new key to use with the signer. Follow the steps below to generate a new key-pair and install the certificate:    </span>
@@ -1648,13 +1656,13 @@ Set the <strong class=" ">DEFAULTKEY</strong> property to the name of the new ke
 The Worker is now listed with the status Active. Confirm that the certificate has the expected name and validity time etc.    </span>
     </p>
     </div>
-    <div class="section section-1" id="src-99156940_safe-id-aWQtLlNldHRpbmd1cEFuZHJvaWRTaWduaW5ndjUuNS4wLVN0ZXAzOlRlc3RTaWduaW5nVGVzdFNpZ25pbmc">
-        <h1 class="heading "><span id="src-99156940_id-.SettingupAndroidSigningv5.5.0-TestSigning" class="confluence-anchor-link"></span><span>Step 3: Test Signing </span></h1>
+    <div class="section section-1" id="src-111021306_safe-id-aWQtLlNldHRpbmd1cEFuZHJvaWRTaWduaW5ndjUuNi4wLVN0ZXAzOlRlc3RTaWduaW5nVGVzdFNpZ25pbmc">
+        <h1 class="heading "><span id="src-111021306_id-.SettingupAndroidSigningv5.6.0-TestSigning" class="confluence-anchor-link"></span><span>Step 3: Test Signing </span></h1>
     <p  >    <span style="color: #000000;">
 The following example shows how to sign using the SignServer Public Web. You can test signing using any of the SignServer client interfaces.    </span>
     </p>
 <ol class=" "><li class=" ">    <p  >    <span style="color: #000000;">
-Click <strong class=" ">Client Web</strong>.<br/>    <img  class="confluence-embedded-image" src="images/download/attachments/99156940/TestSigning.png" alt="images/download/attachments/99156940/TestSigning.png" width="500"  />
+Click <strong class=" ">Client Web</strong>.<br/>    <img  class="confluence-embedded-image" src="images/download/attachments/111021306/TestSigning.png" alt="images/download/attachments/111021306/TestSigning.png" width="500"  />
     </span>
     </p>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
@@ -1667,7 +1675,7 @@ Select the file to sign, for example <tt class=" ">myapplication-unsigned.apk.</
 Click <strong class=" ">Submit</strong> and store the resulting signed file, for example, <tt class=" ">myapplication-signed.apk.</tt>    </span>
     </p>
 </li></ol>    </div>
-    <div class="section section-1" id="src-99156940_safe-id-aWQtLlNldHRpbmd1cEFuZHJvaWRTaWduaW5ndjUuNS4wLVN0ZXA0OlZlcmlmeVNpZ25lZEFQSw">
+    <div class="section section-1" id="src-111021306_safe-id-aWQtLlNldHRpbmd1cEFuZHJvaWRTaWduaW5ndjUuNi4wLVN0ZXA0OlZlcmlmeVNpZ25lZEFQSw">
         <h1 class="heading "><span>Step 4: Verify Signed APK</span></h1>
     <p  >    <span style="color: #000000;">
 To test the signed file you can for instance use the official    </span>
@@ -1675,10 +1683,10 @@ To test the signed file you can for instance use the official    </span>
 tool from    </span>
  <a  class="external-link" href="https://developer.android.com/studio/releases/build-tools">Android SDK Build Tools</a>.    </p>
     <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  Version 0.9 or later of the apksigner tool is required as previous versions had issues if the APK contained a v3 signature.    </span>
     </p>
-    <div class="section section-2" id="src-99156940_id-.SettingupAndroidSigningv5.5.0-VerifySignedAPKusingapkgsigner">
+    <div class="section section-2" id="src-111021306_id-.SettingupAndroidSigningv5.6.0-VerifySignedAPKusingapkgsigner">
         <h2 class="heading "><span>Verify Signed APK using apkgsigner</span></h2>
     <p  >    <span style="color: #000000;">
 Run the following to verify the APK signature:    </span>
@@ -1693,7 +1701,7 @@ The apksigner tool lists whether the signatures were verified correctly or not a
     </p>
     </div>
     </div>
-    <div class="section section-1" id="src-99156940_id-.SettingupAndroidSigningv5.5.0-SigningwithMultipleSigners">
+    <div class="section section-1" id="src-111021306_id-.SettingupAndroidSigningv5.6.0-SigningwithMultipleSigners">
         <h1 class="heading "><span>Signing with Multiple Signers</span></h1>
     <p  >    <span style="color: #000000;">
 Usually, you sign an APK using only one signer. If you need to sign an APK using multiple signers, the v1 and v2 signature schemes allows signing with multiple signers.    </span>
@@ -1717,7 +1725,7 @@ Set <strong class=" ">V3_SIGNATURE=FALSE</strong> to disable V3 signature scheme
 Requests to sign with the APK Signer will now add signatures also from the other signers specified in the configuration.    </span>
     </p>
     </div>
-    <div class="section section-1" id="src-99156940_id-.SettingupAndroidSigningv5.5.0-RollingOvertoaNewKey">
+    <div class="section section-1" id="src-111021306_id-.SettingupAndroidSigningv5.6.0-RollingOvertoaNewKey">
         <h1 class="heading "><span>Rolling Over to a New Key</span></h1>
     <p  >    <span style="color: #000000;">
 Android Signature Scheme V3 supports signing with a new key by rolling over to the new key using a lineage file. In SignServer, the special worker    </span>
@@ -1726,7 +1734,7 @@ is used to create a lineage file that rolls over from an old signer to a new one
  <a   href="APK_Lineage_Signer.html">APK Lineage Signer</a>     <span style="color: #000000;">
 can be used to inspect an optionally modify the content of a lineage file.    </span>
     </p>
-    <div class="section section-2" id="src-99156940_id-.SettingupAndroidSigningv5.5.0-SettingupWorkersforKeyRotation">
+    <div class="section section-2" id="src-111021306_id-.SettingupAndroidSigningv5.6.0-SettingupWorkersforKeyRotation">
         <h2 class="heading "><span>Setting up Workers for Key Rotation </span></h2>
     <p  >    <span style="color: #000000;">
 Follow the example below to set up workers for key rotation:    </span>
@@ -1735,7 +1743,7 @@ Follow the example below to set up workers for key rotation:    </span>
 Make sure there is a worker available pointing to the old signer key. This could be the existing worker since before or a new worker that you set up with access to the old signer key. In this example, the old signer key is referred to as <strong class=" ">OldApkSigner.</strong>    </span>
     </p>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
-Set up a new worker pointing to the new key/certificate and name it <strong class=" ">NewApkSigner</strong>. For instructions on setting it up, see <a   href="#src-99156940_id-.SettingupAndroidSigningv5.5.0-AddAPKSigner">Step 1: Add APK Signer</a>.<br/>    </span>
+Set up a new worker pointing to the new key/certificate and name it <strong class=" ">NewApkSigner</strong>. For instructions on setting it up, see <a   href="#src-111021306_id-.SettingupAndroidSigningv5.6.0-AddAPKSigner">Step 1: Add APK Signer</a>.<br/>    </span>
     </p>
 </li><li class=" ">    <p  >Add the <a   href="APK_Rotate_Signer.html">APK Rotate Signer</a>,     <span style="color: #000000;">
 name it <strong class=" ">OldToNewApkRotateSigner</strong> and specify the following:    </span>
@@ -1750,14 +1758,14 @@ Optionally configure any of the properties <strong class=" ">OLD_SET_*</strong> 
 to allow inspecting the lineage file and optionally update it.    </span>
     </p>
 </li></ol>    <p  >    <span style="color: #000000;">
-    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <img  class="emoticon emoticon-warning" src="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  Make sure to set the appropriate authentication (AUTHTYPE) of each worker in order to prevent unauthorized usage of the signers. For more information, see    </span>
  <a   href="Authorization_Type.html">Authorization Type</a>.    </p>
     </div>
-    <div class="section section-2" id="src-99156940_id-.SettingupAndroidSigningv5.5.0-RollingOverfromOldtoNewSigner">
+    <div class="section section-2" id="src-111021306_id-.SettingupAndroidSigningv5.6.0-RollingOverfromOldtoNewSigner">
         <h2 class="heading "><span>Rolling Over from Old to New Signer</span></h2>
 <ol class=" "><li class=" ">    <p  >    <span style="color: #000000;">
-Confirm that the <a   href="APK_Rotate_Signer.html">APK Rotate Signer</a> <strong class=" ">OldToNewApkRotateSigner</strong> is correctly configured according to the <a   href="#src-99156940_id-.SettingupAndroidSigningv5.5.0-SettingupWorkersforKeyRotation">Setting up Workers for Key Rotation</a> instructions above:    </span>
+Confirm that the <a   href="APK_Rotate_Signer.html">APK Rotate Signer</a> <strong class=" ">OldToNewApkRotateSigner</strong> is correctly configured according to the <a   href="#src-111021306_id-.SettingupAndroidSigningv5.6.0-SettingupWorkersforKeyRotation">Setting up Workers for Key Rotation</a> instructions above:    </span>
     </p>
 <ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
 Specify the two signers to include in the lineage (old and new signer) by setting <strong class=" ">OTHER_SIGNERS=OldApkSigner, NewApkSigner</strong>.    </span>
@@ -1777,7 +1785,6 @@ If you do not have an existing lineage file, create a new lineage file by sendin
 <div class="line"><code class="plain">bin/signclient signdocument -workername OldToNewApkRotateSigner -data </code><code class="string">""</code><code class="plain"> -outfile old-to-</code><code class="keyword">new</code><code class="plain">-lineage1.bin</code></div>
 </div>
     </div>
-    <p  >    </p>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
 To continue on a previous lineage, either send in the lineage or a previous APK containing a signature with the lineage file:<br/>    </span>
     </p>
@@ -1787,7 +1794,6 @@ To continue on a previous lineage, either send in the lineage or a previous APK 
 <div class="line"><code class="plain">bin/signclient signdocument -workername OldToNewApkRotateSigner -infile old-to-</code><code class="keyword">new</code><code class="plain">-lineage0.bin -outfile old-to-</code><code class="keyword">new</code><code class="plain">-lineage1.bin</code></div>
 </div>
     </div>
-    <p  >    </p>
 </li></ul></li><li class=" ">    <p  >    <span style="color: #000000;">
 Inspect the produced lineage file using the <a   href="APK_Lineage_Signer.html">APK Lineage Signer</a>:<br/>    </span>
     </p>
@@ -1796,7 +1802,6 @@ Inspect the produced lineage file using the <a   href="APK_Lineage_Signer.html">
 <div class="line"><code class="plain">bin/signclient signdocument -workername ApkLineageSigner -metadata PRINT_CERTS=</code><code class="keyword">true</code><code class="plain"> -infile old-to-</code><code class="keyword">new</code><code class="plain">-lineage1.bin</code></div>
 </div>
     </div>
-    <p  >    </p>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
 Base64 encode the lineage file and copy the value:    </span>
     </p>
@@ -1819,7 +1824,7 @@ The <strong class=" ">NewApkSigner</strong> can now be used instead of the old o
     </p>
     </div>
     </div>
-    <div class="section section-1" id="src-99156940_id-.SettingupAndroidSigningv5.5.0-ModifyinganExistingLineage">
+    <div class="section section-1" id="src-111021306_id-.SettingupAndroidSigningv5.6.0-ModifyinganExistingLineage">
         <h1 class="heading "><span>Modifying an Existing Lineage</span></h1>
     <p  >    <span style="color: #000000;">
 The    </span>
@@ -1853,6 +1858,7 @@ Send in the previous lineage file:    </span>
 <div class="line"><code class="plain">bin/signclient signdocument -workername ApkLineageSigner -infile a-previous-lineage.bin -outfile </code><code class="keyword">new</code><code class="plain">-lineage.bin</code></div>
 </div>
     </div>
+    <p  >    </p>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
 Inspect the new lineage file:    </span>
     </p>
@@ -1861,6 +1867,7 @@ Inspect the new lineage file:    </span>
 <div class="line"><code class="plain">bin/signclient signdocument -workername ApkLineageSigner -infile </code><code class="keyword">new</code><code class="plain">-lineage.bin</code></div>
 </div>
     </div>
+    <p  >    </p>
 </li><li class=" ">    <p  >    <span style="color: #000000;">
 Copy the base64 encoded value of the <tt class=" ">new-lineage.bin</tt>:    </span>
     </p>
@@ -1869,7 +1876,7 @@ Copy the base64 encoded value of the <tt class=" ">new-lineage.bin</tt>:    </sp
 <div class="line"><code class="plain">base64 </code><code class="keyword">new</code><code class="plain">-lineage.bin</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >    <span style="color: #0e101a;">
+</li><li class=" ">    <p  class="auto-cursor-target">    <span style="color: #0e101a;">
 Set the base64 encoded lineage file content in the     </span>
 <strong class=" ">    <span style="color: #0e101a;">
 LINEAGE_FILE_CONTENT    </span>

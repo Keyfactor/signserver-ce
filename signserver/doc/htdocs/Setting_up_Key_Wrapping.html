@@ -308,6 +308,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Request_Prioritization.html">Setting up Request Prioritization</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -608,6 +612,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="QoS_Status_Worker.html">QoS Status Worker</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Time_Stamp_Signer.html">Time Stamp Signer</a>
 
             </li>
@@ -629,10 +637,6 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="ZoneZipFileServerSideSigner.html">ZoneZipFileServerSideSigner</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="QoS_Status_Worker.html">QoS Status Worker</a>
 
             </li>
                             </ul>
@@ -1402,6 +1406,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.6_Release_Notes.html">SignServer 5.6 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.5_Release_Notes.html">SignServer 5.5 Release Notes</a>
 
             </li>
@@ -1481,7 +1489,7 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Operations.html">SignServer Operations</a></li>
                                                             </ul>
-</div>            <h1 id="src-99157374"> <span>Setting up Key Wrapping</span></h1>
+</div>            <h1 id="src-111021610"> <span>Setting up Key Wrapping</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
@@ -1489,14 +1497,20 @@
     <p  >    </p>
     <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
     <p  >Key wrapping allows solving issues arising when the number of keys you need to handle exceeds the amount that can be stored in a limited storage space for an HSM. The feature enables exporting the key material in a protected manner and storing the wrapped, encrypted key in an external database.    </p>
-    <p  class="confluence-link">Follow the steps below to set up key wrapping. For more information and background on key wrapping, see the reference section <a   href="Key_Wrapping.html">Key Wrapping</a>.    </p>
-<ul class=" "><li class=" ">    <p  ><a   href="#src-99157374_id-.SettingupKeyWrappingv5.5.0-Step1SetUpCryptoWorkerwithSourceCryptoToken">Step 1: Set Up Crypto Worker with Source Crypto Token</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-99157374_id-.SettingupKeyWrappingv5.5.0-Step2SetUpKeyWrappingCryptoWorkerReferencingtheSourceCryptoWorker">Step 2: Set Up Key Wrapping Crypto Worker Referencing the Source Crypto Worker</a>    </p>
-</li><li class=" ">    <p  ><a   href="#src-99157374_id-.SettingupKeyWrappingv5.5.0-Step3SetUpSignerwithWrappedKey">Step 3: Set Up Signer with Wrapped Key</a>    </p>
-</li></ul>    <div class="section section-1" id="src-99157374_safe-id-aWQtLlNldHRpbmd1cEtleVdyYXBwaW5ndjUuNS4wLVN0ZXAxOlNldFVwQ3J5cHRvV29ya2Vyd2l0aFNvdXJjZUNyeXB0b1Rva2VuU3RlcDFTZXRVcENyeXB0b1dvcmtlcndpdGhTb3VyY2VDcnlwdG9Ub2tlbg">
-        <h1 class="heading "><span id="src-99157374_id-.SettingupKeyWrappingv5.5.0-Step1SetUpCryptoWorkerwithSourceCryptoToken" class="confluence-anchor-link"></span><span>Step 1: Set Up Crypto Worker with Source Crypto Token </span></h1>
-    <p  >To set up crypto worker with source crypto token, do the following:    </p>
-<ol class=" "><li class=" ">    <p  >Create source crypto worker <strong class=" ">CryptoTokenP11NG1</strong> using the sample configuration <strong class=" ">p11ng-crypto.properties</strong>. For details, see <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>.    </p>
+    <p  class="confluence-link">    <span style="color: #000000;">
+Follow the steps below to set up key wrapping. For more information and background on key wrapping, see the reference section     </span>
+<a   href="Key_Wrapping.html">Key Wrapping</a>.    </p>
+<ul class=" "><li class=" ">    <p  ><a   href="#src-111021610_id-.SettingupKeyWrappingv5.6.0-Step1SetUpCryptoWorkerwithSourceCryptoToken">Step 1: Set Up Crypto Worker with Source Crypto Token</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-111021610_id-.SettingupKeyWrappingv5.6.0-Step2SetUpKeyWrappingCryptoWorkerReferencingtheSourceCryptoWorker">Step 2: Set Up Key Wrapping Crypto Worker Referencing the Source Crypto Worker</a>    </p>
+</li><li class=" ">    <p  ><a   href="#src-111021610_id-.SettingupKeyWrappingv5.6.0-Step3SetUpSignerwithWrappedKey">Step 3: Set Up Signer with Wrapped Key</a>    </p>
+</li></ul>    <div class="section section-1" id="src-111021610_safe-id-aWQtLlNldHRpbmd1cEtleVdyYXBwaW5ndjUuNi4wLVN0ZXAxOlNldFVwQ3J5cHRvV29ya2Vyd2l0aFNvdXJjZUNyeXB0b1Rva2VuU3RlcDFTZXRVcENyeXB0b1dvcmtlcndpdGhTb3VyY2VDcnlwdG9Ub2tlbg">
+        <h1 class="heading "><span>Step 1: Set Up Crypto Worker with Source Crypto Token </span></h1>
+    <p  >    <span style="color: #000000;">
+To set up crypto worker with source crypto token, do the following:    </span>
+    </p>
+<ol class=" "><li class=" ">    <p  class="auto-cursor-target">    <span style="color: #000000;">
+Create source crypto worker <strong class=" ">CryptoTokenP11NG1</strong> using the sample configuration <strong class=" ">p11ng-crypto.properties</strong>. For details, see    </span>
+ <a   href="JackNJI11CryptoToken.html">JackNJI11CryptoToken</a>.    </p>
     <div  class="confbox programlisting">
                     <div class="title">Sample source crypto worker configuration</div>
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample source crypto worker configuration" data-linenumbers="false" data-firstline="1">
@@ -1519,12 +1533,18 @@
 <div class="line"><code class="plain">WORKERGENID1.DEFAULTKEY=testkey0</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >When the worker <strong class=" ">CryptoTokenP11NG1</strong> is ACTIVE, generate a secret key <strong class=" ">wrapkey001</strong> using algorithm <strong class=" ">AES</strong> and Key specification <strong class=" ">128</strong> to use as wrap key.    </p>
+</li><li class=" ">    <p  class="auto-cursor-target">    <span style="color: #000000;">
+When the worker <strong class=" ">CryptoTokenP11NG1</strong> is ACTIVE, generate a secret key <strong class=" ">wrapkey001</strong> using algorithm <strong class=" ">AES</strong> and Key specification <strong class=" ">128</strong> to use as wrap key.    </span>
+    </p>
 </li></ol>    </div>
-    <div class="section section-1" id="src-99157374_safe-id-aWQtLlNldHRpbmd1cEtleVdyYXBwaW5ndjUuNS4wLVN0ZXAyOlNldFVwS2V5V3JhcHBpbmdDcnlwdG9Xb3JrZXJSZWZlcmVuY2luZ3RoZVNvdXJjZUNyeXB0b1dvcmtlclN0ZXAyU2V0VXBLZXlXcmFwcGluZ0NyeXB0b1dvcmtlclJlZmVyZW5jaW5ndGhlU291cmNlQ3J5cHRvV29ya2Vy">
-        <h1 class="heading "><span id="src-99157374_id-.SettingupKeyWrappingv5.5.0-Step2SetUpKeyWrappingCryptoWorkerReferencingtheSourceCryptoWorker" class="confluence-anchor-link"></span><span>Step 2: Set Up Key Wrapping Crypto Worker Referencing the Source Crypto Worker </span></h1>
-    <p  >To set up key wrapping crypto worker referencing the source crypto worker, do the following:    </p>
-<ol class=" "><li class=" ">    <p  >Create key wrapping crypto worker <strong class=" ">CryptoTokenP11NG1KeyWrapping</strong> using the sample configuration <strong class=" ">p11ng-keywrapping-crypto.properties</strong>. For details, see <a   href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a> and <a   href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>.    </p>
+    <div class="section section-1" id="src-111021610_safe-id-aWQtLlNldHRpbmd1cEtleVdyYXBwaW5ndjUuNi4wLVN0ZXAyOlNldFVwS2V5V3JhcHBpbmdDcnlwdG9Xb3JrZXJSZWZlcmVuY2luZ3RoZVNvdXJjZUNyeXB0b1dvcmtlclN0ZXAyU2V0VXBLZXlXcmFwcGluZ0NyeXB0b1dvcmtlclJlZmVyZW5jaW5ndGhlU291cmNlQ3J5cHRvV29ya2Vy">
+        <h1 class="heading "><span>Step 2: Set Up Key Wrapping Crypto Worker Referencing the Source Crypto Worker </span></h1>
+    <p  >    <span style="color: #000000;">
+To set up key wrapping crypto worker referencing the source crypto worker, do the following:    </span>
+    </p>
+<ol class=" "><li class=" ">    <p  class="auto-cursor-target">    <span style="color: #000000;">
+Create key wrapping crypto worker <strong class=" ">CryptoTokenP11NG1KeyWrapping</strong> using the sample configuration <strong class=" ">p11ng-keywrapping-crypto.properties</strong>. For details, see    </span>
+ <a   href="JackNJI11KeyWrappingCryptoToken.html">JackNJI11KeyWrappingCryptoToken</a> and <a   href="JackNJI11KeyWrappingCryptoWorker.html">JackNJI11KeyWrappingCryptoWorker</a>.    </p>
     <div  class="confbox programlisting">
                     <div class="title">Sample key wrapping crypto worker configuration</div>
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample key wrapping crypto worker configuration" data-linenumbers="false" data-firstline="1">
@@ -1545,15 +1565,27 @@
 <div class="line"><code class="plain">WORKERGENID1.WRAPPING_CIPHER_ALGORITHM=CKM_AES_CBC_PAD</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >Create wrapped key(s).<br/>The wrapped key can be a common key (for example, wrappedkey001, wrappedkey002) or an individual user key (for example, <strong class=" ">userkey_foobar</strong>) depending on the requirement.<br/>For an individual user key, the key alias is a combination of user prefix and the user name. For example, for the key alias <strong class=" ">userkey_foobar</strong>, the <strong class=" ">userkey_</strong> is the user prefix and <strong class=" ">foobar</strong> is the user name.    </p>
-</li><li class=" ">    <p  >Generate Certificate Signing Request (CSR) for the wrapped key(s) created in the step 2 above, get certificate for the CSR, and install certificate for the key in token.    </p>
+</li><li class=" ">    <p  class="auto-cursor-target">    <span style="color: #000000;">
+Create wrapped key(s).    </span>
+    <span style="color: #000000;">
+The wrapped key can be a common key (for example, wrappedkey001, wrappedkey002) or an individual user key (for example, <strong class=" ">userkey_foobar</strong>) depending on the requirement.    </span>
+<br/>    <span style="color: #000000;">
+For an individual user key, the key alias is a combination of user prefix and the user name. For example, for the key alias <strong class=" ">userkey_foobar</strong>, the <strong class=" ">userkey_</strong> is the user prefix and <strong class=" ">foobar</strong> is the user name.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+Generate Certificate Signing Request (CSR) for the wrapped key(s) created in the step 2 above, get certificate for the CSR, and install certificate for the key in token.    </span>
+    </p>
 </li></ol>    </div>
-    <div class="section section-1" id="src-99157374_safe-id-aWQtLlNldHRpbmd1cEtleVdyYXBwaW5ndjUuNS4wLVN0ZXAzOlNldFVwU2lnbmVyd2l0aFdyYXBwZWRLZXlTdGVwM1NldFVwU2lnbmVyd2l0aFdyYXBwZWRLZXk">
-        <h1 class="heading "><span id="src-99157374_id-.SettingupKeyWrappingv5.5.0-Step3SetUpSignerwithWrappedKey" class="confluence-anchor-link"></span><span>Step 3: Set Up Signer with Wrapped Key </span></h1>
-    <p  >The wrapped key can be a common/fixed key <i class=" ">or</i> an individual user key depending on the requirement.    </p>
-    <div class="section section-2" id="src-99157374_id-.SettingupKeyWrappingv5.5.0-FixedKey">
+    <div class="section section-1" id="src-111021610_safe-id-aWQtLlNldHRpbmd1cEtleVdyYXBwaW5ndjUuNi4wLVN0ZXAzOlNldFVwU2lnbmVyd2l0aFdyYXBwZWRLZXlTdGVwM1NldFVwU2lnbmVyd2l0aFdyYXBwZWRLZXk">
+        <h1 class="heading "><span>Step 3: Set Up Signer with Wrapped Key </span></h1>
+    <p  >    <span style="color: #000000;">
+The wrapped key can be a common/fixed key <i class=" ">or</i> an individual user key depending on the requirement.    </span>
+    </p>
+    <div class="section section-2" id="src-111021610_id-.SettingupKeyWrappingv5.6.0-FixedKey">
         <h2 class="heading "><span>Fixed Key</span></h2>
-    <p  >Create PlainSigner using the sample configuration <strong class=" ">plainsigner.properties.</strong>    </p>
+    <p  >    <span style="color: #000000;">
+Create PlainSigner using the sample configuration <strong class=" ">plainsigner.properties.</strong>    </span>
+    </p>
     <div  class="confbox programlisting">
                     <div class="title">Sample Plain Signer configuration with fixed wrapped key</div>
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample Plain Signer configuration with fixed wrapped key" data-linenumbers="false" data-firstline="1">
@@ -1572,11 +1604,15 @@
 <div class="line"><code class="plain">WORKERGENID1.SIGNATUREALGORITHM=SHA256withRSA</code></div>
 </div>
     </div>
-    <p  >The sample config <strong class=" ">keywrapping-fixed_key.properties</strong> can also be used to create a <strong class=" ">XAdESSigner</strong> using a fixed wrapped key.    </p>
+    <p  >    <span style="color: #000000;">
+The sample config <strong class=" ">keywrapping-fixed_key.properties</strong> can also be used to create a <strong class=" ">XAdESSigner</strong> using a fixed wrapped key.    </span>
+    </p>
     </div>
-    <div class="section section-2" id="src-99157374_id-.SettingupKeyWrappingv5.5.0-IndividualKey">
+    <div class="section section-2" id="src-111021610_id-.SettingupKeyWrappingv5.6.0-IndividualKey">
         <h2 class="heading "><span>Individual Key</span></h2>
-    <p  >Create PlainSigner using the sample configuration <strong class=" ">plainsigner.properties</strong> and the following properties related to the Individual user key.    </p>
+    <p  >    <span style="color: #000000;">
+Create PlainSigner using the sample configuration <strong class=" ">plainsigner.properties</strong> and the following properties related to the Individual user key.    </span>
+    </p>
     <div  class="confbox programlisting">
                     <div class="title">Sample Plain Signer configuration with individual user wrapped key</div>
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-title="Sample Plain Signer configuration with individual user wrapped key" data-linenumbers="false" data-firstline="1">
@@ -1603,7 +1639,9 @@
 <div class="line"><code class="plain">WORKERGENID1.SIGNATUREALGORITHM=SHA256withRSA</code></div>
 </div>
     </div>
-    <p  >The sample configuration <strong class=" ">keywrapping-multiple_keys.properties</strong> can also be used to create a <strong class=" ">XAdESSigner</strong> using an individual wrapped key.    </p>
+    <p  >    <span style="color: #000000;">
+The sample configuration <strong class=" ">keywrapping-multiple_keys.properties</strong> can also be used to create a <strong class=" ">XAdESSigner</strong> using an individual wrapped key.    </span>
+    </p>
     </div>
     </div>
         </div>

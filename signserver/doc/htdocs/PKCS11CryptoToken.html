@@ -308,6 +308,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Request_Prioritization.html">Setting up Request Prioritization</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -608,6 +612,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="QoS_Status_Worker.html">QoS Status Worker</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Time_Stamp_Signer.html">Time Stamp Signer</a>
 
             </li>
@@ -629,10 +637,6 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="ZoneZipFileServerSideSigner.html">ZoneZipFileServerSideSigner</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="QoS_Status_Worker.html">QoS Status Worker</a>
 
             </li>
                             </ul>
@@ -1402,6 +1406,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.6_Release_Notes.html">SignServer 5.6 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.5_Release_Notes.html">SignServer 5.5 Release Notes</a>
 
             </li>
@@ -1492,7 +1500,7 @@
     <div class="section section-1" id="src-85929967_id-.PKCS11CryptoTokenv5.4.0-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >PKCS11 allows using an HSM that has a PKCS11 module, such as Utimaco, nCipher, SafeNet or AEP KeyPer.    </p>
-    <p  >SignServer uses the same underlying implementation of PKCS11 crypto tokens as EJBCA but since the token labels strings differ, it is important to use the properties listed in this section for SignServer. The EJBCA ClientToolbox tool can be used to generate and test PKCS11 keys to confirm that the keys can be used with SignServer. For more information, refer to the EJBCA documentation on <a   href="http://confluence.primekey.com/display/EJBCADS/.EJBCA+Client+Toolbox+v7.1.0">EJBCA ClientToolbox</a> and <a   href="http://confluence.primekey.com/display/EJBCADS/.Hardware+Security+Modules+%28HSM%29+v7.4.0">Hardware Security Modules (HSM)</a>.    </p>
+    <p  >SignServer uses the same underlying implementation of PKCS11 crypto tokens as EJBCA but since the token labels strings differ, it is important to use the properties listed in this section for SignServer. The EJBCA ClientToolbox tool can be used to generate and test PKCS11 keys to confirm that the keys can be used with SignServer. For more information, refer to the EJBCA documentation on <a   href="http://confluence.primekey.com/display/EJBCADS/.EJBCA+Client+Toolbox+v7.1.0">EJBCA ClientToolbox</a> and <a   href="http://confluence.primekey.com/display/EJBCADS/.Hardware+Security+Modules+%28HSM%29+v7.5.0">Hardware Security Modules (HSM)</a>.    </p>
     <p  >CRYPTOTOKEN_IMPLEMENTATION=<strong class=" ">org.signserver.server.cryptotokens.PKCS11CryptoToken</strong>    </p>
     </div>
     <div class="section section-1" id="src-85929967_id-.PKCS11CryptoTokenv5.4.0-AvailableProperties">
@@ -1517,7 +1525,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >The key alias of the private key to be used for testing that this crypto token is working.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  If this key does not exist, the crypto token/worker will show as OFFLINE even if it has been activated. This is typically the case when the crypto token has been set up for the first time and the key has not yet been generated. To resolve, generate a key with the key alias name.    </p>
     <p  >A property with this name is typically also accepted by the worker using this crypto token and will then be the key to use for actual signing.    </p>
             </td>
@@ -1551,7 +1559,7 @@
         <p  >SHAREDLIBRARY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+        <p  >    <img  class="emoticon emoticon-warning" src="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  This property is deprecated.    </p>
     <p  >Full path to the library containing the PKCS11 interface. From version 3.7.0 this must point to a file declared in signserver_deploy.properties (or using the built-in values). If this property is defined at the same time as SHAREDLIBRARYNAME they must point to the same library on the file system.    </p>
             </td>
@@ -1618,9 +1626,9 @@
 <div class="line"><code class="plain">}</code></div>
 </div>
     </div>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  The PKCS#11 attributes configuration is global per shared library. If specified in multiple workers, only the configuration from the first worker loaded will be used. Changing the property might not take effect without restarting the application server.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  For a Thales nCipher 'module protected' slot (slot index 0), CKA_PRIVATE must be false for the CKO_PRIVATEKEY to allow the key to be used without a login. Otherwise the key generation will fail with a CKR_USER_NOT_LOGGED_IN PKCS#11 error.    </p>
             </td>
         </tr>
@@ -1640,7 +1648,7 @@
 <div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS=CKM_RSA_PKCS, CKM_SHA256_RSA_PKCS, </code><code class="value">0x00000043</code><code class="plain">, CKM_SHA256_RSA_PKCS_PSS</code></div>
 </div>
     </div>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  This feature requires a patched Java Runtime Environment.    </p>
             </td>
         </tr>
@@ -1650,9 +1658,9 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >If set to true, the private key and certificate is cached in the worker so that they are not queried for each signature. This could potentially improve performance in some environments, typically where network HSMs or HSM slots with many keys are used. Default: true.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  This worker property is to be specified in the worker where the key to be used is specified by the DEFAULTKEY property. It is that key that will be cached locally in the worker. It is important to remember this if the crypto token is configured in a separate worker in which case this property should be specified in the worker that will be using the crypto token and not necessarily in the one having the crypto token configuration.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/vgrfky/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  When enabled, the signer certificate is also cached if taken from the token and not overridden by specifying it in the configuration. This means that if the certificate in the token is changed, the old certificate will still be used until the worker is reloaded, clearing the cache.    </p>
             </td>
         </tr>

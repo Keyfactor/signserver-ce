@@ -308,6 +308,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="Setting_up_Request_Prioritization.html">Setting up Request Prioritization</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Troubleshooting.html">Troubleshooting</a>
 
             </li>
@@ -608,6 +612,10 @@
 
             </li>
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="QoS_Status_Worker.html">QoS Status Worker</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="Time_Stamp_Signer.html">Time Stamp Signer</a>
 
             </li>
@@ -629,10 +637,6 @@
             </li>
                                         <li class="leaf">
         <a class="ht-nav-page-link" href="ZoneZipFileServerSideSigner.html">ZoneZipFileServerSideSigner</a>
-
-            </li>
-                                        <li class="leaf">
-        <a class="ht-nav-page-link" href="QoS_Status_Worker.html">QoS Status Worker</a>
 
             </li>
                             </ul>
@@ -1402,6 +1406,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.6_Release_Notes.html">SignServer 5.6 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.5_Release_Notes.html">SignServer 5.5 Release Notes</a>
 
             </li>
@@ -1486,21 +1494,21 @@
                                                                                                          <li class="shortcut"><a href="Workers_Page.html">Workers Page</a></li>
                                                                                      <li><a href="Worker_Page.html">Worker Page</a></li>
                                                             </ul>
-</div>            <h1 id="src-61833218"> <span>Worker Authorization Page</span></h1>
+</div>            <h1 id="src-108530823"> <span>Worker Authorization Page</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div class="section section-1" id="src-61833218_id-.WorkerAuthorizationPagev5.1.0-Clients">
+    <div class="section section-1" id="src-108530823_id-.WorkerAuthorizationPagev5.6.0-Clients">
         <h1 class="heading "><span>Clients</span></h1>
     <p  >Lists the clients authorized to access this worker using client certificate authentication (if used) and allows to edit or remove them.    </p>
     <p  >Note that the authorization list is present even if the worker is configured with a different AUTHTYPE and therefore not using the list.    </p>
     <p  >For step-by-step configuration instructions, see <a   href="Configure_Client_Certificate_Authentication_and_Authorization.html">Configure Client Certificate Authentication and Authorization</a>.    </p>
     <div  class="tablewrap">
-        <table class="wrapped confluenceTable">
+        <table class="wrapped relative-table confluenceTable">
                     <colgroup>
-                                    <col />
-                                    <col />
+                                    <col  width="7%"/>
+                                    <col  width="92%"/>
                             </colgroup>
         <thead class=" ">    <tr>
             <td  class="confluenceTh" rowspan="1" colspan="1">
@@ -1520,6 +1528,14 @@
     <p  >Alternatively chose to import from certificate by clicking <strong class=" ">From File</strong> and provide a certificate file, or click <strong class=" ">Load Current</strong> to load your administrator certificate. You then have the option to choose which of the existing fields to match on.    </p>
     <p  >Optionally, specify a free-text description of the rule.    </p>
     <p  >Click <strong class=" ">Submit</strong> to save the new rule.    </p>
+            </td>
+        </tr>
+    <tr>
+            <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Reload from database    </p>
+            </td>
+                <td  class="confluenceTd" rowspan="1" colspan="1">
+        <p  >Reloads the authorizations from database. This would normally only be needed when running SignServer in clustered setup with a shared database, and changes have been made to authorizations from another node.    </p>
             </td>
         </tr>
     <tr>

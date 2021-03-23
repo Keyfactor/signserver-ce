@@ -21,8 +21,8 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
 import org.signserver.common.CryptoTokenOfflineException;
@@ -46,7 +46,7 @@ public class ValidityTimeUtils {
      * Specified here as different versions of BouncyCastle (i.e. 1.45 vs 1.46) 
      * uses different types for it breaking runtime compatibility.
      */
-    private static final DERObjectIdentifier PRIVATE_KEY_USAGE_PERIOD = new DERObjectIdentifier("2.5.29.16");
+    private static final ASN1ObjectIdentifier PRIVATE_KEY_USAGE_PERIOD = new ASN1ObjectIdentifier("2.5.29.16");
   
     /**
      * Get the signing validity for the given worker, either notAfter(true) or 

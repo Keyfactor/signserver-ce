@@ -30,7 +30,6 @@ import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSAttributes;
@@ -355,13 +354,13 @@ public class MSAuthCodeTimeStampSigner extends BaseSigner {
 
                 if (includeSigningCertificateAttribute) {
                     try {
-                        final DERInteger serial = new DERInteger(x509cert.getSerialNumber());
+                        final ASN1Integer serial = new ASN1Integer(x509cert.getSerialNumber());
                         final X509CertificateHolder certHolder =
                                 new X509CertificateHolder(x509cert.getEncoded());
                         final X500Name issuer = certHolder.getIssuer();
                         final GeneralName name = new GeneralName(issuer);
                         final GeneralNames names = new GeneralNames(name);
-                        final IssuerSerial is = new IssuerSerial(names, ASN1Integer.getInstance(serial));
+                        final IssuerSerial is = new IssuerSerial(names, serial);
 
                         final ESSCertID essCertid =
                                 new ESSCertID(MessageDigest.getInstance("SHA-1").digest(x509cert.getEncoded()), is);

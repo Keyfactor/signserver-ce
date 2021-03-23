@@ -243,7 +243,7 @@ public class PdfPublicKeySecurityHandler {
             
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
             
-        DEROutputStream k = new DEROutputStream(baos);
+        ASN1OutputStream k = ASN1OutputStream.create(baos, ASN1Encoding.DER);
             
         k.writeObject(obj);  
         

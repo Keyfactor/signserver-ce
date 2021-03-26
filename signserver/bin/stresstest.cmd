@@ -36,15 +36,15 @@ set CLASSPATH=%MAIN_CLASSPATH%;%JEE_CLASSPATH%;%OPTIONAL_CLASSPATH%
 rem echo %CLASSPATH%
 
 rem Enable Java network debug logs
-rem set JAVA_OPTS="%JAVA_OPTS% -Djavax.net.debug=all"
-rem set JAVA_OPTS="%JAVA_OPTS% -Djavax.net.debug=ssl"
+rem set JAVA_OPTS=%JAVA_OPTS% -Djavax.net.debug=all
+rem set JAVA_OPTS=%JAVA_OPTS% -Djavax.net.debug=ssl
 
 rem Enable Java PKCS#11 debug logs
-rem set JAVA_OPTS="%JAVA_OPTS% -Djava.security.debug=sunpkcs11"
+rem set JAVA_OPTS=%JAVA_OPTS% -Djava.security.debug=sunpkcs11
 
 rem Enable Java debugging
-rem set JAVA_OPTS="%JAVA_OPTS% -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=n"
-rem set JAVA_OPTS="%JAVA_OPTS% -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=y"
+rem set JAVA_OPTS=%JAVA_OPTS% -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=n
+rem set JAVA_OPTS=%JAVA_OPTS% -Xrunjdwp:transport=dt_socket,address=8788,server=y,suspend=y
 
 set CLASS_NAME=org.signserver.test.performance.cli.Main
 

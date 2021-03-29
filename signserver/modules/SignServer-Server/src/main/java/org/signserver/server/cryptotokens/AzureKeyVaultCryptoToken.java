@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.server.cryptotokens;
 
+import java.io.IOException;
 import org.signserver.common.UnsupportedCryptoTokenParameter;
 import org.signserver.common.NoSuchAliasException;
 import java.security.InvalidAlgorithmParameterException;
@@ -32,9 +33,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.cesecore.keys.token.AzureCryptoToken;
 import org.cesecore.keys.token.CryptoTokenAuthenticationFailedException;
 import org.cesecore.keys.token.p11.exception.NoSuchSlotException;
@@ -202,7 +203,7 @@ public class AzureKeyVaultCryptoToken extends BaseCryptoToken {
                         }
                     }
                 }
-            } catch (org.cesecore.keys.token.CryptoTokenOfflineException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException | SignatureException | ProviderException ex) {
+            } catch (org.cesecore.keys.token.CryptoTokenOfflineException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException | SignatureException | ProviderException | OperatorCreationException | IOException ex) {
                 LOG.error("Error testing activation", ex);
             }
         }

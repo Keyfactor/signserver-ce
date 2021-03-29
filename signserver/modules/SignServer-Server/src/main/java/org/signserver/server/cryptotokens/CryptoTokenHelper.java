@@ -13,6 +13,7 @@
 package org.signserver.server.cryptotokens;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -43,6 +44,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 import javax.security.auth.x500.X500Principal;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.PredicateUtils;
@@ -337,7 +339,7 @@ public class CryptoTokenHelper {
                         } catch (ClassCastException ce) {
                             status = "Not testing keys with alias "
                                     + keyAlias + ". Not a private key.";
-                        } catch (InvalidKeyException | KeyStoreException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException | UnrecoverableKeyException ex) {
+                        } catch (InvalidKeyException | KeyStoreException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException | UnrecoverableKeyException | OperatorCreationException | IOException ex) {
                             LOG.error("Error testing key: " + keyAlias, ex);
                             status = ex.getMessage();
                         } finally {
@@ -374,7 +376,7 @@ public class CryptoTokenHelper {
      * @throws InvalidKeyException If signature verification failed or the key was invalid
      * @throws SignatureException If the signature could not be made or verified correctly
      */
-    public static void testSignAndVerify(PrivateKey privateKey, PublicKey publicKey, String signatureProvider, String signatureAlgorithm) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException {
+    public static void testSignAndVerify(PrivateKey privateKey, PublicKey publicKey, String signatureProvider, String signatureAlgorithm) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, SignatureException, OperatorCreationException, IOException {
         final byte input[] = "Lillan gick pa vagen ut, motte dar en katt...".getBytes();
         final String sigAlg;
         if (signatureAlgorithm == null) {
@@ -395,10 +397,13 @@ public class CryptoTokenHelper {
             LOG.trace("publicKey: " + publicKey);
             LOG.trace("publicKey class: " + publicKey.getClass().getName());
         }
-        final Signature signSignature = Signature.getInstance(sigAlg, signatureProvider);
-        signSignature.initSign(privateKey);
-        signSignature.update(input);
-        byte[] signBA = signSignature.sign();
+        final JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(sigAlg);
+        signerBuilder.setProvider(signatureProvider);
+        final ContentSigner signer = new BufferingContentSigner(signerBuilder.build(privateKey));
+        try (OutputStream signerOut = signer.getOutputStream()) {
+            signerOut.write(input);
+        }
+        final byte[] signBA = signer.getSignature();
         if (LOG.isTraceEnabled()) {
             LOG.trace("Created signature of size: " + signBA.length);
             LOG.trace("Created signature: " + new String(Hex.encode(signBA)));

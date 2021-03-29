@@ -326,7 +326,7 @@ public class PKCS11CryptoToken extends BaseCryptoToken {
                         }
                     }
                 }
-            } catch (org.cesecore.keys.token.CryptoTokenOfflineException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException | SignatureException | ProviderException ex) {
+            } catch (org.cesecore.keys.token.CryptoTokenOfflineException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException | SignatureException | ProviderException | OperatorCreationException | IOException ex) {
                 LOG.error("Error testing activation", ex);
             }
         }

@@ -236,11 +236,12 @@ public class PlainSigner extends BaseSigner {
                 signerBuilder.setProvider(crypto.getProvider());
                 ContentSigner signer = signerBuilder.build(privKey);
                 
-                OutputStream signerOut = signer.getOutputStream();
-                final byte[] buffer = new byte[4096]; 
-                int n = 0;
-                while (-1 != (n = in.read(buffer))) {
-                    signerOut.write(buffer, 0, n);
+                try (OutputStream signerOut = signer.getOutputStream()) {
+                    final byte[] buffer = new byte[4096]; 
+                    int n = 0;
+                    while (-1 != (n = in.read(buffer))) {
+                        signerOut.write(buffer, 0, n);
+                    }
                 }
                 
                 signedbytes = signer.getSignature();

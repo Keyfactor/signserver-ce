@@ -28,10 +28,16 @@ import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 import org.signserver.common.*;
@@ -197,16 +203,49 @@ public class PlainSigner extends BaseSigner {
             final PrivateKey privKey = crypto.getPrivateKey();
 
             final String sigAlg = signatureAlgorithm == null ? getDefaultSignatureAlgorithm(cert.getPublicKey()) : signatureAlgorithm;
-            final Signature signature = Signature.getInstance(sigAlg, crypto.getProvider());
-            signature.initSign(privKey);
-            
-            final byte[] buffer = new byte[4096]; 
-            int n = 0;
-            while (-1 != (n = in.read(buffer))) {
-                signature.update(buffer, 0, n);
+            final byte[] signedbytes;
+
+            if (sigAlg.toUpperCase(Locale.ENGLISH).startsWith("NONEWITH")) { 
+                // Special case as BC (ContentSignerBuilder) does not handle NONEwithRSA
+                final Signature signature = Signature.getInstance(sigAlg, crypto.getProvider());
+                signature.initSign(privKey);
+
+                final byte[] buffer = new byte[4096]; 
+                int n = 0;
+                while (-1 != (n = in.read(buffer))) {
+                    signature.update(buffer, 0, n);
+                }
+
+                signedbytes = signature.sign();
+            } else {
+                // Special handling to support the new Java names not handled by BC
+                Map<String, String> algorithmNames = new HashMap<>();
+                algorithmNames.put("SHA1withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA1withRSAandMGF1");
+                algorithmNames.put("SHA224withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA224withRSAandMGF1");
+                algorithmNames.put("SHA256withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA256withRSAandMGF1");
+                algorithmNames.put("SHA384withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA384withRSAandMGF1");
+                algorithmNames.put("SHA512withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA512withRSAandMGF1");
+
+                String effectiveSigAlgName = algorithmNames.get(sigAlg.toUpperCase(Locale.ENGLISH));
+                if (effectiveSigAlgName == null) {
+                    effectiveSigAlgName = sigAlg;
+                }
+
+                // Use BC for this as it supports the old algorithm names etc
+                JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(effectiveSigAlgName);
+                signerBuilder.setProvider(crypto.getProvider());
+                ContentSigner signer = signerBuilder.build(privKey);
+                
+                OutputStream signerOut = signer.getOutputStream();
+                final byte[] buffer = new byte[4096]; 
+                int n = 0;
+                while (-1 != (n = in.read(buffer))) {
+                    signerOut.write(buffer, 0, n);
+                }
+                
+                signedbytes = signer.getSignature();
             }
             
-            final byte[] signedbytes = signature.sign();
             out.write(signedbytes);
             
             logMap.put(IWorkerLogger.LOG_RESPONSE_ENCODED, new Loggable() {
@@ -232,7 +271,7 @@ public class PlainSigner extends BaseSigner {
                         responseData, cert, archiveId,
                         archivables,
                         CONTENT_TYPE);
-        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException ex) {
+        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | OperatorCreationException ex) {
             LOG.error("Error initializing signer", ex);
             throw new SignServerException("Error initializing signer", ex);
         } catch (IOException ex) {

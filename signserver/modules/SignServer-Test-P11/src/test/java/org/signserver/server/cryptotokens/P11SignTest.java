@@ -22,6 +22,8 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.MessageDigest;
+import java.security.PublicKey;
+import java.security.Signature;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
@@ -64,6 +66,7 @@ import org.bouncycastle.tsp.TimeStampResponse;
 import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
+import org.cesecore.util.CertTools;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -321,6 +324,58 @@ public class P11SignTest {
         } finally {
             workerSession.removeKey(new WorkerIdentifier(20020), key);
         }
+    }
+    
+    @Test
+    public void testPlainSigner_SHA256withRSAandMGF1() throws Exception {
+        Assume.assumeTrue("Test requires HSM that supports RSASSA-PSS", "true".equalsIgnoreCase(testCase.getConfig().getProperty("test.p11.PSS_SIGNATURE_ALGORITHM_SUPPORTED")));
+        final int workerId = WORKER_PLAIN;
+        try {
+            setupCryptoTokenProperties(CRYPTO_TOKEN, false);
+            setPlainSignerProperties();
+            workerSession.setWorkerProperty(20020, "DEFAULTKEY", existingKey1);
+            workerSession.setWorkerProperty(20020, "SIGNATUREALGORITHM", "SHA256withRSAandMGF1");
+            workerSession.reloadConfiguration(20020);
+
+            // Generate CSR
+            PKCS10CertReqInfo certReqInfo = new PKCS10CertReqInfo("SHA256WithRSAandMGF1", "CN=Worker" + 20020, null);
+            AbstractCertReqData reqData = (AbstractCertReqData) workerSession.getCertificateRequest(new WorkerIdentifier(20020), certReqInfo, false);
+
+            // Issue certificate
+            PKCS10CertificationRequest csr = new PKCS10CertificationRequest(reqData.toBinaryForm());
+            KeyPair issuerKeyPair = CryptoUtils.generateRSA(1024);
+            X509CertificateHolder cert = new X509v3CertificateBuilder(new X500Name("CN=TestP11 Issuer"), BigInteger.ONE, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)), csr.getSubject(), csr.getSubjectPublicKeyInfo()).build(new JcaContentSignerBuilder("SHA256withRSAandMGF1").setProvider("BC").build(issuerKeyPair.getPrivate()));
+            
+            // Install certificate and chain
+            workerSession.uploadSignerCertificate(20020, cert.getEncoded(), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.uploadSignerCertificateChain(20020, Collections.singletonList(cert.getEncoded()), GlobalConfiguration.SCOPE_GLOBAL);
+            workerSession.reloadConfiguration(20020);
+            
+            X509Certificate xcert = CertTools.getCertfromByteArray(cert.getEncoded(), X509Certificate.class);
+
+            // Test active
+            List<String> errors = workerSession.getStatus(new WorkerIdentifier(20020)).getFatalErrors();
+            assertEquals("errors: " + errors, 0, errors.size());
+
+            byte[] plainText = "some-data".getBytes(StandardCharsets.US_ASCII);
+
+            // Test signing
+            GenericSignResponse response = testCase.signGenericDocument(20020, plainText);
+            byte[] signatureBytes = response.getProcessedData();
+            
+            assertTrue("signature verification", verifySignature(plainText, signatureBytes, "SHA256withRSAandMGF1", xcert.getPublicKey(), "BC"));
+        } finally {
+            testCase.removeWorker(workerId);
+        }
+    }
+    
+    public static boolean verifySignature(final byte[] plainText, final byte[] signatureBytes, final String sigAlgName, final PublicKey publicKey, final String provider) throws Exception {
+        final boolean result;
+        Signature signature = Signature.getInstance(sigAlgName, provider);
+        signature.initVerify(publicKey);
+        signature.update(plainText);
+        result = signature.verify(signatureBytes);
+        return result;
     }
 
     /**

@@ -270,7 +270,6 @@ public class PatchedJreP11Test {
     }
     
     private void signTestWithPSSAlgorithm(String algorithm) throws Exception {
-        Assume.assumeTrue("Test requires patched JRE", CryptoTokenHelper.isJREPatched());
         Assume.assumeTrue("Test requires HSM that supports RSASSA-PSS", "true".equalsIgnoreCase(base.getConfig().getProperty("test.p11.PSS_SIGNATURE_ALGORITHM_SUPPORTED")));
         LOG.info("signTestWithPSSAlgorithm: " + algorithm);
         try {

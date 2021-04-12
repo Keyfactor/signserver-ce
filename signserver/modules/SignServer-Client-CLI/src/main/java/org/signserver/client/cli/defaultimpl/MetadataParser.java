@@ -31,7 +31,10 @@ public class MetadataParser {
         final Map<String, String> metadata = new HashMap<>();
         
         for (final String value : optionValues) {
-            final String[] valueSplit = value.split("=");
+            /* split at first occurance of =, value of parameter can contain
+             * additional = characters
+             */
+            final String[] valueSplit = value.split("=", 2);
             
             if (valueSplit.length != 2) {
                 throw new IllegalCommandArgumentsException("Meta data or extra option parameters must be specified as KEY=VALUE");

@@ -67,7 +67,11 @@ public class RequestContext implements Serializable {
      */
     public static final String REMOTE_IP = "REMOTE_IP";
     
-    
+    /**
+     * Constant for QoS priority level.
+     */
+    public static final String QOS_PRIORITY = "QOS_PRIORITY";
+
     /**
      * Used to fetch the forwarded IP address header if it exists, otherwise 'null' is returned.
      */

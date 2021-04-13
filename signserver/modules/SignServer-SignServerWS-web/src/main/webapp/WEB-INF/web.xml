@@ -7,12 +7,12 @@
     <display-name>SignServerWS</display-name>
 
     <filter>
-        <filter-name>QoSFilter</filter-name>
-        <filter-class>org.signserver.web.common.filters.QoSFilter</filter-class>
+        <filter-name>ExtensionFilter</filter-name>
+        <filter-class>org.signserver.web.common.filters.ExtensionFilter</filter-class>
         <async-supported>true</async-supported>
     </filter>
     <filter-mapping>
-        <filter-name>QoSFilter</filter-name>
+        <filter-name>ExtensionFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 

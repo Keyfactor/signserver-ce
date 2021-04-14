@@ -55,19 +55,15 @@ public class MetadataParserUnitTest {
      *
      * @throws Exception 
      */
-    @Test
+    @Test(expected = IllegalCommandArgumentsException.class)
+    @SuppressWarnings("UnusedReturnValue")
     public void parseMetadataInvalid() throws Exception {
         // given
         final String[] input = { "optionwithoutparam" };
 
         // when
-        try {
-            final Map<String, String> result = MetadataParser.parseMetadata(input);
+        MetadataParser.parseMetadata(input);
 
-            // not expected (previous call should throw exception
-            fail("Should trow IllegalCommandArgumensException");
-        } catch (IllegalCommandArgumentsException e) {
-            // expected
-        }
+        // expected to throw IllegalCommandArgumentsException (as per annotation)
     }
 }

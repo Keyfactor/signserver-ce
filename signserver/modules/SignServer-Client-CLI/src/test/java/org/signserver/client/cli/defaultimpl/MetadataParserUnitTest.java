@@ -37,7 +37,8 @@ public class MetadataParserUnitTest {
                                  "option2=value2",
                                  "option3=valuewithadditional=",
                                  "option4=valuewithdouble==",
-                                 "option5=value=more" };
+                                 "option5=valuewithtriple===",
+                                 "option6=value=more" };
 
         // when
         final Map<String, String> result = MetadataParser.parseMetadata(input);
@@ -48,7 +49,8 @@ public class MetadataParserUnitTest {
         assertEquals("Second value", "value2", result.get("option2"));
         assertEquals("Third value", "valuewithadditional=", result.get("option3"));
         assertEquals("Forth value", "valuewithdouble==", result.get("option4"));
-        assertEquals("Forth value", "value=more", result.get("option5"));
+        assertEquals("Fifth value", "valuewithtriple===", result.get("option5"));
+        assertEquals("Sixth value", "value=more", result.get("option6"));
     }
 
     /**

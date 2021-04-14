@@ -33,21 +33,22 @@ public class MetadataParserUnitTest {
     @Test
     public void parseMetadataValid() throws Exception {
         // given
-        final int expectedNumItems = 4;
         final String[] input = { "option1=value1",
                                  "option2=value2",
                                  "option3=valuewithadditional=",
-                                 "option4=value=more" };
+                                 "option4=valuewithdouble==",
+                                 "option5=value=more" };
 
         // when
         final Map<String, String> result = MetadataParser.parseMetadata(input);
 
         // expect
-        assertEquals("Number of parsed items", expectedNumItems, result.size());
+        assertEquals("Number of parsed items", input.length, result.size());
         assertEquals("First value", "value1", result.get("option1"));
         assertEquals("Second value", "value2", result.get("option2"));
         assertEquals("Third value", "valuewithadditional=", result.get("option3"));
-        assertEquals("Forth value", "value=more", result.get("option4"));
+        assertEquals("Forth value", "valuewithdouble==", result.get("option4"));
+        assertEquals("Forth value", "value=more", result.get("option5"));
     }
 
     /**

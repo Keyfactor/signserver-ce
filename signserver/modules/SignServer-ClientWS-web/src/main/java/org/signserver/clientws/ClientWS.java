@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -37,6 +38,7 @@ import org.signserver.common.AccessDeniedException;
 import org.signserver.common.AuthorizationRequiredException;
 import org.signserver.common.CryptoTokenOfflineException;
 import org.signserver.common.IllegalRequestException;
+import org.signserver.common.InvalidWorkerIdException;
 import org.signserver.common.NoSuchWorkerException;
 import org.signserver.common.RequestContext;
 import org.signserver.common.RequestMetadata;
@@ -50,6 +52,7 @@ import org.signserver.common.data.SignatureRequest;
 import org.signserver.common.data.SignatureResponse;
 import org.signserver.ejb.interfaces.GlobalConfigurationSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
+import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.server.CredentialUtils;
 import org.signserver.server.data.impl.CloseableReadableData;
 import org.signserver.server.data.impl.CloseableWritableData;
@@ -86,6 +89,9 @@ public class ClientWS {
 
     @EJB
     private GlobalConfigurationSessionLocal globalSession;
+
+    @EJB
+    private WorkerSessionLocal workerSession;
 
     private DataFactory dataFactory;
 
@@ -129,8 +135,30 @@ public class ClientWS {
             // Upload handling (Note: UploadUtil.cleanUp() in finally clause)
 
             final Request req = new SignatureRequest(requestId, requestData, responseData);
+            
+            WorkerIdentifier workerIdentifier = WorkerIdentifier.createFromIdOrName(workerIdOrName);
 
-            final Response resp = getProcessSession().process(new AdminInfo("CLI user", null, null), WorkerIdentifier.createFromIdOrName(workerIdOrName), req, requestContext);
+            // Check if this came in as a high priority request
+            Set<Integer> highPriorityWorkers = (Set<Integer>) getServletRequest().getAttribute(RequestContext.QOS_PRIORITY_WORKER_ID_LIST);
+            if (highPriorityWorkers == null) {
+                LOG.debug("Not highest priority request");
+            } else {
+                if (!workerIdentifier.hasId()) {
+                    try {
+                        workerIdentifier = new WorkerIdentifier(workerSession.getWorkerId(workerIdentifier.getName()), workerIdentifier.getName());
+                    } catch (InvalidWorkerIdException ex) {
+                        LOG.debug("No such worker: " + ex.getMessage());
+                    }
+                }
+
+                if (!highPriorityWorkers.contains(workerIdentifier.getId())) {
+                    LOG.error("Worker with id " + workerIdentifier.getId() + " not one of the highest priority workers: " + highPriorityWorkers);
+                    throw new RequestFailedException("Requests to the high priority endpoint not allowed for this worker");
+                }
+            }
+            
+
+            final Response resp = getProcessSession().process(new AdminInfo("CLI user", null, null), workerIdentifier, req, requestContext);
 
             if (resp instanceof SignatureResponse) {
                 final SignatureResponse signResponse = (SignatureResponse) resp;
@@ -293,17 +321,17 @@ public class ClientWS {
         return result;
     }
 
-    private String getRequestIP() {
+    private HttpServletRequest getServletRequest() {
         MessageContext msgContext = wsContext.getMessageContext();
-        HttpServletRequest request = (HttpServletRequest) msgContext.get(MessageContext.SERVLET_REQUEST);
+        return (HttpServletRequest) msgContext.get(MessageContext.SERVLET_REQUEST);
+    }
 
-        return request.getRemoteAddr();
+    private String getRequestIP() {
+        return getServletRequest().getRemoteAddr();
     }
 
     private X509Certificate getClientCertificate() {
-        MessageContext msgContext = wsContext.getMessageContext();
-        HttpServletRequest request = (HttpServletRequest) msgContext.get(MessageContext.SERVLET_REQUEST);
-        X509Certificate[] certificates = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
+        X509Certificate[] certificates = (X509Certificate[]) getServletRequest().getAttribute("javax.servlet.request.X509Certificate");
 
         if (certificates != null) {
             return certificates[0];
@@ -312,8 +340,7 @@ public class ClientWS {
     }
 
     private RequestContext handleRequestContext(final List<Metadata> requestMetadata) {
-        final HttpServletRequest servletRequest =
-                (HttpServletRequest) wsContext.getMessageContext().get(MessageContext.SERVLET_REQUEST);
+        final HttpServletRequest servletRequest = getServletRequest();
         String requestIP = getRequestIP();
         X509Certificate clientCertificate = getClientCertificate();
         final RequestContext requestContext = new RequestContext(clientCertificate, requestIP);

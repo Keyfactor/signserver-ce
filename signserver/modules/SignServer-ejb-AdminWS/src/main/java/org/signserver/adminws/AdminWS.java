@@ -519,10 +519,17 @@ public class AdminWS {
         
         final ICertReqData data = worker.getCertificateRequest(adminInfo, new WorkerIdentifier(signerId),
                 certReqInfo, explicitEccParameters, keyAlias);
-        if (!(data instanceof Base64SignerCertReqData)) {
+        if (data instanceof AbstractCertReqData) {
+            try {
+                return new Base64SignerCertReqData(Base64.encode(((AbstractCertReqData) data).toBinaryForm()));
+            } catch (IOException ex) {
+                throw new RuntimeException("Unable to encode cert req data", ex);
+            }
+        } else if (data instanceof Base64SignerCertReqData) {
+            return (Base64SignerCertReqData) data;
+        } else {
             throw new RuntimeException("Unsupported cert req data");
         }
-        return (Base64SignerCertReqData) data;
     }
     
     /**

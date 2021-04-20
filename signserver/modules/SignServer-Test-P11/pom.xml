@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.6.1.Alpha1-SNAPSHOT</version>
+        <version>5.6.1.CR1</version>
     </parent>
     <artifactId>SignServer-Test-P11</artifactId>
     <name>SignServer-Test-P11</name>
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>org.signserver</groupId>
             <artifactId>SignServer-Module-OpenPGP</artifactId>
-            <version>5.6.1.Alpha1-SNAPSHOT</version>
+            <version>5.6.1.CR1</version>
             <scope>test</scope>
             <type>jar</type>
         </dependency>

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.signserver</groupId>
         <artifactId>SignServer-Modules</artifactId>
-        <version>5.6.1.CR1</version>
+        <version>5.6.1.CR2-SNAPSHOT</version>
     </parent>
     <artifactId>SignServer-OpenPGP-Common</artifactId>
     <name>SignServer-OpenPGP-Common</name>

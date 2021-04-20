@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.6.0</p>
+                    <p>Version: 5.6.1</p>
                 </div>
             </header>
 
@@ -1406,6 +1406,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.6.1_Release_Notes.html">SignServer 5.6.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link current" href="SignServer_5.6_Release_Notes.html">SignServer 5.6 Release Notes</a>
 
             </li>
@@ -1503,7 +1507,7 @@ The PrimeKey SignServer team is pleased to announce the release of SignServer 5.
 With this release, we are introducing support for request prioritization, allowing incoming signing requests to be assigned different priority levels based on configuration.    </span>
     </p>
     <p  >    <span style="color: #000000;">
-This release also brings support for Authenticode re-signing, enabling signing of Microsoft Authenticode signed PE and MSI files with an additional signature.    </span>
+This release also brings support for Authenticode resigning, enabling signing of Microsoft Authenticode signed PE and MSI files with an additional signature.    </span>
     </p>
     <p  >    <span style="color: #000000;">
 Deployment options include <a  class="external-link" href="https://doc.primekey.com/x/hZj_/">SignServer Hardware Appliance</a> and <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud</a>.    </span>
@@ -1519,10 +1523,10 @@ By setting up priority levels for different signing request types, you can now e
 The new SignServer Request Prioritization feature ensures that response times for high-priority requests can be optimized while lower priority requests may get queued. Priority levels are configured as part of the worker configuration. For more information, see <a   href="Setting_up_Request_Prioritization.html">Setting up Request Prioritization</a>.<br/>    </span>
     </p>
     </div>
-    <div class="section section-2" id="src-111021246_id-.SignServer5.6ReleaseNotesv5.6.0-AuthenticodeRe-signing">
-        <h2 class="heading "><span>Authenticode Re-signing</span></h2>
+    <div class="section section-2" id="src-111021246_id-.SignServer5.6ReleaseNotesv5.6.0-AuthenticodeResigning">
+        <h2 class="heading "><span>Authenticode Resigning</span></h2>
     <p  >    <span style="color: #000000;">
-SignServer 5.6.0 introduces support for signing Microsoft Authenticode signed PE and MSI files with an additional signature. By signing authenticate files with multiple signatures the files can be made compatible with the signing schemes of both legacy and modern Microsoft platforms.    </span>
+SignServer 5.6.0 introduces support for signing Microsoft Authenticode signed PE and MSI files with an additional signature. By signing application files with multiple signatures the files can be made compatible with the signing schemes of both legacy and modern Microsoft platforms.    </span>
     </p>
     <p  >    <span style="color: #000000;">
 For information on configuring and signing using the SignServer MS Authenticode signer, see <a  class="external-link" href="https://doc.primekey.com/signserver/code-signing-how-to-guides/authenticode-code-signing-technical-how-to/authenticode-code-signing">Authenticode Code Signing</a>.    </span>
@@ -1592,7 +1596,7 @@ Stresstest tool lockups at exit with QoS Filter    </span>
 
 
             <nav id="ht-post-nav">
-                <a href="SignServer_Release_Notes.html" class="ht-post-nav-prev">
+                <a href="SignServer_5.6.1_Release_Notes.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1601,7 +1605,7 @@ Stresstest tool lockups at exit with QoS Filter    </span>
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>SignServer Release Notes</span>
+            <span>SignServer 5.6.1 Release Notes</span>
         </a>
                 <a href="SignServer_5.5_Release_Notes.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"

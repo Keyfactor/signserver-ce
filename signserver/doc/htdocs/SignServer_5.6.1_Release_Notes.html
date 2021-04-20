@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <title>QoS Status Worker - SignServer - Documentation Space</title> -->
-    <title>QoS Status Worker - SignServer Manual</title>
+    <!-- <title>SignServer 5.6.1 Release Notes - SignServer - Documentation Space</title> -->
+    <title>SignServer 5.6.1 Release Notes - SignServer Manual</title>
 
     <meta name="description" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0, user-scalable=yes">
@@ -612,7 +612,7 @@
 
             </li>
                                         <li class="leaf">
-        <a class="ht-nav-page-link current" href="QoS_Status_Worker.html">QoS Status Worker</a>
+        <a class="ht-nav-page-link" href="QoS_Status_Worker.html">QoS Status Worker</a>
 
             </li>
                                         <li class="leaf">
@@ -1406,7 +1406,7 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
-        <a class="ht-nav-page-link" href="SignServer_5.6.1_Release_Notes.html">SignServer 5.6.1 Release Notes</a>
+        <a class="ht-nav-page-link current" href="SignServer_5.6.1_Release_Notes.html">SignServer 5.6.1 Release Notes</a>
 
             </li>
                                         <li class="leaf">
@@ -1492,242 +1492,70 @@
         <!-- <li><a href="SignServer_Manual.html">SignServer - Documentation Space</a></li> -->
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                                              <li><a href="" onclick="$('.shortcut').each(function(){$(this).removeClass('shortcut')}); $(this).parent().addClass('shortcut'); return false;">...</a> </li>
-                                        <li class="shortcut"><a href="SignServer_Reference.html">SignServer Reference</a></li>
-                                                                                                         <li class="shortcut"><a href="SignServer_Workers.html">SignServer Workers</a></li>
-                                                                                     <li><a href="SignServer_Signers.html">SignServer Signers</a></li>
+                                        <li class="shortcut"><a href="SignServer_Release_Information.html">SignServer Release Information</a></li>
+                                                                                     <li><a href="SignServer_Release_Notes.html">SignServer Release Notes</a></li>
                                                             </ul>
-</div>            <h1 id="src-113779315"> <span>QoS Status Worker</span></h1>
+</div>            <h1 id="src-113780350"> <span>SignServer 5.6.1 Release Notes</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
     <p  >    <span style="color: #000000;">
-    </span>
-    </p>
-    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
-    <p  >    <span style="color: #000000;">
-The QoS status worker has the fully qualified class name: <strong class=" ">org.signserver.server.signers.QoSStatusWorker</strong>    </span>
-    </p>
-    <div class="section section-1" id="src-113779315_id-.QoSStatusWorkerv5.6.1-Overview">
-        <h1 class="heading "><span>Overview</span></h1>
-    <p  >    <span style="color: #000000;">
-The QoS status worker provides status of the QoS prioritization web filter (when enabled). The worker is used for setting up Request Prioritization, allowing you to assign different priority levels to different signing requests, in a SignServer system with multiple workers configured to serve different types of signing requests. For more information, see <a   href="Setting_up_Request_Prioritization.html">Setting up Request Prioritization</a>.<br/>    </span>
+The PrimeKey SignServer team is pleased to announce the release of SignServer 5.6.1.    </span>
     </p>
     <p  >    <span style="color: #000000;">
-This worker produces text output in new-line separated key-value format with status information from the web filter.    </span>
+This minor release brings improvements for the SHAxWithRSAandMGF1 / RSASSA-PSS algorithms on certain Java versions. These improvements are required in certain customer deployments due to the Java Virtual Machine (JVM) implementations.    </span>
     </p>
     <p  >    <span style="color: #000000;">
-Currently, the request data is ignored. It is recommended to send a request with an empty body as additional behaviors could be introduced in the future.    </span>
+The SignServer 5.6.1 release also includes other improvements and bug fixes.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+Deployment options include <a  class="external-link" href="https://doc.primekey.com/x/4YT_/">SignServer Hardware Appliance</a> and <a  class="external-link" href="https://doc.primekey.com/x/RwNu">SignServer Cloud</a>.    </span>
+    </p>
+    <div class="section section-1" id="src-113780350_id-.SignServer5.6.1ReleaseNotesv5.6.1-UpgradeInformation">
+        <h1 class="heading "><span>Upgrade Information</span></h1>
+    <p  >    <span style="color: #000000;">
+No database changes are required for this release.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+Review the    </span>
+ <a   href="SignServer_Upgrade_Notes.html">SignServer Upgrade Notes</a>     <span style="color: #000000;">
+for important information on changes and requirements to be aware of when upgrading SignServer. For upgrade instructions, see    </span>
+ <a   href="Upgrade_SignServer.html">Upgrade SignServer</a>.    </p>
+    <p  >    <span style="color: #000000;">
+SignServer 5.6.1 is included in    </span>
+ <a  class="external-link" href="https://doc.primekey.com/x/hZj_/">SignServer Hardware Appliance</a>     <span style="color: #000000;">
+and <a  class="external-link" href="https://doc.primekey.com/x/L4T_/">SignServer Cloud</a>.    </span>
     </p>
     </div>
-    <div class="section section-1" id="src-113779315_safe-id-aWQtLlFvU1N0YXR1c1dvcmtlcnY1LjYuMS1PdXRwdXRLZXkvVmFsdWVQYWlycw">
-        <h1 class="heading "><span>Output Key/Value Pairs</span></h1>
-    <div  class="tablewrap">
-        <table class="relative-table wrapped confluenceTable">
-                    <colgroup>
-                                    <col  width="24%"/>
-                                    <col  width="75%"/>
-                            </colgroup>
-        <thead class=" ">    <tr>
-            <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-Output key/value pair    </span>
-    </p>
-            </td>
-                <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-Description    </span>
-    </p>
-            </td>
-        </tr>
-</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-FILTER_ENABLED=true/false    </span>
-    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-False if the filter is disabled, otherwise true. When set to true, additional status fields are included.    </span>
-    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-MAX_REQUESTS=&lt;integer&gt;    </span>
-    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-The maximum number of concurrent requests before the filter will place requests in prioritized queues.    </span>
-    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-MAX_PRIORITY_LEVEL=&lt;integer&gt;    </span>
-    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-The highest priority level available for requests.    </span>
-    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-QUEUE_SIZE(n)=&lt;integer&gt;    </span>
-    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-One line for each priority level (0&hellip;MAX_PRIORITY_LEVEL) with the value representing the current number of requests placed in queue for that priority.    </span>
-    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-QOS_CACHE_TTL_S=&lt;integer&gt;    </span>
-    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-The number of seconds to keep the configuration cache.    </span>
-    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-SEMAPHORE_QUEUE_SIZE=&lt;integer&gt;    </span>
+    <div class="section section-1" id="src-113780350_safe-id-aWQtLlNpZ25TZXJ2ZXI1LjYuMVJlbGVhc2VOb3Rlc3Y1LjYuMS1DaGFuZ2VMb2c6UmVzb2x2ZWRJc3N1ZXM">
+        <h1 class="heading "><span>Change Log: Resolved Issues</span></h1>
+    <p  >    <span style="color: #000000;">
+For full details of fixed bugs and implemented features in SignServer 5.6.1, refer to our    </span>
+ <a  class="external-link" href="https://jira.primekey.se/issues/?jql=project%20%3D%20DSS%20AND%20resolution%20in%20(Fixed%2C%20Done)%20AND%20fixVersion%20%3D%205.6.1.Final%20ORDER%20BY%20resolution%20DESC">JIRA Issue Tracker</a>.    </p>
+    <div class="section section-2" id="src-113780350_id-.SignServer5.6.1ReleaseNotesv5.6.1-IssuesResolvedin5.6.1">
+        <h2 class="heading "><span>Issues Resolved in 5.6.1</span></h2>
+    <p  >    <span style="color: #000000;">
+Released April 2021    </span>
     </p>
     <p  >    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-Approximate number of requests waiting at this moment to be processed and that are blocked by the semaphore guarding the max request numbers.    </span>
-    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-SEMAPHORE_AVAILABLE_PERMITS=&lt;integer&gt;    </span>
-    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-Number of permits that are available at this moment in the semaphore guarding the max requests number.    </span>
-    </p>
-            </td>
-        </tr>
-</tbody>        </table>
-            </div>
-    <p  >    <span style="color: #000000;">
-The worker also presents filter status in the worker status output.    </span>
-    </p>
+<ul class="toc-indentation "></ul>    </div>
+    <div class="section section-2" id="src-113780350_id-.SignServer5.6.1ReleaseNotesv5.6.1-Improvements">
+        <h2 class="heading "><span>Improvements</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2255">DSS-2255</a> - Upgrade BC to 1.68    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2261">DSS-2261</a> - Give error for WS requests at high priority not configured for such    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2287">DSS-2287</a> - Support both old and new algorithm names for SHAxWithRSAandMGF1 / SHAxWithRSASSA-PSS in Plain Signer    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2294">DSS-2294</a> - Web filter that can be overriden    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2295">DSS-2295</a> - Introduce git ignore files and add some IDE specific ignores to SVN    </p>
     </div>
-    <div class="section section-1" id="src-113779315_id-.QoSStatusWorkerv5.6.1-StatusEntries">
-        <h1 class="heading "><span>Status Entries</span></h1>
-    <p  >    <span style="color: #000000;">
-The following lists the provided status entries.    </span>
-    </p>
-    <div  class="tablewrap">
-        <table class="wrapped confluenceTable">
-                    <colgroup>
-                                    <col />
-                                    <col />
-                            </colgroup>
-        <thead class=" ">    <tr>
-            <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-Title    </span>
-    </p>
-            </td>
-                <td  class="confluenceTh" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-Description    </span>
-    </p>
-            </td>
-        </tr>
-</thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-Filter enabled    </span>
-    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-False if the filter is disabled, otherwise true. When this is true, additional status fields are included.    </span>
-    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-Maximum requests    </span>
-    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-The maximum number of concurrent requests before the filter will place requests in prioritized queues.    </span>
-    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-Maximum priority level    </span>
-    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-The highest priority level available for requests.    </span>
-    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-Queue size(n)    </span>
-    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-One entry for each priority level (0&hellip;MAX_PRIORITY_LEVEL) with the value representing the current number of requests placed in queue for that priority.    </span>
-    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-Semaphore Queue Size    </span>
-    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-See SEMAPHORE_QUEUE_SIZE above.    </span>
-    </p>
-            </td>
-        </tr>
-    <tr>
-            <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-Semaphore Available Permits    </span>
-    </p>
-            </td>
-                <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <span style="color: #000000;">
-See SEMAPHORE_AVAILABLE_PERMITS.    </span>
-    </p>
-            </td>
-        </tr>
-</tbody>        </table>
-            </div>
+    <div class="section section-2" id="src-113780350_id-.SignServer5.6.1ReleaseNotesv5.6.1-BugFixes">
+        <h2 class="heading "><span>Bug Fixes</span></h2>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2257">DSS-2257</a> - Setting debug logging in SignClient Windows batch file is broken    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2268">DSS-2268</a> - Algorithms such as SHAxWithRSAandMGF1 not working with OpenJDK 8u.x even though they should be supported    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2269">DSS-2269</a> - Request metadata value passed through SignClient can not contain equals sign    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2293">DSS-2293</a> - Regression: Duplicated WSDL files and file names only different by casing may cause issues if building from source in Windows    </p>
+    <p  ><a  class="external-link" href="https://jira.primekey.se/browse/DSS-2296">DSS-2296</a> - AdminWS call getPKCS10CertificateRequestForAlias is broken on newer SignServer    </p>
+    </div>
     </div>
         </div>
 
@@ -1735,7 +1563,7 @@ See SEMAPHORE_AVAILABLE_PERMITS.    </span>
 
 
             <nav id="ht-post-nav">
-                <a href="Plain_Signer.html" class="ht-post-nav-prev">
+                <a href="SignServer_Release_Notes.html" class="ht-post-nav-prev">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-prev" sketch:type="MSArtboardGroup">
@@ -1744,9 +1572,9 @@ See SEMAPHORE_AVAILABLE_PERMITS.    </span>
                           transform="translate(11.000000, 11.000000) rotate(-45.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Plain Signer</span>
+            <span>SignServer Release Notes</span>
         </a>
-                <a href="Time_Stamp_Signer.html" class="ht-post-nav-next">
+                <a href="SignServer_5.6_Release_Notes.html" class="ht-post-nav-next">
             <svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="ht-icon-next" sketch:type="MSArtboardGroup">
@@ -1755,7 +1583,7 @@ See SEMAPHORE_AVAILABLE_PERMITS.    </span>
                           transform="translate(11.000000, 11.000000) rotate(-225.000000) translate(-11.000000, -11.000000) "></path>
                 </g>
             </svg>
-            <span>Time Stamp Signer</span>
+            <span>SignServer 5.6 Release Notes</span>
         </a>
     </nav>    
             

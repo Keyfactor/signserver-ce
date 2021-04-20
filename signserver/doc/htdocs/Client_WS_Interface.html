@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.6.0</p>
+                    <p>Version: 5.6.1</p>
                 </div>
             </header>
 
@@ -1406,6 +1406,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.6.1_Release_Notes.html">SignServer 5.6.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.6_Release_Notes.html">SignServer 5.6 Release Notes</a>
 
             </li>
@@ -1489,15 +1493,32 @@
         <li><a href="SignServer_Manual.html">SignServer Manual</a></li>
                                                                                      <li><a href="SignServer_Integration.html">SignServer Integration</a></li>
                                                             </ul>
-</div>            <h1 id="src-111019421"> <span>Client WS Interface</span></h1>
+</div>            <h1 id="src-113780312"> <span>Client WS Interface</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <p  >The SignServer Client Web Services interface can be used to request signings from SignServer.    </p>
-    <p  >The WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/ClientWSService/ClientWS?wsdl and locally in the sources under modules/SignServer-Client-ClientWS/xml-resources/web-service-references/ClientWS/wsdl/localhost_8080/signserver/ClientWSService/ClientWS.wsdl.    </p>
+    <p  >    <span style="color: #000000;">
+The SignServer Client Web Services interface can be used to request signings from SignServer.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+The WSDL file is located at the URL http://&lt;hostname&gt;:8080/signserver/ClientWSService/ClientWS?wsdl and locally in the sources under modules/SignServer-Client-ClientWS/xml-resources/web-service-references/ClientWS/wsdl/localhost_8080/signserver/ClientWSService/ClientWS.wsdl.    </span>
+    </p>
+    <div class="section section-1" id="src-113780312_id-.ClientWSInterfacev5.6.1-PriorityClientWS">
+        <h1 class="heading "><span>Priority Client WS</span></h1>
     <p  >    </p>
-    <div class="section section-1" id="src-111019421_id-.ClientWSInterfacev5.6.0-Operations">
+    <p  ><span class="status blue ">ENTERPRISE</span> This is a SignServer Enterprise feature.    </p>
+    <p  >    <span style="color: #000000;">
+The SignServer Priority Client Web Services interface always prioritizes the requests to the high-priority Client WS.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+The URL is http://&lt;hostname&gt;:8080/signserver/ClientWSService/PriorityClientWS    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+When request prioritization is enabled, then the priority requests will be rejected if the worker is not configured with the highest priority. For more information, see    </span>
+ <a   href="Setting_up_Request_Prioritization.html">Setting up Request Prioritization</a>.    </p>
+    </div>
+    <div class="section section-1" id="src-113780312_id-.ClientWSInterfacev5.6.1-Operations">
         <h1 class="heading "><span>Operations</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1507,44 +1528,138 @@
                             </colgroup>
         <thead class=" "></thead><tfoot class=" "></tfoot><tbody class=" ">    <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">processData</strong>    </p>
+        <p  >    <span style="color: #000000;">
+<strong class=" ">processData</strong>    </span>
+    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Generic operation for request signing of any binary (or character) data.    </p>
-    <p  >Parameters:    </p>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">worker</strong> (string)<br/>Name of worker in SignServer which should handle the request.    </p>
-</li><li class=" ">    <p  ><strong class=" ">metadata</strong> (sequence of key-value pairs)<br/>Optional additional request data. For instance the PDFSigner accepts the PDF password as a request data.    </p>
-</li><li class=" ">    <p  ><strong class=" ">data</strong> (base64Binary)<br/>The document/data to process.    </p>
-</li></ul>    <p  >Output:    </p>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">archiveId</strong> (string)<br/>Identifier for the request if archiving was used.    </p>
-</li><li class=" ">    <p  ><strong class=" ">data</strong> (base64Binary)<br/>The signed binary/document.    </p>
-</li><li class=" ">    <p  ><strong class=" ">metadata</strong> (sequence of key-value pairs)<br/>Any optional additional response data.    </p>
-</li><li class=" ">    <p  ><strong class=" ">requestId</strong> (integer)<br/>Identifier for the request/response.    </p>
-</li><li class=" ">    <p  ><strong class=" ">signerCertificate</strong> (base64Binary)<br/>The signer certificate in binary format if available.    </p>
-</li></ul>    <p  >Faults:    </p>
-<ul class=" "><li class=" ">    <p  >RequestFailedException    </p>
-</li><li class=" ">    <p  >InternalServerException    </p>
+        <p  >    <span style="color: #000000;">
+Generic operation for request signing of any binary (or character) data.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+Parameters:    </span>
+    </p>
+<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">worker</strong> (string)    </span>
+<br/>    <span style="color: #000000;">
+Name of worker in SignServer which should handle the request.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">metadata</strong> (sequence of key-value pairs)    </span>
+<br/>    <span style="color: #000000;">
+Optional additional request data. For instance the PDFSigner accepts the PDF password as a request data.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">data</strong> (base64Binary)    </span>
+<br/>    <span style="color: #000000;">
+The document/data to process.    </span>
+    </p>
+</li></ul>    <p  >    <span style="color: #000000;">
+Output:    </span>
+    </p>
+<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">archiveId</strong> (string)     </span>
+<br/>    <span style="color: #000000;">
+Identifier for the request if archiving was used.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">data</strong> (base64Binary)    </span>
+<br/>    <span style="color: #000000;">
+The signed binary/document.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">metadata</strong> (sequence of key-value pairs)    </span>
+<br/>    <span style="color: #000000;">
+Any optional additional response data.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">requestId</strong> (integer)    </span>
+<br/>    <span style="color: #000000;">
+Identifier for the request/response.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">signerCertificate</strong> (base64Binary)    </span>
+<br/>    <span style="color: #000000;">
+The signer certificate in binary format if available.    </span>
+    </p>
+</li></ul>    <p  >    <span style="color: #000000;">
+Faults:    </span>
+    </p>
+<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
+RequestFailedException    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+InternalServerException    </span>
+    </p>
 </li></ul>            </td>
         </tr>
     <tr>
             <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  ><strong class=" ">processSOD</strong>    </p>
+        <p  >    <span style="color: #000000;">
+<strong class=" ">processSOD</strong>    </span>
+    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >Operation for requesting an SOD to be created and signed.<br/>The ePassport production system calls this operation to get an SOD for the supplied data groups.    </p>
-    <p  >Parameters:    </p>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">worker</strong> (string)<br/>Name of worker in SignServer which should be used for constructing the SOD.    </p>
-</li><li class=" ">    <p  ><strong class=" ">metadata</strong> (sequence of key-value pairs)<br/>Optional additional request data. Not used.    </p>
-</li><li class=" ">    <p  ><strong class=" ">sodData</strong> (a sodRequest structure)<br/>The sodRequest should contain a sequence of datagroups (id 1-16 and their values), optionally also the version of the LDS to use and the version of Unicode.    </p>
-</li></ul>    <p  >Output:    </p>
-<ul class=" "><li class=" ">    <p  ><strong class=" ">archiveId</strong> (string)<br/>Identifier for the request if archiving was used.    </p>
-</li><li class=" ">    <p  ><strong class=" ">data</strong> (base64Binary)<br/>The SOD binary.    </p>
-</li><li class=" ">    <p  ><strong class=" ">metadata</strong> (sequence of key-value pairs)<br/>Any optional additional response data.    </p>
-</li><li class=" ">    <p  ><strong class=" ">requestId</strong> (integer)<br/>Identifier for the request/response.    </p>
-</li><li class=" ">    <p  ><strong class=" ">signerCertificate</strong> (base64Binary)<br/>The signer (DS) certificate in binary format if available.    </p>
-</li></ul>    <p  >Faults:    </p>
-<ul class=" "><li class=" ">    <p  >RequestFailedException    </p>
-</li><li class=" ">    <p  >InternalServerException    </p>
+        <p  >    <span style="color: #000000;">
+Operation for requesting an SOD to be created and signed.    </span>
+<br/>    <span style="color: #000000;">
+The ePassport production system calls this operation to get an SOD for the supplied data groups.    </span>
+    </p>
+    <p  >    <span style="color: #000000;">
+Parameters:    </span>
+    </p>
+<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">worker</strong> (string)    </span>
+<br/>    <span style="color: #000000;">
+Name of worker in SignServer which should be used for constructing the SOD.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">metadata</strong> (sequence of key-value pairs)    </span>
+<br/>    <span style="color: #000000;">
+Optional additional request data. Not used.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">sodData</strong> (a sodRequest structure)    </span>
+<br/>    <span style="color: #000000;">
+The sodRequest should contain a sequence of datagroups (id 1-16 and their values), optionally also the version of the LDS to use and the version of Unicode.    </span>
+    </p>
+</li></ul>    <p  >    <span style="color: #000000;">
+Output:    </span>
+    </p>
+<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">archiveId</strong> (string)     </span>
+<br/>    <span style="color: #000000;">
+Identifier for the request if archiving was used.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">data</strong> (base64Binary)    </span>
+<br/>    <span style="color: #000000;">
+The SOD binary.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">metadata</strong> (sequence of key-value pairs)    </span>
+<br/>    <span style="color: #000000;">
+Any optional additional response data.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">requestId</strong> (integer)    </span>
+<br/>    <span style="color: #000000;">
+Identifier for the request/response.    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+<strong class=" ">signerCertificate</strong> (base64Binary)    </span>
+<br/>    <span style="color: #000000;">
+The signer (DS) certificate in binary format if available.    </span>
+    </p>
+</li></ul>    <p  >    <span style="color: #000000;">
+Faults:    </span>
+    </p>
+<ul class=" "><li class=" ">    <p  >    <span style="color: #000000;">
+RequestFailedException    </span>
+    </p>
+</li><li class=" ">    <p  >    <span style="color: #000000;">
+InternalServerException    </span>
+    </p>
 </li></ul>            </td>
         </tr>
 </tbody>        </table>

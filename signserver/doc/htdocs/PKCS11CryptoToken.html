@@ -110,7 +110,7 @@
                     <a href="../"><img src="projectlogo.png"></a>
                 </h1>
                 <div class="ht-version">
-                    <p>Version: 5.6.0</p>
+                    <p>Version: 5.6.1</p>
                 </div>
             </header>
 
@@ -1406,6 +1406,10 @@
 
             <ul class="nav ht-pages-nav-sub">
                                         <li class="leaf">
+        <a class="ht-nav-page-link" href="SignServer_5.6.1_Release_Notes.html">SignServer 5.6.1 Release Notes</a>
+
+            </li>
+                                        <li class="leaf">
         <a class="ht-nav-page-link" href="SignServer_5.6_Release_Notes.html">SignServer 5.6 Release Notes</a>
 
             </li>
@@ -1492,18 +1496,18 @@
                                                                                                          <li class="shortcut"><a href="SignServer_Components.html">SignServer Components</a></li>
                                                                                      <li><a href="CryptoTokens.html">CryptoTokens</a></li>
                                                             </ul>
-</div>            <h1 id="src-85929967"> <span>PKCS11CryptoToken</span></h1>
+</div>            <h1 id="src-113776737"> <span>PKCS11CryptoToken</span></h1>
         </header>
 
         <div id="main-content" class="wiki-content sp-grid-section" data-index-for-search="true">
 
-    <div class="section section-1" id="src-85929967_id-.PKCS11CryptoTokenv5.4.0-Overview">
+    <div class="section section-1" id="src-113776737_id-.PKCS11CryptoTokenv5.6.1-Overview">
         <h1 class="heading "><span>Overview</span></h1>
     <p  >PKCS11 allows using an HSM that has a PKCS11 module, such as Utimaco, nCipher, SafeNet or AEP KeyPer.    </p>
     <p  >SignServer uses the same underlying implementation of PKCS11 crypto tokens as EJBCA but since the token labels strings differ, it is important to use the properties listed in this section for SignServer. The EJBCA ClientToolbox tool can be used to generate and test PKCS11 keys to confirm that the keys can be used with SignServer. For more information, refer to the EJBCA documentation on <a   href="http://confluence.primekey.com/display/EJBCADS/.EJBCA+Client+Toolbox+v7.1.0">EJBCA ClientToolbox</a> and <a   href="http://confluence.primekey.com/display/EJBCADS/.Hardware+Security+Modules+%28HSM%29+v7.5.0">Hardware Security Modules (HSM)</a>.    </p>
     <p  >CRYPTOTOKEN_IMPLEMENTATION=<strong class=" ">org.signserver.server.cryptotokens.PKCS11CryptoToken</strong>    </p>
     </div>
-    <div class="section section-1" id="src-85929967_id-.PKCS11CryptoTokenv5.4.0-AvailableProperties">
+    <div class="section section-1" id="src-113776737_id-.PKCS11CryptoTokenv5.6.1-AvailableProperties">
         <h1 class="heading "><span>Available Properties</span></h1>
     <div  class="tablewrap">
         <table class="wrapped confluenceTable">
@@ -1525,7 +1529,7 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >The key alias of the private key to be used for testing that this crypto token is working.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  If this key does not exist, the crypto token/worker will show as OFFLINE even if it has been activated. This is typically the case when the crypto token has been set up for the first time and the key has not yet been generated. To resolve, generate a key with the key alias name.    </p>
     <p  >A property with this name is typically also accepted by the worker using this crypto token and will then be the key to use for actual signing.    </p>
             </td>
@@ -1559,7 +1563,7 @@
         <p  >SHAREDLIBRARY    </p>
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
-        <p  >    <img  class="emoticon emoticon-warning" src="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+        <p  >    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  This property is deprecated.    </p>
     <p  >Full path to the library containing the PKCS11 interface. From version 3.7.0 this must point to a file declared in signserver_deploy.properties (or using the built-in values). If this property is defined at the same time as SHAREDLIBRARYNAME they must point to the same library on the file system.    </p>
             </td>
@@ -1626,9 +1630,9 @@
 <div class="line"><code class="plain">}</code></div>
 </div>
     </div>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  The PKCS#11 attributes configuration is global per shared library. If specified in multiple workers, only the configuration from the first worker loaded will be used. Changing the property might not take effect without restarting the application server.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  For a Thales nCipher 'module protected' slot (slot index 0), CKA_PRIVATE must be false for the CKO_PRIVATEKEY to allow the key to be used without a login. Otherwise the key generation will fail with a CKR_USER_NOT_LOGGED_IN PKCS#11 error.    </p>
             </td>
         </tr>
@@ -1648,7 +1652,7 @@
 <div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS=CKM_RSA_PKCS, CKM_SHA256_RSA_PKCS, </code><code class="value">0x00000043</code><code class="plain">, CKM_SHA256_RSA_PKCS_PSS</code></div>
 </div>
     </div>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  This feature requires a patched Java Runtime Environment.    </p>
             </td>
         </tr>
@@ -1658,16 +1662,16 @@
             </td>
                 <td  class="confluenceTd" rowspan="1" colspan="1">
         <p  >If set to true, the private key and certificate is cached in the worker so that they are not queried for each signature. This could potentially improve performance in some environments, typically where network HSMs or HSM slots with many keys are used. Default: true.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  This worker property is to be specified in the worker where the key to be used is specified by the DEFAULTKEY property. It is that key that will be cached locally in the worker. It is important to remember this if the crypto token is configured in a separate worker in which case this property should be specified in the worker that will be using the crypto token and not necessarily in the one having the crypto token configuration.    </p>
-    <p  >    <img  class="emoticon emoticon-warning" src="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/rv34k7/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
+    <p  >    <img  class="emoticon emoticon-warning" src="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg" alt="images/s/-98b7og/8401/7d0034e810b0e95b8c0694abfaf748cf5135c15a/_/images/icons/emoticons/warning.svg"   />
  When enabled, the signer certificate is also cached if taken from the token and not overridden by specifying it in the configuration. This means that if the certificate in the token is changed, the old certificate will still be used until the worker is reloaded, clearing the cache.    </p>
             </td>
         </tr>
 </tbody>        </table>
             </div>
     </div>
-    <div class="section section-1" id="src-85929967_id-.PKCS11CryptoTokenv5.4.0-DefaultGlobalProperties">
+    <div class="section section-1" id="src-113776737_id-.PKCS11CryptoTokenv5.6.1-DefaultGlobalProperties">
         <h1 class="heading "><span>Default Global Properties </span></h1>
     <p  >Certain worker properties can instead be specified as default values in the global configuration, to avoid having to repeat the propertied in every worker. Individual workers can override the default global values (if any), by specifying the property as usual.    </p>
     <p  >Global default values are specified as global values in the global configuration with the name prefixed with &quot;DEFAULT.&quot;. The following properties can currently be specified in the global configuration:    </p>
@@ -1680,7 +1684,7 @@
 </li><li class=" ">    <p  >ATTRIBUTES    </p>
 </li><li class=" ">    <p  >ATTRIBUTESFILE    </p>
 </li><li class=" ">    <p  >PIN    </p>
-</li></ul>    <div class="section section-2" id="src-85929967_id-.PKCS11CryptoTokenv5.4.0-ExampleUsage">
+</li></ul>    <div class="section section-2" id="src-113776737_id-.PKCS11CryptoTokenv5.6.1-ExampleUsage">
         <h2 class="heading "><span>Example Usage </span></h2>
     <p  >Edit (preferably a copy of) pkcs11-crypto.properties to match your PKCS#11 token.    </p>
     <p  >Run the following command to set up the token:    </p>
@@ -1746,22 +1750,26 @@
     <p  >Specify a PKCS#11 attribute to override the statically configured attribute to use when generating a key.<br/>Where x is the object class: PUBLIC or PRIVATE.<br/>Where y is the key type: RSA, ECDSA, etc.<br/>Where z is the attribute name or ID as decimal number or a hexadecimal number prefixed with &quot;0x&quot;.    </p>
     </div>
     </div>
-    <div class="section section-1" id="src-85929967_id-.PKCS11CryptoTokenv5.4.0-NoteonFIPSMode">
+    <div class="section section-1" id="src-113776737_id-.PKCS11CryptoTokenv5.6.1-NoteonFIPSMode">
         <h1 class="heading "><span>Note on FIPS Mode</span></h1>
     <p  >Some HSM vendors have started to enforce stricter rules on keys when the HSM is in FIPS mode. For instance, with Utimaco SecurityServer V4.10.0, the following is needed in order to generate key-pairs and activate the crypto token when the PKCS11CryptoToken is used:    </p>
 <ul class=" "><li class=" ">    <p  >Patched Java/SunPKCS11 (i.e. for RSASSA-PSS signature support and for setting allowed mechanisms).    </p>
-</li><li class=" ">    <p  >Key-pair to be generated with the following worker property set:    </p>
+</li><li class=" ">    <p  class="auto-cursor-target">Key-pair to be generated with the following worker property set:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">ATTRIBUTE.PRIVATE.RSA.CKA_ALLOWED_MECHANISMS=CKM_RSA_PKCS_PSS, CKM_SHA256_RSA_PKCS_PSS</code></div>
 </div>
     </div>
-</li><li class=" ">    <p  >The following worker property set in order for test signing to work:    </p>
+</li><li class=" ">    <p  class="auto-cursor-target">The following worker property set in order for test signing to work:    </p>
     <div  class="confbox programlisting">
                 <div xmlns="http://www.w3.org/1999/xhtml" class="defaultnew syntaxhighlighter scroll-html-formatted-code" data-linenumbers="false" data-firstline="1">
 <div class="line"><code class="plain">  SIGNATUREALGORITHM=SHA256withRSAandMGF1</code></div>
 </div>
     </div>
+</li></ul>    </div>
+    <div class="section section-1" id="src-113776737_id-.PKCS11CryptoTokenv5.6.1-KnownIssues">
+        <h1 class="heading "><span>Known Issues</span></h1>
+<ul class=" "><li class=" ">    <p  ><strong class=" ">Certain Java versions are having issues with the RSASSA-PSS signature algorithm (SHAxWithRSAandMGF1).</strong><br/>Previously, the RSASSA-PSS signature algorithm (SHAxWithRSAandMGF1) was not supported with SunPKCS11 but later versions of Java 8 and 11 have added support for them. However, for Java versions before 11.0.7, the algorithm is only working with key sizes &gt;=4096 bits. For details, refer to the OpenJDK bug <a  class="external-link" href="https://bugs.openjdk.java.net/browse/JDK-8232950">JDK-8232950</a>.    </p>
 </li></ul>    </div>
         </div>
 

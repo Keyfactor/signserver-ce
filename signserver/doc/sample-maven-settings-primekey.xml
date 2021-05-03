@@ -19,11 +19,29 @@
                           http://maven.apache.org/xsd/settings-1.0.0.xsd">
     <mirrors>
 	<!-- PrimeKey Developers: Use PrimeKey Internal Repository for everything -->
+        <!--
         <mirror>
             <id>primekey-unverified-test</id>
             <name>PrimeKey Internal Repository (Unverified, Test)</name>
             <mirrorOf>*</mirrorOf>
             <url>https://binrepo-test.se.lab.primekey/unverified</url>
+        </mirror>
+        -->
+        
+        <!-- Force everything (not listed below) through this URL -->
+        <mirror>
+            <id>central-https</id>
+            <name>Central using HTTPS</name>
+            <mirrorOf>*</mirrorOf>
+            <url>https://repo1.maven.org/maven2</url>
+        </mirror>
+
+	<!-- Use cefdigital through this URL -->
+        <mirror>
+            <id>cefdigital-https</id>
+            <name>CEFDigital using HTTPS</name>
+            <mirrorOf>cefdigital</mirrorOf>
+            <url>https://ec.europa.eu/cefdigital/artifact/content/repositories/esignaturedss/</url>
         </mirror>
     </mirrors>
 </settings>

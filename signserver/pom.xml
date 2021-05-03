@@ -21,6 +21,7 @@
         <!-- 3rd party libraries as a set of release(s) -->
         <jackson.version>2.11.2</jackson.version>
 
+        <dss.framework.version>5.8</dss.framework.version>
     </properties>
 
     <profiles>
@@ -370,6 +371,56 @@
                 <artifactId>jackson-module-jaxb-annotations</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
+            
+            <!-- DSS Framework dependencies -->
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-model</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-spi</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-token</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-reports</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-service</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
+
+            <!-- DSS Modules -->
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-pades</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-pades-openpdf</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-xades</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-cades</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -472,4 +523,13 @@
         </plugins>
     </build>
 
+    <repositories>
+	
+
+	<repository>
+	  <id>cefdigital</id>
+	  <name>cefdigital</name>
+	  <url>https://ec.europa.eu/cefdigital/artifact/content/repositories/esignaturedss/</url>
+	</repository>
+    </repositories>
 </project>

@@ -399,6 +399,12 @@
                 <version>${dss.framework.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-utils-apache-commons</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
+
             <!-- DSS Modules -->
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
@@ -408,6 +414,11 @@
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>
                 <artifactId>dss-pades-openpdf</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-pades-pdfbox</artifactId>
                 <version>${dss.framework.version}</version>
             </dependency>
             <dependency>

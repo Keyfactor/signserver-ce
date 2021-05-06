@@ -26,7 +26,6 @@ hs_err_pid*
 *.iws
 
 # NetBeans IDE
-nb-configuration.xml
 */nbproject/project.properties
 
 # Mac

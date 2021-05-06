@@ -48,6 +48,7 @@ dist/
 dist-*/
 
 # SignServer specific svn propget -R svn:ignore
+.svn
 .clover/
 authenticode-test-files/
 

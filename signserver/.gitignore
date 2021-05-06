@@ -25,7 +25,7 @@ hs_err_pid*
 *.iml
 *.iws
 
-# Netbeans
+# NetBeans IDE
 nb-configuration.xml
 */nbproject/project.properties
 
@@ -51,12 +51,12 @@ dist-*/
 .clover/
 authenticode-test-files/
 
-bin/p11ng-tool/
+bin/p11ng-tool
 bin/p11ng-tool.cmd
-bin/signserver-db/
+bin/signserver-db
 bin/signserver-db.cmd
 bin/timemonitor-in-background.sh
-bin/signserver-gui/
+bin/signserver-gui
 bin/signserver-gui.cmd
 
 conf/signserver_deploy.properties

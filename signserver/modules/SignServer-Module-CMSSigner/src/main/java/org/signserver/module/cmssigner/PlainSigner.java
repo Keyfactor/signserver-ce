@@ -15,6 +15,7 @@ package org.signserver.module.cmssigner;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -26,6 +27,8 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.spec.MGF1ParameterSpec;
+import java.security.spec.PSSParameterSpec;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -94,6 +97,8 @@ public class PlainSigner extends BaseSigner {
     private String logRequestDigestAlgorithm;
     private boolean doLogRequestDigest;
 
+    private final ClientSideHashingHelper clientSideHelper = new ClientSideHashingHelper();
+
     @Override
     public void init(final int workerId, final WorkerConfig config,
             final WorkerContext workerContext, final EntityManager workerEM) {
@@ -117,6 +122,8 @@ public class PlainSigner extends BaseSigner {
         } else {
             configErrors.add("Incorrect value for " + DO_LOGREQUEST_DIGEST);
         }
+        
+        clientSideHelper.init(config, configErrors);
     }
 
     @Override
@@ -205,9 +212,41 @@ public class PlainSigner extends BaseSigner {
             final String sigAlg = signatureAlgorithm == null ? getDefaultSignatureAlgorithm(cert.getPublicKey()) : signatureAlgorithm;
             final byte[] signedbytes;
 
-            if (sigAlg.toUpperCase(Locale.ENGLISH).startsWith("NONEWITH")) { 
+            if (clientSideHelper.shouldUseClientSideHashing(requestContext)) {
+                String clientSideHashAlgorithm = clientSideHelper.getClientSideHashAlgorithmName(requestContext);
+                
                 // Special case as BC (ContentSignerBuilder) does not handle NONEwithRSA
                 final Signature signature = Signature.getInstance(sigAlg, crypto.getProvider());
+                
+                if (sigAlg.toUpperCase(Locale.ENGLISH).endsWith("ANDMGF1") || sigAlg.toUpperCase(Locale.ENGLISH).endsWith("SSA-PSS")) {
+                    final int saltLength;
+                    
+                    // TODO
+                    switch (clientSideHashAlgorithm) {
+                        case "SHA1":
+                        case "SHA-1":
+                            saltLength = 20;
+                            break;
+                        case "SHA256":
+                        case "SHA-256":
+                            saltLength = 32;
+                            break;
+                        case "SHA384":
+                        case "SHA-384":
+                            saltLength = 48;
+                            break;
+                        case "SHA512":
+                        case "SHA-512":
+                            saltLength = 64;
+                            break;
+                        default:
+                            throw new InvalidKeyException("Unsupported digest for PSS parameters: " + clientSideHashAlgorithm);
+                    }
+                    
+                    PSSParameterSpec params = new PSSParameterSpec(clientSideHashAlgorithm, "MGF1", new MGF1ParameterSpec(clientSideHashAlgorithm), saltLength, 1);
+                    signature.setParameter(params);
+                }
+                
                 signature.initSign(privKey);
 
                 final byte[] buffer = new byte[4096]; 
@@ -218,33 +257,47 @@ public class PlainSigner extends BaseSigner {
 
                 signedbytes = signature.sign();
             } else {
-                // Special handling to support the new Java names not handled by BC
-                Map<String, String> algorithmNames = new HashMap<>();
-                algorithmNames.put("SHA1withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA1withRSAandMGF1");
-                algorithmNames.put("SHA224withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA224withRSAandMGF1");
-                algorithmNames.put("SHA256withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA256withRSAandMGF1");
-                algorithmNames.put("SHA384withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA384withRSAandMGF1");
-                algorithmNames.put("SHA512withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA512withRSAandMGF1");
+                if (sigAlg.toUpperCase(Locale.ENGLISH).startsWith("NONEWITH")) { 
+                    // Special case as BC (ContentSignerBuilder) does not handle NONEwithRSA
+                    final Signature signature = Signature.getInstance(sigAlg, crypto.getProvider());
+                    signature.initSign(privKey);
 
-                String effectiveSigAlgName = algorithmNames.get(sigAlg.toUpperCase(Locale.ENGLISH));
-                if (effectiveSigAlgName == null) {
-                    effectiveSigAlgName = sigAlg;
-                }
-
-                // Use BC for this as it supports the old algorithm names etc
-                JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(effectiveSigAlgName);
-                signerBuilder.setProvider(crypto.getProvider());
-                ContentSigner signer = signerBuilder.build(privKey);
-                
-                try (OutputStream signerOut = signer.getOutputStream()) {
                     final byte[] buffer = new byte[4096]; 
                     int n = 0;
                     while (-1 != (n = in.read(buffer))) {
-                        signerOut.write(buffer, 0, n);
+                        signature.update(buffer, 0, n);
                     }
+
+                    signedbytes = signature.sign();
+                } else {
+                    // Special handling to support the new Java names not handled by BC
+                    Map<String, String> algorithmNames = new HashMap<>();
+                    algorithmNames.put("SHA1withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA1withRSAandMGF1");
+                    algorithmNames.put("SHA224withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA224withRSAandMGF1");
+                    algorithmNames.put("SHA256withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA256withRSAandMGF1");
+                    algorithmNames.put("SHA384withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA384withRSAandMGF1");
+                    algorithmNames.put("SHA512withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA512withRSAandMGF1");
+
+                    String effectiveSigAlgName = algorithmNames.get(sigAlg.toUpperCase(Locale.ENGLISH));
+                    if (effectiveSigAlgName == null) {
+                        effectiveSigAlgName = sigAlg;
+                    }
+
+                    // Use BC for this as it supports the old algorithm names etc
+                    JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(effectiveSigAlgName);
+                    signerBuilder.setProvider(crypto.getProvider());
+                    ContentSigner signer = signerBuilder.build(privKey);
+
+                    try (OutputStream signerOut = signer.getOutputStream()) {
+                        final byte[] buffer = new byte[4096]; 
+                        int n = 0;
+                        while (-1 != (n = in.read(buffer))) {
+                            signerOut.write(buffer, 0, n);
+                        }
+                    }
+
+                    signedbytes = signer.getSignature();
                 }
-                
-                signedbytes = signer.getSignature();
             }
             
             out.write(signedbytes);
@@ -272,7 +325,7 @@ public class PlainSigner extends BaseSigner {
                         responseData, cert, archiveId,
                         archivables,
                         CONTENT_TYPE);
-        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | OperatorCreationException ex) {
+        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | OperatorCreationException | InvalidAlgorithmParameterException ex) {
             LOG.error("Error initializing signer", ex);
             throw new SignServerException("Error initializing signer", ex);
         } catch (IOException ex) {

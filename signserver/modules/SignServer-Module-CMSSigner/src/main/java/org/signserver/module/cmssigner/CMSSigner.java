@@ -80,7 +80,6 @@ import org.signserver.server.HashDigestUtils;
  */
 public class CMSSigner extends BaseSigner {
 
-    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(CMSSigner.class);
 
     /** Content-type for the produced data. */
@@ -128,8 +127,6 @@ public class CMSSigner extends BaseSigner {
 
     private boolean detachedSignature;
     private boolean allowDetachedSignatureOverride;
-    private boolean clientSideHashing;
-    private boolean allowClientSideHashingOverride;
     private boolean derReEncode;
     private boolean directSignature;
 
@@ -138,10 +135,10 @@ public class CMSSigner extends BaseSigner {
     private boolean doLogRequestDigest;
     private boolean doLogResponseDigest;
 
-    private Set<AlgorithmIdentifier> acceptedHashDigestAlgorithms;
-
     private ASN1ObjectIdentifier contentOID;
     private boolean allowContentOIDOverride;
+    
+    private final ClientSideHashingHelper clientSideHelper = new ClientSideHashingHelper();
     
     @Override
     public void init(final int workerId, final WorkerConfig config,
@@ -174,36 +171,10 @@ public class CMSSigner extends BaseSigner {
             configErrors.add("Incorrect value for property " + ALLOW_SIGNATURETYPE_OVERRIDE_PROPERTY + ". Expecting TRUE or FALSE.");
         }
         
-        final String clientSideHashingValue = config.getProperty(CLIENTSIDEHASHING, Boolean.FALSE.toString());
-        if (Boolean.FALSE.toString().equalsIgnoreCase(clientSideHashingValue)) {
-            clientSideHashing = false;
-        } else if (Boolean.TRUE.toString().equalsIgnoreCase(clientSideHashingValue)) {
-            clientSideHashing = true;
-        } else {
-            configErrors.add("Incorrect value for property " + CLIENTSIDEHASHING + ". Expecting TRUE or FALSE.");
-        }
         
-        final String allowClientSideHashingOverrideValue = config.getProperty(ALLOW_CLIENTSIDEHASHING_OVERRIDE, Boolean.FALSE.toString());
-        if (Boolean.FALSE.toString().equalsIgnoreCase(allowClientSideHashingOverrideValue)) {
-            allowClientSideHashingOverride = false;
-        } else if (Boolean.TRUE.toString().equalsIgnoreCase(allowClientSideHashingOverrideValue)) {
-            allowClientSideHashingOverride = true;
-        } else {
-            configErrors.add("Incorrect value for property " + ALLOW_CLIENTSIDEHASHING_OVERRIDE + ". Expecting TRUE or FALSE.");
-        }
+        clientSideHelper.init(config, configErrors);
         
-        initAcceptedHashDigestAlgorithms();
         
-        /* require ACCEPTED_HASHDIGEST_ALGORITHMS to be set when either
-         * CLIENTSIDEHASHING is set to true or ALLOW_CLIENTSIDEHASHING_OVERRIDE
-         * is set to true
-         */
-        if (acceptedHashDigestAlgorithms == null &&
-            (allowClientSideHashingOverride || clientSideHashing)) {
-            configErrors.add("Must specify " + ACCEPTED_HASHDIGEST_ALGORITHMS +
-                             " when " + CLIENTSIDEHASHING + " or " +
-                             ALLOW_CLIENTSIDEHASHING_OVERRIDE + " is true");
-        }
         
         final String contentOIDString = config.getProperty(CONTENT_OID_PROPERTY, DEFAULT_NULL);
         if (contentOIDString != null && !contentOIDString.isEmpty()) {
@@ -245,11 +216,11 @@ public class CMSSigner extends BaseSigner {
             configErrors.add("Incorrect value for property " + DIRECTSIGNATURE_PROPERTY + ". Expecting TRUE or FALSE.");
         }
         
-        if (directSignature && clientSideHashing) {
+        if (directSignature && clientSideHelper.isClientSideHashing()) {
             configErrors.add("Can not combine " + CLIENTSIDEHASHING + " and " + DIRECTSIGNATURE_PROPERTY);
         }
         
-        if (directSignature && allowClientSideHashingOverride) {
+        if (directSignature && clientSideHelper.isAllowClientSideHashingOverride()) {
             configErrors.add("Can not combine " + ALLOW_CLIENTSIDEHASHING_OVERRIDE + " and " + DIRECTSIGNATURE_PROPERTY);
         }
         
@@ -314,94 +285,6 @@ public class CMSSigner extends BaseSigner {
         throw new UnsupportedOperationException("Base CMS signer doesn't support extending CMS data");
     }
 
-    private void initAcceptedHashDigestAlgorithms() {
-        final String acceptedHashDigestAlgorithmsValue
-                = config.getProperty(ACCEPTED_HASHDIGEST_ALGORITHMS, DEFAULT_NULL);
-        final DigestAlgorithmIdentifierFinder algFinder = new DefaultDigestAlgorithmIdentifierFinder();
-
-        if (acceptedHashDigestAlgorithmsValue != null) {
-            acceptedHashDigestAlgorithms = new HashSet<>();
-            for (final String digestAlgorithmString
-                    : acceptedHashDigestAlgorithmsValue.split(",")) {
-                final String digestAlgorithmStringTrim = digestAlgorithmString.trim();
-                final AlgorithmIdentifier alg = algFinder.find(digestAlgorithmStringTrim);
-
-                if (alg == null || alg.getAlgorithm() == null) {
-                    configErrors.add("Illegal algorithm specified for " + ACCEPTED_HASHDIGEST_ALGORITHMS + ": "
-                            + digestAlgorithmStringTrim);
-                } else {
-                    acceptedHashDigestAlgorithms.add(alg);
-                }
-            }
-        }        
-        
-    }
-
-    
-    private boolean shouldUseClientSideHashing(final RequestContext requestContext)
-            throws IllegalRequestException {
-        final boolean useClientSideHashing;
-        final Boolean clientSideHashingRequested =
-            getClientSuppliedHashRequest(requestContext);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Client-side hashing configured: " + clientSideHashing + "\n"
-                    + "Client-side hashing requested: " + clientSideHashingRequested);
-        }
-        if (clientSideHashingRequested == null) {
-            useClientSideHashing = clientSideHashing;
-        } else {
-            if (clientSideHashingRequested) {
-                if (!clientSideHashing && !allowClientSideHashingOverride) {
-                    throw new IllegalRequestException("Client-side hashing requested but not allowed");
-                }
-            } else {
-                if (clientSideHashing && !allowClientSideHashingOverride) {
-                    throw new IllegalRequestException("Server-side hashing requested but not allowed");
-                }
-            }
-            
-            final Boolean requestDetached =
-                    getDetachedSignatureRequest(requestContext);
-            if (requestDetached != null && !requestDetached && !detachedSignature) {
-                throw new IllegalRequestException("Client-side hashing can only be used with detached signatures");
-            }
-   
-            useClientSideHashing = clientSideHashingRequested;
-        }
-
-        return useClientSideHashing;
-    }
-    
-    protected final AlgorithmIdentifier getClientSideHashAlgorithm(final RequestContext requestContext)
-            throws IllegalRequestException {
-        AlgorithmIdentifier alg = null;
-        final String value = RequestMetadata.getInstance(requestContext).get(CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY);
-        if (value != null && !value.isEmpty()) {
-            final DigestAlgorithmIdentifierFinder algFinder =
-                    new DefaultDigestAlgorithmIdentifierFinder();
-            alg = algFinder.find(value);
-        }
-
-        if (alg == null) {
-            throw new IllegalRequestException("Client-side hashing request must specify hash algorithm used");
-        }
-        
-        /* DefaultDigestAlgorithmIdentifierFinder returns an AlgorithmIdentifer
-         * with a null algorithm for an unknown algorithm
-         */
-        if (alg.getAlgorithm() == null) {
-            throw new IllegalRequestException("Client specified an unknown digest algorithm");
-        }
-        
-        if (acceptedHashDigestAlgorithms != null &&
-            !acceptedHashDigestAlgorithms.isEmpty() &&
-            !acceptedHashDigestAlgorithms.contains(alg)) {
-            throw new IllegalRequestException("Client specified a non-accepted digest hash algorithm");
-        }
-        
-        return alg;
-    }
-    
     private void signData(final ICryptoInstance crypto,
                           final X509Certificate cert,
                           final Collection<Certificate> certs,
@@ -498,7 +381,7 @@ public class CMSSigner extends BaseSigner {
                     = new CMSSignedDataGenerator();
         final ContentSigner contentSigner = new JcaContentSignerBuilder(sigAlg).setProvider(crypto.getProvider()).build(crypto.getPrivateKey());
         final byte[] digestData = requestData.getAsByteArray();
-        final AlgorithmIdentifier alg = getClientSideHashAlgorithm(requestContext);
+        final AlgorithmIdentifier alg = clientSideHelper.getClientSideHashAlgorithm(requestContext);
                 
         // Check supplied Hash Digest length
         final String clientSpecifiedHashDigestAlgo = RequestMetadata.getInstance(requestContext).get(CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY);
@@ -724,22 +607,6 @@ public class CMSSigner extends BaseSigner {
         return result;
     }
     
-    /**
-     * Read the request metadata property for USING_CLIENTSUPPLIED_HASH if any.
-     * Note that empty String is treated as an unset property.
-     * @param context to read from
-     * @return null if no USING_CLIENTSUPPLIED_HASH request property specified otherwise
-     * true or false.
-     */
-    private static Boolean getClientSuppliedHashRequest(final RequestContext context) {
-        Boolean result = null;
-        final String value = RequestMetadata.getInstance(context).get(USING_CLIENTSUPPLIED_HASH_PROPERTY);
-        if (value != null && !value.isEmpty()) {
-            result = Boolean.parseBoolean(value);
-        }
-        return result;
-    }
-    
     private static ASN1ObjectIdentifier getRequestedContentOID(final RequestContext context) {
         ASN1ObjectIdentifier result = null;
         final String value = RequestMetadata.getInstance(context).get(CONTENT_OID_PROPERTY);
@@ -751,11 +618,17 @@ public class CMSSigner extends BaseSigner {
 
     protected void sign(ICryptoInstance crypto, X509Certificate cert, List<Certificate> certs, String sigAlg, RequestContext requestContext, ReadableData requestData, WritableData responseData, ASN1ObjectIdentifier contentOIDToUse) throws IllegalRequestException, OperatorCreationException, CertificateEncodingException, CMSException, IOException {
         final boolean useClientSideHashing =
-                shouldUseClientSideHashing(requestContext);
+                clientSideHelper.shouldUseClientSideHashing(requestContext);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Using client-side supplied hash: " + useClientSideHashing);
         }
         if (useClientSideHashing) {
+            final Boolean requestDetached =
+                getDetachedSignatureRequest(requestContext);
+            if (requestDetached != null && !requestDetached && !detachedSignature) {
+                throw new IllegalRequestException("Client-side hashing can only be used with detached signatures");
+            }
+            
             signHash(crypto, cert, certs, sigAlg, requestContext, requestData,
                      responseData, contentOIDToUse);
         } else {

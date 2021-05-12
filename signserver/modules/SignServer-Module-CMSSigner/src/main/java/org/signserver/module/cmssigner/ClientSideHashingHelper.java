@@ -35,7 +35,7 @@ public class ClientSideHashingHelper {
     private boolean allowClientSideHashingOverride;
     private Set<AlgorithmIdentifier> acceptedHashDigestAlgorithms;
 
-    protected void init(WorkerConfig config, LinkedList<String> configErrors) {
+    public void init(WorkerConfig config, LinkedList<String> configErrors) {
         
         
         final String clientSideHashingValue = config.getProperty(CLIENTSIDEHASHING, Boolean.FALSE.toString());
@@ -90,7 +90,7 @@ public class ClientSideHashingHelper {
         
     }    
     
-    protected final AlgorithmIdentifier getClientSideHashAlgorithm(final RequestContext requestContext)
+    public final AlgorithmIdentifier getClientSideHashAlgorithm(final RequestContext requestContext)
             throws IllegalRequestException {
         AlgorithmIdentifier alg = null;
         final String value = RequestMetadata.getInstance(requestContext).get(CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY);
@@ -120,7 +120,7 @@ public class ClientSideHashingHelper {
         return alg;
     }
     
-    protected final String getClientSideHashAlgorithmName(final RequestContext requestContext)
+    public final String getClientSideHashAlgorithmName(final RequestContext requestContext)
             throws IllegalRequestException {
         AlgorithmIdentifier alg = null;
         final String value = RequestMetadata.getInstance(requestContext).get(CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY);

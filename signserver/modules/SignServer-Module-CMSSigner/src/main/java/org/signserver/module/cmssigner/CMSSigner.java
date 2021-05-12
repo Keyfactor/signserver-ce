@@ -138,7 +138,7 @@ public class CMSSigner extends BaseSigner {
     private ASN1ObjectIdentifier contentOID;
     private boolean allowContentOIDOverride;
     
-    private final ClientSideHashingHelper clientSideHelper = new ClientSideHashingHelper();
+    protected final ClientSideHashingHelper clientSideHelper = new ClientSideHashingHelper();
     
     @Override
     public void init(final int workerId, final WorkerConfig config,

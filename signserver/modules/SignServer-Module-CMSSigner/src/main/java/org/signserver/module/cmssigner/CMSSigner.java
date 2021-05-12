@@ -142,8 +142,8 @@ public class CMSSigner extends BaseSigner {
     
     @Override
     public void init(final int workerId, final WorkerConfig config,
-            final WorkerContext workerContext, final EntityManager workerEM) {
-        super.init(workerId, config, workerContext, workerEM);
+            final WorkerContext workerContext, final EntityManager entityManager) {
+        super.init(workerId, config, workerContext, entityManager);
 
         // Configuration errors
         configErrors = new LinkedList<>();

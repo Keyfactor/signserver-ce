@@ -245,6 +245,9 @@ public class PlainSigner extends BaseSigner {
                     
                     PSSParameterSpec params = new PSSParameterSpec(clientSideHashAlgorithm, "MGF1", new MGF1ParameterSpec(clientSideHashAlgorithm), saltLength, 1);
                     signature.setParameter(params);
+                } else {
+                    // Do not allow for RSASSA-PKCS1_v1.5 yet as we want to implement the encoding part here so it will work the same way as for PSS
+                    throw new IllegalRequestException("Client-side hashing through request metadata not supported for other algorithms than RSASSA-PSS yet");
                 }
                 
                 signature.initSign(privKey);

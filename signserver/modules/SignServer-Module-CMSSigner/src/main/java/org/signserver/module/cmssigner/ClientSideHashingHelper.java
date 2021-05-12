@@ -1,8 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.module.cmssigner;
 
 import java.util.HashSet;
@@ -24,8 +31,11 @@ import static org.signserver.module.cmssigner.CMSSigner.CLIENTSIDE_HASHDIGESTALG
 import static org.signserver.module.cmssigner.CMSSigner.USING_CLIENTSUPPLIED_HASH_PROPERTY;
 
 /**
+ * Helper class for handling the client-side hashing worker properties and its
+ * logic.
  *
- * @author user
+ * @author Markus Kilås
+ * @version $Id$
  */
 public class ClientSideHashingHelper {
 
@@ -90,6 +100,14 @@ public class ClientSideHashingHelper {
         
     }    
     
+    /**
+     * Get the algorithm provided by the client in the request as OID if we 
+     * support the algorithm.
+     *
+     * @param requestContext of the request
+     * @return the OID of the hash algorithm
+     * @throws IllegalRequestException in case hash algorithm is not provided or unsupported
+     */
     public final AlgorithmIdentifier getClientSideHashAlgorithm(final RequestContext requestContext)
             throws IllegalRequestException {
         AlgorithmIdentifier alg = null;
@@ -119,7 +137,15 @@ public class ClientSideHashingHelper {
         
         return alg;
     }
-    
+
+    /**
+     * Get the algorithm name provided by the client in the request if we
+     * support the algorithm.
+     *
+     * @param requestContext of the request
+     * @return the name of the hash algorithm
+     * @throws IllegalRequestException in case hash algorithm is not provided or unsupported
+     */
     public final String getClientSideHashAlgorithmName(final RequestContext requestContext)
             throws IllegalRequestException {
         AlgorithmIdentifier alg = null;
@@ -162,6 +188,13 @@ public class ClientSideHashingHelper {
         return acceptedHashDigestAlgorithms;
     }
 
+    /**
+     * Checks if the request is for client-side hashing and it is configured
+     * to be allowed etc.
+     * @param requestContext of the request
+     * @return true if client-side hashing should be used
+     * @throws IllegalRequestException 
+     */
     protected boolean shouldUseClientSideHashing(final RequestContext requestContext)
             throws IllegalRequestException {
         final boolean useClientSideHashing;

@@ -24,11 +24,6 @@ import org.signserver.common.RequestContext;
 import org.signserver.common.RequestMetadata;
 import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
 import org.signserver.common.WorkerConfig;
-import static org.signserver.module.cmssigner.CMSSigner.ACCEPTED_HASHDIGEST_ALGORITHMS;
-import static org.signserver.module.cmssigner.CMSSigner.ALLOW_CLIENTSIDEHASHING_OVERRIDE;
-import static org.signserver.module.cmssigner.CMSSigner.CLIENTSIDEHASHING;
-import static org.signserver.module.cmssigner.CMSSigner.CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY;
-import static org.signserver.module.cmssigner.CMSSigner.USING_CLIENTSUPPLIED_HASH_PROPERTY;
 
 /**
  * Helper class for handling the client-side hashing worker properties and its
@@ -40,6 +35,13 @@ import static org.signserver.module.cmssigner.CMSSigner.USING_CLIENTSUPPLIED_HAS
 public class ClientSideHashingHelper {
 
     private static final Logger LOG = Logger.getLogger(ClientSideHashingHelper.class);
+    
+    public static final String CLIENTSIDEHASHING = "CLIENTSIDEHASHING";
+    public static final String ALLOW_CLIENTSIDEHASHING_OVERRIDE = "ALLOW_CLIENTSIDEHASHING_OVERRIDE";
+    public static final String ACCEPTED_HASHDIGEST_ALGORITHMS = "ACCEPTED_HASH_DIGEST_ALGORITHMS";
+    
+    public static final String CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY = "CLIENTSIDE_HASHDIGESTALGORITHM";
+    public static final String USING_CLIENTSUPPLIED_HASH_PROPERTY = "USING_CLIENTSUPPLIED_HASH";
     
     private boolean clientSideHashing;
     private boolean allowClientSideHashingOverride;

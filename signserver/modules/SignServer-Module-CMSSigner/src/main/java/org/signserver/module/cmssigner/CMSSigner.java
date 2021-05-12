@@ -26,10 +26,8 @@ import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.EntityManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -42,8 +40,6 @@ import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.*;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
 import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
-import org.bouncycastle.operator.DigestAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.DigestCalculator;
 import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -69,6 +65,9 @@ import org.signserver.server.log.LogMap;
 import org.signserver.server.log.Loggable;
 import org.signserver.server.signers.BaseSigner;
 import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
+import static org.signserver.module.cmssigner.ClientSideHashingHelper.ALLOW_CLIENTSIDEHASHING_OVERRIDE;
+import static org.signserver.module.cmssigner.ClientSideHashingHelper.CLIENTSIDEHASHING;
+import static org.signserver.module.cmssigner.ClientSideHashingHelper.CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY;
 import org.signserver.server.HashDigestUtils;
 
 /**
@@ -89,12 +88,7 @@ public class CMSSigner extends BaseSigner {
     public static final String SIGNATUREALGORITHM_PROPERTY = "SIGNATUREALGORITHM";
     public static final String DETACHEDSIGNATURE_PROPERTY = "DETACHEDSIGNATURE";
     public static final String ALLOW_SIGNATURETYPE_OVERRIDE_PROPERTY = "ALLOW_DETACHEDSIGNATURE_OVERRIDE";
-    public static final String CLIENTSIDEHASHING = "CLIENTSIDEHASHING";
-    public static final String ALLOW_CLIENTSIDEHASHING_OVERRIDE = "ALLOW_CLIENTSIDEHASHING_OVERRIDE";
-    public static final String ACCEPTED_HASHDIGEST_ALGORITHMS = "ACCEPTED_HASH_DIGEST_ALGORITHMS";
     
-    public static final String CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY = "CLIENTSIDE_HASHDIGESTALGORITHM";
-    public static final String USING_CLIENTSUPPLIED_HASH_PROPERTY = "USING_CLIENTSUPPLIED_HASH";
     
     public static final String CONTENT_OID_PROPERTY = "CONTENTOID";
     public static final String ALLOW_CONTENTOID_OVERRIDE = "ALLOW_CONTENTOID_OVERRIDE";

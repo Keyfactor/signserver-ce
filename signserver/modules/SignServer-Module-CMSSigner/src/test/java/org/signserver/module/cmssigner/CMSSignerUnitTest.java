@@ -537,8 +537,8 @@ public class CMSSignerUnitTest {
         WorkerConfig config = new WorkerConfig();
         config.setProperty(CMSSigner.SIGNATUREALGORITHM_PROPERTY, "  ");
         config.setProperty(CMSSigner.DETACHEDSIGNATURE_PROPERTY, "  ");
-        config.setProperty(CMSSigner.CLIENTSIDEHASHING, "  ");
-        config.setProperty(CMSSigner.ACCEPTED_HASHDIGEST_ALGORITHMS, "  ");
+        config.setProperty(ClientSideHashingHelper.CLIENTSIDEHASHING, "  ");
+        config.setProperty(ClientSideHashingHelper.ACCEPTED_HASHDIGEST_ALGORITHMS, "  ");
 
         CMSSigner instance = createMockSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
@@ -1474,7 +1474,7 @@ public class CMSSignerUnitTest {
         LOG.info("testInit_incorrectDirectSignatureAndClientSideHashingCombination");
         WorkerConfig config = new WorkerConfig();
         config.setProperty(CMSSigner.DIRECTSIGNATURE_PROPERTY, Boolean.TRUE.toString());
-        config.setProperty(CMSSigner.CLIENTSIDEHASHING, Boolean.TRUE.toString());
+        config.setProperty(ClientSideHashingHelper.CLIENTSIDEHASHING, Boolean.TRUE.toString());
         CMSSigner instance = createMockSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
 
@@ -1493,7 +1493,7 @@ public class CMSSignerUnitTest {
         LOG.info("testInit_incorrectDirectSignatureAndClientSideHashingOverrideCombination");
         WorkerConfig config = new WorkerConfig();
         config.setProperty(CMSSigner.DIRECTSIGNATURE_PROPERTY, Boolean.TRUE.toString());
-        config.setProperty(CMSSigner.ALLOW_CLIENTSIDEHASHING_OVERRIDE, Boolean.TRUE.toString());
+        config.setProperty(ClientSideHashingHelper.ALLOW_CLIENTSIDEHASHING_OVERRIDE, Boolean.TRUE.toString());
         CMSSigner instance = createMockSigner(tokenRSA);
         instance.init(1, config, new SignServerContext(), null);
 

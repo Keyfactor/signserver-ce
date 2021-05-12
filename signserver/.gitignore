@@ -69,6 +69,11 @@ conf/timemonitor-log4j.properties
 conf/signserver_build.properties
 conf/admingui.properties
 
+# Enterprise Edition sample configuration files
+conf/cesecore.properties.sample
+conf/databaseprotection.properties.sample
+conf/timemonitor.properties.sample
+
 /doc/TimeMonitor-Manual.pdf
 /doc/api/
 /doc/howto-wrap*/

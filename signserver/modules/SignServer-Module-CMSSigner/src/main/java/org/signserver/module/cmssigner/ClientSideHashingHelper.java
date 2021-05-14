@@ -15,6 +15,9 @@ package org.signserver.module.cmssigner;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
@@ -35,21 +38,21 @@ import org.signserver.common.WorkerConfig;
 public class ClientSideHashingHelper {
 
     private static final Logger LOG = Logger.getLogger(ClientSideHashingHelper.class);
-    
+
     public static final String CLIENTSIDEHASHING = "CLIENTSIDEHASHING";
     public static final String ALLOW_CLIENTSIDEHASHING_OVERRIDE = "ALLOW_CLIENTSIDEHASHING_OVERRIDE";
     public static final String ACCEPTED_HASHDIGEST_ALGORITHMS = "ACCEPTED_HASH_DIGEST_ALGORITHMS";
-    
+
     public static final String CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY = "CLIENTSIDE_HASHDIGESTALGORITHM";
     public static final String USING_CLIENTSUPPLIED_HASH_PROPERTY = "USING_CLIENTSUPPLIED_HASH";
-    
+
     private boolean clientSideHashing;
     private boolean allowClientSideHashingOverride;
     private Set<AlgorithmIdentifier> acceptedHashDigestAlgorithms;
 
     public void init(WorkerConfig config, LinkedList<String> configErrors) {
-        
-        
+
+
         final String clientSideHashingValue = config.getProperty(CLIENTSIDEHASHING, Boolean.FALSE.toString());
         if (Boolean.FALSE.toString().equalsIgnoreCase(clientSideHashingValue)) {
             clientSideHashing = false;
@@ -58,7 +61,7 @@ public class ClientSideHashingHelper {
         } else {
             configErrors.add("Incorrect value for property " + CLIENTSIDEHASHING + ". Expecting TRUE or FALSE.");
         }
-        
+
         final String allowClientSideHashingOverrideValue = config.getProperty(ALLOW_CLIENTSIDEHASHING_OVERRIDE, Boolean.FALSE.toString());
         if (Boolean.FALSE.toString().equalsIgnoreCase(allowClientSideHashingOverrideValue)) {
             allowClientSideHashingOverride = false;
@@ -67,7 +70,7 @@ public class ClientSideHashingHelper {
         } else {
             configErrors.add("Incorrect value for property " + ALLOW_CLIENTSIDEHASHING_OVERRIDE + ". Expecting TRUE or FALSE.");
         }
-        
+
         final String acceptedHashDigestAlgorithmsValue
                 = config.getProperty(ACCEPTED_HASHDIGEST_ALGORITHMS, DEFAULT_NULL);
         final DigestAlgorithmIdentifierFinder algFinder = new DefaultDigestAlgorithmIdentifierFinder();
@@ -86,9 +89,9 @@ public class ClientSideHashingHelper {
                     acceptedHashDigestAlgorithms.add(alg);
                 }
             }
-        }        
-        
-        
+        }
+
+
         /* require ACCEPTED_HASHDIGEST_ALGORITHMS to be set when either
          * CLIENTSIDEHASHING is set to true or ALLOW_CLIENTSIDEHASHING_OVERRIDE
          * is set to true
@@ -99,11 +102,11 @@ public class ClientSideHashingHelper {
                              " when " + CLIENTSIDEHASHING + " or " +
                              ALLOW_CLIENTSIDEHASHING_OVERRIDE + " is true");
         }
-        
-    }    
-    
+
+    }
+
     /**
-     * Get the algorithm provided by the client in the request as OID if we 
+     * Get the algorithm provided by the client in the request as OID if we
      * support the algorithm.
      *
      * @param requestContext of the request
@@ -123,20 +126,19 @@ public class ClientSideHashingHelper {
         if (alg == null) {
             throw new IllegalRequestException("Client-side hashing request must specify hash algorithm used");
         }
-        
+
         /* DefaultDigestAlgorithmIdentifierFinder returns an AlgorithmIdentifer
          * with a null algorithm for an unknown algorithm
          */
         if (alg.getAlgorithm() == null) {
             throw new IllegalRequestException("Client specified an unknown digest algorithm");
         }
-        
-        if (acceptedHashDigestAlgorithms != null &&
-            !acceptedHashDigestAlgorithms.isEmpty() &&
+
+        if (CollectionUtils.isNotEmpty(acceptedHashDigestAlgorithms) &&
             !acceptedHashDigestAlgorithms.contains(alg)) {
             throw new IllegalRequestException("Client specified a non-accepted digest hash algorithm");
         }
-        
+
         return alg;
     }
 
@@ -150,31 +152,9 @@ public class ClientSideHashingHelper {
      */
     public final String getClientSideHashAlgorithmName(final RequestContext requestContext)
             throws IllegalRequestException {
-        AlgorithmIdentifier alg = null;
         final String value = RequestMetadata.getInstance(requestContext).get(CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY);
-        if (value != null && !value.isEmpty()) {
-            final DigestAlgorithmIdentifierFinder algFinder =
-                    new DefaultDigestAlgorithmIdentifierFinder();
-            alg = algFinder.find(value);
-        }
-
-        if (alg == null) {
-            throw new IllegalRequestException("Client-side hashing request must specify hash algorithm used");
-        }
-        
-        /* DefaultDigestAlgorithmIdentifierFinder returns an AlgorithmIdentifer
-         * with a null algorithm for an unknown algorithm
-         */
-        if (alg.getAlgorithm() == null) {
-            throw new IllegalRequestException("Client specified an unknown digest algorithm");
-        }
-        
-        if (acceptedHashDigestAlgorithms != null &&
-            !acceptedHashDigestAlgorithms.isEmpty() &&
-            !acceptedHashDigestAlgorithms.contains(alg)) {
-            throw new IllegalRequestException("Client specified a non-accepted digest hash algorithm");
-        }
-        
+        // Call getClientSideHashAlgorithm to validate request
+        getClientSideHashAlgorithm(requestContext);
         return value;
     }
 
@@ -195,7 +175,7 @@ public class ClientSideHashingHelper {
      * to be allowed etc.
      * @param requestContext of the request
      * @return true if client-side hashing should be used
-     * @throws IllegalRequestException 
+     * @throws IllegalRequestException If Client-side/Server-side hashing requested but not allowed.
      */
     protected boolean shouldUseClientSideHashing(final RequestContext requestContext)
             throws IllegalRequestException {
@@ -218,13 +198,13 @@ public class ClientSideHashingHelper {
                     throw new IllegalRequestException("Server-side hashing requested but not allowed");
                 }
             }
-   
+
             useClientSideHashing = clientSideHashingRequested;
         }
 
         return useClientSideHashing;
     }
-    
+
     /**
      * Read the request metadata property for USING_CLIENTSUPPLIED_HASH if any.
      * Note that empty String is treated as an unset property.
@@ -233,11 +213,10 @@ public class ClientSideHashingHelper {
      * true or false.
      */
     private static Boolean getClientSuppliedHashRequest(final RequestContext context) {
-        Boolean result = null;
         final String value = RequestMetadata.getInstance(context).get(USING_CLIENTSUPPLIED_HASH_PROPERTY);
-        if (value != null && !value.isEmpty()) {
-            result = Boolean.parseBoolean(value);
+        if (StringUtils.isNotBlank(value)) {
+            return Boolean.parseBoolean(value);
         }
-        return result;
+        return null;
     }
 }

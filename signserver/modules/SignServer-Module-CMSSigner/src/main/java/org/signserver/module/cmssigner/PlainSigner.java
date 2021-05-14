@@ -252,8 +252,14 @@ public class PlainSigner extends BaseSigner {
 
                 signedbytes = signature.sign();
             } else {
-                if (sigAlg.toUpperCase(Locale.ENGLISH).startsWith("NONEWITH")) {
-                    // Special case as BC (ContentSignerBuilder) does not handle NONEwithRSA
+                // Special case as BC (ContentSignerBuilder) does not handle NONEwithRSA
+                if (sigAlg.toUpperCase(Locale.ENGLISH).startsWith("NONEWITH")) { 
+                    // We need PSS params for this
+                    if (sigAlg.toUpperCase(Locale.ENGLISH).endsWith("ANDMGF1") || sigAlg.toUpperCase(Locale.ENGLISH).endsWith("SSA-PSS")) {
+                        throw new IllegalRequestException("NONEwithRSAandMGF1 is not supported without the request metadata properties for client-side hashing");
+                    }
+                    
+                    
                     final Signature signature = Signature.getInstance(sigAlg, crypto.getProvider());
                     signature.initSign(privKey);
 

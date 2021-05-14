@@ -26,7 +26,6 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import static junit.framework.TestCase.assertTrue;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
@@ -43,7 +42,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.signserver.common.IllegalRequestException;
 import org.signserver.common.RequestContext;
+import org.signserver.common.RequestMetadata;
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerType;
 import org.signserver.common.data.SignatureRequest;
@@ -648,4 +649,74 @@ public class PlainSignerTest {
         SimplifiedResponse resp = sign(hash, tokenECDSA, createConfig("NONEwithECDSA"));
         assertSignedAndVerifiable(plainText, "SHA384withECDSA", tokenECDSA, resp);
     }
+
+    /**
+     * Tests that we do not support/allow client-side flags for PKCS1 yet.
+     *
+     * TODO: This should be changed when we implement the PKCS1 encoding on server-side (DSS-1498).
+     *
+     * @throws Exception 
+     */
+    @Test(expected = IllegalRequestException.class)
+    public void testNONESigning_RSASSA_PKCS1_notAllowed() throws Exception {
+        LOG.info("testNONESigning_RSASSA_PKCS1_notAllowed");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(plainText);
+        byte[] hash = md.digest();
+
+        // Taken from RFC 3447, page 42 for SHA-256, create input for signing
+        byte[] modifierBytes = {0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, (byte) 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20};
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(modifierBytes);
+        baos.write(hash);
+        
+        final RequestContext context = new RequestContext();
+        RequestMetadata.getInstance(context).put("USING_CLIENTSUPPLIED_HASH", "true");
+        RequestMetadata.getInstance(context).put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-256");
+
+        SimplifiedResponse resp = sign(baos.toByteArray(), tokenRSA, createConfig("NONEwithRSA"), context);
+        assertSignedAndVerifiable(plainText, "SHA256withRSA", tokenRSA, resp);
+    }
+
+    /**
+     * Test that Signing works and signature is verified when Signature algorithm is NONEwithRSAandMGF1 and input is SHA-384 hash digest.
+     * 
+     * @throws Exception 
+     */
+    @Test(expected = IllegalRequestException.class)
+    public void testNONESigning_RSAandMGF1_SHA384() throws Exception {
+        LOG.info("testNONESigning_RSAandMGF1_SHA384");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-384");
+        md.update(plainText);
+        byte[] hash = md.digest();
+        SimplifiedResponse resp = sign(hash, tokenRSA, createConfig("NONEwithRSAandMGF1"));
+        assertSignedAndVerifiable(plainText, "SHA384withRSAandMGF1", tokenRSA, resp);
+    }
+    
+    /**
+     * Test that Signing works and signature is verified when Signature algorithm is NONEwithRSAandMGF1 and input is SHA-384 hash digest.
+     * 
+     * @throws Exception 
+     */
+    @Test(expected = IllegalRequestException.class)
+    public void testNONESigning_RSAandMGF1_SHA384_clientSide() throws Exception {
+        LOG.info("testNONESigning_RSAandMGF1_SHA384_clientSide");
+        // code example includes MessageDigest for the sake of completeness
+        byte[] plainText = "some-data".getBytes("ASCII");
+        MessageDigest md = MessageDigest.getInstance("SHA-384");
+        md.update(plainText);
+        byte[] hash = md.digest();
+        
+        final RequestContext context = new RequestContext();
+        RequestMetadata.getInstance(context).put("USING_CLIENTSUPPLIED_HASH", "true");
+        RequestMetadata.getInstance(context).put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-384");
+        
+        SimplifiedResponse resp = sign(hash, tokenRSA, createConfig("NONEwithRSAandMGF1"), context);
+        assertSignedAndVerifiable(plainText, "SHA384withRSAandMGF1", tokenRSA, resp);
+    }
+    
 }

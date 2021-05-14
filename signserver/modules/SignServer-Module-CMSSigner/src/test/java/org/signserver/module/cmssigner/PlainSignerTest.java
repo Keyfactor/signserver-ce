@@ -686,7 +686,6 @@ public class PlainSignerTest {
         } catch (IllegalRequestException ex) {
             assertEquals("Client-side hashing through request metadata not supported for other algorithms than RSASSA-PSS yet", ex.getMessage());
         }
-
     }
 
     /**

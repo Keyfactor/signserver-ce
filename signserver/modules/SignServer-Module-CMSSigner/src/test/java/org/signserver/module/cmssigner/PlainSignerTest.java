@@ -657,7 +657,7 @@ public class PlainSignerTest {
      *
      * @throws Exception 
      */
-    @Test(expected = IllegalRequestException.class)
+    @Test
     public void testNONESigning_RSASSA_PKCS1_notAllowed() throws Exception {
         LOG.info("testNONESigning_RSASSA_PKCS1_notAllowed");
         // code example includes MessageDigest for the sake of completeness
@@ -676,16 +676,26 @@ public class PlainSignerTest {
         RequestMetadata.getInstance(context).put("USING_CLIENTSUPPLIED_HASH", "true");
         RequestMetadata.getInstance(context).put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-256");
 
-        SimplifiedResponse resp = sign(baos.toByteArray(), tokenRSA, createConfig("NONEwithRSA"), context);
-        assertSignedAndVerifiable(plainText, "SHA256withRSA", tokenRSA, resp);
+        WorkerConfig config = createConfig("NONEwithRSA");
+        config.setProperty("CLIENTSIDEHASHING", "true");
+        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-256, SHA-384, SHA-512");
+        
+        try {
+            sign(baos.toByteArray(), tokenRSA, config, context);
+            fail("Should have failed as suppliying request metadata properties is not supported yet with NONEwithRSA");
+        } catch (IllegalRequestException ex) {
+            assertEquals("Client-side hashing through request metadata not supported for other algorithms than RSASSA-PSS yet", ex.getMessage());
+        }
+
     }
 
     /**
-     * Test that Signing works and signature is verified when Signature algorithm is NONEwithRSAandMGF1 and input is SHA-384 hash digest.
+     * Test that signing fails for NONEwithRSAandMGF1 when then request does 
+     * not have the client-side request metadata properties.
      * 
      * @throws Exception 
      */
-    @Test(expected = IllegalRequestException.class)
+    @Test
     public void testNONESigning_RSAandMGF1_SHA384() throws Exception {
         LOG.info("testNONESigning_RSAandMGF1_SHA384");
         // code example includes MessageDigest for the sake of completeness
@@ -693,16 +703,20 @@ public class PlainSignerTest {
         MessageDigest md = MessageDigest.getInstance("SHA-384");
         md.update(plainText);
         byte[] hash = md.digest();
-        SimplifiedResponse resp = sign(hash, tokenRSA, createConfig("NONEwithRSAandMGF1"));
-        assertSignedAndVerifiable(plainText, "SHA384withRSAandMGF1", tokenRSA, resp);
+        try {
+            sign(hash, tokenRSA, createConfig("NONEwithRSAandMGF1"));
+            fail("Should have failed as signature algorithm is NONEwithRSAandMGF1 but the request metadata properties were not supplied");
+        } catch (IllegalRequestException ex) {
+            assertEquals("NONEwithRSAandMGF1 is not supported without the request metadata properties for client-side hashing", ex.getMessage());
+        }
     }
-    
+
     /**
      * Test that Signing works and signature is verified when Signature algorithm is NONEwithRSAandMGF1 and input is SHA-384 hash digest.
      * 
      * @throws Exception 
      */
-    @Test(expected = IllegalRequestException.class)
+    @Test
     public void testNONESigning_RSAandMGF1_SHA384_clientSide() throws Exception {
         LOG.info("testNONESigning_RSAandMGF1_SHA384_clientSide");
         // code example includes MessageDigest for the sake of completeness
@@ -710,12 +724,16 @@ public class PlainSignerTest {
         MessageDigest md = MessageDigest.getInstance("SHA-384");
         md.update(plainText);
         byte[] hash = md.digest();
-        
+
         final RequestContext context = new RequestContext();
         RequestMetadata.getInstance(context).put("USING_CLIENTSUPPLIED_HASH", "true");
         RequestMetadata.getInstance(context).put("CLIENTSIDE_HASHDIGESTALGORITHM", "SHA-384");
-        
-        SimplifiedResponse resp = sign(hash, tokenRSA, createConfig("NONEwithRSAandMGF1"), context);
+
+        WorkerConfig config = createConfig("NONEwithRSAandMGF1");
+        config.setProperty("CLIENTSIDEHASHING", "true");
+        config.setProperty("ACCEPTED_HASH_DIGEST_ALGORITHMS", "SHA-384");
+
+        SimplifiedResponse resp = sign(hash, tokenRSA, config, context);
         assertSignedAndVerifiable(plainText, "SHA384withRSAandMGF1", tokenRSA, resp);
     }
     

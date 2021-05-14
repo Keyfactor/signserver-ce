@@ -71,7 +71,6 @@ import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
  */
 public class PlainSigner extends BaseSigner {
 
-    /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(PlainSigner.class);
 
     /** Content-type for the produced data. */
@@ -86,18 +85,32 @@ public class PlainSigner extends BaseSigner {
     public static final String LOGREQUEST_DIGESTALGORITHM_PROPERTY = "LOGREQUEST_DIGESTALGORITHM";
 
     private static final String DEFAULT_LOGREQUEST_DIGESTALGORITHM = "SHA256";
-    
+
     /** If the request digest should be created and logged. */
     public static final String DO_LOGREQUEST_DIGEST = "DO_LOGREQUEST_DIGEST";
 
     private static final boolean DEFAULT_DO_LOGREQUEST_DIGEST = true;
-    
+
     private LinkedList<String> configErrors;
     private String signatureAlgorithm;
     private String logRequestDigestAlgorithm;
     private boolean doLogRequestDigest;
 
     private final ClientSideHashingHelper clientSideHelper = new ClientSideHashingHelper();
+
+    private final static Map<String, Integer> HASH_ALGORITHM_AND_SALT_MAP = new HashMap<>();
+
+    // Bind hash algorithm with corresponding salt value
+    static {
+        HASH_ALGORITHM_AND_SALT_MAP.put("SHA1", 20);
+        HASH_ALGORITHM_AND_SALT_MAP.put("SHA-1", 20);
+        HASH_ALGORITHM_AND_SALT_MAP.put("SHA256", 32);
+        HASH_ALGORITHM_AND_SALT_MAP.put("SHA-256", 32);
+        HASH_ALGORITHM_AND_SALT_MAP.put("SHA384", 48);
+        HASH_ALGORITHM_AND_SALT_MAP.put("SHA-384", 48);
+        HASH_ALGORITHM_AND_SALT_MAP.put("SHA512", 64);
+        HASH_ALGORITHM_AND_SALT_MAP.put("SHA-512", 64);
+    }
 
     @Override
     public void init(final int workerId, final WorkerConfig config,
@@ -109,10 +122,10 @@ public class PlainSigner extends BaseSigner {
 
         // Get the signature algorithm
         signatureAlgorithm = config.getProperty(SIGNATUREALGORITHM_PROPERTY, DEFAULT_NULL);
-                
+
         // Get the log digest algorithm
         logRequestDigestAlgorithm = config.getProperty(LOGREQUEST_DIGESTALGORITHM_PROPERTY, DEFAULT_LOGREQUEST_DIGESTALGORITHM);
-        
+
         // If the request digest should computed and be logged
         final String s = config.getProperty(DO_LOGREQUEST_DIGEST, Boolean.toString(DEFAULT_DO_LOGREQUEST_DIGEST));
         if ("true".equalsIgnoreCase(s)) {
@@ -122,7 +135,7 @@ public class PlainSigner extends BaseSigner {
         } else {
             configErrors.add("Incorrect value for " + DO_LOGREQUEST_DIGEST);
         }
-        
+
         clientSideHelper.init(config, configErrors);
     }
 
@@ -130,7 +143,7 @@ public class PlainSigner extends BaseSigner {
     public Response processData(final Request signRequest,
             final RequestContext requestContext) throws IllegalRequestException,
             CryptoTokenOfflineException, SignServerException {
-        
+
         // Log values
         final LogMap logMap = LogMap.getInstance(requestContext);
 
@@ -154,10 +167,9 @@ public class PlainSigner extends BaseSigner {
         } else {
             fileNameOriginal = null;
         }
-        
+
         final ReadableData requestData = sReq.getRequestData();
         final WritableData responseData = sReq.getResponseData();
-        final byte[] digest;
         logMap.put(IWorkerLogger.LOG_REQUEST_DIGEST_ALGORITHM, new Loggable() {
             @Override
             public String toString() {
@@ -214,59 +226,39 @@ public class PlainSigner extends BaseSigner {
 
             if (clientSideHelper.shouldUseClientSideHashing(requestContext)) {
                 String clientSideHashAlgorithm = clientSideHelper.getClientSideHashAlgorithmName(requestContext);
-                
+
                 // Special case as BC (ContentSignerBuilder) does not handle NONEwithRSA
                 final Signature signature = Signature.getInstance(sigAlg, crypto.getProvider());
-                
+
                 if (sigAlg.toUpperCase(Locale.ENGLISH).endsWith("ANDMGF1") || sigAlg.toUpperCase(Locale.ENGLISH).endsWith("SSA-PSS")) {
-                    final int saltLength;
-                    
-                    // TODO
-                    switch (clientSideHashAlgorithm) {
-                        case "SHA1":
-                        case "SHA-1":
-                            saltLength = 20;
-                            break;
-                        case "SHA256":
-                        case "SHA-256":
-                            saltLength = 32;
-                            break;
-                        case "SHA384":
-                        case "SHA-384":
-                            saltLength = 48;
-                            break;
-                        case "SHA512":
-                        case "SHA-512":
-                            saltLength = 64;
-                            break;
-                        default:
-                            throw new InvalidKeyException("Unsupported digest for PSS parameters: " + clientSideHashAlgorithm);
+                    final Integer saltLength = HASH_ALGORITHM_AND_SALT_MAP.get(clientSideHashAlgorithm);
+                    if(saltLength == null) {
+                        throw new InvalidKeyException("Unsupported digest for PSS parameters: " + clientSideHashAlgorithm);
                     }
-                    
                     PSSParameterSpec params = new PSSParameterSpec(clientSideHashAlgorithm, "MGF1", new MGF1ParameterSpec(clientSideHashAlgorithm), saltLength, 1);
                     signature.setParameter(params);
                 } else {
                     // Do not allow for RSASSA-PKCS1_v1.5 yet as we want to implement the encoding part here so it will work the same way as for PSS
                     throw new IllegalRequestException("Client-side hashing through request metadata not supported for other algorithms than RSASSA-PSS yet");
                 }
-                
+
                 signature.initSign(privKey);
 
-                final byte[] buffer = new byte[4096]; 
-                int n = 0;
+                final byte[] buffer = new byte[4096];
+                int n;
                 while (-1 != (n = in.read(buffer))) {
                     signature.update(buffer, 0, n);
                 }
 
                 signedbytes = signature.sign();
             } else {
-                if (sigAlg.toUpperCase(Locale.ENGLISH).startsWith("NONEWITH")) { 
+                if (sigAlg.toUpperCase(Locale.ENGLISH).startsWith("NONEWITH")) {
                     // Special case as BC (ContentSignerBuilder) does not handle NONEwithRSA
                     final Signature signature = Signature.getInstance(sigAlg, crypto.getProvider());
                     signature.initSign(privKey);
 
-                    final byte[] buffer = new byte[4096]; 
-                    int n = 0;
+                    final byte[] buffer = new byte[4096];
+                    int n;
                     while (-1 != (n = in.read(buffer))) {
                         signature.update(buffer, 0, n);
                     }
@@ -292,8 +284,8 @@ public class PlainSigner extends BaseSigner {
                     ContentSigner signer = signerBuilder.build(privKey);
 
                     try (OutputStream signerOut = signer.getOutputStream()) {
-                        final byte[] buffer = new byte[4096]; 
-                        int n = 0;
+                        final byte[] buffer = new byte[4096];
+                        int n;
                         while (-1 != (n = in.read(buffer))) {
                             signerOut.write(buffer, 0, n);
                         }
@@ -302,18 +294,18 @@ public class PlainSigner extends BaseSigner {
                     signedbytes = signer.getSignature();
                 }
             }
-            
+
             out.write(signedbytes);
-            
+
             logMap.put(IWorkerLogger.LOG_RESPONSE_ENCODED, new Loggable() {
                 @Override
                 public String toString() {
                     return Base64.toBase64String(signedbytes);
                 }
             });
-            
+
             final Collection<? extends Archivable> archivables = Arrays.asList(
-                    new DefaultArchivable(Archivable.TYPE_REQUEST, CONTENT_TYPE, requestData, archiveId), 
+                    new DefaultArchivable(Archivable.TYPE_REQUEST, CONTENT_TYPE, requestData, archiveId),
                     new DefaultArchivable(Archivable.TYPE_RESPONSE, CONTENT_TYPE, responseData.toReadableData(), archiveId));
 
             // Suggest new file name
@@ -337,7 +329,7 @@ public class PlainSigner extends BaseSigner {
             releaseCryptoInstance(crypto, requestContext);
         }
     }
-    
+
     private String getDefaultSignatureAlgorithm(final PublicKey publicKey) {
         final String result;
 

@@ -1,3 +1,15 @@
+/*************************************************************************
+ *                                                                       *
+ *  SignServer: The OpenSource Automated Signing Server                  *
+ *                                                                       *
+ *  This software is free software; you can redistribute it and/or       *
+ *  modify it under the terms of the GNU Lesser General Public           *
+ *  License as published by the Free Software Foundation; either         *
+ *  version 2.1 of the License, or any later version.                    *
+ *                                                                       *
+ *  See terms of license at gnu.org.                                     *
+ *                                                                       *
+ *************************************************************************/
 package org.signserver.module.cmssigner;
 
 import java.util.Collections;
@@ -68,6 +80,13 @@ public class ClientSideHashingHelperUnitTest {
         requestMetadataMap = new HashMap<>();
     }
 
+    /**
+     * We test shouldUseClientSideHashing(...) method body, if:
+     * - CLIENTSIDEHASHING = false;
+     * - ALLOW_CLIENTSIDEHASHING_OVERRIDE = false;
+     * - USING_CLIENTSUPPLIED_HASH_PROPERTY unset.
+     * should return false.
+     */
     @Test
     public void usingClientSuppliedHashRequestUnset() throws Exception {
         // given
@@ -83,6 +102,13 @@ public class ClientSideHashingHelperUnitTest {
         assertEquals("Should not have errors", Collections.EMPTY_LIST, workerConfigErrors);
     }
 
+    /**
+     * We test shouldUseClientSideHashing(...) method body, if:
+     * - CLIENTSIDEHASHING = false;
+     * - ALLOW_CLIENTSIDEHASHING_OVERRIDE = false;
+     * - USING_CLIENTSUPPLIED_HASH_PROPERTY = false.
+     * should return false.
+     */
     @Test
     public void usingClientSuppliedHashRequestSetToFalse() throws Exception {
         // given
@@ -99,6 +125,13 @@ public class ClientSideHashingHelperUnitTest {
         assertEquals("Should not have errors", Collections.EMPTY_LIST, workerConfigErrors);
     }
 
+    /**
+     * We test shouldUseClientSideHashing(...) method body, if:
+     * - CLIENTSIDEHASHING = false;
+     * - ALLOW_CLIENTSIDEHASHING_OVERRIDE = false;
+     * - USING_CLIENTSUPPLIED_HASH_PROPERTY true.
+     * should throw IllegalRequestException because of CLIENTSIDEHASHING and ALLOW_CLIENTSIDEHASHING_OVERRIDE.
+     */
     @Test
     public void failureClientSuppliedHashRequestSetToTrue() throws Exception {
         // given
@@ -115,6 +148,13 @@ public class ClientSideHashingHelperUnitTest {
         helper.shouldUseClientSideHashing(requestContext);
     }
 
+    /**
+     * We test shouldUseClientSideHashing(...) method body, if:
+     * - CLIENTSIDEHASHING = true;
+     * - ALLOW_CLIENTSIDEHASHING_OVERRIDE = false;
+     * - USING_CLIENTSUPPLIED_HASH_PROPERTY false.
+     * should throw IllegalRequestException because of CLIENTSIDEHASHING and ALLOW_CLIENTSIDEHASHING_OVERRIDE.
+     */
     @Test
     public void failureClientSuppliedHashSetToFalse() throws Exception {
         // given
@@ -131,6 +171,13 @@ public class ClientSideHashingHelperUnitTest {
         helper.shouldUseClientSideHashing(requestContext);
     }
 
+    /**
+     * We test shouldUseClientSideHashing(...) method body, if:
+     * - CLIENTSIDEHASHING = true;
+     * - ALLOW_CLIENTSIDEHASHING_OVERRIDE = true;
+     * - USING_CLIENTSUPPLIED_HASH_PROPERTY = true.
+     * should return true, but with error due to ACCEPTED_HASHDIGEST_ALGORITHMS.
+     */
     @Test
     public void usingClientSuppliedHashSetToTrueAcceptedButErrors() throws Exception {
         // given
@@ -153,6 +200,13 @@ public class ClientSideHashingHelperUnitTest {
         );
     }
 
+    /**
+     * We test shouldUseClientSideHashing(...) method body, if:
+     * - CLIENTSIDEHASHING = true;
+     * - ALLOW_CLIENTSIDEHASHING_OVERRIDE = true;
+     * - USING_CLIENTSUPPLIED_HASH_PROPERTY = true.
+     * should return true.
+     */
     @Test
     public void usingClientSuppliedHashSetToTrueAccepted() throws Exception {
         // given
@@ -169,6 +223,11 @@ public class ClientSideHashingHelperUnitTest {
         assertEquals("Should not have errors", Collections.EMPTY_LIST, workerConfigErrors);
     }
 
+    /**
+     * We test getClientSideHashAlgorithm, if:
+     * - CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY - unknown algorithm.
+     * should throw IllegalRequestException because of CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY.
+     */
     @Test
     public void failureOnAlgorithmIdentifierWithUnknownAlgorithm() throws Exception {
         // given
@@ -186,6 +245,12 @@ public class ClientSideHashingHelperUnitTest {
         helper.getClientSideHashAlgorithm(requestContext);
     }
 
+    /**
+     * We test getClientSideHashAlgorithm, if:
+     * - CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY - SHA-256;
+     * - ACCEPTED_HASHDIGEST_ALGORITHMS - SHA-512.
+     * should throw IllegalRequestException because of mismatch of accepted algorithms.
+     */
     @Test
     public void failureOnAlgorithmIdentifierWithOtherAcceptedHashDigestAlgorithms() throws Exception {
         // given
@@ -203,6 +268,12 @@ public class ClientSideHashingHelperUnitTest {
         helper.getClientSideHashAlgorithm(requestContext);
     }
 
+    /**
+     * We test getClientSideHashAlgorithm, if:
+     * - CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY - SHA-256;
+     * - ACCEPTED_HASHDIGEST_ALGORITHMS - SHA-256, SHA-512.
+     * should succeed.
+     */
     @Test
     public void successOnAlgorithmIdentifier() throws Exception {
         // given
@@ -221,6 +292,11 @@ public class ClientSideHashingHelperUnitTest {
         assertEquals("Algorithm should match", NISTObjectIdentifiers.id_sha256, algorithmIdentifier.getAlgorithm());
     }
 
+    /**
+     * We test getClientSideHashAlgorithmName, if:
+     * - CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY - unknown algorithm.
+     * should throw IllegalRequestException because of CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY.
+     */
     @Test
     public void failureOnAlgorithmNameWithUnknownAlgorithm() throws Exception {
         // given
@@ -238,6 +314,12 @@ public class ClientSideHashingHelperUnitTest {
         helper.getClientSideHashAlgorithmName(requestContext);
     }
 
+    /**
+     * We test getClientSideHashAlgorithmName, if:
+     * - CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY - SHA-256;
+     * - ACCEPTED_HASHDIGEST_ALGORITHMS - SHA-512.
+     * should throw IllegalRequestException because of mismatch of accepted algorithms.
+     */
     @Test
     public void failureOnAlgorithmNameWithOtherAcceptedHashDigestAlgorithms() throws Exception {
         // given
@@ -255,6 +337,12 @@ public class ClientSideHashingHelperUnitTest {
         helper.getClientSideHashAlgorithmName(requestContext);
     }
 
+    /**
+     * We test getClientSideHashAlgorithm, if:
+     * - CLIENTSIDE_HASHDIGESTALGORITHM_PROPERTY - SHA-256;
+     * - ACCEPTED_HASHDIGEST_ALGORITHMS - SHA-256, SHA-512.
+     * should succeed.
+     */
     @Test
     public void successOnAlgorithmName() throws Exception {
         // given

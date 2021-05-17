@@ -34,7 +34,7 @@ hs_err_pid*
 Thumbs.db
 
 # Maven
-log/
+/log/
 target/
 
 # maven-release-plugin
@@ -49,30 +49,30 @@ dist-*/
 # SignServer specific svn propget -R svn:ignore
 .svn
 .clover/
-authenticode-test-files/
+/authenticode-test-files/
 
-bin/p11ng-tool
-bin/p11ng-tool.cmd
-bin/signserver-db
-bin/signserver-db.cmd
-bin/timemonitor-in-background.sh
-bin/signserver-gui
-bin/signserver-gui.cmd
+/bin/p11ng-tool
+/bin/p11ng-tool.cmd
+/bin/signserver-db
+/bin/signserver-db.cmd
+/bin/timemonitor-in-background.sh
+/bin/signserver-gui
+/bin/signserver-gui.cmd
 
-conf/signserver_deploy.properties
-conf/signserver_cli.properties
-conf/databaseprotection.properties
-conf/timemonitor.properties
-conf/webtest.properties
-conf/cesecore.properties
-conf/timemonitor-log4j.properties
-conf/signserver_build.properties
-conf/admingui.properties
+/conf/signserver_deploy.properties
+/conf/signserver_cli.properties
+/conf/databaseprotection.properties
+/conf/timemonitor.properties
+/conf/webtest.properties
+/conf/cesecore.properties
+/conf/timemonitor-log4j.properties
+/conf/signserver_build.properties
+/conf/admingui.properties
 
 # Enterprise Edition sample configuration files
-conf/cesecore.properties.sample
-conf/databaseprotection.properties.sample
-conf/timemonitor.properties.sample
+/conf/cesecore.properties.sample
+/conf/databaseprotection.properties.sample
+/conf/timemonitor.properties.sample
 
 /doc/TimeMonitor-Manual.pdf
 /doc/api/
@@ -98,8 +98,8 @@ conf/timemonitor.properties.sample
 /doc/sample-configs/apk_*.properties
 /doc/sample-configs/qos_*.properties
 
-indir*/
-jarsigner-test-files/
+/indir*/
+/jarsigner-test-files/
 
 /lib/*.jar
 /lib/*.mar
@@ -120,43 +120,43 @@ jarsigner-test-files/
 /lib/ext/apksig-*
 /lib/ext/jdbc/*.jar
 
-modules/SignServer-Admin-web/nbproject
-modules/SignServer-AdminCLI/nbproject
-modules/SignServer-Module-CMSSigner/.jacocoverage
-modules/SignServer-Module-OpenPGP/nbproject
-modules/SignServer-Module-Renewal/nbproject
-modules/SignServer-Module-XAdES/.jacocoverage
-modules/SignServer-Project/nbproject/private
-modules/SignServer-Server/nbproject
-modules/SignServer-Test-P11/ctb.log
-modules/SignServer-Test-System/src/jndi.properties
-modules/SignServer-Test-System/src/test/java/org/signserver/client/api/EightCA-use.crl
-modules/SignServer-ejb/.ant-targets-build.xml
-modules/mod-enterprise/SignServer-AdminGUI/connect.properties
-modules/mod-enterprise/SignServer-AdminGUI/.~lock.admingui-splash.odg*
-modules/mod-enterprise/SignServer-Module-TimeMonitorManager/.jacocoverage
-modules/mod-enterprise/SignServer-Test-Enterprise/nbproject
-modules/mod-enterprise/SignServer-TimeMonitor/.jacocoverage
-modules/mod-enterprise/SignServer-TimeMonitor/doc/.~lock.TimeMonitor-Manual.*
-modules/mod-enterprise/SignServer-TimeMonitor-Common/.jacocoverage
-mods-available/
+/modules/SignServer-Admin-web/nbproject
+/modules/SignServer-AdminCLI/nbproject
+/modules/SignServer-Module-CMSSigner/.jacocoverage
+/modules/SignServer-Module-OpenPGP/nbproject
+/modules/SignServer-Module-Renewal/nbproject
+/modules/SignServer-Module-XAdES/.jacocoverage
+/modules/SignServer-Project/nbproject/private
+/modules/SignServer-Server/nbproject
+/modules/SignServer-Test-P11/ctb.log
+/modules/SignServer-Test-System/src/jndi.properties
+/modules/SignServer-Test-System/src/test/java/org/signserver/client/api/EightCA-use.crl
+/modules/SignServer-ejb/.ant-targets-build.xml
+/modules/mod-enterprise/SignServer-AdminGUI/connect.properties
+/modules/mod-enterprise/SignServer-AdminGUI/.~lock.admingui-splash.odg*
+/modules/mod-enterprise/SignServer-Module-TimeMonitorManager/.jacocoverage
+/modules/mod-enterprise/SignServer-Test-Enterprise/nbproject
+/modules/mod-enterprise/SignServer-TimeMonitor/.jacocoverage
+/modules/mod-enterprise/SignServer-TimeMonitor/doc/.~lock.TimeMonitor-Manual.*
+/modules/mod-enterprise/SignServer-TimeMonitor-Common/.jacocoverage
+/mods-available/
 
-nodb
-outdir*/
-p12
+/nodb
+/outdir*/
+/p12
 
-res/edition.properties
-res/deploytools/nbproject/private
+/res/edition.properties
+/res/deploytools/nbproject/private
 
-statistics/
-tmp
+/statistics/
+/tmp
 
 .externalToolBuilders
-connect.properties
-htdocs.tgz
-maintenance.properties
-signserver_audit.log
-signserver_build.properties
-signserver-timemonitor.log
-test-config.properties
-velocity.log
+/connect.properties
+/htdocs.tgz
+/maintenance.properties
+/signserver_audit.log
+/signserver_build.properties
+/signserver-timemonitor.log
+/test-config.properties
+/velocity.log

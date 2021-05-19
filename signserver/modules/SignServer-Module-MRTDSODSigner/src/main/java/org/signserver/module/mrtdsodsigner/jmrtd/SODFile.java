@@ -675,7 +675,7 @@ public class SODFile extends PassportFile
 				if (storedDigestedContent == null) {
 					LOGGER.warning("Error extracting signedAttribute message digest in eContent!");
 				}	
-				MessageDigest dig = MessageDigest.getInstance(digAlg);
+				MessageDigest dig = MessageDigest.getInstance(digAlg, PROVIDER);
 				byte[] computedDigestedContent = dig.digest(contentBytes);
 				if (!Arrays.equals(storedDigestedContent, computedDigestedContent)) {
 					LOGGER.warning("Error checking signedAttribute message digest in eContent!");
@@ -873,7 +873,7 @@ public class SODFile extends PassportFile
 
 	private static ASN1Set createAuthenticatedAttributes(String digestAlgorithm, byte[] contentBytes)
 	throws NoSuchAlgorithmException {
-		MessageDigest dig = MessageDigest.getInstance(digestAlgorithm);
+		MessageDigest dig = MessageDigest.getInstance(digestAlgorithm, PROVIDER);
 		byte[] digestedContentBytes = dig.digest(contentBytes);
 		ASN1OctetString digestedContent = new DEROctetString(digestedContentBytes);
 		Attribute contentTypeAttribute = new Attribute(RFC_3369_CONTENT_TYPE_OID, createSingletonSet(ICAO_SOD_OID));

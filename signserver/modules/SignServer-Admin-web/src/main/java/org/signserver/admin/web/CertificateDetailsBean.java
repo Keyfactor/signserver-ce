@@ -19,6 +19,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -39,6 +40,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
 import org.bouncycastle.util.encoders.Hex;
 import org.bouncycastle.util.io.pem.PemWriter;
@@ -291,8 +293,8 @@ public class CertificateDetailsBean {
                     byte[] certBytes = certificate.getEncoded();
                     for (String algorithm : new String[]{"SHA1", "SHA-256"}) {
                         try {
-                            general.getFingerprints().add(new KeyValue<>(algorithm, Hex.toHexString(MessageDigest.getInstance(algorithm).digest(certBytes))));
-                        } catch (NoSuchAlgorithmException ex) {
+                            general.getFingerprints().add(new KeyValue<>(algorithm, Hex.toHexString(MessageDigest.getInstance(algorithm, BouncyCastleProvider.PROVIDER_NAME).digest(certBytes))));
+                        } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
                             LOG.error("Algorithm not supported: " + ex.getLocalizedMessage());
                         }
                     }
@@ -353,8 +355,8 @@ public class CertificateDetailsBean {
                         byte[] certBytes = xCert.getEncoded();
                         for (String algorithm : new String[]{"SHA1", "SHA-256"}) {
                             try {
-                                dc.getFingerprints().add(new KeyValue<>(algorithm, Hex.toHexString(MessageDigest.getInstance(algorithm).digest(certBytes))));
-                            } catch (NoSuchAlgorithmException ex) {
+                                dc.getFingerprints().add(new KeyValue<>(algorithm, Hex.toHexString(MessageDigest.getInstance(algorithm, BouncyCastleProvider.PROVIDER_NAME).digest(certBytes))));
+                            } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
                                 LOG.error("Algorithm not supported: " + ex.getLocalizedMessage());
                             }
                         }

@@ -3569,9 +3569,9 @@ public abstract class CertTools {
      */
     public static byte[] generateSHA256Fingerprint(byte[] ba) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            MessageDigest md = MessageDigest.getInstance("SHA-256", BouncyCastleProvider.PROVIDER_NAME);
             return md.digest(ba);
-        } catch (NoSuchAlgorithmException nsae) {
+        } catch (NoSuchAlgorithmException | NoSuchProviderException nsae) {
             log.error("SHA-256 algorithm not supported", nsae);
         }
         return null;
@@ -4617,7 +4617,7 @@ public abstract class CertTools {
      */
     public static final String createPublicKeyFingerprint(final PublicKey publicKey, final String algorithm) {
         try {
-            final MessageDigest digest = MessageDigest.getInstance(algorithm);
+            final MessageDigest digest = MessageDigest.getInstance(algorithm, BouncyCastleProvider.PROVIDER_NAME);
             digest.reset();
             digest.update(publicKey.getEncoded());
             final String result = Hex.toHexString(digest.digest());
@@ -4625,7 +4625,7 @@ public abstract class CertTools {
                 log.debug("Fingerprint " + result + " created for public key: " + new String(Base64.encode(publicKey.getEncoded())));
             }
             return result;
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
             log.warn("Could not create fingerprint for public key ", e);
             return null;
         }

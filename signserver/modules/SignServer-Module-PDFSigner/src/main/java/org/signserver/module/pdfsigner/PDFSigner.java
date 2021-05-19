@@ -35,6 +35,7 @@ import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
 import org.signserver.server.cesecore.util.CertTools;
 import org.signserver.common.*;
@@ -809,8 +810,8 @@ public class PDFSigner extends BaseSigner {
 
             MessageDigest messageDigest;
             try {
-                messageDigest = MessageDigest.getInstance(digestAlgorithm);
-            } catch (NoSuchAlgorithmException e) {
+                messageDigest = MessageDigest.getInstance(digestAlgorithm, BouncyCastleProvider.PROVIDER_NAME);
+            } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
                 throw new SignServerException("Error creating " + digestAlgorithm + " digest", e);
             }
 

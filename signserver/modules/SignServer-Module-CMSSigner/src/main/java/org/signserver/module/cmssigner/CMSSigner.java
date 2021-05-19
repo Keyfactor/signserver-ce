@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
@@ -39,6 +40,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.*;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.DigestCalculator;
 import org.bouncycastle.operator.DigestCalculatorProvider;
@@ -490,7 +492,7 @@ public class CMSSigner extends BaseSigner {
                 logMap.put(IWorkerLogger.LOG_REQUEST_DIGEST_ALGORITHM, logRequestDigestAlgorithm);
 
                 try (InputStream input = requestData.getAsInputStream()) {
-                    final MessageDigest md = MessageDigest.getInstance(logRequestDigestAlgorithm);
+                    final MessageDigest md = MessageDigest.getInstance(logRequestDigestAlgorithm, BouncyCastleProvider.PROVIDER_NAME);
 
                     // Digest all data
                     // TODO: Future optimization: could be done while the file is read instead
@@ -502,7 +504,7 @@ public class CMSSigner extends BaseSigner {
                             return Hex.toHexString(requestDigest);
                         }
                     });
-                } catch (NoSuchAlgorithmException ex) {
+                } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
                     LOG.error("Log digest algorithm not supported", ex);
                     throw new SignServerException("Log digest algorithm not supported", ex);
                 } catch (IOException ex) {
@@ -524,7 +526,7 @@ public class CMSSigner extends BaseSigner {
                 logMap.put(IWorkerLogger.LOG_RESPONSE_DIGEST_ALGORITHM, logResponseDigestAlgorithm);
 
                 try (InputStream in = responseData.toReadableData().getAsInputStream()) {
-                    final MessageDigest md = MessageDigest.getInstance(logResponseDigestAlgorithm);
+                    final MessageDigest md = MessageDigest.getInstance(logResponseDigestAlgorithm, BouncyCastleProvider.PROVIDER_NAME);
                     responseDigest = UploadUtil.digest(in, md);
 
                     logMap.put(IWorkerLogger.LOG_RESPONSE_DIGEST,
@@ -534,7 +536,7 @@ public class CMSSigner extends BaseSigner {
                                         return Hex.toHexString(responseDigest);
                                    }
                                });
-                } catch (NoSuchAlgorithmException ex) {
+                } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
                     LOG.error("Log digest algorithm not supported", ex);
                     throw new SignServerException("Log digest algorithm not supported", ex);
                 }

@@ -14,6 +14,7 @@ package org.signserver.client.cli.defaultimpl;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import org.signserver.common.IllegalRequestException;
 
 /**
@@ -55,18 +56,18 @@ public interface FileSpecificHandler extends AutoCloseable {
     
     /**
      * Phase 1: compute the signature input from the input file to send to SignServer
-     * for creating the signature.
+     * for creating the signature.The signature input could be a hash or a file with hashes depending on the
+ implementation.
      * 
-     * The signature input could be a hash or a file with hashes depending on the
-     * implementation.
      *
      * @param algorithm Digest algorithm to use
      * @return the signature input
      * @throws NoSuchAlgorithmException
+     * @throws NoSuchProviderException in case the provider for message digest for instance can't be found
      * @throws IOException typically in case of issues reading the input file or writing to the output file
      * @throws IllegalRequestException for example: if file is already signed
      */
-    InputSource produceSignatureInput(String algorithm) throws NoSuchAlgorithmException, IOException, IllegalRequestException;
+    InputSource produceSignatureInput(String algorithm) throws NoSuchAlgorithmException, NoSuchProviderException, IOException, IllegalRequestException;
     
     /**
      * Phase 2: Finalize the output file by embedding the provided signature.

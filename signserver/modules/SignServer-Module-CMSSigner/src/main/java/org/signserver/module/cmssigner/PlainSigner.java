@@ -19,6 +19,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -38,6 +39,7 @@ import java.util.Locale;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -178,7 +180,7 @@ public class PlainSigner extends BaseSigner {
         });
         if (doLogRequestDigest) {
             try (InputStream input = requestData.getAsInputStream()) {
-                final MessageDigest md = MessageDigest.getInstance(logRequestDigestAlgorithm);
+                final MessageDigest md = MessageDigest.getInstance(logRequestDigestAlgorithm, BouncyCastleProvider.PROVIDER_NAME);
 
                 // Digest all data
                 // TODO: Future optimization: could be done while the file is read instead
@@ -190,7 +192,7 @@ public class PlainSigner extends BaseSigner {
                         return Hex.toHexString(requestDigest);
                     }
                 });
-            } catch (NoSuchAlgorithmException ex) {
+            } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
                 LOG.error("Log digest algorithm not supported", ex);
                 throw new SignServerException("Log digest algorithm not supported", ex);
             } catch (IOException ex) {

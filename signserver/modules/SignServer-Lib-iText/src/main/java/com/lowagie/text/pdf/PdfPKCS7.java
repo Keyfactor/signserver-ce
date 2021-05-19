@@ -75,7 +75,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -113,6 +112,7 @@ import org.bouncycastle.cert.ocsp.CertificateID;
 import org.bouncycastle.cert.ocsp.SingleResp;
 import org.bouncycastle.cert.ocsp.jcajce.JcaCertificateID;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoVerifierBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.tsp.TimeStampToken;
@@ -1238,7 +1238,7 @@ public class PdfPKCS7 {
             // Added by Martin Brunecky, 07/12/2007 folowing Aiken Sam, 2006-11-15
             // Sam found Adobe expects time-stamped SHA1-1 of the encrypted digest
             if (tsaClient != null) {
-                byte[] tsImprint = MessageDigest.getInstance(tsaDigestAlgorithm).digest(digest);
+                byte[] tsImprint = MessageDigest.getInstance(tsaDigestAlgorithm, BouncyCastleProvider.PROVIDER_NAME).digest(digest);
                 byte[] tsToken = tsaClient.getTimeStampToken(this, tsImprint);
                 if (tsToken != null) {
                     ASN1EncodableVector unauthAttributes = buildUnauthenticatedAttributes(tsToken);

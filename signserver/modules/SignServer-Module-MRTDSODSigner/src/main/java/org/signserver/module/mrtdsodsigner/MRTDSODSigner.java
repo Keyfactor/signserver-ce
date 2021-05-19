@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -35,6 +36,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.jcajce.JcaX500NameUtil;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.cesecore.util.CertTools;
 import org.signserver.common.*;
 import org.signserver.common.data.Request;
@@ -209,7 +211,7 @@ public class MRTDSODSigner extends BaseSigner {
                         log.debug("Hashing data group " + dgId + ", value is of length: " + value.length);
                     }
                     if ((value != null) && (value.length > 0)) {
-                        MessageDigest digest = MessageDigest.getInstance(digestAlgorithm);
+                        MessageDigest digest = MessageDigest.getInstance(digestAlgorithm, BouncyCastleProvider.PROVIDER_NAME);
                         byte[] result = digest.digest(value);
                         if (log.isDebugEnabled()) {
                             log.debug("Resulting hash is of length: " + result.length);
@@ -275,7 +277,7 @@ public class MRTDSODSigner extends BaseSigner {
             // Reconstruct the sod
             sod = new SODFile(new ByteArrayInputStream(constructedSod.getEncoded()));
 
-        } catch (NoSuchAlgorithmException ex) {
+        } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
             throw new SignServerException("Problem constructing SOD as configured algorithm not supported", ex);
         } catch (CertificateException ex) {
             throw new SignServerException("Problem constructing SOD", ex);

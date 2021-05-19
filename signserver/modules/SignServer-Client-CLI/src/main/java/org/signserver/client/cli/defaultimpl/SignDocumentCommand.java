@@ -16,6 +16,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -828,7 +829,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 LOG.error("Failed: " + ex.getLocalizedMessage());
                 success = false;
                 cleanUpOutputFileOnFailure = true;
-            } catch (NoSuchAlgorithmException ex) {
+            } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
                 LOG.error("Unknown digest algorithm: " + digestAlgorithm);
                 success = false;
                 cleanUpOutputFileOnFailure = true;

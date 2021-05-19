@@ -56,9 +56,9 @@ public interface FileSpecificHandler extends AutoCloseable {
     
     /**
      * Phase 1: compute the signature input from the input file to send to SignServer
-     * for creating the signature.The signature input could be a hash or a file with hashes depending on the
- implementation.
-     * 
+     * for creating the signature.
+     *
+     * The signature input could be a hash or a file with hashes depending on the implementation.
      *
      * @param algorithm Digest algorithm to use
      * @return the signature input

@@ -830,7 +830,7 @@ public class SignDocumentCommand extends AbstractCommand implements ConsolePassw
                 success = false;
                 cleanUpOutputFileOnFailure = true;
             } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
-                LOG.error("Unknown digest algorithm: " + digestAlgorithm);
+                LOG.error("Digest algorithm not supported: " + digestAlgorithm);
                 success = false;
                 cleanUpOutputFileOnFailure = true;
             } finally {

@@ -632,4 +632,4 @@ public class CMSSigner extends BaseSigner {
                      responseData, contentOIDToUse);
         }
     } 
-   }
+}

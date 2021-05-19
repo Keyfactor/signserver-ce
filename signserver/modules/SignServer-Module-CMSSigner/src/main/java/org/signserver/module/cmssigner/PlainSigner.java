@@ -224,6 +224,7 @@ public class PlainSigner extends BaseSigner {
             final PrivateKey privKey = crypto.getPrivateKey();
 
             final String sigAlg = signatureAlgorithm == null ? getDefaultSignatureAlgorithm(cert.getPublicKey()) : signatureAlgorithm;
+            final String sigAlgUpperCase = sigAlg.toUpperCase(Locale.ENGLISH);
             final byte[] signedbytes;
 
             if (clientSideHelper.shouldUseClientSideHashing(requestContext)) {
@@ -232,7 +233,7 @@ public class PlainSigner extends BaseSigner {
                 // Special case as BC (ContentSignerBuilder) does not handle NONEwithRSA
                 final Signature signature = Signature.getInstance(sigAlg, crypto.getProvider());
 
-                if (sigAlg.toUpperCase(Locale.ENGLISH).endsWith("ANDMGF1") || sigAlg.toUpperCase(Locale.ENGLISH).endsWith("SSA-PSS")) {
+                if (sigAlgUpperCase.endsWith("ANDMGF1") || sigAlgUpperCase.endsWith("SSA-PSS")) {
                     final Integer saltLength = HASH_ALGORITHM_AND_SALT_MAP.get(clientSideHashAlgorithm);
                     if(saltLength == null) {
                         throw new InvalidKeyException("Unsupported digest for PSS parameters: " + clientSideHashAlgorithm);
@@ -255,9 +256,9 @@ public class PlainSigner extends BaseSigner {
                 signedbytes = signature.sign();
             } else {
                 // Special case as BC (ContentSignerBuilder) does not handle NONEwithRSA
-                if (sigAlg.toUpperCase(Locale.ENGLISH).startsWith("NONEWITH")) { 
+                if (sigAlgUpperCase.startsWith("NONEWITH")) { 
                     // We need PSS params for this
-                    if (sigAlg.toUpperCase(Locale.ENGLISH).endsWith("ANDMGF1") || sigAlg.toUpperCase(Locale.ENGLISH).endsWith("SSA-PSS")) {
+                    if (sigAlgUpperCase.endsWith("ANDMGF1") || sigAlgUpperCase.endsWith("SSA-PSS")) {
                         throw new IllegalRequestException("NONEwithRSAandMGF1 is not supported without the request metadata properties for client-side hashing");
                     }
                     
@@ -281,7 +282,7 @@ public class PlainSigner extends BaseSigner {
                     algorithmNames.put("SHA384withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA384withRSAandMGF1");
                     algorithmNames.put("SHA512withRSASSA-PSS".toUpperCase(Locale.ENGLISH), "SHA512withRSAandMGF1");
 
-                    String effectiveSigAlgName = algorithmNames.get(sigAlg.toUpperCase(Locale.ENGLISH));
+                    String effectiveSigAlgName = algorithmNames.get(sigAlgUpperCase);
                     if (effectiveSigAlgName == null) {
                         effectiveSigAlgName = sigAlg;
                     }

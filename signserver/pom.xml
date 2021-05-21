@@ -436,7 +436,11 @@
                 <artifactId>dss-cades</artifactId>
                 <version>${dss.framework.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-service</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

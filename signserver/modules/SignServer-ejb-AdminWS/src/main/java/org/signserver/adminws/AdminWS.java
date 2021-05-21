@@ -85,9 +85,7 @@ import static org.signserver.common.SignServerConstants.TOKEN_ENTRY_FIELDS_ALIAS
 import static org.signserver.common.SignServerConstants.TOKEN_ENTRY_FIELDS_KEY_ALIAS;
 
 /**
- * Class implementing the Admin WS interface.
- *
- * This class contains web service implementations for almost all EJB methods.
+ * SignServer Administration Web Services (AdminWS) interface.
  *
  * @author Markus Kilås
  * @version $Id$
@@ -394,8 +392,14 @@ public class AdminWS {
     }
 
     /**
-     * Generate a PKCS#10 certificate signing request either for the current key or the next key.
+     * Legacy operation to generate a PKCS#10 certificate signing request 
+     * either for the current key or the next key.
      *
+     * Note: Legacy operation. This operation is kept for backwards compatibility
+     * but new implementations are recommended to use the newer 
+     * <i>getPKCS10CertificateRequestForKey2</i> operation which returns a
+     * structure supporting other formats than PKCS#10.
+     * 
      * @param signerId ID of worker
      * @param certReqInfo information used by the worker to create the request
      * @param explicitEccParameters false should be default and will use NamedCurve encoding of ECC public keys
@@ -403,8 +407,8 @@ public class AdminWS {
      *                              (ICAO ePassport requirement).
      * @param defaultKey true if the default key should be used otherwise for instance use next key.
      * @return Base64 encoded certificate signing request
-     * @throws CryptoTokenOfflineException
-     * @throws InvalidWorkerIdException
+     * @throws CryptoTokenOfflineException if the crypto token is offline
+     * @throws InvalidWorkerIdException if a worker with the Id is not existing
      * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "getPKCS10CertificateRequestForKey")
@@ -433,8 +437,13 @@ public class AdminWS {
     }
 
     /**
-     * Generate a PKCS#10 certificate signing request either for the current key
-     * or the next key.
+     * Generate a certificate signing request (or similar) either for the 
+     * current key or the next key.
+     * 
+     * Note: This operation is recommended over the legacy operation 
+     * <i>getPKCS10CertificateRequestForKey</i> which only supported PKCS#10.
+     * Specifically when generating a certification signature or a revocation
+     * certificate for OpenPGP this newer operation should be used.
      *
      * @param signerId id of the signer
      * @param certReqInfo information used by the worker to create the request
@@ -443,9 +452,10 @@ public class AdminWS {
      * to include all parameters explicitly (ICAO ePassport requirement).
      * @param defaultKey true if the default key should be used otherwise for
      * instance use next key.
-     * @return Base64 encoded certificate signing request
-     * @throws CryptoTokenOfflineException
-     * @throws InvalidWorkerIdException
+     * @return A structure containing a certificate signing request (or similar)
+     * data in a form where it can be read both in binary or in PEM/armored form
+     * @throws CryptoTokenOfflineException if the crypto token is offline
+     * @throws InvalidWorkerIdException if a worker with the Id is not existing
      * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "getPKCS10CertificateRequestForKey2")
@@ -478,8 +488,14 @@ public class AdminWS {
     }
 
     /**
-     * Generate a PKCS#10 certificate signing request for the specified key
-     * alias.
+     * Legacy operation to generate a PKCS#10 certificate signing request for 
+     * the specified key alias.
+     * 
+     * Note: Legacy operation. This operation is kept for backwards compatibility
+     * but new implementations are recommended to use the newer 
+     * <i>getPKCS10CertificateRequestForAlias2</i> operation which returns a
+     * structure supporting other formats than PKCS#10.
+     * 
      * @param signerId ID of worker
      * @param certReqInfo information used by the worker to create the request
      * @param explicitEccParameters false should be default and will use
@@ -520,17 +536,24 @@ public class AdminWS {
     }
 
     /**
-     * Generate a PKCS#10 certificate signing request for the specified key
+     * Generate a certificate signing request (or similar) for the specified key
      * alias.
+     *
+     * Note: This operation is recommended over the legacy operation 
+     * <i>getPKCS10CertificateRequestForAlias2</i> which only supported PKCS#10.
+     * Specifically when generating a certification signature or a revocation
+     * certificate for OpenPGP this newer operation should be used.
+     * 
      * @param signerId ID of worker
      * @param certReqInfo information used by the worker to create the request
      * @param explicitEccParameters false should be default and will use
      * NamedCurve encoding of ECC public keys (IETF recommendation), use true
      * to include all parameters explicitly (ICAO ePassport requirement).
      * @param keyAlias to generate the request for
-     * @return Base64 encoded certificate signing request
-     * @throws CryptoTokenOfflineException
-     * @throws InvalidWorkerIdException
+     * @return A structure containing a certificate signing request (or similar)
+     * data in a form where it can be read both in binary or in PEM/armored form
+     * @throws CryptoTokenOfflineException if the crypto token is offline
+     * @throws InvalidWorkerIdException if a worker with the Id is not existing
      * @throws AdminNotAuthorizedException If the admin is not authorized
      */
     @WebMethod(operationName = "getPKCS10CertificateRequestForAlias2")

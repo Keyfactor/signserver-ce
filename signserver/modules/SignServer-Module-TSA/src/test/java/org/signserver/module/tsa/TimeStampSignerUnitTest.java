@@ -101,7 +101,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
     private static final String CRYPTOTOKEN_CLASSNAME =
             "org.signserver.server.cryptotokens.KeystoreCryptoToken";
 
-    private static final String KEY_ALIAS = "TS Signer 1";
+    private static final String KEY_ALIAS = "ts00001";
 
     private GlobalConfigurationSessionLocal globalConfig;
     private WorkerSessionLocal workerSession;
@@ -185,7 +185,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" +
                         File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_tssigner1.p12");
+                        File.separator + "dss10_keystore.p12");
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             config.setProperty("ACCEPTANYPOLICY", "true");
@@ -207,7 +207,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" +
                         File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_tssigner1.p12");
+                        File.separator + "dss10_keystore.p12");
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             config.setProperty("ACCEPTANYPOLICY", "true");
@@ -229,7 +229,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" +
                         File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_tssigner1.p12");
+                        File.separator + "dss10_keystore.p12");
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             config.setProperty("ACCEPTANYPOLICY", "true");
@@ -251,7 +251,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" +
                         File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_tssigner1.p12");
+                        File.separator + "dss10_keystore.p12");
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             config.setProperty("ACCEPTANYPOLICY", "true");
@@ -272,7 +272,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" +
                         File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_tssigner1.p12");
+                        File.separator + "dss10_keystore.p12");
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             config.setProperty("ACCEPTANYPOLICY", "true");
@@ -303,7 +303,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" +
                         File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_tssigner1.p12");
+                        File.separator + "dss10_keystore.p12");
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             config.setProperty("ACCEPTANYPOLICY", "true");
@@ -340,7 +340,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" +
                         File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_tssigner1.p12");
+                        File.separator + "dss10_keystore.p12");
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             config.setProperty("ACCEPTEDPOLICIES",
@@ -363,7 +363,7 @@ public class TimeStampSignerUnitTest extends ModulesTestCase {
             config.setProperty("KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" +
                         File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_tssigner1.p12");
+                        File.separator + "dss10_keystore.p12");
             config.setProperty("KEYSTORETYPE", "PKCS12");
             config.setProperty("KEYSTOREPASSWORD", "foo123");
             config.setProperty("ACCEPTEDPOLICIES",

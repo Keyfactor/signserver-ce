@@ -117,29 +117,33 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
     private static final String SIGNING_CERT_OID = "1.2.840.113549.1.9.16.2.12";
 
     private static final byte[] certbytes1 = Base64.decode((
-            "MIIEkTCCAnmgAwIBAgIIeCvAS5OwAJswDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UEAwwORFNTIFJv"
-            + "b3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYT"
-            + "AlNFMB4XDTExMDUyNzEyMTU1NVoXDTIxMDUyNDEyMTU1NVowSjEUMBIGA1UEAwwLVFMgU2lnbmVy"
-            + "IDExEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIIB"
-            + "IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnT38GG8i/bGnuFMwnOdg+caHMkdPBacRdBaI"
-            + "ggwMPfE50SOZ2TLrDEHJotxYda7HS0+tX5dIcalmEYCls/ptHzO5TQpqdRTuTqxp5cMA379yhD0O"
-            + "qTVNAmHrvPj9IytktoAtB/xcjwkRTHagaCmg5SWNcLKyVUct7nbeRA5yDSJQsCAEGHNZbJ50vATg"
-            + "1DQEyKT87GKfSBsclA0WIIIHMt8/SRhpsUZxESayU6YA4KCxVtexF5x+COLB6CzzlRG9JA8WpX9y"
-            + "KgIMsMDAscsJLiLPjhET5hwAFm5ZRfQQG9LI06QNTGqukuTlDbYrQGAUR5ZXW00WNHfgS00CjUCu"
-            + "0QIDAQABo3gwdjAdBgNVHQ4EFgQUOF0FflO2G+IN6c92pCNlPoorGVwwDAYDVR0TAQH/BAIwADAf"
-            + "BgNVHSMEGDAWgBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCB4AwFgYDVR0lAQH/"
-            + "BAwwCgYIKwYBBQUHAwgwDQYJKoZIhvcNAQELBQADggIBADELkeIO9aiKjS/GaBUUhMr+k5UbVeK6"
-            + "9WapU+7gTsWwa9D2vAOhAkfQ1OcUJoZaminv8pcNfo1Ey5qLtxBCmUy1fVomVWOPl6u1w8B6uYgE"
-            + "608hi2bfx28uIeksqpdqUX0Qf6ReUyl+FOh4xNrsyaF81TrIKt8ekq0iD+YAtT/jqgv4bUvs5fgI"
-            + "ms4QOXgMUzNAP7cPU44KxcmR5I5Uy/Ag82hGIz64hZmeIDT0X59kbQvlZqFaiZvYOikoZSFvdM5k"
-            + "SVfItMgp7qmyLxuM/WaXqJWp6Mm+8ZZmcECugd4AEpE7xIiB7M/KEe+X4ItBNTKdAoaxWa+yeuYS"
-            + "7ol9rHt+Nogelj/06ZRQ0x03UqC7uKpgYAICjQEXIjcZofWSTh9KzKNfS1sQyIQ6yNTT2VMdYW9J"
-            + "C2OLKPV4AEJuBw30X8HOciJRRXOq9KRrIA2RSiaC5/3oAYscWuo31Fmj8CWQknXAIb39gPuZRwGO"
-            + "Jbi1tUu2zmRsUNJfAe3hnvk+uxhnyp2vKB2KN5/VQgisx+8doEK/+Nbj/PPG/zASKimWG++5m0JN"
-            + "Y4chIfR43gDDcF+4INof/8V84wbvUF+TpvP/mYM8wC9OkUyRvzqv9vjWOncCdbdjCuqPxDItwm9h"
-            + "hr+PbxsMaBes9rAiV9YT1FnpA++YpCufveFCQPDbCTgJ").getBytes());
+            "MIIEjTCCAnWgAwIBAgIIasT6mAr8CC4wDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UE\n" +
+            "AwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNp\n" +
+            "Z25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTE5MDIyNTEwMDgyOVoXDTM2MDUyNzA4\n" +
+            "MTQyN1owRjEQMA4GA1UEAwwHdHMwMDAwMTEQMA4GA1UECwwHVGVzdGluZzETMBEG\n" +
+            "A1UECgwKU2lnblNlcnZlcjELMAkGA1UEBhMCU0UwggEiMA0GCSqGSIb3DQEBAQUA\n" +
+            "A4IBDwAwggEKAoIBAQCLjZ3QGO6EGexpqjAOM+wsfom6vDFtkEi+yYqsTIxv9Tzj\n" +
+            "Z+pbWQKVbZOhBqhkgFO3L2vhMeeYlsMXOFO6L908dJ9C1BUCFYDU9AJDv1VdmtPl\n" +
+            "nH4l+7j6jamaBgQYAu9092cc81aekNOCWCaPqBKlBHuqL8BSy0pKhFQkBSDJNK6y\n" +
+            "czcfiWE+W9edJr4h848HsSs7dzlALnwbLXR+Xlp5ctHOXIBkwGZT0rJnIHP0jY54\n" +
+            "a5eHBrjDqq8QKlDEL4YnLztHrag4SE4nnmSLGmbPcwNM2EWYE8M1hkwzd7iAC/Cj\n" +
+            "FomKkgGnj/pe+/RWBPLD6agKSaCj0mAmLytmSpF7AgMBAAGjeDB2MAwGA1UdEwEB\n" +
+            "/wQCMAAwHwYDVR0jBBgwFoAUIHoh3uituwKo+3FYpAliudhYBaIwFgYDVR0lAQH/\n" +
+            "BAwwCgYIKwYBBQUHAwgwHQYDVR0OBBYEFEAQ8DdseqtTJu6fMrc19NnkNGRMMA4G\n" +
+            "A1UdDwEB/wQEAwIHgDANBgkqhkiG9w0BAQsFAAOCAgEAUcuugRKmh+gsfpi8tg6K\n" +
+            "b0GLSMPcD+V43NhgEIQE0fyr/XD/B1oaVm1WpefP7dRRBDUBpF1dVInUj5llg14e\n" +
+            "wV0jU4C/bFIvAiR+JkTY3q3I7lowhe0Qs6p/Jy+JQ2yYSgnpjTmyEScqg8UfWTb/\n" +
+            "bDqz6TQjDiGqVrlk7wyh3vzm+2T5xGp8ERs+pWRhNqG3AMdprq3EEFJNrZO5p4yK\n" +
+            "cxXsZWWACpN/YYdPbdnOusJiXEW7c14Trwfc4Fj7/l1b3o4Ob02YL+A99k8kf496\n" +
+            "sAat3trCSdk3iQllFwSPS4HqjDACr1Pe7miY4F/4VD95q6tBvaOVm2W1ZlL0Zovd\n" +
+            "jie57w0zheLdopmpINigJEegrKv73qa4mk8SHybw1ZVaZcSTjXsSmZArn4chqa/h\n" +
+            "eE+eVnfQteVWK3uocBv5sq+77kMGy8ZJHsYOHrBJeaIHcB83iSJ+YEVLXH5VJZjn\n" +
+            "JVOgFt7cKwCXbqaqh8NWrcNJtTJ9AFTimalrRg8+ai9FxEPmYNiX/FqTsREdG3ZP\n" +
+            "TIGAcK0MhZZUuTUanWtOiSoUuJ9azr3GaDJRBfgYGzAgoIznhRwflzKx2DTHZiBH\n" +
+            "Gf7HNUoUyWVhn91In4OChEi73n2Gmsb1u8DuI7o96yHMFW6RdDV0+av/feCIVAKZ\n" +
+            "/zevwmSGMK4Eif5q2XkLYQU=").getBytes());
 
-    private static final String KEY_ALIAS_1 = "TS Signer 1";
+    private static final String KEY_ALIAS_1 = "ts00001";
 
     /**
      * Performs test using specified signature algorithm, digest algorithm and with the optional SigningCertificate attribute included or not included.
@@ -193,7 +197,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         config.setProperty("KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res" +
                         File.separator + "test" + File.separator + "dss10" +
-                        File.separator + "dss10_tssigner1.p12");
+                        File.separator + "dss10_keystore.p12");
         config.setProperty("KEYSTORETYPE", "PKCS12");
         config.setProperty("KEYSTOREPASSWORD", "foo123");
 
@@ -588,7 +592,7 @@ public class MSAuthCodeTimeStampSignerTest extends ModulesTestCase {
         config.setProperty("KEYSTOREPATH",
                 getSignServerHome() + File.separator + "res"
                 + File.separator + "test" + File.separator + "dss10"
-                + File.separator + "dss10_tssigner1.p12");
+                + File.separator + "dss10_keystore.p12");
         config.setProperty("KEYSTORETYPE", "PKCS12");
         config.setProperty("KEYSTOREPASSWORD", "foo123");
 

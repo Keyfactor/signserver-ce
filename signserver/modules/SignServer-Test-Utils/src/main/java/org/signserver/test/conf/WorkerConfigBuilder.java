@@ -14,10 +14,9 @@ package org.signserver.test.conf;
 
 import org.signserver.common.WorkerConfig;
 import org.signserver.common.WorkerType;
-import org.signserver.common.worker.WorkerConfigProperty;
 
 /**
- * This is a help class to define a configuration of a Worker for tests. It contains withXYZ methods to chain
+ * This is an abstract help class to define a WorkerConfig for tests. It contains withXYZ methods to chain
  * the configuration.
  *
  * @author Andrey Sergeev
@@ -25,108 +24,51 @@ import org.signserver.common.worker.WorkerConfigProperty;
  */
 public class WorkerConfigBuilder {
 
-    private Integer workerId;
-    private String workerName;
-    private String workerType;
-    private String signatureFormat;
-    private String signatureLevel;
-    private String signatureAlgorithm;
-    private String digestAlgorithm;
-    private String tsaWorker;
-    private String tsaUrl;
-    private String addContentTimestamp;
-
-    public static WorkerConfigBuilder builder() {
-        return new WorkerConfigBuilder();
+    @SuppressWarnings("rawtypes")
+    public static Builder builder() {
+        return new Builder() {
+            @Override
+            public Builder<?> getThis() {
+                return this;
+            }
+        };
     }
 
-    /**
-     * Returns the WorkerConfig defined by input.
-     *
-     * @return the WorkerConfig defined by input.
-     */
-    public WorkerConfig build() {
-        final WorkerConfig config = new WorkerConfig();
-        if(workerId != null) {
-            config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+    public abstract static class Builder<T extends Builder<T>> {
+
+        private Integer workerId;
+        private String workerName;
+        private String workerType;
+
+        public abstract T getThis();
+
+        public T withWorkerId(final int workerId) {
+            this.workerId = workerId;
+            return this.getThis();
         }
-        if(workerName != null) {
-            config.setProperty("NAME", workerName);
+
+        public T withWorkerName(final String workerName) {
+            this.workerName = workerName;
+            return this.getThis();
         }
-        if(workerType != null) {
-            config.setProperty(WorkerConfig.TYPE, workerType);
+
+        public T withWorkerType(final String workerType) {
+            this.workerType = workerType;
+            return this.getThis();
         }
-        if(signatureFormat != null) {
-            config.setProperty(WorkerConfigProperty.AdES_SIGNATURE_FORMAT, signatureFormat);
+
+        public WorkerConfig build() {
+            final WorkerConfig config = new WorkerConfig();
+            if(workerId != null) {
+                config.setProperty(WorkerConfig.TYPE, WorkerType.PROCESSABLE.name());
+            }
+            if(workerName != null) {
+                config.setProperty("NAME", workerName);
+            }
+            if(workerType != null) {
+                config.setProperty(WorkerConfig.TYPE, workerType);
+            }
+            return config;
         }
-        if(signatureLevel != null) {
-            config.setProperty("SIGNATURE_LEVEL", signatureLevel);
-        }
-        if(signatureAlgorithm != null) {
-            config.setProperty("SIGNATUREALGORITHM", signatureAlgorithm);
-        }
-        if(digestAlgorithm !=  null) {
-            config.setProperty("DIGESTALGORITHM", digestAlgorithm);
-        }
-        if(tsaWorker != null) {
-            config.setProperty("TSA_WORKER", "TimeStampSigner");
-        }
-        if(tsaUrl !=  null) {
-            config.setProperty("TSA_URL", tsaUrl);
-        }
-        if(addContentTimestamp != null) {
-            config.setProperty("ADD_CONTENT_TIMESTAMP", addContentTimestamp);
-        }
-        return config;
-    }
-
-    public WorkerConfigBuilder withWorkerId(final int workerId) {
-        this.workerId = workerId;
-        return this;
-    }
-
-    public WorkerConfigBuilder  withWorkerName(final String workerName) {
-        this.workerName = workerName;
-        return this;
-    }
-
-    public WorkerConfigBuilder withWorkerType(final String workerType) {
-        this.workerType = workerType;
-        return this;
-    }
-
-    public WorkerConfigBuilder withSignatureFormat(final String signatureFormat) {
-        this.signatureFormat = signatureFormat;
-        return this;
-    }
-
-    public WorkerConfigBuilder withSignatureLevel(final String signatureLevel) {
-        this.signatureLevel = signatureLevel;
-        return this;
-    }
-
-    public WorkerConfigBuilder withSignatureAlgorithm(final String signatureAlgorithm) {
-        this.signatureAlgorithm = signatureAlgorithm;
-        return this;
-    }
-
-    public WorkerConfigBuilder withDigestAlgorithm(final String digestAlgorithm) {
-        this.digestAlgorithm = digestAlgorithm;
-        return this;
-    }
-
-    public WorkerConfigBuilder withTsaWorker(final String tsaWorker) {
-        this.tsaWorker = tsaWorker;
-        return this;
-    }
-
-    public WorkerConfigBuilder withTsaUrl(final String tsaUrl) {
-        this.tsaUrl = tsaUrl;
-        return this;
-    }
-
-    public WorkerConfigBuilder withAddContentTimestamp(final String addContentTimestamp) {
-        this.addContentTimestamp = addContentTimestamp;
-        return this;
     }
 }

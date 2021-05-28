@@ -20,16 +20,6 @@ package org.signserver.common.worker;
  */
 public class WorkerConfigProperty {
 
-    //==================================================================================================================
-    // AdES
-    //==================================================================================================================
-    /**
-     * AdES signature format property. Reflects values: PAdES, XAdES.
-     */
-    public static final String AdES_SIGNATURE_FORMAT = "SIGNATURE_FORMAT";
 
-    /**
-     * AdES packaging property. Reflects values: Enveloped, Enveloping, Detached, Internally detached.
-     */
-    public static final String AdES_PACKAGING = "PACKAGING";
+
 }

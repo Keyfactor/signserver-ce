@@ -42,6 +42,7 @@ import org.signserver.common.WorkerStatus;
 import org.signserver.common.WorkerType;
 import org.signserver.common.data.Request;
 import org.signserver.common.data.Response;
+import org.signserver.ejb.interfaces.InternalProcessSessionLocal;
 import org.signserver.ejb.interfaces.ProcessSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionLocal;
 import org.signserver.ejb.interfaces.WorkerSessionRemote;
@@ -58,7 +59,7 @@ import org.signserver.server.log.LogMap;
  * $version $Id$
  */
 public class WorkerSessionMock implements WorkerSessionLocal,
-        WorkerSessionRemote, ProcessSessionLocal/*, ProcessSessionRemote*/ {
+        WorkerSessionRemote, InternalProcessSessionLocal/*, ProcessSessionRemote*/ {
 
     private static final Logger LOG = Logger.getLogger(WorkerSessionMock.class);
 

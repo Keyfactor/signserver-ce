@@ -22,38 +22,41 @@ package org.signserver.module.xmlvalidator;
 public class XMLValidatorTestData {
 
     /**
-      *   SerialNumber: 05:3f:69:92:d0:81:24:8a
-      *   IssuerDN: CN=DSS Root CA 10, OU=Testing, O=SignServer, C=SE
-      *   Not Before: May 27 09:50:37 2011 GMT
-      *   Not After : May 27 09:50:37 2021 GMT
-      *   SubjectDN: CN=Signer 2, OU=Testing, O=SignServer, C=SE
+     * Certificate for signer00001.
+     *
+     * Serial Number 	6b88a95bd1b9f59d
+     * Issuer 	CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE
+     * Validity Not Before: 	2016-03-03 09:24:09 CET
+     * Validity Not After: 	2036-02-27 09:24:09 CET
+     * Subject 	CN=signer00001,OU=Testing,O=SignServer,C=SE
+     * Subject Public Key Algorithm 	RSA
       */
     static final String CERT_XMLSIGNER =
-          "MIIElTCCAn2gAwIBAgIIBT9pktCBJIowDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UE"
-	+ "AwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNp"
-	+ "Z25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMDUyNzA5NTAzN1oXDTIxMDUyNzA5"
-	+ "NTAzN1owRzERMA8GA1UEAwwIU2lnbmVyIDIxEDAOBgNVBAsMB1Rlc3RpbmcxEzAR"
-	+ "BgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0BAQEF"
-	+ "AAOCAQ8AMIIBCgKCAQEAokJJPVkPrn3a55rO6A3Bnbe0nfJR9IDSI8AmFhYEBLoK"
-	+ "fiavx0oMdbdDe+Dkwv78xBkgbj//2lhMCVmss90RzY+d0d0rg2SP8y/DsyxwriqC"
-	+ "fuM7lnlgvSHCYwoX8+uDM7zI53ykKVhqI3ttyFPa8RsjfFOIWqf39++sJUheW4j9"
-	+ "x9rutf6qgtjxOYPQwDygT9cIVpM7ZehhqVYlcQZRsprMg55s2SN/a78krAW51mso"
-	+ "IDgd9+zbsIvzuGqCspO3AN8b2m8tlHTlA/E4+3OZkSqgpx8FSKIfbKUa866pRzpt"
-	+ "vcbL/wpFxYkyxqcB6o7CFnWbr3gUPpz8KjuY7ypMmwIDAQABo38wfTAdBgNVHQ4E"
-	+ "FgQUSkR/B71idJmR8deZziBAqSzWzhMwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAW"
-	+ "gBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0lBBYw"
-	+ "FAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQA+pQuI1QmZ"
-	+ "LdheCVmc+k1h53uIv9pBnBKSbKn0/CVznmlPOpJIwwuzcLfCesa6gkG6BabHJwMr"
-	+ "U/SpZuWurHxdEKe6fS/ngYnIjFI5R0Kgl1czqq/tXDjGEpv2x0tZECqLFrkC7a+g"
-	+ "jXJPE8TDj8nvi40pcKFvv2tbRiyYrIPIxefrXmkT91F3zUKbQL0iW7Aot/0Klj+i"
-	+ "4uivqFu359OymJ2C5wJOyZqPPsxUvTdA2EZNX4BseFvJREmvx1CAgZkANZD4Qzn1"
-	+ "b/0WrXfYsbWA4cBeTRR7vjGajBc/oGo2wki0dJksImU8b2dLEf3n3M9dfxiFEAnl"
-	+ "3YKDmT21wamO/hRdWklT+7Ivz6SFnW6HneT42IMNkC4k3d0i0Y2/q7XN5rvMFbH1"
-	+ "n6O4NUqHIkzbCtVljV6+XESmMseyJGKlY6RD7jnhEJq6dGPGSr5h6SAohYljs5Y1"
-	+ "e/Dyg243sP75ZO7HfOYPd2Sp+p5R5szWOuZp5UtLFBhuwlI41LnpuL+4t25LjNHo"
-	+ "GhzZCl1rxqcSBGVKLG2sN0XVXfqrt/EykOAV0WW+S72tRPI73eq0AeRJRRfzcZie"
-	+ "qui694eP10Ehh/iiOpQ28yfhsWDvMIxu8o8oK+hpgQvCwecP7rupdqM9OQYnePb5"
-	+ "3dd8Tt4hw4WhvSWC/9aNfFXc3jwbHVy5Rw==";
+        "MIIEmDCCAoCgAwIBAgIIa4ipW9G59Z0wDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UE\n" +
+        "AwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNp\n" +
+        "Z25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTE2MDMwMzA4MjQwOVoXDTM2MDIyNzA4\n" +
+        "MjQwOVowSjEUMBIGA1UEAwwLc2lnbmVyMDAwMDExEDAOBgNVBAsMB1Rlc3Rpbmcx\n" +
+        "EzARBgNVBAoMClNpZ25TZXJ2ZXIxCzAJBgNVBAYTAlNFMIIBIjANBgkqhkiG9w0B\n" +
+        "AQEFAAOCAQ8AMIIBCgKCAQEApzvRZ6gX/u2T1AqL7EVrpKHEFDtKlBehjqJ05/kI\n" +
+        "zFNbGNkmTLQkbCRRirfHcd6jhY9wmFnYFTTHBS9JFWI7Q6Q/nehHApSaoh+eb5Qr\n" +
+        "ZYW2Cq5wLrQg18ckpecarXratsPQEKvTGWBCnJ1bhHmMeWHj56LYIB2EqES09gmK\n" +
+        "IVbNoAX/XymZ3lDgtfGXUc5SndTh1iIPFVMUzRbXoSvZGIfvQ6rRJDVS3/epBRfW\n" +
+        "tGzLaDK+dXMHisLsOahQARp5XU8DXd5+CwZC1dA+zQNixYEhStHXVuKfv4a89ONS\n" +
+        "pEdv2KHgOLiQP2N+hjszzSasRbhwLSENMEbeL5GbMIJTRQIDAQABo38wfTAdBgNV\n" +
+        "HQ4EFgQUlkvLMTR+fW1eSjV4irWUdoJifMwwDAYDVR0TAQH/BAIwADAfBgNVHSME\n" +
+        "GDAWgBQgeiHe6K27Aqj7cVikCWK52FgFojAOBgNVHQ8BAf8EBAMCBeAwHQYDVR0l\n" +
+        "BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQANg0pI\n" +
+        "IifUnDHjffnpiep7eITU6V6odovsj3+1tYIaAahW+HtI5T2ishEt++huFiUFIdwb\n" +
+        "FyF4Ep5cQe9cMfQghUJ//YqC1WHnxVQH234ELdO1FzaC1YcHis2zeW7HFpugd9Wr\n" +
+        "Lgms/p2gXTLkLEfbUVE5ujUjelBUKyIA3ADDnWRxaz2vlOvRV+8ZgrvxSN+jYkrA\n" +
+        "SeoDHeBh9qGknu1AmgaIUuQV6j/SSuf9+em3E7RSpFzOFwQTKq1MlKcxb3EC32O/\n" +
+        "JHu8T8jHWHZDmq2IkmwyGm3vTJH9bLNKvgM+wLWBJpbU5Ku/ijRNvOCAVrt90QKl\n" +
+        "MtA2/JZfLqZFiBNdB43VrM6cxWMdCL7gRIb50rR/CNAgblHq0DvpnXwS16SdaEib\n" +
+        "H6LjzTIJjoLwVbW+23j5w5r+XgxeNpoGxD5WY+Kq/h7D4eoL3e+oXHEfNwvXEuuR\n" +
+        "FpFXv4+4kOibRklG79VHSXEWclMvMlplIqHjHYh4gGSyvktCkV7YmqWteK9NEKeL\n" +
+        "OFoJ5Y5S4S9a+aCFkaHoUrW/PwR8Qp/0vOCK8+UduaDVbEQaM8Z2KeZwWafVdFxg\n" +
+        "b41nu6vcDVL/OQU0JyvdmNYmVoujboC3kNVfYJRgWeGceW2yo5anh5EuVwpMDncN\n" +
+        "HRF8V0TNwfORKDMmKoX5rcdgjmrR7Ebh29qalg==";
 
     /**
      * Certificate for xmlsigner4.
@@ -228,11 +231,11 @@ public class XMLValidatorTestData {
             +"pN5nwZxfMj6Zz+9Y9fAZdWzjUa4rBwbNzZlvZ/uXQaIb4U0DPmSJZC0YwXmUqU5u7W7Zow==";
 	
     static final String SIGNATURE_BY_XMLSIGNER2 =
-        "TLroNwxZtAflrBvdMrKscqn0Rho2YzWGt0ydBRWo85she7faAhz+cfniLDgWNAWly27zc15KMdMa"
-        + "FsELxgPg4J544Mx5RutkhGEn6dj6zMv+OoSjraDSP3PJ8tislpJw95SbmcrCKxSUqhQUdgO/ifNp"
-        + "M9wcQZGUMNhNxvBdrhoezcOkKmCdxO8PI+dJgmuxcF3WS+dN3rgH4DKE7+6UwcPUNX1y5Atg0qjr"
-        + "4fm2NUMFPcr/PWwaUv+5lOapnqSO1mN6P3lI7huk4bKrnKX39JnPmmTbnC8ihMqH+6Zdt6YNfgMH"
-        + "wWqnHSqXmZvbJyJLnIIQskw8Oi+tnEMBgwW11g==";
+             "TVHbxQyoBoLXqDICQ1gGHxfkVn3HUZ6KW66bNRWmwjzXvyjEkqcRYHohj9Z8hbnRxBObw3feZRkH"
+            + "z8UFaELXH1QcEiklGDTIMQoqiaWUQ9rwa8gnaN9hjHx2R82vwztNu0DhG51ovzUj29XXBth3+Lo"
+            + "84WtbbfZo1vXOApKd25R574Ethelxss0zRjfCTiCMyg4GCt3fF0u3JElydg6EfpOtA8wSEolQ6S"
+            + "/KS/FEkjCBCy/0EwkimTZuBoR7CFlMlox2pUV9hAfS5VavzdYCVB1kRCTAVs+Pjc+hSOUUH+cNp"
+            + "wHmacKoy0eQTgM5L8/l3Ep/p443dEmbTmx2doDIew==";
 
     static final String SIGNATURE_BY_XMLSIGNER4 =
             "YAIZt+p+oHbNTeVrW03MNDt3bL85x3mpwDn3nd58txFB/k/Ad1/lCA==";
@@ -245,25 +248,25 @@ public class XMLValidatorTestData {
             +"lWowqRrdOL0XaGczUUsp+BN6xsIqzfk3RCVtSQ==";
     
     static final String SIGNATURE_RSA_SHA256 =
-            "bU6VTlrxeitxNmS5GPh5BmkDlK/jweHwbxEDg8q+Kjv+AZUNkmrZEMGyFyF+J6G7QhmvRLvm6mGf"
-            +"HTZagObEpBSuYWz0dUyfEje9fRP4LooaowJ1FLxtsgHzQlc1m+3iyXpiLmaU0Nqg2R6lZXwhOPpl"
-            +"thHvRxGcyFWIx193Ai5Lnfao9ODnjAiypjEmWXwDUeqyXyr2cu2SkzlHYb1klc7WKba8HRSwoXEE"
-            +"RpTISKxcbbBRhJ8zZJ3Dyky07mZo5QIFcyWlICC7IzP982S9DWRPldWKqjCh4429Wq4BBwUcWZOD"
-            +"z/dipBBFLzo/1vEr12d0jmoD6sXjBVYFvqtGZQ==";
+             "b4PpwZ52orUA6zbA7JdWjzmQEyu/cJpBHnRI0J/Y74nDfaF7Cjzf7AHt4AszKmBHRtSJe59CbTys"
+            + "msf6U2y1yybA9DYLUgWGjA+uQyvF7GIi5EPl3D+a/2b2kuAVMypTFDYeoKTqqYyLL6mBMfxpU0/"
+            + "ftIB+4M0P1r61qBZEEraY9LRmaz8KoKMYW/cdb0n3wHp8/QRyUZdJ2rHqv2dQggrZWlgLawKHIl"
+            + "iI2Tgo3/Dr+6ZD8vl3qsdEUxjz0amJMOkdAjy7lNY3jB5s+4cGx4I8XD6vt/Y2W4ZGGvdZ9r9gh"
+            + "IRtsW8tfzpPRaDe+ZbzhTf0xNNkmqqud7ZWKHLxXQ==";
     
     static final String SIGNATURE_RSA_SHA384 =
-            "oElpxMLnogsjxK3gxlTS1rqXp3fD4blsOmjLWXY66yQIDQ7ZVo1FryLPg8z6jUxg6dYhkXuvxGd3"
-            +"cRA0a5D3ogBRIR4l2LD5CkzJ0IrxyQ6/27PwvXHU5p2t8xxI11jCMQWRy+oK46uFMH+W7CplSMQq"
-            +"EN2zxjmhOiRHnFByyVjMAySP73qPo6QxaLryrEfmwdmAf9I5ZE8V13fqe9/s5gAP9LT9ERafpJ4A"
-            +"xY8vTu76u7MGEd2Y345C8jnsDNCJmK6DdsbpXVKirgc87lIOdHEJR9B0d94Z5ZCHTlQKYamEExk5"
-            +"g4FCX0jwKS+eR+sjDgP0/qBNIJXNs/7iQUgfhw==";
+             "oMKlV+ovqJ2rith7zqwhtVbXXbOhsUzFn4j6EGS0LVhdO86SyATQvkCoRaf3lQX9jcvXyN6jjdz5"
+            + "Dvvld4AEZDmI77j+x+2jf/sHoOWOxTu6Xc893GyK/dtrKoTPGTqLgLGaRyzCZWTP1T+htnqqVdq"
+            + "BydSwuUaOFZTfSfwcoD15ibRU7jjxncCeRVhPijnBtafCJjHEaIU2FY02jTyizc9b7WsGAB+pN1"
+            + "9j29AqCAq4cEizC8u39DRZ6vtbWMh13pgSMQgygzQjyXTdiS6WTP3L1nEgixiDQ4UVcg9ApMf9m"
+            + "75ZMYKstAZ/BmL/zx8QJtyVaphMpUhmU2C9nOW3yw==";
     
     static final String SIGNATURE_RSA_SHA512 =
-            "RlPLAOJDK7uGxe6ig3J1B9jhgHJ5MMitSUncGBfxP0Wtcr8yG84Vm3Wknl8QsfMIREaS7bW8M6tQ"
-            +"UoO2hHTKhynCRHDcVIWrQMSbnvSF9aue+AxWN/ZL7GvU7O99I6cpl7bGVTpmg7RcFDhByE9IlFjR"
-            +"Os6bjpwtohKOmRNhXO/cHMeySb38p/oi6LRneT/LioCQbgJfa9gJHxk6ABB1a47a/xdPasbt2tZv"
-            +"yCVn9EmoTZId1Xzr0vmiFBOQt55If6lwfhniKHbCcoFy/Yap5ISsc3ha3ZI+Sbop+DIohHxR9F+1"
-            +"BrnSTMT6qjEXhDgs2AItRciLaz4h4QJxrKQo3Q==";
+             "Uicu5O7vz47tvT1Jay6gXGLztIFSJPqleSyrBJ4ULq94NdXu4E0OC3gIbibjtendKN37SZmmyNse"
+            + "T8rKrU4/LtBSMV8c7wqgKO2htWONWvX8rf0wyhQL+oh6GOzCQeQCZoyTaWozUizcgIPjt2cffz8"
+            + "qJ+DSbCSBOvIY6HiinzqqH9zJ6eOOH4piAi2ochza1UaEBjW04fbGr3+7eEeNRfVTMD+Gtycv/f"
+            + "cWoyvS3MoQJ6AHrFlsWbhOS2TBGW6dKINVoEIAK1ECyD45fVnNMPHNsQ5PZbUx5Q3z0XWdJXUT6"
+            + "JotOEw2DBrmqdcqabXFq+c2WU3OkyVPlKemDenvYA==";
     
     static final String SIGNATURE_ECDSA_SHA1 =
             "H3d3d6LHOXoS2m6USmGRfjCT94GgiaMWdSy4DW1+lVKFhIJsdo83zh0kZFrt48UedxhrboOsmcqU\n" +

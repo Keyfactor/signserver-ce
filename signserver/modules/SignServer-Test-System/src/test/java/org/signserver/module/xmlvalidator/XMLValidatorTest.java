@@ -68,7 +68,7 @@ public class XMLValidatorTest extends ModulesTestCase {
 
     private static final String VALIDATION_WORKER = "TestValidationWorker";
     private static final String SIGNER2_ISSUERDN = "CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE";
-    private static final String SIGNER2_SUBJECTDN = "CN=Signer 2,OU=Testing,O=SignServer,C=SE";
+    private static final String SIGNER2_SUBJECTDN = "CN=signer00001,OU=Testing,O=SignServer,C=SE";
     private static final String SIGNEREC_ISSUERDN = "CN=ECCA";
     private static final String SIGNEREC_SUBJECTDN = "CN=TestXMLSignerEC,OU=Testing,O=SignServer,C=SE";
 

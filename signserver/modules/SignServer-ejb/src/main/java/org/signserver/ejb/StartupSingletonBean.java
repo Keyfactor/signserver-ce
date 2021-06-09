@@ -123,6 +123,17 @@ public class StartupSingletonBean {
                 CompileTimeSettings.SIGNSERVER_VERSION);
         
         LOG.info("Init, " + version + " startup.");
+        
+        // Redefine the XML factories to use the ones with the JRE instead of
+        // it being the first on the classpath as for instance the Xerces in
+        // JBoss does not work with the default way DSS creates secure factories
+        LOG.info("Previous transformer property: " + System.getProperty("javax.xml.transform.TransformerFactory"));
+        System.setProperty("javax.xml.transform.TransformerFactory", "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
+        LOG.info("Current  transformer property: " + System.getProperty("javax.xml.transform.TransformerFactory"));
+        LOG.info("Previous schema property:      " + System.getProperty("javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema"));
+        System.setProperty("javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema", "com.sun.org.apache.xerces.internal.jaxp.validation.XMLSchemaFactory");
+        LOG.info("Current  schema property:      " + System.getProperty("javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema"));
+
       
         // Make a log row that EJBCA is starting
         AuthenticationToken admin = new AlwaysAllowLocalAuthenticationToken(new UsernamePrincipal("StartServicesServlet.init"));

@@ -403,6 +403,16 @@
                 <artifactId>dss-document</artifactId>
                 <version>${dss.framework.version}</version>
             </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-crl-parser</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+                <artifactId>dss-crl-parser-x509crl</artifactId>
+                <version>${dss.framework.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>eu.europa.ec.joinup.sd-dss</groupId>

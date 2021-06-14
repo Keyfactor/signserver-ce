@@ -90,7 +90,7 @@ public class PDFSignerTest extends ModulesTestCase {
      * Test signing a PDF, optionally with given hash algorithm.
      */
     protected void signGenericPDFWithHash(final byte[] data, final String digestAlgorithm,
-                                          final boolean checkTimestamp,
+                                          final boolean expectTimestamp,
                                           final String tsaDigestAlgorithm)
                     throws IllegalRequestException, CryptoTokenOfflineException,
                         SignServerException, IOException {
@@ -137,7 +137,7 @@ public class PDFSignerTest extends ModulesTestCase {
                 assertEquals("Hash algorithm", expectedDigestAlgorithm,
                         pk.getHashAlgorithm());
 
-                if (checkTimestamp) {
+                if (expectTimestamp) {
                     // for now only check that the token is using the
                     // expected digest algorithm
                     final TimeStampToken timeStampToken = pk.getTimeStampToken();
@@ -154,6 +154,11 @@ public class PDFSignerTest extends ModulesTestCase {
 
                     assertEquals("Expected TSA digest algorithm",
                                  ai.getAlgorithm(), algId.getAlgorithm());
+                } else {
+                    final TimeStampToken timeStampToken = pk.getTimeStampToken();
+
+                    assertNull("Timestamp token should not be available",
+                                  timeStampToken);
                 }
             }
 
@@ -609,6 +614,50 @@ public class PDFSignerTest extends ModulesTestCase {
         final byte[] pdfSigned = getTestFile(TESTPDF_SIGNED);
 
         signGenericPDFWithHash(pdfSigned, "SHA1", false, null);
+    }
+    
+    /**
+     * Tests that specifying USE_TIMESTAMP=false there is no time-stamp even
+     * though there is a TSA_WORKER specified.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void test20TsaWorkerUseTimestampFalse() throws Exception {
+        try {
+            final byte[] pdfOk = getTestFile(TESTPDF_OK);
+
+            workerSession.setWorkerProperty(WORKERID, PDFSigner.TSA_WORKER,
+                    String.valueOf(TSAWORKERID));
+            workerSession.setWorkerProperty(WORKERID, "USE_TIMESTAMP", "false");
+            workerSession.reloadConfiguration(WORKERID);
+
+            signGenericPDFWithHash(pdfOk, "SHA256", false, null);
+        } finally {
+            workerSession.removeWorkerProperty(WORKERID, PDFSigner.TSA_WORKER);
+            workerSession.reloadConfiguration(WORKERID);
+        }
+    }
+
+    /**
+     * Tests that specifying USE_TIMESTAMP=false there is no time-stamp even
+     * though there is a TSA_URL specified.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void test20TsaUrlUseTimestampFalse() throws Exception {
+        try {
+            final byte[] pdfOk = getTestFile(TESTPDF_OK);
+
+            workerSession.setWorkerProperty(WORKERID, PDFSigner.TSA_URL,
+                    "https://localhost:8080/tsa123");
+            workerSession.setWorkerProperty(WORKERID, "USE_TIMESTAMP", "false");
+            workerSession.reloadConfiguration(WORKERID);
+
+            signGenericPDFWithHash(pdfOk, "SHA256", false, null);
+        } finally {
+            workerSession.removeWorkerProperty(WORKERID, PDFSigner.TSA_URL);
+            workerSession.reloadConfiguration(WORKERID);
+        }
     }
 
     @Test

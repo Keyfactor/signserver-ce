@@ -49,8 +49,8 @@ public class PDFSignerParameters {
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(PDFSignerParameters.class);
     
-    private int workerId;
-    private WorkerConfig config;
+    private final int workerId;
+    private final WorkerConfig config;
     
     // private member declarations holding configuration property values
     private String reason = PDFSigner.REASONDEFAULT;
@@ -82,7 +82,7 @@ public class PDFSignerParameters {
     private boolean refuseDoubleIndirectObjects;
     
     /** Permissions to not allow in a document. */
-    private Set<String> rejectPermissions = new HashSet<>();
+    private final Set<String> rejectPermissions = new HashSet<>();
     /** Permissions to set. **/
     private Permissions setPermissions;
     /** Permissions to remove. **/
@@ -91,10 +91,10 @@ public class PDFSignerParameters {
     private String setOwnerPassword;
     
     // helper variables
-    private boolean use_custom_image = false;
-    private boolean use_timestamp = false;
-    private boolean use_timestamp_authorization = false;
-    private Image custom_image = null;
+    private boolean useCustomImage;
+    private boolean useTimestamp;
+    private boolean useTimestampAuthorization;
+    private Image custom_image;
 
     private String tsa_worker;
     
@@ -154,24 +154,24 @@ public class PDFSignerParameters {
         // Unless USE_TIMESTAMP=false or no TSA_URL or TSA_WORKER is configured then use timestamp
         String useTimeStampWorkerProperty = config.getProperty(PDFSigner.USE_TIMESTAMP);
         if (useTimeStampWorkerProperty == null || useTimeStampWorkerProperty.equalsIgnoreCase(Boolean.TRUE.toString())) {
-            use_timestamp = tsa_url != null || tsa_worker != null;
+            useTimestamp = tsa_url != null || tsa_worker != null;
         }
 
-        if (use_timestamp
+        if (useTimestamp
                 && config.getProperty(PDFSigner.TSA_USERNAME, DEFAULT_NULL) != null
                 && config.getPropertyThatCouldBeEmpty(PDFSigner.TSA_PASSWORD) != null) { // Password Might be empty string so no default
             tsa_username = config.getProperty(
                     PDFSigner.TSA_USERNAME, DEFAULT_NULL);
             tsa_password = config.getPropertyThatCouldBeEmpty(
                     PDFSigner.TSA_PASSWORD);
-            use_timestamp_authorization = true;
+            useTimestampAuthorization = true;
         }
         
         // Override use_timestamp
         strMetadataValue = requestMetadata.get(PDFSigner.USE_TIMESTAMP);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-            use_timestamp = Boolean.parseBoolean(strMetadataValue) && (tsa_url != null || tsa_worker != null);
-            LOG.debug("Using timestamp : " + use_timestamp);
+            useTimestamp = Boolean.parseBoolean(strMetadataValue) && (tsa_url != null || tsa_worker != null);
+            LOG.debug("Using timestamp : " + useTimestamp);
         }
 
         // should we embed crl inside the cms package
@@ -316,11 +316,11 @@ public class PDFSignerParameters {
             boolean use_image_from_base64_string = visible_sig_custom_image_base64 != null;                    
             boolean use_image_from_path = visible_sig_custom_image_path != null;
                   
-            use_custom_image = use_image_from_base64_string
+            useCustomImage = use_image_from_base64_string
                     || use_image_from_path;
 
             // custom image resizing (if we are using custom image)
-            if (use_custom_image) {
+            if (useCustomImage) {
 
                 // retrieve custom image
                 byte[] imageByteArray = null;
@@ -539,15 +539,15 @@ public class PDFSignerParameters {
     }
 
     public boolean isUse_custom_image() {
-        return use_custom_image;
+        return useCustomImage;
     }
 
-    public boolean isUse_timestamp() {
-        return use_timestamp;
+    public boolean isUseTimestamp() {
+        return useTimestamp;
     }
 
-    public boolean isUse_timestamp_authorization() {
-        return use_timestamp_authorization;
+    public boolean isUseTimestampAuthorization() {
+        return useTimestampAuthorization;
     }
 
     public Image getCustom_image() {

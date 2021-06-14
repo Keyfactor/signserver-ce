@@ -99,6 +99,10 @@ public class PDFSigner extends BaseSigner {
     public static final String REASONDEFAULT = "Signed by SignServer";
     public static final String LOCATION = "LOCATION";
     public static final String LOCATIONDEFAULT = "SignServer";
+    public static final String ALIAS = "ALIAS";
+    public static final String SIGNERCERTCHAIN = "SIGNERCERTCHAIN";
+    
+    public static final String USE_TIMESTAMP = "USE_TIMESTAMP";
     
     // properties that control signature visibility
     public static final String ADD_VISIBLE_SIGNATURE = "ADD_VISIBLE_SIGNATURE";
@@ -107,6 +111,7 @@ public class PDFSigner extends BaseSigner {
     public static final String VISIBLE_SIGNATURE_PAGE_DEFAULT = "First";
     public static final String VISIBLE_SIGNATURE_RECTANGLE = "VISIBLE_SIGNATURE_RECTANGLE";
     public static final String VISIBLE_SIGNATURE_RECTANGLE_DEFAULT = "400,700,500,800";
+    public static final String VISIBLE_SIGNATURE_NAME = "VISIBLE_SIGNATURE_NAME";
     public static final String VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 = "VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64";
     public static final String VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH = "VISIBLE_SIGNATURE_CUSTOM_IMAGE_PATH";
     public static final String VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE = "VISIBLE_SIGNATURE_CUSTOM_IMAGE_RESIZE_TO_RECTANGLE";
@@ -177,7 +182,6 @@ public class PDFSigner extends BaseSigner {
      */
     private ASN1ObjectIdentifier tsaDigestAlgorithm;
     private String tsaDigestAlgorithmName; // passed to PdfPkcs7
-    PDFSignerParameters params;
     
     @Override
     public void init(int signerId, WorkerConfig config,
@@ -236,9 +240,12 @@ public class PDFSigner extends BaseSigner {
             configErrors.add("Can not specify " + TSA_URL + " and " + TSA_WORKER + " at the same time.");
         }
 
-        // retrieve and preprocess configuration parameter values
-        params = new PDFSignerParameters(workerId, config, configErrors);
-
+        try {
+            // retrieve and preprocess configuration parameter values
+            new PDFSignerParameters(workerId, config, configErrors, new HashMap<>());
+        } catch (IllegalRequestException | SignServerException ex) {
+            configErrors.add("PDF configuration error: " + ex.getMessage());
+        }
     }
 
     
@@ -317,6 +324,19 @@ public class PDFSigner extends BaseSigner {
         // Log values
         final LogMap logMap = LogMap.getInstance(requestContext);        
 
+        Object o = requestContext.get(RequestContext.REQUEST_METADATA);
+        Map<String, String> metadata = null;
+        if (o instanceof Map) {
+            metadata = (Map<String, String>) o;
+        }
+        // retrieve and preprocess configuration parameter values
+        // XXX: Note: below a new instance of configError is passed in. Actually we do not want to collect errors at this stage but will do it like this for now
+        final ArrayList<String> processingErrors = new ArrayList<>();
+        final PDFSignerParameters params = new PDFSignerParameters(workerId, config, processingErrors, metadata);
+        if (!processingErrors.isEmpty()) {
+            throw new IllegalRequestException(processingErrors.toString());
+        }
+
         // Start processing the actual signature
         ICryptoInstance crypto = null;
         try {
@@ -364,7 +384,7 @@ public class PDFSigner extends BaseSigner {
                            });
             }
             
-            addSignatureToPDFDocument(crypto, params, pdfBytes, pdfFile, password, 0,
+            List<Certificate> certificates = addSignatureToPDFDocument(crypto, params, pdfBytes, pdfFile, password, 0,
                                               signRequest, responseData, requestContext, tsaDigestAlgorithm, tsaDigestAlgorithmName);
             final Collection<? extends Archivable> archivables = Arrays.asList(
                     new DefaultArchivable(Archivable.TYPE_REQUEST, CONTENT_TYPE, requestData, archiveId), 
@@ -382,7 +402,7 @@ public class PDFSigner extends BaseSigner {
             
             return new SignatureResponse(sReq.getRequestID(),
                     responseData,
-                    getSigningCertificate(crypto),
+                    certificates.isEmpty() ? null : certificates.get(0),
                     archiveId, archivables, CONTENT_TYPE);
         } catch (DocumentException e) {
             throw new IllegalRequestException("Could not sign document: "
@@ -562,7 +582,7 @@ public class PDFSigner extends BaseSigner {
         return encodedSig;
     }
     
-    protected void addSignatureToPDFDocument(final ICryptoInstance crypto, PDFSignerParameters params,
+    protected List<Certificate> addSignatureToPDFDocument(final ICryptoInstance crypto, PDFSignerParameters params,
             byte[] pdfBytes, File pdfFile, byte[] password, int contentEstimated,
             final Request request, final WritableData responseData, final RequestContext context,
             final ASN1ObjectIdentifier tsaDigestAlgo, final String tsaDigestAlgoName)
@@ -572,19 +592,30 @@ public class PDFSigner extends BaseSigner {
     	boolean secondTry = contentEstimated != 0;
     	
         // get signing cert certificate chain and private key
-        final List<Certificate> certs = getSigningCertificateChain(crypto);
+        final List<Certificate> includedCerts;
+        final List<Certificate> certs;
+        final List<Certificate> overriddenCertChain = params.getSignerCertChain();
+        certs = overriddenCertChain != null ? overriddenCertChain : getSigningCertificateChain(crypto);
         if (certs == null) {
             throw new SignServerException(
                     "Null certificate chain. This signer needs a certificate.");
         }
-        final List<Certificate> includedCerts = includedCertificates(certs);
+        includedCerts = includedCertificates(certs);
         Certificate[] certChain = includedCerts.toArray(new Certificate[includedCerts.size()]);
         PrivateKey privKey = crypto.getPrivateKey();
+
+        // Override the default digestAlgorithm by the digestAlgorithm given in parameters
+        String theDigestAlgorithm = digestAlgorithm;
+        if (params.getDigestAlgorithm() != null && !params.getDigestAlgorithm().isEmpty()) {
+            theDigestAlgorithm = params.getDigestAlgorithm();
+
+            LOG.debug("Use the digestAlgorithm given in parameters : " + theDigestAlgorithm);
+        }
 
         // need to check digest algorithms for DSA private key at signing
         // time since we can't be sure what key a configured alias selector gives back
         if (privKey instanceof DSAPrivateKey) {
-            if (!"SHA1".equals(digestAlgorithm)) {
+            if (!"SHA1".equals(theDigestAlgorithm)) {
                 throw new IllegalRequestException("Only SHA1 is permitted as digest algorithm for DSA private keys");
             }
         }
@@ -598,7 +629,7 @@ public class PDFSigner extends BaseSigner {
         boolean appendMode = true; // TODO: This could be good to have as a property in the future
 
         String strPdfVersion = Character.toString(reader.getPdfVersion());
-        PdfVersionCompatibilityChecker pdfVersionCompatibilityChecker = new PdfVersionCompatibilityChecker(strPdfVersion, digestAlgorithm);
+        PdfVersionCompatibilityChecker pdfVersionCompatibilityChecker = new PdfVersionCompatibilityChecker(strPdfVersion, theDigestAlgorithm);
             
         if (LOG.isDebugEnabled()) {
             LOG.debug("PDF version: " + strPdfVersion);
@@ -741,15 +772,31 @@ public class PDFSigner extends BaseSigner {
 
             // add visible signature if requested
             if (params.isAdd_visible_signature()) {
-                int signaturePage = getPageNumberForSignature(reader, params);
-                sap.setVisibleSignature(new com.lowagie.text.Rectangle(params.getVisible_sig_rectangle_llx(), params.getVisible_sig_rectangle_lly(), params.getVisible_sig_rectangle_urx(), params.getVisible_sig_rectangle_ury()), signaturePage, null);
+                try {
+                    int signaturePage = getPageNumberForSignature(reader, params);
+                    if (params.getVisible_sig_name() != null && !params.getVisible_sig_name().isEmpty()) {
+                        sap.setVisibleSignature(params.getVisible_sig_name());
 
-                // set custom image if requested
-                if (params.isUse_custom_image()) {
-                    sap.setAcro6Layers(true);
-                    PdfTemplate n2 = sap.getLayer(2);
-                    params.getCustom_image().setAbsolutePosition(0, 0);
-                    n2.addImage(params.getCustom_image());
+                        // positions => [page, llx, lly, urx, ury]
+                        float[] positions = stp.getAcroFields().getFieldPositions(params.getVisible_sig_name());
+                        float newWidth = positions[3] - positions[1];
+                        float newHeight = positions[4] - positions[2];
+                        params.getCustom_image().scaleToFit(newWidth, newHeight);
+                    } else {
+                        sap.setVisibleSignature(new com.lowagie.text.Rectangle(params.getVisible_sig_rectangle_llx(), params.getVisible_sig_rectangle_lly(), params.getVisible_sig_rectangle_urx(), params.getVisible_sig_rectangle_ury()), signaturePage, null);
+                    }
+
+                    // set custom image if requested
+                    if (params.isUse_custom_image()) {
+                        sap.setAcro6Layers(true);
+                        PdfTemplate n2 = sap.getLayer(2);
+                        params.getCustom_image().setAbsolutePosition(0, 0);
+                        n2.addImage(params.getCustom_image());
+                    }
+                } catch (IllegalArgumentException e) {
+                    //one exception could be lanched by setVisibleSignature. For example, when fieldname is not present in the document.
+                    //in this case, we decide to sign the document whithout signature image.
+                    LOG.info("Impossible to set the image of the signature, the document will be signed without visible signature. " + e.getMessage());
                 }
             }
 
@@ -843,10 +890,9 @@ public class PDFSigner extends BaseSigner {
                             }
 
                             // try signing again
-                            addSignatureToPDFDocument(crypto, params, pdfBytes, pdfFile,
+                            return addSignatureToPDFDocument(crypto, params, pdfBytes, pdfFile,
                                                              password, contentExact,
                                                              request, responseData, context, tsaDigestAlgo, tsaDigestAlgoName);
-                            return;
                     } else {
                             // if we fail to get an accurate signature size on the second attempt, bail out (this shouldn't happen)
                             throw new SignServerException("Failed to calculate signature size");
@@ -864,6 +910,7 @@ public class PDFSigner extends BaseSigner {
         } finally {
             IOUtils.closeQuietly(responseOut);
         }
+        return certs;
     }
     
     protected InternalProcessSessionLocal getProcessSession(IServices services) {

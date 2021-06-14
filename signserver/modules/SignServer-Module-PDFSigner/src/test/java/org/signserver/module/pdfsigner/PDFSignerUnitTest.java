@@ -56,6 +56,7 @@ import com.lowagie.text.pdf.PdfSignature;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.TSAClient;
+import java.util.HashMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -1812,7 +1813,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         final WorkerConfig config = new WorkerConfig();
         final List<String> configErrors = new LinkedList<>();
         config.setProperty("TSA_URL", "http://any-tsa.example.com");
-        final PDFSignerParameters params = new PDFSignerParameters(1234, config, configErrors);
+        final PDFSignerParameters params = new PDFSignerParameters(1234, config, configErrors, new HashMap<>());
 
         instance.setIncludeCertificateLevels(1);
 

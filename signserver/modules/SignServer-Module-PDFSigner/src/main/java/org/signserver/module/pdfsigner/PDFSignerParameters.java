@@ -18,17 +18,25 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.signserver.common.WorkerConfig;
-import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
 
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Image;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
+import java.io.ByteArrayInputStream;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.DecoderException;
+import org.cesecore.util.CertTools;
+import org.signserver.common.IllegalRequestException;
+import static org.signserver.common.SignServerConstants.DEFAULT_NULL;
+import org.signserver.common.SignServerException;
 
 /**
  * Class that holds configuration values passed to pdfsigner.
@@ -55,6 +63,7 @@ public class PDFSignerParameters {
     private int visible_sig_rectangle_lly;
     private int visible_sig_rectangle_urx;
     private int visible_sig_rectangle_ury;
+    private String visible_sig_name;
 
     private String visible_sig_custom_image_base64;
     private String visible_sig_custom_image_path;
@@ -88,38 +97,64 @@ public class PDFSignerParameters {
     private Image custom_image = null;
 
     private String tsa_worker;
+    
+    private String alias;
+    private List<Certificate> signerCertChain;
+
+    private String digestAlgorithm;
+    
     private final List<String> configErrors;
 
-    public PDFSignerParameters(int workerId, WorkerConfig config, final List<String> configErrors) {
+    public PDFSignerParameters(int workerId, WorkerConfig config, final List<String> configErrors, Map<String, String> requestMetadata) throws IllegalRequestException, SignServerException {
         this.workerId = workerId;
         this.config = config;
         this.configErrors = configErrors;
-        extractAndProcessConfigurationProperties();
+        extractAndProcessConfigurationProperties(requestMetadata);
     }
 
-    private void extractAndProcessConfigurationProperties() {
+    private void extractAndProcessConfigurationProperties(Map<String, String> requestMetadata) throws IllegalRequestException, SignServerException {
+        // requestMetadata could be missing if using ClientWS
+        if (requestMetadata == null) {
+            requestMetadata = new HashMap<>();
+        }
 
         // The reason shown in the PDF signature
         reason = config.getProperty(PDFSigner.REASON, PDFSigner.REASONDEFAULT);
+        String strMetadataValue = requestMetadata.get(PDFSigner.REASON);
+        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+            reason = strMetadataValue;
+        }
         LOG.debug("Using reason: " + reason);
 
         // The location shown in the PDF signature
         location = config.getProperty(PDFSigner.LOCATION, PDFSigner.LOCATIONDEFAULT);
+        strMetadataValue = requestMetadata.get(PDFSigner.LOCATION);
+        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+            location = strMetadataValue;
+        }
         LOG.debug("Using location: " + location);
 
         // are we adding visible or invisible signature
         // note : ParseBoolean returns false for everything but "True"
         add_visible_signature = Boolean.parseBoolean(config.getProperty(PDFSigner.ADD_VISIBLE_SIGNATURE, Boolean.toString(PDFSigner.ADD_VISIBLE_SIGNATURE_DEFAULT)).trim());
+        strMetadataValue = requestMetadata.get(PDFSigner.ADD_VISIBLE_SIGNATURE);
+        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+            add_visible_signature = Boolean.parseBoolean(strMetadataValue);
+        }
         LOG.debug("Using visible signature: " + add_visible_signature);
 
         // timestamp url
         if (config.getProperty(PDFSigner.TSA_URL, DEFAULT_NULL) != null) {
             tsa_url = config.getProperty(PDFSigner.TSA_URL, DEFAULT_NULL);
-            use_timestamp = true;
             LOG.debug("Using tsa url : " + tsa_url);
         } else if (config.getProperty(PDFSigner.TSA_WORKER, DEFAULT_NULL) != null) {
             tsa_worker = config.getProperty(PDFSigner.TSA_WORKER, DEFAULT_NULL);
-            use_timestamp = true;
+        }
+        
+        // Unless USE_TIMESTAMP=false or no TSA_URL or TSA_WORKER is configured then use timestamp
+        String useTimeStampWorkerProperty = config.getProperty(PDFSigner.USE_TIMESTAMP);
+        if (useTimeStampWorkerProperty == null || useTimeStampWorkerProperty.equalsIgnoreCase(Boolean.TRUE.toString())) {
+            use_timestamp = tsa_url != null || tsa_worker != null;
         }
 
         if (use_timestamp
@@ -131,13 +166,28 @@ public class PDFSignerParameters {
                     PDFSigner.TSA_PASSWORD);
             use_timestamp_authorization = true;
         }
+        
+        // Override use_timestamp
+        strMetadataValue = requestMetadata.get(PDFSigner.USE_TIMESTAMP);
+        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+            use_timestamp = Boolean.parseBoolean(strMetadataValue) && (tsa_url != null || tsa_worker != null);
+            LOG.debug("Using timestamp : " + use_timestamp);
+        }
 
         // should we embed crl inside the cms package
         embed_crl = Boolean.parseBoolean(config.getProperty(PDFSigner.EMBED_CRL, Boolean.toString(PDFSigner.EMBED_CRL_DEFAULT)).trim());
+        strMetadataValue = requestMetadata.get(PDFSigner.EMBED_CRL);
+        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+            embed_crl = Boolean.parseBoolean(strMetadataValue);
+        }
         LOG.debug("Using embed crl inside cms package : " + isEmbed_crl());
 
         // should we embed ocsp response inside the cms package
         embed_ocsp_response = Boolean.parseBoolean(config.getProperty(PDFSigner.EMBED_OCSP_RESPONSE, Boolean.toString(PDFSigner.EMBED_OCSP_RESPONSE_DEFAULT)).trim());
+        strMetadataValue = requestMetadata.get(PDFSigner.EMBED_OCSP_RESPONSE);
+        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+            embed_ocsp_response = Boolean.parseBoolean(strMetadataValue);
+        }
         LOG.debug("Using embed ocsp inside cms package : "
                 + isEmbed_ocsp_response());
 
@@ -152,6 +202,12 @@ public class PDFSignerParameters {
             String[] array = rejectPermissionsValue.split(",");
             rejectPermissions.addAll(Arrays.asList(array));
         }
+        strMetadataValue = requestMetadata.get(PDFSigner.REJECT_PERMISSIONS);
+        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+            String[] array = strMetadataValue.split(",");
+            rejectPermissions.addAll(Arrays.asList(array));
+        }
+
         // Set permissions
         String setPermissionsValue = config.getPropertyThatCouldBeEmpty(PDFSigner.SET_PERMISSIONS);
         if (setPermissionsValue != null) {
@@ -162,6 +218,16 @@ public class PDFSignerParameters {
                 configErrors.add("Signer " + workerId + " misconfigured: " + ex.getMessage());
             }
         }
+        strMetadataValue = requestMetadata.get(PDFSigner.SET_PERMISSIONS);
+        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+            String[] array = strMetadataValue.split(",");
+            try {
+                setPermissions = Permissions.fromSet(Arrays.asList(array), true);
+            } catch (UnknownPermissionException ex) {
+                throw new SignServerException("Signer " + workerId + " missconfigured: " + ex.getMessage());
+            }
+        }
+
         // Remove permissions
         String removePermissionsValue = config.getPropertyThatCouldBeEmpty(PDFSigner.REMOVE_PERMISSIONS);
         if (removePermissionsValue != null) {
@@ -169,14 +235,28 @@ public class PDFSignerParameters {
             removePermissions = new HashSet<>();
             removePermissions.addAll(Arrays.asList(array));
         }
+        strMetadataValue = requestMetadata.get(PDFSigner.REMOVE_PERMISSIONS);
+        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+            String[] array = strMetadataValue.split(",");
+            removePermissions = new HashSet<>();
+            removePermissions.addAll(Arrays.asList(array));
+        }
         // Set ownerpassword
         setOwnerPassword = config.getPropertyThatCouldBeEmpty(PDFSigner.SET_OWNERPASSWORD);
+        strMetadataValue = requestMetadata.get(PDFSigner.SET_OWNERPASSWORD);
+        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+            setOwnerPassword = strMetadataValue;
+        }
         
         // if signature is choosen to be visible proceed with setting visibility
         // properties
         if (add_visible_signature) {
             // page to draw visible signature at            
             visible_sig_page = config.getProperty(PDFSigner.VISIBLE_SIGNATURE_PAGE, PDFSigner.VISIBLE_SIGNATURE_PAGE_DEFAULT);
+            strMetadataValue = requestMetadata.get(PDFSigner.VISIBLE_SIGNATURE_PAGE);
+            if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+                visible_sig_page = strMetadataValue;
+            }
 
             LOG.debug("Using visible signature page: " + visible_sig_page);
 
@@ -185,6 +265,10 @@ public class PDFSignerParameters {
             // llx = lower left x coordinate, lly = lower left y coordinate, urx
             // = upper right x coordinate, ury = upper right y coordinate
             visible_sig_rectangle = config.getProperty(PDFSigner.VISIBLE_SIGNATURE_RECTANGLE, PDFSigner.VISIBLE_SIGNATURE_RECTANGLE_DEFAULT);
+            strMetadataValue = requestMetadata.get(PDFSigner.VISIBLE_SIGNATURE_RECTANGLE);
+            if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+                visible_sig_rectangle = strMetadataValue;
+            }
             LOG.debug("Using rectangle: " + visible_sig_rectangle);
 
             String[] rect = visible_sig_rectangle.split(",");
@@ -202,12 +286,23 @@ public class PDFSignerParameters {
                     LOG.error("Invalid RECTANGLE property specified", ex);
                 }
             }
+            
+            strMetadataValue = requestMetadata.get(PDFSigner.VISIBLE_SIGNATURE_NAME);
+            if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+                visible_sig_name = strMetadataValue;
+                LOG.debug("Using visible signature name: " + visible_sig_name);
+            }
 
             // custom image to use with signature
             // base64 encoded byte[]
             visible_sig_custom_image_base64 = config.getProperty(
                     PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64, DEFAULT_NULL);
             LOG.debug("base64 encoded custom image is set");
+            strMetadataValue = requestMetadata.get(PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64);
+            if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+                visible_sig_custom_image_base64 = strMetadataValue;
+                LOG.debug("base64 encoded custom image is set with request metadata");
+            }
             
             // custom image path. Do not set if base64 encoded image is
             // specified
@@ -217,7 +312,7 @@ public class PDFSignerParameters {
                 LOG.debug("using custom image path : "
                         + visible_sig_custom_image_path);
             }
-
+            
             boolean use_image_from_base64_string = visible_sig_custom_image_base64 != null;                    
             boolean use_image_from_path = visible_sig_custom_image_path != null;
                   
@@ -255,6 +350,13 @@ public class PDFSignerParameters {
                             LOG.debug("resize custom image to rectangle : "
                                     + visible_sig_custom_image_scale_to_rectangle);
                         }
+                        
+                        strMetadataValue = requestMetadata.get(PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE);
+                        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+                            visible_sig_custom_image_scale_to_rectangle = Boolean.parseBoolean(strMetadataValue);
+                            LOG.debug("resize custom image to rectangle : "
+                                    + visible_sig_custom_image_scale_to_rectangle);
+                        }
 
                         // if we are using custom image and the
                         // VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE is set to
@@ -275,7 +377,11 @@ public class PDFSignerParameters {
         }
 
         // Certification level
-        final String level = config.getProperty(PDFSigner.CERTIFICATION_LEVEL, "NOT_CERTIFIED");
+        String level = config.getProperty(PDFSigner.CERTIFICATION_LEVEL, "NOT_CERTIFIED");
+        strMetadataValue = requestMetadata.get(PDFSigner.CERTIFICATION_LEVEL);
+        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+            level = strMetadataValue;
+        }
         if (level.equalsIgnoreCase("NO_CHANGES_ALLOWED")) {
             certification_level
                     = PdfSignatureAppearance.CERTIFIED_NO_CHANGES_ALLOWED;
@@ -293,6 +399,32 @@ public class PDFSignerParameters {
         if (LOG.isDebugEnabled()) {
             LOG.debug("using certification level: " + certification_level);
         }
+        
+        // Specific parameters
+        strMetadataValue = requestMetadata.get(PDFSigner.ALIAS);
+        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+            alias = strMetadataValue;
+        }
+        LOG.debug("Using alias: " + alias);
+
+        strMetadataValue = requestMetadata.get(PDFSigner.SIGNERCERTCHAIN);
+        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+            List<Certificate> result = null;
+            try {
+                result = CertTools.getCertsFromPEM(new ByteArrayInputStream(strMetadataValue.getBytes()), Certificate.class);
+            } catch (CertificateException e) {
+                LOG.error(e);
+                configErrors.add("Unable to read certificates from SIGNERCERTCHAIN: " + e.getMessage());
+            }
+            setSignerCertChain(result);
+        }
+        LOG.debug("Using signer cert chain: " + getSignerCertChain());
+
+        strMetadataValue = requestMetadata.get(PDFSigner.DIGESTALGORITHM);
+        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
+            digestAlgorithm = strMetadataValue;
+        }
+        LOG.debug("Using digestAlgorithm: " + digestAlgorithm);
     }
 
     /**
@@ -372,6 +504,10 @@ public class PDFSignerParameters {
 
     public int getVisible_sig_rectangle_ury() {
         return visible_sig_rectangle_ury;
+    }
+    
+    public String getVisible_sig_name() {
+        return visible_sig_name;
     }
 
     public String getVisible_sig_custom_image_base64() {
@@ -464,6 +600,48 @@ public class PDFSignerParameters {
      */
     public String getSetOwnerPassword() {
         return setOwnerPassword;
+    }
+    
+    /**
+     * @return the alias
+     */
+    public String getAlias() {
+        return alias;
+    }
+
+    /**
+     * @param alias the alias to set
+     */
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    /**
+     * @return the signerCertChain
+     */
+    public List<Certificate> getSignerCertChain() {
+        return signerCertChain;
+    }
+
+    /**
+     * @param signerCertChain the signerCertChain to set
+     */
+    public void setSignerCertChain(List<Certificate> signerCertChain) {
+        this.signerCertChain = signerCertChain;
+    }
+
+    /**
+     * @return String
+     */
+    public String getDigestAlgorithm() {
+        return digestAlgorithm;
+    }
+
+    /**
+     * @param digestAlgorithm
+     */
+    public void setDigestAlgorithm(String digestAlgorithm) {
+        this.digestAlgorithm = digestAlgorithm;
     }
 
 }

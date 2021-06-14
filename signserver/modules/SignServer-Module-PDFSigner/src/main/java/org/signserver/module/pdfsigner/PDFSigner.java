@@ -813,7 +813,7 @@ public class PDFSigner extends BaseSigner {
 
             // add timestamp to signature if requested
             TSAClient tsc = null;
-            if (params.isUse_timestamp()) {
+            if (params.isUseTimestamp()) {
                 final String tsaUrl = params.getTsa_url();
 
                 if (tsaUrl != null) {

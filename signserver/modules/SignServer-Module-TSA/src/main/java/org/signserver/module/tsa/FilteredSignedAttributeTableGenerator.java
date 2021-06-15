@@ -41,6 +41,12 @@ public class FilteredSignedAttributeTableGenerator extends
         this.attributesToRemove = attributesToRemove;
     }
 
+    public FilteredSignedAttributeTableGenerator(final Collection<ASN1ObjectIdentifier> attributesToRemove,
+                                                 final AttributeTable at) {
+        super(at);
+        this.attributesToRemove = attributesToRemove;
+    }
+
     @Override
     public AttributeTable getAttributes(Map parameters) {
         AttributeTable attrs = super.getAttributes(parameters);

@@ -10,7 +10,7 @@
  *  See terms of license at gnu.org.                                     *
  *                                                                       *
  *************************************************************************/
-package org.signserver.module.tsa;
+package org.signserver.module.cmssigner;
 
 import java.util.Collection;
 import java.util.Map;
@@ -25,7 +25,7 @@ import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
  *
  * @author Marcus Lundblad
  * @author Markus Kilås
- * @version $Id$
+ * @version $Id: FilteredSignedAttributeTableGenerator.java 12770 2021-06-15 06:24:37Z malu9369 $
  *
  */
 public class FilteredSignedAttributeTableGenerator extends

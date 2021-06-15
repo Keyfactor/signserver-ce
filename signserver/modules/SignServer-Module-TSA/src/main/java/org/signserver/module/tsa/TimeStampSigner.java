@@ -12,6 +12,7 @@
  *************************************************************************/
 package org.signserver.module.tsa;
 
+import org.signserver.module.cmssigner.FilteredSignedAttributeTableGenerator;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;

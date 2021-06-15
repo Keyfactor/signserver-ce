@@ -49,5 +49,10 @@
             <artifactId>javaee-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>SignServer-Module-CMSSigner</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

@@ -1813,7 +1813,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         final WorkerConfig config = new WorkerConfig();
         final List<String> configErrors = new LinkedList<>();
         config.setProperty("TSA_URL", "http://any-tsa.example.com");
-        final PDFSignerParameters params = new PDFSignerParameters(1234, config, configErrors, new HashMap<>());
+        final PDFSignerParameters params = new PDFSignerParameters(1234, config, configErrors, new HashMap<>(), new HashSet<>());
 
         instance.setIncludeCertificateLevels(1);
 

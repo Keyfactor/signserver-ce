@@ -165,6 +165,32 @@ public class PDFSigner extends BaseSigner {
     
     private static final String DEFAULT_TSA_DIGESTALGORITHM = "SHA256";
     
+    public static final String ALLOW_PROPERTY_OVERRIDE = "ALLOW_PROPERTY_OVERRIDE";
+    
+    /** Set of properties that could be overridden if the configuration allows. */
+    private static final Set<String> OVERRIDABLE_PROPERTIES = new HashSet<String>(
+        Arrays.asList(
+            REASON,
+            LOCATION,
+            ADD_VISIBLE_SIGNATURE,
+            USE_TIMESTAMP,
+            EMBED_CRL,
+            EMBED_OCSP_RESPONSE,
+            REJECT_PERMISSIONS,
+            SET_PERMISSIONS,
+            REMOVE_PERMISSIONS,
+            SET_OWNERPASSWORD,
+            VISIBLE_SIGNATURE_PAGE,
+            VISIBLE_SIGNATURE_RECTANGLE,
+            VISIBLE_SIGNATURE_NAME,
+            VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE,
+            CERTIFICATION_LEVEL,
+            ALIAS,
+            SIGNERCERTCHAIN,
+            DIGESTALGORITHM
+        )
+    );
+
     private Pattern archivetodiskPattern;
 
     /** Random used for instance when setting a random owner/permissions password*/
@@ -182,6 +208,9 @@ public class PDFSigner extends BaseSigner {
      */
     private ASN1ObjectIdentifier tsaDigestAlgorithm;
     private String tsaDigestAlgorithmName; // passed to PdfPkcs7
+
+    /** Properties that are configured to be allowed to override. */
+    private Set<String> allowPropertyOverride;
     
     @Override
     public void init(int signerId, WorkerConfig config,
@@ -190,6 +219,20 @@ public class PDFSigner extends BaseSigner {
 
         configErrors = new LinkedList<>();
         
+        // Handle properties allowed to be overridden
+        allowPropertyOverride = new HashSet<>();
+        String propertyValue = config.getProperty(PDFSigner.ALLOW_PROPERTY_OVERRIDE);
+        if (!StringUtils.isBlank(propertyValue)) {
+            for (String property : propertyValue.split(",")) {
+                String prop = property.trim();
+                if (isOverridePossible(property)) {
+                    allowPropertyOverride.add(prop);
+                } else {
+                    configErrors.add("Override not supported for property: " + prop);
+                }
+            }
+        }
+
         // Check properties for archive to disk
         if (StringUtils.equalsIgnoreCase("TRUE",
                 config.getProperty(PROPERTY_ARCHIVETODISK, Boolean.FALSE.toString()))) {
@@ -242,7 +285,7 @@ public class PDFSigner extends BaseSigner {
 
         try {
             // retrieve and preprocess configuration parameter values
-            new PDFSignerParameters(workerId, config, configErrors, new HashMap<>());
+            new PDFSignerParameters(workerId, config, configErrors, new HashMap<>(), allowPropertyOverride);
         } catch (IllegalRequestException | SignServerException ex) {
             configErrors.add("PDF configuration error: " + ex.getMessage());
         }
@@ -332,7 +375,7 @@ public class PDFSigner extends BaseSigner {
         // retrieve and preprocess configuration parameter values
         // XXX: Note: below a new instance of configError is passed in. Actually we do not want to collect errors at this stage but will do it like this for now
         final ArrayList<String> processingErrors = new ArrayList<>();
-        final PDFSignerParameters params = new PDFSignerParameters(workerId, config, processingErrors, metadata);
+        final PDFSignerParameters params = new PDFSignerParameters(workerId, config, processingErrors, metadata, allowPropertyOverride);
         if (!processingErrors.isEmpty()) {
             throw new IllegalRequestException(processingErrors.toString());
         }
@@ -1191,6 +1234,15 @@ public class PDFSigner extends BaseSigner {
      */
     void setIncludeCertificateLevels(final int includeCertificateLevels) {
         this.includeCertificateLevels = includeCertificateLevels;
+    }
+    
+    /**
+     * Check if a property is one of those that could be overidden.
+     * @param property to check
+     * @return True if property is one of those that can be overidden
+     */
+    private boolean isOverridePossible(String property) {
+        return OVERRIDABLE_PROPERTIES.contains(property);
     }
 
 }

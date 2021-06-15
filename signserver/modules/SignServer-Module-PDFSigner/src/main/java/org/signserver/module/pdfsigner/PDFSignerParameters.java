@@ -105,10 +105,13 @@ public class PDFSignerParameters {
     
     private final List<String> configErrors;
 
-    public PDFSignerParameters(int workerId, WorkerConfig config, final List<String> configErrors, Map<String, String> requestMetadata) throws IllegalRequestException, SignServerException {
+    private final Set<String> allowPropertyOverride;
+
+    public PDFSignerParameters(int workerId, WorkerConfig config, final List<String> configErrors, Map<String, String> requestMetadata, final Set<String> allowPropertyOverride) throws IllegalRequestException, SignServerException {
         this.workerId = workerId;
         this.config = config;
         this.configErrors = configErrors;
+        this.allowPropertyOverride = allowPropertyOverride;
         extractAndProcessConfigurationProperties(requestMetadata);
     }
 
@@ -117,12 +120,16 @@ public class PDFSignerParameters {
         if (requestMetadata == null) {
             requestMetadata = new HashMap<>();
         }
-
+        
         // The reason shown in the PDF signature
         reason = config.getProperty(PDFSigner.REASON, PDFSigner.REASONDEFAULT);
         String strMetadataValue = requestMetadata.get(PDFSigner.REASON);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-            reason = strMetadataValue;
+            if (isOverrideAllowed(PDFSigner.REASON)) {
+                reason = strMetadataValue;
+            } else {
+                throw new IllegalRequestException("Overriding " + PDFSigner.REASON + " not permitted");
+            }
         }
         LOG.debug("Using reason: " + reason);
 
@@ -130,7 +137,11 @@ public class PDFSignerParameters {
         location = config.getProperty(PDFSigner.LOCATION, PDFSigner.LOCATIONDEFAULT);
         strMetadataValue = requestMetadata.get(PDFSigner.LOCATION);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-            location = strMetadataValue;
+            if (isOverrideAllowed(PDFSigner.LOCATION)) {
+                location = strMetadataValue;
+            } else {
+                throw new IllegalRequestException("Overriding " + PDFSigner.LOCATION + " not permitted");
+            }
         }
         LOG.debug("Using location: " + location);
 
@@ -139,7 +150,11 @@ public class PDFSignerParameters {
         add_visible_signature = Boolean.parseBoolean(config.getProperty(PDFSigner.ADD_VISIBLE_SIGNATURE, Boolean.toString(PDFSigner.ADD_VISIBLE_SIGNATURE_DEFAULT)).trim());
         strMetadataValue = requestMetadata.get(PDFSigner.ADD_VISIBLE_SIGNATURE);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-            add_visible_signature = Boolean.parseBoolean(strMetadataValue);
+            if (isOverrideAllowed(PDFSigner.ADD_VISIBLE_SIGNATURE)) {
+                add_visible_signature = Boolean.parseBoolean(strMetadataValue);
+            } else {
+                throw new IllegalRequestException("Overriding " + PDFSigner.ADD_VISIBLE_SIGNATURE + " not permitted");
+            }
         }
         LOG.debug("Using visible signature: " + add_visible_signature);
 
@@ -170,7 +185,12 @@ public class PDFSignerParameters {
         // Override use_timestamp
         strMetadataValue = requestMetadata.get(PDFSigner.USE_TIMESTAMP);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-            useTimestamp = Boolean.parseBoolean(strMetadataValue) && (tsa_url != null || tsa_worker != null);
+            if (isOverrideAllowed(PDFSigner.USE_TIMESTAMP)) {
+                useTimestamp = Boolean.parseBoolean(strMetadataValue) && (tsa_url != null || tsa_worker != null);
+            } else {
+                throw new IllegalRequestException("Overriding " + PDFSigner.USE_TIMESTAMP + " not permitted");
+            }
+                
             LOG.debug("Using timestamp : " + useTimestamp);
         }
 
@@ -178,7 +198,11 @@ public class PDFSignerParameters {
         embed_crl = Boolean.parseBoolean(config.getProperty(PDFSigner.EMBED_CRL, Boolean.toString(PDFSigner.EMBED_CRL_DEFAULT)).trim());
         strMetadataValue = requestMetadata.get(PDFSigner.EMBED_CRL);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-            embed_crl = Boolean.parseBoolean(strMetadataValue);
+            if (isOverrideAllowed(PDFSigner.EMBED_CRL)) {
+                embed_crl = Boolean.parseBoolean(strMetadataValue);
+            } else {
+                throw new IllegalRequestException("Overriding " + PDFSigner.EMBED_CRL + " not permitted");
+            }
         }
         LOG.debug("Using embed crl inside cms package : " + isEmbed_crl());
 
@@ -186,7 +210,11 @@ public class PDFSignerParameters {
         embed_ocsp_response = Boolean.parseBoolean(config.getProperty(PDFSigner.EMBED_OCSP_RESPONSE, Boolean.toString(PDFSigner.EMBED_OCSP_RESPONSE_DEFAULT)).trim());
         strMetadataValue = requestMetadata.get(PDFSigner.EMBED_OCSP_RESPONSE);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-            embed_ocsp_response = Boolean.parseBoolean(strMetadataValue);
+            if (isOverrideAllowed(PDFSigner.EMBED_OCSP_RESPONSE)) {
+                embed_ocsp_response = Boolean.parseBoolean(strMetadataValue);
+            } else {
+                throw new IllegalRequestException("Overriding " + PDFSigner.EMBED_OCSP_RESPONSE + " not permitted");
+            }
         }
         LOG.debug("Using embed ocsp inside cms package : "
                 + isEmbed_ocsp_response());
@@ -204,8 +232,12 @@ public class PDFSignerParameters {
         }
         strMetadataValue = requestMetadata.get(PDFSigner.REJECT_PERMISSIONS);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-            String[] array = strMetadataValue.split(",");
-            rejectPermissions.addAll(Arrays.asList(array));
+            if (isOverrideAllowed(PDFSigner.REJECT_PERMISSIONS)) {
+                String[] array = strMetadataValue.split(",");
+                rejectPermissions.addAll(Arrays.asList(array));
+            } else {
+                throw new IllegalRequestException("Overriding " + PDFSigner.REJECT_PERMISSIONS + " not permitted");
+            }
         }
 
         // Set permissions
@@ -220,11 +252,15 @@ public class PDFSignerParameters {
         }
         strMetadataValue = requestMetadata.get(PDFSigner.SET_PERMISSIONS);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-            String[] array = strMetadataValue.split(",");
-            try {
-                setPermissions = Permissions.fromSet(Arrays.asList(array), true);
-            } catch (UnknownPermissionException ex) {
-                throw new SignServerException("Signer " + workerId + " missconfigured: " + ex.getMessage());
+            if (isOverrideAllowed(PDFSigner.SET_PERMISSIONS)) {
+                String[] array = strMetadataValue.split(",");
+                try {
+                    setPermissions = Permissions.fromSet(Arrays.asList(array), true);
+                } catch (UnknownPermissionException ex) {
+                    throw new SignServerException("Signer " + workerId + " missconfigured: " + ex.getMessage());
+                }
+            } else {
+                throw new IllegalRequestException("Overriding " + PDFSigner.SET_PERMISSIONS + " not permitted");
             }
         }
 
@@ -237,15 +273,23 @@ public class PDFSignerParameters {
         }
         strMetadataValue = requestMetadata.get(PDFSigner.REMOVE_PERMISSIONS);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-            String[] array = strMetadataValue.split(",");
-            removePermissions = new HashSet<>();
-            removePermissions.addAll(Arrays.asList(array));
+            if (isOverrideAllowed(PDFSigner.REMOVE_PERMISSIONS)) {
+                String[] array = strMetadataValue.split(",");
+                removePermissions = new HashSet<>();
+                removePermissions.addAll(Arrays.asList(array));
+            } else {
+                throw new IllegalRequestException("Overriding " + PDFSigner.REMOVE_PERMISSIONS + " not permitted");
+            }
         }
         // Set ownerpassword
         setOwnerPassword = config.getPropertyThatCouldBeEmpty(PDFSigner.SET_OWNERPASSWORD);
         strMetadataValue = requestMetadata.get(PDFSigner.SET_OWNERPASSWORD);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-            setOwnerPassword = strMetadataValue;
+            if (isOverrideAllowed(PDFSigner.SET_OWNERPASSWORD)) {
+                setOwnerPassword = strMetadataValue;
+            } else {
+                throw new IllegalRequestException("Overriding " + PDFSigner.SET_OWNERPASSWORD + " not permitted");
+            }
         }
         
         // if signature is choosen to be visible proceed with setting visibility
@@ -255,7 +299,11 @@ public class PDFSignerParameters {
             visible_sig_page = config.getProperty(PDFSigner.VISIBLE_SIGNATURE_PAGE, PDFSigner.VISIBLE_SIGNATURE_PAGE_DEFAULT);
             strMetadataValue = requestMetadata.get(PDFSigner.VISIBLE_SIGNATURE_PAGE);
             if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-                visible_sig_page = strMetadataValue;
+                if (isOverrideAllowed(PDFSigner.VISIBLE_SIGNATURE_PAGE)) {
+                    visible_sig_page = strMetadataValue;
+                } else {
+                throw new IllegalRequestException("Overriding " + PDFSigner.VISIBLE_SIGNATURE_PAGE + " not permitted");
+            }
             }
 
             LOG.debug("Using visible signature page: " + visible_sig_page);
@@ -267,7 +315,11 @@ public class PDFSignerParameters {
             visible_sig_rectangle = config.getProperty(PDFSigner.VISIBLE_SIGNATURE_RECTANGLE, PDFSigner.VISIBLE_SIGNATURE_RECTANGLE_DEFAULT);
             strMetadataValue = requestMetadata.get(PDFSigner.VISIBLE_SIGNATURE_RECTANGLE);
             if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-                visible_sig_rectangle = strMetadataValue;
+                if (isOverrideAllowed(PDFSigner.VISIBLE_SIGNATURE_RECTANGLE)) {
+                    visible_sig_rectangle = strMetadataValue;
+                } else {
+                    throw new IllegalRequestException("Overriding " + PDFSigner.VISIBLE_SIGNATURE_RECTANGLE + " not permitted");
+                }
             }
             LOG.debug("Using rectangle: " + visible_sig_rectangle);
 
@@ -289,8 +341,12 @@ public class PDFSignerParameters {
             
             strMetadataValue = requestMetadata.get(PDFSigner.VISIBLE_SIGNATURE_NAME);
             if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-                visible_sig_name = strMetadataValue;
-                LOG.debug("Using visible signature name: " + visible_sig_name);
+                if (isOverrideAllowed(PDFSigner.VISIBLE_SIGNATURE_NAME)) {
+                    visible_sig_name = strMetadataValue;
+                    LOG.debug("Using visible signature name: " + visible_sig_name);
+                } else {
+                    throw new IllegalRequestException("Overriding " + PDFSigner.VISIBLE_SIGNATURE_NAME + " not permitted");
+                }
             }
 
             // custom image to use with signature
@@ -300,8 +356,12 @@ public class PDFSignerParameters {
             LOG.debug("base64 encoded custom image is set");
             strMetadataValue = requestMetadata.get(PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64);
             if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-                visible_sig_custom_image_base64 = strMetadataValue;
-                LOG.debug("base64 encoded custom image is set with request metadata");
+                if (isOverrideAllowed(PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64)) {
+                    visible_sig_custom_image_base64 = strMetadataValue;
+                    LOG.debug("base64 encoded custom image is set with request metadata");
+                } else {
+                    throw new IllegalRequestException("Overriding " + PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 + " not permitted");
+                }
             }
             
             // custom image path. Do not set if base64 encoded image is
@@ -353,9 +413,13 @@ public class PDFSignerParameters {
                         
                         strMetadataValue = requestMetadata.get(PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE);
                         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-                            visible_sig_custom_image_scale_to_rectangle = Boolean.parseBoolean(strMetadataValue);
-                            LOG.debug("resize custom image to rectangle : "
-                                    + visible_sig_custom_image_scale_to_rectangle);
+                            if (isOverrideAllowed(PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE)) {
+                                visible_sig_custom_image_scale_to_rectangle = Boolean.parseBoolean(strMetadataValue);
+                                LOG.debug("resize custom image to rectangle : "
+                                        + visible_sig_custom_image_scale_to_rectangle);
+                            } else {
+                                throw new IllegalRequestException("Overriding " + PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE + " not permitted");
+                            }
                         }
 
                         // if we are using custom image and the
@@ -380,7 +444,11 @@ public class PDFSignerParameters {
         String level = config.getProperty(PDFSigner.CERTIFICATION_LEVEL, "NOT_CERTIFIED");
         strMetadataValue = requestMetadata.get(PDFSigner.CERTIFICATION_LEVEL);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-            level = strMetadataValue;
+            if (isOverrideAllowed(PDFSigner.CERTIFICATION_LEVEL)) {
+                level = strMetadataValue;
+            } else {
+                throw new IllegalRequestException("Overriding " + PDFSigner.CERTIFICATION_LEVEL + " not permitted");
+            }
         }
         if (level.equalsIgnoreCase("NO_CHANGES_ALLOWED")) {
             certification_level
@@ -403,26 +471,38 @@ public class PDFSignerParameters {
         // Specific parameters
         strMetadataValue = requestMetadata.get(PDFSigner.ALIAS);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-            alias = strMetadataValue;
+            if (isOverrideAllowed(PDFSigner.ALIAS)) {
+                alias = strMetadataValue;
+            } else {
+                throw new IllegalRequestException("Overriding " + PDFSigner.ALIAS + " not permitted");
+            }
         }
         LOG.debug("Using alias: " + alias);
 
         strMetadataValue = requestMetadata.get(PDFSigner.SIGNERCERTCHAIN);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-            List<Certificate> result = null;
-            try {
-                result = CertTools.getCertsFromPEM(new ByteArrayInputStream(strMetadataValue.getBytes()), Certificate.class);
-            } catch (CertificateException e) {
-                LOG.error(e);
-                configErrors.add("Unable to read certificates from SIGNERCERTCHAIN: " + e.getMessage());
+            if (isOverrideAllowed(PDFSigner.SIGNERCERTCHAIN)) {
+                List<Certificate> result = null;
+                try {
+                    result = CertTools.getCertsFromPEM(new ByteArrayInputStream(strMetadataValue.getBytes()), Certificate.class);
+                } catch (CertificateException e) {
+                    LOG.error(e);
+                    configErrors.add("Unable to read certificates from SIGNERCERTCHAIN: " + e.getMessage());
+                }
+                setSignerCertChain(result);
+            } else {
+                throw new IllegalRequestException("Overriding " + PDFSigner.SIGNERCERTCHAIN + " not permitted");
             }
-            setSignerCertChain(result);
         }
         LOG.debug("Using signer cert chain: " + getSignerCertChain());
 
         strMetadataValue = requestMetadata.get(PDFSigner.DIGESTALGORITHM);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-            digestAlgorithm = strMetadataValue;
+            if (isOverrideAllowed(PDFSigner.DIGESTALGORITHM)) {
+                digestAlgorithm = strMetadataValue;
+            } else {
+                throw new IllegalRequestException("Overriding " + PDFSigner.DIGESTALGORITHM + " not permitted");
+            }    
         }
         LOG.debug("Using digestAlgorithm: " + digestAlgorithm);
     }
@@ -468,6 +548,10 @@ public class PDFSignerParameters {
     private void calculateUpperRightRectangleCoordinatesFromImage() {
         visible_sig_rectangle_urx = (int) (visible_sig_rectangle_llx + custom_image.getWidth());
         visible_sig_rectangle_ury = (int) (visible_sig_rectangle_lly + custom_image.getHeight());
+    }
+    
+    private boolean isOverrideAllowed(String property) {
+        return allowPropertyOverride.contains(property);
     }
 
     public String getReason() {

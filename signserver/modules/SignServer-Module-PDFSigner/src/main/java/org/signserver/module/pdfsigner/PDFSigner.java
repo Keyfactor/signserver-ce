@@ -99,7 +99,6 @@ public class PDFSigner extends BaseSigner {
     public static final String REASONDEFAULT = "Signed by SignServer";
     public static final String LOCATION = "LOCATION";
     public static final String LOCATIONDEFAULT = "SignServer";
-    public static final String ALIAS = "ALIAS";
     public static final String SIGNERCERTCHAIN = "SIGNERCERTCHAIN";
     
     public static final String USE_TIMESTAMP = "USE_TIMESTAMP";
@@ -185,7 +184,6 @@ public class PDFSigner extends BaseSigner {
             VISIBLE_SIGNATURE_NAME,
             VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE,
             CERTIFICATION_LEVEL,
-            ALIAS,
             SIGNERCERTCHAIN,
             DIGESTALGORITHM
         )
@@ -225,10 +223,12 @@ public class PDFSigner extends BaseSigner {
         if (!StringUtils.isBlank(propertyValue)) {
             for (String property : propertyValue.split(",")) {
                 String prop = property.trim();
-                if (isOverridePossible(property)) {
-                    allowPropertyOverride.add(prop);
-                } else {
-                    configErrors.add("Override not supported for property: " + prop);
+                if (!StringUtils.isBlank(prop)) {
+                    if (isOverridePossible(prop)) {
+                        allowPropertyOverride.add(prop);
+                    } else {
+                        configErrors.add("Override not supported for property: " + prop);
+                    }
                 }
             }
         }
@@ -288,6 +288,10 @@ public class PDFSigner extends BaseSigner {
             new PDFSignerParameters(workerId, config, configErrors, new HashMap<>(), allowPropertyOverride);
         } catch (IllegalRequestException | SignServerException ex) {
             configErrors.add("PDF configuration error: " + ex.getMessage());
+        }
+        
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Configuration errors:\n" + StringUtils.join(configErrors, "\n"));
         }
     }
 

@@ -57,6 +57,7 @@ import com.lowagie.text.pdf.PdfSignatureAppearance;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.TSAClient;
 import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -1741,6 +1742,128 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         reader.close();
         assertEquals("LibreOffice 3.3; modified using SignServer", info.getAsString(PdfName.PRODUCER).toUnicodeString());
     }
+    
+    // TODO test trying to configure override for an unsupported property
+    
+    // TODO test override for a property that is not allowed
+    
+    
+    @Test
+    public void testRequestMetadata_certificationLevel() throws Exception {
+        PdfReader reader = null;
+        try {
+            // given
+            workerSession.setWorkerProperty(WORKER1, PDFSigner.ALLOW_PROPERTY_OVERRIDE, " CERTIFICATION_LEVEL  ,");
+            workerSession.reloadConfiguration(WORKER1);
+            final Map<String, String> requestMetadata = new HashMap<>();
+            requestMetadata.put(PDFSigner.CERTIFICATION_LEVEL, "FORM_FILLING_AND_ANNOTATIONS");
+
+            // when
+            final byte[] bytes = signPDF(sample, WORKER1, requestMetadata);
+
+            // then
+            reader = new PdfReader(bytes);
+            assertEquals("certified form filling and annotations (3)", 
+                    PdfSignatureAppearance.CERTIFIED_FORM_FILLING_AND_ANNOTATIONS, reader.getCertificationLevel());
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+    }
+    
+    @Test
+    public void testRequestMetadata_reason() throws Exception {
+        PdfReader reader = null;
+        try {
+            // given
+            workerSession.setWorkerProperty(WORKER1, PDFSigner.ALLOW_PROPERTY_OVERRIDE, " , REASON,CERTIFICATION_LEVEL");
+            workerSession.reloadConfiguration(WORKER1);
+            final Map<String, String> requestMetadata = new HashMap<>();
+            requestMetadata.put(PDFSigner.REASON, "My own reason");
+
+            // when
+            final byte[] bytes = signPDF(sample, WORKER1, requestMetadata);
+
+            // then
+            reader = new PdfReader(bytes);
+            final PdfPKCS7 p7 = reader.getAcroFields().verifySignature((String) reader.getAcroFields().getSignatureNames().get(0));
+            assertEquals("overriding reason", "My own reason", p7.getReason());
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+    }
+    
+    @Test
+    public void testRequestMetadata_location() throws Exception {
+        PdfReader reader = null;
+        try {
+            // given
+            workerSession.setWorkerProperty(WORKER1, PDFSigner.ALLOW_PROPERTY_OVERRIDE, "LOCATION");
+            workerSession.reloadConfiguration(WORKER1);
+            final Map<String, String> requestMetadata = new HashMap<>();
+            requestMetadata.put(PDFSigner.LOCATION, "Solna");
+
+            // when
+            final byte[] bytes = signPDF(sample, WORKER1, requestMetadata);
+
+            // then
+            reader = new PdfReader(bytes);
+            final PdfPKCS7 p7 = reader.getAcroFields().verifySignature((String) reader.getAcroFields().getSignatureNames().get(0));
+            assertEquals("overriding location", "Solna", p7.getLocation());
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+    }
+    
+    // TODO or skip: ADD_VISIBLE_SIGNATURE
+    // TODO or skip: VISIBLE_SIGNATURE_PAGE,
+    // TODO or skip: VISIBLE_SIGNATURE_RECTANGLE,
+    // TODO or skip: VISIBLE_SIGNATURE_NAME,
+    // TODO or skip: VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE
+    
+    // TODO or skip: USE_TIMESTAMP
+    // TODO or skip: EMBED_CRL,
+    // TODO or skip: EMBED_OCSP_RESPONSE,
+    
+
+    @Test
+    public void testRequestMetadata_rejectPermissions() throws Exception {
+        PdfReader reader = null;
+        try {
+            // given
+            workerSession.setWorkerProperty(WORKER1, PDFSigner.ALLOW_PROPERTY_OVERRIDE, "REJECT_PERMISSIONS");
+            workerSession.setWorkerProperty(WORKER1, "REJECT_PERMISSIONS", "ALLOW_PRINTING");
+            workerSession.reloadConfiguration(WORKER1);
+            final Map<String, String> requestMetadata = new HashMap<>();
+            requestMetadata.put(PDFSigner.ADD_VISIBLE_SIGNATURE, "True");
+
+            // when & then
+            try {
+                signProtectedPDF(sampleUseraao, SAMPLE_USER_AAA_PASSWORD);
+                fail("Should have thrown exception");
+            } catch (IllegalRequestException ok) {
+                assertEquals("Document contains permissions not allowed by this signer", ok.getMessage());
+            }
+        } finally {
+            workerSession.removeWorkerProperty(WORKER1, "REJECT_PERMISSIONS");
+            workerSession.reloadConfiguration(WORKER1);
+            if (reader != null) {
+                reader.close();
+            }
+        }
+    }
+    
+    // TODO: SET_PERMISSIONS
+    // TODO: REMOVE_PERMISSIONS
+    // TODO: SET_OWNERPASSWORD
+    
+    // TODO: SIGNERCERTCHAIN
+    // TODO: DIGESTALGORITHM
 
     /**
      * Helper method creating a mocked token, using DSA or RSA keys.
@@ -1876,9 +1999,16 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         } else {
             LOG.debug("\"" + password + "\" " + Arrays.toString(password.toCharArray()));
         }
+        Map<String, String> requestMetadata = new HashMap<>();
+        requestMetadata.put(RequestContext.METADATA_PDFPASSWORD, password);
+        return signPDF(file, workerId, requestMetadata);
+    }
+    
+    private byte[] signPDF(final File file, final int workerId, final Map<String, String> requestMetadata) throws Exception {
+        LOG.debug("Tests signing of " + file.getName());
 
         RequestContext context = new RequestContext();
-        RequestMetadata.getInstance(context).put(RequestContext.METADATA_PDFPASSWORD, password);
+        RequestMetadata.getInstance(context).putAll(requestMetadata);
 
         try (
                 CloseableReadableData requestData = createRequestDataKeepingFile(file);

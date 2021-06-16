@@ -469,15 +469,6 @@ public class PDFSignerParameters {
         }
         
         // Specific parameters
-        strMetadataValue = requestMetadata.get(PDFSigner.ALIAS);
-        if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
-            if (isOverrideAllowed(PDFSigner.ALIAS)) {
-                alias = strMetadataValue;
-            } else {
-                throw new IllegalRequestException("Overriding " + PDFSigner.ALIAS + " not permitted");
-            }
-        }
-        LOG.debug("Using alias: " + alias);
 
         strMetadataValue = requestMetadata.get(PDFSigner.SIGNERCERTCHAIN);
         if (strMetadataValue != null && !strMetadataValue.isEmpty()) {
@@ -684,20 +675,6 @@ public class PDFSignerParameters {
      */
     public String getSetOwnerPassword() {
         return setOwnerPassword;
-    }
-    
-    /**
-     * @return the alias
-     */
-    public String getAlias() {
-        return alias;
-    }
-
-    /**
-     * @param alias the alias to set
-     */
-    public void setAlias(String alias) {
-        this.alias = alias;
     }
 
     /**

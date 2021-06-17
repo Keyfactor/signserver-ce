@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -281,6 +282,31 @@ public class PDFSignerParametersUnitTest {
         assertEquals("REMOVE_PERMISSIONS overridden", 
                 "newPassword789",
                 instance.getSetOwnerPassword());
+    }
+
+    /**
+     * Test overriding VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testOverrideVisibleSignatureCustomImageBase64() throws Exception {
+        LOG.info("testOverrideVisibleSignatureCustomImageBase64");
+
+        // given
+        final WorkerConfig config = createWorkerConfig();
+
+        final RequestMetadata requestMetadata = new RequestMetadata();
+        final String image = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQI12NQsDgKAAGZAR5n3WUAAAAAAElFTkSuQmCC";
+        requestMetadata.put(PDFSigner.ADD_VISIBLE_SIGNATURE, "true");
+        requestMetadata.put(PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64, image);
+        final Set<String> allowPropertyOverride = new HashSet<>(Arrays.asList(PDFSigner.VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64, PDFSigner.ADD_VISIBLE_SIGNATURE));
+        final LinkedList<String> configErrors = new LinkedList<>();
+        
+        // when
+        PDFSignerParameters instance = new PDFSignerParameters(101, config, configErrors, requestMetadata, allowPropertyOverride);
+        
+        // then
+        assertEquals("VISIBLE_SIGNATURE_CUSTOM_IMAGE_BASE64 overridden", image, instance.getVisible_sig_custom_image_base64());
     }
 
     /**

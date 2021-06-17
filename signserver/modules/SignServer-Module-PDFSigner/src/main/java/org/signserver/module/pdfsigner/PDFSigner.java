@@ -896,7 +896,7 @@ public class PDFSigner extends BaseSigner {
 
             PdfPKCS7 sgn;
             try {
-                sgn = new PdfPKCS7(privKey, certChain, crlList, digestAlgorithm,
+                sgn = new PdfPKCS7(privKey, certChain, crlList, theDigestAlgorithm,
                                    crypto.getProvider().getName(), false);
             } catch (InvalidKeyException | NoSuchProviderException | NoSuchAlgorithmException e) {
                 throw new SignServerException("Error constructing PKCS7 package", e);

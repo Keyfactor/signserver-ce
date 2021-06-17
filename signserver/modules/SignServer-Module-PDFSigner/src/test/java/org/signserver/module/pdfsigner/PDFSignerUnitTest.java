@@ -1863,7 +1863,30 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     // TODO: SET_OWNERPASSWORD
     
     // TODO: SIGNERCERTCHAIN
-    // TODO: DIGESTALGORITHM
+
+    @Test
+    public void testRequestMetadata_digestalgorithm() throws Exception {
+        PdfReader reader = null;
+        try {
+            // given
+            workerSession.setWorkerProperty(WORKER1, PDFSigner.ALLOW_PROPERTY_OVERRIDE, "DIGESTALGORITHM");
+            workerSession.reloadConfiguration(WORKER1);
+            final Map<String, String> requestMetadata = new HashMap<>();
+            requestMetadata.put(PDFSigner.DIGESTALGORITHM, "SHA384");
+
+            // when
+            final byte[] bytes = signPDF(sample, WORKER1, requestMetadata);
+
+            // then
+            reader = new PdfReader(bytes);
+            final PdfPKCS7 p7 = reader.getAcroFields().verifySignature((String) reader.getAcroFields().getSignatureNames().get(0));
+            assertEquals("overriding digest algorithm", "SHA384", p7.getHashAlgorithm());
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+    }
 
     /**
      * Helper method creating a mocked token, using DSA or RSA keys.

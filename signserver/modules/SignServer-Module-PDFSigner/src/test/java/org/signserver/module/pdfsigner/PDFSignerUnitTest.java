@@ -56,6 +56,7 @@ import com.lowagie.text.pdf.PdfSignature;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.TSAClient;
+import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.io.FileUtils;
@@ -71,6 +72,7 @@ import org.bouncycastle.cert.jcajce.JcaX509CRLConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.cesecore.util.CertTools;
 import org.junit.Before;
 import org.junit.Test;
 import org.signserver.common.IllegalRequestException;
@@ -133,6 +135,99 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     private final String SAMPLE_OPEN123_PASSWORD = "open123";
 
     private final String ILLEGAL_DIGEST_FOR_DSA_MESSAGE = "Only SHA1 is permitted as digest algorithm for DSA public/private keys";
+    
+    /**
+     * Alternative certificate chain for dss10_signer1.p12.
+     * Different certificate, subject DN and issued from sub CA.
+     */
+    private static final String SIGNER_1_ALT_CHAIN = 
+        "Subject: CN=Signer 1 - Alternative,OU=Development,O=SignServer,C=SE\n" +
+        "Issuer: CN=DSS Sub CA 11,OU=Testing,O=SignServer,C=SE\n" +
+        "-----BEGIN CERTIFICATE-----\n" +
+        "MIIDsjCCApqgAwIBAgIUfPkcsWlAs0IOkDdDToWChRzvYfcwDQYJKoZIhvcNAQEL\n" +
+        "BQAwTDEWMBQGA1UEAwwNRFNTIFN1YiBDQSAxMTEQMA4GA1UECwwHVGVzdGluZzET\n" +
+        "MBEGA1UECgwKU2lnblNlcnZlcjELMAkGA1UEBhMCU0UwHhcNMjEwNjE3MDk1MjUy\n" +
+        "WhcNMzYwNTI3MDgxNDI3WjBZMR8wHQYDVQQDDBZTaWduZXIgMSAtIEFsdGVybmF0\n" +
+        "aXZlMRQwEgYDVQQLDAtEZXZlbG9wbWVudDETMBEGA1UECgwKU2lnblNlcnZlcjEL\n" +
+        "MAkGA1UEBhMCU0UwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDLQZfj\n" +
+        "mXMNGFRT+OEIJ6ooplwVaU5CIPFRx3ok6rfx2tRqUv27b6Cv51wEUpEE4aYXGMwZ\n" +
+        "UnicM7y4jd2X4E6sVvKRQCd/ViT+3wTZmaB1Aw/gLPqJfCWBaPxhGdDrASTaBwCn\n" +
+        "jlIBF/IRh20Cti9tPE4WjFv0o6PCOLz3LEJH+ltEfP+rdGheCroT+DyZOYi3gICC\n" +
+        "8PlVUWI0/tdYp3g+3DhuNBjxFbmTzb3WjUSsdsNm++q+mzgT1wi7fm/Uu1eOUWTB\n" +
+        "UnjFzQvrUCT5yNzABRwapMdDs/0p2Nw4vO2zDRfeNNmLmcuDfLgW6R47OSPGTmeH\n" +
+        "Qmvf8XczvC5jYFLrAgMBAAGjfzB9MAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAU\n" +
+        "HGBBSt6YreXWA4roZoKpfrDyAocwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUF\n" +
+        "BwMEMB0GA1UdDgQWBBQOwQJbEbddsAmiheJeZCsjP93SXjAOBgNVHQ8BAf8EBAMC\n" +
+        "BeAwDQYJKoZIhvcNAQELBQADggEBAF4cdl+6PahAxiPZJAAiuNAlahs1V2J469ks\n" +
+        "0Zgj4rEg/8LgAHSoain4bCaNqgCWNhoQmmqEBNp/JHESZs+PE6Z20O87pz5OOW4R\n" +
+        "lLEB+eGeXIJvMPvpJeqvP7ujr73pv/f9TkqFuaprfJx0JAXWankl0ZPWStDdRyo9\n" +
+        "sNKDEh/KJNYlv8S3itmuRayEI/pn50l7rY8IjvJKqwZ++UTEuhgjwTVAVwtp/P8A\n" +
+        "gJLpPfQV21ReQh+3AVXNhkEK73Wbo/DsgNEpH70tAxrNjsF1BwTTDOxOGZtLCMUF\n" +
+        "Y1gitOPQ+4cVjJyO3N4O819mezBqVw6DMdC1KQYPJUJBhsHERPg=\n" +
+        "-----END CERTIFICATE-----\n" +
+        "Subject: CN=DSS Sub CA 11,OU=Testing,O=SignServer,C=SE\n" +
+        "Issuer: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE\n" +
+        "-----BEGIN CERTIFICATE-----\n" +
+        "MIIEfjCCAmagAwIBAgIINRnImL/vDX4wDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UE\n" +
+        "AwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNp\n" +
+        "Z25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMTEwMzIxMzUwOVoXDTM2MDUyNzA4\n" +
+        "MTQyN1owTDEWMBQGA1UEAwwNRFNTIFN1YiBDQSAxMTEQMA4GA1UECwwHVGVzdGlu\n" +
+        "ZzETMBEGA1UECgwKU2lnblNlcnZlcjELMAkGA1UEBhMCU0UwggEiMA0GCSqGSIb3\n" +
+        "DQEBAQUAA4IBDwAwggEKAoIBAQCg4ovlcxaRM8g3RJrOUrSCH7bJhWnNN54EZ3a4\n" +
+        "aIAGBYjN7B8+CtnFDNaaC57mCLI5U64vRzYRTbphA5X5XiHsz+eEaHFkwKS+Eovv\n" +
+        "jOWUPzYuReRpyRaDyxEUYfmVqSa3fFa6Vn7vsE8N9mfwyNMT/q56SLuNO7Un2EAg\n" +
+        "voTdaMen6UbISg4ONNI7XmhtaDQvBe5+px0NIBCFw5qnvAMUz4nRJcKRZ6QKvRFJ\n" +
+        "Pux9R048WSrBfAxkKBPzIiKtkAfeOs3E2anPIDwiaPdWD4AjraFjSfTOVxzNrp0D\n" +
+        "/+1s3zVvQDBGQoAw8QAUnb3bZS8siY0Oo943j4McSBFI3VHNAgMBAAGjYzBhMB0G\n" +
+        "A1UdDgQWBBQcYEFK3pit5dYDiuhmgql+sPIChzAPBgNVHRMBAf8EBTADAQH/MB8G\n" +
+        "A1UdIwQYMBaAFCB6Id7orbsCqPtxWKQJYrnYWAWiMA4GA1UdDwEB/wQEAwIBhjAN\n" +
+        "BgkqhkiG9w0BAQsFAAOCAgEAMW0jL9WGrV6Hn5ZaNmAu2XPOF25vuiVFCgfmKInF\n" +
+        "PROkvxIOPBOgAumX43jcL1ATWV6zoRscPxflp5E1C55W5xaxVd4YMuxjZhxZj3qO\n" +
+        "HbkCjJd5V47nFEiqazgdnFdFE0APpe5/gWhjY5fYc2erS+RnojM//qzeeivd7QD2\n" +
+        "SC9FJ79cBsclzUgtZ2hdtwaKFFKzxYDkMelJa+SZMBEw1FgF8abynbkga8hFHVvn\n" +
+        "IsUxrIEGIPxHXC/gvpMpOLu/hAg+p+negdQKnM6HNpl+TmJdaz37fe49mzylS9Gw\n" +
+        "Sj+iVPvHy2H9eEL9MuXRGpTRJbzBKLlq3q3Rx5udtZfalN6EcKCr7yTKumF5SjcM\n" +
+        "PoF1LLYKO70FZ4dSSi3lyMlTThqb0pr4XF0zq/4j8KHiYboomxrG+LVhbqT0x51D\n" +
+        "1UebOPd8S5VK2l0NEC6xQDqDvuWjveI/wwYXDIWXj/6UzQGvVZ+vKb6DXFUJ9oPw\n" +
+        "4LD+vFppv90XeIzwzm7EMV3GrzEvfW5rLmCVGgTggPHowPWdNgtFE/n29uxO58V7\n" +
+        "3Com1cFnfryfwGp1efkMxj9yBjZwAgYUDCteLbKLgL6GH//J5r9nAQ8r3z76mtdt\n" +
+        "E0aU1swza03wVsJySOdCNFI9iZAJLe7SZ4k7YCqevF5p2S8Eu/5niX2igtu5iNzc\n" +
+        "ReA=\n" +
+        "-----END CERTIFICATE-----\n" +
+        "Subject: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE\n" +
+        "Issuer: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE\n" +
+        "-----BEGIN CERTIFICATE-----\n" +
+        "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\n" +
+        "dMwk/ZXzsDjMZEtENaBXzAefYA==\n" +
+        "-----END CERTIFICATE-----";
 
     private WorkerSessionRemote workerSession;
     private ProcessSessionLocal processSession;
@@ -1743,10 +1838,62 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         assertEquals("LibreOffice 3.3; modified using SignServer", info.getAsString(PdfName.PRODUCER).toUnicodeString());
     }
     
-    // TODO test trying to configure override for an unsupported property
+    /**
+     * Tests that it is not possible to configure override for a property that
+     * is not one of those that are candidates to be overridden.
+     */
+    @Test
+    public void testConfigureOverrideForUnsupportedProperty() {
+        WorkerConfig workerConfig = new WorkerConfig();
+
+        workerConfig.setProperty("TYPE", "PROCESSABLE");
+        workerConfig.setProperty("NAME", "TestSigner101");
+        workerConfig.setProperty(PDFSigner.ALLOW_PROPERTY_OVERRIDE, "CERTIFICATION_LEVEL, NONEXISTINGPROPERTY321");
+
+        final PDFSigner instance = new PDFSigner() {
+            @Override
+            public ICryptoTokenV4 getCryptoToken(final IServices services) {
+                return null;
+            }
+        };
+        instance.init(WORKER1, workerConfig, null, null);
+
+        final List<String> fatalErrors = instance.getFatalErrors(null);
+
+        assertTrue("Should contain error about the property: " + fatalErrors,
+                fatalErrors.contains("Override not supported for property: NONEXISTINGPROPERTY321"));
+    }
     
-    // TODO test override for a property that is not allowed
-    
+    /**
+     * Tests that overriding a property not in the ALLOW_PROPERTY_OVERRIDE
+     * property gives an illegal request exception.
+     *
+     * @throws Exception 
+     */
+    @Test
+    public void testRequestMetadata_overridePropertyNotAllowed() throws Exception {
+        PdfReader reader = null;
+        try {
+            // given
+            workerSession.setWorkerProperty(WORKER1, PDFSigner.ALLOW_PROPERTY_OVERRIDE, "REASON"); // Not including CERTIFICATION_LEVEL
+            workerSession.reloadConfiguration(WORKER1);
+            final Map<String, String> requestMetadata = new HashMap<>();
+            requestMetadata.put(PDFSigner.CERTIFICATION_LEVEL, "FORM_FILLING_AND_ANNOTATIONS"); // Overriding CERTIFICATION_LEVEL
+
+            // when
+            signPDF(sample, WORKER1, requestMetadata);
+
+            // then
+            fail("Should have thrown IllegalRequestException as trying to override property not allowed to be overridden");
+        } catch (IllegalRequestException ex) {
+            // then
+            assertEquals("request message", "Overriding CERTIFICATION_LEVEL not permitted", ex.getMessage());
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+    }
     
     @Test
     public void testRequestMetadata_certificationLevel() throws Exception {
@@ -1796,6 +1943,10 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         }
     }
     
+    /**
+     * Tests overriding the location field.
+     * @throws Exception in case of error
+     */
     @Test
     public void testRequestMetadata_location() throws Exception {
         PdfReader reader = null;
@@ -1819,18 +1970,12 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             }
         }
     }
-    
-    // TODO or skip: ADD_VISIBLE_SIGNATURE
-    // TODO or skip: VISIBLE_SIGNATURE_PAGE,
-    // TODO or skip: VISIBLE_SIGNATURE_RECTANGLE,
-    // TODO or skip: VISIBLE_SIGNATURE_NAME,
-    // TODO or skip: VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE
-    
-    // TODO or skip: USE_TIMESTAMP
-    // TODO or skip: EMBED_CRL,
-    // TODO or skip: EMBED_OCSP_RESPONSE,
-    
 
+    /**
+     * Tests overriding reject permissions.
+     *
+     * @throws Exception in case of error
+     */
     @Test
     public void testRequestMetadata_rejectPermissions() throws Exception {
         PdfReader reader = null;
@@ -1857,13 +2002,43 @@ public class PDFSignerUnitTest extends ModulesTestCase {
             }
         }
     }
-    
-    // TODO: SET_PERMISSIONS
-    // TODO: REMOVE_PERMISSIONS
-    // TODO: SET_OWNERPASSWORD
-    
-    // TODO: SIGNERCERTCHAIN
 
+    /**
+     * Tests overriding the signer certificate chain.
+     *
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testRequestMetadata_signercertchain() throws Exception {
+        PdfReader reader = null;
+        try {
+            // given
+            workerSession.setWorkerProperty(WORKER1, PDFSigner.ALLOW_PROPERTY_OVERRIDE, "SIGNERCERTCHAIN");
+            workerSession.reloadConfiguration(WORKER1);
+            final Map<String, String> requestMetadata = new HashMap<>();
+            requestMetadata.put(PDFSigner.SIGNERCERTCHAIN, SIGNER_1_ALT_CHAIN);
+            final List<Certificate> expectedChain = CertTools.getCertsFromPEM(new ByteArrayInputStream(SIGNER_1_ALT_CHAIN.getBytes(StandardCharsets.US_ASCII)), Certificate.class);
+
+            // when
+            final byte[] bytes = signPDF(sample, WORKER1, requestMetadata);
+
+            // then
+            reader = new PdfReader(bytes);
+            final PdfPKCS7 p7 = reader.getAcroFields().verifySignature((String) reader.getAcroFields().getSignatureNames().get(0));
+            List<Certificate> actualChain = Arrays.asList(p7.getSignCertificateChain());
+            assertEquals("signer certificate chain", expectedChain, actualChain);
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+    }
+
+    /**
+     * Tests overriding the digest algorithm.
+     *
+     * @throws Exception in case of error
+     */
     @Test
     public void testRequestMetadata_digestalgorithm() throws Exception {
         PdfReader reader = null;

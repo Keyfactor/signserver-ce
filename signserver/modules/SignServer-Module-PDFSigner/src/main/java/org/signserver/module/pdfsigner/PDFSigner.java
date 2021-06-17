@@ -166,26 +166,17 @@ public class PDFSigner extends BaseSigner {
     
     public static final String ALLOW_PROPERTY_OVERRIDE = "ALLOW_PROPERTY_OVERRIDE";
     
-    /** Set of properties that could be overridden if the configuration allows. */
-    private static final Set<String> OVERRIDABLE_PROPERTIES = new HashSet<String>(
+    /** 
+     * Set of properties that the PDFSigner implementation (actually 
+     * PDFSignerParameters use but that should not be overridable.
+     */
+    private static final Set<String> NOT_OVERRIDABLE_PROPERTIES = new HashSet<String>(
         Arrays.asList(
-            REASON,
-            LOCATION,
-            ADD_VISIBLE_SIGNATURE,
-            USE_TIMESTAMP,
-            EMBED_CRL,
-            EMBED_OCSP_RESPONSE,
-            REJECT_PERMISSIONS,
-            SET_PERMISSIONS,
-            REMOVE_PERMISSIONS,
-            SET_OWNERPASSWORD,
-            VISIBLE_SIGNATURE_PAGE,
-            VISIBLE_SIGNATURE_RECTANGLE,
-            VISIBLE_SIGNATURE_NAME,
-            VISIBLE_SIGNATURE_CUSTOM_IMAGE_SCALE_TO_RECTANGLE,
-            CERTIFICATION_LEVEL,
-            SIGNERCERTCHAIN,
-            DIGESTALGORITHM
+            ALLOW_PROPERTY_OVERRIDE,
+            REFUSE_DOUBLE_INDIRECT_OBJECTS,
+            PROPERTY_ARCHIVETODISK_FILENAME_PATTERN,
+            PROPERTY_ARCHIVETODISK_PATH_BASE,
+            PROPERTY_ARCHIVETODISK_PATH_PATTERN
         )
     );
 
@@ -224,10 +215,10 @@ public class PDFSigner extends BaseSigner {
             for (String property : propertyValue.split(",")) {
                 String prop = property.trim();
                 if (!StringUtils.isBlank(prop)) {
-                    if (isOverridePossible(prop)) {
-                        allowPropertyOverride.add(prop);
-                    } else {
+                    if (isOverrideNotSupported(prop)) {
                         configErrors.add("Override not supported for property: " + prop);
+                    } else {
+                        allowPropertyOverride.add(prop);
                     }
                 }
             }
@@ -1241,12 +1232,14 @@ public class PDFSigner extends BaseSigner {
     }
     
     /**
-     * Check if a property is one of those that could be overidden.
+     * Check if a property is not one of those that should not be possible to
+     * override.
+     *
      * @param property to check
      * @return True if property is one of those that can be overidden
      */
-    private boolean isOverridePossible(String property) {
-        return OVERRIDABLE_PROPERTIES.contains(property);
+    private boolean isOverrideNotSupported(String property) {
+        return NOT_OVERRIDABLE_PROPERTIES.contains(property);
     }
 
 }

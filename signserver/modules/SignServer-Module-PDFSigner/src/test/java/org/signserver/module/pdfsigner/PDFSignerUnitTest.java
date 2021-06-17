@@ -1839,8 +1839,8 @@ public class PDFSignerUnitTest extends ModulesTestCase {
     }
     
     /**
-     * Tests that it is not possible to configure override for a property that
-     * is not one of those that are candidates to be overridden.
+     * Tests that a configuration error is give for know properties that can 
+     * not be overridden.
      */
     @Test
     public void testConfigureOverrideForUnsupportedProperty() {
@@ -1848,7 +1848,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
 
         workerConfig.setProperty("TYPE", "PROCESSABLE");
         workerConfig.setProperty("NAME", "TestSigner101");
-        workerConfig.setProperty(PDFSigner.ALLOW_PROPERTY_OVERRIDE, "CERTIFICATION_LEVEL, NONEXISTINGPROPERTY321");
+        workerConfig.setProperty(PDFSigner.ALLOW_PROPERTY_OVERRIDE, "CERTIFICATION_LEVEL, ARCHIVETODISK_FILENAME_PATTERN");
 
         final PDFSigner instance = new PDFSigner() {
             @Override
@@ -1861,7 +1861,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         final List<String> fatalErrors = instance.getFatalErrors(null);
 
         assertTrue("Should contain error about the property: " + fatalErrors,
-                fatalErrors.contains("Override not supported for property: NONEXISTINGPROPERTY321"));
+                fatalErrors.contains("Override not supported for property: ARCHIVETODISK_FILENAME_PATTERN"));
     }
     
     /**

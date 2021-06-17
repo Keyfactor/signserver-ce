@@ -104,6 +104,7 @@ public class ModulesTestCase {
     private static final int XML_VALIDATOR_WORKER_ID = 5882;
     private static final String XML_VALIDATOR_WORKER_NAME = "TestXMLValidator";
 
+    protected static final String KEYSTORE_SIGNER00001_ALIAS = "signer00001";
     protected static final String KEYSTORE_SIGNER1_ALIAS = "signer00003";
     protected static final String KEYSTORE_TSSIGNER1_ALIAS = "ts00003";
     protected static final String KEYSTORE_AUTHCODESIGNER1_ALIAS = "code00003";
@@ -905,9 +906,16 @@ public class ModulesTestCase {
      * Make a GenericSignRequest.
      */
     public GenericSignResponse signGenericDocument(final int workerId, final byte[] data) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
+        return signGenericDocument(workerId, data, new RemoteRequestContext());
+    }
+
+    /**
+     * Make a GenericSignRequest.
+     */
+    public GenericSignResponse signGenericDocument(final int workerId, final byte[] data, final RemoteRequestContext requestContext) throws IllegalRequestException, CryptoTokenOfflineException, SignServerException {
         final int requestId = random.nextInt();
         final GenericSignRequest request = new GenericSignRequest(requestId, data);
-        final GenericSignResponse response = (GenericSignResponse) getProcessSession().process(new WorkerIdentifier(workerId), request, new RemoteRequestContext());
+        final GenericSignResponse response = (GenericSignResponse) getProcessSession().process(new WorkerIdentifier(workerId), request, requestContext);
         assertEquals("requestId", requestId, response.getRequestID());
         Certificate signercert = response.getSignerCertificate();
         assertNotNull(signercert);

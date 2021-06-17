@@ -97,8 +97,7 @@ public class PDFSignerParameters {
     private Image custom_image;
 
     private String tsa_worker;
-    
-    private String alias;
+
     private List<Certificate> signerCertChain;
 
     private String digestAlgorithm;

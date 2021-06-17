@@ -17,7 +17,7 @@ import com.lowagie.text.pdf.PdfPKCS7;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfSignatureAppearance;
 import java.io.*;
-import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
 import java.util.*;
@@ -45,6 +45,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.signserver.server.aliasselectors.RequestMetadataAliasSelector;
 
 /**
  * Unit tests for the PDFSigner.
@@ -66,6 +67,94 @@ public class PDFSignerTest extends ModulesTestCase {
 
     private final WorkerSession workerSession = getWorkerSession();
     private final ProcessSessionRemote processSession = getProcessSession();
+    private final String SIGNER00001_ALT_CHAIN = 
+        "Subject: CN=Signer 00001 - Alt,OU=Development,O=SignServer,C=SE\n" +
+        "Issuer: CN=DSS Sub CA 11,OU=Testing,O=SignServer,C=SE\n" +
+        "-----BEGIN CERTIFICATE-----\n" +
+        "MIIDrjCCApagAwIBAgIUMu1lTgSxFHMONcmbk2aIcgI9WOcwDQYJKoZIhvcNAQEL\n" +
+        "BQAwTDEWMBQGA1UEAwwNRFNTIFN1YiBDQSAxMTEQMA4GA1UECwwHVGVzdGluZzET\n" +
+        "MBEGA1UECgwKU2lnblNlcnZlcjELMAkGA1UEBhMCU0UwHhcNMjEwNjE3MTM0ODMz\n" +
+        "WhcNMzYwNTI3MDgxNDI3WjBVMRswGQYDVQQDDBJTaWduZXIgMDAwMDEgLSBBbHQx\n" +
+        "FDASBgNVBAsMC0RldmVsb3BtZW50MRMwEQYDVQQKDApTaWduU2VydmVyMQswCQYD\n" +
+        "VQQGEwJTRTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKc70WeoF/7t\n" +
+        "k9QKi+xFa6ShxBQ7SpQXoY6idOf5CMxTWxjZJky0JGwkUYq3x3Heo4WPcJhZ2BU0\n" +
+        "xwUvSRViO0OkP53oRwKUmqIfnm+UK2WFtgqucC60INfHJKXnGq162rbD0BCr0xlg\n" +
+        "QpydW4R5jHlh4+ei2CAdhKhEtPYJiiFWzaAF/18pmd5Q4LXxl1HOUp3U4dYiDxVT\n" +
+        "FM0W16Er2RiH70Oq0SQ1Ut/3qQUX1rRsy2gyvnVzB4rC7DmoUAEaeV1PA13efgsG\n" +
+        "QtXQPs0DYsWBIUrR11bin7+GvPTjUqRHb9ih4Di4kD9jfoY7M80mrEW4cC0hDTBG\n" +
+        "3i+RmzCCU0UCAwEAAaN/MH0wDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBQcYEFK\n" +
+        "3pit5dYDiuhmgql+sPIChzAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQw\n" +
+        "HQYDVR0OBBYEFJZLyzE0fn1tXko1eIq1lHaCYnzMMA4GA1UdDwEB/wQEAwIF4DAN\n" +
+        "BgkqhkiG9w0BAQsFAAOCAQEAiCPi5A7THCUx3d/pZzuV+5Pkp2t7ld5ZY3TsPeYM\n" +
+        "3j7a2RGRPhNk+VEkyluQmvYRCilVz5SGyQCxMLLcBWEde2FwE5rLXIgRNXjAKZHV\n" +
+        "ruXAklFPUi8jVmQh+Wk8JOAxExO4fsZhHEM/KGHeER4qTThZqfZOCfc8/nPiwS8a\n" +
+        "NHc5REPtSCESuqqdQJCRlfcvdZ+zQOO2Sat6WQrNmApNRQJ2KEGjy+o9SQgGBvqo\n" +
+        "/otYb8MHei9ze9TtFC7Ybxi/m2iQDNvYhNiL5V61kfx7T7o0AhDkyLzGpPp8Zgeo\n" +
+        "MS2dk1Tte1sHblEjWGkF4/3qkMxksa5vqaDCLpLbyAEO4g==\n" +
+        "-----END CERTIFICATE-----\n" +
+        "Subject: CN=DSS Sub CA 11,OU=Testing,O=SignServer,C=SE\n" +
+        "Issuer: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE\n" +
+        "-----BEGIN CERTIFICATE-----\n" +
+        "MIIEfjCCAmagAwIBAgIINRnImL/vDX4wDQYJKoZIhvcNAQELBQAwTTEXMBUGA1UE\n" +
+        "AwwORFNTIFJvb3QgQ0EgMTAxEDAOBgNVBAsMB1Rlc3RpbmcxEzARBgNVBAoMClNp\n" +
+        "Z25TZXJ2ZXIxCzAJBgNVBAYTAlNFMB4XDTExMTEwMzIxMzUwOVoXDTM2MDUyNzA4\n" +
+        "MTQyN1owTDEWMBQGA1UEAwwNRFNTIFN1YiBDQSAxMTEQMA4GA1UECwwHVGVzdGlu\n" +
+        "ZzETMBEGA1UECgwKU2lnblNlcnZlcjELMAkGA1UEBhMCU0UwggEiMA0GCSqGSIb3\n" +
+        "DQEBAQUAA4IBDwAwggEKAoIBAQCg4ovlcxaRM8g3RJrOUrSCH7bJhWnNN54EZ3a4\n" +
+        "aIAGBYjN7B8+CtnFDNaaC57mCLI5U64vRzYRTbphA5X5XiHsz+eEaHFkwKS+Eovv\n" +
+        "jOWUPzYuReRpyRaDyxEUYfmVqSa3fFa6Vn7vsE8N9mfwyNMT/q56SLuNO7Un2EAg\n" +
+        "voTdaMen6UbISg4ONNI7XmhtaDQvBe5+px0NIBCFw5qnvAMUz4nRJcKRZ6QKvRFJ\n" +
+        "Pux9R048WSrBfAxkKBPzIiKtkAfeOs3E2anPIDwiaPdWD4AjraFjSfTOVxzNrp0D\n" +
+        "/+1s3zVvQDBGQoAw8QAUnb3bZS8siY0Oo943j4McSBFI3VHNAgMBAAGjYzBhMB0G\n" +
+        "A1UdDgQWBBQcYEFK3pit5dYDiuhmgql+sPIChzAPBgNVHRMBAf8EBTADAQH/MB8G\n" +
+        "A1UdIwQYMBaAFCB6Id7orbsCqPtxWKQJYrnYWAWiMA4GA1UdDwEB/wQEAwIBhjAN\n" +
+        "BgkqhkiG9w0BAQsFAAOCAgEAMW0jL9WGrV6Hn5ZaNmAu2XPOF25vuiVFCgfmKInF\n" +
+        "PROkvxIOPBOgAumX43jcL1ATWV6zoRscPxflp5E1C55W5xaxVd4YMuxjZhxZj3qO\n" +
+        "HbkCjJd5V47nFEiqazgdnFdFE0APpe5/gWhjY5fYc2erS+RnojM//qzeeivd7QD2\n" +
+        "SC9FJ79cBsclzUgtZ2hdtwaKFFKzxYDkMelJa+SZMBEw1FgF8abynbkga8hFHVvn\n" +
+        "IsUxrIEGIPxHXC/gvpMpOLu/hAg+p+negdQKnM6HNpl+TmJdaz37fe49mzylS9Gw\n" +
+        "Sj+iVPvHy2H9eEL9MuXRGpTRJbzBKLlq3q3Rx5udtZfalN6EcKCr7yTKumF5SjcM\n" +
+        "PoF1LLYKO70FZ4dSSi3lyMlTThqb0pr4XF0zq/4j8KHiYboomxrG+LVhbqT0x51D\n" +
+        "1UebOPd8S5VK2l0NEC6xQDqDvuWjveI/wwYXDIWXj/6UzQGvVZ+vKb6DXFUJ9oPw\n" +
+        "4LD+vFppv90XeIzwzm7EMV3GrzEvfW5rLmCVGgTggPHowPWdNgtFE/n29uxO58V7\n" +
+        "3Com1cFnfryfwGp1efkMxj9yBjZwAgYUDCteLbKLgL6GH//J5r9nAQ8r3z76mtdt\n" +
+        "E0aU1swza03wVsJySOdCNFI9iZAJLe7SZ4k7YCqevF5p2S8Eu/5niX2igtu5iNzc\n" +
+        "ReA=\n" +
+        "-----END CERTIFICATE-----\n" +
+        "Subject: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE\n" +
+        "Issuer: CN=DSS Root CA 10,OU=Testing,O=SignServer,C=SE\n" +
+        "-----BEGIN CERTIFICATE-----\n" +
+        "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\n" +
+        "dMwk/ZXzsDjMZEtENaBXzAefYA==\n" +
+        "-----END CERTIFICATE-----";
 
     @Before
     public void setUp() throws Exception {
@@ -536,6 +625,7 @@ public class PDFSignerTest extends ModulesTestCase {
         final byte[] pdfOk = getTestFile(TESTPDF_OK);
         byte[] certFile = getTestFile("dss10" + File.separator + "long_chain.pem");
 
+        workerSession.setWorkerProperty(WORKERID, "DISABLEKEYUSAGECOUNTER", "true");
         workerSession.setWorkerProperty(WORKERID, "SIGNERCERTCHAIN", new String(certFile));
         workerSession.reloadConfiguration(WORKERID);
 
@@ -634,6 +724,7 @@ public class PDFSignerTest extends ModulesTestCase {
             signGenericPDFWithHash(pdfOk, "SHA256", false, null);
         } finally {
             workerSession.removeWorkerProperty(WORKERID, PDFSigner.TSA_WORKER);
+            workerSession.removeWorkerProperty(WORKERID, PDFSigner.USE_TIMESTAMP);
             workerSession.reloadConfiguration(WORKERID);
         }
     }
@@ -656,6 +747,47 @@ public class PDFSignerTest extends ModulesTestCase {
             signGenericPDFWithHash(pdfOk, "SHA256", false, null);
         } finally {
             workerSession.removeWorkerProperty(WORKERID, PDFSigner.TSA_URL);
+            workerSession.removeWorkerProperty(WORKERID, PDFSigner.USE_TIMESTAMP);
+            workerSession.reloadConfiguration(WORKERID);
+        }
+    }
+    
+    /**
+     * Tests that it is possible to override the 
+     * @throws Exception in case of error
+     */
+    @Test
+    public void test21OverrideKeyAndCertificate() throws Exception {
+        PdfReader reader = null;
+        try {
+            // given
+            final byte[] pdfOk = getTestFile(TESTPDF_OK);
+
+            workerSession.setWorkerProperty(WORKERID, PDFSigner.ALLOW_PROPERTY_OVERRIDE,
+                    PDFSigner.SIGNERCERTCHAIN);
+            //workerSession.setWorkerProperty(WORKERID, WorkerConfig.PROPERTY_ALIASSELECTOR, RequestMetadataAliasSelector.class.getName());
+            workerSession.setWorkerProperty(WORKERID, WorkerConfig.PROPERTY_ALIASSELECTOR, "org.signserver.server.aliasselectors.RequestMetadataAliasSelector");
+            workerSession.reloadConfiguration(WORKERID);
+            RequestMetadata requestMetadata = new RequestMetadata();
+            requestMetadata.put(RequestMetadataAliasSelector.ALIAS, ModulesTestCase.KEYSTORE_SIGNER00001_ALIAS);
+            requestMetadata.put(PDFSigner.SIGNERCERTCHAIN, SIGNER00001_ALT_CHAIN);
+            final List<Certificate> expectedChain = CertTools.getCertsFromPEM(new ByteArrayInputStream(SIGNER00001_ALT_CHAIN.getBytes(StandardCharsets.US_ASCII)), Certificate.class);
+
+            // when
+            GenericSignResponse response = signGenericDocument(WORKERID, pdfOk, new RemoteRequestContext(requestMetadata));
+            
+            // then
+            reader = new PdfReader(response.getProcessedData());
+            final PdfPKCS7 p7 = reader.getAcroFields().verifySignature((String) reader.getAcroFields().getSignatureNames().get(0));
+            List<Certificate> actualChain = Arrays.asList(p7.getSignCertificateChain());
+            assertEquals("signer certificate chain", expectedChain, actualChain);
+            
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+            workerSession.removeWorkerProperty(WORKERID, WorkerConfig.PROPERTY_ALIASSELECTOR);
+            workerSession.removeWorkerProperty(WORKERID, PDFSigner.ALLOW_PROPERTY_OVERRIDE);
             workerSession.reloadConfiguration(WORKERID);
         }
     }

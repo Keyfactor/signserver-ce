@@ -12,8 +12,8 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
-import com.lowagie.text.pdf.PdfPKCS7;
-import com.lowagie.text.pdf.TSAClient;
+import org.signserver.lib.itext.text.pdf.PdfPKCS7;
+import org.signserver.lib.itext.text.pdf.TSAClient;
 import java.util.Arrays;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.DERBitString;

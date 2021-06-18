@@ -19,9 +19,9 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.signserver.common.WorkerConfig;
 
-import com.lowagie.text.BadElementException;
-import com.lowagie.text.Image;
-import com.lowagie.text.pdf.PdfSignatureAppearance;
+import org.signserver.lib.itext.text.BadElementException;
+import org.signserver.lib.itext.text.Image;
+import org.signserver.lib.itext.text.pdf.PdfSignatureAppearance;
 import java.io.ByteArrayInputStream;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;

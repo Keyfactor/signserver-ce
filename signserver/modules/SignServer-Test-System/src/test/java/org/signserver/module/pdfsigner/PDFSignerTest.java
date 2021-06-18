@@ -12,10 +12,10 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
-import com.lowagie.text.pdf.AcroFields;
-import com.lowagie.text.pdf.PdfPKCS7;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfSignatureAppearance;
+import org.signserver.lib.itext.text.pdf.AcroFields;
+import org.signserver.lib.itext.text.pdf.PdfPKCS7;
+import org.signserver.lib.itext.text.pdf.PdfReader;
+import org.signserver.lib.itext.text.pdf.PdfSignatureAppearance;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;

@@ -12,7 +12,7 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
-import com.lowagie.text.pdf.PdfWriter;
+import org.signserver.lib.itext.text.pdf.PdfWriter;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;

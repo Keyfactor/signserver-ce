@@ -12,8 +12,8 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
-import com.lowagie.text.pdf.PdfPKCS7;
-import com.lowagie.text.pdf.TSAClient;
+import org.signserver.lib.itext.text.pdf.PdfPKCS7;
+import org.signserver.lib.itext.text.pdf.TSAClient;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 import org.bouncycastle.tsp.TimeStampToken;

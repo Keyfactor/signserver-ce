@@ -12,9 +12,24 @@
  *************************************************************************/
 package org.signserver.module.pdfsigner;
 
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.exceptions.BadPasswordException;
-import com.lowagie.text.pdf.*;
+import org.signserver.lib.itext.text.pdf.PdfDictionary;
+import org.signserver.lib.itext.text.pdf.PdfStamper;
+import org.signserver.lib.itext.text.pdf.PdfDate;
+import org.signserver.lib.itext.text.pdf.TSAClient;
+import org.signserver.lib.itext.text.pdf.PdfString;
+import org.signserver.lib.itext.text.pdf.PRTokeniser;
+import org.signserver.lib.itext.text.pdf.PdfPKCS7;
+import org.signserver.lib.itext.text.pdf.PdfSignature;
+import org.signserver.lib.itext.text.pdf.TSAClientBouncyCastle;
+import org.signserver.lib.itext.text.pdf.PdfWriter;
+import org.signserver.lib.itext.text.pdf.AcroFields;
+import org.signserver.lib.itext.text.pdf.PdfName;
+import org.signserver.lib.itext.text.pdf.PdfSignatureAppearance;
+import org.signserver.lib.itext.text.pdf.OcspClientBouncyCastle;
+import org.signserver.lib.itext.text.pdf.PdfReader;
+import org.signserver.lib.itext.text.pdf.PdfTemplate;
+import org.signserver.lib.itext.text.DocumentException;
+import org.signserver.lib.itext.text.exceptions.BadPasswordException;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -821,7 +836,7 @@ public class PDFSigner extends BaseSigner {
                         float newHeight = positions[4] - positions[2];
                         params.getCustom_image().scaleToFit(newWidth, newHeight);
                     } else {
-                        sap.setVisibleSignature(new com.lowagie.text.Rectangle(params.getVisible_sig_rectangle_llx(), params.getVisible_sig_rectangle_lly(), params.getVisible_sig_rectangle_urx(), params.getVisible_sig_rectangle_ury()), signaturePage, null);
+                        sap.setVisibleSignature(new org.signserver.lib.itext.text.Rectangle(params.getVisible_sig_rectangle_llx(), params.getVisible_sig_rectangle_lly(), params.getVisible_sig_rectangle_urx(), params.getVisible_sig_rectangle_ury()), signaturePage, null);
                     }
 
                     // set custom image if requested

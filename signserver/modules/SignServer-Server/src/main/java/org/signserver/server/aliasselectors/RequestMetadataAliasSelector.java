@@ -31,7 +31,7 @@ import org.signserver.server.cryptotokens.CryptoTokenHelper;
  *
  * @author Antoine Louiset
  * @author Markus Kilås
- * @version YousignAliasSelector.java
+ * @version $Id$
  */
 public class RequestMetadataAliasSelector implements AliasSelector {
 

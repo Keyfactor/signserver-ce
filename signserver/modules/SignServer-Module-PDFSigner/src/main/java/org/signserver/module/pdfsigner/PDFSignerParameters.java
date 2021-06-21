@@ -691,14 +691,14 @@ public class PDFSignerParameters {
     }
 
     /**
-     * @return String
+     * @return the digestAlgorithm
      */
     public String getDigestAlgorithm() {
         return digestAlgorithm;
     }
 
     /**
-     * @param digestAlgorithm
+     * @param digestAlgorithm the digestAlgorithm to set
      */
     public void setDigestAlgorithm(String digestAlgorithm) {
         this.digestAlgorithm = digestAlgorithm;

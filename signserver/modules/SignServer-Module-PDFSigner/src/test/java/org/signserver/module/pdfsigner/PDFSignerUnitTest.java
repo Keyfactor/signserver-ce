@@ -1872,7 +1872,6 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      */
     @Test
     public void testRequestMetadata_overridePropertyNotAllowed() throws Exception {
-        PdfReader reader = null;
         try {
             // given
             workerSession.setWorkerProperty(WORKER1, PDFSigner.ALLOW_PROPERTY_OVERRIDE, "REASON"); // Not including CERTIFICATION_LEVEL
@@ -1888,13 +1887,9 @@ public class PDFSignerUnitTest extends ModulesTestCase {
         } catch (IllegalRequestException ex) {
             // then
             assertEquals("request message", "Overriding CERTIFICATION_LEVEL not permitted", ex.getMessage());
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
         }
     }
-    
+
     @Test
     public void testRequestMetadata_certificationLevel() throws Exception {
         PdfReader reader = null;
@@ -1978,28 +1973,19 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      */
     @Test
     public void testRequestMetadata_rejectPermissions() throws Exception {
-        PdfReader reader = null;
-        try {
-            // given
-            workerSession.setWorkerProperty(WORKER1, PDFSigner.ALLOW_PROPERTY_OVERRIDE, "REJECT_PERMISSIONS");
-            workerSession.setWorkerProperty(WORKER1, "REJECT_PERMISSIONS", "ALLOW_PRINTING");
-            workerSession.reloadConfiguration(WORKER1);
-            final Map<String, String> requestMetadata = new HashMap<>();
-            requestMetadata.put(PDFSigner.ADD_VISIBLE_SIGNATURE, "True");
+        // given
+        workerSession.setWorkerProperty(WORKER1, PDFSigner.ALLOW_PROPERTY_OVERRIDE, "REJECT_PERMISSIONS");
+        workerSession.setWorkerProperty(WORKER1, "REJECT_PERMISSIONS", "ALLOW_PRINTING");
+        workerSession.reloadConfiguration(WORKER1);
+        final Map<String, String> requestMetadata = new HashMap<>();
+        requestMetadata.put(PDFSigner.ADD_VISIBLE_SIGNATURE, "True");
 
-            // when & then
-            try {
-                signProtectedPDF(sampleUseraao, SAMPLE_USER_AAA_PASSWORD);
-                fail("Should have thrown exception");
-            } catch (IllegalRequestException ok) {
-                assertEquals("Document contains permissions not allowed by this signer", ok.getMessage());
-            }
-        } finally {
-            workerSession.removeWorkerProperty(WORKER1, "REJECT_PERMISSIONS");
-            workerSession.reloadConfiguration(WORKER1);
-            if (reader != null) {
-                reader.close();
-            }
+        // when & then
+        try {
+            signProtectedPDF(sampleUseraao, SAMPLE_USER_AAA_PASSWORD);
+            fail("Should have thrown exception");
+        } catch (IllegalRequestException ok) {
+            assertEquals("Document contains permissions not allowed by this signer", ok.getMessage());
         }
     }
 

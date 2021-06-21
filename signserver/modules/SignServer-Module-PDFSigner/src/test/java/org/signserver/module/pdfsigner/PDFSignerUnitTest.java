@@ -372,6 +372,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * Tries to sign a PDF with document restrictions. As the correct passwords
      * are supplied it should succeed.
      */
+    @Test
     public void test02SignWithRestrictionsPasswordSupplied() throws Exception {
         signProtectedPDF(sampleOpen123, "open123");
         signProtectedPDF(sampleOwner123, SAMPLE_OWNER123_PASSWORD);
@@ -385,6 +386,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * Tests the REJECT_PERMISSIONS with different values to see that the
      * signer rejects documents with permissions not allowed.
      */
+    @Test
     public void test03RejectingPermissions() throws Exception {
 
         // First test without any constraints
@@ -462,6 +464,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * sure they end up in the signed PDF. Also tests that when not setting
      * the property the original permissions remain.
      */
+    @Test
     public void test04SetPermissions_SHA1() throws Exception {
         try {
             // Set SHA1 as hash algorithm so the PDF will not be upgraded
@@ -500,6 +503,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * the case no restrictions are given then the final PDF also has no
      * restrictions.
      */
+    @Test
     public void test04SetPermissions_upgradedVersion() throws Exception {
         // Test requires a PDF with version less then 1.6
         String header;
@@ -1714,6 +1718,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      /**
      * Tests that Signer refuses to sign if worker has configuration errors.
      */
+    @Test
     public void test21NoSigningWhenWorkerMisconfigued() throws Exception {
         workerSession.setWorkerProperty(WORKER1, "DIGESTALGORITHM", "IllegalHash");
         workerSession.reloadConfiguration(WORKER1);
@@ -1730,6 +1735,7 @@ public class PDFSignerUnitTest extends ModulesTestCase {
      * Tests that signing fails with an expected exception when the signing
      * certificate has a CDP and the fetched CRL is an empty file.
      */
+    @Test
     public void test22FailWithEmptyCRLFile() throws Exception {
         try {
             signPDF(sampleOk, WORKER2);

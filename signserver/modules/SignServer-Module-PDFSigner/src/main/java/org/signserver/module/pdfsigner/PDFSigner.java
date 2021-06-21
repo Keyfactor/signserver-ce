@@ -185,7 +185,7 @@ public class PDFSigner extends BaseSigner {
      * Set of properties that the PDFSigner implementation (actually 
      * PDFSignerParameters use but that should not be overridable.
      */
-    private static final Set<String> NOT_OVERRIDABLE_PROPERTIES = new HashSet<String>(
+    private static final Set<String> NOT_OVERRIDABLE_PROPERTIES = new HashSet<>(
         Arrays.asList(
             ALLOW_PROPERTY_OVERRIDE,
             REFUSE_DOUBLE_INDIRECT_OBJECTS,
@@ -201,8 +201,6 @@ public class PDFSigner extends BaseSigner {
     private SecureRandom random = new SecureRandom();
     
     private List<String> configErrors;
-
-    private InternalProcessSessionLocal workerSession;
 
     private String digestAlgorithm = DEFAULTDIGESTALGORITHM;
 

@@ -14,7 +14,9 @@ package org.signserver.ejb.worker.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.signserver.common.util.PropertiesConstants;
 import org.signserver.common.WorkerIdentifier;
@@ -128,11 +130,26 @@ public class WorkerStore {
         if (workerId != null) {
             workersOnly.remove(workerId);
             workersWithComponents.remove(workerId);
-            nameToIdMap.remove(getName(workerId));
+            removeEntriesMappingToId(nameToIdMap, workerId);
         }
     }
 
     public Collection<Integer> keySet() {
         return workersOnly.keySet();
+    }
+
+    /**
+     * Remove all entries that map to the specified integer value.
+     * @param nameToIdMap map to remove entries from
+     * @param workerId id to remove mapping for
+     */
+    private static void removeEntriesMappingToId(Map<String, Integer> nameToIdMap, Integer workerId) {
+        final Iterator<Map.Entry<String, Integer>> iterator = nameToIdMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            final Entry entry = iterator.next();
+            if (workerId.equals(entry.getValue())) {
+                iterator.remove();
+            }
+        }
     }
 }

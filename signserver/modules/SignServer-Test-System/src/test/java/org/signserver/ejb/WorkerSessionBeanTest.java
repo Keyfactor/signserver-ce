@@ -47,6 +47,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.signserver.common.IllegalRequestException;
+import org.signserver.common.SignServerException;
 
 /**
  * TODO: Document me!
@@ -399,6 +401,93 @@ public class WorkerSessionBeanTest extends ModulesTestCase {
     @Test
     public void test16invalidArchiver() throws Exception {
         testWithInvalidClass("ARCHIVERS", "ARCHIVERS");
+    }
+    
+    /**
+     * Tests that after renaming a worker the new name can be used but not the
+     * old name.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void test20RenamedWorkerNotAccessibleWithOldName() throws Exception {
+        final int workerId = 12345;
+        try {
+            // given
+            final String initialName = "TestWorkerNameInitial";
+            final String newName = "WorkerWorkerNameNew";        
+            addDummySigner(workerId, initialName, true);
+
+            // Test that signing works with the inital name
+            GenericSignRequest request = new GenericSignRequest(2, "<test1/>".getBytes(StandardCharsets.UTF_8));
+            processSession.process(new WorkerIdentifier(initialName), request, new RemoteRequestContext());
+
+            // when
+            // Rename the worker
+            workerSession.setWorkerProperty(workerId, "NAME", newName);
+            workerSession.reloadConfiguration(workerId);
+
+            // then
+            // It should be possible to sign with the new name
+            try {
+                request = new GenericSignRequest(3, "<test2/>".getBytes(StandardCharsets.UTF_8));
+                processSession.process(new WorkerIdentifier(newName), request, new RemoteRequestContext());
+            } catch (IllegalRequestException | SignServerException | CryptoTokenOfflineException ex) {
+                fail("Signing failed with new name after rename: " + ex.getMessage());
+            }
+            // It should not be possible to sign with the old name
+            try {
+                request = new GenericSignRequest(4, "<test3/>".getBytes(StandardCharsets.UTF_8));
+                processSession.process(new WorkerIdentifier(initialName), request, new RemoteRequestContext());
+                fail("Should have failed as the worker has been renamed");
+            } catch (IllegalRequestException ex) {
+                assertEquals("No such worker: " + initialName, ex.getMessage());
+            }
+        } finally {
+            removeWorker(workerId);
+        }
+    }
+    
+    /**
+     * Tests that a worker can not be called (by name) after it has been
+     * removed.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void test21RemovedWorkerNotAccessible() throws Exception {
+        final int workerId = 12346;
+        try {
+            // given
+            final String workerName = "TheWorkerName";
+            addDummySigner(workerId, workerName, true);
+
+            // Test that signing works with the worker
+            GenericSignRequest request = new GenericSignRequest(2, "<test1/>".getBytes(StandardCharsets.UTF_8));
+            processSession.process(new WorkerIdentifier(workerName), request, new RemoteRequestContext());
+
+            // when
+            // Remove the worker
+            removeWorker(workerId);
+
+            // then
+            // It should not be possible to sign with the worker name
+            try {
+                request = new GenericSignRequest(4, "<test3/>".getBytes(StandardCharsets.UTF_8));
+                processSession.process(new WorkerIdentifier(workerName), request, new RemoteRequestContext());
+                fail("Should have failed as the worker has been removed");
+            } catch (IllegalRequestException ex) {
+                assertEquals("No such worker: " + workerName, ex.getMessage());
+            }
+            // It should not be possible to sign with the worker id
+            try {
+                request = new GenericSignRequest(4, "<test3/>".getBytes(StandardCharsets.UTF_8));
+                processSession.process(new WorkerIdentifier(workerId), request, new RemoteRequestContext());
+                fail("Should have failed as the worker has been removed");
+            } catch (IllegalRequestException ex) {
+                assertEquals("No such worker: " + workerId, ex.getMessage());
+            }
+        } finally {
+            removeWorker(workerId);
+        }
     }
 
     @Test

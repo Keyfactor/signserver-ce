@@ -271,12 +271,12 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>11.0.0.beta2</version>
+                <version>9.4.42.v20210604</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-util</artifactId>
-                <version>11.0.0.beta2</version>
+                <version>9.4.42.v20210604</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>

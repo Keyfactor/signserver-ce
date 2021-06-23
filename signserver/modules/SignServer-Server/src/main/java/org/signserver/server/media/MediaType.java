@@ -23,11 +23,11 @@ public class MediaType {
     /**
      * Constant media type for application/pdf.
      */
-    public static String APPLICATION_PDF = "application/pdf";
+    public static final String APPLICATION_PDF = "application/pdf";
 
     /**
      * Constant media type for application/xml.
      */
-    public static String APPLICATION_XML = "application/xml";
+    public static final String APPLICATION_XML = "application/xml";
 
 }

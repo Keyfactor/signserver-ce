@@ -134,8 +134,8 @@ public class RemoveBulkBean extends BulkBean {
                     LOG.debug("  Error, the property '" + property + "' couldn't be removed.");
                 }
             }
-            getWorkerSessionBean().reloadConfiguration(getAuthBean().getAdminCertificate(), worker.getId());
         }
+        getWorkerSessionBean().reloadConfiguration(getAuthBean().getAdminCertificate(), worker.getId());
     }
 
     public static class MyWorker extends Worker {

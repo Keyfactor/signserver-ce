@@ -30,9 +30,9 @@ import org.signserver.common.GlobalConfiguration;
  * @author Markus Kilås
  * @version $Id$
  */
-public class RemoveBulkBeanTest {
+public class RemoveBulkBeanUnitTest {
 
-    private static final Logger LOG = Logger.getLogger(RemoveBulkBeanTest.class);
+    private static final Logger LOG = Logger.getLogger(RemoveBulkBeanUnitTest.class);
 
     /**
      * Tests that the remove action calls reload after removing all properties.
